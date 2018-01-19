@@ -213,7 +213,7 @@ app.post("*", async function(req, res) {
 			const signature = req.get("X-Hub-Signature");
 			if(signature && signature === `sha1=${crypto.createHmac("sha1", youKnow.gh.secret).update(req.body).digest("hex")}` && req.get("X-GitHub-Event") === "push") {
 				const payload = JSON.parse(req.body);
-				if(payload.repository.name === "web") {
+				if(payload.repository.name === "mspfa") {
 					const branch = payload.ref.slice(payload.ref.lastIndexOf("/")+1);
 					if(branch === "master") {
 						const modified = [];
