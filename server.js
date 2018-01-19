@@ -322,6 +322,7 @@ app.post("*", async function(req, res) {
 								}
 							}
 						}
+						res.send();
 						if(modified.includes("package.json")) {
 							childProcess.spawnSync("npm", ["update"]);
 						}
@@ -330,7 +331,6 @@ app.post("*", async function(req, res) {
 						}
 					}
 				}
-				res.send();
 			}
 		}
 	}
