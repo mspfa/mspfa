@@ -14,6 +14,7 @@ ServeCube.serve({
 	httpPort: 8082,
 	httpsPort: 8443,
 	tls,
+	subdomain: ["", "d", "beta"],
 	errorRedirect: {
 		404: "/?s=20784"
 	},
