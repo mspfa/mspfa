@@ -260,9 +260,7 @@ app.post("*", async function(req, res) {
 												},
 												compress: {
 													passes: 2,
-													unsafe_comps: true,
-													unsafe_math: true,
-													unsafe_proto: true
+													unsafe_math: true
 												},
 												sourceMap: {
 													content: JSON.stringify(compiled.map),
