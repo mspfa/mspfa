@@ -12,7 +12,6 @@ try {
 ServeCube.serve({
 	basePath: `${__dirname}/`,
 	httpPort: 8082,
-	httpsPort: 8443,
 	tls,
 	subdomain: ["", "d", "beta"],
 	errorRedirect: {
