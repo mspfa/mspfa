@@ -10,7 +10,9 @@ const options = {
 	subdomain: ["", "d", "beta"],
 	errorRedirect: {
 		404: "/?s=20784"
-	}
+	},
+	githubSecret: youKnow.github.secret,
+	githubPayloadURL: "/githubwebhook"
 };
 try {
 	options.tls = {

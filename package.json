@@ -17,20 +17,7 @@
 	},
 	"homepage": "https://mspfa,com/",
 	"dependencies": {
-		"babel-core": "^6.26.0",
-		"babel-preset-env": "^1.6.1",
-		"body-parser": "^1.18.2",
-		"clean-css": "^4.1.9",
-		"connect-redis": "^3.3.3",
-		"cookie-parser": "^1.4.3",
 		"discord.js": "github:discordjs/discord.js",
-		"express": "^4.16.2",
-		"express-session": "^1.15.6",
-		"mime": "^2.2.0",
-		"redis": "^2.8.0",
-		"request": "^2.83.0",
-		"request-promise-native": "^1.0.5",
-		"servecube": "^1.0.7",
-		"uglify-js": "^3.3.8"
+		"servecube": "^1.1.0"
 	}
 }
