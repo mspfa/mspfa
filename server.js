@@ -26,3 +26,4 @@ const stdin = process.openStdin();
 stdin.on("data", function(input) {
 	console.log(eval(String(input)));
 });
+// test
