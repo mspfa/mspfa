@@ -19,6 +19,7 @@ try {
 	};
 } catch(err) {}
 const cube = ServeCube.serve(options);
+const {load} = cube;
 const stdin = process.openStdin();
 stdin.on("data", function(input) {
 	console.log(eval(String(input)));
