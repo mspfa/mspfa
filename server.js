@@ -11,13 +11,6 @@ const options = {
 	githubSecret: youKnow.github.secret,
 	githubPayloadURL: "/githubwebhook"
 };
-try {
-	options.tls = {
-		key: fs.readFileSync("certs/privkey1.pem"),
-		cert: fs.readFileSync("certs/cert1.pem"),
-		ca: fs.readFileSync("certs/chain1.pem")
-	};
-} catch(err) {}
 const cube = ServeCube.serve(options);
 const {load} = cube;
 const stdin = process.openStdin();
