@@ -1,3 +1,4 @@
+this.cache = 2;
 this.value = (await load("/load/head", this)).value;
 this.value += html`
 		<link rel="stylesheet" href="index.css">`;
