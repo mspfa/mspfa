@@ -21,7 +21,7 @@ this.value = html`
 		<meta property="og:title" content="${this.title}">
 		<meta property="og:description" content="${this.description}">
 		<meta name="google-signin-client_id" content="${youKnow.google.clientId}">
-		<link rel="icon" href="/image/icon/cover.png">
+		<link rel="icon" href="/images/ico.png">
 		<link href="//fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
 		<link rel="stylesheet" href="/css/mspfa.css">
 		<script src="https://www.googletagmanager.com/gtag/js?id=UA-110090319-2" async></script>
