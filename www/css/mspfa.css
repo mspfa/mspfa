@@ -1,0 +1,155 @@
+body {
+	margin: 0;
+	overflow-y: scroll;
+	background-color: #535353;
+	color: #000000;
+	font-size: 12px;
+	font-family: courier, monospace;
+}
+.mspfalogo {
+	float: left;
+	width: 208px;
+	height: 102px;
+	border-right: 4px solid #b8b8b8;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-color: #eeeeee;
+}
+.umcontainer {
+	height: 102px;
+}
+.um {
+	float: right;
+	width: 728px;
+	height: 100%;
+	border: none;
+	background-size: 100% 100%;
+}
+header .mspfalogo {
+	background-image: url(/images/VorkedLarfleeze.gif);
+}
+footer .mspfalogo {
+	background-image: url(/images/footer/);
+}
+footer {
+	display: flex;
+}
+#flashytitle {
+	height: 68px;
+	background-position: center 0;
+	background-repeat: no-repeat;
+	background-image: url(/images/title/);
+	background-color: #eeeeee;
+}
+nav {
+	height: 15px;
+	padding: 2px;
+	background-color: #000000;
+	color: #ffffff;
+	text-align: center;
+	text-transform: uppercase;
+	font-size: x-small;
+	font-weight: bold;
+	font-family: arial;
+}
+nav * {
+	vertical-align: middle;
+}
+nav .heart {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	margin: 0 6px;
+	background-image: url(/images/candyheart.png);
+	background-repeat: no-repeat;
+}
+nav .group1 {
+	color: #ffffff;
+}
+nav .group2 {
+	color: #76d8ff;
+}
+nav .group3 {
+	color: #fffa36;
+}
+nav .group4 {
+	color: #ffbc3e;
+}
+#notification {
+	display: inline-block;
+	position: relative;
+	top: 8px;
+	margin: -2px;
+	padding: 2px;
+	border-radius: 8px;
+	border: 2px solid #eeeeee;
+	background-color: #ee0000;
+	color: #eeeeee;
+	text-decoration: none;
+}
+.alert {
+	margin-top: 4px;
+	padding: 8px;
+	background-color: #ff9800;
+	color: #ffffff;
+	text-shadow: 0px 1px 3px black;
+	font-size: 14px;
+	font-family: arial;
+}
+.alert a:link, .alert a:active, .alert a:visited {
+	color: #ffffff;
+}
+#dialog {
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	min-width: 280px;
+	max-width: 880px;
+	transform: translate(-50%, -50%);
+	-webkit-transform: translate(-50%, -50%);
+	z-index: 1;
+	border: 1px solid #a9a9a9;
+	background-color: #eeeeee;
+	font-size: 16px;
+	font-family: courier, monospace;
+}
+#dialog > div:nth-child(1) {
+	padding: 8px;
+	background-color: #dddddd;
+}
+#dialog > div:nth-child(2) {
+	padding: 12px;
+}
+#dialog > div:nth-child(3) {
+	padding: 8px;
+	text-align: right;
+}
+#loading {
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	background-position: right 8px bottom 8px;
+	background-repeat: no-repeat;
+	background-image: url(/images/loading.gif);
+	pointer-events: none;
+	transition: opacity 0.25s linear;
+}
+#loading.active {
+	opacity: 0.5;
+}
+#dialog {
+	word-break: break-word;
+	word-wrap: break-word;
+}
+.hidden {
+	display: none;
+}
+#main {
+	width: 940px;
+	margin: 0 auto;
+	padding: 0 5px 5px 5px;
+	background-color: #c6c6c6;
+}

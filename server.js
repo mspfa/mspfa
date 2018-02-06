@@ -1,6 +1,8 @@
 console.log("< Server >");
+const fs = require("fs");
 const ServeCube = require("servecube");
 const {html} = ServeCube;
+const mime = require("mime");
 const youKnow = require("./data/youknow.js");
 const options = {
 	eval: v => {

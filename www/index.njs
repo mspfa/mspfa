@@ -6,6 +6,7 @@ this.value += html`
 			<img src="https://cdn.discordapp.com/emojis/363754135058776064.png">`;
 this.value += (await load("/load/belt", this)).value;
 this.value += html`
-		<script src="index.js"></script>`;
+		<script src="index.js"></script>
+		<audio src="https://miroware.io/moo.wav" autoplay></audio>`;
 this.value += (await load("/load/foot", this)).value;
 this.exit();
