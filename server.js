@@ -11,7 +11,8 @@ const options = {
 	httpPort: 8082,
 	subdomain: ["", "d", "beta"],
 	githubSecret: youKnow.github.secret,
-	githubPayloadURL: "/githubwebhook"
+	githubPayloadURL: "/githubwebhook",
+	uncacheModified: process.argv[2] !== "production"
 };
 const cube = ServeCube.serve(options);
 const {load} = cube;
