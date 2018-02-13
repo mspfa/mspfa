@@ -8,12 +8,12 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Miroware8/mspfa.git"
+		"url": "git+https://github.com/GrantGryczan/mspfa.git"
 	},
 	"author": "Grant Gryczan",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/Miroware8/mspfa/issues"
+		"url": "https://github.com/GrantGryczan/mspfa/issues"
 	},
 	"homepage": "https://mspfa,com/",
 	"dependencies": {
