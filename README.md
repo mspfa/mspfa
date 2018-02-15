@@ -1,2 +1,2 @@
 # MSPFA
-[MS Paint Fan Adventures](https://miroware.io/)
+[MS Paint Fan Adventures](https://mspfa.com/)
