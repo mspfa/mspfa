@@ -8,6 +8,7 @@ const cube = ServeCube.serve({
 	eval: v => {
 		return eval(v);
 	},
+	domain: "mspfa.com",
 	httpPort: 8082,
 	httpsRedirect: true,
 	subdomain: ["", "d", "beta"],

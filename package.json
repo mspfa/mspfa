@@ -19,6 +19,6 @@
 	"dependencies": {
 		"discord.js": "github:discordjs/discord.js",
 		"mime": "^2.2.0",
-		"servecube": "^1.5.1"
+		"servecube": "^1.5.2"
 	}
 }
