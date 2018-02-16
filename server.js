@@ -4,7 +4,7 @@ const ServeCube = require("servecube");
 const {html} = ServeCube;
 const mime = require("mime");
 const youKnow = require("./data/youknow.js");
-const options = {
+const cube = ServeCube.serve({
 	eval: v => {
 		return eval(v);
 	},
@@ -13,8 +13,7 @@ const options = {
 	githubSecret: youKnow.github.secret,
 	githubPayloadURL: "/githubwebhook",
 	uncacheModified: process.argv[2] !== "production"
-};
-const cube = ServeCube.serve(options);
+});
 const {load} = cube;
 const stdin = process.openStdin();
 stdin.on("data", function(input) {
