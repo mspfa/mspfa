@@ -8,6 +8,12 @@ Here you go.
 
 If you want to upload your own footer image, it should match the template in size, general style, that it's mostly desaturated, and that it can't be too distracting if it's animated.
 
+The format of the filenames of any footer images should be your username, followed by an underscore, ending with a number to identify your image. The number should be "1" if it's the first image under your username, "2" if it's the second, and so on. The number increases per file regardless of file format. Here's a filename example of if someone under the username "nixshadow" were to upload their fourth footer image.
+
+`nixshadow_4.png`
+
+Lastly, only PNGs and GIFs are accepted.
+
 # How can I upload mine?
 * Once you have your image or images, make sure they follow the template, which can be found above.
 * Create a GitHub account on this website if you haven't already, and log in.
