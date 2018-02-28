@@ -1,7 +1,9 @@
 # What is a footer image?
+
 It's a randomized image at the bottom-left corner of MSPFA.
 
 # Can I get a template?
+
 Here you go.
 
 ![Template](https://mspfa.com/images/footer/template.png)
@@ -15,7 +17,9 @@ The format of the filenames of any footer images should be your username, follow
 Lastly, only PNGs and GIFs are accepted.
 
 # How can I upload mine?
-* Once you have your image or images, make sure they follow the template, which can be found above.
+
+Once you have your image or images, make sure they follow the template, which can be found above. Then follow these steps.
+
 * Create a GitHub account on this website if you haven't already, and log in.
 * At the top-right corner of this page, click the "Fork" button to make an editable copy of MSPFA you can upload to on GitHub.
 * Once it's done loading, go to "www", then "images", and then "footer", and then click "Upload files", obviously to upload your files.
@@ -23,3 +27,11 @@ Lastly, only PNGs and GIFs are accepted.
 * Click the link that says "Pull request", which can be found above the file list and to the right.
 * Click the big button that says "Create pull request".
 * Now that any admins have been notified of your request, you can wait for them to verify it, or to comment on it if there is a reason that the request is unacceptable. It is recommended that you check on the request's status frequently to await verification or comments. Alternatively, you can tell an admin about the pull request on Discord if you want to speed up the process.
+
+If you want to edit an image from a pull request you've already made, follow these steps instead.
+
+* In your pull request, go to "www", then "images", and then "footer", and find the image or images you uploaded.
+* For each image you are editing, click on it, press deletion icon in the top-right corner, and click "Commit changes".
+* After doing this for each applicable image, click "Upload files" and upload your edited images.
+* Click "Commit changes".
+* Wait for additional verification from an admin.
