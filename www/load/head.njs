@@ -13,7 +13,7 @@ this.value = html`
 		<meta name="author" content="${this.author}">
 		<meta name="description" content="${this.description}">
 		<meta name="keywords" content="${["miroware", "miro", "ware", "grantgryczan", "grant", "gryczan", "mspfa", "mspfanventures", "mspfanventure", "mspaintfanventures", "mspaintfanventure", "mspfanadventures", "mspfanadventure", "mspaintfanadventures", "mspaintfanadventure", "mspaint", "ms", "paint", "fanventures", "fanventure", "fan", "adventures", "adventure", "fans", "mspa", "mspaintadventures", "mspafa", "forums", "forum", ...this.tags].join(",")}">
-		<meta name="theme-color" content="#202020">
+		<meta name="theme-color" content="${this.req.get("User-Agent").includes("Discordbot") ? "#00cc13" : "#eeeeee"}">
 		<meta property="og:type" content="website">
 		<meta property="og:url" content="https://mspfa.com/">
 		<meta property="og:site_name" content="MS Paint Fan Adventures">
