@@ -30,8 +30,8 @@ Once you have your image or images, make sure they follow the template, which ca
 
 If you want to edit an image from a pull request you've already made, follow these steps instead.
 
-* In your pull request, go to "www", then "images", and then "footer", and find the image or images you uploaded.
-* For each image you are editing, click on it, press deletion icon in the top-right corner, and click "Commit changes".
-* After doing this for each applicable image, click "Upload files" and upload your edited images.
+* In your pull request, go to "www", then "images", and then "footer", and find the image or images you previously uploaded in GitHub's file list.
+* For each image you are editing, click on it, press the deletion icon in the top-right corner, and click "Commit changes".
+* After doing this for each applicable image, click "Upload files" and upload the edited images from your computer.
 * Click "Commit changes".
 * Wait for additional verification from an admin.
