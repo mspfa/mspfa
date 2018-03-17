@@ -2,13 +2,10 @@ const fs = require("fs");
 const {MongoClient} = require("mongodb");
 const youKnow = require("./data/youknow.js");
 (async () => {
-	const client = await MongoClient.connect(youKnow.db.url, {
+	const client = await MongoClient.connect(youKnow.db.url, youKnow.db.user, youKnow.db.password, {
 		authSource: "mspfa",
 		appname: "Server",
-		auth: {
-			user: youKnow.db.user,
-			password: youKnow.db.passsword
-		}
+		compression: "snappy"
 	});
 	const db = client.db("mspfa");
 	const users = await db.createCollection("users", {
