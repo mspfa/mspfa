@@ -1,3 +1,4 @@
+console.log("< Setup >");
 const fs = require("fs");
 const {MongoClient} = require("mongodb");
 const youKnow = require("./data/youknow.js");
