@@ -18,7 +18,9 @@
 	"homepage": "https://mspfa,com/",
 	"dependencies": {
 		"discord.js": "github:discordjs/discord.js",
+		"express-session": "^1.15.6",
 		"mime": "^2.2.0",
+		"mongo-store": "0.0.2",
 		"mongodb": "^3.0.4",
 		"request": "^2.83.0",
 		"request-promise-native": "^1.0.5",
