@@ -24,10 +24,10 @@ const youKnow = require("./data/youknow.js");
 		githubPayloadURL: "/githubwebhook",
 		uncacheModified: process.argv[2] !== "production",
 		middleware: [session({
-			name: "session",
-			secret: youKnow.sessionSecret,
+			secret: youKnow.session.secret,
 			resave: false,
 			saveUninitialized: false,
+			name: "sess",
 			cookie: {
 				secure: true,
 				maxAge: 604800000
