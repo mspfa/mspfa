@@ -3,6 +3,7 @@ const {MongoClient} = require("mongodb");
 const youKnow = require("./data/youknow.js");
 (async () => {
 	const client = await MongoClient.connect(youKnow.db.url, {
+		authSource: "mspfa",
 		appname: "Server",
 		auth: {
 			user: youKnow.db.user,
