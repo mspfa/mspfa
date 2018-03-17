@@ -2,9 +2,7 @@ const fs = require("fs");
 const {MongoClient} = require("mongodb");
 const youKnow = require("./data/youknow.js");
 (async () => {
-	const client = await MongoClient.connect(youKnow.db.url, youKnow.db.user, youKnow.db.password, {
-		authSource: "mspfa",
-		appname: "Server",
+	const client = await MongoClient.connect(youKnow.db.url, {
 		compression: "snappy"
 	});
 	const db = client.db("mspfa");
