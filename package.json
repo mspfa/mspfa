@@ -19,6 +19,7 @@
 	"dependencies": {
 		"discord.js": "github:discordjs/discord.js",
 		"mime": "^2.2.0",
+		"mongodb": "^3.0.4",
 		"request": "^2.83.0",
 		"request-promise-native": "^1.0.5",
 		"servecube": "^1.6.3"
