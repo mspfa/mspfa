@@ -142,8 +142,7 @@ const youKnow = require("./data/youknow.js");
 		},
 		publicFavs: true
 	});
-	const stdin = process.openStdin();
-	stdin.on("data", input => {
+	process.openStdin().on("data", input => {
 		console.log(eval(String(input)));
 	});
 })();
