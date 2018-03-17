@@ -150,3 +150,6 @@ const youKnow = require("./data/youknow.js");
 		console.log(eval(String(input)));
 	});
 })();
+fs.watch(__filename, () => {
+	process.exit();
+});
