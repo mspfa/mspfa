@@ -20,8 +20,9 @@ const youKnow = require("./data/youknow.js");
 		httpPort: 8082,
 		httpsRedirect: true,
 		subdomain: ["", "d", "beta"],
-		githubSecret: youKnow.github.secret,
 		githubPayloadURL: "/githubwebhook",
+		githubSecret: youKnow.github.secret,
+		githubToken: youKnow.github.token,
 		uncacheModified: process.argv[2] !== "production",
 		middleware: [session({
 			secret: youKnow.session.secret,
