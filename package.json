@@ -17,13 +17,15 @@
 	},
 	"homepage": "https://mspfa,com/",
 	"dependencies": {
+		"body-parser": "^1.18.2",
 		"connect-mongo": "^2.0.1",
+		"cookie-parser": "^1.4.3",
 		"discord.js": "github:discordjs/discord.js",
 		"express-session": "^1.15.6",
 		"mime": "^2.2.0",
 		"mongodb": "^3.0.4",
 		"request": "^2.85.0",
 		"request-promise-native": "^1.0.5",
-		"servecube": "^1.7.0"
+		"servecube": "^1.7.2"
 	}
 }

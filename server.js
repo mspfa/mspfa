@@ -2,11 +2,14 @@ console.log("< Server >");
 const fs = require("fs");
 const ServeCube = require("servecube");
 const {html} = ServeCube;
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 const mime = require("mime");
 const {MongoClient} = require("mongodb");
 const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
 const youKnow = require("./data/youknow.js");
+const production = process.argv[2] === "production";
 (async () => {
 	const client = await MongoClient.connect(youKnow.db.url, {
 		compression: "snappy"
@@ -18,13 +21,16 @@ const youKnow = require("./data/youknow.js");
 		},
 		domain: "mspfa.com",
 		httpPort: 8082,
-		httpsRedirect: true,
+		httpsRedirect: production,
 		subdomain: ["", "d", "beta"],
 		githubPayloadURL: "/githubwebhook",
 		githubSecret: youKnow.github.secret,
 		githubToken: youKnow.github.token,
-		uncacheModified: process.argv[2] !== "production",
-		middleware: [session({
+		uncacheModified: !production,
+		middleware: [cookieParser(), bodyParser.raw({
+			limit: "100mb",
+			type: "*/*"
+		}), session({
 			secret: youKnow.session.secret,
 			resave: false,
 			saveUninitialized: false,
