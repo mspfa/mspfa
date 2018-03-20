@@ -22,10 +22,11 @@
 		"cookie-parser": "^1.4.3",
 		"discord.js": "github:discordjs/discord.js",
 		"express-session": "^1.15.6",
+		"fs-extra": "^5.0.0",
 		"mime": "^2.2.0",
 		"mongodb": "^3.0.4",
 		"request": "^2.85.0",
 		"request-promise-native": "^1.0.5",
-		"servecube": "^1.8.0"
+		"servecube": "^1.9.0"
 	}
 }
