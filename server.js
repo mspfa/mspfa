@@ -22,7 +22,11 @@ const production = process.argv[2] === "production";
 		domain: "mspfa.com",
 		httpPort: 8082,
 		httpsRedirect: production,
-		subdomain: ["", "d", "beta"],
+		subdomains: {
+			d: "www/",
+			beta: "www/",
+			api: "api/"
+		},
 		githubPayloadURL: "/githubwebhook",
 		githubSecret: youKnow.github.secret,
 		githubToken: youKnow.github.token,
