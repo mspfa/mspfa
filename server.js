@@ -1,7 +1,6 @@
 console.log("< Server >");
 const fs = require("fs-extra");
-const ServeCube = require("servecube");
-const {html} = ServeCube;
+const {serve, html} = require("servecube");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const mime = require("mime");
@@ -15,7 +14,7 @@ const production = process.argv[2] === "production";
 		compression: "snappy"
 	});
 	const db = client.db("mspfa");
-	const cube = await ServeCube.serve({
+	const cube = await serve({
 		eval: v => {
 			return eval(v);
 		},
