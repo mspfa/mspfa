@@ -1,6 +1,6 @@
 {
 	"name": "mspfa",
-	"version": "1.0.0",
+	"version": "3.0.0",
 	"description": "MS Paint Fan Adventures",
 	"main": "server.js",
 	"scripts": {
@@ -24,9 +24,9 @@
 		"express-session": "^1.15.6",
 		"fs-extra": "^5.0.0",
 		"mime": "^2.2.0",
-		"mongodb": "^3.0.4",
+		"mongodb": "^3.0.5",
 		"request": "^2.85.0",
 		"request-promise-native": "^1.0.5",
-		"servecube": "^1.9.0"
+		"servecube": "^1.10.0"
 	}
 }

@@ -32,4 +32,4 @@ this.value = html`
 				<div id="pepsidehydration" class="alert hidden">It seems you are blocking our ads, but we need those ads enabled to be able to fund this website. Please be considerate and enable ads. Don't worry; they're non-intrusive.</div>
 				<div id="warning" class="alert">This is the beta site. No data here will be kept when this site is released.</div>
 			</header>`;
-this.exit();
+this.done();
