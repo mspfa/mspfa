@@ -1,4 +1,4 @@
-this.cache = context => context.req.queryString;
+this.cache = context => `${context.rawPath}?${context.req.queryString}`;
 this.value = html`
 <html>
 	<head>
