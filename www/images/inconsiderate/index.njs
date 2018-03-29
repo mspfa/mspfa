@@ -5,8 +5,6 @@ const files = (await fs.readdir(dir)).filter(i => {
 });
 const file = files[Math.floor(Math.random()*files.length)];
 this.value = await fs.readFile(`${dir}/${file}`);
-this.headers = {
-	"Cache-Control": "no-cache no-store",
-	"Content-Type": mime.getType(file)
-};
+this.headers["Cache-Control"] = "no-cache no-store";
+this.headers["Content-Type"] = mime.getType(file);
 this.done();
