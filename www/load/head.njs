@@ -20,7 +20,7 @@ this.value = html`
 		<meta property="og:image" content="${this.image}">
 		<meta property="og:title" content="${this.title}">
 		<meta property="og:description" content="${this.description}">
-		<meta name="google-signin-client_id" content="${youKnow.google.clientId}">
+		<meta name="google-signin-client_id" content="${youKnow.google.id}">
 		<title>${this.title}</title>
 		<link rel="icon" href="/images/ico.png">
 		<link href="//fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
