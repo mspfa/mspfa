@@ -18,7 +18,7 @@ const production = process.argv[2] === "production";
 		eval: v => {
 			return eval(v);
 		},
-		domain: "mspfa.com",
+		domain: production ? "mspfa.com" : "localhost",
 		httpPort: 8082,
 		httpsRedirect: production,
 		subdomains: {
