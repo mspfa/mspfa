@@ -14,9 +14,7 @@ const production = process.argv[2] === "production";
 	});
 	const db = client.db("mspfa");
 	const cube = await serve({
-		eval: v => {
-			return eval(v);
-		},
+		eval: v => eval(v),
 		domain: production ? "mspfa.com" : "localhost",
 		httpPort: 8082,
 		httpsRedirect: production,
