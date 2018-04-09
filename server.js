@@ -16,6 +16,7 @@ const production = process.argv[2] === "production";
 	const cube = await serve({
 		eval: v => eval(v),
 		domain: production ? "mspfa.com" : "localhost",
+		errorDir: "error",
 		httpPort: 8082,
 		httpsRedirect: production,
 		subdomains: {

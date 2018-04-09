@@ -24,9 +24,9 @@
 		"express-session": "^1.15.6",
 		"fs-extra": "^5.0.0",
 		"mime": "^2.2.2",
-		"mongodb": "^3.0.5",
+		"mongodb": "^3.0.6",
 		"request": "^2.85.0",
 		"request-promise-native": "^1.0.5",
-		"servecube": "^1.11.10"
+		"servecube": "^1.12.0"
 	}
 }
