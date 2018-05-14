@@ -24,6 +24,7 @@ const production = process.argv[2] === "production";
 			beta: "www/",
 			api: "api/"
 		},
+		githubSubdomain: "api",
 		githubPayloadURL: "/githubwebhook",
 		githubSecret: youKnow.github.secret,
 		githubToken: youKnow.github.token,
