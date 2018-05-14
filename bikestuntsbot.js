@@ -73,20 +73,22 @@ client.on("message", async msg => {
 			respond(msg.channel);
 		}
 		if(msg.channel.id === "394162947867410434") {
-			if(msg.author.id !== data.lastShillAuthor && Date.now()-data.lastShillDate < 300000 && !perm) {
+			const now = Date.now();
+			if(msg.author.id !== data.lastShillAuthor && now-data.lastShillDate < 300000 && !perm) {
 				msg.delete();
 				msg.author.send("You must wait at least five minutes after someone posts in <#394162947867410434> before posting there too.");
 			} else {
-				data.lastShillDate = Date.now();
+				data.lastShillDate = now;
 				data.lastShillAuthor = msg.author.id;
 				save();
 			}
 		} else if(msg.channel.id === "394162913155219456" && (msg.attachments.size || msg.embeds.length || msg.content.includes("://"))) {
-			if(msg.author.id !== data.lastCreativeAuthor && Date.now()-data.lastCreativeDate < 300000 && !perm) {
+			const now = Date.now();
+			if(msg.author.id !== data.lastCreativeAuthor && now-data.lastCreativeDate < 300000 && !perm) {
 				msg.delete();
 				msg.author.send("You must wait at least five minutes after someone posts a creative work in <#394162913155219456> before posting yours too.");
 			} else {
-				data.lastCreativeDate = Date.now();
+				data.lastCreativeDate = now;
 				data.lastCreativeAuthor = msg.author.id;
 				save();
 			}
