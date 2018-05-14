@@ -58,10 +58,10 @@ client.on("message", async msg => {
 	const isPublic = msg.channel.type === "text";
 	let content = msg.content;
 	const lowerCaseContent = content.toLowerCase();
-	if(msg.author.id !== "152282430915608578" && (lowerCaseContent.includes("miro") || lowerCaseContent.includes("grant"))) {
+	if(msg.author.id !== "152282430915608578" && (lowerCaseContent.includes("grant") || lowerCaseContent.includes("miro") || lowerCaseContent.includes("cube"))) {
 		guild.members.get("152282430915608578").send(`${msg.author} has mentioned you in ${msg.channel}.`);
 	}
-	if(!isPublic || msg.mentions.has(client.user)) {
+	if(!isPublic || msg.content.includes("<@294635195439513601>")) {
 		respond(msg.channel);
 	} else if(prefix.test(content)) {
 		const member = msg.guild.member(msg.author) || await msg.guild.members.fetch(msg.author);
