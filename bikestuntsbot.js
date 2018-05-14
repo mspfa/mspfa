@@ -1,6 +1,16 @@
 console.log("< BikeStuntsBot >");
 const fs = require("fs");
 const Discord = require("discord.js");
+const evalTest = /```js\n((?:.|\n)*?)\n```/;
+const doNothing = () => {};
+let data;
+const load = () => {
+	data = JSON.parse(fs.readFileSync("data/colorbot.json"));
+};
+load();
+const save = () => {
+	fs.writeFileSync("data/bikestunts.json", JSON.stringify(data));
+};
 const client = new Discord.Client();
 const exitOnError = err => {
 	console.error(err);
@@ -34,14 +44,9 @@ client.on("guildMemberRemove", member => {
 });
 client.on("typingStart", channel => {
 	if(channel.type === "dm") {
-		channel.send("Have you tried `ctrl`+`F5`?").catch(() => {});
+		channel.send("Have you tried `ctrl`+`F5`?").catch(doNothing);
 	}
 });
-const mad = msg => {
-	if(msg.author.id === "205733356741066752" && /= *. *=/i.test(msg.content)) {
-		msg.channel.send("https://mspfa.com/images/madsquint.png");
-	}
-};
 client.on("messageUpdate", (old, msg) => {
 	mad(msg);
 });
@@ -85,7 +90,7 @@ client.on("message", async msg => {
 						const msg2 = msgs.first();
 						for(const v of emojis) {
 							if(v) {
-								msg2.react(v).catch(() => {});
+								msg2.react(v).catch(doNothing);
 							}
 						}
 						msg.delete();
@@ -95,12 +100,12 @@ client.on("message", async msg => {
 				msg.delete().then(() => {
 					const messages = parseInt(content[1]);
 					if(!isNaN(content[1])) {
-						msg.channel.bulkDelete(parseInt(content[1])).catch(() => {});
+						msg.channel.bulkDelete(parseInt(content[1])).catch(doNothing);
 					}
 				});
 			} else if(content[0] === "eval") {
 				try {
-					eval(content[1].replace(/```js\n((?:.|\n)*?)\n```/, "$1"));
+					eval(content[1].replace(evalTest, "$1"));
 				} catch(err) {
 					console.error(err);
 				}
@@ -108,7 +113,7 @@ client.on("message", async msg => {
 		}
 	}
 });
-client.login(...);
+client.login(data.token);
 fs.watch(__filename, () => {
 	process.exit();
 });
