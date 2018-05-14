@@ -47,15 +47,10 @@ client.on("typingStart", channel => {
 		channel.send("Have you tried `ctrl`+`F5`?").catch(doNothing);
 	}
 });
-client.on("messageUpdate", (old, msg) => {
-	mad(msg);
-});
 const prefix = /^> ?/;
 client.on("message", async msg => {
 	if(msg.author.bot) {
 		return;
-	} else {
-		mad(msg);
 	}
 	const isPublic = msg.channel.type === "text";
 	let content = msg.content;
