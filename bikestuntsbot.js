@@ -57,7 +57,6 @@ client.on("message", async msg => {
 	} else {
 		mad(msg);
 	}
-	const member = msg.guild.member(msg.author) || await msg.guild.members.fetch(msg.author);
 	const isPublic = msg.channel.type === "text";
 	let content = msg.content;
 	const lowerCaseContent = content.toLowerCase();
@@ -67,6 +66,7 @@ client.on("message", async msg => {
 	if(!isPublic || msg.mentions.has(client.user)) {
 		msg.channel.send(`${isPublic ? `${msg.author} ` : ""}Have you tried \`ctrl\`+\`F5\`?`);
 	} else if(prefix.test(content)) {
+		const member = msg.guild.member(msg.author) || await msg.guild.members.fetch(msg.author);
 		content = content.replace(prefix, "");
 		const contentSpaceIndex = content.indexOf(" ");
 		const contentLineIndex = content.indexOf("\n");
