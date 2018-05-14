@@ -1,11 +1,11 @@
-console.log("< BikeStuntsBot debug >");
+console.log("< BikeStuntsBot >");
 const fs = require("fs");
 const Discord = require("discord.js");
 const evalTest = /```js\n((?:.|\n)*?)\n```/;
 const doNothing = () => {};
 let data;
 const load = () => {
-	data = JSON.parse(fs.readFileSync("data/colorbot.json"));
+	data = JSON.parse(fs.readFileSync("data/bikestunts.json"));
 };
 load();
 const save = () => {
