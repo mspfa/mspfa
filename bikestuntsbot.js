@@ -78,7 +78,7 @@ client.on("message", async msg => {
 					save();
 				}
 			}
-		} else if(msg.channel.id === "394162913155219456" && (msg.attachments.size || msg.embeds.length) && msg.author.id !== data.lastCreativeAuthor) {
+		} else if(msg.channel.id === "394162913155219456" && (msg.attachments.size || msg.embeds.length || msg.content.includes("://")) && msg.author.id !== data.lastCreativeAuthor) {
 			if(Date.now()-data.lastCreativeDate < 300000) {
 				msg.delete();
 				msg.author.send("You must wait at least five minutes after someone posts a creative work in <#394162913155219456> before posting yours too.");
