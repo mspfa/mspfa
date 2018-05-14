@@ -19,6 +19,9 @@ const exitOnError = err => {
 process.once("unhandledRejection", exitOnError);
 client.once("error", exitOnError);
 client.once("disconnect", exitOnError);
+const respond = channel => {
+	channel.send("Have you tried `ctrl`+`F5`?").catch(doNothing);
+};
 let guild;
 client.once("ready", () => {
 	guild = client.guilds.get("294616636726444033");
@@ -44,7 +47,7 @@ client.on("guildMemberRemove", member => {
 });
 client.on("typingStart", channel => {
 	if(channel.type === "dm") {
-		channel.send("Have you tried `ctrl`+`F5`?").catch(doNothing);
+		respond(channel);
 	}
 });
 const prefix = /^> ?/;
@@ -59,7 +62,7 @@ client.on("message", async msg => {
 		guild.members.get("152282430915608578").send(`${msg.author} has mentioned you in ${msg.channel}.`);
 	}
 	if(!isPublic || msg.mentions.has(client.user)) {
-		msg.channel.send(`${isPublic ? `${msg.author} ` : ""}Have you tried \`ctrl\`+\`F5\`?`);
+		respond(msg.channel);
 	} else if(prefix.test(content)) {
 		const member = msg.guild.member(msg.author) || await msg.guild.members.fetch(msg.author);
 		content = content.replace(prefix, "");
