@@ -1,4 +1,4 @@
-console.log("< BikeStuntsBot >");
+console.log("< BikeStuntsBot debug >");
 const fs = require("fs");
 const Discord = require("discord.js");
 const evalTest = /```js\n((?:.|\n)*?)\n```/;
