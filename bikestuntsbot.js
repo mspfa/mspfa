@@ -61,25 +61,23 @@ client.on("message", async msg => {
 	if(msg.author.id !== "152282430915608578" && (lowerCaseContent.includes("grant") || lowerCaseContent.includes("miro") || lowerCaseContent.includes("cube"))) {
 		guild.members.get("152282430915608578").send(`${msg.author} has mentioned you in ${msg.channel}.`);
 	}
-	if(!isPublic) {
-		respond(msg.channel);
-	} else {
+	if(isPublic) {
+		const member = msg.guild.member(msg.author) || await msg.guild.members.fetch(msg.author);
+		const perm = member.hasPermission(8192);
 		if(msg.content.includes("<@294635195439513601>")) {
 			respond(msg.channel);
 		}
 		if(msg.channel.id === "394162947867410434") {
-			if(msg.author.id !== data.lastShillAuthor) {
-				if(Date.now()-data.lastShillDate < 300000) {
-					msg.delete();
-					msg.author.send("You must wait at least five minutes after someone posts in <#394162947867410434> before posting there too.");
-				} else {
-					data.lastShillDate = Date.now();
-					data.lastShillAuthor = msg.author.id;
-					save();
-				}
+			if(msg.author.id !== data.lastShillAuthor && Date.now()-data.lastShillDate < 300000 && !perm) {
+				msg.delete();
+				msg.author.send("You must wait at least five minutes after someone posts in <#394162947867410434> before posting there too.");
+			} else {
+				data.lastShillDate = Date.now();
+				data.lastShillAuthor = msg.author.id;
+				save();
 			}
-		} else if(msg.channel.id === "394162913155219456" && (msg.attachments.size || msg.embeds.length || msg.content.includes("://")) && msg.author.id !== data.lastCreativeAuthor) {
-			if(Date.now()-data.lastCreativeDate < 300000) {
+		} else if(msg.channel.id === "394162913155219456" && (msg.attachments.size || msg.embeds.length || msg.content.includes("://"))) {
+			if(msg.author.id !== data.lastCreativeAuthor && Date.now()-data.lastCreativeDate < 300000 && !perm) {
 				msg.delete();
 				msg.author.send("You must wait at least five minutes after someone posts a creative work in <#394162913155219456> before posting yours too.");
 			} else {
@@ -89,7 +87,6 @@ client.on("message", async msg => {
 			}
 		}
 		if(prefix.test(content)) {
-			const member = msg.guild.member(msg.author) || await msg.guild.members.fetch(msg.author);
 			content = content.replace(prefix, "");
 			const contentSpaceIndex = content.indexOf(" ");
 			const contentLineIndex = content.indexOf("\n");
@@ -102,7 +99,7 @@ client.on("message", async msg => {
 			content[0] = content[0].toLowerCase();
 			if(content[0] === "help") {
 				msg.author.send("**There is no help for you now.**");
-			} else if(member.hasPermission(0x00002000)) {
+			} else if(perm) {
 				if(content[0] === "react") {
 					if(msg.author.id === "152282430915608578") {
 						const emojis = content[1].split(" ");
@@ -135,6 +132,8 @@ client.on("message", async msg => {
 				}
 			}
 		}
+	} else {
+		respond(msg.channel);
 	}
 });
 client.login(data.token);
