@@ -45,8 +45,13 @@ const production = process.argv[2] === "production";
 		})]
 	});
 	const {load} = cube;
-	process.openStdin().on("data", input => {
+	evalInput = input => {
 		console.log(eval(String(input)));
-	});
+	};
 })();
-	
+let evalInput = input => {
+	console.log(eval(String(input)));
+};
+process.openStdin().on("data", input => {
+	evalInput(input);
+});
