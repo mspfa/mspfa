@@ -17,16 +17,16 @@
 	},
 	"homepage": "https://mspfa.com/",
 	"dependencies": {
-		"body-parser": "^1.18.2",
+		"body-parser": "^1.18.3",
 		"connect-mongo": "^2.0.1",
 		"cookie-parser": "^1.4.3",
 		"discord.js": "github:discordjs/discord.js",
 		"express-session": "^1.15.6",
 		"fs-extra": "^5.0.0",
-		"mime": "^2.2.2",
-		"mongodb": "^3.0.6",
-		"request": "^2.85.0",
+		"mime": "^2.3.1",
+		"mongodb": "^3.0.8",
+		"request": "^2.86.0",
 		"request-promise-native": "^1.0.5",
-		"servecube": "^1.13.3"
+		"servecube": "^1.13.5"
 	}
 }
