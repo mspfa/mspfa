@@ -6,7 +6,7 @@ this.image = this.image === undefined ? "/images/ico.png" : this.image; // Perfe
 const userAgent = this.req.get("User-Agent");
 this.value = html`
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1">
