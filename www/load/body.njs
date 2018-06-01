@@ -4,10 +4,10 @@ this.value = html`
 		<div id="main">
 			<header>
 				<div class="umcontainer">
-					<div class="mspfalogo"></div>
+					<div class="mspfaLogo"></div>
 					<iframe class="um" src="/um/?60252"></iframe>
 				</div>
-				<div id="flashytitle"></div>
+				<div id="flashyTitle"></div>
 				<nav>
 					<a class="group1" href="/">MSPFA Home</a>
 					<span class="vbar">|</span>
@@ -29,7 +29,7 @@ this.value = html`
 					<span class="vbar">|</span>
 					<a class="group4" href="/donate/">Donate</a>
 				</nav>
-				<div id="pepsidehydration" class="alert hidden">It seems you are blocking our ads, but we need those ads enabled to be able to fund this website. Please be considerate and enable ads. Don't worry; they're non-intrusive.</div>
+				<div id="pepsiDehydration" class="alert hidden">It seems you are blocking our ads, but we need those ads enabled to be able to fund this website. Please be considerate and enable ads. Don't worry; they're non-intrusive.</div>
 				<div id="warning" class="alert">This is the beta site. No data here will be kept when this site is released.</div>
 			</header>`;
 this.done();

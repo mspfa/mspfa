@@ -6,7 +6,7 @@ body {
 	font-size: 12px;
 	font-family: courier, monospace;
 }
-.mspfalogo {
+.mspfaLogo {
 	float: left;
 	width: 208px;
 	height: 102px;
@@ -15,7 +15,7 @@ body {
 	background-repeat: no-repeat;
 	background-color: #eeeeee;
 }
-.umcontainer {
+.umContainer {
 	height: 102px;
 }
 .um {
@@ -25,16 +25,16 @@ body {
 	border: none;
 	background-size: 100% 100%;
 }
-header .mspfalogo {
+header .mspfaLogo {
 	background-image: url(/images/VorkedLarfleeze.gif);
 }
-footer .mspfalogo {
+footer .mspfaLogo {
 	background-image: url(/images/footer/);
 }
 footer {
 	display: flex;
 }
-#flashytitle {
+#flashyTitle {
 	height: 68px;
 	background-position: center 0;
 	background-repeat: no-repeat;
