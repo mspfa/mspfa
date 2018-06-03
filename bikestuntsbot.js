@@ -148,7 +148,4 @@ client.login(data.token);
 fs.watch(__filename, () => {
 	process.exit();
 });
-const stdin = process.openStdin();
-stdin.on("data", input => {
-	console.log(eval(String(input)));
-});
+require("replthis")(v => eval(v));

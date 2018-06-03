@@ -3,6 +3,7 @@ const fs = require("fs");
 const {MongoClient} = require("mongodb");
 const youKnow = require("./data/youknow.js");
 (async () => {
+	require("replthis")(v => eval(v));
 	const client = await MongoClient.connect(youKnow.db.url, {
 		compression: "snappy"
 	});
@@ -141,9 +142,6 @@ const youKnow = require("./data/youknow.js");
 			next: 39
 		},
 		publicFavs: true
-	});
-	process.openStdin().on("data", input => {
-		console.log(eval(String(input)));
 	});
 })();
 fs.watch(__filename, () => {

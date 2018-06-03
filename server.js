@@ -9,12 +9,14 @@ const MongoStore = require("connect-mongo")(session);
 const youKnow = require("./data/youknow.js");
 const production = process.argv[2] === "production";
 (async () => {
+	const myEval = v => eval(v);
+	require("replthis")(myEval);
 	const client = await MongoClient.connect(youKnow.db.url, {
 		compression: "snappy"
 	});
 	const db = client.db("mspfa");
 	const cube = await serve({
-		eval: v => eval(v),
+		eval: myEval,
 		domain: production ? "mspfa.com" : "localhost:8082",
 		errorDir: "error",
 		httpPort: 8082,
@@ -45,13 +47,4 @@ const production = process.argv[2] === "production";
 		})]
 	});
 	const {load} = cube;
-	evalInput = input => {
-		console.log(eval(String(input)));
-	};
 })();
-let evalInput = input => {
-	console.log(eval(String(input)));
-};
-process.openStdin().on("data", input => {
-	evalInput(input);
-});

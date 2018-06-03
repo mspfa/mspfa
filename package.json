@@ -25,6 +25,7 @@
 		"fs-extra": "^5.0.0",
 		"mime": "^2.3.1",
 		"mongodb": "^3.0.8",
+		"replthis": "^1.0.1",
 		"request": "^2.86.0",
 		"request-promise-native": "^1.0.5",
 		"servecube": "^1.14.3"
