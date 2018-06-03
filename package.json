@@ -18,10 +18,8 @@
 	"homepage": "https://mspfa.com/",
 	"dependencies": {
 		"body-parser": "^1.18.3",
-		"connect-mongo": "^2.0.1",
 		"cookie-parser": "^1.4.3",
 		"discord.js": "github:discordjs/discord.js",
-		"express-session": "^1.15.6",
 		"fs-extra": "^5.0.0",
 		"mime": "^2.3.1",
 		"mongodb": "^3.0.8",

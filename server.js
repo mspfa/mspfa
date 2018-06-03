@@ -4,8 +4,6 @@ const {serve, html} = require("servecube");
 const cookieParser = require("cookie-parser");
 const mime = require("mime");
 const {MongoClient} = require("mongodb");
-const session = require("express-session");
-const MongoStore = require("connect-mongo")(session);
 const youKnow = require("./data/youknow.js");
 const production = process.argv[2] === "production";
 (async () => {
@@ -30,21 +28,7 @@ const production = process.argv[2] === "production";
 		githubPayloadURL: "/githubwebhook",
 		githubSecret: youKnow.github.secret,
 		githubToken: youKnow.github.token,
-		middleware: [cookieParser(), session({
-			secret: youKnow.session.secret,
-			resave: false,
-			saveUninitialized: false,
-			name: "sess",
-			cookie: {
-				secure: true,
-				maxAge: 604800000
-			},
-			store: new MongoStore({
-				db,
-				collection: "sessions",
-				stringify: false
-			})
-		})]
+		middleware: [cookieParser()]
 	});
 	const {load} = cube;
 })();
