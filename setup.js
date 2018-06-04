@@ -4,7 +4,7 @@ const {MongoClient} = require("mongodb");
 const youKnow = require("./data/youknow.js");
 (async () => {
 	require("replthis")(v => eval(v));
-	const client = await MongoClient.connect(youKnow.db.url, {
+	const client = await MongoClient.connect(youKnow.db, {
 		compression: "snappy"
 	});
 	const db = client.db("mspfa");
