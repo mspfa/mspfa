@@ -4,7 +4,7 @@ const {serve, html} = require("servecube");
 const cookieParser = require("cookie-parser");
 const mime = require("mime");
 const {MongoClient} = require("mongodb");
-const youKnow = require("./youknow.js");
+const youKnow = require("./secret/youknow.js");
 const production = process.argv[2] === "production";
 (async () => {
 	const myEval = v => eval(v);

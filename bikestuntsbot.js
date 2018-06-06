@@ -5,7 +5,7 @@ const evalTest = /```js\n((?:.|\n)*?)\n```/;
 const doNothing = () => {};
 let data;
 const load = () => {
-	data = JSON.parse(fs.readFileSync("bikestunts.json"));
+	data = JSON.parse(fs.readFileSync("secret/bikestunts.json"));
 };
 load();
 const save = () => {
