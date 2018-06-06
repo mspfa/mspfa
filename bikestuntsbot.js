@@ -9,7 +9,7 @@ const load = () => {
 };
 load();
 const save = () => {
-	fs.writeFileSync("bikestunts.json", JSON.stringify(data));
+	fs.writeFileSync("secret/bikestunts.json", JSON.stringify(data));
 };
 const client = new Discord.Client();
 const exitOnError = err => {
@@ -36,18 +36,6 @@ client.once("ready", () => {
 });
 client.on("guildMemberAdd", member => {
 	general.send(`${member} Welcome to ${guild.name}! We don't get it either.`);
-});
-client.on("guildMemberRemove", member => {
-	for(const v of member.roles) {
-		if(v.name.startsWith("#")) {
-			if(v.members.size > 1) {
-				member.roles.remove(v);
-			} else {
-				v.delete();
-			}
-			break;
-		}
-	}
 });
 client.on("typingStart", channel => {
 	if(channel.type === "dm") {
