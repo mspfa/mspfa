@@ -5,11 +5,11 @@ const evalTest = /```js\n((?:.|\n)*?)\n```/;
 const doNothing = () => {};
 let data;
 const load = () => {
-	data = JSON.parse(fs.readFileSync("data/bikestunts.json"));
+	data = JSON.parse(fs.readFileSync("bikestunts.json"));
 };
 load();
 const save = () => {
-	fs.writeFileSync("data/bikestunts.json", JSON.stringify(data));
+	fs.writeFileSync("bikestunts.json", JSON.stringify(data));
 };
 const client = new Discord.Client();
 const exitOnError = err => {
