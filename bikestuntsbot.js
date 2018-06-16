@@ -62,7 +62,7 @@ client.on("message", async msg => {
 		}
 		if(msg.channel.id === "394162947867410434") {
 			const now = Date.now();
-			if(msg.author.id !== data.lastShillAuthor && now-data.lastShillDate < 300000 && !perm) {
+			if(msg.author.id !== data.lastShillAuthor && now - data.lastShillDate < 300000 && !perm) {
 				msg.delete();
 				msg.author.send("You must wait at least five minutes after someone posts in <#394162947867410434> before posting there too.");
 			} else {
@@ -72,7 +72,7 @@ client.on("message", async msg => {
 			}
 		} else if(msg.channel.id === "394162913155219456" && (msg.attachments.size || msg.embeds.length || msg.content.includes("://"))) {
 			const now = Date.now();
-			if(msg.author.id !== data.lastCreativeAuthor && now-data.lastCreativeDate < 300000 && !perm) {
+			if(msg.author.id !== data.lastCreativeAuthor && now - data.lastCreativeDate < 300000 && !perm) {
 				msg.delete();
 				msg.author.send("You must wait at least five minutes after someone posts a creative work in <#394162913155219456> before posting yours too.");
 			} else {
@@ -87,7 +87,7 @@ client.on("message", async msg => {
 			const contentLineIndex = content.indexOf("\n");
 			const index = Math.min((contentSpaceIndex !== -1) ? contentSpaceIndex : Infinity, (contentLineIndex !== -1) ? contentLineIndex : Infinity);
 			if(index !== Infinity) {
-				content = [content.slice(0, index), content.slice(index+1)];
+				content = [content.slice(0, index), content.slice(index + 1)];
 			} else {
 				content = [content];
 			}
@@ -102,9 +102,9 @@ client.on("message", async msg => {
 						before: msg.id
 					}).then(msgs => {
 						const msg2 = msgs.first();
-						for(const v of emojis) {
-							if(v) {
-								msg2.react(v).catch(doNothing);
+						for(const emoji of emojis) {
+							if(emoji) {
+								msg2.react(emoji).catch(doNothing);
 							}
 						}
 						msg.delete();
