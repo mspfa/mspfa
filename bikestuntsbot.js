@@ -56,7 +56,7 @@ client.on("message", async msg => {
 	}
 	if(isPublic) {
 		const member = msg.guild.member(msg.author) || await msg.guild.members.fetch(msg.author);
-		const perm = member.hasPermission(8192);
+		const perm = member.hasPermission(8);
 		if(msg.content.includes("<@294635195439513601>")) {
 			respond(msg.channel);
 		}
