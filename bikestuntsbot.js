@@ -95,7 +95,18 @@ client.on("message", async msg => {
 			if(content[0] === "help") {
 				msg.author.send("**There is no help for you now.**");
 			} else if(perm) {
-				if(content[0] === "react") {
+				if(content[0] === "say") {
+				   msg.delete().then(() => {
+					   msg.channel.send(content[1]).catch(doNothing);
+				   });
+			   } else if(content[0] === "delete") {
+				   msg.delete().then(() => {
+					   const messages = parseInt(content[1]);
+					   if(!isNaN(content[1])) {
+						   msg.channel.bulkDelete(parseInt(content[1])).catch(doNothing);
+					   }
+				   });
+			   } else if(content[0] === "react") {
 					const emojis = content[1].split(" ");
 					msg.channel.messages.fetch({
 						limit: 1,
@@ -108,13 +119,6 @@ client.on("message", async msg => {
 							}
 						}
 						msg.delete();
-					});
-				} else if(content[0] === "delete") {
-					msg.delete().then(() => {
-						const messages = parseInt(content[1]);
-						if(!isNaN(content[1])) {
-							msg.channel.bulkDelete(parseInt(content[1])).catch(doNothing);
-						}
 					});
 				} else if(content[0] === "eval") {
 					try {
