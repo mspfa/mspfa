@@ -64,7 +64,12 @@ client.on("message", async msg => {
 			const now = Date.now();
 			if(msg.author.id !== data.lastShillAuthor && now - data.lastShillDate < 300000 && !perm) {
 				msg.delete();
-				msg.author.send("You must wait at least five minutes after someone posts in <#394162947867410434> before posting there too.");
+				msg.author.send("You must wait at least five minutes after someone posts in <#394162947867410434> before posting there too.", {
+					embed: {
+						title: "Your archived message",
+						description: msg.content
+					}
+				});
 			} else {
 				data.lastShillDate = now;
 				data.lastShillAuthor = msg.author.id;
@@ -74,7 +79,12 @@ client.on("message", async msg => {
 			const now = Date.now();
 			if(msg.author.id !== data.lastCreativeAuthor && now - data.lastCreativeDate < 300000 && !perm) {
 				msg.delete();
-				msg.author.send("You must wait at least five minutes after someone posts a creative work in <#394162913155219456> before posting yours too.");
+				msg.author.send("You must wait at least five minutes after someone posts a creative work in <#394162913155219456> before posting yours too.", {
+					embed: {
+						title: "Your archived message",
+						description: msg.content
+					}
+				});
 			} else {
 				data.lastCreativeDate = now;
 				data.lastCreativeAuthor = msg.author.id;
