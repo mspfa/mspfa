@@ -18,8 +18,7 @@ Lastly, only PNGs and GIFs are accepted.
 
 # How can I upload mine?
 
-Once you have your image or images, make sure they follow the template, which can be found above. Then follow these steps.
-
+* Once you have your image or images, double-check to make sure they follow the template and its respective requirements, which can be found above.
 * Create a GitHub account on this website if you haven't already, and log in.
 * At the top-right corner of this page, click the "Fork" button to make an editable copy of MSPFA you can upload to on GitHub.
 * Once it's done loading, go to "www", then "images", and then "footer", and click "Upload files", obviously to upload your files.
