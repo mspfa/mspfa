@@ -35,7 +35,7 @@ client.once("ready", () => {
 	client.user.setActivity("a song you like");
 });
 client.on("guildMemberAdd", member => {
-	general.send(`Welcome to ${guild.name}! MSPFA stands for Maybe Someone Please Fgreet A${member}`);
+	general.send(`Welcome ${member} to ${guild.name}! There's punch and cookies by the door!`);
 });
 client.on("typingStart", channel => {
 	if(channel.type === "dm") {
