@@ -1,3 +1,4 @@
+"use strict";
 console.log("< Setup >");
 const fs = require("fs");
 const {MongoClient} = require("mongodb");

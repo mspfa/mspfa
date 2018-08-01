@@ -1,3 +1,4 @@
+"use strict";
 console.log("< BikeStuntsBot >");
 const fs = require("fs");
 const Discord = require("discord.js");

@@ -1,3 +1,4 @@
+"use strict";
 console.log("< Server >");
 const fs = require("fs-extra");
 const {serve, html} = require("servecube");
