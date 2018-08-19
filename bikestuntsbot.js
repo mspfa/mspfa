@@ -96,9 +96,9 @@ client.on("message", async msg => {
 			content = content.replace(prefix, "");
 			const contentSpaceIndex = content.indexOf(" ");
 			const contentLineIndex = content.indexOf("\n");
-			const index = Math.min((contentSpaceIndex !== -1) ? contentSpaceIndex : Infinity, (contentLineIndex !== -1) ? contentLineIndex : Infinity);
-			if(index !== Infinity) {
-				content = [content.slice(0, index), content.slice(index + 1)];
+			const contentIndex = Math.min((contentSpaceIndex !== -1) ? contentSpaceIndex : Infinity, (contentLineIndex !== -1) ? contentLineIndex : Infinity);
+			if(contentIndex !== Infinity) {
+				content = [content.slice(0, contentIndex), content.slice(contentIndex + 1)];
 			} else {
 				content = [content];
 			}
