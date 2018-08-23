@@ -10,7 +10,10 @@
 		"type": "git",
 		"url": "git+https://github.com/GrantGryczan/mspfa.git"
 	},
-	"author": "Grant Gryczan",
+	"author": {
+		"name": "Grant Gryczan",
+		"email": "grantgryczan@gmail.com"
+	},
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/GrantGryczan/mspfa/issues"
