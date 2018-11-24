@@ -2,11 +2,23 @@ body {
 	margin: 0;
 	overflow-y: scroll;
 	background-color: #535353;
-	color: #000000;
 	font-size: 12px;
 	font-family: courier, monospace;
+	color: #000000;
 }
-.mspfaLogo {
+.hidden {
+	display: none;
+}
+#app {
+	width: 940px;
+	margin: 0 auto;
+	padding: 0 5px 5px 5px;
+	background-color: #c6c6c6;
+}
+.umContainer {
+	height: 102px;
+}
+.mspface {
 	float: left;
 	width: 208px;
 	height: 102px;
@@ -15,8 +27,8 @@ body {
 	background-repeat: no-repeat;
 	background-color: #eeeeee;
 }
-.umContainer {
-	height: 102px;
+header .mspface {
+	background-image: url(/images/VorkedLarfleeze.gif);
 }
 .um {
 	float: right;
@@ -24,15 +36,6 @@ body {
 	height: 100%;
 	border: none;
 	background-size: 100% 100%;
-}
-header .mspfaLogo {
-	background-image: url(/images/VorkedLarfleeze.gif);
-}
-footer .mspfaLogo {
-	background-image: url(/images/footer/);
-}
-footer {
-	display: flex;
 }
 #flashyTitle {
 	height: 68px;
@@ -44,18 +47,18 @@ footer {
 nav {
 	height: 15px;
 	padding: 2px;
-	background-color: #000000;
-	color: #ffffff;
+	background-color: #2d2d2d;
 	text-align: center;
 	text-transform: uppercase;
 	font-size: x-small;
 	font-weight: bold;
 	font-family: arial;
+	color: #ffffff;
 }
 nav * {
 	vertical-align: middle;
 }
-nav .heart {
+nav .groupSeparator {
 	display: inline-block;
 	width: 16px;
 	height: 16px;
@@ -67,25 +70,16 @@ nav .group1 {
 	color: #ffffff;
 }
 nav .group2 {
-	color: #76d8ff;
+	color: #29ff4a;
 }
 nav .group3 {
-	color: #fffa36;
+	color: #76d8ff;
 }
 nav .group4 {
-	color: #ffbc3e;
+	color: #fffa36;
 }
-#notification {
-	display: inline-block;
-	position: relative;
-	top: 8px;
-	margin: -2px;
-	padding: 2px;
-	border-radius: 8px;
-	border: 2px solid #eeeeee;
-	background-color: #ee0000;
-	color: #eeeeee;
-	text-decoration: none;
+nav .group5 {
+	color: #ffbc3e;
 }
 .alert {
 	margin-top: 4px;
@@ -99,30 +93,11 @@ nav .group4 {
 .alert a:link, .alert a:active, .alert a:visited {
 	color: #ffffff;
 }
-#dialog {
-	position: fixed;
-	left: 50%;
-	top: 50%;
-	min-width: 280px;
-	max-width: 880px;
-	transform: translate(-50%, -50%);
-	-webkit-transform: translate(-50%, -50%);
-	z-index: 1;
-	border: 1px solid #a9a9a9;
-	background-color: #eeeeee;
-	font-size: 16px;
-	font-family: courier, monospace;
+footer {
+	display: flex;
 }
-#dialog > div:nth-child(1) {
-	padding: 8px;
-	background-color: #dddddd;
-}
-#dialog > div:nth-child(2) {
-	padding: 12px;
-}
-#dialog > div:nth-child(3) {
-	padding: 8px;
-	text-align: right;
+footer .mspface {
+	background-image: url(/images/footer/);
 }
 #loading {
 	position: fixed;
@@ -131,25 +106,12 @@ nav .group4 {
 	width: 100%;
 	height: 100%;
 	opacity: 0;
+	pointer-events: none;
 	background-position: right 8px bottom 8px;
 	background-repeat: no-repeat;
 	background-image: url(/images/loading.gif);
-	pointer-events: none;
 	transition: opacity 0.25s linear;
 }
-#loading.active {
+#loading.visible {
 	opacity: 0.5;
-}
-#dialog {
-	word-break: break-word;
-	word-wrap: break-word;
-}
-.hidden {
-	display: none;
-}
-#main {
-	width: 940px;
-	margin: 0 auto;
-	padding: 0 5px 5px 5px;
-	background-color: #c6c6c6;
 }

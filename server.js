@@ -10,9 +10,7 @@ const production = process.argv[2] === "production";
 (async () => {
 	const myEval = v => eval(v);
 	require("replthis")(myEval);
-	const client = await MongoClient.connect(youKnow.db, {
-		compression: "snappy"
-	});
+	const client = await MongoClient.connect(youKnow.db);
 	const db = client.db("mspfa");
 	const cube = await serve({
 		eval: myEval,

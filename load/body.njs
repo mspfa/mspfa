@@ -1,35 +1,34 @@
 this.value = html`
 	</head>
 	<body>
-		<div id="main">
+		<div id="app">
 			<header>
 				<div class="umContainer">
-					<div class="mspfaLogo"></div>
-					<iframe class="um" src="/um/?60252"></iframe>
+					<div class="mspface"></div>
+					<iframe class="um" src="/um/"></iframe>
 				</div>
 				<div id="flashyTitle"></div>
 				<nav>
-					<a class="group1" href="/">MSPFA Home</a>
-					<span class="vbar">|</span>
-					<a class="group1" href="http://www.mspaintadventures.com/" target="_blank">MSPA</a>
-					<div class="heart"></div>
-					<a class="group2" href="/stories/">Explore</a>
-					<span class="vbar">|</span>
+					<a id="navHome" class="group1" href="/">Home</a>
+					<div class="groupSeparator"></div>
+					<a class="group2" href="/stories/">Archive</a>
+					<span class="itemSeparator">|</span>
 					<a class="group2" href="/random/">Random</a>
-					<span class="vbar">|</span>
+					<span class="itemSeparator">|</span>
 					<a class="group2" href="/stats/">Statistics</a>
-					<div class="heart"></div>` + (this.loggedIn/*TODO*/ ? html`
-					<a class="group3" href="/my/">My MSPFA</a>
-					<a id="notifications" href="/my/messages/">0</a>` : html`
-					<a class="group3" href="/login/">Log in</a>`) + html`
-					<span class="vbar">|</span>
-					<a class="group3" href="https://discord.mspfa.com/" target="_blank">Discord</a>
-					<div class="heart"></div>
-					<a class="group4" href="mailto:support@mspfa.com">Contact</a>
-					<span class="vbar">|</span>
-					<a class="group4" href="/donate/">Donate</a>
+					<div class="groupSeparator"></div>` + (this.in/*TODO*/ ? html`
+					<a class="group4" href="/my/">My Account</a>
+					<span class="itemSeparator">|</span>
+					<a class="group4" href="/my/messages/">Messages (0)</a>` : html`
+					<a class="group4" href="/login/">Log in</a>`) + html`
+					<div class="groupSeparator"></div>
+					<a class="group5" href="https://discord.mspfa.com/" target="_blank">Discord</a>
+					<span class="itemSeparator">|</span>
+					<a class="group5" href="mailto:support@mspfa.com">Contact</a>
+					<span class="itemSeparator">|</span>
+					<a class="group5" href="/donate/">Donate</a>
 				</nav>
-				<div id="pepsiDehydration" class="alert hidden">It seems you are blocking our ads, but we need those ads enabled to be able to fund this website. Please be considerate and enable ads. Don't worry; they're non-intrusive.</div>
-				<div id="warning" class="alert">This is the beta site. No data here will be kept when this site is released.</div>
+				<div id="dehydration" class="alert hidden">It seems you're blocking our ads, but we need those enabled to be able to fund this website. Please be considerate and disable your blocker for us! Don't worry; our ads aren't intrusive.</div>
+				<div id="warning" class="alert">This is a beta site. Data here will not be kept when this site is released.</div>
 			</header>`;
 this.done();

@@ -1,8 +1,21 @@
-this.title = this.title === undefined ? "MS Paint Fan Adventures" : this.title;
-this.author = this.author === undefined ? "Grant Gryczan" : this.author;
-this.description = this.description === undefined ? "Hello, welcome to the bath house" : this.description;
-this.tags = this.tags instanceof Array ? this.tags : [];
-this.image = this.image === undefined ? "/images/ico.png" : this.image; // Perfectly Generic Icon courtesy of heyitskane
+if(this.title === undefined) {
+	this.title = "MS Paint Fan Adventures";
+}
+if(this.author === undefined) {
+	this.author = "Grant Gryczan";
+}
+if(this.description === undefined) {
+	this.description = "Hello, welcome to the bath house";
+}
+if(!(this.tags instanceof Array)) {
+	this.tags = [];
+}
+if(this.image === undefined) {
+	this.image = "/images/icon/full.png";
+}
+if(this.icon === undefined) {
+	this.icon = "/images/ico.png"; // Perfectly Generic Icon courtesy of heyitskane
+}
 const userAgent = this.req.get("User-Agent");
 this.value = html`
 <!DOCTYPE html>
@@ -24,7 +37,7 @@ this.value = html`
 		<title>$${this.title}</title>
 		<link rel="icon" href="/images/ico.png">
 		<link href="//fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
-		<link rel="stylesheet" href="/css/mspfa.css">
+		<link rel="stylesheet" href="/css/style.css">
 		<script src="https://www.googletagmanager.com/gtag/js?id=UA-110090319-2" async></script>
 		<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","UA-110090319-2");</script>`;
 this.done();

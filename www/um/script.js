@@ -1,5 +1,5 @@
-window.addEventListener("message", function(evt) {
-	if(evt.data === "refresh") {
+window.addEventListener("message", ({data}) => {
+	if(data === "refresh") {
 		location.reload();
 	}
 });
