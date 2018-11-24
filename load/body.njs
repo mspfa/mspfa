@@ -7,7 +7,7 @@ this.value = html`
 					<div class="mspface"></div>
 					<iframe class="um" src="/um/"></iframe>
 				</div>
-				<div id="flashyTitle"></div>
+				<a id="flashyTitle" href="/"></a>
 				<nav>
 					<a id="navHome" class="group1" href="/">Home</a>
 					<div class="groupSeparator"></div>
