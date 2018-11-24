@@ -4,10 +4,10 @@ this.value = html`
 		<div id="container">
 			<header>
 				<div class="umContainer">
-					<div class="mspface"></div>
+					<a class="mspface" href="/"></a>
 					<iframe class="um" src="/um/"></iframe>
 				</div>
-				<a id="flashyTitle" href="/"></a>
+				<div id="flashyTitle"></div>
 				<nav>
 					<a id="navHome" class="group1" href="/">Home</a>
 					<div class="groupSeparator"></div>
