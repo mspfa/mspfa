@@ -1,7 +1,7 @@
 this.value = html`
 	</head>
 	<body>
-		<div id="app">
+		<div id="container">
 			<header>
 				<div class="umContainer">
 					<div class="mspface"></div>
