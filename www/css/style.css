@@ -94,7 +94,7 @@ nav .group5 {
 	color: #ffffff;
 }
 footer {
-	display: flex;
+	margin-top: 4px;
 }
 footer .mspface {
 	background-image: url(/images/footer/);
