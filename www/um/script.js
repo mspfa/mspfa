@@ -1,5 +1,5 @@
 window.addEventListener("message", ({data}) => {
-	if(data === "refresh") {
+	if (data === "refresh") {
 		location.reload();
 	}
 });

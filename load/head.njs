@@ -1,19 +1,19 @@
-if(this.title === undefined) {
+if (this.title === undefined) {
 	this.title = "MS Paint Fan Adventures";
 }
-if(this.author === undefined) {
+if (this.author === undefined) {
 	this.author = "Grant Gryczan";
 }
-if(this.description === undefined) {
+if (this.description === undefined) {
 	this.description = "Hello, welcome to the bath house";
 }
-if(!(this.tags instanceof Array)) {
+if (!(this.tags instanceof Array)) {
 	this.tags = [];
 }
-if(this.image === undefined) {
+if (this.image === undefined) {
 	this.image = "/images/icon/full.png";
 }
-if(this.icon === undefined) {
+if (this.icon === undefined) {
 	this.icon = "/images/ico.png"; // Perfectly Generic Icon courtesy of heyitskane
 }
 const userAgent = this.req.get("User-Agent");
