@@ -20,15 +20,15 @@
 	},
 	"homepage": "https://mspfa.com/",
 	"dependencies": {
-		"body-parser": "^1.18.3",
+		"body-parser": "^1.19.0",
 		"cookie-parser": "^1.4.4",
 		"discord.js": "github:discordjs/discord.js",
 		"fs-extra": "^5.0.0",
-		"mime": "^2.4.0",
-		"mongodb": "^3.1.13",
+		"mime": "^2.4.4",
+		"mongodb": "^3.3.3",
 		"replthis": "^1.0.2",
 		"request": "^2.88.0",
 		"request-promise-native": "^1.0.7",
-		"servecube": "^1.16.18"
+		"servecube": "^1.17.0"
 	}
 }
