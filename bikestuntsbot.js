@@ -51,10 +51,6 @@ client.on("message", async msg => {
 	const isPublic = msg.channel.type === "text";
 	let content = msg.content;
 	const lowerCaseContent = content.toLowerCase();
-	const isMiro = msg.author.id === miro.id;
-	if (!isMiro && (lowerCaseContent.includes("grant") || lowerCaseContent.includes("miro") || lowerCaseContent.includes("cube"))) {
-		miro.send(`${msg.author} has mentioned you in ${msg.channel}: https://discordapp.com/channels/${msg.guild.id}/${msg.channel.id}/${msg.id}`);
-	}
 	if (isPublic) {
 		const member = msg.guild.member(msg.author) || await msg.guild.members.fetch(msg.author);
 		const perm = member.hasPermission(8);
@@ -142,9 +138,6 @@ client.on("message", async msg => {
 		}
 	} else {
 		respond(msg.channel);
-		if (!isMiro) {
-			miro.send(`${msg.author}:\n${msg.content}`).catch(doNothing);
-		}
 	}
 });
 client.login(data.token);
