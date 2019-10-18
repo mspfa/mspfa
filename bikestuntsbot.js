@@ -49,8 +49,6 @@ client.on("message", async msg => {
 		return;
 	}
 	const isPublic = msg.channel.type === "text";
-	let content = msg.content;
-	const lowerCaseContent = content.toLowerCase();
 	if (isPublic) {
 		const member = msg.guild.member(msg.author) || await msg.guild.members.fetch(msg.author);
 		const perm = member.hasPermission(8);
@@ -88,8 +86,8 @@ client.on("message", async msg => {
 				save();
 			}
 		}
-		if (prefix.test(content)) {
-			content = content.replace(prefix, "");
+		if (prefix.test(msg.content)) {
+			let content = msg.content.replace(prefix, "");
 			const contentSpaceIndex = content.indexOf(" ");
 			const contentLineIndex = content.indexOf("\n");
 			const contentIndex = Math.min((contentSpaceIndex !== -1) ? contentSpaceIndex : Infinity, (contentLineIndex !== -1) ? contentLineIndex : Infinity);
