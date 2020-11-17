@@ -3,7 +3,7 @@ console.log("< BikeStuntsBot >");
 const fs = require("fs");
 const Discord = require("discord.js");
 const evalTest = /```js\n((?:.|\n)*?)\n```/;
-const doNothing = () => {};
+const doNothing = () => { };
 let data;
 const load = () => {
 	data = JSON.parse(fs.readFileSync("secret/bikestunts.json"));
@@ -27,13 +27,13 @@ let guild;
 let general;
 let miro;
 client.once("ready", () => {
-	guild = client.guilds.get("294616636726444033");
-	general = guild.channels.get("394160269980467200");
-	miro = guild.members.get("152282430915608578");
+	guild = client.guilds.cache.get("294616636726444033");
+	general = guild.channels.cache.get("394160269980467200");
+	miro = guild.members.cache.get("152282430915608578");
 	client.user.setPresence({
 		status: "online"
 	});
-	client.user.setActivity("a song you like");
+	client.user.setActivity(" ");
 });
 client.on("guildMemberAdd", member => {
 	general.send(`Welcome ${member} to ${guild.name}! There's punch and cookies by the door!`);
@@ -52,7 +52,7 @@ client.on("message", async msg => {
 	if (isPublic) {
 		const member = msg.guild.member(msg.author) || await msg.guild.members.fetch(msg.author);
 		const perm = member.hasPermission(8);
-		if (msg.content.includes("<@294635195439513601>")) {
+		if (msg.content.includes("<@294635195439513601>") || msg.content.includes("<@!294635195439513601>")) {
 			respond(msg.channel);
 		}
 		if (msg.channel.id === "394162947867410434") {
@@ -101,17 +101,17 @@ client.on("message", async msg => {
 				msg.author.send("**There is no help for you now.**");
 			} else if (perm) {
 				if (content[0] === "say") {
-				   msg.delete().then(() => {
-					   msg.channel.send(content[1]).catch(doNothing);
-				   });
-			   } else if (content[0] === "delete") {
-				   msg.delete().then(() => {
-					   const messages = parseInt(content[1]);
-					   if (!isNaN(content[1])) {
-						   msg.channel.bulkDelete(parseInt(content[1])).catch(doNothing);
-					   }
-				   });
-			   } else if (content[0] === "react") {
+					msg.delete().then(() => {
+						msg.channel.send(content[1]).catch(doNothing);
+					});
+				} else if (content[0] === "delete") {
+					msg.delete().then(() => {
+						const messages = parseInt(content[1]);
+						if (!isNaN(content[1])) {
+							msg.channel.bulkDelete(parseInt(content[1])).catch(doNothing);
+						}
+					});
+				} else if (content[0] === "react") {
 					const emojis = content[1].split(" ");
 					msg.channel.messages.fetch({
 						limit: 1,
