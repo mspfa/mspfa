@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"declaration": true,
+		"importHelpers": true,
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"target": "es2020",
+		"strict": true,
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+		"allowSyntheticDefaultImports": true,
+		"skipLibCheck": true,
+		"noImplicitAny": true,
+		"outDir": "build"
+	},
+	"include": [
+		"**/*.ts"
+	]
+}
