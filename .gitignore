@@ -1,5 +1,5 @@
 /node_modules
 /.next/
 
-# this was default under "next"; not sure if it's necessary
+# TODO: This was default under "next"; not sure if it's necessary
 /out/

@@ -24,12 +24,12 @@
 		"fs-extra": "^9.1.0"
 	},
 	"devDependencies": {
-		"@ijsto/eslint-config": "^3.0.1",
 		"@types/fs-extra": "^9.0.7",
 		"@types/node": "^14.14.31",
+		"@types/react": "17.0.2",
+		"@types/react-dom": "17.0.1",
 		"@typescript-eslint/eslint-plugin": "^4.15.2",
 		"@typescript-eslint/parser": "^4.15.2",
-		"babel-eslint": "^10.1.0",
 		"eslint": "^6.8.0",
 		"eslint-plugin-import": "^2.22.1",
 		"eslint-plugin-jsx-a11y": "^6.4.1",

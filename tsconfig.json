@@ -11,9 +11,11 @@
 		"allowSyntheticDefaultImports": true,
 		"skipLibCheck": true,
 		"noImplicitAny": true,
-		"outDir": "build"
+		"outDir": "build",
+		"jsx": "preserve"
 	},
 	"include": [
-		"**/*.ts"
+		"**/*.ts",
+		"**/*.tsx"
 	]
 }
