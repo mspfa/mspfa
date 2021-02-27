@@ -15,7 +15,8 @@
 		"sourceType": "module",
 		"ecmaFeatures": {
 			"jsx": true
-		}
+		},
+		"project": "tsconfig.json"
 	},
 	"settings": {
 		"react": {
@@ -74,7 +75,7 @@
 			"warn",
 			{
 				"vars": "all",
-				"args": "all"
+				"args": "after-used"
 			}
 		],
 		"array-bracket-spacing": [
@@ -136,7 +137,7 @@
 		],
 		"jsx-quotes": [
 			"error",
-			"prefer-single"
+			"prefer-double"
 		],
 		"key-spacing": [
 			"error",
@@ -576,7 +577,7 @@
 					"warn",
 					{
 						"vars": "all",
-						"args": "all"
+						"args": "after-used"
 					}
 				],
 				"no-useless-constructor": "off",

@@ -1,0 +1,20 @@
+// To get tasks to work, if it doesn't work on its own, press ctrl+shift+P in VS Code, then select "Tasks: Manage Automatic Tasks in Folder", and then select "Allow Automatic Tasks in Folder".
+{
+	// See https://go.microsoft.com/fwlink/?LinkId=733558
+	// for the documentation about the tasks.json format
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "typed-scss-modules",
+			"type": "shell",
+			"command": "npx ts-node styles/cleanup.ts",
+			"presentation": {
+				"reveal": "never",
+				"panel": "dedicated"
+			},
+			"runOptions": {
+				"runOn": "folderOpen"
+			}
+		}
+	]
+}

@@ -1,5 +1,6 @@
-/node_modules
-/.next/
+node_modules
+.next
+next-env.d.ts
 
 # TODO: This was default under "next"; not sure if it's necessary
-/out/
+out
