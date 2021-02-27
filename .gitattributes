@@ -1,1 +1,6 @@
-eol=lf
+* text=auto
+
+*.js text
+*.jsx text
+*.ts text
+*.tsx text
