@@ -170,7 +170,7 @@
 		],
 		"lines-between-class-members": [
 			"error",
-			"never"
+			"always"
 		],
 		"max-statements-per-line": [
 			"error",
@@ -610,7 +610,7 @@
 				"lines-between-class-members": "off",
 				"@typescript-eslint/lines-between-class-members": [
 					"error",
-					"never"
+					"always"
 				],
 				"no-array-constructor": "off",
 				"@typescript-eslint/no-array-constructor": "error",
