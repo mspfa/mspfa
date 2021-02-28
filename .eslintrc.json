@@ -211,7 +211,9 @@
 		"no-whitespace-before-property": "error",
 		"object-curly-newline": [
 			"error",
-			"consistent"
+			{
+				"consistent": true
+			}
 		],
 		"object-curly-spacing": [
 			"error",
@@ -219,7 +221,9 @@
 		],
 		"object-property-newline": [
 			"error",
-			"consistent"
+			{
+				"allowAllPropertiesOnSameLine": true
+			}
 		],
 		"one-var": [
 			"error",
@@ -681,7 +685,7 @@
 				"react/jsx-curly-newline": [
 					"error",
 					{
-						"multiline": "require",
+						"multiline": "consistent",
 						"singleline": "forbid"
 					}
 				],
@@ -690,7 +694,41 @@
 					{
 						"when": "never"
 					}
-				]
+				],
+				"react/jsx-equals-spacing": [
+					"error",
+					"never"
+				],
+				"react/jsx-filename-extension": [
+					"error",
+					{
+						"allow": "as-needed",
+						"extensions": [
+							".jsx",
+							".tsx"
+						]
+					}
+				],
+				"react/jsx-fragments": [
+					"error",
+					"syntax"
+				],
+				"react/jsx-indent": [
+					"error",
+					"tab",
+					{
+						"checkAttributes": true,
+						"indentLogicalExpressions": true
+					}
+				],
+				"react/jsx-indent-props": [
+					"error",
+					"tab"
+				],
+				"react/jsx-no-bind": "error",
+				"react/jsx-no-comment-textnodes": "off",
+				"react/jsx-no-constructed-context-values": "warn",
+				"react/jsx-no-script-url": "error"
 			}
 		}
 	]

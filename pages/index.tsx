@@ -14,10 +14,13 @@ const Component = () => (
 		</footer>
 	</div>
 );
-const fuck = 'test';
-
-
-const div = <div className={ fuck } />;
+const div = (
+	<div className="test" style={{
+		color: 'red'
+	}}>
+		{ Math.random() < 0.5
+	&& 'hello' } test
+		<div /> <div/>
+	</div>
+);
 export default Component;
-
-
