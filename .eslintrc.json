@@ -714,21 +714,44 @@
 					"syntax"
 				],
 				"react/jsx-indent": [
-					"error",
+					"warn",
 					"tab",
 					{
-						"checkAttributes": true,
+						"checkAttributes": false,
 						"indentLogicalExpressions": true
 					}
 				],
 				"react/jsx-indent-props": [
-					"error",
+					"warn",
 					"tab"
 				],
 				"react/jsx-no-bind": "error",
 				"react/jsx-no-comment-textnodes": "off",
 				"react/jsx-no-constructed-context-values": "warn",
-				"react/jsx-no-script-url": "error"
+				"react/jsx-no-script-url": "error",
+				"react/jsx-no-useless-fragment": "error",
+				"react/jsx-props-no-multi-spaces": "error",
+				"react/jsx-tag-spacing": [
+					"error",
+					{
+						"closingSlash": "never",
+						"beforeSelfClosing": "always",
+						"afterOpening": "never",
+						"beforeClosing": "never"
+					}
+				],
+				"react/jsx-wrap-multilines": [
+					"error",
+					{
+						"declaration": "parens-new-line",
+						"assignment": "parens-new-line",
+						"return": "parens-new-line",
+						"arrow": "parens-new-line",
+						"condition": "parens-new-line",
+						"logical": "parens-new-line",
+						"prop": "parens-new-line"
+					}
+				]
 			}
 		}
 	]
