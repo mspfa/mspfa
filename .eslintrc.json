@@ -177,7 +177,7 @@
 		"no-multiple-empty-lines": [
 			"warn",
 			{
-				"max": 0,
+				"max": 1,
 				"maxEOF": 0,
 				"maxBOF": 0
 			}
