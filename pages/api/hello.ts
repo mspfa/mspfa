@@ -1,6 +1,6 @@
-import type express from 'express';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default (req: express.Request, res: express.Response) => {
+export default (req: NextApiRequest, res: NextApiResponse) => {
 	res.statusCode = 200;
 	res.json({ name: 'John Doe' });
 };
