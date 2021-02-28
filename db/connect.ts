@@ -1,6 +1,7 @@
 import { MongoClient } from 'mongodb';
 
-export const client = new MongoClient('mongodb://localhost:27017', {
+const client = new MongoClient(process.env.DB_HOST, {
 	useUnifiedTopology: true
 });
 client.connect();
+export const db = client.db('mspfa');

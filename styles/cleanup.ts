@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import { exec } from 'child_process';
+
 const run = (command: string) => new Promise(resolve => {
 	const childProcess = exec(command);
 	childProcess.stdout?.pipe(process.stdout);

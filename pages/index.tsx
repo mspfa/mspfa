@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import styles from '../styles/Home.module.scss';
+
 const Component = () => (
 	<div className={styles.container}>
 		<Head>
