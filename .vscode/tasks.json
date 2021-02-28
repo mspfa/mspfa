@@ -15,6 +15,18 @@
 			"runOptions": {
 				"runOn": "folderOpen"
 			}
+		},
+		{
+			"label": "MongoDB Server",
+			"type": "shell",
+			"command": "mongod",
+			"presentation": {
+				"reveal": "never",
+				"panel": "dedicated"
+			},
+			"runOptions": {
+				"runOn": "folderOpen"
+			}
 		}
 	]
 }

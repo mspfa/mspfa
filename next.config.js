@@ -17,5 +17,6 @@ module.exports = {
 			}
 		}
 		return config;
-	}
+	},
+	poweredByHeader: false
 };
