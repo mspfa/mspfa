@@ -7,7 +7,8 @@
 	},
 	"extends": [
 		"eslint:recommended",
-		"plugin:react/recommended" // Not sure if I want to keep this yet
+		"plugin:react/recommended",
+		"plugin:react-hooks/recommended"
 	],
 	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
@@ -25,7 +26,8 @@
 	},
 	"plugins": [
 		"@typescript-eslint",
-		"react"
+		"react",
+		"react-hooks"
 	],
 	"globals": {
 		"React": "writable"
@@ -78,9 +80,17 @@
 				"args": "after-used"
 			}
 		],
+		"array-bracket-newline": [
+			"error",
+			"consistent"
+		],
 		"array-bracket-spacing": [
 			"error",
 			"never"
+		],
+		"array-element-newline": [
+			"error",
+			"consistent"
 		],
 		"brace-style": [
 			"error",
@@ -199,9 +209,17 @@
 		],
 		"no-unneeded-ternary": "error",
 		"no-whitespace-before-property": "error",
+		"object-curly-newline": [
+			"error",
+			"consistent"
+		],
 		"object-curly-spacing": [
 			"error",
 			"always"
+		],
+		"object-property-newline": [
+			"error",
+			"consistent"
 		],
 		"one-var": [
 			"error",
@@ -346,7 +364,43 @@
 			"after"
 		],
 		"@typescript-eslint/prefer-for-of": "warn",
-		"@typescript-eslint/prefer-includes": "error"
+		"@typescript-eslint/prefer-includes": "error",
+		"react/default-props-match-prop-types": [
+			"error",
+			{
+				"allowRequiredDefaults": false
+			}
+		],
+		"react/destructuring-assignment": [
+			"error",
+			"always"
+		],
+		"react/no-access-state-in-setstate": "error",
+		"react/no-array-index-key": "warn",
+		"react/no-did-mount-set-state": "error",
+		"react/no-did-update-set-state": "error",
+		"react/no-redundant-should-component-update": "error",
+		"react/no-unused-prop-types": "error",
+		"react/no-unused-state": "error",
+		"react/no-will-update-set-state": "error",
+		"react/prefer-stateless-function": "error",
+		"react/self-closing-comp": [
+			"error",
+			{
+				"component": true,
+				"html": true
+			}
+		],
+		"react/state-in-constructor": [
+			"error",
+			"always"
+		],
+		"react/static-property-placement": [
+			"error",
+			"static public field"
+		],
+		"react/style-prop-object": "error",
+		"react/void-dom-elements-no-children": "error"
 	},
 	"overrides": [
 		{
@@ -606,6 +660,37 @@
 				],
 				"space-infix-ops": "off",
 				"@typescript-eslint/space-infix-ops": "error"
+			}
+		},
+		{
+			"files": [
+				"*.jsx",
+				"*.tsx"
+			],
+			"rules": {
+				"react/jsx-boolean-value": "error",
+				"react/jsx-closing-bracket-location": [
+					"error",
+					"tag-aligned"
+				],
+				"react/jsx-closing-tag-location": "error",
+				"react/jsx-curly-brace-presence": [
+					"error",
+					"never"
+				],
+				"react/jsx-curly-newline": [
+					"error",
+					{
+						"multiline": "require",
+						"singleline": "forbid"
+					}
+				],
+				"react/jsx-curly-spacing": [
+					"error",
+					{
+						"when": "never"
+					}
+				]
 			}
 		}
 	]

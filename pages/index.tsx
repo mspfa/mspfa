@@ -14,4 +14,10 @@ const Component = () => (
 		</footer>
 	</div>
 );
+const fuck = 'test';
+
+
+const div = <div className={ fuck } />;
 export default Component;
+
+
