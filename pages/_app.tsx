@@ -12,7 +12,7 @@ const App = ({ Component, pageProps }: AppProps) => (
 			<meta property="og:description" content="Hello, welcome to the bath house" />
 			<meta property="og:title" content="MS Paint Fan Adventures" />
 			<meta property="og:image" content="/images/icon.png" />
-			<link rel="icon" href="/images/icon.png" /* Perfectly generic icon courtesy of keyitskane */ />
+			<link rel="icon" href="/images/icon.png" /* Perfectly generic icon courtesy of heyitskane */ />
 		</Head>
 		<Component {...pageProps} />
 	</>
