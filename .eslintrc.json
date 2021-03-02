@@ -621,7 +621,7 @@
 						"builtinGlobals": true,
 						"hoist": "all",
 						"ignoreTypeValueShadow": true,
-						"ignoreFunctionTypeParameterNameValueShadow": true
+						"ignoreFunctionTypeParameterNameValueShadow": false
 					}
 				],
 				"no-throw-literal": "off",
