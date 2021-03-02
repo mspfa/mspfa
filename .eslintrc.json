@@ -740,7 +740,7 @@
 				"react/jsx-no-comment-textnodes": "off",
 				"react/jsx-no-constructed-context-values": "warn",
 				"react/jsx-no-script-url": "error",
-				"react/jsx-no-useless-fragment": "error",
+				"react/jsx-no-useless-fragment": "warn",
 				"react/jsx-props-no-multi-spaces": "error",
 				"react/jsx-tag-spacing": [
 					"error",
