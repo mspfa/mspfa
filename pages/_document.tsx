@@ -1,7 +1,7 @@
 import NextDocument, { Html, Head, Main, NextScript } from 'next/document';
-import type { DocumentContext } from 'next/dist/next-server/lib/utils';
+import type { DocumentContext } from 'next/document';
 
-export default class MyDocument extends NextDocument {
+export default class extends NextDocument {
 	static async getInitialProps(ctx: DocumentContext) {
 		const initialProps = await NextDocument.getInitialProps(ctx);
 		return { ...initialProps };
