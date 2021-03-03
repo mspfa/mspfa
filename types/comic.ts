@@ -1,6 +1,8 @@
+import type { Quirk } from './quirk';
+
 export type ComicPage = {
 	published: Date,
-	name: string,
+	title: string,
 	content: string,
 	nextPages: number[],
 	tags: string[],
@@ -19,10 +21,26 @@ export enum ComicStatus {
 	Discontinued
 }
 
+export type ComicComment = {
+	posted: Date,
+	edited?: Date,
+	page: number,
+	author: number,
+	content: string,
+	likes: string[],
+	dislikes: string[],
+	private?: boolean
+};
+
+export type ComicColor = {
+	value: string,
+	name: string
+};
+
 export type ComicDocument = {
 	created: Date,
 	updated: Date,
-	name: string,
+	title: string,
 	status: ComicStatus,
 	owner: string,
 	editors: string[],
@@ -33,14 +51,26 @@ export type ComicDocument = {
 	pages: ComicPage[],
 	drafts: ComicPageDraft[],
 	desc: string,
-	icon?: string,
-	banner?: string,
 	hearts: string[],
 	bells: string[],
+	icon?: string,
+	banner?: string,
 	style: string,
 	script: {
 		unverified: string,
 		verified: string
 	},
-	tags: string[]
+	tags: string[],
+	commentsEnabled: boolean,
+	comments: ComicComment[],
+	/** Properties of the comic which are only used in the comic editor. */
+	editorSettings: {
+		defaultPageTitle: ComicPage['title'],
+		defaultSpoiler: {
+			openLabel: string,
+			closeLabel: string
+		},
+		colors: ComicColor[]
+	},
+	quirks: Quirk[]
 };
