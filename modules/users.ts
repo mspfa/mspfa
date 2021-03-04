@@ -1,5 +1,13 @@
+import type { ObjectId, Binary } from 'mongodb';
+import type { AuthMethod } from './auth';
 import type { Theme } from './themes';
 import type { achievements } from './achievements';
+
+export type UserSession = {
+	token: string,
+	lastUsed: Date,
+	ip: string
+};
 
 export type NotificationSetting = 0 | 1 | 2 | 3;
 
@@ -10,7 +18,10 @@ export type ComicNotificationSettings = {
 };
 
 export type User = {
-	_id: string,
+	_id: ObjectId,
+	salt: Binary,
+	authMethods: AuthMethod[],
+	sessions: UserSession[],
 	created: Date,
 	lastSeen: Date,
 	name: string,

@@ -1,5 +1,7 @@
+import type { ObjectId } from 'mongodb';
+
 export type Message = {
-	_id: string,
+	_id: ObjectId,
 	/** The message ID which this is a reply to. */
 	replyTo: string,
 	sent: Date,
