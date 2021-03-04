@@ -38,6 +38,7 @@ export type ComicColor = {
 };
 
 export type ComicDocument = {
+	_id: number,
 	created: Date,
 	updated: Date,
 	title: string,

@@ -10,6 +10,7 @@ export type ComicNotificationSettings = {
 };
 
 export type User = {
+	_id: string,
 	created: Date,
 	lastSeen: Date,
 	name: string,
