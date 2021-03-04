@@ -1,4 +1,4 @@
-import type { Quirk } from './quirk';
+import type { Quirk } from './quirks';
 
 export type ComicPage = {
 	published: Date,
@@ -6,7 +6,7 @@ export type ComicPage = {
 	content: string,
 	nextPages: number[],
 	tags: string[],
-	hidden?: boolean,
+	hidden: boolean,
 	commentary?: string
 };
 
@@ -29,7 +29,7 @@ export type ComicComment = {
 	content: string,
 	likes: string[],
 	dislikes: string[],
-	private?: boolean
+	private: boolean
 };
 
 export type ComicColor = {
@@ -51,11 +51,10 @@ export type ComicDocument = {
 	pages: ComicPage[],
 	drafts: ComicPageDraft[],
 	desc: string,
-	hearts: string[],
-	bells: string[],
-	icon?: string,
-	banner?: string,
+	icon: string,
+	banner: string,
 	style: string,
+	disableUserTheme: boolean,
 	script: {
 		unverified: string,
 		verified: string
