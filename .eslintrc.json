@@ -389,7 +389,7 @@
 		"react/no-will-update-set-state": "error",
 		"react/prefer-stateless-function": "error",
 		"react/self-closing-comp": [
-			"error",
+			"warn",
 			{
 				"component": true,
 				"html": true
@@ -743,7 +743,7 @@
 				"react/jsx-no-useless-fragment": "warn",
 				"react/jsx-props-no-multi-spaces": "error",
 				"react/jsx-tag-spacing": [
-					"error",
+					"warn",
 					{
 						"closingSlash": "never",
 						"beforeSelfClosing": "always",
