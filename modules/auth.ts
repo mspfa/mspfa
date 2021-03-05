@@ -1,4 +1,10 @@
 export type AuthMethod = {
-	service: string,
-	id: string
+	type: keyof typeof authMethods,
+	value: string
+};
+
+export const authMethods = {
+	password: () => {},
+	google: () => {},
+	discord: () => {}
 };
