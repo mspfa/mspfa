@@ -6,7 +6,7 @@ const footerDir = path.join(process.cwd(), '/public/images/footers');
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 	const footers = await fs.readdir(footerDir);
-	res.status(200).json({
+	res.status(200).send({
 		name: footers[Math.floor(Math.random() * footers.length)]
 	});
 };

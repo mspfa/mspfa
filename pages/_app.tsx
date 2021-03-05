@@ -18,7 +18,7 @@ const App = ({ Component, pageProps }: AppProps) => (
 		</Head>
 		<SWRConfig
 			value={{
-				revalidateOnMount: false,
+				revalidateOnMount: true,
 				revalidateOnFocus: false,
 				revalidateOnReconnect: false
 			}}
