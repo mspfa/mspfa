@@ -1,0 +1,25 @@
+// Lets you set a CSS property which varies in value dependent on the user's theme.
+@mixin theme($property, $values) {
+	#{$property}: map-get($values, standard);
+	@each $theme, $value in map-remove($values, standard) {
+		.theme-#{$theme} & {
+			#{$property}: $value;
+		}
+	}
+}
+
+$textColor: (
+	standard: #000000
+);
+
+$backBackground: (
+	standard: #535353
+);
+
+$midBackground: (
+	standard: #c6c6c6
+);
+
+$frontBackground: (
+	standard: #eeeeee
+);

@@ -1,9 +1,14 @@
+@use 'Header.module.scss';
+@use 'Footer.module.scss';
+
+@import '../../styles/themes.scss';
+
 #page {
 	box-sizing: border-box;
 	width: 950px;
 	margin: 0 auto;
 	padding: 0 5px 5px 5px;
-	background-color: #c6c6c6;
+	@include theme(background-color, $midBackground);
 	
 	@media screen and (max-width: 950px) {
 		width: 100%;
@@ -22,8 +27,12 @@
 .mspface {
 	width: 208px;
 	height: 102px;
+	margin-right: 4px;
 	background-repeat: no-repeat;
 	background-position: center;
-	background-color: #eeeeee;
-	border-right: 4px solid #b8b8b8;
+	@include theme(background-color, $frontBackground);
+}
+
+.wealth-spawner-container {
+	flex-grow: 1;
 }

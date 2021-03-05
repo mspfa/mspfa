@@ -13,7 +13,7 @@
 	"homepage": "https://mspfa.com/",
 	"scripts": {
 		"dev": "next dev",
-		"build": "next build",
+		"build-start": "next build && next start",
 		"start": "next start",
 		"setup": "ts-node ./db/setup"
 	},

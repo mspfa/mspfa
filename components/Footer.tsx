@@ -1,9 +1,9 @@
-const Header = () => (
-	<header>
+const Footer = () => (
+	<footer>
 		<div className="mspface-container">
 			<div className="mspface" />
 			<div className="wealth-spawner-container" />
 		</div>
-	</header>
+	</footer>
 );
-export default Header;
+export default Footer;
