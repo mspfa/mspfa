@@ -1,0 +1,29 @@
+#page {
+	box-sizing: border-box;
+	width: 950px;
+	margin: 0 auto;
+	padding: 0 5px 5px 5px;
+	background-color: #c6c6c6;
+	
+	@media screen and (max-width: 950px) {
+		width: 100%;
+	}
+}
+
+.mspface-container {
+	display: flex;
+	height: 102px;
+	
+	& > div {
+		height: 100%;
+	}
+}
+
+.mspface {
+	width: 208px;
+	height: 102px;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-color: #eeeeee;
+	border-right: 4px solid #b8b8b8;
+}

@@ -1,5 +1,6 @@
 import type { AppProps } from 'next/dist/next-server/lib/router/router';
 import Head from 'next/head';
+import '../styles/global.scss';
 
 const App = ({ Component, pageProps }: AppProps) => (
 	<>
@@ -12,7 +13,7 @@ const App = ({ Component, pageProps }: AppProps) => (
 			<meta property="og:description" content="Hello, welcome to the bath house" />
 			<meta property="og:title" content="MS Paint Fan Adventures" />
 			<meta property="og:image" content="/images/icon.png" />
-			<link rel="icon" href="/images/icon.png" /* Perfectly generic icon courtesy of heyitskane */ />
+			<link rel="icon" href="/images/icon.png" /* Perfectly generic icon by heyitskane */ />
 		</Head>
 		<Component {...pageProps} />
 	</>

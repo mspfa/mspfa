@@ -17,6 +17,10 @@
 		"start": "next start",
 		"setup": "ts-node ./db/setup"
 	},
+	"browserslist": [
+		"> 0.5%",
+		"not dead"
+	],
 	"dependencies": {
 		"argon2": "^0.27.1",
 		"fs-extra": "^9.1.0",
