@@ -1,7 +1,5 @@
-@use 'Header.module.scss';
-@use 'Footer.module.scss';
-
 @import '../../styles/themes.scss';
+@import 'Header.module.scss';
 
 #page {
 	box-sizing: border-box;

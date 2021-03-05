@@ -13,6 +13,7 @@
 	"homepage": "https://mspfa.com/",
 	"scripts": {
 		"dev": "next dev",
+		"build": "next build",
 		"build-start": "next build && next start",
 		"start": "next start",
 		"setup": "ts-node ./db/setup"
@@ -27,7 +28,8 @@
 		"mongodb": "^3.6.4",
 		"next": "^10.0.7",
 		"react": "^17.0.1",
-		"react-dom": "^17.0.1"
+		"react-dom": "^17.0.1",
+		"swr": "^0.4.2"
 	},
 	"devDependencies": {
 		"@types/fs-extra": "^9.0.7",

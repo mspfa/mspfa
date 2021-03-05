@@ -1,5 +1,6 @@
 import type { AppProps } from 'next/dist/next-server/lib/router/router';
 import Head from 'next/head';
+import { SWRConfig } from 'swr';
 import '../styles/global.scss';
 
 const App = ({ Component, pageProps }: AppProps) => (
@@ -15,7 +16,15 @@ const App = ({ Component, pageProps }: AppProps) => (
 			<meta property="og:image" content="/images/icon.png" />
 			<link rel="icon" href="/images/icon.png" /* Perfectly generic icon by heyitskane */ />
 		</Head>
-		<Component {...pageProps} />
+		<SWRConfig
+			value={{
+				revalidateOnMount: false,
+				revalidateOnFocus: false,
+				revalidateOnReconnect: false
+			}}
+		>
+			<Component {...pageProps} />
+		</SWRConfig>
 	</>
 );
 export default App;
