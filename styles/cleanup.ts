@@ -11,14 +11,16 @@ fs.watch('styles', { recursive: true }, async (evt, filename) => {
 	const path = `styles/${filename}`;
 	if (path.endsWith('.module.scss')) {
 		const declarationPath = `${path}.d.ts`;
-		if (fs.existsSync(declarationPath)) {
-			await fs.unlink(declarationPath);
-		}
+		const declarationExists = fs.existsSync(declarationPath);
 		if (fs.existsSync(path)) {
-			await run(`npx tsm ${path}`);
-			if (fs.existsSync(declarationPath)) {
-				await run(`npx eslint --fix ${declarationPath}`);
+			if (!declarationExists) {
+				await fs.createFile(declarationPath);
 			}
+			await fs.writeFile(declarationPath, 'export default {};');
+			await run(`npx tsm ${path}`);
+			await run(`npx eslint --fix ${declarationPath}`);
+		} else if (declarationExists) {
+			await fs.unlink(declarationPath);
 		}
 	}
 });
