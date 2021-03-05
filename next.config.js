@@ -9,6 +9,7 @@ module.exports = {
 					if (!rule.sideEffects && Array.isArray(rule.use)) {
 						for (const entry of rule.use) {
 							if (entry.loader.includes(`${sep}css-loader${sep}`)) {
+								entry.options.modules.mode = 'local';
 								entry.options.modules.getLocalIdent = (context, localIdentName, localName) => localName;
 							}
 						}
