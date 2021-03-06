@@ -9,11 +9,11 @@ const nextLinkPropKeys = ['href', 'as', 'prefetch', 'replace', 'scroll', 'shallo
 
 /** Accepts props from `a` elements and Next `Link` components, with the exception that `prefetch` on the latter defaults to `false`. */
 const Link = (props: LinkProps) => {
-	const external = props.href.includes('//');
+	const external = /^(https?:)?\/\//i.test(props.href);
 	
 	const anchorProps: Partial<LinkProps> = { ...props };
 	delete anchorProps.children;
-	delete anchorProps.targetBlank;
+	delete anchorProps.rel;
 	
 	let nextLinkProps: Partial<NextLinkProps>;
 	if (!external) {
