@@ -17,7 +17,7 @@ const Footer = () => {
 				<Stick nix />
 				<Link href="/privacy" target="_blank">Privacy Policy</Link>
 				<Stick />
-				<Link href="/terms">Terms of Service</Link>
+				<Link href="/terms" target="_blank">Terms of Service</Link>
 			</div>
 		</>
 	);
