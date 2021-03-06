@@ -3,7 +3,7 @@ import type { AnchorHTMLAttributes } from 'react';
 
 type AnchorProps = AnchorHTMLAttributes<HTMLAnchorElement>;
 type NextLinkProps = Omit<Parameters<typeof NextLink>[0], 'passHref'>;
-type LinkProps = Record<string, unknown> & AnchorProps & NextLinkProps;
+type LinkProps = AnchorProps & NextLinkProps;
 
 const nextLinkPropKeys = ['href', 'as', 'prefetch', 'replace', 'scroll', 'shallow', 'locale'] as const;
 

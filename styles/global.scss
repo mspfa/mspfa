@@ -9,10 +9,6 @@ body {
 	font-size: 0.75em; // We are using ems so the browser's font scale is multiplied. The default scale is 1em = 16px.
 	
 	@media screen and (max-width: 950px) {
-		font-size: 1.5em;
+		font-size: 1.1em;
 	}
-}
-
-.no-decoration {
-	text-decoration: none;
 }

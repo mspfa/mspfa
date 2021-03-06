@@ -18,9 +18,6 @@ const Footer = () => {
 				<Link href="/privacy" target="_blank">Privacy Policy</Link>
 				<Stick />
 				<Link href="/terms">Terms of Service</Link>
-				<Link className="no-decoration" href="https://www.youtube.com/watch?v=PjxV0jMpS34" target="_blank">
-					<Stick />
-				</Link>
 			</div>
 		</>
 	);

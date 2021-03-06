@@ -17,21 +17,23 @@
 .mspface-container {
 	display: flex;
 	height: 102px;
-	
-	& > div {
-		height: 100%;
-	}
 }
 
 .mspface {
+	flex-shrink: 0;
 	width: 208px;
-	height: 102px;
+	height: 100%;
 	margin-right: 4px;
 	background-repeat: no-repeat;
 	background-position: center;
 	@include theme(background-color, $frontBackground);
+	
+	@media screen and (max-width: 950px) {
+		display: none;
+	}
 }
 
 .wealth-spawner-container {
 	flex-grow: 1;
+	height: 100%;
 }
