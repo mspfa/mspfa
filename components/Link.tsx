@@ -1,7 +1,7 @@
 import NextLink from 'next/link';
 import type { AnchorHTMLAttributes } from 'react';
 
-// `href` is omitted here because NextLinkProps has a more inclusive `href`, allowing for URL objects in addition to strings.
+// `href` is omitted here because NextLinkProps has a more inclusive `href`, accepting URL objects in addition to strings.
 type AnchorProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>;
 // `passHref` is omitted here because it is not useful for this component. This component already passes the `href` value to the NextLink's child without `passHref`.
 type NextLinkProps = Omit<Parameters<typeof NextLink>[0], 'passHref'>;
