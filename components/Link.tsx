@@ -1,15 +1,19 @@
 import NextLink from 'next/link';
 import type { AnchorHTMLAttributes } from 'react';
 
-type AnchorProps = AnchorHTMLAttributes<HTMLAnchorElement>;
+type AnchorProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>;
 type NextLinkProps = Omit<Parameters<typeof NextLink>[0], 'passHref'>;
 type LinkProps = AnchorProps & NextLinkProps;
 
 /** Accepts props from `a` elements and Next `Link` components, with the exception that `prefetch` on the latter defaults to `false`. */
 const Link = (props: LinkProps) => {
-	const external = /^(https?:)?\/\//i.test(props.href);
+	const hrefString = String(props.href);
+	const external = /^(https?:)?\/\//i.test(hrefString);
 	
-	const anchorProps: Partial<LinkProps> = { ...props };
+	const anchorProps: Omit<LinkProps, 'href'> & { href?: string } = {
+		...props,
+		href: hrefString
+	};
 	delete anchorProps.children;
 	delete anchorProps.rel;
 	
@@ -17,7 +21,7 @@ const Link = (props: LinkProps) => {
 	if (!external) {
 		// Set default NextLink props here.
 		nextLinkProps = {
-			href: anchorProps.href!,
+			href: props.href,
 			prefetch: false
 		};
 		
@@ -53,7 +57,7 @@ const Link = (props: LinkProps) => {
 	if (external && anchorProps.target === '_blank') {
 		if (relationship) {
 			if (/(?:^| )(?:noreferrer|noopener)(?:$| )/i.test(relationship)) {
-				throw new TypeError('If the `target` prop of a `Link` component is `_blank`, its `rel` prop must not include `noreferrer` or `noopener` because they are set automatically.');
+				throw new TypeError('If the `target` prop of a `Link` is `_blank`, its `rel` prop must not include `noreferrer` or `noopener` because they are included automatically.');
 			}
 			relationship += ' noreferrer noopener';
 		} else {
