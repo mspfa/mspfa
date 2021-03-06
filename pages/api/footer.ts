@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import fs from 'fs-extra';
 import path from 'path';
+import fs from 'fs-extra';
 
 const footerDir = path.join(process.cwd(), '/public/images/footers');
 

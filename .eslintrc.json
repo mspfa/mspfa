@@ -66,13 +66,6 @@
 		"no-useless-return": "error",
 		"no-void": "error",
 		"prefer-regex-literals": "error",
-		"no-shadow": [
-			"warn",
-			{
-				"builtinGlobals": true,
-				"hoist": "all"
-			}
-		],
 		"no-unused-vars": [
 			"warn",
 			{
@@ -375,10 +368,6 @@
 				"allowRequiredDefaults": false
 			}
 		],
-		"react/destructuring-assignment": [
-			"error",
-			"always"
-		],
 		"react/no-access-state-in-setstate": "error",
 		"react/no-array-index-key": "warn",
 		"react/no-did-mount-set-state": "error",
@@ -614,16 +603,6 @@
 				"@typescript-eslint/no-duplicate-imports": "error",
 				"no-extra-semi": "off",
 				"@typescript-eslint/no-extra-semi": "error",
-				"no-shadow": "off",
-				"@typescript-eslint/no-shadow": [
-					"warn",
-					{
-						"builtinGlobals": true,
-						"hoist": "all",
-						"ignoreTypeValueShadow": true,
-						"ignoreFunctionTypeParameterNameValueShadow": false
-					}
-				],
 				"no-throw-literal": "off",
 				"@typescript-eslint/no-throw-literal": "error",
 				"no-unused-vars": "off",
@@ -711,7 +690,7 @@
 					"never"
 				],
 				"react/jsx-filename-extension": [
-					"error",
+					"warn",
 					{
 						"allow": "as-needed",
 						"extensions": [
