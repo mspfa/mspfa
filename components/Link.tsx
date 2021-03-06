@@ -5,8 +5,6 @@ type AnchorProps = AnchorHTMLAttributes<HTMLAnchorElement>;
 type NextLinkProps = Omit<Parameters<typeof NextLink>[0], 'passHref'>;
 type LinkProps = AnchorProps & NextLinkProps;
 
-const nextLinkPropKeys = ['href', 'as', 'prefetch', 'replace', 'scroll', 'shallow', 'locale'] as const;
-
 /** Accepts props from `a` elements and Next `Link` components, with the exception that `prefetch` on the latter defaults to `false`. */
 const Link = (props: LinkProps) => {
 	const external = /^(https?:)?\/\//i.test(props.href);
@@ -15,18 +13,39 @@ const Link = (props: LinkProps) => {
 	delete anchorProps.children;
 	delete anchorProps.rel;
 	
-	let nextLinkProps: Partial<NextLinkProps>;
+	let nextLinkProps: NextLinkProps;
 	if (!external) {
 		// Set default NextLink props here.
 		nextLinkProps = {
+			href: anchorProps.href!,
 			prefetch: false
 		};
-		// If this Link goes to an external site, move all props which can be applied to a NextLink from `props` to `nextLinkProps`.
-		for (const key of nextLinkPropKeys) {
-			if (props[key] !== undefined) {
-				nextLinkProps[key] = (props as any)[key];
-				delete anchorProps[key];
-			}
+		
+		// Attempt to set all applicable NextLink props (https://nextjs.org/docs/api-reference/next/link), and delete those props from the anchor.
+		delete anchorProps.href;
+		if (anchorProps.as !== undefined) {
+			nextLinkProps.as = anchorProps.as;
+			delete anchorProps.as;
+		}
+		if (anchorProps.prefetch !== undefined) {
+			nextLinkProps.prefetch = anchorProps.prefetch;
+			delete anchorProps.prefetch;
+		}
+		if (anchorProps.replace !== undefined) {
+			nextLinkProps.replace = anchorProps.replace;
+			delete anchorProps.replace;
+		}
+		if (anchorProps.scroll !== undefined) {
+			nextLinkProps.scroll = anchorProps.scroll;
+			delete anchorProps.scroll;
+		}
+		if (anchorProps.shallow !== undefined) {
+			nextLinkProps.shallow = anchorProps.shallow;
+			delete anchorProps.shallow;
+		}
+		if (anchorProps.locale !== undefined) {
+			nextLinkProps.locale = anchorProps.locale;
+			delete anchorProps.locale;
 		}
 	}
 	
@@ -46,12 +65,11 @@ const Link = (props: LinkProps) => {
 			{props.children}
 		</a>
 	);
-	
 	if (external) {
 		return anchor;
 	}
 	return (
-		<NextLink {...(nextLinkProps! as NextLinkProps)}>
+		<NextLink {...nextLinkProps!}>
 			{anchor}
 		</NextLink>
 	);
