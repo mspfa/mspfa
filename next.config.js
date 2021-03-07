@@ -1,4 +1,4 @@
-const { sep } = require('path');
+const path = require('path');
 
 module.exports = {
 	webpack: config => {
@@ -7,7 +7,7 @@ module.exports = {
 				for (const rule of oneOf) {
 					if (Array.isArray(rule.use)) {
 						for (const entry of rule.use) {
-							if (entry.loader.includes(`${sep}css-loader${sep}`)) {
+							if (entry.loader.includes(`${path.sep}css-loader${path.sep}`)) {
 								// Let global styles be used in style modules.
 								entry.options.modules.mode = 'local';
 								
