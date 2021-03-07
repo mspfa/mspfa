@@ -1,7 +1,6 @@
 import Header from './Header';
 import Footer from './Footer';
-import styles from './styles/Page.module.scss';
-styles;
+import './styles/Page.module.scss';
 
 const Page = () => (
 	<div id="page">

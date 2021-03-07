@@ -1,5 +1,4 @@
-import styles from './styles/Stick.module.scss';
-styles;
+import './styles/Stick.module.scss';
 
 const Stick = ({ nix }: {
 	/** Whether this stick is nix's favorite. */

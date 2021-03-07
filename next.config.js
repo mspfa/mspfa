@@ -5,12 +5,13 @@ module.exports = {
 		for (const { oneOf } of config.module.rules) {
 			if (Array.isArray(oneOf)) {
 				for (const rule of oneOf) {
-					if (!rule.sideEffects && Array.isArray(rule.use)) {
+					if (Array.isArray(rule.use)) {
 						for (const entry of rule.use) {
 							if (entry.loader.includes(`${sep}css-loader${sep}`)) {
-								// The following is to let global styles be used in style modules.
+								// Let global styles be used in style modules.
 								entry.options.modules.mode = 'local';
-								// The following is to undo the default hashing of CSS module class names.
+								
+								// Undo the default hashing of style module class names.
 								entry.options.modules.getLocalIdent = (context, localIdentName, localName) => localName;
 							}
 						}
@@ -18,6 +19,18 @@ module.exports = {
 				}
 			}
 		}
+		
+		// Normally, the minifier thinks `import`ed style modules which have nothing `import`ed `from` them are unused, so it omits them from the production build.
+		// This is a workaround to prevent that.
+		config.module.rules.push({
+			test: /\.[jt]sx?$/,
+			loader: 'string-replace-loader',
+			options: {
+				search: /^import '(.+?(\w+)\.module\.(?:s?css|sass))';$/gm,
+				replace: "import __styles_$2 from '$1';\n__styles_$2;"
+			}
+		});
+		
 		return config;
 	},
 	poweredByHeader: false
