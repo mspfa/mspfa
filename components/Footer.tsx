@@ -8,7 +8,16 @@ const Footer = () => {
 		<>
 			<footer>
 				<div className="mspface-container">
-					<div className="mspface" style={footer && { backgroundImage: `url(/images/footers/${footer.name})` }} />
+					{footer && (
+						<style jsx global>
+							{`
+								footer .mspface {
+									background-image: url(/images/footers/${footer.name});
+								}
+							`}
+						</style>
+					)}
+					<Link className="mspface" />
 					<div className="wealth-spawner-container" />
 				</div>
 			</footer>
