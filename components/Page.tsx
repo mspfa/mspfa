@@ -1,15 +1,13 @@
 import Header from './Header';
-import Main from './Main';
-import type { MainProps } from './Main';
 import Footer from './Footer';
 import './styles/Page.module.scss';
 
-export type PageProps = MainProps;
+export type PageProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
 
 const Page = (props: PageProps) => (
 	<div id="page">
 		<Header />
-		<Main {...props} />
+		<main {...props} />
 		<Footer />
 	</div>
 );
