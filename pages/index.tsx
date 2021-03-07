@@ -1,6 +1,8 @@
 import Page from '../components/Page';
 
 const Component = () => (
-	<Page />
+	<Page>
+		test
+	</Page>
 );
 export default Component;
