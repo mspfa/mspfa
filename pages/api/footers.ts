@@ -7,7 +7,5 @@ const footers = (fs.readdirSync(
 )).filter(footer => /\.(?:png|gif)$/i.test(footer));
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-	res.status(200).send({
-		name: footers[Math.floor(Math.random() * footers.length)]
-	});
+	res.status(200).send(footers);
 };

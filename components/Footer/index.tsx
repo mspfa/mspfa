@@ -3,7 +3,9 @@ import Stick from '../Stick';
 import Link from '../Link';
 
 const Footer = () => {
-	const footer = useSWR('/api/footer').data;
+	const footers: string[] | undefined = useSWR('/api/footers').data;
+	const footer = footers && footers[Math.floor(Math.random() * footers.length)];
+	
 	return (
 		<>
 			<footer>
@@ -11,7 +13,7 @@ const Footer = () => {
 					{footer && (
 						<style jsx global>{`
 							footer .mspface {
-								background-image: url(/images/footers/${footer.name});
+								background-image: url(/images/footers/${footer});
 							}
 						`}</style>
 					)}
