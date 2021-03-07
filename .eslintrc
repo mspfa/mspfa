@@ -368,6 +368,17 @@
 				"allowRequiredDefaults": false
 			}
 		],
+		"react/forbid-elements": [
+			"error",
+			{
+				"forbid": [
+					{
+						"element": "a",
+						"message": "use <Link> from '/components/Link' instead."
+					}
+				]
+			}
+		],
 		"react/no-access-state-in-setstate": "error",
 		"react/no-array-index-key": "warn",
 		"react/no-did-mount-set-state": "error",
