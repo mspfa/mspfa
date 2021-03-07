@@ -1,0 +1,9 @@
+@import '../../styles/themes.scss';
+
+#flashy-title {
+	display: block;
+	height: 68px;
+	background-repeat: no-repeat;
+	background-position: center 0;
+	@include theme(background-color, $frontBackground);
+}

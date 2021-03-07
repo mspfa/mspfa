@@ -1,6 +1,6 @@
 import useSWR from 'swr';
-import Stick from './Stick';
-import Link from './Link';
+import Stick from '../Stick';
+import Link from '../Link';
 
 const Footer = () => {
 	const footer = useSWR('/api/footer').data;
@@ -29,4 +29,5 @@ const Footer = () => {
 		</>
 	);
 };
+
 export default Footer;

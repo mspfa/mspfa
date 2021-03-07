@@ -20,14 +20,24 @@ module.exports = {
 			}
 		}
 		
-		// Normally, the minifier thinks `import`ed style modules which have nothing `import`ed `from` them are unused, so it omits them from the production build.
-		// This is a workaround to prevent that.
+		// Here are some stupid workarounds with comments above each to explain what they are trying to work around.
 		config.module.rules.push({
 			test: /\.[jt]sx?$/,
 			loader: 'string-replace-loader',
 			options: {
-				search: /^import '(.+?(\w+)\.module\.(?:s?css|sass))';$/gm,
-				replace: "import __styles_$2 from '$1';\n__styles_$2;"
+				multiple: [
+					// Normally, the minifier thinks `import`ed style modules which have nothing `import`ed `from` them are unused, so it omits them from the production build.
+					{
+						search: /^import '(.+?(\w+)\.module\.(?:s?css|sass))';$/gm,
+						replace: "import __styles_$2 from '$1';\n__styles_$2;"
+					},
+					
+					// If a global JSX style is in a component's children but not wrapped in curly brackets, it will add randomized class names to all the components in the same block of JSX.
+					{
+						search: /(?<!\(\s+)(<style jsx global>(?:(?!<\/style>).)*?<\/style>)/gs,
+						replace: '{$1}'
+					}
+				]
 			}
 		});
 		

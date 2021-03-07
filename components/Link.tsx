@@ -83,4 +83,5 @@ const Link = (props: LinkProps) => {
 		</NextLink>
 	);
 };
+
 export default Link;

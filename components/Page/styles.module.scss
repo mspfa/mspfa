@@ -1,6 +1,6 @@
 @import '../../styles/themes.scss';
-@import 'Header.module.scss';
-@import 'Footer.module.scss';
+@import '../Header/styles.module.scss';
+@import '../Footer/styles.module.scss';
 
 #page {
 	box-sizing: border-box;
