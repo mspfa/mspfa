@@ -17,7 +17,7 @@ const Footer = () => {
 							`}
 						</style>
 					)}
-					<Link className="mspface" />
+					<div className="mspface" />
 					<div className="wealth-spawner-container" />
 				</div>
 			</footer>
