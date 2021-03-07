@@ -5,7 +5,7 @@ body {
 	overflow-y: scroll; // To make the scrollbar not change visibility and offset the page horizontally when changing the page height e.g. by toggling tall spoilers on a short page.
 	@include theme(background-color, $backBackground);
 	@include theme(color, $textColor);
-	font-family: "Courier New", "Courier", monospace;
+	font-family: 'Courier New', 'Courier', monospace;
 	font-size: 0.75em; // We are using ems so the browser's font scale is multiplied. The default scale is 1em = 16px.
 	
 	@media screen and (max-width: 950px) {
