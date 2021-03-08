@@ -1,0 +1,37 @@
+@import '../../styles/variables.scss';
+
+nav {
+	display: flex;
+	justify-content: center;
+	font-family: $sans-serif;
+	font-weight: bold;
+	font-size: 9px;
+	height: 20px;
+	line-height: 20px;
+	text-transform: uppercase;
+	background-color: #000000;
+	color: #ffffff;
+	
+	.stick {
+		color: #bbbbbb;
+	}
+	
+	a {
+		display: inline-block;
+	}
+}
+
+$nav-groups: (
+	primary: #39d5f6,
+	pages: #29ff4a,
+	comic: #f7f72a,
+	external: #ffb529
+);
+
+#nav-group {
+	@each $id, $color in $nav-groups {
+		&-#{$id} a {
+			color: $color;
+		}
+	}
+}

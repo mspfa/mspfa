@@ -5,5 +5,5 @@
 	height: 68px;
 	background-repeat: no-repeat;
 	background-position: center 0;
-	@include theme(background-color, $frontBackground);
+	@include theme(background-color, $front-background);
 }

@@ -1,11 +1,17 @@
 import React from 'react';
 
+export type DelimitProps = {
+	children?: JSX.Element | JSX.Element[],
+	/** The element to delimit this component's children with. */
+	with: JSX.Element
+};
+
 /**
- * ⚠️ To increase performance and simplicity, please avoid using this.
+ * ⚠️ To avoid unnecessary DOM complexity, please use this sparingly.
  *
  * Inserts the delimiter element set in the `with` prop between each child of this component.
  * 
- * Each child has a `key` prop which defaults to its index in this component's children.
+ * Each child has a `key` prop which defaults to its `id` prop, or to its index in this component's children if its `id` is undefined.
  * 
  * Example:
  * ```
@@ -35,17 +41,13 @@ import React from 'react';
  * </>
  * ```
  */
-const Delimit = ({ children = [], with: delimiter }: {
-	children?: JSX.Element | JSX.Element[],
-	/** The element to delimit this component's children with. */
-	with: JSX.Element
-}) =>
+const Delimit = ({ children = [], with: delimiter }: DelimitProps) =>
 	Array.isArray(children)
 		? (
 			<>
 				{children.map((child, index) => (
 					<React.Fragment
-						key={child.key === null ? index : child.key}
+						key={child.key === null ? child.props.id || index : child.key}
 					>
 						{index !== 0 && delimiter}
 						{child}

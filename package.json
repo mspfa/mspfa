@@ -10,7 +10,7 @@
 	"bugs": {
 		"url": "https://github.com/GrantGryczan/MSPFA/issues"
 	},
-	"homepage": "https://mspfa.com/",
+	"homepage": "https://mspfa.com",
 	"scripts": {
 		"dev": "next dev",
 		"build": "next build",

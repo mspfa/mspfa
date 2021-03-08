@@ -1,11 +1,10 @@
 @import '../../styles/themes.scss';
 
 #page {
-	box-sizing: border-box;
-	width: 950px;
+	width: 940px;
 	margin: 0 auto;
 	padding: 0 5px 5px 5px;
-	@include theme(background-color, $midBackground);
+	@include theme(background-color, $mid-background);
 	
 	@media screen and (max-width: 950px) {
 		width: 100%;
@@ -23,7 +22,7 @@
 	margin-right: 4px;
 	background-repeat: no-repeat;
 	background-position: center;
-	@include theme(background-color, $frontBackground);
+	@include theme(background-color, $front-background);
 	
 	@media screen and (max-width: 950px) {
 		display: none;

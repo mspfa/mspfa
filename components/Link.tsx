@@ -1,12 +1,13 @@
 /* eslint-disable react/forbid-elements */
 import NextLink from 'next/link';
+import type { LinkProps as OriginalNextLinkProps } from 'next/link';
 import type { AnchorHTMLAttributes } from 'react';
 
 // `href` is omitted here because NextLinkProps has a more inclusive `href`, accepting URL objects in addition to strings.
 type AnchorProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>;
 // `passHref` is omitted here because it is not useful enough to be worth implementing.
-type NextLinkProps = Omit<Parameters<typeof NextLink>[0], 'passHref'>;
-type LinkProps = AnchorProps & NextLinkProps;
+type NextLinkProps = Omit<OriginalNextLinkProps, 'passHref'>;
+export type LinkProps = AnchorProps & NextLinkProps;
 
 /**
  * Should be used in place of `a`. Accepts any props which `a` accepts.
