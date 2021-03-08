@@ -380,7 +380,6 @@
 			}
 		],
 		"react/no-access-state-in-setstate": "error",
-		"react/no-array-index-key": "warn",
 		"react/no-did-mount-set-state": "error",
 		"react/no-did-update-set-state": "error",
 		"react/no-redundant-should-component-update": "error",
@@ -675,16 +674,6 @@
 					"error",
 					"never"
 				],
-				"react/jsx-filename-extension": [
-					"warn",
-					{
-						"allow": "as-needed",
-						"extensions": [
-							".jsx",
-							".tsx"
-						]
-					}
-				],
 				"react/jsx-fragments": [
 					"error",
 					"syntax"
@@ -705,7 +694,6 @@
 				"react/jsx-no-comment-textnodes": "off",
 				"react/jsx-no-constructed-context-values": "warn",
 				"react/jsx-no-script-url": "error",
-				"react/jsx-no-useless-fragment": "warn",
 				"react/jsx-props-no-multi-spaces": "error",
 				"react/jsx-tag-spacing": [
 					"warn",

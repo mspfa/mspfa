@@ -1,9 +1,10 @@
 import Header from '../Header';
 import type { HeaderProps } from '../Header';
+import type { ReactNode } from 'react';
 import Footer from '../Footer';
 import './styles.module.scss';
 
-export type PageProps = React.PropsWithChildren<HeaderProps>;
+export type PageProps = HeaderProps & { children: ReactNode };
 
 const Page = (props: PageProps) => (
 	<div id="page">
