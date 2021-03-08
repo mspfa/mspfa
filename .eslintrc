@@ -187,12 +187,6 @@
 		],
 		"no-negated-condition": "error",
 		"no-new-object": "error",
-		"no-tabs": [
-			"warn",
-			{
-				"allowIndentationTabs": true
-			}
-		],
 		"no-trailing-spaces": [
 			"error",
 			{
