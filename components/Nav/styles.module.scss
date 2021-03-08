@@ -1,23 +1,20 @@
 @import '../../styles/variables.scss';
 
+$nav-height: 20px;
+
 nav {
 	display: flex;
 	justify-content: center;
 	font-family: $sans-serif;
 	font-weight: bold;
 	font-size: 9px;
-	height: 20px;
-	line-height: 20px;
+	height: $nav-height;
+	line-height: $nav-height;
 	text-transform: uppercase;
 	background-color: #000000;
-	color: #ffffff;
 	
 	.stick {
 		color: #bbbbbb;
-	}
-	
-	a {
-		display: inline-block;
 	}
 }
 
@@ -33,5 +30,26 @@ $nav-groups: (
 		&-#{$id} a {
 			color: $color;
 		}
+	}
+}
+
+.nav-item {
+	display: inline-block;
+	color: #ffffff;
+}
+
+.nav-menu {
+	display: none;
+	position: absolute;
+	margin: $nav-height 0 0 -5px;
+	background-color: #000000;
+	
+	&:hover, &.force-open {
+		display: block;
+	}
+	
+	.nav-item {
+		display: block;
+		padding: 0 5px;
 	}
 }

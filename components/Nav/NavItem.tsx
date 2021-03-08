@@ -10,12 +10,16 @@ export type NavItemProps = {
 	id: string,
 	/** The text displayed on the nav item. */
 	label: string,
-	children?: never,
-	className?: never
+	className?: never,
+	children?: never
 } & LinkProps;
 
-const NavItem = ({ label, id, ...props }: NavItemProps) => (
-	<Link id={`nav-item-${id}`} className="nav-item" {...props}>
+const NavItem = ({ id, label, ...props }: NavItemProps) => (
+	<Link
+		id={`nav-item-${id}`}
+		className="nav-item"
+		{...props}
+	>
 		{label}
 	</Link>
 );

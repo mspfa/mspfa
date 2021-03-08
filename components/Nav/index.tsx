@@ -2,6 +2,7 @@ import Delimit from '../Delimit';
 import CandyHeart from '../CandyHeart';
 import NavGroup from './NavGroup';
 import NavItem from './NavItem';
+import NavMenu from './NavMenu';
 import './styles.module.scss';
 
 const Nav = () => (
@@ -20,8 +21,11 @@ const Nav = () => (
 				<NavItem id="comic-search" label="Search" href="/comics/search" />
 			</NavGroup>
 			<NavGroup id="external">
-				<NavItem id="support" label="Help" href="#" />
-				<NavItem id="links" label="More" href="#" />
+				<NavMenu id="help" label="Help">
+					<NavItem id="help-discord" label="Discord" href="/discord" target="_blank" />
+					<NavItem id="help-email" label="Email" href="mailto:support@mspfa.com" target="_blank" />
+				</NavMenu>
+				<NavItem id="links" label="More" />
 			</NavGroup>
 		</Delimit>
 	</nav>
