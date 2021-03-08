@@ -1,28 +1,50 @@
 /* eslint-disable react/forbid-elements */
 import NextLink from 'next/link';
 import type { LinkProps as OriginalNextLinkProps } from 'next/link';
-import type { AnchorHTMLAttributes } from 'react';
+import type { AnchorHTMLAttributes, MouseEventHandler } from 'react';
 
 // `href` is omitted here because NextLinkProps has a more inclusive `href`, accepting URL objects in addition to strings.
 type AnchorProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>;
 // `passHref` is omitted here because it is not useful enough to be worth implementing.
 type NextLinkProps = Omit<OriginalNextLinkProps, 'passHref'>;
-export type LinkProps = AnchorProps & NextLinkProps;
+// NextLinkProps is `Partial`ed in LinkProps below to make `href` optional in the Link component. NextLinkProps above is not `Partial`ed because `href` is required in NextLink's props.
+export type LinkProps = AnchorProps & Partial<NextLinkProps>;
+
+const preventDefaultClick: MouseEventHandler = event => {
+	event.preventDefault();
+};
 
 /**
  * Should be used in place of `a`. Accepts any props which `a` accepts.
  * 
  * Also has all props from [Next's `Link` component](https://nextjs.org/docs/api-reference/next/link), except:
+ * - `href` is optional. Leaving `href` undefined sets `href` to `#` but prevents default click events.
  * - `prefetch` defaults to `false`.
  * - `passHref` is removed because it is not useful enough to be worth implementing.
  */
-const Link = (props: LinkProps) => {
-	const hrefString = String(props.href);
-	const external = /^(?:[^:/]+:)?\/\//.test(hrefString);
+const Link = ({
+	// All NextLink-exclusive props.
+	as,
+	prefetch,
+	replace,
+	scroll,
+	shallow,
+	locale,
+	
+	// All non-NextLink-exclusive props.
+	href,
+	...props
+}: LinkProps) => {
+	if (href === undefined) {
+		return <a {...props} href="#" onClick={preventDefaultClick} />;
+	}
+	
+	const hrefString = String(href);
+	const external = /^(?:(?:[^:/]+:)|\/\/)/.test(hrefString);
 	
 	const anchorProps: Omit<LinkProps, 'href'> & { href?: string } = {
 		...props,
-		// Anchors don't accept URL objects like NextLink's `href` prop does, so in case `props.href` is a URL object, it should be overwritten with the string version in `anchorProps`.
+		// Anchors don't accept URL objects like NextLink's `href` prop does, so in case `href` is a URL object, it should be overwritten with the string version in `anchorProps`.
 		href: hrefString
 	};
 	
@@ -44,42 +66,16 @@ const Link = (props: LinkProps) => {
 	}
 	
 	// Otherwise, if the link is not external, wrap the anchor in a NextLink to get those [nice features](https://nextjs.org/docs/api-reference/next/link).
-	
-	// Set default NextLink props (and `href`).
-	const nextLinkProps: NextLinkProps = {
-		href: props.href,
-		prefetch: false
-	};
-	
-	// Attempt to set [all applicable NextLink props](https://nextjs.org/docs/api-reference/next/link), and remove those props from the anchor.
-	delete anchorProps.href;
-	if (anchorProps.as !== undefined) {
-		nextLinkProps.as = anchorProps.as;
-		delete anchorProps.as;
-	}
-	if (anchorProps.prefetch !== undefined) {
-		nextLinkProps.prefetch = anchorProps.prefetch;
-		delete anchorProps.prefetch;
-	}
-	if (anchorProps.replace !== undefined) {
-		nextLinkProps.replace = anchorProps.replace;
-		delete anchorProps.replace;
-	}
-	if (anchorProps.scroll !== undefined) {
-		nextLinkProps.scroll = anchorProps.scroll;
-		delete anchorProps.scroll;
-	}
-	if (anchorProps.shallow !== undefined) {
-		nextLinkProps.shallow = anchorProps.shallow;
-		delete anchorProps.shallow;
-	}
-	if (anchorProps.locale !== undefined) {
-		nextLinkProps.locale = anchorProps.locale;
-		delete anchorProps.locale;
-	}
-	
 	return (
-		<NextLink {...nextLinkProps}>
+		<NextLink
+			href={href}
+			as={as}
+			prefetch={prefetch ?? false}
+			replace={replace}
+			scroll={scroll}
+			shallow={shallow}
+			locale={locale}
+		>
 			<a {...anchorProps} />
 		</NextLink>
 	);
