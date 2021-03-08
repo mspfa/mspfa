@@ -1,6 +1,7 @@
 import Link from '../Link';
 import FlashyTitle from '../FlashyTitle';
 import Nav from '../Nav';
+import './styles.module.scss';
 
 export type HeaderProps = { noFlashyTitle?: boolean };
 

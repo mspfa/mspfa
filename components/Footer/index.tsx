@@ -1,6 +1,7 @@
 import useSWR from 'swr';
 import Stick from '../Stick';
 import Link from '../Link';
+import './styles.module.scss';
 
 const Footer = () => {
 	const footers: string[] | undefined = useSWR('/api/footers').data;
