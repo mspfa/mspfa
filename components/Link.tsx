@@ -36,7 +36,14 @@ const Link = ({
 	...props
 }: LinkProps) => {
 	if (href === undefined) {
-		return <a {...props} href="#" onClick={preventDefaultClick} />;
+		return (
+			<a
+				{...props}
+				href="#"
+				onClick={preventDefaultClick}
+				draggable={props.draggable ?? false}
+			/>
+		);
 	}
 	
 	const hrefString = String(href);

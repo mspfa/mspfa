@@ -18,7 +18,7 @@ nav {
 	}
 }
 
-$nav-groups: (
+$nav-group-colors: (
 	primary: #39d5f6,
 	pages: #29ff4a,
 	comic: #f7f72a,
@@ -26,30 +26,35 @@ $nav-groups: (
 );
 
 #nav-group {
-	@each $id, $color in $nav-groups {
+	@each $id, $color in $nav-group-colors {
 		&-#{$id} a {
 			color: $color;
 		}
 	}
 }
 
-.nav-item {
-	display: inline-block;
-	color: #ffffff;
-}
-
-.nav-menu {
-	display: none;
-	position: absolute;
-	margin: $nav-height 0 0 -5px;
-	background-color: #000000;
+.nav {
+	&-item {
+		display: inline-block;
+	}
 	
-	&:hover, &.force-open {
+	&-item:hover + &-menu, &-item:focus + &-menu, &-menu:hover {
 		display: block;
 	}
 	
-	.nav-item {
-		display: block;
-		padding: 0 5px;
+	&-menu {
+		display: none;
+		position: absolute;
+		margin-left: -5px;
+		background-color: #000000;
+		
+		.nav-item {
+			display: block;
+			padding: 0 10px 0 5px;
+		}
+		
+		&-container {
+			display: inline-block;
+		}
 	}
 }

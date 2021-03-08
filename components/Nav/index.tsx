@@ -25,7 +25,12 @@ const Nav = () => (
 					<NavItem id="help-discord" label="Discord" href="/discord" target="_blank" />
 					<NavItem id="help-email" label="Email" href="mailto:support@mspfa.com" target="_blank" />
 				</NavMenu>
-				<NavItem id="links" label="More" />
+				<NavMenu id="links" label="More">
+					<NavItem id="discord" label="Discord" href="/discord" target="_blank" />
+					<NavItem id="patreon" label="Patreon" href="https://www.patreon.com/mspfa" target="_blank" />
+					<NavItem id="twitter" label="Twitter" href="https://twitter.com/mspfa" target="_blank" />
+					<NavItem id="github" label="GitHub" href="https://github.com/GrantGryczan/MSPFA" target="_blank" />
+				</NavMenu>
 			</NavGroup>
 		</Delimit>
 	</nav>
