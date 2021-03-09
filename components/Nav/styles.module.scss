@@ -29,20 +29,29 @@ $nav-group-colors: (
 	@each $id, $color in $nav-group-colors {
 		&-#{$id} a {
 			color: $color;
+			
+			&:focus {
+				color: #ffffff;
+			}
 		}
 	}
 }
 
 .nav {
-	&-item {
-		display: inline-block;
+	&-group {
+		background-color: inherit;
 	}
 	
 	&-menu {
+		&-container {
+			display: inline-block;
+			background-color: inherit;
+		}
+		
 		display: none;
 		position: absolute;
 		margin-left: -5px;
-		background-color: #000000;
+		background-color: inherit;
 		
 		.nav-item:hover + &, &:hover {
 			z-index: 1;
@@ -57,13 +66,13 @@ $nav-group-colors: (
 			display: block;
 			padding: 0 10px 0 5px;
 			
-			&:hover, &:focus {
-				background-color: rgba(255, 255, 255, 0.2);
-			}	
+			&:hover {
+				background-color: rgba(255, 255, 255, 0.25);
+			}
 		}
-		
-		&-container {
-			display: inline-block;
-		}
+	}
+	
+	&-item {
+		display: inline-block;
 	}
 }
