@@ -653,10 +653,7 @@
 				],
 				"react/jsx-curly-newline": [
 					"error",
-					{
-						"multiline": "consistent",
-						"singleline": "forbid"
-					}
+					"consistent"
 				],
 				"react/jsx-curly-spacing": [
 					"error",
