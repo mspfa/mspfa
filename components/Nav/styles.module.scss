@@ -40,6 +40,21 @@ $nav-group-colors: (
 .nav {
 	&-group {
 		background-color: inherit;
+		
+		&::before {
+			display: inline-block;
+			width: 16px;
+			height: 100%;
+			vertical-align: bottom;
+			padding: 0 6px;
+			background-repeat: no-repeat;
+			background-position: center;
+			background-image: url(/images/candy-heart.png);
+		}
+		
+		& + &::before {
+			content: '';
+		}
 	}
 	
 	&-menu {
