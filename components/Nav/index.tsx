@@ -14,7 +14,7 @@ const Nav = () => (
 			</NavGroup>
 			<NavGroup id="pages">
 				<NavItem id="search" label="Site Search" href="/search" />
-				<NavItem id="mystery" label="Mystery" href="/mystery" title="Take me to a random adventure!" />
+				<NavItem id="random" label="Mystery" href="/random" title="Take me to a random adventure!" />
 			</NavGroup>
 			<NavGroup id="comic">
 				<NavItem id="comic-log" label="Log" href="/comics/log" />

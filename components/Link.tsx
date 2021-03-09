@@ -1,14 +1,16 @@
 /* eslint-disable react/forbid-elements */
 import NextLink from 'next/link';
 import type { LinkProps as OriginalNextLinkProps } from 'next/link';
-import type { AnchorHTMLAttributes, MouseEventHandler } from 'react';
+import type { AnchorHTMLAttributes, LegacyRef, MouseEventHandler } from 'react';
 
 // `href` is omitted here because NextLinkProps has a more inclusive `href`, accepting URL objects in addition to strings.
 type AnchorProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>;
 // `passHref` is omitted here because it is not useful enough to be worth implementing.
 type NextLinkProps = Omit<OriginalNextLinkProps, 'passHref'>;
 // NextLinkProps is `Partial`ed in LinkProps below to make `href` optional in the Link component. NextLinkProps above is not `Partial`ed because `href` is required in NextLink's props.
-export type LinkProps = AnchorProps & Partial<NextLinkProps>;
+export type LinkProps = AnchorProps & Partial<NextLinkProps> & {
+	forwardRef?: LegacyRef<HTMLAnchorElement>
+};
 
 const preventDefaultClick: MouseEventHandler = event => {
 	event.preventDefault();
@@ -18,7 +20,7 @@ const preventDefaultClick: MouseEventHandler = event => {
  * Should be used in place of `a`. Accepts any props which `a` accepts.
  * 
  * Also has all props from [Next's `Link` component](https://nextjs.org/docs/api-reference/next/link), except:
- * - `href` is optional. Leaving `href` undefined sets `href` to `#` but prevents default click events.
+ * - `href` is optional. Leaving `href` undefined sets `href` to `#` but prevents default click events (unless the `clickEvent` prop is overwritten).
  * - `prefetch` defaults to `false`.
  * - `passHref` is removed because it is not useful enough to be worth implementing.
  */
@@ -33,15 +35,17 @@ const Link = ({
 	
 	// All non-NextLink-exclusive props.
 	href,
+	forwardRef: ref,
 	...props
 }: LinkProps) => {
 	if (href === undefined) {
 		return (
 			<a
+				onClick={preventDefaultClick}
+				draggable={false}
 				{...props}
 				href="#"
-				onClick={preventDefaultClick}
-				draggable={props.draggable ?? false}
+				ref={ref}
 			/>
 		);
 	}
@@ -49,7 +53,7 @@ const Link = ({
 	const hrefString = String(href);
 	const external = /^(?:(?:[^:/]+:)|\/\/)/.test(hrefString);
 	
-	const anchorProps: Omit<LinkProps, 'href'> & { href?: string } = {
+	const anchorProps: Omit<LinkProps, 'href' | 'forwardRef'> & { href?: string } = {
 		...props,
 		// Anchors don't accept URL objects like NextLink's `href` prop does, so in case `href` is a URL object, it should be overwritten with the string version in `anchorProps`.
 		href: hrefString
@@ -69,7 +73,7 @@ const Link = ({
 			}
 		}
 		
-		return <a {...anchorProps} />;
+		return <a {...anchorProps} ref={ref} />;
 	}
 	
 	// Otherwise, if the link is not external, wrap the anchor in a NextLink to get those [nice features](https://nextjs.org/docs/api-reference/next/link).
@@ -83,7 +87,7 @@ const Link = ({
 			shallow={shallow}
 			locale={locale}
 		>
-			<a {...anchorProps} />
+			<a {...anchorProps} ref={ref} />
 		</NextLink>
 	);
 };

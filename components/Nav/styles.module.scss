@@ -38,19 +38,28 @@ $nav-group-colors: (
 		display: inline-block;
 	}
 	
-	&-item:hover + &-menu, &-item:focus + &-menu, &-menu:hover {
-		display: block;
-	}
-	
 	&-menu {
 		display: none;
 		position: absolute;
 		margin-left: -5px;
 		background-color: #000000;
 		
+		.nav-item:hover + &, &:hover {
+			z-index: 1;
+			display: block;
+		}
+		
+		.nav-item:focus + & {
+			display: block;
+		}
+		
 		.nav-item {
 			display: block;
 			padding: 0 10px 0 5px;
+			
+			&:hover, &:focus {
+				background-color: rgba(255, 255, 255, 0.2);
+			}	
 		}
 		
 		&-container {
