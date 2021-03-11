@@ -9,7 +9,7 @@ export type NavMenuProps = {
 	onClick?: never,
 	/** The nav items in this nav menu. */
 	children: JSX.Element | JSX.Element[]
-} & Omit<NavItemProps, 'children' | 'forwardRef'>;
+} & Omit<NavItemProps, 'href' | 'children'>;
 
 const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 	// This state is whether the menu's label is in focus due to being clicked.
@@ -18,8 +18,8 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 	// Note: The menu can still be visible without the `force-open` class, for example if it or its label is hovered over.
 	const [forceOpen, setForceOpen] = useState(false);
 	
-	/** A ref to the underlying `a` element of this menu's label. */
-	const labelRef = useRef<HTMLAnchorElement>(null);
+	/** A ref to the underlying link element of this menu's label. */
+	const labelRef = useRef<HTMLAnchorElement & HTMLButtonElement>(null);
 	const menuRef = useRef<HTMLDivElement>(null);
 	
 	/** Handles the focus event on the menu's label or any link in the menu. */
@@ -57,6 +57,7 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 			{/* The menu's label. */}
 			<NavItem
 				id={id}
+				{...props}
 				onFocus={handleFocus}
 				onBlur={
 					useCallback(() => {
@@ -76,8 +77,7 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 						setClickedLabel(!clickedLabel);
 					}, [setClickedLabel, clickedLabel])
 				}
-				forwardRef={labelRef}
-				{...props}
+				ref={labelRef}
 			/>
 			<div
 				id={`nav-menu-${id}`}

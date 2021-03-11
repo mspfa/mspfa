@@ -1,0 +1,13 @@
+.link {
+	padding: 0;
+	background: none;
+	border: none;
+	font: inherit;
+	text-transform: inherit;
+	cursor: pointer;
+	text-decoration: underline;
+	
+	&:focus:not(:active) {
+		color: #ffffff;
+	}
+}

@@ -27,7 +27,7 @@ $nav-group-colors: (
 
 #nav-group {
 	@each $id, $color in $nav-group-colors {
-		&-#{$id} a {
+		&-#{$id} .link {
 			color: $color;
 			
 			&:focus {

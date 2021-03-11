@@ -1,3 +1,4 @@
+import React from 'react';
 import Link from '../Link';
 import type { LinkProps } from '../Link';
 
@@ -14,14 +15,18 @@ export type NavItemProps = {
 	children?: never
 } & LinkProps;
 
-const NavItem = ({ id, label, ...props }: NavItemProps) => (
+const NavItem = React.forwardRef((
+	{ id, label, ...props }: NavItemProps,
+	ref: Parameters<typeof Link>[0]['ref']
+) => (
 	<Link
 		id={`nav-item-${id}`}
 		className="nav-item"
 		{...props}
+		ref={ref}
 	>
 		{label}
 	</Link>
-);
+));
 
 export default NavItem;

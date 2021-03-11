@@ -362,6 +362,7 @@
 				"allowRequiredDefaults": false
 			}
 		],
+		"react/display-name": "off",
 		"react/forbid-elements": [
 			"error",
 			{

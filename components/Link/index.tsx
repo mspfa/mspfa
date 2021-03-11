@@ -1,50 +1,49 @@
 /* eslint-disable react/forbid-elements */
 import NextLink from 'next/link';
 import type { LinkProps as OriginalNextLinkProps } from 'next/link';
-import type { AnchorHTMLAttributes, LegacyRef, MouseEventHandler } from 'react';
+import React from 'react';
+import type { AnchorHTMLAttributes } from 'react';
+import './styles.module.scss';
 
 // `href` is omitted here because NextLinkProps has a more inclusive `href`, accepting URL objects in addition to strings.
 type AnchorProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>;
 // `passHref` is omitted here because it is not useful enough to be worth implementing.
 type NextLinkProps = Omit<OriginalNextLinkProps, 'passHref'>;
 // NextLinkProps is `Partial`ed in LinkProps below to make `href` optional in the Link component. NextLinkProps above is not `Partial`ed because `href` is required in NextLink's props.
-export type LinkProps = AnchorProps & Partial<NextLinkProps> & {
-	forwardRef?: LegacyRef<HTMLAnchorElement>
-};
-
-const preventDefaultClick: MouseEventHandler = event => {
-	event.preventDefault();
-};
+export type LinkProps = AnchorProps & Partial<NextLinkProps>;
 
 /**
  * Should be used in place of `a`. Accepts any props which `a` accepts.
  * 
  * Also has all props from [Next's `Link` component](https://nextjs.org/docs/api-reference/next/link), except:
- * - `href` is optional. Leaving `href` undefined sets `href` to `#` but prevents default click events (unless the `clickEvent` prop is overwritten).
+ * - `href` is optional. Leaving `href` undefined uses a `button.link` element instead of an `a` element.
  * - `prefetch` defaults to `false`.
  * - `passHref` is removed because it is not useful enough to be worth implementing.
  */
-const Link = ({
-	// All NextLink-exclusive props.
-	as,
-	prefetch,
-	replace,
-	scroll,
-	shallow,
-	locale,
+const Link = React.forwardRef((
+	{
+		// All NextLink-exclusive props.
+		as,
+		prefetch,
+		replace,
+		scroll,
+		shallow,
+		locale,
+
+		// All non-NextLink-exclusive props.
+		className,
+		href,
+		...props
+	}: LinkProps,
+	ref: React.ForwardedRef<HTMLAnchorElement & HTMLButtonElement>
+) => {
+	const linkClassName = `link${className ? ` ${className}` : ''}`;
 	
-	// All non-NextLink-exclusive props.
-	href,
-	forwardRef: ref,
-	...props
-}: LinkProps) => {
 	if (href === undefined) {
 		return (
-			<a
-				onClick={preventDefaultClick}
-				draggable={false}
-				{...props}
-				href="#"
+			<button
+				className={linkClassName}
+				{...props as any}
 				ref={ref}
 			/>
 		);
@@ -53,8 +52,9 @@ const Link = ({
 	const hrefString = String(href);
 	const external = /^(?:(?:[^:/]+:)|\/\/)/.test(hrefString);
 	
-	const anchorProps: Omit<LinkProps, 'href' | 'forwardRef'> & { href?: string } = {
+	const anchorProps: Omit<LinkProps, 'href'> & { href?: string } = {
 		...props,
+		className: linkClassName,
 		// Anchors don't accept URL objects like NextLink's `href` prop does, so in case `href` is a URL object, it should be overwritten with the string version in `anchorProps`.
 		href: hrefString
 	};
@@ -90,6 +90,6 @@ const Link = ({
 			<a {...anchorProps} ref={ref} />
 		</NextLink>
 	);
-};
+});
 
 export default Link;
