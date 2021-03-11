@@ -9,6 +9,11 @@ const createGlobalState = <StateType>(
 	
 	const stateChangeCallbacks: Array<() => void> = [];
 	
+	/**
+	 * The setter function of the global state. Takes a new value for the global state as an argument.
+	 *
+	 * This can be called inside or outside a React component. Its identity remains the same between renders.
+	 */
 	const setGlobalState = (newState: StateType) => {
 		currentState = newState;
 		for (let i = 0; i < stateChangeCallbacks.length; i++) {
@@ -16,6 +21,11 @@ const createGlobalState = <StateType>(
 		}
 	};
 	
+	/**
+	 * The React hook for the global state. Returns `[globalState, setGlobalState]`, just like a [state hook](https://reactjs.org/docs/hooks-state.html).
+	 *
+	 * This must follow the [rules of hooks](https://reactjs.org/docs/hooks-rules.html).
+	 */
 	const useGlobalState = () => {
 		const [state, setState] = useState(currentState);
 		
@@ -34,20 +44,10 @@ const createGlobalState = <StateType>(
 		return [state, setGlobalState];
 	};
 	
-	return {
-		/**
-		 * The setter function of the global state. Takes a new value for the global state as an argument.
-		 *
-		 * This can be called inside or outside a React component. Its identity remains the same between renders.
-		 */
-		setGlobalState,
-		/**
-		 * The React hook for the global state. Returns `[globalState, setGlobalState]`, just like a [state hook](https://reactjs.org/docs/hooks-state.html).
-		 *
-		 * This must follow the [rules of hooks](https://reactjs.org/docs/hooks-rules.html).
-		 */
-		useGlobalState
-	};
+	return [useGlobalState, setGlobalState] as [
+		typeof useGlobalState,
+		typeof setGlobalState
+	];
 };
 
 export default createGlobalState;

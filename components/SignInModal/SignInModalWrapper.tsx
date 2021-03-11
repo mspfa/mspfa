@@ -3,7 +3,7 @@ import createGlobalState from '../../modules/globalState';
 
 const SignInModal = dynamic(() => import('.'));
 
-export const { useGlobalState: useSignInShown, setGlobalState: setSignInShown } = createGlobalState(false);
+export const [useSignInShown, setSignInShown] = createGlobalState(false);
 
 const SignInModalWrapper = () => {
 	const [signInShown] = useSignInShown();
