@@ -31,7 +31,7 @@ const Nav = () => (
 				<NavItem id="discord" label="Discord" href="/discord" target="_blank" />
 				<NavItem id="patreon" label="Patreon" href="https://www.patreon.com/mspfa" target="_blank" />
 				<NavItem id="twitter" label="Twitter" href="https://twitter.com/mspfa" target="_blank" />
-				<NavItem id="github" label="GitHub" href="https://github.com/GrantGryczan/MSPFA" target="_blank" />
+				<NavItem id="github" label="GitHub" href="https://github.com/MSPFA/MSPFA" target="_blank" />
 			</NavMenu>
 		</NavGroup>
 	</nav>

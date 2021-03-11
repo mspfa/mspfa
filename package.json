@@ -4,11 +4,11 @@
 	"description": "MS Paint Fan Adventures",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/GrantGryczan/MSPFA.git"
+		"url": "git+https://github.com/MSPFA/MSPFA.git"
 	},
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/GrantGryczan/MSPFA/issues"
+		"url": "https://github.com/MSPFA/MSPFA/issues"
 	},
 	"homepage": "https://mspfa.com",
 	"scripts": {
