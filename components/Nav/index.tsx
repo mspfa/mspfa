@@ -1,13 +1,18 @@
 import NavGroup from './NavGroup';
 import NavItem from './NavItem';
 import NavMenu from './NavMenu';
+import { setSignInShown } from '../../modules/MSPFA';
 import './styles.module.scss';
+
+const showSignIn = () => {
+	setSignInShown(true);
+};
 
 const Nav = () => (
 	<nav>
 		<NavGroup id="primary">
 			<NavItem id="home" label="Home" href="/" />
-			<NavItem id="sign-in" label="Sign In" href="/sign-in" />
+			<NavItem id="sign-in" label="Sign In" onClick={showSignIn} />
 		</NavGroup>
 		<NavGroup id="secondary">
 			<NavItem id="search" label="Site Search" href="/search" />

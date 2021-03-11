@@ -354,7 +354,6 @@
 			"error",
 			"after"
 		],
-		"@typescript-eslint/prefer-for-of": "warn",
 		"@typescript-eslint/prefer-includes": "error",
 		"react/default-props-match-prop-types": [
 			"error",
