@@ -43,5 +43,12 @@ module.exports = {
 		
 		return config;
 	},
-	poweredByHeader: false
+	poweredByHeader: false,
+	redirects: () => [
+		{
+			source: '/discord',
+			destination: 'https://discord.gg/EC5acgG',
+			permanent: true
+		}
+	]
 };
