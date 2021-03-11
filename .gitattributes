@@ -8,6 +8,7 @@
 *.html text eol=lf
 *.md text eol=lf
 *.sh text eol=lf
+*.yml text eol=lf
 .env* text eol=lf
 .eslintignore text eol=lf
 .eslintrc text eol=lf
