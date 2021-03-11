@@ -26,7 +26,7 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 	const handleFocus = useCallback(() => {
 		// When the menu's label or any link in the menu is focused, add the `force-open` class to the menu.
 		setForceOpen(true);
-	}, [setForceOpen]);
+	}, []);
 
 	/** Handles the blur event on the menu's label or any link in the menu. */
 	const handleBlur = useCallback(() => {
@@ -42,7 +42,7 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 				setForceOpen(false);
 			}
 		});
-	}, [setForceOpen]);
+	}, []);
 	
 	/** Adds `onFocus={handleFocus}` and `onBlur={handleBlur}` props to the links in the menu. */
 	const addEventListeners = (child: JSX.Element) =>
@@ -64,7 +64,9 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 						handleBlur();
 						// When the menu's label is blurred, it is (obviously) no longer focused from being clicked.
 						setClickedLabel(false);
-					}, [setClickedLabel, handleBlur])
+						// This ESLint comment is necessary because the rule thinks `handleBlur` should be a dependency here. It shouldn't because it is memoized in its definition with no dependencies and thus can never change.
+						// eslint-disable-next-line react-hooks/exhaustive-deps
+					}, [])
 				}
 				onClick={
 					useCallback((event: MouseEvent) => {
@@ -75,7 +77,7 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 						}
 						// When the user clicks the label, toggle whether it is clicked.
 						setClickedLabel(!clickedLabel);
-					}, [setClickedLabel, clickedLabel])
+					}, [clickedLabel])
 				}
 				ref={labelRef}
 			/>
