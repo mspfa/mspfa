@@ -1,2 +1,1 @@
-# MSPFA
-[MS Paint Fan Adventures](https://mspfa.com/)
+This is the official repo for [MS Paint Fan Adventures](https://mspfa.com/).
