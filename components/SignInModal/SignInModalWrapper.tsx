@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic';
-import createGlobalState from '../../modules/globalState';
+import createGlobalState from 'global-react-state';
 
 const SignInModal = dynamic(() => import('.'));
 
