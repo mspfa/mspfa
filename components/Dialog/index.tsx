@@ -1,5 +1,5 @@
 import React from 'react';
-import type { DialogData } from '../../modules/dialogs';
+import type { DialogData } from 'modules/dialogs';
 import './styles.module.scss';
 
 export type DialogProps = Omit<DialogData, 'content'> & {

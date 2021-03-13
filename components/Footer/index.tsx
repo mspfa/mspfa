@@ -1,6 +1,6 @@
 import useSWR from 'swr';
-import Stick from '../Stick';
-import Link from '../Link';
+import Stick from 'components/Stick';
+import Link from 'components/Link';
 import './styles.module.scss';
 
 const Footer = () => {

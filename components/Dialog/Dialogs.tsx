@@ -1,5 +1,5 @@
 import createGlobalState from 'global-react-state';
-import type { DialogData } from '../../modules/dialogs';
+import type { DialogData } from 'modules/dialogs';
 import dynamic from 'next/dynamic';
 
 export const [useDialogs, setDialogs] = createGlobalState<DialogData[]>([]);

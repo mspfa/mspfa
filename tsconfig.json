@@ -18,7 +18,8 @@
 		"allowJs": true,
 		"forceConsistentCasingInFileNames": true,
 		"noEmit": true,
-		"isolatedModules": true
+		"isolatedModules": true,
+		"baseUrl": "."
 	},
 	"include": [
 		"**/*.js",

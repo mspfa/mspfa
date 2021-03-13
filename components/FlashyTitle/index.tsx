@@ -1,4 +1,4 @@
-import Link from '../Link';
+import Link from 'components/Link';
 import './styles.module.scss';
 
 const NUMBER_OF_FLASHY_TITLES = 6;

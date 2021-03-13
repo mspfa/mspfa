@@ -1,8 +1,8 @@
-import Header from '../Header';
-import type { HeaderProps } from '../Header';
+import Header from 'components/Header';
+import type { HeaderProps } from 'components/Header';
 import type { ReactNode } from 'react';
-import Footer from '../Footer';
-import Dialogs from '../Dialog/Dialogs';
+import Footer from 'components/Footer';
+import Dialogs from 'components/Dialog/Dialogs';
 import './styles.module.scss';
 
 export type PageProps = HeaderProps & { children: ReactNode };

@@ -1,6 +1,6 @@
 import React from 'react';
-import Link from '../Link';
-import type { LinkProps } from '../Link';
+import Link from 'components/Link';
+import type { LinkProps } from 'components/Link';
 
 export type NavItemProps = {
 	/**

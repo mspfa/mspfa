@@ -1,5 +1,5 @@
-import Delimit from '../Delimit';
-import Stick from '../Stick';
+import Delimit from 'components/Delimit';
+import Stick from 'components/Stick';
 import './styles.module.scss';
 
 export type NavGroupProps = {
