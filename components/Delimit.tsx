@@ -41,20 +41,15 @@ export type DelimitProps = {
  * </>
  * ```
  */
-const Delimit = ({ children = [], with: delimiter }: DelimitProps) =>
-	Array.isArray(children)
-		? (
-			<>
-				{children.map((child, index) => (
-					<Fragment
-						key={child.key === null ? child.props.id || index : child.key}
-					>
-						{index !== 0 && delimiter}
-						{child}
-					</Fragment>
-				))}
-			</>
-		)
-		: <>{children}</>;
+const Delimit = ({ children = [], with: delimiter }: DelimitProps) => (
+	<>
+		{Array.isArray(children) ? children.map((child, index) => (
+			<Fragment key={child.key === null ? child.props.id || index : child.key}>
+				{index !== 0 && delimiter}
+				{child}
+			</Fragment>
+		)) : children}
+	</>
+);
 
 export default Delimit;
