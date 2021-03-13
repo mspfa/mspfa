@@ -7,8 +7,8 @@ export type DelimitProps = {
 };
 
 /**
- * ⚠️ To avoid unnecessary DOM complexity, please use this sparingly.
- *
+ * ⚠️ To avoid unnecessary virtual DOM complexity, please use this sparingly.
+ * 
  * Inserts the delimiter element set in the `with` prop between each child of this component.
  * 
  * Each child has a `key` prop which defaults to its `id` prop, or to its index in this component's children if its `id` is undefined.
