@@ -1,6 +1,6 @@
-import NavGroup from './NavGroup';
-import NavItem from './NavItem';
-import NavMenu from './NavMenu';
+import NavGroup from 'components/Nav/NavGroup';
+import NavItem from 'components/Nav/NavItem';
+import NavMenu from 'components/Nav/NavMenu';
 import './styles.module.scss';
 
 const showSignIn = () => {

@@ -1,5 +1,5 @@
 export {};
 
-// export { something } from './somewhere';
+// export { something } from 'somewhere';
 
 (global as any).MSPFA = module.exports;

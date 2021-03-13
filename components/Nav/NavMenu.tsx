@@ -1,5 +1,5 @@
-import NavItem from './NavItem';
-import type { NavItemProps } from './NavItem';
+import NavItem from 'components/Nav/NavItem';
+import type { NavItemProps } from 'components/Nav/NavItem';
 import React, { useState, useCallback, useRef } from 'react';
 import type { MouseEvent } from 'react';
 
