@@ -2,18 +2,16 @@ import React from 'react';
 import type { DialogData } from 'modules/dialogs';
 import './styles.module.scss';
 
-export type DialogProps = Omit<DialogData, 'content'> & {
-	children: DialogData['content']
-};
+export type DialogProps = DialogData;
 
-const Dialog = React.memo(({ title, actions, children }: DialogProps) => (
+const Dialog = React.memo(({ title, actions, content }: DialogProps) => (
 	<div className="dialog-container">
 		<dialog className="dialog" open>
 			<div className="dialog-title">
 				{title}
 			</div>
 			<div className="dialog-content">
-				{children}
+				{content}
 			</div>
 			<div className="dialog-actions">
 				{actions.map(action => (

@@ -320,7 +320,7 @@
 				"enforceForClassMembers": true
 			}
 		],
-		"no-useless-constructor": "error",
+		"no-useless-constructor": "warn",
 		"no-useless-rename": "error",
 		"no-var": "error",
 		"object-shorthand": [
@@ -595,7 +595,7 @@
 					}
 				],
 				"no-useless-constructor": "off",
-				"@typescript-eslint/no-useless-constructor": "error",
+				"@typescript-eslint/no-useless-constructor": "warn",
 				"quotes": "off",
 				"@typescript-eslint/quotes": [
 					"error",

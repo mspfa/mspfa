@@ -1,8 +1,5 @@
-import createGlobalState from 'global-react-state';
-import type { DialogData } from 'modules/dialogs';
+import { useDialogs } from 'modules/dialogs';
 import dynamic from 'next/dynamic';
-
-export const [useDialogs, setDialogs] = createGlobalState<DialogData[]>([]);
 
 const Dialog = dynamic(() => import('.'));
 
@@ -11,16 +8,7 @@ const Dialogs = () => {
 	
 	return (
 		<div id="dialogs">
-			{dialogs.map(dialog => (
-				<Dialog
-					key={dialog.id}
-					id={dialog.id}
-					title={dialog.title}
-					actions={dialog.actions}
-				>
-					{dialog.content}
-				</Dialog>
-			))}
+			{dialogs.map(dialogData => <Dialog key={dialogData.id} {...dialogData} />)}
 		</div>
 	);
 };

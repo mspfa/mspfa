@@ -1,5 +1,3 @@
-export {};
-
-// export { something } from 'somewhere';
+export { Dialog } from 'modules/dialogs';
 
 (global as any).MSPFA = module.exports;
