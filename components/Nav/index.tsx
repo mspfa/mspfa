@@ -1,11 +1,10 @@
 import NavGroup from './NavGroup';
 import NavItem from './NavItem';
 import NavMenu from './NavMenu';
-import { setSignInShown } from '../../modules/MSPFA';
 import './styles.module.scss';
 
 const showSignIn = () => {
-	setSignInShown(true);
+	// TODO
 };
 
 const Nav = () => (

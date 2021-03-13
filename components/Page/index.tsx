@@ -2,7 +2,7 @@ import Header from '../Header';
 import type { HeaderProps } from '../Header';
 import type { ReactNode } from 'react';
 import Footer from '../Footer';
-import SignInModalWrapper from '../SignInModal/SignInModalWrapper';
+import Dialogs from '../Dialog/Dialogs';
 import './styles.module.scss';
 
 export type PageProps = HeaderProps & { children: ReactNode };
@@ -16,7 +16,7 @@ const Page = (props: PageProps) => (
 			</main>
 			<Footer />
 		</div>
-		<SignInModalWrapper />
+		<Dialogs />
 	</>
 );
 
