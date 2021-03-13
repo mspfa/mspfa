@@ -1,4 +1,4 @@
-import React from 'react';
+import { Fragment } from 'react';
 
 export type DelimitProps = {
 	children?: JSX.Element | JSX.Element[],
@@ -26,17 +26,17 @@ export type DelimitProps = {
  * ```
  * <>
  * 	{[
- * 		<React.Fragment key={0}>
+ * 		<Fragment key={0}>
  * 			<span>example 1</span>
- * 		</React.Fragment>,
- * 		<React.Fragment key={1}>
+ * 		</Fragment>,
+ * 		<Fragment key={1}>
  * 			<span className="delimiter"> | </span>
  * 			<span>example 2</span>
- * 		</React.Fragment>,
- * 		<React.Fragment key="my-key">
+ * 		</Fragment>,
+ * 		<Fragment key="my-key">
  * 			<span className="delimiter"> | </span>
  * 			<span>example 3</span>
- * 		</React.Fragment>
+ * 		</Fragment>
  * 	]}
  * </>
  * ```
@@ -46,12 +46,12 @@ const Delimit = ({ children = [], with: delimiter }: DelimitProps) =>
 		? (
 			<>
 				{children.map((child, index) => (
-					<React.Fragment
+					<Fragment
 						key={child.key === null ? child.props.id || index : child.key}
 					>
 						{index !== 0 && delimiter}
 						{child}
-					</React.Fragment>
+					</Fragment>
 				))}
 			</>
 		)
