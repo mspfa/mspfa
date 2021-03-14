@@ -1,37 +1,70 @@
 import createGlobalState from 'global-react-state';
 import createUpdater from 'react-component-updater';
+import type { ReactNode } from 'react';
 
-export type DialogActionData = {
-	label: string,
-	autofocus?: boolean
+export type DialogActionOption = {
+	/** The label of the action's button. */
+	label: ReactNode,
+	/**
+	 * Whether the action should be auto-focused when the dialog opens.
+	 * 
+	 * If none of the dialog's actions have `focus: true`, it will be set on the action with `submit: true`. If no action has `submit: true`, it will be set on the last action.
+	 * 
+	 * This will be ignored if an element in the dialog's content has `autoFocus="true"`.
+	 */
+	focus?: boolean,
+	/**
+	 * Whether submitting the dialog form (e.g. by pressing `enter` with a form field focused) will trigger the action.
+	 * 
+	 * If no action has `submit: true`, it will be set on the last action.
+	 */
+	submit?: boolean
 };
 
-const dialogs: Dialog[] = [];
-const [useDialogData] = createGlobalState(dialogs);
+export const onClick = Symbol('onClick');
+export type DialogAction = DialogActionOption & {
+	/** The index of the action in the dialog's `actions`. */
+	index: number,
+	[onClick]: () => void
+};
+
+export const dialogs: Dialog[] = [];
+const [useInternalDialogs] = createGlobalState(dialogs);
 const [useDialogsUpdater, updateDialogs] = createUpdater();
 
 export const useDialogs = () => {
 	useDialogsUpdater();
-	const [dialogs] = useDialogData();
-	
-	return dialogs;
+	return useInternalDialogs()[0];
 };
 
 export type DialogOptions = {
-	title: string,
-	content: JSX.Element,
-	actions?: DialogActionData[]
+	/** The title of the dialog. */
+	title: Dialog['title'],
+	/**
+	 * The content of the dialog.
+	 * 
+	 * Any content element with `autoFocus="true"` will be auto-focused when the dialog opens.
+	 */
+	content: Dialog['content'],
+	/** The actions which the user can select to close the dialog. */
+	actions?: DialogActionOption[]
 };
 
-type DialogResult = string | undefined;
+type DialogResult = DialogAction | undefined;
 let resolvePromise: (value: DialogResult) => void;
 
-export class Dialog extends Promise<DialogResult> implements DialogOptions {
+export class Dialog extends Promise<DialogResult> {
+	readonly [Symbol.toStringTag] = 'Dialog';
+	// This is so `then`, `catch, etc. return a `Promise` rather than a `Dialog`. Errors occur when this is not here.
+	static readonly [Symbol.species] = Promise;
+	
 	/** The React array key for this dialog's component. */
-	id = Math.random();
-	title;
-	content;
-	actions;
+	readonly id = Math.random();
+	title: ReactNode;
+	content: ReactNode;
+	actions: DialogAction[];
+	form?: HTMLFormElement;
+	submitAction?: DialogAction;
 	
 	#resolvePromise: typeof resolvePromise;
 	
@@ -46,7 +79,7 @@ export class Dialog extends Promise<DialogResult> implements DialogOptions {
 		updateDialogs();
 	}
 	
-	constructor({ title, content, actions }: DialogOptions) {
+	constructor({ title, content, actions: actionsOption }: DialogOptions) {
 		super(resolve => {
 			resolvePromise = resolve;
 		});
@@ -55,9 +88,52 @@ export class Dialog extends Promise<DialogResult> implements DialogOptions {
 		
 		this.title = title;
 		this.content = content;
-		this.actions = actions;
+		this.actions = actionsOption ? actionsOption.map((actionOption, index) => {
+			const action: DialogAction = {
+				...actionOption,
+				index,
+				[onClick]: () => {
+					this.resolve(action);
+				}
+			};
+			
+			if (action.submit) {
+				if (this.submitAction) {
+					// Ensure there is at most one action with `submit: true`.
+					action.submit = false;
+				} else {
+					// Set `this.submitAction` to the first action with `submit: true`.
+					this.submitAction = action;
+				}
+			}
+			
+			return action;
+		}) : [];
+		
+		if (this.actions.length) {
+			// If no action has `submit: true`, set it on the last action.
+			if (!this.submitAction) {
+				this.submitAction = this.actions[this.actions.length - 1];
+				this.submitAction.submit = true;
+			}
+			
+			// If no action has `focus: true`, set it on the action with `submit: true`.
+			if (!this.actions.some(action => action.focus)) {
+				this.submitAction.focus = true;
+			}
+		}
 		
 		dialogs.push(this);
 		updateDialogs();
 	}
+	
+	static Actions: Record<string, DialogOptions['actions']> = {
+		Okay: [
+			{ label: 'Okay', focus: true, submit: true }
+		],
+		Confirm: [
+			{ label: 'Cancel' },
+			{ label: 'Okay', focus: true, submit: true }
+		]
+	};
 }
