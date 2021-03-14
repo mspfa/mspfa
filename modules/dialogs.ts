@@ -6,14 +6,7 @@ export type DialogActionData = {
 	autofocus?: boolean
 };
 
-export type DialogData = {
-	id: number | string,
-	title: string,
-	content: JSX.Element,
-	actions?: DialogActionData[]
-};
-
-const dialogs: DialogData[] = [];
+const dialogs: Dialog[] = [];
 const [useDialogData] = createGlobalState(dialogs);
 const [useDialogsUpdater, updateDialogs] = createUpdater();
 
@@ -24,18 +17,23 @@ export const useDialogs = () => {
 	return dialogs;
 };
 
-export type DialogOptions = Omit<DialogData, 'id'>;
-type DialogResult = string | undefined;
+export type DialogOptions = {
+	title: string,
+	content: JSX.Element,
+	actions?: DialogActionData[]
+};
 
+type DialogResult = string | undefined;
 let resolvePromise: (value: DialogResult) => void;
 
-export class Dialog extends Promise<DialogResult> implements DialogData {
+export class Dialog extends Promise<DialogResult> implements DialogOptions {
+	/** The React array key for this dialog's component. */
 	id = Math.random();
 	title;
 	content;
 	actions;
 	
-	#resolvePromise!: typeof resolvePromise;
+	#resolvePromise: typeof resolvePromise;
 	
 	/** Close the dialog and resolve its promise. */
 	resolve(
