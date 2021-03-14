@@ -1,4 +1,3 @@
-import createGlobalState from 'global-react-state';
 import createUpdater from 'react-component-updater';
 import type { ReactNode } from 'react';
 
