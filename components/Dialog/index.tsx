@@ -16,7 +16,7 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 		if (autoFocused instanceof HTMLElement) {
 			autoFocused.focus();
 		}
-	});
+	}, [dialog]);
 	
 	const handleSubmit = useCallback((evt: React.FormEvent<HTMLFormElement>) => {
 		evt.preventDefault();

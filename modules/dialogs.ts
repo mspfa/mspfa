@@ -28,13 +28,14 @@ export type DialogAction = DialogActionOption & {
 	[onClick]: () => void
 };
 
+/** The array of all dialogs. */
 export const dialogs: Dialog[] = [];
-const [useInternalDialogs] = createGlobalState(dialogs);
 const [useDialogsUpdater, updateDialogs] = createUpdater();
 
+/** A hook which keeps the component updated with `dialogs`. */
 export const useDialogs = () => {
 	useDialogsUpdater();
-	return useInternalDialogs()[0];
+	return dialogs;
 };
 
 export type DialogOptions = {
@@ -55,7 +56,7 @@ let resolvePromise: (value: DialogResult) => void;
 
 export class Dialog extends Promise<DialogResult> {
 	readonly [Symbol.toStringTag] = 'Dialog';
-	// This is so `then`, `catch, etc. return a `Promise` rather than a `Dialog`. Errors occur when this is not here.
+	// This is so `then`, `catch`, etc. return a `Promise` rather than a `Dialog`. Weird errors occur when this is not here.
 	static readonly [Symbol.species] = Promise;
 	
 	/** The React array key for this dialog's component. */
@@ -81,6 +82,7 @@ export class Dialog extends Promise<DialogResult> {
 	
 	constructor({ title, content, actions: actionsOption }: DialogOptions) {
 		super(resolve => {
+			// `this.#resolvePromise` cannot be set here directly, because then a class property would be set before `super` is called, which throws an error.
 			resolvePromise = resolve;
 		});
 		
@@ -123,6 +125,7 @@ export class Dialog extends Promise<DialogResult> {
 			}
 		}
 		
+		// This renders the dialog component in `components/Dialog/index.tsx`.
 		dialogs.push(this);
 		updateDialogs();
 	}
