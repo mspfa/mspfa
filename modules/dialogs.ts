@@ -181,7 +181,8 @@ export class Dialog extends Promise<DialogResult> {
 
 if (process.browser) {
 	document.addEventListener('keydown', evt => {
-		if (evt.key === 'Escape') {
+		if (evt.key.startsWith('Esc')) { // Should be `Escape`, but can be `Esc` on old browsers.
+			// Resolve the last dialog with `undefined`.
 			const topDialog = dialogs.length && dialogs[dialogs.length - 1];
 			if (topDialog) {
 				topDialog.resolve();

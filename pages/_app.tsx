@@ -4,7 +4,9 @@ import { SWRConfig } from 'swr';
 import * as MSPFA from 'modules/MSPFA';
 import 'styles/global.scss';
 
-(global as any).MSPFA = MSPFA; // TODO: Get this to not be omitted from the production build.
+if (process.browser) {
+	(global as any).MSPFA = MSPFA;
+}
 
 const App = ({ Component, pageProps }: AppProps) => (
 	<>
