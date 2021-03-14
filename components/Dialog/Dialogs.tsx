@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 const Dialog = dynamic(() => import('.'));
 
 const Dialogs = () => {
-	const [dialogs] = useDialogs();
+	const dialogs = useDialogs();
 	
 	return (
 		<div id="dialogs">

@@ -1,7 +1,10 @@
 import type { AppProps } from 'next/dist/next-server/lib/router/router';
 import Head from 'next/head';
 import { SWRConfig } from 'swr';
+import * as MSPFA from 'modules/MSPFA';
 import 'styles/global.scss';
+
+(global as any).MSPFA = MSPFA;
 
 const App = ({ Component, pageProps }: AppProps) => (
 	<>
@@ -27,4 +30,5 @@ const App = ({ Component, pageProps }: AppProps) => (
 		</SWRConfig>
 	</>
 );
+
 export default App;

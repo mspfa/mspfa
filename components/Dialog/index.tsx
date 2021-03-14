@@ -13,11 +13,13 @@ const Dialog = React.memo(({ title, actions, content }: DialogProps) => (
 			<div className="dialog-content">
 				{content}
 			</div>
-			<div className="dialog-actions">
-				{actions.map(action => (
-					<>{action.label}</>
-				))}
-			</div>
+			{actions && (
+				<div className="dialog-actions">
+					{actions.map(action => (
+						<>{action.label}</>
+					))}
+				</div>
+			)}
 		</dialog>
 	</div>
 ), (prevProps, nextProps) => prevProps.id === nextProps.id);

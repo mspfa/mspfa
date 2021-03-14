@@ -161,10 +161,6 @@
 			"error",
 			"unix"
 		],
-		"lines-between-class-members": [
-			"error",
-			"always"
-		],
 		"max-statements-per-line": [
 			"error",
 			{
@@ -572,11 +568,6 @@
 						"before": true,
 						"after": true
 					}
-				],
-				"lines-between-class-members": "off",
-				"@typescript-eslint/lines-between-class-members": [
-					"error",
-					"always"
 				],
 				"no-array-constructor": "off",
 				"@typescript-eslint/no-array-constructor": "error",

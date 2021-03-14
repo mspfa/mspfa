@@ -1,4 +1,5 @@
 import createGlobalState from 'global-react-state';
+import createUpdater from 'react-component-updater';
 
 export type DialogActionData = {
 	label: string,
@@ -9,19 +10,56 @@ export type DialogData = {
 	id: number | string,
 	title: string,
 	content: JSX.Element,
-	actions: DialogActionData[]
+	actions?: DialogActionData[]
 };
 
-export const [useDialogs, setDialogs] = createGlobalState<DialogData[]>([]);
+const dialogs: DialogData[] = [];
+const [useDialogData] = createGlobalState(dialogs);
+const [useDialogsUpdater, updateDialogs] = createUpdater();
+
+export const useDialogs = () => {
+	useDialogsUpdater();
+	const [dialogs] = useDialogData();
+	
+	return dialogs;
+};
 
 export type DialogOptions = Omit<DialogData, 'id'>;
+type DialogResult = string | undefined;
 
-export class Dialog extends Promise<string> {
-	private resolve?: (value: string | PromiseLike<string>) => void;
+let resolvePromise: (value: DialogResult) => void;
+
+export class Dialog extends Promise<DialogResult> implements DialogData {
+	id = Math.random();
+	title;
+	content;
+	actions;
 	
-	constructor(options: DialogOptions) {
+	#resolvePromise!: typeof resolvePromise;
+	
+	/** Close the dialog and resolve its promise. */
+	resolve(
+		/** The result of the dialog's promise. */
+		value?: DialogResult
+	) {
+		this.#resolvePromise(value);
+		
+		dialogs.splice(dialogs.findIndex(({ id }) => this.id === id), 1);
+		updateDialogs();
+	}
+	
+	constructor({ title, content, actions }: DialogOptions) {
 		super(resolve => {
-			this.resolve = resolve;
+			resolvePromise = resolve;
 		});
+		
+		this.#resolvePromise = resolvePromise;
+		
+		this.title = title;
+		this.content = content;
+		this.actions = actions;
+		
+		dialogs.push(this);
+		updateDialogs();
 	}
 }
