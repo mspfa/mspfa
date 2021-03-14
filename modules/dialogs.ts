@@ -85,7 +85,7 @@ export class Dialog extends Promise<DialogResult> {
 	resolve(
 		/** The result of the dialog's promise. */
 		value?: DialogResult,
-		/** Whether `updateDialogs` should be called upon completion. */
+		/** Whether dialogs should be re-rendered upon completion. */
 		shouldUpdateDialogs = true
 	) {
 		this.#resolvePromise(value);
