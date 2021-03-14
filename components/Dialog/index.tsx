@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import type { Dialog as DialogClass } from 'modules/dialogs';
-import { onClick } from 'modules/dialogs';
 import './styles.module.scss';
 
 export type DialogProps = {
@@ -39,7 +38,7 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 							type={action.submit ? 'submit' : 'button'}
 							className="dialog-action"
 							autoFocus={action.focus}
-							onClick={action[onClick]}
+							onClick={action.onClick}
 						>
 							{action.label}
 						</button>

@@ -1,5 +1,15 @@
 import createUpdater from 'react-component-updater';
-import type { ReactNode } from 'react';
+import type { ReactNode, Key } from 'react';
+
+/** The array of all dialogs. */
+export const dialogs: Dialog[] = [];
+const [useDialogsUpdater, updateDialogs] = createUpdater();
+
+/** A hook which keeps the component updated with `dialogs`. */
+export const useDialogs = () => {
+	useDialogsUpdater();
+	return dialogs;
+};
 
 export type DialogActionOption = {
 	/** The label of the action's button. */
@@ -20,24 +30,21 @@ export type DialogActionOption = {
 	submit?: boolean
 };
 
-export const onClick = Symbol('onClick');
 export type DialogAction = DialogActionOption & {
 	/** The index of the action in the dialog's `actions`. */
 	index: number,
-	[onClick]: () => void
-};
-
-/** The array of all dialogs. */
-export const dialogs: Dialog[] = [];
-const [useDialogsUpdater, updateDialogs] = createUpdater();
-
-/** A hook which keeps the component updated with `dialogs`. */
-export const useDialogs = () => {
-	useDialogsUpdater();
-	return dialogs;
+	onClick: () => void
 };
 
 export type DialogOptions = {
+	/**
+	 * The React array key for the dialog's component.
+	 * 
+	 * If set, any other dialog with the same `id` will be resolved with `undefined` when this dialog is created.
+	 */
+	id?: Key,
+	/** A dialog which, when closed, should forcibly close this dialog and resolve it with `undefined`. */
+	parent?: Dialog,
 	/** The title of the dialog. */
 	title: Dialog['title'],
 	/**
@@ -46,62 +53,85 @@ export type DialogOptions = {
 	 * Any content element with `autoFocus="true"` will be auto-focused when the dialog opens.
 	 */
 	content: Dialog['content'],
-	/** The actions which the user can select to close the dialog. */
-	actions?: DialogActionOption[]
+	/**
+	 * The actions which the user can select to close the dialog.
+	 * 
+	 * A `value` in this array (such as a string) which isn't a valid `DialogActionOption` is shorthand for `{ label: value }`.
+	 */
+	actions?: Array<DialogActionOption['label'] | DialogActionOption>
 };
 
 type DialogResult = DialogAction | undefined;
-let resolvePromise: (value: DialogResult) => void;
+let resolvePromise: (value?: DialogResult) => void;
 
 export class Dialog extends Promise<DialogResult> {
 	readonly [Symbol.toStringTag] = 'Dialog';
 	// This is so `then`, `catch`, etc. return a `Promise` rather than a `Dialog`. Weird errors occur when this is not here.
 	static readonly [Symbol.species] = Promise;
 	
-	/** The React array key for this dialog's component. */
-	readonly id = Math.random();
+	id: Key;
+	parent?: Dialog;
 	title: ReactNode;
 	content: ReactNode;
 	actions: DialogAction[];
+	/** The form element wrapping this dialog. */
 	form?: HTMLFormElement;
+	/** The action with `submit: true`. */
 	submitAction?: DialogAction;
 	
 	#resolvePromise: typeof resolvePromise;
 	
-	/** Close the dialog and resolve its promise. */
+	/** Closes the dialog and resolves its promise. */
 	resolve(
 		/** The result of the dialog's promise. */
-		value?: DialogResult
+		value?: DialogResult,
+		/** Whether `updateDialogs` should be called upon completion. */
+		shouldUpdateDialogs = true
 	) {
 		this.#resolvePromise(value);
-		
-		dialogs.splice(dialogs.findIndex(({ id }) => this.id === id), 1);
-		updateDialogs();
+		for (let i = 0; i < dialogs.length; i++) {
+			const dialog = dialogs[i];
+			if (dialog === this) {
+				// Remove this dialog from the array.
+				dialogs.splice(i--, 1);
+				if (shouldUpdateDialogs) {
+					updateDialogs();
+				}
+			} else if (dialog.parent === this) {
+				// Resolve `dialog` with `undefined` if it needs to close because of its parent (this dialog) closing.
+				dialog.resolve(undefined, shouldUpdateDialogs);
+			}
+		}
 	}
 	
-	constructor({ title, content, actions: actionsOption }: DialogOptions) {
+	constructor({ id = Math.random(), parent, title, content, actions: actionsOption }: DialogOptions) {
 		super(resolve => {
 			// `this.#resolvePromise` cannot be set here directly, because then a class property would be set before `super` is called, which throws an error.
 			resolvePromise = resolve;
 		});
-		
 		this.#resolvePromise = resolvePromise;
 		
+		this.id = id;
+		this.parent = parent;
 		this.title = title;
 		this.content = content;
 		this.actions = actionsOption ? actionsOption.map((actionOption, index) => {
-			const action: DialogAction = {
-				...actionOption,
-				index,
-				[onClick]: () => {
-					this.resolve(action);
+			const action: DialogAction = Object.assign(
+				actionOption instanceof Object && 'label' in actionOption
+					? { ...actionOption }
+					: { label: actionOption },
+				{
+					index,
+					onClick: () => {
+						this.resolve(action);
+					}
 				}
-			};
+			);
 			
 			if (action.submit) {
 				if (this.submitAction) {
 					// Ensure there is at most one action with `submit: true`.
-					action.submit = false;
+					delete action.submit;
 				} else {
 					// Set `this.submitAction` to the first action with `submit: true`.
 					this.submitAction = action;
@@ -124,18 +154,20 @@ export class Dialog extends Promise<DialogResult> {
 			}
 		}
 		
+		// Remove any other dialog with the same `id`.
+		const duplicateDialog = dialogs.find(dialog => dialog.id === this.id);
+		if (duplicateDialog) {
+			duplicateDialog.resolve(undefined, false);
+		}
+		
 		// This renders the dialog component in `components/Dialog/index.tsx`.
 		dialogs.push(this);
 		updateDialogs();
 	}
 	
+	/** Some presets you can plug into the `actions` option of the `Dialog` constructor. */
 	static Actions: Record<string, DialogOptions['actions']> = {
-		Okay: [
-			{ label: 'Okay', focus: true, submit: true }
-		],
-		Confirm: [
-			{ label: 'Cancel' },
-			{ label: 'Okay', focus: true, submit: true }
-		]
+		Okay: ['Okay'],
+		Confirm: ['Cancel', 'Okay']
 	};
 }
