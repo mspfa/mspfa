@@ -1,12 +1,9 @@
-import { useRouter } from 'next/router';
 import Page from 'components/Page';
 
-const Component = () => {
-	const router = useRouter();
-	return (
-		<Page noFlashyTitle={'s' in router.query}>
-			test
-		</Page>
-	);
-};
+const Component = () => (
+	<Page>
+		homepage test
+	</Page>
+);
+
 export default Component;
