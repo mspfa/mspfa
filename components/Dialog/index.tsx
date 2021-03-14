@@ -1,27 +1,29 @@
 import React from 'react';
-import type { DialogData } from 'modules/dialogs';
+import type { Dialog as DialogClass } from 'modules/dialogs';
 import './styles.module.scss';
 
-export type DialogProps = DialogData;
+export type DialogProps = {
+	dialog: DialogClass
+};
 
-const Dialog = React.memo(({ title, actions, content }: DialogProps) => (
+const Dialog = React.memo(({ dialog }: DialogProps) => (
 	<div className="dialog-container">
 		<dialog className="dialog" open>
 			<div className="dialog-title">
-				{title}
+				{dialog.title}
 			</div>
 			<div className="dialog-content">
-				{content}
+				{dialog.content}
 			</div>
-			{actions && (
+			{dialog.actions && (
 				<div className="dialog-actions">
-					{actions.map(action => (
+					{dialog.actions.map(action => (
 						<>{action.label}</>
 					))}
 				</div>
 			)}
 		</dialog>
 	</div>
-), (prevProps, nextProps) => prevProps.id === nextProps.id);
+));
 
 export default Dialog;

@@ -8,7 +8,7 @@ const Dialogs = () => {
 	
 	return (
 		<div id="dialogs">
-			{dialogs.map(dialogData => <Dialog key={dialogData.id} {...dialogData} />)}
+			{dialogs.map(dialog => <Dialog key={dialog.id} dialog={dialog} />)}
 		</div>
 	);
 };
