@@ -3,7 +3,6 @@
 #page {
 	width: 940px;
 	margin: 0 auto;
-	padding: 0 5px 5px 5px;
 	@include theme(background-color, $mid-background);
 	
 	@media screen and (max-width: 950px) {
