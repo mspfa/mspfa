@@ -78,6 +78,10 @@ export class Dialog extends Promise<DialogResult> {
 	form?: HTMLFormElement;
 	/** The action with `submit: true`. */
 	submitAction?: DialogAction;
+	/** Whether the dialog has been resolved. */
+	resolved = false;
+	/** Whether the dialog's component is currently mounted. */
+	open = false;
 	
 	#resolvePromise: typeof resolvePromise;
 	
@@ -89,6 +93,7 @@ export class Dialog extends Promise<DialogResult> {
 		shouldUpdateDialogs = true
 	) {
 		this.#resolvePromise(value);
+		this.resolved = true;
 		for (let i = 0; i < dialogs.length; i++) {
 			const dialog = dialogs[i];
 			if (dialog === this) {
@@ -98,7 +103,7 @@ export class Dialog extends Promise<DialogResult> {
 					updateDialogs();
 				}
 			} else if (dialog.parent === this) {
-				// Resolve `dialog` with `undefined` if it needs to close because of its parent (this dialog) closing.
+				// Resolve `dialog` with `undefined` if it needs to close because of its parent (`this`) closing.
 				dialog.resolve(undefined, shouldUpdateDialogs);
 			}
 		}
@@ -160,9 +165,11 @@ export class Dialog extends Promise<DialogResult> {
 			duplicateDialog.resolve(undefined, false);
 		}
 		
-		// This renders the dialog component in `components/Dialog/index.tsx`.
+		// Render the dialog's component.
 		dialogs.push(this);
 		updateDialogs();
+		
+		this.open = true;
 	}
 	
 	/** Some presets you can plug into the `actions` option of the `Dialog` constructor. */
@@ -170,4 +177,15 @@ export class Dialog extends Promise<DialogResult> {
 		Okay: ['Okay'],
 		Confirm: ['Cancel', 'Okay']
 	};
+}
+
+if (process.browser) {
+	document.addEventListener('keydown', evt => {
+		if (evt.key === 'Escape') {
+			const topDialog = dialogs.length && dialogs[dialogs.length - 1];
+			if (topDialog) {
+				topDialog.resolve();
+			}
+		}
+	});
 }
