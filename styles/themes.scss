@@ -1,16 +1,20 @@
+@use "sass:meta";
+@use "sass:map";
+@use "sass:color";
+
+@function return-value($value) {
+	@return $value;
+}
+
 // Lets you set a CSS property which varies in value dependent on the user's theme.
-@mixin theme($property, $values) {
-	#{$property}: map-get($values, standard);
+@mixin theme($property, $values, $function: meta.get-function('return-value')) {
+	#{$property}: meta.call($function, map-get($values, standard));
 	@each $theme, $value in map-remove($values, standard) {
 		.theme-#{$theme} & {
-			#{$property}: $value;
+			#{$property}: meta.call($function, $value);
 		}
 	}
 }
-
-$text-color: (
-	standard: #000000
-);
 
 $back-background: (
 	standard: #535353
@@ -23,3 +27,12 @@ $mid-background: (
 $front-background: (
 	standard: #eeeeee
 );
+
+$text-color: (
+	standard: #000000
+);
+
+$translucent-text-color: ();
+@each $theme, $color in $text-color {
+	$translucent-text-color: map.set($translucent-text-color, $theme, color.scale($color, $alpha: -35%));
+}

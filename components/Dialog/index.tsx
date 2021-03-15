@@ -6,6 +6,8 @@ export type DialogProps = {
 	dialog: DialogClass
 };
 
+let containerPressed = false;
+
 const Dialog = React.memo(({ dialog }: DialogProps) => {
 	const formRef = useRef<HTMLFormElement>(null);
 	
@@ -27,26 +29,25 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 		<form
 			className="dialog-container"
 			ref={formRef}
-			onSubmit={
-				useCallback((evt: React.FormEvent<HTMLFormElement>) => {
-					evt.preventDefault();
-					dialog.resolve(dialog.submitAction);
-				}, [dialog])
+			onPointerDown={
+				useCallback((evt: React.PointerEvent<HTMLFormElement>) => {
+					containerPressed = evt.target === formRef.current;
+				}, [])
 			}
-			onClick={
-				useCallback((evt: React.FormEvent<HTMLFormElement>) => {
-					// Check to make sure the user didn't click inside the dialog.
-					if (evt.target === formRef.current) {
-						// The user clicked outside the dialog, so resolve the dialog with `undefined`.
+			onPointerUp={
+				useCallback((evt: React.PointerEvent<HTMLFormElement>) => {
+					if (containerPressed && evt.target === formRef.current) {
+						// The user both pressed and released their pointer on the dialog, so resolve the dialog with `undefined`.
 						dialog.resolve();
 					}
+					containerPressed = false;
 				}, [dialog])
 			}
 		>
-			<dialog className="dialog" open>
-				<div className="dialog-title">
+			<dialog open>
+				<h2 className="dialog-title">
 					{dialog.title}
-				</div>
+				</h2>
 				<div className="dialog-content">
 					{dialog.content}
 				</div>

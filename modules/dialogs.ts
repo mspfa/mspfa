@@ -76,8 +76,6 @@ export class Dialog extends Promise<DialogResult> {
 	actions: DialogAction[];
 	/** The form element wrapping this dialog. */
 	form?: HTMLFormElement;
-	/** The action with `submit: true`. */
-	submitAction?: DialogAction;
 	/** Whether the dialog has been resolved. */
 	resolved = false;
 	/** Whether the dialog's component is currently mounted. */
@@ -116,6 +114,9 @@ export class Dialog extends Promise<DialogResult> {
 		});
 		this.#resolvePromise = resolvePromise;
 		
+		/** The action with `submit: true`. */
+		let submitAction: DialogAction | undefined;
+		
 		this.id = id;
 		this.parent = parent;
 		this.title = title;
@@ -131,15 +132,15 @@ export class Dialog extends Promise<DialogResult> {
 						this.resolve(action);
 					}
 				}
-			);
+			) as any;
 			
 			if (action.submit) {
-				if (this.submitAction) {
+				if (submitAction) {
 					// Ensure there is at most one action with `submit: true`.
 					delete action.submit;
 				} else {
-					// Set `this.submitAction` to the first action with `submit: true`.
-					this.submitAction = action;
+					// Set `submitAction` to the first action with `submit: true`.
+					submitAction = action;
 				}
 			}
 			
@@ -147,15 +148,15 @@ export class Dialog extends Promise<DialogResult> {
 		}) : [];
 		
 		if (this.actions.length) {
-			// If no action has `submit: true`, set it on the last action.
-			if (!this.submitAction) {
-				this.submitAction = this.actions[this.actions.length - 1];
-				this.submitAction.submit = true;
+			// If no action has `submit: true`, set it on the first action.
+			if (!submitAction) {
+				submitAction = this.actions[0];
+				submitAction.submit = true;
 			}
 			
 			// If no action has `focus: true`, set it on the action with `submit: true`.
 			if (!this.actions.some(action => action.focus)) {
-				this.submitAction.focus = true;
+				submitAction.focus = true;
 			}
 		}
 		
@@ -168,14 +169,12 @@ export class Dialog extends Promise<DialogResult> {
 		// Render the dialog's component.
 		dialogs.push(this);
 		updateDialogs();
-		
-		this.open = true;
 	}
 	
 	/** Some presets you can plug into the `actions` option of the `Dialog` constructor. */
 	static Actions: Record<string, DialogOptions['actions']> = {
 		Okay: ['Okay'],
-		Confirm: ['Cancel', 'Okay']
+		Confirm: ['Okay', 'Cancel']
 	};
 }
 

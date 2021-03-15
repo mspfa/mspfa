@@ -1,13 +1,64 @@
+@use 'sass:meta';
+@use 'sass:color';
+
+@import 'styles/themes.scss';
+
 .dialog {
 	&-container {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		position: fixed;
 		left: 0;
 		top: 0;
 		width: 100%;
 		height: 100%;
+		padding: 1rem 0;
+		box-sizing: border-box;
 		
 		&:last-child {
-			background-color: rgba(0, 0, 0, 0.5);
+			@function scale($color) {
+				@return color.scale(color.scale($color, $lightness: -50%), $alpha: -50%);
+			}
+			@include theme(background-color, $back-background, meta.get-function('scale'));
 		}
 	}
+	
+	&-title {
+		margin: 0;
+		padding: 0.3rem 0.75rem;
+		font-family: 'Homestuck-Regular';
+		font-weight: normal;
+		font-size: 1.75rem;
+		@include theme(background-color, $mid-background);
+		@include theme(color, $translucent-text-color);
+	}
+	
+	&-content {
+		padding: 1rem 0.75rem;
+		font-size: 1rem;
+		overflow-y: auto;
+	}
+	
+	&-actions {
+		padding: 1rem;
+		text-align: right;
+	}
+	
+	&-action + &-action {
+		margin-left: 0.75rem;
+	}
+}
+
+dialog {
+	display: flex;
+	flex-direction: column;
+	position: static;
+	border: none;
+	padding: 0;
+	max-height: 100%;
+	min-width: 280px;
+	max-width: 880px;
+	@include theme(background-color, $front-background);
+	box-shadow: 16px 16px 0 0 rgba(0, 0, 0, 0.25);
 }

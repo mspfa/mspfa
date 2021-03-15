@@ -1,4 +1,20 @@
+@use 'sass:meta';
+@use 'sass:list';
+@use 'sass:color';
+
 @import 'themes.scss';
+
+@font-face {
+	font-family: 'Homestuck-Regular';
+	src: url(/fonts/Homestuck-Regular/index.eot);
+	src: url(/fonts/Homestuck-Regular/index.eot?#iefix) format('embedded-opentype'),
+		url(/fonts/Homestuck-Regular/index.woff2) format('woff2'),
+		url(/fonts/Homestuck-Regular/index.woff) format('woff'),
+		url(/fonts/Homestuck-Regular/index.ttf) format('truetype'),
+		url(/fonts/Homestuck-Regular/index.svg#Homestuck-Regular) format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
 
 :focus {
 	outline: none;
@@ -14,5 +30,33 @@ body {
 	
 	@media screen and (max-width: 950px) {
 		font-size: 1.1em;
+	}
+}
+
+button:not(.link) {
+	user-select: none;
+	font-family: 'Homestuck-Regular';
+	font-size: 1.5rem;
+	border: none;
+	background-color: rgba(128, 128, 128, 0.1);
+	@include theme(color, $translucent-text-color);
+	position: relative;
+	
+	@function depth-shadow($color, $depth: 3) {
+		$box-shadow: ();
+		@for $offset from 1 to $depth {
+			$box-shadow: list.append(
+				$box-shadow,
+				#{2 * $offset}px #{2 * $offset}px 0 0 color.scale($color, $lightness: -35%),
+				$separator: comma
+			);
+		}
+		@return $box-shadow;
+	}
+	@include theme(box-shadow, $mid-background, meta.get-function('depth-shadow'));
+	
+	&:active {
+		top: 2px;
+		// border-color: $dark-border-color $light-border-color $light-border-color $dark-border-color;
 	}
 }
