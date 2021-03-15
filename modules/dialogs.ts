@@ -172,8 +172,9 @@ export class Dialog extends Promise<DialogResult> {
 	}
 	
 	/** Some presets you can plug into the `actions` option of the `Dialog` constructor. */
-	static Actions: Record<string, DialogOptions['actions']> = {
+	static Actions = {
 		Okay: ['Okay'],
+		Cancel: ['Cancel'],
 		Confirm: ['Okay', 'Cancel']
 	};
 }

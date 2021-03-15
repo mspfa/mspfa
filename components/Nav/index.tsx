@@ -1,12 +1,18 @@
 import NavGroup from 'components/Nav/NavGroup';
 import NavItem from 'components/Nav/NavItem';
 import NavMenu from 'components/Nav/NavMenu';
+import { Dialog } from 'modules/dialogs';
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
 import './styles.module.scss';
 
 const showSignIn = () => {
-	// TODO
+	new Dialog({
+		id: 'sign-in',
+		title: 'Sign In',
+		content: 'the',
+		actions: Dialog.Actions.Cancel
+	});
 };
 
 const Nav = () => {
