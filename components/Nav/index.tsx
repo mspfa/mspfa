@@ -12,7 +12,10 @@ const showSignIn = () => {
 		id: 'sign-in',
 		title: 'Sign In',
 		content: <SignInContent />,
-		actions: ['Sign In', 'Cancel']
+		actions: [
+			{ label: 'Sign In', focus: false },
+			'Cancel'
+		]
 	});
 };
 

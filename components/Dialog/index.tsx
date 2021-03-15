@@ -15,11 +15,6 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 		dialog.open = true;
 		dialog.form = formRef.current!;
 		
-		const autoFocused = dialog.form.querySelector('[autofocus]');
-		if (autoFocused instanceof HTMLElement) {
-			autoFocused.focus();
-		}
-		
 		return () => {
 			dialog.open = false;
 		};
@@ -43,6 +38,12 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 					containerPressed = false;
 				}, [dialog])
 			}
+			onSubmit={
+				useCallback((evt: React.FormEvent<HTMLFormElement>) => {
+					evt.preventDefault();
+					dialog.submitAction?.onClick();
+				}, [dialog])
+			}
 		>
 			<dialog id={`dialog-${dialog.id}`} open>
 				<h2 className="dialog-title">
@@ -58,7 +59,7 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 							type={action.submit ? 'submit' : 'button'}
 							className="dialog-action"
 							autoFocus={action.focus}
-							onClick={action.onClick}
+							onClick={action.submit ? undefined : action.onClick}
 						>
 							{action.label}
 						</button>

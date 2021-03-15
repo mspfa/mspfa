@@ -6,11 +6,11 @@ const SignInContent = () => (
 			<label htmlFor="email">
 				Email:
 			</label>
-			<input id="email" name="email" type="email" autoFocus />
+			<input id="email" name="email" type="email" required autoFocus />
 			<label htmlFor="password">
 				Password:
 			</label>
-			<input id="password" name="password" type="password" />
+			<input id="password" name="password" type="password" required />
 		</div>
 	</>
 );

@@ -17,15 +17,13 @@ export type DialogActionOption = {
 	/**
 	 * Whether the action should be auto-focused when the dialog opens.
 	 * 
-	 * If none of the dialog's actions have `focus: true`, it will be set on the action with `submit: true`. If no action has `submit: true`, it will be set on the last action.
-	 * 
-	 * This will be ignored if an element in the dialog's content has `autoFocus="true"`.
+	 * If no action has `focus: true`, it will be set by default, either on the action with `submit: true` or on the first action.
 	 */
 	focus?: boolean,
 	/**
 	 * Whether submitting the dialog form (e.g. by pressing `enter` with a form field focused) will trigger the action.
 	 * 
-	 * If no action has `submit: true`, it will be set on the last action.
+	 * If no action has `submit: true`, it will be set on the first action.
 	 */
 	submit?: boolean
 };
@@ -80,6 +78,8 @@ export class Dialog extends Promise<DialogResult> {
 	resolved = false;
 	/** Whether the dialog's component is currently mounted. */
 	open = false;
+	/** The action with `submit: true`. */
+	submitAction: DialogAction | undefined;
 	
 	#resolvePromise: typeof resolvePromise;
 	
@@ -114,9 +114,6 @@ export class Dialog extends Promise<DialogResult> {
 		});
 		this.#resolvePromise = resolvePromise;
 		
-		/** The action with `submit: true`. */
-		let submitAction: DialogAction | undefined;
-		
 		this.id = id;
 		this.parent = parent;
 		this.title = title;
@@ -135,12 +132,12 @@ export class Dialog extends Promise<DialogResult> {
 			) as any;
 			
 			if (action.submit) {
-				if (submitAction) {
+				if (this.submitAction) {
 					// Ensure there is at most one action with `submit: true`.
 					delete action.submit;
 				} else {
-					// Set `submitAction` to the first action with `submit: true`.
-					submitAction = action;
+					// Set `this.submitAction` to the first action with `submit: true`.
+					this.submitAction = action;
 				}
 			}
 			
@@ -148,15 +145,26 @@ export class Dialog extends Promise<DialogResult> {
 		}) : [];
 		
 		if (this.actions.length) {
-			// If no action has `submit: true`, set it on the first action.
-			if (!submitAction) {
-				submitAction = this.actions[0];
-				submitAction.submit = true;
+			// If no action has `submit: true`, set it on the first action (unless it explicitly sets `submit` already).
+			if (
+				!this.submitAction
+				&& !('submit' in this.actions[0])
+			) {
+				this.submitAction = this.actions[0];
+				this.submitAction.submit = true;
 			}
 			
-			// If no action has `focus: true`, set it on the action with `submit: true`.
+			// If no action has `focus: true`...
 			if (!this.actions.some(action => action.focus)) {
-				submitAction.focus = true;
+				if (this.submitAction) {
+					// ...set `focus: true` on the action with `submit: true` (unless it explicitly sets `focus` already)...
+					if (!('focus' in this.submitAction)) {
+						this.submitAction.focus = true;
+					}
+				} else if (!('focus' in this.actions[0])) {
+					// ...or, if there is no action with `submit: true`, set `focus: true` on the first action (unless it explicitly sets `focus` already).
+					this.actions[0].focus = true;
+				}
 			}
 		}
 		
