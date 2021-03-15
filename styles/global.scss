@@ -40,13 +40,13 @@ button:not(.link) {
 	border: none;
 	position: relative;
 	
-	@function lighten($color) {
+	@function offset($color, $offset: 16) {
 		@return color.adjust(
 			$color,
-			$red: 16, $green: 16, $blue: 16
+			$red: $offset, $green: $offset, $blue: $offset
 		);
 	}
-	@include theme(background-color, $front-background, meta.get-function('lighten'));
+	@include theme(background-color, $front-background, meta.get-function('offset'), -12);
 	@include theme(color, $translucent-text-color);
 	
 	@function depth-shadow($color, $depth: 2, $scale: 2) {
@@ -63,7 +63,7 @@ button:not(.link) {
 	@include theme(box-shadow, $mid-background, meta.get-function('depth-shadow'));
 	
 	&:focus:not(:active) {
-		text-decoration: underline;
+		@include theme(background-color, $front-background, meta.get-function('offset'), 16);
 	}
 	
 	&:active {
@@ -71,23 +71,5 @@ button:not(.link) {
 		top: 2px;
 		
 		@include theme(box-shadow, $mid-background, meta.get-function('depth-shadow'), 1);
-	}
-}
-
-.align {
-	&-center {
-		text-align: left;
-	}
-	
-	&-center {
-		text-align: center;
-	}
-	
-	&-right {
-		text-align: right;
-	}
-	
-	&-justify {
-		text-align: justify;
 	}
 }

@@ -1,6 +1,3 @@
-@use 'sass:meta';
-@use 'sass:color';
-
 @import 'styles/themes.scss';
 
 .dialog {
@@ -15,16 +12,8 @@
 		width: 100%;
 		height: 100%;
 		padding: 1rem;
+		// If this is not here, the dialog in the container will not be centered due to the above padding.
 		box-sizing: border-box;
-		
-		/* Darken the background behind dialogs.
-		&:last-child {
-			@function scale($color) {
-				@return color.scale(color.scale($color, $lightness: -50%), $alpha: -50%);
-			}
-			@include theme(background-color, $back-background, meta.get-function('scale'));
-		}
-		*/
 	}
 	
 	&-title {
