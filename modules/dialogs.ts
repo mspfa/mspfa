@@ -181,11 +181,15 @@ export class Dialog extends Promise<DialogResult> {
 
 if (process.browser) {
 	document.addEventListener('keydown', evt => {
-		if (evt.key.startsWith('Esc')) { // Should be `Escape`, but can be `Esc` on old browsers.
-			// Resolve the last dialog with `undefined`.
-			const topDialog = dialogs.length && dialogs[dialogs.length - 1];
-			if (topDialog) {
-				topDialog.resolve();
+		// This check is necessary because of https://bugs.chromium.org/p/chromium/issues/detail?id=581537.
+		if (evt.key) {
+			// `evt.key` should be `Escape` but can be `Esc` on old browsers.
+			if (evt.key.startsWith('Esc')) {
+				// Resolve the last dialog with `undefined`.
+				const topDialog = dialogs.length && dialogs[dialogs.length - 1];
+				if (topDialog) {
+					topDialog.resolve();
+				}
 			}
 		}
 	});

@@ -4,14 +4,15 @@ import NavMenu from 'components/Nav/NavMenu';
 import { Dialog } from 'modules/dialogs';
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
+import SignInContent from 'components/SignIn/SignInContex';
 import './styles.module.scss';
 
 const showSignIn = () => {
 	new Dialog({
 		id: 'sign-in',
 		title: 'Sign In',
-		content: 'the',
-		actions: Dialog.Actions.Cancel
+		content: <SignInContent />,
+		actions: ['Sign In', 'Cancel']
 	});
 };
 
