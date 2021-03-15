@@ -38,6 +38,7 @@ button:not(.link) {
 	font-family: 'Homestuck-Regular';
 	font-size: 1.5rem;
 	border: none;
+	position: relative;
 	
 	@function lighten($color) {
 		@return color.adjust(
@@ -61,8 +62,11 @@ button:not(.link) {
 	}
 	@include theme(box-shadow, $mid-background, meta.get-function('depth-shadow'));
 	
+	&:focus:not(:active) {
+		text-decoration: underline;
+	}
+	
 	&:active {
-		position: relative;
 		left: 2px;
 		top: 2px;
 		

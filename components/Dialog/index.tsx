@@ -44,7 +44,7 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 				}, [dialog])
 			}
 		>
-			<dialog open>
+			<dialog id={`dialog-${dialog.id}`} open>
 				<h2 className="dialog-title">
 					{dialog.title}
 				</h2>

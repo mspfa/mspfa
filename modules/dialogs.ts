@@ -107,7 +107,7 @@ export class Dialog extends Promise<DialogResult> {
 		}
 	}
 	
-	constructor({ id = Math.random(), parent, title, content, actions: actionsOption }: DialogOptions) {
+	constructor({ id = String(Math.random()).slice(2), parent, title, content, actions: actionsOption }: DialogOptions) {
 		super(resolve => {
 			// `this.#resolvePromise` cannot be set here directly, because then a class property would be set before `super` is called, which throws an error.
 			resolvePromise = resolve;

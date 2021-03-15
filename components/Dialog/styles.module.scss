@@ -58,12 +58,13 @@ dialog {
 	display: flex;
 	flex-direction: column;
 	position: static;
-	border: none;
 	padding: 0;
 	max-height: 100%;
 	min-width: 280px;
 	max-width: 880px;
 	color: inherit;
-	@include theme(background-color, $front-background);
 	box-shadow: 16px 16px 0 0 rgba(0, 0, 0, 0.25);
+	@include theme(background-color, $front-background);
+	background-clip: content-box;
+	border: 1px solid rgba(128, 128, 128, 0.25);
 }
