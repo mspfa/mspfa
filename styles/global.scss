@@ -38,16 +38,22 @@ button:not(.link) {
 	font-family: 'Homestuck-Regular';
 	font-size: 1.5rem;
 	border: none;
-	background-color: rgba(128, 128, 128, 0.1);
-	@include theme(color, $translucent-text-color);
-	position: relative;
 	
-	@function depth-shadow($color, $depth: 3) {
+	@function lighten($color) {
+		@return color.adjust(
+			$color,
+			$red: 16, $green: 16, $blue: 16
+		);
+	}
+	@include theme(background-color, $front-background, meta.get-function('lighten'));
+	@include theme(color, $translucent-text-color);
+	
+	@function depth-shadow($color, $depth: 2, $scale: 2) {
 		$box-shadow: ();
-		@for $offset from 1 to $depth {
+		@for $offset from 1 through $depth {
 			$box-shadow: list.append(
 				$box-shadow,
-				#{2 * $offset}px #{2 * $offset}px 0 0 color.scale($color, $lightness: -35%),
+				#{$scale * $offset}px #{$scale * $offset}px 0 0 color.scale($color, $lightness: -20%),
 				$separator: comma
 			);
 		}
@@ -56,7 +62,10 @@ button:not(.link) {
 	@include theme(box-shadow, $mid-background, meta.get-function('depth-shadow'));
 	
 	&:active {
+		position: relative;
+		left: 2px;
 		top: 2px;
-		// border-color: $dark-border-color $light-border-color $light-border-color $dark-border-color;
+		
+		@include theme(box-shadow, $mid-background, meta.get-function('depth-shadow'), 1);
 	}
 }

@@ -7,32 +7,36 @@
 }
 
 // Lets you set a CSS property which varies in value dependent on the user's theme.
-@mixin theme($property, $values, $function: meta.get-function('return-value')) {
-	#{$property}: meta.call($function, map-get($values, standard));
+@mixin theme($property, $values, $function: meta.get-function('return-value'), $args...) {
+	#{$property}: meta.call($function, map-get($values, standard), $args...);
 	@each $theme, $value in map-remove($values, standard) {
 		.theme-#{$theme} & {
-			#{$property}: meta.call($function, $value);
+			#{$property}: meta.call($function, $value, $args...);
 		}
 	}
 }
 
 $back-background: (
-	standard: #535353
+	standard: #535353,
+	dark: #141414
 );
 
 $mid-background: (
-	standard: #c6c6c6
+	standard: #c6c6c6,
+	dark: #202020
 );
 
 $front-background: (
-	standard: #eeeeee
+	standard: #eeeeee,
+	dark: #323232
 );
 
 $text-color: (
-	standard: #000000
+	standard: #000000,
+	dark: #e4e4e4
 );
 
 $translucent-text-color: ();
 @each $theme, $color in $text-color {
-	$translucent-text-color: map.set($translucent-text-color, $theme, color.scale($color, $alpha: -35%));
+	$translucent-text-color: map.set($translucent-text-color, $theme, color.scale($color, $alpha: -40%));
 }

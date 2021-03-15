@@ -5,6 +5,7 @@
 
 .dialog {
 	&-container {
+		pointer-events: none;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -13,15 +14,17 @@
 		top: 0;
 		width: 100%;
 		height: 100%;
-		padding: 1rem 0;
+		padding: 1rem;
 		box-sizing: border-box;
 		
+		/* Darken the background behind dialogs.
 		&:last-child {
 			@function scale($color) {
 				@return color.scale(color.scale($color, $lightness: -50%), $alpha: -50%);
 			}
 			@include theme(background-color, $back-background, meta.get-function('scale'));
 		}
+		*/
 	}
 	
 	&-title {
@@ -51,6 +54,7 @@
 }
 
 dialog {
+	pointer-events: auto;
 	display: flex;
 	flex-direction: column;
 	position: static;
@@ -59,6 +63,7 @@ dialog {
 	max-height: 100%;
 	min-width: 280px;
 	max-width: 880px;
+	color: inherit;
 	@include theme(background-color, $front-background);
 	box-shadow: 16px 16px 0 0 rgba(0, 0, 0, 0.25);
 }
