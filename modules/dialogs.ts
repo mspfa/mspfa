@@ -178,15 +178,6 @@ export class Dialog extends Promise<DialogResult> {
 		dialogs.push(this);
 		updateDialogs();
 	}
-	
-	/** Some presets you can plug into the `actions` option of the `Dialog` constructor. */
-	static Actions = {
-		Okay: ['Okay'],
-		Cancel: [
-			{ label: 'Cancel', submit: false }
-		],
-		Confirm: ['Okay', 'Cancel']
-	};
 }
 
 if (process.browser) {
