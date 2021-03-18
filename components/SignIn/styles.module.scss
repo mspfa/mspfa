@@ -1,14 +1,32 @@
-#sign-in-method-password {
-	display: grid;
-	grid-template-columns: auto auto;
-	grid-template-rows: auto auto;
-	
-	label {
-		justify-self: right;
-		align-self: center;
+@import 'styles/buttons.scss';
+
+#sign-in {
+	&-content {
+		text-align: center;
 	}
 	
-	input {
-		margin: 1ch;
+	&-method {
+		&-password {
+			display: grid;
+			grid-template-columns: auto auto;
+			grid-template-rows: auto auto;
+			
+			label {
+				justify-self: right;
+				align-self: center;
+			}
+			
+			input {
+				margin: 1ch;
+			}
+		}
+		
+		&-google {
+			@include colored-button(#4285f4, #ffffff);
+		}
+		
+		&-discord {
+			@include colored-button(#7289da, #ffffff);
+		}
 	}
 }

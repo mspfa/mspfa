@@ -351,6 +351,7 @@
 			"after"
 		],
 		"@typescript-eslint/prefer-includes": "error",
+		"react/button-has-type": "warn",
 		"react/default-props-match-prop-types": [
 			"error",
 			{

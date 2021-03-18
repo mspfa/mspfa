@@ -2,12 +2,21 @@
 @use "sass:map";
 @use "sass:color";
 
+// Used as a useless default for the `theme` mixin, so that no extra check is necessary for whether the `$function` parameter is set.
 @function return-value($value) {
 	@return $value;
 }
 
 // Lets you set a CSS property which varies in value dependent on the user's theme.
-@mixin theme($property, $values, $function: meta.get-function('return-value'), $args...) {
+@mixin theme(
+	// The property to set. Example: `background-color`
+	$property,
+	// The map of theme IDs to values to apply. Example: `(standard: #ff0000)`
+	$values,
+	// An optional function to apply to each value in `$values`, called with arguments `$value, $args...`.
+	$function: meta.get-function('return-value'),
+	$args...
+) {
 	#{$property}: meta.call($function, map-get($values, standard), $args...);
 	@each $theme, $value in map-remove($values, standard) {
 		.theme-#{$theme} & {

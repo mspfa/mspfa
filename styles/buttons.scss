@@ -1,0 +1,87 @@
+@use 'sass:meta';
+@use 'sass:map';
+@use 'sass:color';
+@use 'sass:list';
+
+@import 'themes.scss';
+
+// Offsets the RGB values by `$offset`.
+@function adjust-color($color, $offset: 16) {
+	@return color.adjust(
+		$color,
+		$red: $offset, $green: $offset, $blue: $offset
+	);
+}
+
+@function depth-shadow($color, $depth: 2, $lightness: -33%, $scale: 2) {
+	$box-shadow: ();
+	@for $offset from 1 through $depth {
+		$box-shadow: list.append(
+			$box-shadow,
+			#{$scale * $offset}px #{$scale * $offset}px 0 0 color.scale($color, $lightness: $lightness),
+			$separator: comma
+		);
+	}
+	@return $box-shadow;
+}
+
+// Applies a pixelated shadow which gives the element 3D depth. Lowers the depth on `:active`.
+@mixin depth-shadow($colors) {
+	@include theme(box-shadow, $colors, meta.get-function('depth-shadow'));
+	
+	&:active {
+		@include theme(box-shadow, $colors, meta.get-function('depth-shadow'), 1);
+	}
+}
+
+// Applies styles to color a `button` element.
+@mixin colored-button(
+	// A color value or a map of themes to color values for the color of the button.
+	$colors,
+	// Optional override for the default button text color.
+	$text-color,
+	// Whether `$colors` represents the color behind the button and not the color of the button.
+	$color-is-behind-button: false
+) {
+	@if type-of($colors) != 'map' {
+		$colors: (standard: $colors);
+	}
+	
+	@if $color-is-behind-button {
+		@each $theme, $color in $colors {
+			$colors: map.set($colors, $theme, adjust-color($color, -12));
+		}
+	}
+	
+	@if $text-color {
+		color: $text-color;
+	} @else {
+		@include theme(color, $translucent-text-color);
+	}
+	
+	@include depth-shadow($colors);
+	@include theme(background-color, $colors);
+	
+	&:focus:not(:active) {
+		@include theme(background-color, $colors, meta.get-function('adjust-color'), 28);
+	}
+}
+
+button:not(.link) {
+	user-select: none;
+	font-family: 'Homestuck-Regular';
+	font-size: 1.5rem;
+	border: none;
+	position: relative;
+	
+	@include colored-button($front-background, false, true);
+	
+	&:active {
+		left: 2px;
+		top: 2px;
+	}
+	
+	& + & {
+		margin-left: 0.75rem;
+	}
+}

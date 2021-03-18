@@ -1,8 +1,5 @@
-@use 'sass:meta';
-@use 'sass:list';
-@use 'sass:color';
-
 @import 'themes.scss';
+@import 'buttons.scss';
 
 @font-face {
 	font-family: 'Homestuck-Regular';
@@ -30,46 +27,5 @@ body {
 	
 	@media screen and (max-width: 950px) {
 		font-size: 1.1em;
-	}
-}
-
-button:not(.link) {
-	user-select: none;
-	font-family: 'Homestuck-Regular';
-	font-size: 1.5rem;
-	border: none;
-	position: relative;
-	
-	@function offset($color, $offset: 16) {
-		@return color.adjust(
-			$color,
-			$red: $offset, $green: $offset, $blue: $offset
-		);
-	}
-	@include theme(background-color, $front-background, meta.get-function('offset'), -12);
-	@include theme(color, $translucent-text-color);
-	
-	@function depth-shadow($color, $depth: 2, $scale: 2) {
-		$box-shadow: ();
-		@for $offset from 1 through $depth {
-			$box-shadow: list.append(
-				$box-shadow,
-				#{$scale * $offset}px #{$scale * $offset}px 0 0 color.scale($color, $lightness: -20%),
-				$separator: comma
-			);
-		}
-		@return $box-shadow;
-	}
-	@include theme(box-shadow, $mid-background, meta.get-function('depth-shadow'));
-	
-	&:focus:not(:active) {
-		@include theme(background-color, $front-background, meta.get-function('offset'), 16);
-	}
-	
-	&:active {
-		left: 2px;
-		top: 2px;
-		
-		@include theme(box-shadow, $mid-background, meta.get-function('depth-shadow'), 1);
 	}
 }
