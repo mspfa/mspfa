@@ -1,0 +1,13 @@
+@import 'styles/themes';
+
+input {
+	padding: 2px;
+	@include theme(color, $text-color);
+	@include theme(background-color, $frontest-background);
+	border: 2px solid;
+	@include theme(border-color, $border-color);
+	
+	&:focus {
+		@include theme(border-color, $focused-border-color);
+	}
+}

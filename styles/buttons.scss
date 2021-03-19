@@ -3,7 +3,7 @@
 @use 'sass:color';
 @use 'sass:list';
 
-@import 'themes.scss';
+@import 'themes';
 
 // Offsets the RGB values by `$offset`.
 @function adjust-color($color, $offset: 16) {

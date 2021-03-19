@@ -25,6 +25,11 @@
 	}
 }
 
+$text-color: (
+	standard: #000000,
+	dark: #e4e4e4
+);
+
 $back-background: (
 	standard: #535353,
 	dark: #141414
@@ -40,9 +45,19 @@ $front-background: (
 	dark: #323232
 );
 
-$text-color: (
+$frontest-background: (
+	standard: #ffffff,
+	dark: #1a1a1a
+);
+
+$border-color: (
+	standard: #8d8d8d,
+	dark: #545454
+);
+
+$focused-border-color: (
 	standard: #000000,
-	dark: #e4e4e4
+	dark: #b0b0b0
 );
 
 $translucent-text-color: ();

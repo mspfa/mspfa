@@ -1,5 +1,6 @@
-@import 'themes.scss';
-@import 'buttons.scss';
+@import 'themes';
+@import 'buttons';
+@import 'text-inputs';
 
 @font-face {
 	font-family: 'Homestuck-Regular';
@@ -24,6 +25,7 @@ body {
 	@include theme(color, $text-color);
 	font-family: 'Courier New', 'Courier', monospace;
 	font-size: 0.75em; // We are using ems so the browser's font scale is multiplied. The default scale is 1em = 16px.
+	font-weight: bold;
 	
 	@media screen and (max-width: 950px) {
 		font-size: 1.1em;
