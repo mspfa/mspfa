@@ -12,6 +12,9 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 	useEffect(() => {
 		dialog.open = true;
 		dialog.form = formRef.current!;
+		if (dialog.onMount) {
+			dialog.onMount(dialog);
+		}
 		
 		return () => {
 			dialog.open = false;

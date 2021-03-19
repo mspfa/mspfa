@@ -74,7 +74,7 @@ export class Dialog extends Promise<DialogResult> {
 	title: ReactNode;
 	content: ReactNode;
 	actions: DialogAction[];
-	/** The form element wrapping this dialog. */
+	/** The form element wrapping this dialog. Never undefined after the dialog's component is mounted. */
 	form?: HTMLFormElement;
 	/** Whether the dialog has been resolved. */
 	resolved = false;
@@ -82,6 +82,8 @@ export class Dialog extends Promise<DialogResult> {
 	open = false;
 	/** The action with `submit: true`. */
 	submitAction: DialogAction | undefined;
+	/** A function called when the dialog's component is mounted, called with an argument of the `Dialog` instance which was mounted. */
+	onMount?: (dialog: Dialog) => void;
 	
 	#resolvePromise: typeof resolvePromise;
 	
