@@ -59,7 +59,20 @@ export const signIn = () => new Promise<boolean>(resolve => {
 				if (evt.origin === window.origin && evt.source === win) {
 					window.removeEventListener('message', handleMessage);
 					clearInterval(winClosedPoll);
-					console.log(evt.data);
+					if (evt.data.error) {
+						// Ignore `access_denied` because it is triggered when the user selects "Cancel" on the Discord auth screen.
+						if (evt.data.error === 'access_denied') {
+							console.warn(evt.data);
+						} else {
+							console.error(evt.data);
+							new Dialog({
+								title: 'Error',
+								content: evt.data.error_description
+							});
+						}
+					} else {
+						console.log(evt.data.code);
+					}
 				}
 			};
 			window.addEventListener('message', handleMessage);

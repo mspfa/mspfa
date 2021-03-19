@@ -5,13 +5,13 @@ const Component = () => {
 	const router = useRouter();
 	
 	useEffect(() => {
-		if (router.query.code) {
-			window.opener.postMessage(router.query.code, location.origin);
+		if (router.isReady) {
+			window.opener.postMessage(router.query, location.origin);
 			window.close();
 		}
 	});
 	
-	return <>Signing in...</>;
+	return null;
 };
 
 export default Component;
