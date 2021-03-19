@@ -1,7 +1,5 @@
 import { useDialogs } from 'modules/dialogs';
-import dynamic from 'next/dynamic';
-
-const Dialog = dynamic(() => import('.'));
+import Dialog from 'components/Dialog';
 
 const Dialogs = () => {
 	const dialogs = useDialogs();
