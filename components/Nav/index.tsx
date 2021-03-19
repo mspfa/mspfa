@@ -4,8 +4,10 @@ import NavMenu from 'components/Nav/NavMenu';
 import { Dialog } from 'modules/dialogs';
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
-import SignInContent from 'components/SignIn/SignInContex';
+import dynamic from 'next/dynamic';
 import './styles.module.scss';
+
+const SignInContent = dynamic(() => import('components/SignIn/SignInContent'));
 
 const showSignIn = () => {
 	new Dialog({
