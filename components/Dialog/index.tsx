@@ -25,8 +25,12 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 			onSubmit={
 				useCallback((evt: React.FormEvent<HTMLFormElement>) => {
 					evt.preventDefault();
-					dialog.submitAction?.onClick();
-				}, [dialog.submitAction])
+					if (dialog.submitAction) {
+						dialog.submitAction.onClick();
+					} else {
+						dialog.resolve({ submit: true });
+					}
+				}, [dialog])
 			}
 		>
 			<dialog id={`dialog-${dialog.id}`} open>

@@ -5,20 +5,27 @@
 		text-align: center;
 	}
 	
-	&-method {
+	&-inputs-password {
+		display: grid;
+		grid-template-columns: auto auto;
+		grid-template-rows: auto auto auto;
+		
+		label {
+			justify-self: right;
+			align-self: center;
+		}
+		
+		input {
+			margin: 1ch;
+		}
+	}
+	
+	&-with {
 		&-password {
-			display: grid;
-			grid-template-columns: auto auto;
-			grid-template-rows: auto auto;
-			
-			label {
-				justify-self: right;
-				align-self: center;
-			}
-			
-			input {
-				margin: 1ch;
-			}
+			grid-column: 1 / span 2;
+			grid-row: 3;
+			margin-top: 1ch;
+			justify-self: center;
 		}
 		
 		&-google {

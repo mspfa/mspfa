@@ -5,12 +5,24 @@ import './styles.module.scss';
 declare const gapi: any;
 
 const signInWithGoogle = () => {
+	const showError = (err: any) => {
+		if (err.error === 'popup_closed_by_user') {
+			console.warn(err);
+		} else {
+			console.error(err);
+			new Dialog({
+				title: 'Error',
+				content: JSON.stringify(err)
+			});
+		}
+	};
+	
 	gapi.load('auth2', () => {
 		gapi.auth2.init().then((auth2: any) => {
 			auth2.signIn().then((user: any) => {
 				console.log(user.getAuthResponse().id_token);
-			}).catch(console.error);
-		}).catch(console.error);
+			}).catch(showError);
+		}).catch(showError);
 	});
 };
 
@@ -19,10 +31,7 @@ const signInWithDiscord = () => {
 	const winClosedPoll = setInterval(() => {
 		if (!win || win.closed) {
 			clearInterval(winClosedPoll);
-			new Dialog({
-				title: 'Error',
-				content: 'The Discord sign-in page was closed.'
-			});
+			console.warn('The Discord sign-in page was closed.');
 		}
 	}, 200);
 	const handleMessage = (evt: MessageEvent<any>) => {
@@ -42,7 +51,7 @@ const SignInContent = () => (
 			<script src="https://apis.google.com/js/platform.js" defer />
 			<meta name="google-signin-client_id" content="910008890195-oqbrg6h1r62vv8fql0p6iffn9j9kanm2.apps.googleusercontent.com" />
 		</Head>
-		<div id="sign-in-method-password">
+		<div id="sign-in-inputs-password">
 			<label htmlFor="email">
 				Email:
 			</label>
@@ -51,12 +60,11 @@ const SignInContent = () => (
 				Password:
 			</label>
 			<input id="password" name="password" type="password" required autoComplete="current-password" />
+			<button id="sign-in-with-password" type="submit">Sign In</button>
 		</div>
 		<p>or</p>
-		<div id="sign-in-method-other">
-			<button id="sign-in-method-google" type="button" onClick={signInWithGoogle}>Google</button>
-			<button id="sign-in-method-discord" type="button" onClick={signInWithDiscord}>Discord</button>
-		</div>
+		<button id="sign-in-with-google" type="button" onClick={signInWithGoogle}>Google</button>
+		<button id="sign-in-with-discord" type="button" onClick={signInWithDiscord}>Discord</button>
 	</div>
 );
 

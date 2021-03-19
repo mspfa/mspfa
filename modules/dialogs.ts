@@ -15,17 +15,19 @@ export type DialogActionOption = {
 	/** The label of the action's button. */
 	label: ReactNode,
 	/**
+	 * Whether submitting the dialog form (e.g. by pressing `enter` with a form field focused) will trigger the action.
+	 * 
+	 * If no action has `submit: true`, it will be set on the first action.
+	 */
+	submit?: boolean,
+	/**
 	 * Whether the action should be auto-focused when the dialog opens.
 	 * 
 	 * If no action has `focus: true`, it will be set by default, either on the action with `submit: true` or on the first action.
 	 */
 	focus?: boolean,
-	/**
-	 * Whether submitting the dialog form (e.g. by pressing `enter` with a form field focused) will trigger the action.
-	 * 
-	 * If no action has `submit: true`, it will be set on the first action.
-	 */
-	submit?: boolean
+	/** Do whatever you want with this property. It does nothing by default. */
+	value?: any
 };
 
 export type DialogAction = DialogActionOption & {
@@ -59,7 +61,7 @@ export type DialogOptions = {
 	actions?: Array<DialogActionOption['label'] | DialogActionOption>
 };
 
-type DialogResult = DialogAction | undefined;
+export type DialogResult = Partial<DialogAction> | undefined;
 let resolvePromise: (value?: DialogResult) => void;
 
 export class Dialog extends Promise<DialogResult> {

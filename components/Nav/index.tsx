@@ -7,16 +7,27 @@ import { useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import './styles.module.scss';
 
-const SignInContent = dynamic(() => import('components/SignIn'), {
+const SignIn = dynamic(() => import('components/SignIn'), {
 	loading: () => <>Loading...</>
 });
 
 const showSignIn = () => {
-	new Dialog({
+	const signInDialog = new Dialog({
 		id: 'sign-in',
 		title: 'Sign In',
-		content: <SignInContent />,
-		actions: ['Cancel']
+		content: <SignIn />,
+		actions: [
+			{ label: 'Cancel', submit: false, focus: false }
+		]
+	});
+	signInDialog.then(result => {
+		if (result?.submit) {
+			const elements = signInDialog.form!.elements as HTMLFormControlsCollection & {
+				email: HTMLInputElement,
+				password: HTMLInputElement
+			};
+			console.log(elements.email.value, elements.password.value);
+		}
 	});
 };
 
