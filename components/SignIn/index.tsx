@@ -9,9 +9,9 @@ export type SignInProps = {
 const SignIn = ({ promptSignIn }: SignInProps) => (
 	<div id="sign-in-content">
 		<Head>
+			<meta name="google-signin-client_id" content="910008890195-oqbrg6h1r62vv8fql0p6iffn9j9kanm2.apps.googleusercontent.com" />
 			{/* I'm not sure if this is the best way to dynamically load the Google API here. If you are sure, then please submit an issue. */}
 			<script src="https://apis.google.com/js/platform.js" defer />
-			<meta name="google-signin-client_id" content="910008890195-oqbrg6h1r62vv8fql0p6iffn9j9kanm2.apps.googleusercontent.com" />
 		</Head>
 		<div id="sign-in-inputs-password">
 			<label htmlFor="email">
