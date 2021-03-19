@@ -7,17 +7,16 @@ import { useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import './styles.module.scss';
 
-const SignInContent = dynamic(() => import('components/SignIn/SignInContent'));
+const SignInContent = dynamic(() => import('components/SignIn'), {
+	loading: () => <>Loading...</>
+});
 
 const showSignIn = () => {
 	new Dialog({
 		id: 'sign-in',
 		title: 'Sign In',
 		content: <SignInContent />,
-		actions: [
-			{ label: 'Sign In', focus: false },
-			'Cancel'
-		]
+		actions: ['Cancel']
 	});
 };
 

@@ -107,7 +107,7 @@ export class Dialog extends Promise<DialogResult> {
 		}
 	}
 	
-	constructor({ id = String(Math.random()).slice(2), parent, title, content, actions: actionsOption }: DialogOptions) {
+	constructor({ id = String(Math.random()).slice(2), parent, title, content, actions: actionsOption = ['Okay'] }: DialogOptions) {
 		super(resolve => {
 			// `this.#resolvePromise` cannot be set here directly, because then a class property would be set before `super` is called, which throws an error.
 			resolvePromise = resolve;
@@ -118,7 +118,7 @@ export class Dialog extends Promise<DialogResult> {
 		this.parent = parent;
 		this.title = title;
 		this.content = content;
-		this.actions = actionsOption ? actionsOption.map((actionOption, index) => {
+		this.actions = actionsOption.map((actionOption, index) => {
 			const action: DialogAction = Object.assign(
 				actionOption instanceof Object && 'label' in actionOption
 					? { ...actionOption }
@@ -142,7 +142,7 @@ export class Dialog extends Promise<DialogResult> {
 			}
 			
 			return action;
-		}) : [];
+		});
 		
 		if (this.actions.length) {
 			// If no action has `submit: true`, set it on the first action (unless it explicitly sets `submit` already).

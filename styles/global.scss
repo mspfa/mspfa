@@ -1,6 +1,7 @@
-@import 'themes';
-@import 'buttons';
-@import 'text-inputs';
+@import 'styles/variables';
+@import 'styles/themes';
+@import 'styles/buttons';
+@import 'styles/text-inputs';
 
 @font-face {
 	font-family: 'Homestuck-Regular';
@@ -23,7 +24,7 @@ body {
 	overflow-y: scroll; // To make the scrollbar not change visibility and offset the page horizontally when changing the page height e.g. by toggling tall spoilers on a short page.
 	@include theme(background-color, $back-background);
 	@include theme(color, $text-color);
-	font-family: 'Courier New', 'Courier', monospace;
+	font-family: $monospace;
 	font-size: 0.75em; // We are using ems so the browser's font scale is multiplied. The default scale is 1em = 16px.
 	font-weight: bold;
 	

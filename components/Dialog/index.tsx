@@ -36,19 +36,21 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 				<div className="dialog-content">
 					{dialog.content}
 				</div>
-				<div className="dialog-actions">
-					{dialog.actions.map((action, index) => (
-						<button
-							key={index}
-							type={action.submit ? 'submit' : 'button'}
-							className="dialog-action"
-							autoFocus={action.focus}
-							onClick={action.submit ? undefined : action.onClick}
-						>
-							{action.label}
-						</button>
-					))}
-				</div>
+				{!!dialog.actions.length && (
+					<div className="dialog-actions">
+						{dialog.actions.map((action, index) => (
+							<button
+								key={index}
+								type={action.submit ? 'submit' : 'button'}
+								className="dialog-action"
+								autoFocus={action.focus}
+								onClick={action.submit ? undefined : action.onClick}
+							>
+								{action.label}
+							</button>
+						))}
+					</div>
+				)}
 			</dialog>
 		</form>
 	);

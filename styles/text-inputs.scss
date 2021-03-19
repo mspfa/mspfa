@@ -1,7 +1,10 @@
+@import 'styles/variables';
 @import 'styles/themes';
 
-input {
+input, textarea {
 	padding: 2px;
+	font-family: $monospace;
+	font-weight: bold;
 	@include theme(color, $text-color);
 	@include theme(background-color, $frontest-background);
 	border: 2px solid;
