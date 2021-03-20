@@ -7,6 +7,10 @@
 	
 	&-methods-external {
 		margin: 2ch 0;
+		
+		.theme-dark & {
+			opacity: 0.85;
+		}
 	}
 	
 	&-inputs {
