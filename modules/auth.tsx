@@ -20,14 +20,6 @@ export type AuthMethod =
 	)
 	& { value: string };
 
-type SignInFormElementNames = 'username' | 'email' | 'password' | 'confirmPassword' | 'acceptedTerms';
-type SignInFormElements =
-	HTMLFormControlsCollection
-	& Array<HTMLInputElement & { name: '' | SignInFormElementNames }>
-	& Record<SignInFormElementNames, HTMLInputElement>;
-
-export const formValues: Partial<Record<SignInFormElementNames, string>> = {};
-
 /**
  * Opens a dialog prompting the user to sign in or create an account.
  * 
@@ -106,15 +98,10 @@ export const signIn = (
 			]
 	});
 	signInDialog.then(result => {
-		const elements = signInDialog.form!.elements as SignInFormElements;
-		
-		for (const element of elements) {
-			console.log(element.name);
-			if (element.name) {
-				formValues[element.name] = element.value;
-				console.log(2, element.value);
-			}
-		}
+		const elements = signInDialog.form!.elements as (
+			HTMLFormControlsCollection
+			& Record<'username' | 'email' | 'password' | 'confirmPassword' | 'acceptedTerms', HTMLInputElement>
+		);
 		
 		if (result) {
 			if (result.submit) {
