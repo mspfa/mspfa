@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { Dialog } from './dialogs';
 
-const api = axios.create();
+const api = axios.create({
+	baseURL: '/api'
+});
 
 /** This function works as if it is automatically plugged into every API call's `.catch`. */
 const onReject = (error: any) => {
