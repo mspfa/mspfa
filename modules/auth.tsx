@@ -84,7 +84,7 @@ export const signIn = (
 		}
 	};
 	
-	const signInDialog = new Dialog({
+	new Dialog({
 		id: 'sign-in',
 		title: signUpStage ? 'Sign Up' : 'Sign In',
 		content: <SignIn signUpStage={signUpStage} promptSignIn={promptSignIn} />,
@@ -97,8 +97,7 @@ export const signIn = (
 				{ label: signUpStage === 1 ? 'Continue' : 'Sign Up', focus: false },
 				{ label: 'Go Back', value: 'back' }
 			]
-	});
-	signInDialog.then(result => {
+	}).then(result => {
 		if (result) {
 			if (result.submit) {
 				if (signUpStage === 1) {
