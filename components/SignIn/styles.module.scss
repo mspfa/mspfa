@@ -27,7 +27,7 @@
 	
 	&-with {
 		&-password {
-			margin-top: 1ch;
+			margin-top: 1.5ch;
 		}
 		
 		&-google {
@@ -38,4 +38,11 @@
 			@include colored-button(#7289da, #ffffff);
 		}
 	}
+}
+
+#reset-password-link {
+	grid-column: 2 / 2;
+	position: relative;
+	top: -0.5ch;
+	font-size: 0.7em;
 }
