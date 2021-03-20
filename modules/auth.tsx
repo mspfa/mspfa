@@ -1,5 +1,6 @@
 import { Dialog } from 'modules/dialogs';
 import dynamic from 'next/dynamic';
+import type { SignInProps } from 'components/SignIn';
 
 declare const gapi: any;
 
@@ -19,12 +20,23 @@ export type AuthMethod =
 	)
 	& { value: string };
 
+type SignInFormElementNames = 'username' | 'email' | 'password' | 'confirmPassword' | 'acceptedTerms';
+type SignInFormElements =
+	HTMLFormControlsCollection
+	& Array<HTMLInputElement & { name: '' | SignInFormElementNames }>
+	& Record<SignInFormElementNames, HTMLInputElement>;
+
+export const formValues: Partial<Record<SignInFormElementNames, string>> = {};
+
 /**
  * Opens a dialog prompting the user to sign in or create an account.
  * 
  * When the dialog closes, resolves a boolean for whether the user signed in.
  */
-export const signIn = (signingUp = false) => new Promise<boolean>(resolve => {
+export const signIn = (
+	/** 0 or undefined if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
+	signUpStage: SignInProps['signUpStage'] = 0
+) => {
 	const promptSignIn = {
 		google: () => {
 			const onError = (err: any) => {
@@ -81,26 +93,41 @@ export const signIn = (signingUp = false) => new Promise<boolean>(resolve => {
 	
 	const signInDialog = new Dialog({
 		id: 'sign-in',
-		title: signingUp ? 'Sign Up' : 'Sign In',
-		content: <SignIn signingUp={signingUp} promptSignIn={promptSignIn} />,
-		actions: [
-			{
-				label: signingUp ? 'Sign Up' : 'Sign In',
-				focus: false
-			},
-			'Cancel'
-		]
+		title: signUpStage ? 'Sign Up' : 'Sign In',
+		content: <SignIn signUpStage={signUpStage} promptSignIn={promptSignIn} />,
+		actions: signUpStage === 0
+			? [
+				{ label: 'Sign In', focus: false },
+				{ label: 'Cancel', value: 'exit' }
+			]
+			: [
+				{ label: signUpStage === 1 ? 'Continue' : 'Sign Up', focus: false },
+				{ label: 'Go Back', value: 'back' }
+			]
 	});
 	signInDialog.then(result => {
-		const submitted = !!result?.submit;
-		resolve(submitted);
+		const elements = signInDialog.form!.elements as SignInFormElements;
 		
-		if (submitted) {
-			const elements = signInDialog.form!.elements as HTMLFormControlsCollection & {
-				email: HTMLInputElement,
-				password: HTMLInputElement
-			};
-			console.log(elements.email.value, elements.password.value);
+		for (const element of elements) {
+			console.log(element.name);
+			if (element.name) {
+				formValues[element.name] = element.value;
+				console.log(2, element.value);
+			}
+		}
+		
+		if (result) {
+			if (result.submit) {
+				if (signUpStage === 1) {
+					// If the user is on stage 1 (first stage of signing up), and they submit the dialog's form, move them to the next stage.
+					signIn(2);
+				} else {
+					// If the user is on stage 0 (signing in) or stage 2 (final stage of signing up), and they submit the dialog's form, then use the provided email and password credentials.
+					console.log(elements.email.value, elements.password.value);
+				}
+			} else if (result.value === 'back') {
+				signIn(signUpStage - 1);
+			}
 		}
 	});
-});
+};

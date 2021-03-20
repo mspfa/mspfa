@@ -6,18 +6,21 @@
 	}
 	
 	&-methods-external {
-		margin: 2ch 0;
+		margin-top: 2ch;
 		
 		.theme-dark & {
 			opacity: 0.85;
 		}
 	}
 	
+	&-divider {
+		margin: 2ch 0;
+	}
+	
 	&-inputs {
 		display: grid;
 		grid-template-columns: auto auto;
 		grid-gap: 1ch;
-		margin-top: 1ch;
 		
 		label {
 			justify-self: right;
