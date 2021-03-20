@@ -16,35 +16,36 @@ export type SignInProps = {
 	promptSignIn: Record<Exclude<AuthMethod['type'], 'password'>, () => void>
 };
 
-const [useUsername, setUsername] = createGlobalState('');
-const [useEmail, setEmail] = createGlobalState('');
-const [usePassword, setPassword] = createGlobalState('');
-const [useConfirmPassword, setConfirmPassword] = createGlobalState('');
-const [useAcceptedTerms, setAcceptedTerms] = createGlobalState(false);
+const [useInputUsername, setInputUsername, getInputUsername] = createGlobalState('');
+const [useInputEmail, setInputEmail, getInputEmail] = createGlobalState('');
+const [useInputPassword, setInputPassword, getInputPassword] = createGlobalState('');
+const [useInputConfirmPassword, setInputConfirmPassword, getInputConfirmPassword] = createGlobalState('');
 
-const setInput = {
-	username: setUsername,
-	email: setEmail,
-	password: setPassword,
-	confirmPassword: setConfirmPassword
+const setInputValue = {
+	username: setInputUsername,
+	email: setInputEmail,
+	password: setInputPassword,
+	confirmPassword: setInputConfirmPassword
+};
+
+export const getInputValue = {
+	username: getInputUsername,
+	email: getInputEmail,
+	password: getInputPassword,
+	confirmPassword: getInputConfirmPassword
 };
 
 const onChange = (
-	evt: ChangeEvent<HTMLInputElement & { name: keyof typeof setInput }>
+	evt: ChangeEvent<HTMLInputElement & { name: keyof typeof setInputValue }>
 ) => {
-	setInput[evt.target.name](evt.target.value);
-};
-
-const onAcceptedTermsChange = (evt: ChangeEvent<HTMLInputElement>) => {
-	setAcceptedTerms(evt.target.checked);
+	setInputValue[evt.target.name](evt.target.value);
 };
 
 const SignIn = ({ signUpStage, promptSignIn }: SignInProps) => {
-	const [username] = useUsername();
-	const [email] = useEmail();
-	const [password] = usePassword();
-	const [confirmPassword] = useConfirmPassword();
-	const [acceptedTerms] = useAcceptedTerms();
+	const [username] = useInputUsername();
+	const [email] = useInputEmail();
+	const [password] = useInputPassword();
+	const [confirmPassword] = useInputConfirmPassword();
 	
 	return (
 		<div id="sign-in-content">
@@ -135,8 +136,6 @@ const SignIn = ({ signUpStage, promptSignIn }: SignInProps) => {
 							name="acceptedTerms"
 							type="checkbox"
 							required
-							checked={acceptedTerms}
-							onChange={onAcceptedTermsChange}
 						/>
 						<label htmlFor="sign-in-accepted-terms" className="translucent">
 							I agree to the <Link href="/terms" target="_blank">terms of service</Link>.

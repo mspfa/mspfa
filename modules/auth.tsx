@@ -1,6 +1,7 @@
 import { Dialog } from 'modules/dialogs';
 import dynamic from 'next/dynamic';
 import type { SignInProps } from 'components/SignIn';
+import { getInputValue } from 'components/SignIn';
 
 declare const gapi: any;
 
@@ -98,11 +99,6 @@ export const signIn = (
 			]
 	});
 	signInDialog.then(result => {
-		const elements = signInDialog.form!.elements as (
-			HTMLFormControlsCollection
-			& Record<'username' | 'email' | 'password' | 'confirmPassword' | 'acceptedTerms', HTMLInputElement>
-		);
-		
 		if (result) {
 			if (result.submit) {
 				if (signUpStage === 1) {
@@ -110,7 +106,7 @@ export const signIn = (
 					signIn(2);
 				} else {
 					// If the user is on stage 0 (signing in) or stage 2 (final stage of signing up), and they submit the dialog's form, then use the provided email and password credentials.
-					console.log(elements.email.value, elements.password.value);
+					console.log(getInputValue.email(), getInputValue.password());
 				}
 			} else if (result.value === 'back') {
 				signIn(signUpStage - 1);
