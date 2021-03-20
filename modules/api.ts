@@ -8,12 +8,12 @@ const api = axios.create({
 /** This function works as if it is automatically plugged into every API call's `.catch`. */
 const onReject = (error: any) => {
 	console.error(error);
-
+	
 	new Dialog({
 		title: 'Error',
 		content: error.message
 	});
-
+	
 	return Promise.reject(error);
 };
 api.interceptors.request.use(
