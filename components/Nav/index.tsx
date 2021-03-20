@@ -6,6 +6,10 @@ import { useCallback } from 'react';
 import { signIn } from 'modules/auth';
 import './styles.module.scss';
 
+const onClickSignIn = () => {
+	signIn();
+};
+
 const Nav = () => {
 	const router = useRouter();
 	
@@ -19,7 +23,7 @@ const Nav = () => {
 		<nav>
 			<NavGroup id="primary">
 				<NavItem id="home" label="Home" href="/" />
-				<NavItem id="sign-in" label="Sign In" onClick={signIn} />
+				<NavItem id="sign-in" label="Sign In" onClick={onClickSignIn} />
 			</NavGroup>
 			<NavGroup id="secondary">
 				<NavItem id="search" label="Site Search" href="/search" />

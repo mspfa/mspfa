@@ -24,7 +24,7 @@ export type AuthMethod =
  * 
  * When the dialog closes, resolves a boolean for whether the user signed in.
  */
-export const signIn = () => new Promise<boolean>(resolve => {
+export const signIn = (signingUp = false) => new Promise<boolean>(resolve => {
 	const promptSignIn = {
 		google: () => {
 			const onError = (err: any) => {
@@ -81,10 +81,13 @@ export const signIn = () => new Promise<boolean>(resolve => {
 	
 	const signInDialog = new Dialog({
 		id: 'sign-in',
-		title: 'Sign In',
-		content: <SignIn promptSignIn={promptSignIn} />,
+		title: signingUp ? 'Sign Up' : 'Sign In',
+		content: <SignIn signingUp={signingUp} promptSignIn={promptSignIn} />,
 		actions: [
-			{ label: 'Sign In', focus: false },
+			{
+				label: signingUp ? 'Sign Up' : 'Sign In',
+				focus: false
+			},
 			'Cancel'
 		]
 	});
