@@ -42,6 +42,7 @@ const Link = React.forwardRef((
 	if (href === undefined) {
 		return (
 			<button
+				type="button"
 				className={linkClassName}
 				{...props as any}
 				ref={ref}

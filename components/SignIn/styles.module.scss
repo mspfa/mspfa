@@ -5,10 +5,15 @@
 		text-align: center;
 	}
 	
-	&-inputs-password {
+	&-methods-external {
+		margin: 2ch 0;
+	}
+	
+	&-inputs {
 		display: grid;
 		grid-template-columns: auto auto;
-		grid-template-rows: auto auto auto;
+		grid-template-rows: auto auto;
+		margin-top: 1ch;
 		
 		label {
 			justify-self: right;
@@ -22,10 +27,7 @@
 	
 	&-with {
 		&-password {
-			grid-column: 1 / span 2;
-			grid-row: 3;
 			margin-top: 1ch;
-			justify-self: center;
 		}
 		
 		&-google {

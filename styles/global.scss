@@ -32,3 +32,7 @@ body {
 		font-size: 1.1em;
 	}
 }
+
+.translucent {
+	@include theme(color, $translucent-text-color);
+}
