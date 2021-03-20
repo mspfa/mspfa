@@ -11,7 +11,7 @@ const onReject = (error: any) => {
 
 	new Dialog({
 		title: 'Error',
-		content: String(error.message)
+		content: error.message
 	});
 
 	return Promise.reject(error);
