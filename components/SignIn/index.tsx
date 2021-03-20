@@ -10,12 +10,6 @@ const startSigningUp = () => {
 	signIn(1);
 };
 
-export type SignInProps = {
-	/** 0 or undefined if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
-	signUpStage?: number,
-	promptSignIn: Record<Exclude<AuthMethod['type'], 'password'>, () => void>
-};
-
 const [useInputUsername, setInputUsername, getInputUsername] = createGlobalState('');
 const [useInputEmail, setInputEmail, getInputEmail] = createGlobalState('');
 const [useInputPassword, setInputPassword, getInputPassword] = createGlobalState('');
@@ -39,6 +33,12 @@ const onChange = (
 	evt: ChangeEvent<HTMLInputElement & { name: keyof typeof setInputValue }>
 ) => {
 	setInputValue[evt.target.name](evt.target.value);
+};
+
+export type SignInProps = {
+	/** 0 or undefined if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
+	signUpStage?: number,
+	promptSignIn: Record<Exclude<AuthMethod['type'], 'password'>, () => void>
 };
 
 const SignIn = ({ signUpStage, promptSignIn }: SignInProps) => {
