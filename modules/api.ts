@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Dialog } from './dialogs';
 
+/** An [axios](https://github.com/axios/axios#readme) instance for the MSPFA API. */
 const api = Object.assign(
 	axios.create({
 		baseURL: '/api'
