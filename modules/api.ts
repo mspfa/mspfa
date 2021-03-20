@@ -1,27 +1,26 @@
 import axios from 'axios';
 import { Dialog } from './dialogs';
 
+const api = axios.create();
+
 /** This function works as if it is automatically plugged into every API call's `.catch`. */
-const handleReject = (error: any) => {
+const onReject = (error: any) => {
 	console.error(error);
-	
+
 	new Dialog({
 		title: 'Error',
 		content: String(error.message)
 	});
-	
+
 	return Promise.reject(error);
 };
-
-const api = axios.create();
-
 api.interceptors.request.use(
 	undefined,
-	handleReject
+	onReject
 );
 api.interceptors.response.use(
 	undefined,
-	handleReject
+	onReject
 );
 
 export default api;

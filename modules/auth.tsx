@@ -27,7 +27,7 @@ export type AuthMethod =
 export const signIn = () => new Promise<boolean>(resolve => {
 	const promptSignIn = {
 		google: () => {
-			const handleError = (err: any) => {
+			const onError = (err: any) => {
 				if (err.error === 'popup_closed_by_user') {
 					console.warn(err);
 				} else {
@@ -43,8 +43,8 @@ export const signIn = () => new Promise<boolean>(resolve => {
 				gapi.auth2.init().then((auth2: any) => {
 					auth2.signIn().then((user: any) => {
 						console.log(user.getAuthResponse().id_token);
-					}).catch(handleError);
-				}).catch(handleError);
+					}).catch(onError);
+				}).catch(onError);
 			});
 		},
 		discord: () => {
@@ -55,9 +55,9 @@ export const signIn = () => new Promise<boolean>(resolve => {
 					console.warn('The Discord sign-in page was closed.');
 				}
 			}, 200);
-			const handleMessage = (evt: MessageEvent<any>) => {
+			const onMessage = (evt: MessageEvent<any>) => {
 				if (evt.origin === window.origin && evt.source === win) {
-					window.removeEventListener('message', handleMessage);
+					window.removeEventListener('message', onMessage);
 					clearInterval(winClosedPoll);
 					if (evt.data.error) {
 						// Ignore `access_denied` because it is triggered when the user selects "Cancel" on the Discord auth screen.
@@ -75,7 +75,7 @@ export const signIn = () => new Promise<boolean>(resolve => {
 					}
 				}
 			};
-			window.addEventListener('message', handleMessage);
+			window.addEventListener('message', onMessage);
 		}
 	};
 	

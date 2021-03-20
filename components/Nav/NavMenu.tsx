@@ -23,13 +23,13 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 	const menuRef = useRef<HTMLDivElement>(null);
 	
 	/** Handles the focus event on the menu's label or any link in the menu. */
-	const handleFocus = useCallback(() => {
+	const onFocus = useCallback(() => {
 		// When the menu's label or any link in the menu is focused, add the `force-open` class to the menu.
 		setForceOpen(true);
 	}, []);
 
 	/** Handles the blur event on the menu's label or any link in the menu. */
-	const handleBlur = useCallback(() => {
+	const onBlur = useCallback(() => {
 		// `setTimeout` is necessary here because otherwise, for example when tabbing through links in the menu, this will run before the next link in the menu focuses, so the `if` statement would not detect that the menu is in focus.
 		setTimeout(() => {
 			if (
@@ -44,12 +44,12 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 		});
 	}, []);
 	
-	/** Adds `onFocus={handleFocus}` and `onBlur={handleBlur}` props to the links in the menu. */
+	/** Adds `onFocus={onFocus}` and `onBlur={onBlur}` props to the links in the menu. */
 	const addEventListeners = (child: JSX.Element) =>
 		React.cloneElement(child, {
 			key: child.props.id,
-			onFocus: handleFocus,
-			onBlur: handleBlur
+			onFocus,
+			onBlur
 		} as Partial<Parameters<typeof NavItem>[0]>);
 	
 	return (
@@ -58,13 +58,13 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 			<NavItem
 				id={id}
 				{...props}
-				onFocus={handleFocus}
+				onFocus={onFocus}
 				onBlur={
 					useCallback(() => {
-						handleBlur();
+						onBlur();
 						// When the menu's label is blurred, it is (obviously) no longer focused from being clicked.
 						setClickedLabel(false);
-						// This ESLint comment is necessary because the rule thinks `handleBlur` should be a dependency here. It shouldn't because it is memoized in its definition with no dependencies and thus can never change.
+						// This ESLint comment is necessary because the rule thinks `onBlur` should be a dependency here. It shouldn't because it is memoized in its definition with no dependencies and thus can never change.
 						// eslint-disable-next-line react-hooks/exhaustive-deps
 					}, [])
 				}
