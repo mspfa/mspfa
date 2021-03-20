@@ -2,3 +2,4 @@
 
 export { Dialog } from 'modules/dialogs';
 export { signIn } from 'modules/auth';
+export { default as api } from 'modules/api';
