@@ -28,15 +28,14 @@ const SignIn = ({ promptSignIn }: SignInProps) => (
 			<input id="email" name="email" type="email" required autoFocus maxLength={254} autoComplete="email" />
 			<label htmlFor="password">Password:</label>
 			<input id="password" name="password" type="password" required autoComplete="current-password" />
-			<div id="reset-password-link">
+			<div id="reset-password-link-container">
 				<Link className="translucent">Reset Password</Link>
 			</div>
 		</div>
-		<button id="sign-in-with-password" type="submit">Sign In</button>
-		<span id="sign-up-link-container">
-			<span className="translucent"> or </span>
+		<div id="sign-up-link-container">
+			<span className="translucent">Don't have an account? </span>
 			<Link>Sign Up</Link>
-		</span>
+		</div>
 	</div>
 );
 

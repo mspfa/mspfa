@@ -40,9 +40,15 @@
 	}
 }
 
-#reset-password-link {
+#reset-password-link-container {
 	grid-column: 2 / 2;
 	position: relative;
+	margin: 0 1ch;
 	top: -0.5ch;
 	font-size: 0.7em;
+}
+
+#sign-up-link-container {
+	margin-top: 3ch;
+	font-size: 0.85em;
 }

@@ -84,7 +84,8 @@ export const signIn = () => new Promise<boolean>(resolve => {
 		title: 'Sign In',
 		content: <SignIn promptSignIn={promptSignIn} />,
 		actions: [
-			{ label: 'Cancel', submit: false, focus: false }
+			{ label: 'Sign In', focus: false },
+			'Cancel'
 		]
 	});
 	signInDialog.then(result => {
