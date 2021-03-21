@@ -1,6 +1,7 @@
 import { MongoClient } from 'mongodb';
 
-const client = new MongoClient(process.env.DB_HOST, {
+// The `as any` below is to make TypeScript not angry when this module is imported from `modules/server/setup`.
+const client = new MongoClient((process.env as any).DB_HOST, {
 	useUnifiedTopology: true
 });
 client.connect();
