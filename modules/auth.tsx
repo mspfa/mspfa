@@ -1,6 +1,7 @@
 import { Dialog } from 'modules/dialogs';
 import dynamic from 'next/dynamic';
 import { getInputValue, resetForm } from 'components/SignIn';
+import api from './api';
 
 declare const gapi: any;
 
@@ -10,12 +11,11 @@ const SignIn = dynamic(() => import('components/SignIn'), {
 
 export type AuthMethod = (
 	(
-		{
-			type: 'password' | 'google' | 'discord'
-		}
+		{ type: 'google' | 'discord' }
 		| {
 			type: 'password',
-			legacy: true
+			/** Whether the password was created on the old site. */
+			legacy?: true
 		}
 	)
 	& { value: string }
@@ -25,16 +25,22 @@ let signInDialog: Dialog | undefined;
 /** 0 if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
 let signUpStage = 0;
 
+let authMethod: AuthMethod;
+
+const externalSignInDone = () => {
+	signInDialog!.resolve({ submit: true, value: authMethod.type });
+};
+
 export const promptExternalSignIn = {
 	google: () => {
-		const onError = (err: any) => {
-			if (err.error === 'popup_closed_by_user') {
-				console.warn(err);
+		const onError = (error: any) => {
+			if (error.error === 'popup_closed_by_user') {
+				console.warn(error);
 			} else {
-				console.error(err);
+				console.error(error);
 				new Dialog({
 					title: 'Error',
-					content: JSON.stringify(err)
+					content: JSON.stringify(error)
 				});
 			}
 		};
@@ -42,7 +48,13 @@ export const promptExternalSignIn = {
 		gapi.load('auth2', () => {
 			gapi.auth2.init().then((auth2: any) => {
 				auth2.signIn().then((user: any) => {
-					console.log(user.getAuthResponse().id_token);
+					if (signInDialog!.open) {
+						authMethod = {
+							type: 'google',
+							value: user.getAuthResponse().id_token
+						};
+						externalSignInDone();
+					}
 				}).catch(onError);
 			}).catch(onError);
 		});
@@ -70,8 +82,12 @@ export const promptExternalSignIn = {
 							content: evt.data.error_description
 						});
 					}
-				} else {
-					console.log(evt.data.code);
+				} else if (signInDialog!.open) {
+					authMethod = {
+						type: 'discord',
+						value: evt.data.code
+					};
+					externalSignInDone();
 				}
 			}
 		};
@@ -79,12 +95,18 @@ export const promptExternalSignIn = {
 	}
 };
 
-/**
- * Opens a dialog prompting the user to sign in or create an account.
- * 
- * When the dialog closes, resolves a boolean for whether the user signed in.
- */
+let signInLoading = false;
+
+/** Opens a dialog prompting the user to sign in or sign up. */
 export const signIn = (newSignUpStage = 0) => {
+	if (signInLoading) {
+		new Dialog({
+			title: 'Error',
+			content: 'Your sign-in is already loading. Please wait.'
+		});
+		return;
+	}
+	
 	signUpStage = newSignUpStage;
 	
 	if (signInDialog && !signInDialog.resolved) {
@@ -98,26 +120,53 @@ export const signIn = (newSignUpStage = 0) => {
 		content: <SignIn signUpStage={signUpStage} />,
 		actions: signUpStage === 0
 			? [
-				{ label: 'Sign In', focus: false },
+				{ label: 'Sign In', value: 'password', focus: false },
 				{ label: 'Cancel', value: 'exit' }
 			]
-			: [
-				{
-					label: signUpStage === 1 ? 'Continue' : 'Sign Up',
-					focus: false
-				},
-				{ label: 'Go Back', value: 'back' }
-			]
+			: signUpStage === 1
+				? [
+					{ label: 'Continue', focus: false },
+					{ label: 'Go Back', value: 'back' }
+				]
+				: [
+					{ label: 'Sign Up', value: 'password', focus: false },
+					{ label: 'Cancel', value: 'exit' }
+				]
 	});
 	signInDialog.then(result => {
 		if (result) {
 			if (result.submit) {
 				if (signUpStage === 1) {
-					// If the user is on stage 1 (first stage of signing up), and they submit the dialog's form, move them to the next stage.
-					signIn(signUpStage + 1);
+					// If the user submits the form while on the first stage of sign-up, move them to the next stage.
+					signIn(2);
 				} else {
-					// If the user is on stage 0 (signing in) or stage 2 (final stage of signing up), and they submit the dialog's form, then use the provided email and password credentials.
-					console.log(getInputValue.email(), getInputValue.password());
+					// If the user submits the form while on the sign-in screen or on the last stage of sign-up, attempt sign-in or sign-up.
+					
+					console.log(result.value);
+					const authWithPassword = result.value === 'password';
+					if (authWithPassword) {
+						authMethod = {
+							type: 'password',
+							value: getInputValue.password()
+						};
+					}
+					
+					signInLoading = true;
+					api.post(signUpStage === 0 ? 'session' : 'users', {
+						email: authWithPassword ? getInputValue.email() : undefined,
+						authMethod,
+						name: getInputValue.name()
+						// TODO: born
+					}).then(response => {
+						// If sign-in or sign-up succeeds, reset the sign-in form and update the client's user state.
+						resetForm();
+						console.log(response);
+					}).catch(() => {
+						// If sign-in or sign-up fails, go back to sign-in screen.
+						signIn();
+					}).finally(() => {
+						signInLoading = false;
+					});
 				}
 			} else if (result.value === 'exit') {
 				resetForm();

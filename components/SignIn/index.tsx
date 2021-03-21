@@ -15,19 +15,20 @@ const [useInputPassword, setInputPassword, getInputPassword] = createGlobalState
 const [useInputConfirmPassword, setInputConfirmPassword, getInputConfirmPassword] = createGlobalState('');
 
 const setInputValue = {
-	username: setInputUsername,
+	name: setInputUsername,
 	email: setInputEmail,
 	password: setInputPassword,
 	confirmPassword: setInputConfirmPassword
 };
 
 export const getInputValue = {
-	username: getInputUsername,
+	name: getInputUsername,
 	email: getInputEmail,
 	password: getInputPassword,
 	confirmPassword: getInputConfirmPassword
 };
 
+/** Resets the values of all sign-in form inputs. */
 export const resetForm = () => {
 	for (const set of Object.values(setInputValue)) {
 		set('');
@@ -46,7 +47,7 @@ export type SignInProps = {
 };
 
 const SignIn = ({ signUpStage }: SignInProps) => {
-	const [username] = useInputUsername();
+	const [name] = useInputUsername();
 	const [email] = useInputEmail();
 	const [password] = useInputPassword();
 	const [confirmPassword] = useInputConfirmPassword();
@@ -73,16 +74,16 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 			<div id="sign-in-inputs">
 				{signUpStage === 2 ? (
 					<>
-						<label htmlFor="sign-in-username">Username:</label>
+						<label htmlFor="sign-in-name">Username:</label>
 						<input
-							id="sign-in-username"
-							name="username"
+							id="sign-in-name"
+							name="name"
 							required
 							autoComplete="username"
 							minLength={2}
 							maxLength={32}
 							autoFocus
-							value={username}
+							value={name}
 							onChange={onChange}
 						/>
 					</>

@@ -4,7 +4,8 @@ import { Dialog } from './dialogs';
 /** An [axios](https://github.com/axios/axios#readme) instance for the MSPFA API. */
 const api = Object.assign(
 	axios.create({
-		baseURL: '/api'
+		baseURL: '/api',
+		timeout: 10000
 	}),
 	{
 		/** Use this config object in API requests to not reject the request's promise on HTTP 4xx errors. */
