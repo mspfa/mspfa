@@ -1,4 +1,4 @@
-import { useDialogs } from 'modules/dialogs';
+import { useDialogs } from 'modules/client/dialogs';
 import Dialog from 'components/Dialog';
 
 const Dialogs = () => {

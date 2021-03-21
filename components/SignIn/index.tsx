@@ -1,4 +1,4 @@
-import { signIn, promptExternalSignIn } from 'modules/auth';
+import { signIn, promptExternalSignIn } from 'modules/client/auth';
 import Head from 'next/head';
 import Link from 'components/Link';
 import createGlobalState from 'global-react-state';

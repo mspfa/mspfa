@@ -1,4 +1,4 @@
-import type { Quirk } from 'modules/quirks';
+import type { Quirk } from 'modules/server/quirks';
 
 export type ComicPage = {
 	published: Date,

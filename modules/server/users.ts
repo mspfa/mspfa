@@ -1,7 +1,7 @@
 import type { ObjectId } from 'mongodb';
-import type { AuthMethod } from 'modules/auth';
-import type { Theme } from 'modules/themes';
-import type { achievements } from 'modules/achievements';
+import type { AuthMethod } from 'modules/client/auth';
+import type { Theme } from 'modules/server/themes';
+import type { achievements } from 'modules/server/achievements';
 
 export type UserSession = {
 	token: string,

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import type { Dialog as DialogClass } from 'modules/dialogs';
+import type { Dialog as DialogClass } from 'modules/client/dialogs';
 import './styles.module.scss';
 
 export type DialogProps = {

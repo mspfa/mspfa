@@ -1,4 +1,4 @@
-import { Dialog } from 'modules/dialogs';
+import { Dialog } from 'modules/client/dialogs';
 import dynamic from 'next/dynamic';
 import { getInputValue, resetForm } from 'components/SignIn';
 import api from './api';

@@ -1,7 +1,7 @@
 import type { AppProps } from 'next/dist/next-server/lib/router/router';
 import Head from 'next/head';
 import { SWRConfig } from 'swr';
-import * as MSPFA from 'modules/MSPFA';
+import * as MSPFA from 'modules/client/MSPFA';
 import 'styles/global.scss';
 
 if (process.browser) {
