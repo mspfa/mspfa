@@ -43,6 +43,16 @@ export type DialogOptions = {
 	 * If set, any other dialog with the same `id` will be resolved with `undefined` when this dialog is created.
 	 */
 	id?: Key,
+	/**
+	 * The index at which this dialog should be inserted into the dialog stack. Negative numbers count from the top of the stack.
+	 * 
+	 * Examples:
+	 * - `-1` (default) puts the dialog on top.
+	 * - `-2` puts the dialog below the top one.
+	 * - `1` puts the dialog above the bottom one.
+	 * - `0` puts the dialog on the bottom.
+	 */
+	index?: number,
 	/** A dialog which, when closed, should forcibly close this dialog and resolve it with `undefined`. */
 	parent?: Dialog,
 	/** The title of the dialog. */
@@ -111,7 +121,14 @@ export class Dialog extends Promise<DialogResult> {
 		}
 	}
 	
-	constructor({ id = String(Math.random()).slice(2), parent, title, content, actions: actionsOption = ['Okay'] }: DialogOptions) {
+	constructor({
+		id = String(Math.random()).slice(2),
+		index = -1,
+		parent,
+		title,
+		content,
+		actions: actionsOption = ['Okay']
+	}: DialogOptions) {
 		super(resolve => {
 			// `this.#resolvePromise` cannot be set here directly, because then a class property would be set before `super` is called, which throws an error.
 			resolvePromise = resolve;
@@ -179,7 +196,19 @@ export class Dialog extends Promise<DialogResult> {
 		}
 		
 		// Render the dialog's component.
-		dialogs.push(this);
+		if (index === -1) {
+			dialogs.push(this);
+		} else if (index === 0) {
+			dialogs.unshift(this);
+		} else {
+			// Convert negative indexes relative to the end of the array into absolute indexes relative to the start of the array.
+			if (index < 0) {
+				index += dialogs.length;
+			}
+			index = Math.min(Math.max(index, 0), dialogs.length - 1);
+			// Insert `this` into `dialogs` at index `index`.
+			dialogs.splice(index, 0, this);
+		}
 		updateDialogs();
 	}
 }

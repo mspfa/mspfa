@@ -116,6 +116,7 @@ export const signIn = (newSignUpStage = 0) => {
 	
 	signInDialog = new Dialog({
 		id: 'sign-in',
+		index: 0, // This is necessary to prevent the sign-in dialog from covering up sign-in error dialogs.
 		title: signUpStage ? 'Sign Up' : 'Sign In',
 		content: <SignIn signUpStage={signUpStage} />,
 		actions: signUpStage === 0
@@ -155,13 +156,13 @@ export const signIn = (newSignUpStage = 0) => {
 						// TODO: born
 					}).then(response => {
 						// If sign-in or sign-up succeeds, reset the sign-in form and update the client's user state.
+						signInLoading = false;
 						resetForm();
 						console.log(response);
 					}).catch(() => {
 						// If sign-in or sign-up fails, go back to sign-in screen.
-						signIn();
-					}).finally(() => {
 						signInLoading = false;
+						signIn();
 					});
 				}
 			} else if (result.value === 'exit') {
