@@ -130,7 +130,7 @@ export const signIn = (newSignUpStage = 0) => {
 				]
 				: [
 					{ label: 'Sign Up', value: 'password', focus: false },
-					{ label: 'Cancel', value: 'exit' }
+					{ label: 'Go Back', value: 'back' }
 				]
 	});
 	signInDialog.then(result => {
@@ -142,7 +142,6 @@ export const signIn = (newSignUpStage = 0) => {
 				} else {
 					// If the user submits the form while on the sign-in screen or on the last stage of sign-up, attempt sign-in or sign-up.
 					
-					console.log(result.value);
 					const authWithPassword = result.value === 'password';
 					if (authWithPassword) {
 						authMethod = {

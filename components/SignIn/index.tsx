@@ -91,6 +91,7 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 					<>
 						<label htmlFor="sign-in-email">Email:</label>
 						<input
+							key={signUpStage}
 							id="sign-in-email"
 							name="email"
 							type="email"
