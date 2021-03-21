@@ -26,6 +26,7 @@
 		"axios": "^0.21.1",
 		"fs-extra": "^9.1.0",
 		"global-react-state": "^1.1.4",
+		"google-auth-library": "^7.0.2",
 		"mongodb": "^3.6.5",
 		"next": "^10.0.9",
 		"react": "^17.0.1",
