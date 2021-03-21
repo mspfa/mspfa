@@ -5,4 +5,6 @@ const client = new MongoClient(process.env.DB_HOST, {
 });
 client.connect();
 
-export const db = client.db('mspfa');
+const db = client.db('mspfa');
+
+export default db;
