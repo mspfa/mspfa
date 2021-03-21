@@ -1,5 +1,4 @@
-import type { AuthMethod } from 'modules/auth';
-import { signIn } from 'modules/auth';
+import { signIn, promptExternalSignIn } from 'modules/auth';
 import Head from 'next/head';
 import Link from 'components/Link';
 import createGlobalState from 'global-react-state';
@@ -29,6 +28,12 @@ export const getInputValue = {
 	confirmPassword: getInputConfirmPassword
 };
 
+export const resetForm = () => {
+	for (const set of Object.values(setInputValue)) {
+		set('');
+	}
+};
+
 const onChange = (
 	evt: ChangeEvent<HTMLInputElement & { name: keyof typeof setInputValue }>
 ) => {
@@ -36,12 +41,11 @@ const onChange = (
 };
 
 export type SignInProps = {
-	/** 0 or undefined if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
-	signUpStage?: number,
-	promptSignIn: Record<Exclude<AuthMethod['type'], 'password'>, () => void>
+	/** 0 if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
+	signUpStage: number
 };
 
-const SignIn = ({ signUpStage, promptSignIn }: SignInProps) => {
+const SignIn = ({ signUpStage }: SignInProps) => {
 	const [username] = useInputUsername();
 	const [email] = useInputEmail();
 	const [password] = useInputPassword();
@@ -60,8 +64,8 @@ const SignIn = ({ signUpStage, promptSignIn }: SignInProps) => {
 						{signUpStage ? 'Sign up with' : 'Sign in with'}
 					</div>
 					<div id="sign-in-methods-external">
-						<button id="sign-in-with-google" type="button" onClick={promptSignIn.google}>Google</button>
-						<button id="sign-in-with-discord" type="button" onClick={promptSignIn.discord}>Discord</button>
+						<button id="sign-in-with-google" type="button" onClick={promptExternalSignIn.google}>Google</button>
+						<button id="sign-in-with-discord" type="button" onClick={promptExternalSignIn.discord}>Discord</button>
 					</div>
 					<div id="sign-in-divider" className="translucent">or</div>
 				</>

@@ -22,8 +22,10 @@ export type User = {
 	authMethods: AuthMethod[],
 	sessions: UserSession[],
 	created: Date,
-	/** The date of the last request the user sent to the site. */
+	/** The date of the last authenticated request the user sent to the site. */
 	lastSeen: Date,
+	/** The user's birth date. */
+	born: Date,
 	name: string,
 	email: string,
 	verified: boolean,
