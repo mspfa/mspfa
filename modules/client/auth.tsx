@@ -2,6 +2,7 @@ import { Dialog } from 'modules/client/dialogs';
 import dynamic from 'next/dynamic';
 import { getInputValue, resetForm } from 'components/SignIn';
 import api from './api';
+import type { AuthMethod } from 'modules/server/auth';
 
 declare const gapi: any;
 
@@ -9,25 +10,13 @@ const SignIn = dynamic(() => import('components/SignIn'), {
 	loading: () => <>Loading...</>
 });
 
-export type AuthMethod = (
-	(
-		{ type: 'google' | 'discord' }
-		| {
-			type: 'password',
-			/** Whether the password was created on the old site. */
-			legacy?: true
-		}
-	)
-	& { value: string }
-);
-
 let signInDialog: Dialog | undefined;
 /** 0 if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
 let signUpStage = 0;
 
 let authMethod: AuthMethod;
 
-const externalSignInDone = () => {
+const resolveExternalSignIn = () => {
 	signInDialog!.resolve({ submit: true, value: authMethod.type });
 };
 
@@ -53,7 +42,7 @@ export const promptExternalSignIn = {
 							type: 'google',
 							value: user.getAuthResponse().id_token
 						};
-						externalSignInDone();
+						resolveExternalSignIn();
 					}
 				}).catch(onError);
 			}).catch(onError);
@@ -87,7 +76,7 @@ export const promptExternalSignIn = {
 						type: 'discord',
 						value: evt.data.code
 					};
-					externalSignInDone();
+					resolveExternalSignIn();
 				}
 			}
 		};
@@ -126,8 +115,8 @@ export const signIn = (newSignUpStage = 0) => {
 			]
 			: [
 				signUpStage === 1
-					? { label: 'Continue', focus: false }
-					: { label: 'Sign Up', value: 'password', focus: false },
+					? { label: 'Continue', value: 'password', focus: false }
+					: { label: 'Sign Up', focus: false },
 				{ label: 'Go Back', value: 'back' }
 			]
 	});
@@ -136,24 +125,23 @@ export const signIn = (newSignUpStage = 0) => {
 			if (result.submit) {
 				if (signUpStage === 1) {
 					// If the user submits the form while on the first stage of sign-up, move them to the next stage.
-					signIn(2);
-				} else {
-					// If the user submits the form while on the sign-in screen or on the last stage of sign-up, attempt sign-in or sign-up.
-					
-					const authWithPassword = result.value === 'password';
-					if (authWithPassword) {
+					if (result.value === 'password') {
 						authMethod = {
 							type: 'password',
 							value: getInputValue.password()
 						};
 					}
-					
+					signIn(2);
+				} else {
+					// If the user submits the form while on the sign-in screen or on the last stage of sign-up, attempt sign-in or sign-up.
 					signInLoading = true;
 					api.post(signUpStage === 0 ? 'session' : 'users', {
-						email: authWithPassword ? getInputValue.email() : undefined,
+						email: result.value === 'password' ? getInputValue.email() : undefined,
 						authMethod,
-						name: getInputValue.name()
-						// TODO: born
+						...(signUpStage === 0 ? undefined : {
+							name: getInputValue.name()
+							// TODO: born
+						})
 					}).then(response => {
 						// If sign-in or sign-up succeeds, reset the sign-in form and update the client's user state.
 						signInLoading = false;

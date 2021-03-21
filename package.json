@@ -24,6 +24,7 @@
 	"dependencies": {
 		"argon2": "^0.27.1",
 		"axios": "^0.21.1",
+		"cookies": "^0.8.0",
 		"fs-extra": "^9.1.0",
 		"global-react-state": "^1.1.4",
 		"google-auth-library": "^7.0.2",
@@ -35,6 +36,7 @@
 		"swr": "^0.4.2"
 	},
 	"devDependencies": {
+		"@types/cookies": "^0.7.6",
 		"@types/fs-extra": "^9.0.8",
 		"@types/mongodb": "^3.6.10",
 		"@types/node": "^14.14.35",

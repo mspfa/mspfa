@@ -1,5 +1,5 @@
 import type { ObjectId } from 'mongodb';
-import type { AuthMethod } from 'modules/client/auth';
+import type { AuthMethod } from 'modules/server/auth';
 import type { Theme } from 'modules/server/themes';
 import type { achievements } from 'modules/server/achievements';
 
