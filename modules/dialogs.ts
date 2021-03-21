@@ -205,7 +205,10 @@ export class Dialog extends Promise<DialogResult> {
 			if (index < 0) {
 				index += dialogs.length;
 			}
+			
+			// Limit `index` to the range [0, `dialogs.length - 1`].
 			index = Math.min(Math.max(index, 0), dialogs.length - 1);
+			
 			// Insert `this` into `dialogs` at index `index`.
 			dialogs.splice(index, 0, this);
 		}
