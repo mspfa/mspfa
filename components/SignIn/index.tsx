@@ -91,7 +91,7 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 					<>
 						<label htmlFor="sign-in-email">Email:</label>
 						<input
-							key={signUpStage}
+							key={signUpStage} // This is necessary to re-render this element when `signUpStage` changes, or else `autoFocus` will not work correctly.
 							id="sign-in-email"
 							name="email"
 							type="email"
