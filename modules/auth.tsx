@@ -123,15 +123,12 @@ export const signIn = (newSignUpStage = 0) => {
 				{ label: 'Sign In', value: 'password', focus: false },
 				{ label: 'Cancel', value: 'exit' }
 			]
-			: signUpStage === 1
-				? [
-					{ label: 'Continue', focus: false },
-					{ label: 'Go Back', value: 'back' }
-				]
-				: [
-					{ label: 'Sign Up', value: 'password', focus: false },
-					{ label: 'Go Back', value: 'back' }
-				]
+			: [
+				signUpStage === 1
+					? { label: 'Continue', focus: false }
+					: { label: 'Sign Up', value: 'password', focus: false },
+				{ label: 'Go Back', value: 'back' }
+			]
 	});
 	signInDialog.then(result => {
 		if (result) {
