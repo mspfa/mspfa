@@ -82,7 +82,7 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 							autoComplete="username"
 							minLength={2}
 							maxLength={32}
-							autoFocus
+							autoFocus={!name}
 							value={name}
 							onChange={onChange}
 						/>
@@ -98,7 +98,7 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 							required
 							autoComplete="email"
 							maxLength={254}
-							autoFocus
+							autoFocus={!email}
 							value={email}
 							onChange={onChange}
 						/>
