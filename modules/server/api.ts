@@ -1,15 +1,16 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Validator } from 'jsonschema';
+import type { IncomingMessage } from 'http';
 
 type UnknownObject = Record<string, unknown> | unknown[];
 
 export type APIRequest<Request extends UnknownObject = UnknownObject> = (
 	'body' extends keyof Request
-		? Omit<NextApiRequest, 'body'> & { body: Request['body'] }
+		? IncomingMessage & Omit<NextApiRequest, 'body'> & { body: Request['body'] }
 		: NextApiRequest
 );
 
-export type APIResponse<ResponseBody extends UnknownObject = UnknownObject> = Omit<NextApiResponse<ResponseBody>, 'body'>;
+export type APIResponse<ResponseBody extends UnknownObject = UnknownObject> = NextApiResponse<ResponseBody>;
 
 export type APIHandler<
 	Request extends UnknownObject = UnknownObject,
@@ -17,7 +18,6 @@ export type APIHandler<
 > = (req: APIRequest<Request>, res: APIResponse<ResponseBody>) => void | Promise<void>;
 
 const validator = new Validator();
-console.log(validator);
 
 export const createValidator = (schema: Record<string, unknown>) => (
 	(req: APIRequest<any>, res: APIResponse<any>) => (
@@ -26,13 +26,19 @@ export const createValidator = (schema: Record<string, unknown>) => (
 				nestedErrors: true
 			});
 			
-			const errors: typeof result.errors = [];
-			
+			let valid = true;
 			let methodNotAllowed = false;
+			const errorMessages: string[] = [];
 			
 			for (const error of result.errors) {
 				if (error.name !== 'additionalProperties') {
-					errors.push(error);
+					valid = false;
+					if (!error.stack.includes('subschema')) {
+						const errorMessage = error.stack.slice('instance.'.length);
+						if (!errorMessages.includes(errorMessage)) {
+							errorMessages.push(errorMessage);
+						}
+					}
 				}
 				
 				if (error.property === 'instance.method') {
@@ -42,13 +48,17 @@ export const createValidator = (schema: Record<string, unknown>) => (
 				}
 			}
 			
-			if (errors.length === 0) {
+			if (valid) {
 				resolve();
 			} else if (methodNotAllowed) {
 				res.status(405).end();
 			} else {
+				if (errorMessages.length > 1) {
+					const lastIndex = errorMessages.length - 1;
+					errorMessages[lastIndex] = `and/or ${errorMessages[lastIndex]}`;
+				}
 				res.status(400).send({
-					message: errors.map(error => error.stack).join('\n')
+					message: errorMessages.join(errorMessages.length > 2 ? ', ' : ' ')
 				});
 			}
 		})

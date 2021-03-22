@@ -15,27 +15,22 @@ const validate = createValidator({
 					anyOf: [
 						{
 							type: 'object',
-							additionalProperties: false,
 							properties: {
-								name: {
-									type: 'string'
-								},
 								authMethod: {
-									$ref: '#/definitions/ExternalAuthMethod'
+									type: 'array',
+									items: {
+										$ref: '#/definitions/ExternalAuthMethod'
+									}
 								}
 							},
 							required: [
-								'authMethod',
-								'name'
-							]
+								'authMethod'
+							],
+							additionalProperties: false
 						},
 						{
 							type: 'object',
-							additionalProperties: false,
 							properties: {
-								name: {
-									type: 'string'
-								},
 								email: {
 									type: 'string'
 								},
@@ -44,10 +39,10 @@ const validate = createValidator({
 								}
 							},
 							required: [
-								'authMethod',
 								'email',
-								'name'
-							]
+								'authMethod'
+							],
+							additionalProperties: false
 						}
 					]
 				}

@@ -8,29 +8,29 @@ export type ExternalAuthMethod = {
 	type: 'google' | 'discord',
 	value: string
 };
-
-export type AuthMethod = ExternalAuthMethod | {
+export type InternalAuthMethod = {
 	type: 'password',
 	value: string,
 	/** Whether the password was created on the old site. */
 	legacy?: true
 };
+export type AuthMethod = ExternalAuthMethod | InternalAuthMethod;
 
 /**
  * Authenticate an auth method object with an external auth method.
  * 
  * If an error occurs, the promise returned by this function will never resolve.
  */
-export const checkExternalAuthMethod = async (authMethod: ExternalAuthMethod, req: APIRequest, res: APIResponse): Promise<{
+export const checkExternalAuthMethod = async (req: APIRequest<any>, res: APIResponse<any>): Promise<{
 	id: string,
 	email: string,
 	verified: boolean
 }> => {
 	try {
-		if (authMethod.type === 'google') {
+		if (req.body.authMethod.type === 'google') {
 			// Authenticate with Google.
 			const ticket = await googleClient.verifyIdToken({
-				idToken: authMethod.value,
+				idToken: req.body.authMethod.value,
 				audience: process.env.GOOGLE_CLIENT_ID
 			});
 			const payload = ticket.getPayload()!;
@@ -47,7 +47,7 @@ export const checkExternalAuthMethod = async (authMethod: ExternalAuthMethod, re
 			client_id: process.env.DISCORD_CLIENT_ID!,
 			client_secret: process.env.DISCORD_CLIENT_SECRET!,
 			grant_type: 'authorization_code',
-			code: authMethod.value,
+			code: req.body.authMethod.value,
 			redirect_uri: `${referrerOrigin}/sign-in/discord`
 		}), {
 			headers: {
