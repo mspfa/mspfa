@@ -6,6 +6,11 @@ export type DialogProps = {
 	dialog: DialogClass
 };
 
+/**
+ * The component for a dialog.
+ * 
+ * ⚠️ This should never be rendered from outside the `Dialogs` component.
+ */
 const Dialog = React.memo(({ dialog }: DialogProps) => {
 	const formRef = useRef<HTMLFormElement>(null);
 	
