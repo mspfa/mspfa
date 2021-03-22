@@ -14,8 +14,7 @@ export default createValidator({
 			},
 			required: [
 				'method'
-			],
-			additionalProperties: false
+			]
 		}
 	}
 });

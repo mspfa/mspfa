@@ -16,8 +16,7 @@ export default createValidator({
 					},
 					required: [
 						'method'
-					],
-					additionalProperties: false
+					]
 				},
 				{
 					type: 'object',
@@ -33,8 +32,7 @@ export default createValidator({
 					required: [
 						'method',
 						'body'
-					],
-					additionalProperties: false
+					]
 				}
 			]
 		},
@@ -49,8 +47,7 @@ export default createValidator({
 					},
 					required: [
 						'authMethod'
-					],
-					additionalProperties: false
+					]
 				},
 				{
 					type: 'object',
@@ -72,15 +69,13 @@ export default createValidator({
 							required: [
 								'type',
 								'value'
-							],
-							additionalProperties: false
+							]
 						}
 					},
 					required: [
 						'email',
 						'authMethod'
-					],
-					additionalProperties: false
+					]
 				}
 			]
 		},
@@ -101,8 +96,7 @@ export default createValidator({
 			required: [
 				'type',
 				'value'
-			],
-			additionalProperties: false
+			]
 		}
 	}
 });

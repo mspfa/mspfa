@@ -15,7 +15,6 @@ export default createValidator({
 					anyOf: [
 						{
 							type: 'object',
-							additionalProperties: false,
 							properties: {
 								name: {
 									type: 'string'
@@ -31,7 +30,6 @@ export default createValidator({
 						},
 						{
 							type: 'object',
-							additionalProperties: false,
 							properties: {
 								name: {
 									type: 'string'
@@ -53,8 +51,7 @@ export default createValidator({
 									required: [
 										'type',
 										'value'
-									],
-									additionalProperties: false
+									]
 								}
 							},
 							required: [
@@ -69,8 +66,7 @@ export default createValidator({
 			required: [
 				'method',
 				'body'
-			],
-			additionalProperties: false
+			]
 		},
 		ExternalAuthMethod: {
 			type: 'object',
@@ -89,8 +85,7 @@ export default createValidator({
 			required: [
 				'type',
 				'value'
-			],
-			additionalProperties: false
+			]
 		}
 	}
 });

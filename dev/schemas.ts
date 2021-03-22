@@ -23,7 +23,8 @@ fs.watch('pages/api', { recursive: true }, async (evt, filename) => {
 					const schemaString = JSON.stringify(
 						createGenerator({
 							path,
-							tsconfig: 'tsconfig.json'
+							tsconfig: 'tsconfig.json',
+							additionalProperties: true
 						}).createSchema('Request'),
 						null,
 						'\t'
