@@ -9,6 +9,7 @@
 	"trailing-spaces.includeEmptyLines": false,
 	"files.exclude": {
 		".next": true,
-		"next-env.d.ts": true
+		"next-env.d.ts": true,
+		"**/*.validate.ts": true
 	}
 }
