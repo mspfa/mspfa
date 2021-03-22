@@ -45,20 +45,18 @@ export const createValidator = (schema: Record<string, unknown>) => (
 				}
 			}
 			
-			if (errorMessages.length) {
-				if (methodNotAllowed) {
-					res.status(405).end();
-				} else {
-					if (errorMessages.length > 1) {
-						const lastIndex = errorMessages.length - 1;
-						errorMessages[lastIndex] = `and/or ${errorMessages[lastIndex]}`;
-					}
-					res.status(400).send({
-						message: `${errorMessages.join(errorMessages.length > 2 ? ',\n' : '\n')}.`
-					});
-				}
-			} else {
+			if (result.valid) {
 				resolve();
+			} else if (methodNotAllowed) {
+				res.status(405).end();
+			} else {
+				if (errorMessages.length > 1) {
+					const lastIndex = errorMessages.length - 1;
+					errorMessages[lastIndex] = `and/or ${errorMessages[lastIndex]}`;
+				}
+				res.status(400).send({
+					message: `${errorMessages.join(errorMessages.length > 2 ? ',\n' : '\n')}.`
+				});
 			}
 		})
 	)
