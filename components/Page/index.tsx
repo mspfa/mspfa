@@ -8,6 +8,8 @@ export type PageProps = { children: ReactNode };
 
 const Page = ({ children }: PageProps) => (
 	<>
+		{/* It is necessary for dialogs to be before the page so that dialog elements are reached first when tabbing. */}
+		<Dialogs />
 		<div id="page">
 			<Header />
 			<main>
@@ -15,7 +17,6 @@ const Page = ({ children }: PageProps) => (
 			</main>
 			<Footer />
 		</div>
-		<Dialogs />
 	</>
 );
 
