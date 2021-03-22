@@ -150,7 +150,7 @@ export class Dialog extends Promise<DialogResult> {
 						this.resolve(action);
 					}
 				}
-			) as any;
+			);
 			
 			if (action.submit) {
 				if (this.submitAction) {
