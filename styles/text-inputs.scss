@@ -6,6 +6,7 @@ input {
 		padding: 2px;
 		font-family: $monospace;
 		font-weight: bold;
+		border-radius: 0;
 		@include theme(color, $text-color);
 		@include theme(background-color, $frontest-background);
 		border: 2px solid;
