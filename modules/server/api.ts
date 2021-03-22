@@ -34,7 +34,7 @@ export const createValidator = (schema: Record<string, unknown>) => (
 				if (error.name !== 'additionalProperties') {
 					valid = false;
 					if (!error.stack.includes('subschema')) {
-						const errorMessage = error.stack.slice('instance.'.length);
+						const errorMessage = error.stack.replace(/^instance\./, '').replace(/ a type\(s\) /g, ' type ');
 						if (!errorMessages.includes(errorMessage)) {
 							errorMessages.push(errorMessage);
 						}
@@ -58,7 +58,7 @@ export const createValidator = (schema: Record<string, unknown>) => (
 					errorMessages[lastIndex] = `and/or ${errorMessages[lastIndex]}`;
 				}
 				res.status(400).send({
-					message: errorMessages.join(errorMessages.length > 2 ? ', ' : ' ')
+					message: errorMessages.join(errorMessages.length > 2 ? ',\n' : '\n')
 				});
 			}
 		})
