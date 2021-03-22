@@ -39,12 +39,12 @@ export const createValidator = (schema: Record<string, unknown>) => (
 							errorMessages.push(errorMessage);
 						}
 					}
-				}
-				
-				if (error.property === 'instance.method') {
-					methodNotAllowed = true;
-					// This break is an optimization, because once error 405 is detected, we know all other errors are unused and don't need to pushed to the `errors` array.
-					break;
+					
+					if (error.property === 'instance.method') {
+						methodNotAllowed = true;
+						// This break is an optimization, because once error 405 is detected, we know all other errors are unused and don't need to pushed to the `errors` array.
+						break;
+					}
 				}
 			}
 			
