@@ -126,6 +126,7 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 									required
 									autoComplete="new-password"
 									placeholder="Re-type Password"
+									pattern={password.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}
 									value={confirmPassword}
 									onChange={onChange}
 								/>
