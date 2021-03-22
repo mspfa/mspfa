@@ -4,14 +4,16 @@ import { checkExternalAuthMethod } from 'modules/server/auth';
 import Cookies from 'cookies';
 import validate from './index.validate';
 
-export type Request = {
+export type SessionBody = {
+	authMethod: ExternalAuthMethod
+} | {
+	email: string,
+	authMethod: Omit<InternalAuthMethod, 'legacy'>
+};
+
+export type Request = { method: 'DELETE' } | {
 	method: 'POST',
-	body: {
-		authMethod: ExternalAuthMethod
-	} | {
-		email: string,
-		authMethod: InternalAuthMethod
-	}
+	body: SessionBody
 };
 
 export default (async (req, res) => {
@@ -23,7 +25,7 @@ export default (async (req, res) => {
 			
 		} else {
 			const data = await checkExternalAuthMethod(req, res);
-			console.log(data);
+			
 		}
 	}
 }) as APIHandler<Request>;

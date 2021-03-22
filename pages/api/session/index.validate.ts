@@ -1,54 +1,88 @@
 import { createValidator } from 'modules/server/api';
 
-const validate = createValidator({
+export default createValidator({
 	$schema: 'http://json-schema.org/draft-07/schema#',
 	$ref: '#/definitions/Request',
 	definitions: {
 		Request: {
-			type: 'object',
-			properties: {
-				method: {
-					type: 'string',
-					const: 'POST'
+			anyOf: [
+				{
+					type: 'object',
+					properties: {
+						method: {
+							type: 'string',
+							const: 'DELETE'
+						}
+					},
+					required: [
+						'method'
+					],
+					additionalProperties: false
 				},
-				body: {
-					anyOf: [
-						{
-							type: 'object',
-							properties: {
-								authMethod: {
-									$ref: '#/definitions/ExternalAuthMethod'
-								}
-							},
-							required: [
-								'authMethod'
-							],
-							additionalProperties: false
+				{
+					type: 'object',
+					properties: {
+						method: {
+							type: 'string',
+							const: 'POST'
 						},
-						{
+						body: {
+							$ref: '#/definitions/SessionBody'
+						}
+					},
+					required: [
+						'method',
+						'body'
+					],
+					additionalProperties: false
+				}
+			]
+		},
+		SessionBody: {
+			anyOf: [
+				{
+					type: 'object',
+					properties: {
+						authMethod: {
+							$ref: '#/definitions/ExternalAuthMethod'
+						}
+					},
+					required: [
+						'authMethod'
+					],
+					additionalProperties: false
+				},
+				{
+					type: 'object',
+					properties: {
+						email: {
+							type: 'string'
+						},
+						authMethod: {
 							type: 'object',
 							properties: {
-								email: {
-									type: 'string'
+								type: {
+									type: 'string',
+									const: 'password'
 								},
-								authMethod: {
-									$ref: '#/definitions/InternalAuthMethod'
+								value: {
+									type: 'string'
 								}
 							},
 							required: [
-								'email',
-								'authMethod'
+								'type',
+								'value'
 							],
 							additionalProperties: false
 						}
-					]
+					},
+					required: [
+						'email',
+						'authMethod'
+					],
+					additionalProperties: false
 				}
-			},
-			required: [
-				'method',
-				'body'
-			],
-			additionalProperties: false
+			]
 		},
 		ExternalAuthMethod: {
 			type: 'object',
@@ -69,30 +103,6 @@ const validate = createValidator({
 				'value'
 			],
 			additionalProperties: false
-		},
-		InternalAuthMethod: {
-			type: 'object',
-			properties: {
-				type: {
-					type: 'string',
-					const: 'password'
-				},
-				value: {
-					type: 'string'
-				},
-				legacy: {
-					type: 'boolean',
-					const: true,
-					description: 'Whether the password was created on the old site.'
-				}
-			},
-			required: [
-				'type',
-				'value'
-			],
-			additionalProperties: false
 		}
 	}
 });
-
-export default validate;

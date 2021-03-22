@@ -33,7 +33,7 @@ fs.watch('pages/api', { recursive: true }, async (evt, filename) => {
 				// This is awful. But that's okay because it's funny. Oh, and also useful.
 				await fs.writeFile(
 					outputPath,
-					`import { createValidator } from 'modules/server/api';\n\nconst validate = createValidator(${schemaString});\n\nexport default validate;`
+					`import { createValidator } from 'modules/server/api';\n\nexport default createValidator(${schemaString});`
 				);
 				await run(`npx eslint --fix ${outputPath}`);
 			} catch (error) {

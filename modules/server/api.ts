@@ -5,9 +5,9 @@ import type { IncomingMessage } from 'http';
 type UnknownObject = Record<string, unknown> | unknown[];
 
 export type APIRequest<Request extends UnknownObject = UnknownObject> = (
-	'body' extends keyof Request
-		? IncomingMessage & Omit<NextApiRequest, 'body'> & { body: Request['body'] }
-		: NextApiRequest
+	IncomingMessage
+	& Omit<NextApiRequest, keyof Request>
+	& Request
 );
 
 export type APIResponse<ResponseBody extends UnknownObject = UnknownObject> = NextApiResponse<ResponseBody>;
@@ -40,6 +40,7 @@ export const createValidator = (schema: Record<string, unknown>) => (
 						}
 					}
 					
+					// Check if the property which has a schema mismatch is `req.method`.
 					if (error.property === 'instance.method') {
 						methodNotAllowed = true;
 						// This break is an optimization, because once error 405 is detected, we know all other errors are unused and don't need to pushed to the `errors` array.
@@ -58,7 +59,7 @@ export const createValidator = (schema: Record<string, unknown>) => (
 					errorMessages[lastIndex] = `and/or ${errorMessages[lastIndex]}`;
 				}
 				res.status(400).send({
-					message: errorMessages.join(errorMessages.length > 2 ? ',\n' : '\n')
+					message: `${errorMessages.join(errorMessages.length > 2 ? ',\n' : '\n')}.`
 				});
 			}
 		})

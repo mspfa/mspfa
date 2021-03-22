@@ -1,6 +1,6 @@
 import { createValidator } from 'modules/server/api';
 
-const validate = createValidator({
+export default createValidator({
 	$schema: 'http://json-schema.org/draft-07/schema#',
 	$ref: '#/definitions/Request',
 	definitions: {
@@ -40,7 +40,21 @@ const validate = createValidator({
 									type: 'string'
 								},
 								authMethod: {
-									$ref: '#/definitions/InternalAuthMethod'
+									type: 'object',
+									properties: {
+										type: {
+											type: 'string',
+											const: 'password'
+										},
+										value: {
+											type: 'string'
+										}
+									},
+									required: [
+										'type',
+										'value'
+									],
+									additionalProperties: false
 								}
 							},
 							required: [
@@ -77,30 +91,6 @@ const validate = createValidator({
 				'value'
 			],
 			additionalProperties: false
-		},
-		InternalAuthMethod: {
-			type: 'object',
-			properties: {
-				type: {
-					type: 'string',
-					const: 'password'
-				},
-				value: {
-					type: 'string'
-				},
-				legacy: {
-					type: 'boolean',
-					const: true,
-					description: 'Whether the password was created on the old site.'
-				}
-			},
-			required: [
-				'type',
-				'value'
-			],
-			additionalProperties: false
 		}
 	}
 });
-
-export default validate;
