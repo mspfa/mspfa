@@ -1,6 +1,6 @@
 import type { APIHandler } from 'modules/server/api';
-import { checkExternalAuthMethod } from 'modules/server/auth';
 import type { Request as SessionRequest } from 'pages/api/session';
+import { checkExternalAuthMethod } from 'modules/server/auth';
 import validate from './index.validate';
 
 export type Request = {
@@ -18,7 +18,7 @@ export default (async (req, res) => {
 		if (req.body.authMethod.type === 'password') {
 			
 		} else {
-			await checkExternalAuthMethod(req, res);
+			const data = await checkExternalAuthMethod(req, res);
 			
 		}
 	}

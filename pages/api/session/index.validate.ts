@@ -17,10 +17,7 @@ const validate = createValidator({
 							type: 'object',
 							properties: {
 								authMethod: {
-									type: 'array',
-									items: {
-										$ref: '#/definitions/ExternalAuthMethod'
-									}
+									$ref: '#/definitions/ExternalAuthMethod'
 								}
 							},
 							required: [

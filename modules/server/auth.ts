@@ -49,11 +49,7 @@ export const checkExternalAuthMethod = async (req: APIRequest<any>, res: APIResp
 			grant_type: 'authorization_code',
 			code: req.body.authMethod.value,
 			redirect_uri: `${referrerOrigin}/sign-in/discord`
-		}), {
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded'
-			}
-		});
+		}));
 		const { data } = await axios.get('https://discord.com/api/users/@me', {
 			method: 'GET',
 			headers: {
@@ -66,7 +62,7 @@ export const checkExternalAuthMethod = async (req: APIRequest<any>, res: APIResp
 			verified: data.verified
 		};
 	} catch (error) {
-		res.status(422).send({ message: error.message });
+		res.status(error.status || 422).send({ message: error.message });
 		await new Promise(() => {});
 		return undefined as never;
 	}
