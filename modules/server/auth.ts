@@ -21,7 +21,10 @@ export type AuthMethod = ExternalAuthMethod | InternalAuthMethod;
  * 
  * If an error occurs, the promise returned by this function will never resolve.
  */
-export const checkExternalAuthMethod = async (req: APIRequest<any>, res: APIResponse<any>): Promise<{
+export const checkExternalAuthMethod = async (
+	req: APIRequest<{ body: { authMethod: ExternalAuthMethod } }>,
+	res: APIResponse<{ body: { message: string } }>
+): Promise<{
 	id: string,
 	email: string,
 	verified: boolean

@@ -1,4 +1,4 @@
-import type { APIHandler } from 'modules/server/api';
+import type { APIHandler, APIRequest } from 'modules/server/api';
 import type { ExternalAuthMethod, InternalAuthMethod } from 'modules/server/auth';
 import { checkExternalAuthMethod } from 'modules/server/auth';
 import Cookies from 'cookies';
@@ -19,7 +19,7 @@ const Handler: APIHandler<(
 		method: 'POST',
 		body: SessionBody
 	}
-)> = async (req, res) => {
+)> = async (req: APIRequest<{ body: any }>, res) => {
 	await validate(req, res);
 	const cookies = new Cookies(req, res);
 	

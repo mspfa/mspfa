@@ -1,17 +1,15 @@
-import type { APIHandler } from 'modules/server/api';
+import type { APIHandler, APIRequest } from 'modules/server/api';
 import type { SessionBody } from 'pages/api/session';
 import { checkExternalAuthMethod } from 'modules/server/auth';
 import validate from './index.validate';
 
-export type Request = {
+const Handler: APIHandler<{
 	method: 'POST',
 	body: SessionBody & {
 		name: string
 		// TODO: born
 	}
-};
-
-export default (async (req, res) => {
+}> = async (req: APIRequest<{ body: any }>, res) => {
 	await validate(req, res);
 	
 	if (req.body.authMethod.type === 'password') {
@@ -20,4 +18,6 @@ export default (async (req, res) => {
 		const data = await checkExternalAuthMethod(req, res);
 		
 	}
-}) as APIHandler<Request>;
+};
+
+export default Handler;

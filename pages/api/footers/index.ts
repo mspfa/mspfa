@@ -4,13 +4,13 @@ import path from 'path';
 import validate from './index.validate';
 
 const footers = (fs.readdirSync(
-	path.join(process.cwd(), '/public/images/footers')
+	path.join(process.cwd(), 'public/images/footers')
 )).filter(footer => /\.(?:png|gif)$/i.test(footer));
 
-export type Request = { method: 'GET' };
-
-export default (async (req, res) => {
+const Handler: APIHandler<{ method: 'GET' }> = async (req, res) => {
 	await validate(req, res);
-	
+
 	res.status(200).send(footers);
-}) as APIHandler<Request>;
+};
+
+export default Handler;

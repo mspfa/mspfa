@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { Validator } from 'jsonschema';
 import type { IncomingMessage } from 'http';
 
+/** The server-side API request object. */
 export type APIRequest<
 	Request extends Record<string, unknown> = Record<string, unknown>
 > = (
@@ -10,6 +11,7 @@ export type APIRequest<
 	& Request
 );
 
+/** The server-side API response object. */
 export type APIResponse<
 	Response extends Record<string, unknown> = any
 > = (
@@ -18,6 +20,7 @@ export type APIResponse<
 	)>
 );
 
+/** The server-side API handler function to be the type of an API's default export. */
 export type APIHandler<
 	Request extends Record<string, unknown> = Record<string, unknown>,
 	Response extends Record<string, unknown> = any
