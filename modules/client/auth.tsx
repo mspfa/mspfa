@@ -3,6 +3,10 @@ import dynamic from 'next/dynamic';
 import { getInputValue, resetForm } from 'components/SignIn';
 import api from './api';
 import type { AuthMethod } from 'modules/server/auth';
+import type { APIClient } from './api';
+
+type SessionAPI = APIClient<typeof import('pages/api/session').default>;
+type UsersAPI = APIClient<typeof import('pages/api/users').default>;
 
 declare const gapi: any;
 
@@ -135,14 +139,14 @@ export const signIn = (newSignUpStage = 0) => {
 				} else {
 					// If the user submits the form while on the sign-in screen or on the last stage of sign-up, attempt sign-in or sign-up.
 					signInLoading = true;
-					api.post(signUpStage === 0 ? 'session' : 'users', {
-						email: result.value === 'password' ? getInputValue.email() : undefined,
+					(api as SessionAPI | UsersAPI).post(signUpStage === 0 ? 'session' : 'users', {
+						email: authMethod.type === 'password' ? getInputValue.email() : undefined,
 						authMethod,
 						...(signUpStage === 0 ? undefined : {
 							name: getInputValue.name()
 							// TODO: born
 						})
-					}).then(response => {
+					} as any).then(response => {
 						// If sign-in or sign-up succeeds, reset the sign-in form and update the client's user state.
 						signInLoading = false;
 						resetForm();

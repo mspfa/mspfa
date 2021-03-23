@@ -12,6 +12,9 @@ export default createValidator({
 						method: {
 							type: 'string',
 							const: 'DELETE'
+						},
+						body: {
+							not: {}
 						}
 					},
 					required: [
@@ -42,7 +45,23 @@ export default createValidator({
 					type: 'object',
 					properties: {
 						authMethod: {
-							$ref: '#/definitions/ExternalAuthMethod'
+							type: 'object',
+							properties: {
+								type: {
+									type: 'string',
+									enum: [
+										'google',
+										'discord'
+									]
+								},
+								value: {
+									type: 'string'
+								}
+							},
+							required: [
+								'type',
+								'value'
+							]
 						}
 					},
 					required: [
@@ -77,25 +96,6 @@ export default createValidator({
 						'authMethod'
 					]
 				}
-			]
-		},
-		ExternalAuthMethod: {
-			type: 'object',
-			properties: {
-				type: {
-					type: 'string',
-					enum: [
-						'google',
-						'discord'
-					]
-				},
-				value: {
-					type: 'string'
-				}
-			},
-			required: [
-				'type',
-				'value'
 			]
 		}
 	}

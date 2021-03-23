@@ -5,18 +5,21 @@ import Cookies from 'cookies';
 import validate from './index.validate';
 
 export type SessionBody = {
-	authMethod: ExternalAuthMethod
+	authMethod: Pick<ExternalAuthMethod, 'type' | 'value'>
 } | {
 	email: string,
-	authMethod: Omit<InternalAuthMethod, 'legacy'>
+	authMethod: Pick<InternalAuthMethod, 'type' | 'value'>
 };
 
-export type Request = { method: 'DELETE' } | {
-	method: 'POST',
-	body: SessionBody
-};
-
-export default (async (req, res) => {
+const Handler: APIHandler<(
+	{
+		method: 'DELETE',
+		body: undefined
+	} | {
+		method: 'POST',
+		body: SessionBody
+	}
+)> = async (req, res) => {
 	await validate(req, res);
 	const cookies = new Cookies(req, res);
 	
@@ -28,4 +31,6 @@ export default (async (req, res) => {
 			
 		}
 	}
-}) as APIHandler<Request>;
+};
+
+export default Handler;

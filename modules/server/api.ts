@@ -2,20 +2,30 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { Validator } from 'jsonschema';
 import type { IncomingMessage } from 'http';
 
-type UnknownObject = Record<string, unknown> | unknown[];
-
-export type APIRequest<Request extends UnknownObject = UnknownObject> = (
+export type APIRequest<
+	Request extends Record<string, unknown> = Record<string, unknown>
+> = (
 	IncomingMessage
 	& Omit<NextApiRequest, keyof Request>
 	& Request
 );
 
-export type APIResponse<ResponseBody extends UnknownObject = UnknownObject> = NextApiResponse<ResponseBody>;
+export type APIResponse<
+	Response extends Record<string, unknown> = any
+> = (
+	NextApiResponse<(
+		Response extends { body: {} } ? Response['body'] : any
+	)>
+);
 
 export type APIHandler<
-	Request extends UnknownObject = UnknownObject,
-	ResponseBody extends UnknownObject = UnknownObject
-> = (req: APIRequest<Request>, res: APIResponse<ResponseBody>) => void | Promise<void>;
+	Request extends Record<string, unknown> = Record<string, unknown>,
+	Response extends Record<string, unknown> = any
+> = (
+	((req: APIRequest<Request>, res: APIResponse<Response>) => void | Promise<void>)
+	// This is so you can use `NonNullable<APIHandler['Request']>` and `NonNullable<APIHandler['Response']>` instead of having to use a conditional type with `infer` to get the request and response types.
+	& { Request?: Request, Response?: Response }
+);
 
 const validator = new Validator();
 
