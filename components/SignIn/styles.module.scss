@@ -5,26 +5,15 @@
 		text-align: center;
 	}
 	
+	&-divider {
+		margin: 2ch 0;
+	}
+	
 	&-methods-external {
 		margin-top: 2ch;
 		
 		.theme-dark & {
 			opacity: 0.85;
-		}
-	}
-	
-	&-divider {
-		margin: 2ch 0;
-	}
-	
-	&-inputs {
-		display: grid;
-		grid-template-columns: auto auto;
-		grid-gap: 1ch;
-		
-		label {
-			justify-self: right;
-			align-self: center;
 		}
 	}
 	
@@ -40,6 +29,21 @@
 		&-discord {
 			@include colored-button(#7289da, #ffffff);
 		}
+	}
+	
+	&-inputs {
+		display: grid;
+		grid-template-columns: auto auto;
+		grid-gap: 1ch;
+		
+		label {
+			justify-self: right;
+			align-self: center;
+		}
+	}
+	
+	&-birth-month {
+		margin: 0 1ch;
 	}
 }
 
@@ -59,7 +63,16 @@
 #accepted-terms-container {
 	display: grid;
 	grid-template-columns: auto auto;
+	grid-gap: 1ch;
 	align-items: center;
 	margin-top: 3ch;
 	font-size: 0.85em;
+	
+	input {
+		justify-self: right;
+	}
+	
+	label {
+		justify-self: left;
+	}
 }

@@ -2,6 +2,7 @@ import { signIn, promptExternalSignIn } from 'modules/client/auth';
 import Head from 'next/head';
 import Link from 'components/Link';
 import createGlobalState from 'global-react-state';
+import type { GlobalStateHook, GlobalStateSetter, GlobalStateGetter } from 'global-react-state';
 import type { ChangeEvent } from 'react';
 import './styles.module.scss';
 
@@ -9,24 +10,16 @@ const startSigningUp = () => {
 	signIn(1);
 };
 
-const [useInputUsername, setInputUsername, getInputUsername] = createGlobalState('');
-const [useInputEmail, setInputEmail, getInputEmail] = createGlobalState('');
-const [useInputPassword, setInputPassword, getInputPassword] = createGlobalState('');
-const [useInputConfirmPassword, setInputConfirmPassword, getInputConfirmPassword] = createGlobalState('');
+const inputNames = ['email', 'password', 'confirmPassword', 'name', 'birthDay', 'birthMonth', 'birthYear'] as const;
+type InputName = typeof inputNames extends ReadonlyArray<infer Item> ? Item : never;
 
-const setInputValue = {
-	name: setInputUsername,
-	email: setInputEmail,
-	password: setInputPassword,
-	confirmPassword: setInputConfirmPassword
-};
+const useInputValue: Record<InputName, GlobalStateHook<string>> = {} as any;
+const setInputValue: Record<InputName, GlobalStateSetter<string>> = {} as any;
+export const getInputValue: Record<InputName, GlobalStateGetter<string>> = {} as any;
 
-export const getInputValue = {
-	name: getInputUsername,
-	email: getInputEmail,
-	password: getInputPassword,
-	confirmPassword: getInputConfirmPassword
-};
+for (const inputName of inputNames) {
+	[useInputValue[inputName], setInputValue[inputName], getInputValue[inputName]] = createGlobalState('');
+}
 
 /** Resets the values of all sign-in form inputs. */
 export const resetForm = () => {
@@ -36,7 +29,7 @@ export const resetForm = () => {
 };
 
 const onChange = (
-	evt: ChangeEvent<HTMLInputElement & { name: keyof typeof setInputValue }>
+	evt: ChangeEvent<HTMLInputElement & HTMLSelectElement & { name: keyof typeof setInputValue }>
 ) => {
 	setInputValue[evt.target.name](evt.target.value);
 };
@@ -47,10 +40,13 @@ export type SignInProps = {
 };
 
 const SignIn = ({ signUpStage }: SignInProps) => {
-	const [name] = useInputUsername();
-	const [email] = useInputEmail();
-	const [password] = useInputPassword();
-	const [confirmPassword] = useInputConfirmPassword();
+	const [email] = useInputValue.email();
+	const [password] = useInputValue.password();
+	const [confirmPassword] = useInputValue.confirmPassword();
+	const [name] = useInputValue.name();
+	const [birthDay] = useInputValue.birthDay();
+	const [birthMonth] = useInputValue.birthMonth();
+	const [birthYear] = useInputValue.birthYear();
 	
 	return (
 		<div id="sign-in-content">
@@ -80,12 +76,63 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 							name="name"
 							required
 							autoComplete="username"
-							minLength={2}
+							minLength={1}
 							maxLength={32}
 							autoFocus={!name}
 							value={name}
 							onChange={onChange}
 						/>
+						<label htmlFor="sign-in-birth-day">Birthdate:</label>
+						<div id="sign-in-birthdate">
+							<input
+								id="sign-in-birth-day"
+								name="birthDay"
+								type="number"
+								required
+								autoComplete="bday-day"
+								placeholder="DD"
+								min={1}
+								max={new Date(+birthYear, +birthMonth, 0).getDate() || 31}
+								size={4}
+								value={birthDay}
+								onChange={onChange}
+							/>
+							<select
+								id="sign-in-birth-month"
+								name="birthMonth"
+								required
+								autoComplete="bday-month"
+								value={birthMonth}
+								onChange={onChange}
+							>
+								<option value="" disabled hidden>Month</option>
+								<option value={1}>January</option>
+								<option value={2}>February</option>
+								<option value={3}>March</option>
+								<option value={4}>April</option>
+								<option value={5}>May</option>
+								<option value={6}>June</option>
+								<option value={7}>July</option>
+								<option value={8}>August</option>
+								<option value={9}>September</option>
+								<option value={10}>October</option>
+								<option value={11}>November</option>
+								<option value={12}>December</option>
+							</select>
+							<input
+								id="sign-in-birth-year"
+								name="birthYear"
+								type="number"
+								required
+								autoComplete="bday-year"
+								placeholder="YYYY"
+								min={1}
+								max={new Date().getFullYear()}
+								size={String(new Date().getFullYear()).length + 2}
+								value={birthYear}
+								onChange={onChange}
+							/>
+						</div>
 					</>
 				) : (
 					<>
