@@ -24,12 +24,11 @@ export type User = {
 	created: Date,
 	/** The date of the last authenticated request the user sent to the site. */
 	lastSeen: Date,
-	/** The user's birth date. */
-	born: Date,
+	birthdate: Date,
 	name: string,
 	email: string,
 	verified: boolean,
-	desc: string,
+	description: string,
 	icon: string,
 	website: string,
 	comicSaves: Record<number, number>,

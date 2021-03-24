@@ -51,7 +51,7 @@ export type ComicDocument = {
 	},
 	pages: ComicPage[],
 	drafts: ComicPageDraft[],
-	desc: string,
+	description: string,
 	icon: string,
 	banner: string,
 	style: string,
