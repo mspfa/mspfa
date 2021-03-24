@@ -143,8 +143,8 @@ export const signIn = (newSignUpStage = 0) => {
 						email: authMethod.type === 'password' ? getInputValue.email() : undefined,
 						authMethod,
 						...(signUpStage === 0 ? undefined : {
-							name: getInputValue.name()
-							// TODO: born
+							name: getInputValue.name(),
+							birthdate: +new Date(+getInputValue.birthYear(), +getInputValue.birthMonth() - 1, +getInputValue.birthDay())
 						})
 					} as any).then(response => {
 						// If sign-in or sign-up succeeds, reset the sign-in form and update the client's user state.
@@ -154,7 +154,7 @@ export const signIn = (newSignUpStage = 0) => {
 					}).catch(() => {
 						// If sign-in or sign-up fails, go back to sign-in screen.
 						signInLoading = false;
-						signIn();
+						signIn(signUpStage);
 					});
 				}
 			} else if (result.value === 'exit') {

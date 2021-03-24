@@ -19,6 +19,9 @@ export default createValidator({
 								name: {
 									type: 'string'
 								},
+								birthdate: {
+									type: 'number'
+								},
 								authMethod: {
 									type: 'object',
 									properties: {
@@ -41,6 +44,7 @@ export default createValidator({
 							},
 							required: [
 								'authMethod',
+								'birthdate',
 								'name'
 							]
 						},
@@ -49,6 +53,9 @@ export default createValidator({
 							properties: {
 								name: {
 									type: 'string'
+								},
+								birthdate: {
+									type: 'number'
 								},
 								email: {
 									type: 'string'
@@ -72,6 +79,7 @@ export default createValidator({
 							},
 							required: [
 								'authMethod',
+								'birthdate',
 								'email',
 								'name'
 							]

@@ -6,8 +6,8 @@ import validate from './index.validate';
 const Handler: APIHandler<{
 	method: 'POST',
 	body: SessionBody & {
-		name: string
-		// TODO: born
+		name: string,
+		birthdate: number
 	}
 }> = async (req: APIRequest<{ body: any }>, res) => {
 	await validate(req, res);

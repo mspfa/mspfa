@@ -23,8 +23,8 @@ for (const inputName of inputNames) {
 
 /** Resets the values of all sign-in form inputs. */
 export const resetForm = () => {
-	for (const set of Object.values(setInputValue)) {
-		set('');
+	for (const inputName of inputNames) {
+		setInputValue[inputName]('');
 	}
 };
 
