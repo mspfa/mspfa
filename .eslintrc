@@ -33,6 +33,7 @@
 		"React": "writable"
 	},
 	"rules": {
+		"no-async-promise-executor": "off",
 		"no-empty": "off",
 		"no-unsafe-optional-chaining": "error",
 		"no-useless-backreference": "warn",
