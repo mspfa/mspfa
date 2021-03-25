@@ -1,8 +1,7 @@
 import { signIn, promptExternalSignIn } from 'modules/client/auth';
 import Head from 'next/head';
 import Link from 'components/Link';
-import createGlobalState from 'global-react-state';
-import type { GlobalStateHook, GlobalStateSetter, GlobalStateGetter } from 'global-react-state';
+import createUpdater from 'react-component-updater';
 import type { ChangeEvent } from 'react';
 import './styles.module.scss';
 
@@ -10,28 +9,39 @@ const startSigningUp = () => {
 	signIn(1);
 };
 
-const inputNames = ['email', 'password', 'confirmPassword', 'name', 'birthDay', 'birthMonth', 'birthYear'] as const;
-type InputName = typeof inputNames extends ReadonlyArray<infer Item> ? Item : never;
+const [useFormValuesUpdater, updateFormValues] = createUpdater();
 
-const useInputValue: Record<InputName, GlobalStateHook<string>> = {} as any;
-const setInputValue: Record<InputName, GlobalStateSetter<string>> = {} as any;
-export const getInputValue: Record<InputName, GlobalStateGetter<string>> = {} as any;
+const initialFormValues = {
+	email: '',
+	password: '',
+	confirmPassword: '',
+	name: '',
+	termsAgreed: false,
+	birthDay: '',
+	birthMonth: '',
+	birthYear: ''
+};
 
-for (const inputName of inputNames) {
-	[useInputValue[inputName], setInputValue[inputName], getInputValue[inputName]] = createGlobalState('');
-}
+export let formValues = { ...initialFormValues };
 
-/** Resets the values of all sign-in form inputs. */
-export const resetForm = () => {
-	for (const inputName of inputNames) {
-		setInputValue[inputName]('');
-	}
+export const resetFormValues = () => {
+	formValues = { ...initialFormValues };
+	updateFormValues();
 };
 
 const onChange = (
-	evt: ChangeEvent<HTMLInputElement & HTMLSelectElement & { name: keyof typeof setInputValue }>
+	evt: ChangeEvent<(
+		HTMLInputElement
+		& HTMLSelectElement
+		& { name: keyof typeof formValues }
+	)>
 ) => {
-	setInputValue[evt.target.name](evt.target.value);
+	if (evt.target.type === 'checkbox') {
+		(formValues[evt.target.name] as boolean) = evt.target.checked;
+	} else {
+		(formValues[evt.target.name] as string) = evt.target.value;
+	}
+	updateFormValues();
 };
 
 export type SignInProps = {
@@ -40,13 +50,7 @@ export type SignInProps = {
 };
 
 const SignIn = ({ signUpStage }: SignInProps) => {
-	const [email] = useInputValue.email();
-	const [password] = useInputValue.password();
-	const [confirmPassword] = useInputValue.confirmPassword();
-	const [name] = useInputValue.name();
-	const [birthDay] = useInputValue.birthDay();
-	const [birthMonth] = useInputValue.birthMonth();
-	const [birthYear] = useInputValue.birthYear();
+	useFormValuesUpdater();
 	
 	return (
 		<div id="sign-in-content">
@@ -78,8 +82,8 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 							autoComplete="username"
 							minLength={1}
 							maxLength={32}
-							autoFocus={!name}
-							value={name}
+							autoFocus={!formValues.name}
+							value={formValues.name}
 							onChange={onChange}
 						/>
 						<label htmlFor="sign-in-birth-day">Birthdate:</label>
@@ -92,9 +96,9 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 								autoComplete="bday-day"
 								placeholder="DD"
 								min={1}
-								max={new Date(+birthYear, +birthMonth, 0).getDate() || 31}
+								max={new Date(+formValues.birthYear, +formValues.birthMonth, 0).getDate() || 31}
 								size={4}
-								value={birthDay}
+								value={formValues.birthDay}
 								onChange={onChange}
 							/>
 							<select
@@ -102,7 +106,7 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 								name="birthMonth"
 								required
 								autoComplete="bday-month"
-								value={birthMonth}
+								value={formValues.birthMonth}
 								onChange={onChange}
 							>
 								<option value="" disabled hidden>Month</option>
@@ -129,7 +133,7 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 								min={1}
 								max={new Date().getFullYear()}
 								size={String(new Date().getFullYear()).length + 2}
-								value={birthYear}
+								value={formValues.birthYear}
 								onChange={onChange}
 							/>
 						</div>
@@ -145,8 +149,8 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 							required
 							autoComplete="email"
 							maxLength={254}
-							autoFocus={!email}
-							value={email}
+							autoFocus={!formValues.email}
+							value={formValues.email}
 							onChange={onChange}
 						/>
 						<label htmlFor="sign-in-password">Password:</label>
@@ -156,7 +160,7 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 							type="password"
 							required
 							autoComplete={signUpStage ? 'new-password' : 'current-password'}
-							value={password}
+							value={formValues.password}
 							onChange={onChange}
 						/>
 						{signUpStage === 0 ? (
@@ -175,9 +179,9 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 									placeholder="Re-type Password"
 									pattern={
 										// Validate the confirmed password to match the password by escaping the password as a regular expression.
-										password.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+										formValues.password.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 									}
-									value={confirmPassword}
+									value={formValues.confirmPassword}
 									onChange={onChange}
 								/>
 							</>
@@ -187,14 +191,16 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 			</div>
 			{signUpStage === 2 && (
 				<>
-					<div id="accepted-terms-container">
+					<div id="terms-agreed-container">
 						<input
-							id="sign-in-accepted-terms"
-							name="acceptedTerms"
+							id="sign-in-terms-agreed"
+							name="termsAgreed"
 							type="checkbox"
 							required
+							checked={formValues.termsAgreed}
+							onChange={onChange}
 						/>
-						<label htmlFor="sign-in-accepted-terms" className="translucent">
+						<label htmlFor="sign-in-terms-agreed" className="translucent">
 							I agree to the <Link href="/terms" target="_blank">terms of service</Link>.
 						</label>
 					</div>

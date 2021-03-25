@@ -1,6 +1,6 @@
 import { Dialog } from 'modules/client/dialogs';
 import dynamic from 'next/dynamic';
-import { getInputValue, resetForm } from 'components/SignIn';
+import { formValues, resetFormValues } from 'components/SignIn';
 import api from './api';
 import type { AuthMethod } from 'modules/server/auth';
 import type { APIClient } from './api';
@@ -132,7 +132,7 @@ export const signIn = (newSignUpStage = 0) => {
 					if (result.value === 'password') {
 						authMethod = {
 							type: 'password',
-							value: getInputValue.password()
+							value: formValues.password
 						};
 					}
 					signIn(2);
@@ -140,16 +140,16 @@ export const signIn = (newSignUpStage = 0) => {
 					// If the user submits the form while on the sign-in screen or on the last stage of sign-up, attempt sign-in or sign-up.
 					signInLoading = true;
 					(api as SessionAPI | UsersAPI).post(signUpStage === 0 ? 'session' : 'users', {
-						email: authMethod.type === 'password' ? getInputValue.email() : undefined,
+						email: authMethod.type === 'password' ? formValues.email : undefined,
 						authMethod,
 						...(signUpStage === 0 ? undefined : {
-							name: getInputValue.name(),
-							birthdate: +new Date(+getInputValue.birthYear(), +getInputValue.birthMonth() - 1, +getInputValue.birthDay())
+							name: formValues.name,
+							birthdate: +new Date(+formValues.birthYear, +formValues.birthMonth - 1, +formValues.birthDay)
 						})
 					} as any).then(response => {
 						// If sign-in or sign-up succeeds, reset the sign-in form and update the client's user state.
 						signInLoading = false;
-						resetForm();
+						resetFormValues();
 						console.log(response);
 					}).catch(() => {
 						// If sign-in or sign-up fails, go back to sign-in screen.
@@ -158,12 +158,12 @@ export const signIn = (newSignUpStage = 0) => {
 					});
 				}
 			} else if (result.value === 'exit') {
-				resetForm();
+				resetFormValues();
 			} else if (result.value === 'back') {
 				signIn(signUpStage - 1);
 			}
 		} else {
-			resetForm();
+			resetFormValues();
 		}
 	});
 };
