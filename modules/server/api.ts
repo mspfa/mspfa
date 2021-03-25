@@ -46,7 +46,7 @@ export const createValidator = (schema: Record<string, unknown>) => {
 				const errorMessages: string[] = [];
 				
 				for (const error of validate.errors!) {
-					let errorMessage = error.message || 'unknown error';
+					let errorMessage = error.message!;
 					// Filter out unhelpful error messages.
 					if (!errorMessage.includes('schema')) {
 						errorMessage = `${error.dataPath.slice(1).replace(/\//g, '.')}: ${errorMessage}`;
