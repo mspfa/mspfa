@@ -5,11 +5,13 @@ import type { achievements } from 'modules/server/achievements';
 
 export type ExternalAuthMethod = {
 	type: 'google' | 'discord',
+	/** @minLength 1 */
 	value: string
 };
 
 export type InternalAuthMethod = {
 	type: 'password',
+	/** @minLength 8 */
 	value: string,
 	/** Whether the password was created on the old site. */
 	legacy?: true

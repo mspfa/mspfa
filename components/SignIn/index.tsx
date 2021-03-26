@@ -78,8 +78,8 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 						<input
 							id="sign-in-name"
 							name="name"
-							required
 							autoComplete="username"
+							required
 							minLength={1}
 							maxLength={32}
 							autoFocus={!formValues.name}
@@ -92,8 +92,8 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 								id="sign-in-birth-day"
 								name="birthDay"
 								type="number"
-								required
 								autoComplete="bday-day"
+								required
 								placeholder="DD"
 								min={1}
 								max={new Date(+formValues.birthYear, +formValues.birthMonth, 0).getDate() || 31}
@@ -104,8 +104,8 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 							<select
 								id="sign-in-birth-month"
 								name="birthMonth"
-								required
 								autoComplete="bday-month"
+								required
 								value={formValues.birthMonth}
 								onChange={onChange}
 							>
@@ -127,8 +127,8 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 								id="sign-in-birth-year"
 								name="birthYear"
 								type="number"
-								required
 								autoComplete="bday-year"
+								required
 								placeholder="YYYY"
 								min={1}
 								max={new Date().getFullYear()}
@@ -146,8 +146,8 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 							id="sign-in-email"
 							name="email"
 							type="email"
-							required
 							autoComplete="email"
+							required
 							maxLength={254}
 							autoFocus={!formValues.email}
 							value={formValues.email}
@@ -158,8 +158,9 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 							id="sign-in-password"
 							name="password"
 							type="password"
-							required
 							autoComplete={signUpStage ? 'new-password' : 'current-password'}
+							required
+							minLength={8}
 							value={formValues.password}
 							onChange={onChange}
 						/>
@@ -174,8 +175,8 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 									id="sign-in-confirm-password"
 									name="confirmPassword"
 									type="password"
-									required
 									autoComplete="new-password"
+									required
 									placeholder="Re-type Password"
 									pattern={
 										// Validate the confirmed password to match the password by escaping the password as a regular expression.

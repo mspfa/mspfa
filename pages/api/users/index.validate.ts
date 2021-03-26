@@ -56,7 +56,8 @@ export default createValidator({
 											const: 'password'
 										},
 										value: {
-											type: 'string'
+											type: 'string',
+											minLength: 8
 										}
 									},
 									required: [
@@ -91,7 +92,8 @@ export default createValidator({
 					]
 				},
 				value: {
-					type: 'string'
+					type: 'string',
+					minLength: 1
 				}
 			},
 			required: [
