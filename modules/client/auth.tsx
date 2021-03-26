@@ -1,9 +1,9 @@
 import { Dialog } from 'modules/client/dialogs';
 import dynamic from 'next/dynamic';
 import { formValues, resetFormValues } from 'components/SignIn';
-import api from './api';
-import type { AuthMethod } from 'modules/server/auth';
-import type { APIClient } from './api';
+import api from 'modules/client/api';
+import type { AuthMethod } from 'modules/server/users';
+import type { APIClient } from 'modules/client/api';
 
 type SessionAPI = APIClient<typeof import('pages/api/session').default>;
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;

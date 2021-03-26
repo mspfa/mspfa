@@ -94,7 +94,7 @@
 			}
 		],
 		"comma-dangle": [
-			"error",
+			"warn",
 			"never"
 		],
 		"comma-spacing": [
@@ -540,7 +540,7 @@
 				],
 				"comma-dangle": "off",
 				"@typescript-eslint/comma-dangle": [
-					"error",
+					"warn",
 					"never"
 				],
 				"comma-spacing": "off",

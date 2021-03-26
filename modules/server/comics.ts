@@ -1,3 +1,4 @@
+import db from 'modules/server/db';
 import type { Quirk } from 'modules/server/quirks';
 
 export type ComicPage = {
@@ -74,3 +75,7 @@ export type ComicDocument = {
 	},
 	quirks: Quirk[]
 };
+
+const comics = db.collection<ComicDocument>('comics');
+
+export default comics;

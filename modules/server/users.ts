@@ -1,7 +1,21 @@
+import db from 'modules/server/db';
 import type { ObjectId } from 'mongodb';
-import type { AuthMethod } from 'modules/server/auth';
 import type { Theme } from 'modules/server/themes';
 import type { achievements } from 'modules/server/achievements';
+
+export type ExternalAuthMethod = {
+	type: 'google' | 'discord',
+	value: string
+};
+
+export type InternalAuthMethod = {
+	type: 'password',
+	value: string,
+	/** Whether the password was created on the old site. */
+	legacy?: true
+};
+
+export type AuthMethod = ExternalAuthMethod | InternalAuthMethod;
 
 export type UserSession = {
 	token: string,
@@ -9,7 +23,12 @@ export type UserSession = {
 	ip: string
 };
 
-export type NotificationSetting = 0 | 1 | 2 | 3;
+export enum NotificationSetting {
+	Off = 0b00,
+	Site = 0b01,
+	Email = 0b10,
+	All = 0b11
+}
 
 export type ComicNotificationSettings = {
 	updates: NotificationSetting,
@@ -17,7 +36,7 @@ export type ComicNotificationSettings = {
 	comments: NotificationSetting
 };
 
-export type User = {
+export type UserDocument = {
 	_id: ObjectId,
 	authMethods: AuthMethod[],
 	sessions: UserSession[],
@@ -78,3 +97,7 @@ export type User = {
 	nameColor?: string,
 	legacyID?: number
 };
+
+const users = db.collection<UserDocument>('users');
+
+export default users;

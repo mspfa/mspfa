@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Dialog } from './dialogs';
+import { Dialog } from 'modules/client/dialogs';
 import type { APIHandler } from 'modules/server/api';
 import type { AxiosRequestConfig, AxiosInstance } from 'axios';
 

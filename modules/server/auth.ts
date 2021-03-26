@@ -1,20 +1,9 @@
 import axios from 'axios';
-import type { APIRequest, APIResponse } from './api';
+import type { APIRequest, APIResponse } from 'modules/server/api';
+import type { ExternalAuthMethod } from 'modules/server/users';
 import { OAuth2Client } from 'google-auth-library';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
-export type ExternalAuthMethod = {
-	type: 'google' | 'discord',
-	value: string
-};
-export type InternalAuthMethod = {
-	type: 'password',
-	value: string,
-	/** Whether the password was created on the old site. */
-	legacy?: true
-};
-export type AuthMethod = ExternalAuthMethod | InternalAuthMethod;
 
 /**
  * Authenticate an auth method object with an external auth method.

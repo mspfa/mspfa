@@ -45,23 +45,7 @@ export default createValidator({
 					type: 'object',
 					properties: {
 						authMethod: {
-							type: 'object',
-							properties: {
-								type: {
-									type: 'string',
-									enum: [
-										'google',
-										'discord'
-									]
-								},
-								value: {
-									type: 'string'
-								}
-							},
-							required: [
-								'type',
-								'value'
-							]
+							$ref: '#/definitions/ExternalAuthMethod'
 						}
 					},
 					required: [
@@ -96,6 +80,25 @@ export default createValidator({
 						'authMethod'
 					]
 				}
+			]
+		},
+		ExternalAuthMethod: {
+			type: 'object',
+			properties: {
+				type: {
+					type: 'string',
+					enum: [
+						'google',
+						'discord'
+					]
+				},
+				value: {
+					type: 'string'
+				}
+			},
+			required: [
+				'type',
+				'value'
 			]
 		}
 	}

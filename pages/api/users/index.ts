@@ -1,6 +1,7 @@
 import type { APIHandler, APIRequest } from 'modules/server/api';
 import type { SessionBody } from 'pages/api/session';
 import { checkExternalAuthMethod } from 'modules/server/auth';
+import users from 'modules/server/users';
 import validate from './index.validate';
 
 const Handler: APIHandler<{

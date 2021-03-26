@@ -1,11 +1,11 @@
 import type { APIHandler, APIRequest } from 'modules/server/api';
-import type { ExternalAuthMethod, InternalAuthMethod } from 'modules/server/auth';
+import type { ExternalAuthMethod, InternalAuthMethod } from 'modules/server/users';
 import { checkExternalAuthMethod } from 'modules/server/auth';
 import Cookies from 'cookies';
 import validate from './index.validate';
 
 export type SessionBody = {
-	authMethod: Pick<ExternalAuthMethod, 'type' | 'value'>
+	authMethod: ExternalAuthMethod
 } | {
 	email: string,
 	authMethod: Pick<InternalAuthMethod, 'type' | 'value'>
