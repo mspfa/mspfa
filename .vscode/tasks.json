@@ -19,7 +19,7 @@
 		{
 			"label": "JSON Schemas",
 			"type": "shell",
-			"command": "npx ts-node dev/schemas.ts",
+			"command": "npx ts-node dev/schemas",
 			"presentation": {
 				"reveal": "never",
 				"panel": "dedicated"
