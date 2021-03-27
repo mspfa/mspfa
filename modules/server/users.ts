@@ -2,6 +2,7 @@ import db from 'modules/server/db';
 import type { ObjectId } from 'mongodb';
 import type { Theme } from 'modules/server/themes';
 import type { achievements } from 'modules/server/achievements';
+import type { URLString } from 'modules/types';
 
 export type ExternalAuthMethod = {
 	type: 'google' | 'discord',
@@ -46,16 +47,17 @@ export type UserDocument = {
 	/** The date of the last authenticated request the user sent to the site. */
 	lastSeen: Date,
 	birthdate: Date,
+	/** @minLength 1 */
 	name: string,
 	/**
-	 * The following regular expression is explicitly copied from https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
+	 * The following regular expression is copied directly from https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
 	 * @pattern ^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$
 	 */
 	email: string,
 	verified: boolean,
 	description: string,
 	icon: string,
-	website: string,
+	site: URLString,
 	comicSaves: Record<number, number>,
 	achievements: Partial<Record<keyof typeof achievements, true>>,
 	favs: number[],

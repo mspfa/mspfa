@@ -1,5 +1,6 @@
 import db from 'modules/server/db';
 import type { Quirk } from 'modules/server/quirks';
+import type { URLString } from 'modules/types';
 
 export type ComicPage = {
 	published: Date,
@@ -48,7 +49,7 @@ export type ComicDocument = {
 	editors: string[],
 	author?: {
 		name: string,
-		site: string
+		site: URLString
 	},
 	pages: ComicPage[],
 	drafts: ComicPageDraft[],

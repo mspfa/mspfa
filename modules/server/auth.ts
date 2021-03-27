@@ -1,6 +1,5 @@
 import axios from 'axios';
 import type { APIRequest, APIResponse } from 'modules/server/api';
-import type { ExternalAuthMethod } from 'modules/server/users';
 import { OAuth2Client } from 'google-auth-library';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -11,7 +10,7 @@ const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
  * If an error occurs, the promise returned by this function will never resolve.
  */
 export const checkExternalAuthMethod = async (
-	req: APIRequest<{ body: { authMethod: ExternalAuthMethod } }>,
+	req: APIRequest<{ body: any }>,
 	res: APIResponse<{ body: { message: string } }>
 ): Promise<{
 	id: string,

@@ -59,7 +59,7 @@ export default createValidator({
 					properties: {
 						email: {
 							type: 'string',
-							description: 'The following regular expression is explicitly copied from https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.',
+							description: 'The following regular expression is copied directly from https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.',
 							pattern: "^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
 						},
 						authMethod: {
