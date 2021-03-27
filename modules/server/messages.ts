@@ -1,6 +1,7 @@
 import type { ObjectId } from 'mongodb';
+import db from 'modules/server/db';
 
-export type Message = {
+export type MessageDocument = {
 	_id: ObjectId,
 	/** The message ID which this is a reply to. */
 	replyTo: string,
@@ -13,3 +14,7 @@ export type Message = {
 	subject: string,
 	content: string
 };
+
+const messages = db.collection<MessageDocument>('messages');
+
+export default messages;
