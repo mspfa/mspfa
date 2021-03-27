@@ -1,6 +1,6 @@
 import db from 'modules/server/db';
 import type { ObjectId } from 'mongodb';
-import type { Theme } from 'modules/server/themes';
+import { Theme } from 'modules/server/themes';
 import type { achievements } from 'modules/server/achievements';
 import type { URLString } from 'modules/types';
 
@@ -23,7 +23,7 @@ export type AuthMethod = ExternalAuthMethod | InternalAuthMethod;
 export type UserSession = {
 	token: string,
 	lastUsed: Date,
-	ip: string
+	ip?: string
 };
 
 export enum NotificationSetting {
@@ -56,8 +56,8 @@ export type UserDocument = {
 	email: string,
 	verified: boolean,
 	description: string,
-	icon: string,
-	site: URLString,
+	icon?: URLString,
+	site?: URLString,
 	comicSaves: Record<number, number>,
 	achievements: Partial<Record<keyof typeof achievements, true>>,
 	favs: number[],
@@ -65,8 +65,10 @@ export type UserDocument = {
 	settings: {
 		emailPublic: boolean,
 		favsPublic: boolean,
-		sideAdVisible: boolean,
-		matchedContentAdVisible: boolean,
+		ads: {
+			side: boolean,
+			matchedContent: boolean
+		},
 		autoOpenSpoilers: boolean,
 		/** This makes images on adjacent pages always preload when a user visits a comic page. */
 		preloadImages: boolean,
@@ -77,9 +79,9 @@ export type UserDocument = {
 		theme: Theme,
 		style: string,
 		keybinds: {
-			back: number,
-			forward: number,
-			toggleSpoilers: number
+			back: string,
+			forward: string,
+			toggleSpoilers: string
 		},
 		notifications: {
 			messages: NotificationSetting,
@@ -91,20 +93,60 @@ export type UserDocument = {
 		}
 	},
 	perms: Partial<{
-		unrestrictedAccess: boolean,
-		verifyScripts: boolean,
-		manageComics: boolean,
-		destroyComics: boolean,
-		ban: boolean, // AKA destroyUsers
-		manageComments: boolean,
-		manageAchievements: boolean
+		unrestrictedAccess: true,
+		verifyScripts: true,
+		manageComics: true,
+		destroyComics: true,
+		ban: true,
+		manageComments: true,
+		manageAchievements: true
 	}>,
-	dev: boolean, // Hey that's me.
-	mod: boolean,
-	patron: boolean,
+	dev?: true, // Hey that's me.
+	mod?: true,
+	patron?: true,
 	nameColor?: string,
 	legacyID?: number
 };
+
+export const defaultUser = {
+	verified: false,
+	description: '',
+	comicSaves: {} as Record<never, never>,
+	achievements: {} as Record<never, never>,
+	favs: [] as never[],
+	profileStyle: '',
+	settings: {
+		emailPublic: false,
+		favsPublic: true,
+		ads: {
+			side: true,
+			matchedContent: true
+		},
+		autoOpenSpoilers: false,
+		preloadImages: true,
+		stickyNav: true,
+		pixelatedImages: false,
+		theme: Theme.Standard,
+		style: '',
+		keybinds: {
+			back: 'ArrowLeft',
+			forward: 'ArrowRight',
+			toggleSpoilers: 'Space'
+		},
+		notifications: {
+			messages: NotificationSetting.All,
+			userTags: NotificationSetting.All,
+			commentReplies: NotificationSetting.All,
+			comicDefaults: {
+				updates: NotificationSetting.All,
+				news: NotificationSetting.All,
+				comments: NotificationSetting.All
+			},
+			comics: {} as Record<never, never>
+		}
+	},
+	perms: {} as Record<never, never>
+} as const;
 
 const users = db.collection<UserDocument>('users');
 

@@ -49,14 +49,15 @@ export type ComicDocument = {
 	editors: string[],
 	author?: {
 		name: string,
-		site: URLString
+		site?: URLString
 	},
 	pages: ComicPage[],
 	drafts: ComicPageDraft[],
 	description: string,
-	icon: string,
-	banner: string,
+	icon?: URLString,
+	banner?: URLString,
 	style: string,
+	/** Whether the comic should ignore the reader's theme setting. */
 	disableUserTheme: boolean,
 	script: {
 		unverified: string,

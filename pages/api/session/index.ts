@@ -2,7 +2,19 @@ import type { APIHandler } from 'modules/server/api';
 import type { ExternalAuthMethod, InternalAuthMethod, UserDocument } from 'modules/server/users';
 import { checkExternalAuthMethod } from 'modules/server/auth';
 import Cookies from 'cookies';
+import crypto from 'crypto';
+import argon2 from 'argon2';
 import validate from './index.validate';
+
+/** Takes a `Cookies` object which is used to set the session cookie. Returns the hashed token string. */
+export const createSession = async (cookies: Cookies) => {
+	const token = crypto.randomBytes(100).toString('base64');
+	cookies.set('token', token, {
+		maxAge: 1000 * 60 * 60 * 24 * 7,
+		sameSite: 'strict'
+	});
+	return argon2.hash(token);
+};
 
 export type SessionBody = {
 	authMethod: ExternalAuthMethod
