@@ -15,18 +15,6 @@
 			"runOptions": {
 				"runOn": "folderOpen"
 			}
-		},
-		{
-			"label": "JSON Schemas",
-			"type": "shell",
-			"command": "npx ts-node dev/schemas",
-			"presentation": {
-				"reveal": "never",
-				"panel": "dedicated"
-			},
-			"runOptions": {
-				"runOn": "folderOpen"
-			}
 		}
 	]
 }
