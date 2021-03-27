@@ -15,8 +15,8 @@
 		"dev": "next dev",
 		"generate-validators": "ts-node scripts/generate-validators",
 		"build-start": "next build && next start",
-		"start": "next start",
 		"build": "next build",
+		"start": "next start",
 		"setup": "ts-node scripts/setup"
 	},
 	"browserslist": [
