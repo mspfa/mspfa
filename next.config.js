@@ -30,8 +30,8 @@ module.exports = {
 					// Some scripts which run on both the client and the server contain code which should only run on the client or the server rather than both.
 					{
 						search: isServer
-							? /^.+ \/\/ @client-only$/gm
-							: /^.+ \/\/ @server-only$/gm,
+							? /^[^\n]+ \/\/ @client-only$|\/\/ @client-only {$.*?\/\/ @client-only }$|\/\* @client-only { \*\/.*?\/\* @client-only } \*\//gms
+							: /^[^\n]+ \/\/ @server-only$|\/\/ @server-only {$.*?\/\/ @server-only }$|\/\* @server-only { \*\/.*?\/\* @server-only } \*\//gms,
 						replace: ''
 					},
 					
@@ -43,7 +43,7 @@ module.exports = {
 					
 					// If a global JSX style is in a component's children but not wrapped in curly brackets, it will add randomized class names to all the components in the same block of JSX.
 					{
-						search: /(?<!\(\s+)(<style jsx global>(?:(?!<\/style>).)*?<\/style>)/gs,
+						search: /(?<!\(\s+)(<style jsx global>.*?<\/style>)/gs,
 						replace: '{$1}'
 					}
 				]
