@@ -6,6 +6,7 @@ import users, { defaultUser } from 'modules/server/users';
 import type { UserDocument, UserSession } from 'modules/server/users';
 import argon2 from 'argon2';
 import Cookies from 'cookies';
+import { ObjectId } from 'bson';
 import validate from './index.validate';
 
 const Handler: APIHandler<{
@@ -16,44 +17,58 @@ const Handler: APIHandler<{
 	}
 }> = async (req, res) => {
 	await validate(req, res);
-	const cookies = new Cookies(req, res);
 
 	let email: string;
 	let verified = false;
 	let authMethodValue: string;
 	
 	if (req.body.authMethod.type === 'password') {
-		email = (req.body as any).email;
+		email = (req.body as { email: string }).email.toLowerCase();
 		authMethodValue = await argon2.hash(req.body.authMethod.value);
 	} else {
 		const data = await checkExternalAuthMethod(req, res);
 		authMethodValue = data.id;
-		email = data.email;
+		email = data.email.toLowerCase();
 		verified = data.verified;
 	}
 	
-	const session: UserSession = {
-		token: await createSession(cookies),
-		lastUsed: new Date()
-	};
-	if (typeof req.headers['x-real-ip'] === 'string') {
-		session.ip = req.headers['x-real-ip'];
+	if (await users.findOne({
+		email
+	})) {
+		res.status(422).send({
+			message: 'The specified email is already taken.'
+		});
+		return;
 	}
 	
-	const user = (await users.insertOne({
+	const user: UserDocument = {
 		...defaultUser,
+		_id: new ObjectId(),
 		authMethods: [{
 			type: req.body.authMethod.type,
 			value: authMethodValue
 		}],
-		sessions: [session],
+		sessions: [],
 		created: new Date(),
 		lastSeen: new Date(),
 		birthdate: new Date(req.body.birthdate),
 		name: req.body.name,
 		email,
 		verified
-	})).ops[0];
+	};
+	
+	const session: UserSession = {
+		token: await createSession(user, new Cookies(req, res)),
+		lastUsed: new Date()
+	};
+	if (typeof req.headers['x-real-ip'] === 'string') {
+		session.ip = req.headers['x-real-ip'];
+	}
+	user.sessions.push(session);
+	
+	await users.insertOne(user);
+	
+	res.status(200).end();
 };
 
 export default Handler;

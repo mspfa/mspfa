@@ -1,12 +1,19 @@
-import type { AppProps } from 'next/dist/next-server/lib/router/router';
+import App from 'next/app';
+import type { AppProps, AppContext } from 'next/app';
 import Head from 'next/head';
 import { SWRConfig } from 'swr';
-import * as MSPFA from 'modules/client/MSPFA';
+import Cookies from 'cookies'; // @server-only
+import users from 'modules/server/users'; // @server-only
+import { ObjectId } from 'bson'; // @server-only
+import * as MSPFA from 'modules/client/MSPFA'; // @client-only
 import 'styles/global.scss';
 
 (global as any).MSPFA = MSPFA; // @client-only
 
-const App = ({ Component, pageProps }: AppProps) => (
+const MyApp = ({
+	Component,
+	pageProps: { user, ...pageProps }
+}: AppProps) => (
 	<>
 		<Head>
 			<title>MS Paint Fan Adventures</title>
@@ -31,4 +38,33 @@ const App = ({ Component, pageProps }: AppProps) => (
 	</>
 );
 
-export default App;
+// @server-only {
+/** This runs server-side on every request. */
+MyApp.getInitialProps = async (appContext: AppContext) => {
+	const appProps = await App.getInitialProps(appContext);
+	
+	const { req, res } = appContext.ctx;
+	if (req && res) {
+		const cookies = new Cookies(req, res);
+		/** The client's `Authorization` header or `auth` cookie in the format of [the HTTP `Authorization` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization). */
+		const authorization = req.headers.authorization || cookies.get('auth');
+		if (authorization && authorization.startsWith('Basic ')) {
+			const match = /^([^:]+):([^:]+)$/.exec(Buffer.from(authorization.slice(6), 'base64').toString());
+			if (match) {
+				const [, id, token] = match;
+				const user = await users.findOne({
+					_id: new ObjectId(id)
+				});
+				if (user) {
+					// TODO: Check `token`
+					appProps.pageProps.user = user;
+				}
+			}
+		}
+	}
+	
+	return appProps;
+};
+// @server-only }
+
+export default MyApp;

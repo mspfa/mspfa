@@ -7,12 +7,17 @@ import argon2 from 'argon2';
 import validate from './index.validate';
 
 /** Takes a `Cookies` object which is used to set the session cookie. Returns the hashed token string. */
-export const createSession = async (cookies: Cookies) => {
+export const createSession = async (user: UserDocument, cookies: Cookies) => {
 	const token = crypto.randomBytes(100).toString('base64');
-	cookies.set('token', token, {
-		maxAge: 1000 * 60 * 60 * 24 * 7,
-		sameSite: 'strict'
-	});
+	const authorization = `Basic ${Buffer.from(`${user._id}:${token}`).toString('base64')}`;
+	cookies.set(
+		'auth',
+		authorization,
+		{
+			sameSite: 'strict',
+			maxAge: 1000 * 60 * 60 * 24 * 7
+		}
+	);
 	return argon2.hash(token);
 };
 
