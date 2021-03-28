@@ -1,7 +1,7 @@
 import mongodb, { MongoClient } from 'mongodb';
 import type { Db, Collection } from 'mongodb';
 
-// `as any` below is to make TypeScript not angry when this module is imported from `modules/server/setup`.
+// `as any` below is to make TypeScript not angry when this module is imported from `scripts/setup`.
 const client = new MongoClient((process.env as any).DB_HOST, {
 	useUnifiedTopology: true
 });
