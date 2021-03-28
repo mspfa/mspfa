@@ -1,5 +1,12 @@
 import axios from 'axios';
+import crypto from 'crypto';
+import argon2 from 'argon2';
+import Cookies from 'cookies';
+import { ObjectId } from 'bson';
 import type { APIRequest, APIResponse } from 'modules/server/api';
+import type { IncomingMessage, ServerResponse } from 'http';
+import users from 'modules/server/users';
+import type { UserDocument, UserSession } from 'modules/server/users';
 import { OAuth2Client } from 'google-auth-library';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -9,14 +16,14 @@ const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
  * 
  * If an error occurs, the promise returned by this function will never resolve.
  */
-export const checkExternalAuthMethod = async (
-	req: APIRequest<{ body: any }>,
-	res: APIResponse<{ body: { message: string } }>
+export const checkExternalAuthMethod = (
+	req: APIRequest,
+	res: APIResponse
 ): Promise<{
-	id: string,
+	value: string,
 	email: string,
 	verified: boolean
-}> => {
+}> => new Promise(async resolve => {
 	try {
 		if (req.body.authMethod.type === 'google') {
 			// Authenticate with Google.
@@ -25,11 +32,12 @@ export const checkExternalAuthMethod = async (
 				audience: process.env.GOOGLE_CLIENT_ID
 			});
 			const payload = ticket.getPayload()!;
-			return {
-				id: payload.sub,
+			resolve({
+				value: payload.sub,
 				email: payload.email!,
 				verified: payload.email_verified!
-			};
+			});
+			return;
 		}
 		
 		// Authenticate with Discord.
@@ -47,14 +55,115 @@ export const checkExternalAuthMethod = async (
 				Authorization: `${response.data.token_type} ${response.data.access_token}`
 			}
 		});
-		return {
-			id: data.id,
-			email: data.email,
+		resolve({
+			value: data.id,
+			email: data.email.toLowerCase(),
 			verified: data.verified
-		};
+		});
 	} catch (error) {
+		console.error(error);
 		res.status(error.status || 422).send({ message: error.message });
-		await new Promise(() => {});
-		return undefined as never;
+	}
+});
+
+const authCookieOptions = {
+	sameSite: 'strict',
+	maxAge: 1000 * 60 * 60 * 24 * 7
+} as const;
+
+/**
+ * Sets the `auth` cookie to new session data which is pushed to the user's sessions in the DB.
+ * 
+ * Returns a `UserSession` of that session data.
+ */
+export const createSession = async (
+	req: IncomingMessage,
+	res: ServerResponse,
+	/** The user which the session is for. */
+	user: UserDocument
+) => {
+	const token = crypto.randomBytes(100).toString('base64');
+	
+	new Cookies(req, res).set('auth', `${user._id}:${token}`, authCookieOptions);
+	
+	const session: UserSession = {
+		token: await argon2.hash(token),
+		lastUsed: new Date()
+	};
+	if (typeof req.headers['x-real-ip'] === 'string') {
+		session.ip = req.headers['x-real-ip'];
+	}
+	
+	await users.updateOne({
+		_id: user._id
+	}, {
+		$push: {
+			sessions: session
+		}
+	});
+	
+	return session;
+};
+
+/**
+ * Checks if the HTTP `Authorization` header or `auth` cookie represents a valid existing session.
+ * 
+ * Returns the authenticated user's `UserDocument` if so. Returns `undefined` if not.
+ * 
+ * Also updates the user's `lastSeen` and session `lastUsed` dates in the DB. The returned user data is from before this update.
+ */
+export const authenticate = async (req: IncomingMessage, res: ServerResponse) => {
+	let cookies: Cookies | undefined;
+	
+	/** The auth credentials in the format `${userID}:${token}`, decoded from either the `Authorization` header or the `auth` cookie. */
+	let credentials: string | undefined;
+	
+	/** The client's [HTTP `Authorization` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization). */
+	const authorization = req.headers.authorization;
+	if (authorization && authorization.startsWith('Basic ')) {
+		credentials = Buffer.from(authorization.slice(6), 'base64').toString();
+	} else {
+		cookies = new Cookies(req, res);
+		credentials = cookies.get('auth');
+	}
+	
+	if (credentials) {
+		const match = /^([^:]+):([^:]+)$/.exec(credentials);
+		if (match) {
+			const [, userID, token] = match;
+			const user = await users.findOne({
+				_id: new ObjectId(userID)
+			});
+			if (user) {
+				for (const session of user.sessions) {
+					if (await argon2.verify(session.token, token)) {
+						// Authentication succeeded.
+						
+						if (cookies) {
+							// An `auth` cookie is set, so update its expiration date.
+							cookies.set('auth', credentials, authCookieOptions);
+						}
+						
+						users.updateOne({
+							_id: user._id,
+							'sessions.token': session.token
+						}, {
+							$set: {
+								lastSeen: new Date(),
+								'sessions.$.lastUsed': new Date(),
+								'sessions.$.ip': req.headers['x-real-ip']
+							}
+						});
+						
+						return user;
+					}
+				}
+			}
+		}
+		
+		if (cookies) {
+			// Authentication failed but an `auth` cookie is set, so delete it.
+			cookies.set('auth', undefined);
+		}
 	}
 };

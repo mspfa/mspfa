@@ -1,11 +1,9 @@
 import type { APIHandler } from 'modules/server/api';
 import type { SessionBody } from 'pages/api/session';
-import { createSession } from 'pages/api/session';
-import { checkExternalAuthMethod } from 'modules/server/auth';
+import { checkExternalAuthMethod, createSession } from 'modules/server/auth';
 import users, { defaultUser } from 'modules/server/users';
-import type { UserDocument, UserSession } from 'modules/server/users';
+import type { UserDocument } from 'modules/server/users';
 import argon2 from 'argon2';
-import Cookies from 'cookies';
 import { ObjectId } from 'bson';
 import validate from './index.validate';
 
@@ -17,19 +15,16 @@ const Handler: APIHandler<{
 	}
 }> = async (req, res) => {
 	await validate(req, res);
-
+	
 	let email: string;
 	let verified = false;
 	let authMethodValue: string;
 	
 	if (req.body.authMethod.type === 'password') {
-		email = (req.body as { email: string }).email.toLowerCase();
+		email = (req.body as { email: UserDocument['email'] }).email.toLowerCase();
 		authMethodValue = await argon2.hash(req.body.authMethod.value);
 	} else {
-		const data = await checkExternalAuthMethod(req, res);
-		authMethodValue = data.id;
-		email = data.email.toLowerCase();
-		verified = data.verified;
+		({ value: authMethodValue, email, verified } = await checkExternalAuthMethod(req, res));
 	}
 	
 	if (await users.findOne({
@@ -56,19 +51,11 @@ const Handler: APIHandler<{
 		email,
 		verified
 	};
-	
-	const session: UserSession = {
-		token: await createSession(user, new Cookies(req, res)),
-		lastUsed: new Date()
-	};
-	if (typeof req.headers['x-real-ip'] === 'string') {
-		session.ip = req.headers['x-real-ip'];
-	}
-	user.sessions.push(session);
-	
 	await users.insertOne(user);
 	
-	res.status(200).end();
+	await createSession(req, res, user);
+	
+	res.status(200).send(user); // TODO: Sanitize user data
 };
 
 export default Handler;

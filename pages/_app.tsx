@@ -1,10 +1,8 @@
-import App from 'next/app';
+import App from 'next/app'; // @server-only
 import type { AppProps, AppContext } from 'next/app';
 import Head from 'next/head';
 import { SWRConfig } from 'swr';
-import Cookies from 'cookies'; // @server-only
-import users from 'modules/server/users'; // @server-only
-import { ObjectId } from 'bson'; // @server-only
+import { authenticate } from 'modules/server/auth'; // @server-only
 import * as MSPFA from 'modules/client/MSPFA'; // @client-only
 import 'styles/global.scss';
 
@@ -39,28 +37,13 @@ const MyApp = ({
 );
 
 // @server-only {
-/** This runs server-side on every request. */
+/** This runs server-side on every page request. */
 MyApp.getInitialProps = async (appContext: AppContext) => {
 	const appProps = await App.getInitialProps(appContext);
 	
 	const { req, res } = appContext.ctx;
 	if (req && res) {
-		const cookies = new Cookies(req, res);
-		/** The client's `Authorization` header or `auth` cookie in the format of [the HTTP `Authorization` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization). */
-		const authorization = req.headers.authorization || cookies.get('auth');
-		if (authorization && authorization.startsWith('Basic ')) {
-			const match = /^([^:]+):([^:]+)$/.exec(Buffer.from(authorization.slice(6), 'base64').toString());
-			if (match) {
-				const [, id, token] = match;
-				const user = await users.findOne({
-					_id: new ObjectId(id)
-				});
-				if (user) {
-					// TODO: Check `token`
-					appProps.pageProps.user = user;
-				}
-			}
-		}
+		appProps.pageProps.user = await authenticate(req, res);
 	}
 	
 	return appProps;

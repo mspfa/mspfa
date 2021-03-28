@@ -4,7 +4,7 @@ import Ajv from 'ajv';
 
 /** The server-side API request object. */
 export type APIRequest<
-	Request extends Record<string, unknown> = Record<string, unknown>
+	Request extends Record<string, unknown> = { body: any }
 > = (
 	IncomingMessage
 	& Omit<NextApiRequest, keyof Request>
@@ -22,7 +22,7 @@ export type APIResponse<
 
 /** The server-side API handler function to be the type of an API's default export. */
 export type APIHandler<
-	Request extends Record<string, unknown> = Record<string, unknown>,
+	Request extends Record<string, unknown> = { body: any },
 	Response extends Record<string, unknown> = any
 > = (
 	((req: APIRequest<Request>, res: APIResponse<Response>) => void | Promise<void>)
@@ -35,7 +35,7 @@ const ajv = new Ajv({ allErrors: true });
 export const createValidator = (schema: Record<string, unknown>) => {
 	const validate = ajv.compile(schema);
 	
-	return (req: APIRequest<any>, res: APIResponse<any>) => (
+	return (req: APIRequest, res: APIResponse) => (
 		new Promise<void>(resolve => {
 			const valid = validate(req);
 			

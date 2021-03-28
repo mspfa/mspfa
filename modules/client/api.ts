@@ -2,10 +2,7 @@ import axios from 'axios';
 import { Dialog } from 'modules/client/dialogs';
 import type { APIHandler } from 'modules/server/api';
 import type { AxiosRequestConfig, AxiosInstance } from 'axios';
-
-export type Method = 'get' | 'delete' | 'head' | 'options' | 'post' | 'put' | 'patch';
-/** The methods for which axios has a `data` parameter. */
-export type MethodWithData = 'post' | 'put' | 'patch';
+import type { Method, MethodWithData } from 'modules/types';
 
 const apiExtension = {
 	/** Use this config object in API requests to not reject the request's promise on HTTP 4xx errors. */
