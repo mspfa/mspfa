@@ -4,9 +4,7 @@ import { SWRConfig } from 'swr';
 import * as MSPFA from 'modules/client/MSPFA';
 import 'styles/global.scss';
 
-if (process.browser) {
-	(global as any).MSPFA = MSPFA;
-}
+(global as any).MSPFA = MSPFA; // @client-only
 
 const App = ({ Component, pageProps }: AppProps) => (
 	<>

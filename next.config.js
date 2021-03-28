@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-	webpack: config => {
+	webpack: (config, { isServer }) => {
 		for (const { oneOf } of config.module.rules) {
 			if (Array.isArray(oneOf)) {
 				for (const rule of oneOf) {
@@ -21,15 +21,24 @@ module.exports = {
 		}
 		
 		// Here are some stupid workarounds with comments above each to explain what they are trying to work around.
+		// If you're editing these, try to avoid replacements causing line numbers to change.
 		config.module.rules.push({
 			test: /\.[jt]sx?$/,
 			loader: 'string-replace-loader',
 			options: {
 				multiple: [
+					// Some scripts which run on both the client and the server contain code which should only run on the client or the server rather than both.
+					{
+						search: isServer
+							? /^.+ \/\/ @client-only$/gm
+							: /^.+ \/\/ @server-only$/gm,
+						replace: ''
+					},
+					
 					// Normally, the minifier thinks `import`ed style modules which have nothing `import`ed `from` them are unused, so it omits them from the production build.
 					{
 						search: /^import '(.+?(\w+)\.module\.(?:s?css|sass))';$/gm,
-						replace: "import __styles_$2 from '$1';\n__styles_$2;"
+						replace: "import __styles_$2 from '$1'; __styles_$2;"
 					},
 					
 					// If a global JSX style is in a component's children but not wrapped in curly brackets, it will add randomized class names to all the components in the same block of JSX.
