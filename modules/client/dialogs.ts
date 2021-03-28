@@ -122,7 +122,7 @@ export class Dialog extends Promise<DialogResult> {
 	}
 	
 	constructor({
-		id = String(Math.random()).slice(2),
+		id = Math.random().toString().slice(2),
 		index = -1,
 		parent,
 		title,

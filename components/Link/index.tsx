@@ -50,7 +50,7 @@ const Link = React.forwardRef((
 		);
 	}
 	
-	const hrefString = String(href);
+	const hrefString = href.toString();
 	const external = /^(?:(?:[^:/]+:)|\/\/)/.test(hrefString);
 	
 	const anchorProps: Omit<LinkProps, 'href'> & { href?: string } = {

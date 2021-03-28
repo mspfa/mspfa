@@ -132,7 +132,7 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 								placeholder="YYYY"
 								min={1}
 								max={new Date().getFullYear()}
-								size={String(new Date().getFullYear()).length + 2}
+								size={new Date().getFullYear().toString().length + 2}
 								value={formValues.birthYear}
 								onChange={onChange}
 							/>
