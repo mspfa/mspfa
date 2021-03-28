@@ -1,47 +1,67 @@
-import { MongoClient } from 'mongodb';
+import mongodb, { MongoClient } from 'mongodb';
 import type { Db, Collection } from 'mongodb';
 
-// The `as any` below is to make TypeScript not angry when this module is imported from `modules/server/setup`.
+// `as any` below is to make TypeScript not angry when this module is imported from `modules/server/setup`.
 const client = new MongoClient((process.env as any).DB_HOST, {
 	useUnifiedTopology: true
 });
 
-let mspfa: Db;
+let mspfaDB: Db | undefined;
 
+/**
+ * A promise which resolves when the DB connects.
+ * 
+ * The resolution value is the raw MSPFA DB instance.
+ */
 export const connection = client.connect().then(() => {
-	mspfa = client.db('mspfa');
-	return mspfa;
+	mspfaDB = client.db('mspfa');
+	return mspfaDB;
 });
 
+// `mongodb as any` below, along with the `mongodb` import as opposed to importing `Collection` directly, is necessary because `@types/mongodb` doesn't support the `Collection` class.
+/** An array of the keys of a `Collection` instance. */
+const collectionKeys: Array<keyof Collection> = Object.keys((mongodb as any).Collection.prototype) as any[];
+
 const db = {
-	collection: <
-		Document,
-		ProxiedCollection extends Record<keyof Collection<Document>, (...args: any) => Promise<any>> = {
+	collection: <Document>(name: string) => {
+		// Check if the database has already connected.
+		if (mspfaDB) {
+			return mspfaDB.collection<Document>(name);
+		}
+		
+		/** `Collection<Document>` with only its async function properties. */
+		type PartialCollection = {
 			[Key in keyof Collection<Document>]: Collection<Document>[Key] extends (...args: any) => Promise<any>
 				? Collection<Document>[Key]
-				: never
-		}
-	>(name: string) => {
-		let collection: Collection<Document> | undefined;
-		connection.then(() => {
-			collection = mspfa.collection<Document>(name);
+				: undefined
+		};
+		
+		/**
+		 * Before the DB connects, this is the collection with only its async function properties (`PartialCollection`).
+		 * 
+		 * After the DB connects, this is set to the full collection (`Collection<Document>`).
+		 */
+		const partialCollection: Collection<Document> | PartialCollection = {} as any;
+		
+		const collectionUpdate = connection.then(() => {
+			const collection = mspfaDB!.collection<Document>(name);
+			
+			// Now that the DB has connected, set all of the properties of the full collection.
+			for (const key of collectionKeys) {
+				const value = collection[key];
+				partialCollection[key] = typeof value === 'function' ? value.bind(collection) : value;
+			}
 		});
 		
-		return new Proxy({}, {
-			/** The getter for any property of the proxied collection. */
-			get: <Key extends keyof Collection<Document>>(
-				_target: never,
-				key: Key
-			) => (
-				// Every property in the proxied collection is this async function.
-				async (
-					...args: [...Parameters<ProxiedCollection[Key]>]
-				) => {
-					await connection;
-					return collection![key](...args);
-				}
-			)
-		}) as unknown as ProxiedCollection;
+		// The DB has not connected yet, so set only the async function properties on the `partialCollection`.
+		for (const key of collectionKeys) {
+			partialCollection[key] = async (...args: any[]) => {
+				await collectionUpdate;
+				return partialCollection[key](...args);
+			};
+		}
+		
+		return partialCollection;
 	}
 };
 
