@@ -13,6 +13,7 @@ export type NavItemProps = {
 	label: string,
 	className?: never,
 	children?: never,
+	/** If true, shows an exclamation point. If a number > 0, shows the number. Otherwise, is hidden. */
 	bubble?: number | boolean
 } & LinkProps;
 
