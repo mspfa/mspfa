@@ -54,6 +54,7 @@
 		"no-constructor-return": "error",
 		"no-else-return": "error",
 		"no-extra-bind": "error",
+		"no-extra-label": "warn",
 		"no-floating-decimal": "error",
 		"no-multi-spaces": "error",
 		"no-octal-escape": "error",

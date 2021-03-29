@@ -1,11 +1,12 @@
 import type { APIHandler } from 'modules/server/api';
 import type { SessionBody } from 'pages/api/session';
 import { checkExternalAuthMethod, createSession } from 'modules/server/auth';
-import users, { defaultUser } from 'modules/server/users';
+import users, { defaultUser, getClientUser } from 'modules/server/users';
 import type { UserDocument } from 'modules/server/users';
 import argon2 from 'argon2';
 import { ObjectId } from 'bson';
 import validate from './index.validate';
+import type { ClientUser } from 'modules/client/users';
 
 const Handler: APIHandler<{
 	method: 'POST',
@@ -13,7 +14,12 @@ const Handler: APIHandler<{
 		name: UserDocument['name'],
 		birthdate: number
 	}
-}> = async (req, res) => {
+}, (
+	{
+		method: 'POST',
+		body: ClientUser
+	}
+)> = async (req, res) => {
 	await validate(req, res);
 	
 	let email: string;
@@ -27,9 +33,7 @@ const Handler: APIHandler<{
 		({ value: authMethodValue, email, verified } = await checkExternalAuthMethod(req, res));
 	}
 	
-	if (await users.findOne({
-		email
-	})) {
+	if (await users.findOne({ email })) {
 		res.status(422).send({
 			message: 'The specified email is already taken.'
 		});
@@ -43,7 +47,6 @@ const Handler: APIHandler<{
 			type: req.body.authMethod.type,
 			value: authMethodValue
 		}],
-		sessions: [],
 		created: new Date(),
 		lastSeen: new Date(),
 		birthdate: new Date(req.body.birthdate),
@@ -55,7 +58,7 @@ const Handler: APIHandler<{
 	
 	await createSession(req, res, user);
 	
-	res.status(200).send(user); // TODO: Sanitize user data
+	res.status(200).send(getClientUser(user));
 };
 
 export default Handler;

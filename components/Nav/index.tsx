@@ -5,13 +5,24 @@ import { useRouter } from 'next/router';
 import { useCallback } from 'react';
 import { signIn } from 'modules/client/auth';
 import './styles.module.scss';
+import { setUser, useUser } from 'modules/client/users';
+import api from 'modules/client/api';
+import type { APIClient } from 'modules/client/api';
 
 const onClickSignIn = () => {
 	signIn();
 };
 
+type SessionAPI = APIClient<typeof import('pages/api/session').default>;
+
+const signOut = async () => {
+	await (api as SessionAPI).delete('session');
+	setUser(undefined);
+};
+
 const Nav = () => {
 	const router = useRouter();
+	const [user] = useUser();
 	
 	const visitRandomComic = useCallback(() => {
 		// TODO
@@ -23,7 +34,14 @@ const Nav = () => {
 		<nav>
 			<NavGroup id="primary">
 				<NavItem id="home" label="Home" href="/" />
-				<NavItem id="sign-in" label="Sign In" onClick={onClickSignIn} />
+				{(user
+					? (
+						<NavMenu id="my-mspfa" label="My MSPFA">
+							<NavItem id="sign-out" label="Sign Out" onClick={signOut} />
+						</NavMenu>
+					)
+					: <NavItem id="sign-in" label="Sign In" onClick={onClickSignIn} />
+				)}
 			</NavGroup>
 			<NavGroup id="secondary">
 				<NavItem id="search" label="Site Search" href="/search" />

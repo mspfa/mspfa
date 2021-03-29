@@ -16,7 +16,9 @@ export type APIResponse<
 	Response extends Record<string, unknown> = any
 > = (
 	NextApiResponse<(
-		Response extends { body: {} } ? Response['body'] : any
+		Response extends { body: {} }
+			? ErrorResponseBody | Response['body']
+			: any
 	)>
 );
 
@@ -29,6 +31,8 @@ export type APIHandler<
 	// This is so you can use `NonNullable<APIHandler['Request']>` and `NonNullable<APIHandler['Response']>` instead of having to use a conditional type with `infer` to get the request and response types.
 	& { Request?: Request, Response?: Response }
 );
+
+export type ErrorResponseBody = { message: string };
 
 const ajv = new Ajv({ allErrors: true });
 

@@ -41,24 +41,27 @@ export const checkExternalAuthMethod = (
 		}
 		
 		// Authenticate with Discord.
-		const referrerOrigin = req.headers.referer?.slice(0, `${req.headers.referer}/`.indexOf('/', req.headers.referer.indexOf('//') + 2));
-		const response = await axios.post('https://discord.com/api/oauth2/token', new URLSearchParams({
+		const referrerOrigin = req.headers.referer?.slice(
+			0,
+			// This is the index of end of the origin in the `Referer` header. For example, the index of the single "/" in "https://example.com/path".
+			`${req.headers.referer}/`.indexOf('/', req.headers.referer.indexOf('//') + 2)
+		);
+		const { data: discordToken } = await axios.post('https://discord.com/api/oauth2/token', new URLSearchParams({
 			client_id: process.env.DISCORD_CLIENT_ID!,
 			client_secret: process.env.DISCORD_CLIENT_SECRET!,
 			grant_type: 'authorization_code',
 			code: req.body.authMethod.value,
 			redirect_uri: `${referrerOrigin}/sign-in/discord`
 		}));
-		const { data } = await axios.get('https://discord.com/api/users/@me', {
-			method: 'GET',
+		const { data: discordUser } = await axios.get('https://discord.com/api/users/@me', {
 			headers: {
-				Authorization: `${response.data.token_type} ${response.data.access_token}`
+				Authorization: `${discordToken.token_type} ${discordToken.access_token}`
 			}
 		});
 		resolve({
-			value: data.id,
-			email: data.email.toLowerCase(),
-			verified: data.verified
+			value: discordUser.id,
+			email: discordUser.email.toLowerCase(),
+			verified: discordUser.verified
 		});
 	} catch (error) {
 		console.error(error);
@@ -71,6 +74,9 @@ const authCookieOptions = {
 	maxAge: 1000 * 60 * 60 * 24 * 7
 } as const;
 
+/** The number of random bytes in newly generated tokens. */
+const TOKEN_LENGTH = 64;
+
 /**
  * Sets the `auth` cookie to new session data which is pushed to the user's sessions in the DB.
  * 
@@ -82,7 +88,7 @@ export const createSession = async (
 	/** The user which the session is for. */
 	user: UserDocument
 ) => {
-	const token = crypto.randomBytes(100).toString('base64');
+	const token = crypto.randomBytes(TOKEN_LENGTH).toString('base64');
 	
 	new Cookies(req, res).set('auth', `${user._id}:${token}`, authCookieOptions);
 	
@@ -144,6 +150,7 @@ export const authenticate = async (req: IncomingMessage, res: ServerResponse) =>
 							cookies.set('auth', credentials, authCookieOptions);
 						}
 						
+						// Update the existing session in the DB.
 						users.updateOne({
 							_id: user._id,
 							'sessions.token': session.token

@@ -3,6 +3,7 @@ import type { ObjectId } from 'mongodb';
 import { Theme } from 'modules/server/themes';
 import type { achievements } from 'modules/server/achievements';
 import type { URLString } from 'modules/types';
+import type { ClientUser } from 'modules/client/users';
 
 export type ExternalAuthMethod = {
 	type: 'google' | 'discord',
@@ -109,6 +110,7 @@ export type UserDocument = {
 };
 
 export const defaultUser = {
+	sessions: [] as never[],
 	verified: false,
 	description: '',
 	comicSaves: {} as Record<never, never>,
@@ -147,6 +149,29 @@ export const defaultUser = {
 	},
 	perms: {} as Record<never, never>
 } as const;
+
+/** Converts a `UserDocument` to a `ClientUser`. */
+export const getClientUser = (user: UserDocument): ClientUser => ({
+	id: user._id.toString(),
+	created: +user.created,
+	lastSeen: +user.lastSeen,
+	birthdate: +user.birthdate,
+	name: user.name,
+	email: user.email,
+	verified: user.verified,
+	description: user.description,
+	icon: user.icon,
+	site: user.site,
+	comicSaves: user.comicSaves,
+	achievements: user.achievements,
+	favs: user.favs,
+	profileStyle: user.profileStyle,
+	settings: user.settings,
+	dev: user.dev,
+	mod: user.mod,
+	patron: user.patron,
+	nameColor: user.nameColor
+});
 
 const users = db.collection<UserDocument>('users');
 

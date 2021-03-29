@@ -1,9 +1,11 @@
 import type { APIHandler } from 'modules/server/api';
-import users from 'modules/server/users';
+import users, { getClientUser } from 'modules/server/users';
 import type { ExternalAuthMethod, InternalAuthMethod, UserDocument } from 'modules/server/users';
 import { checkExternalAuthMethod, createSession } from 'modules/server/auth';
 import validate from './index.validate';
 import argon2 from 'argon2';
+import Cookies from 'cookies';
+import type { ClientUser } from 'modules/client/users';
 
 export type SessionBody = {
 	authMethod: ExternalAuthMethod
@@ -13,12 +15,14 @@ export type SessionBody = {
 };
 
 const Handler: APIHandler<(
-	{
-		method: 'DELETE',
-		body: undefined
-	} | {
+	{ method: 'DELETE' } | {
 		method: 'POST',
 		body: SessionBody
+	}
+), (
+	{
+		method: 'POST',
+		body: ClientUser
 	}
 )> = async (req, res) => {
 	await validate(req, res);
@@ -74,8 +78,14 @@ const Handler: APIHandler<(
 		
 		await createSession(req, res, user);
 		
-		res.status(200).send(user); // TODO: Sanitize user data
+		res.status(200).send(getClientUser(user));
+		return;
 	}
+	
+	// If this point is reached, `req.method === 'DELETE'`.
+	
+	new Cookies(req, res).set('auth', undefined);
+	res.status(200).end();
 };
 
 export default Handler;

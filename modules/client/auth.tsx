@@ -4,6 +4,7 @@ import { formValues, resetFormValues } from 'components/SignIn';
 import api from 'modules/client/api';
 import type { AuthMethod } from 'modules/server/users';
 import type { APIClient } from 'modules/client/api';
+import { setUser } from 'modules/client/users';
 
 type SessionAPI = APIClient<typeof import('pages/api/session').default>;
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
@@ -150,7 +151,7 @@ export const signIn = (newSignUpStage = 0) => {
 						// If sign-in or sign-up succeeds, reset the sign-in form and update the client's user state.
 						signInLoading = false;
 						resetFormValues();
-						console.log(response);
+						setUser(response);
 					}).catch(() => {
 						// If sign-in or sign-up fails, go back to sign-in screen.
 						signInLoading = false;
