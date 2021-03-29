@@ -17,8 +17,8 @@ const Nav = () => {
 		router.push(`/s/${Math.random()}/p/1`);
 	}, [router]);
 	
-	const notificationsBubble = 23;
-	const messagesBubble = 1;
+	const notificationsBubble = 0;
+	const messagesBubble = 0;
 	
 	return (
 		<nav>
