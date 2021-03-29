@@ -7,8 +7,13 @@ export type APIRequest<
 	Request extends Record<string, unknown> = { body: any }
 > = (
 	IncomingMessage
-	& Omit<NextApiRequest, keyof Request>
-	& Request
+	& Request extends {}
+		? (
+			Omit<NextApiRequest, 'body' | keyof Request>
+			& Request
+			& { body: unknown }
+		)
+		: NextApiRequest
 );
 
 /** The server-side API response object. */
