@@ -97,7 +97,6 @@ const generateValidator = async (
 	} catch (error) {
 		console.log(`${c.gray(sourcePathModule)} ${c.red('Error:')}`);
 		console.error(error);
-		console.log(fs.readFileSync('C:/Users/grant/Documents/projects/MSPFA/pages/api/session/index.validate.ts', 'utf8'));
 		
 		await fs.unlink(outputPath);
 	}

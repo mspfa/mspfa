@@ -67,8 +67,8 @@ export const promptExternalSignIn = {
 				window.removeEventListener('message', onMessage);
 				clearInterval(winClosedPoll);
 				if (evt.data.error) {
-					// Ignore `access_denied` because it is triggered when the user selects "Cancel" on the Discord auth screen.
 					if (evt.data.error === 'access_denied') {
+						// Ignore `access_denied` because it is triggered when the user selects "Cancel" on the Discord auth screen.
 						console.warn(evt.data);
 					} else {
 						console.error(evt.data);

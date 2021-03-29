@@ -31,8 +31,6 @@ const api: (
 
 /** This function works as if it is automatically plugged into every API call's `.catch`. */
 const onReject = (error: any) => {
-	console.error(error);
-	
 	new Dialog({
 		title: 'Error',
 		content: error.response?.data.message || error.message

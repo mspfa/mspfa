@@ -64,7 +64,6 @@ export const checkExternalAuthMethod = (
 			verified: discordUser.verified
 		});
 	} catch (error) {
-		console.error(error);
 		res.status(error.status || 422).send({ message: error.message });
 	}
 });
