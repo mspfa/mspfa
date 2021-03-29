@@ -25,7 +25,7 @@ const Handler: APIHandler<{
 	const now = new Date();
 	if (req.body.birthdate > +new Date(now.getFullYear() - 13, now.getMonth(), now.getDate())) {
 		// The user is under 13 years old, which breaks the terms of service.
-		res.status(422).send({
+		res.status(400).send({
 			message: 'You must be at least 13 years old to sign up.'
 		});
 		return;
@@ -33,7 +33,7 @@ const Handler: APIHandler<{
 	
 	if (req.body.birthdate < +new Date(now.getFullYear() - 1000, now.getMonth(), now.getDate())) {
 		// The user is over 1000 years old, which, as far as I know, is impossible.
-		res.status(422).send({
+		res.status(400).send({
 			message: 'You should be dead.'
 		});
 		return;
