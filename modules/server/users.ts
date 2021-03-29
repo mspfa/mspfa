@@ -3,7 +3,7 @@ import type { ObjectId } from 'mongodb';
 import { Theme } from 'modules/server/themes';
 import type { achievements } from 'modules/server/achievements';
 import type { URLString } from 'modules/types';
-import type { ClientUser } from 'modules/client/users';
+import type { PrivateUser, PublicUser } from 'modules/client/users';
 
 export type ExternalAuthMethod = {
 	type: 'google' | 'discord',
@@ -150,8 +150,8 @@ export const defaultUser = {
 	perms: {} as Record<never, never>
 } as const;
 
-/** Converts a `UserDocument` to a `ClientUser`. */
-export const getClientUser = (user: UserDocument): ClientUser => ({
+/** Converts a `UserDocument` to a `PrivateUser`. */
+export const getPrivateUser = (user: UserDocument): PrivateUser => ({
 	id: user._id.toString(),
 	created: +user.created,
 	lastSeen: +user.lastSeen,
@@ -167,10 +167,31 @@ export const getClientUser = (user: UserDocument): ClientUser => ({
 	favs: user.favs,
 	profileStyle: user.profileStyle,
 	settings: user.settings,
+	perms: user.perms,
 	dev: user.dev,
 	mod: user.mod,
 	patron: user.patron,
 	nameColor: user.nameColor
+	// Yes, this could be shortened and automated, but that would be less efficient.
+});
+
+/** Converts a `UserDocument` to a `PublicUser`. */
+export const getPublicUser = (user: UserDocument): PublicUser => ({
+	id: user._id.toString(),
+	created: +user.created,
+	lastSeen: +user.lastSeen,
+	name: user.name,
+	description: user.description,
+	icon: user.icon,
+	site: user.site,
+	achievements: user.achievements,
+	favs: user.favs,
+	profileStyle: user.profileStyle,
+	dev: user.dev,
+	mod: user.mod,
+	patron: user.patron,
+	nameColor: user.nameColor
+	// Yes, this could be shortened and automated, but that would be less efficient.
 });
 
 const users = db.collection<UserDocument>('users');

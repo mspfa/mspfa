@@ -3,11 +3,12 @@ import React, { useContext, useState } from 'react';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
 
-type ClientUserDocumentKey = 'name' | 'email' | 'verified' | 'description' | 'icon' | 'site' | 'comicSaves' | 'achievements' | 'favs' | 'profileStyle' | 'settings' | 'dev' | 'mod' | 'patron' | 'nameColor';
+/** All keys whose values have a serializable type shared by both `DocumentUser` and `PrivateUser`. */
+type PrivateUserDocumentKey = 'name' | 'email' | 'verified' | 'description' | 'icon' | 'site' | 'comicSaves' | 'achievements' | 'favs' | 'profileStyle' | 'settings' | 'perms' | 'dev' | 'mod' | 'patron' | 'nameColor';
 
 /** This is a serializable version of `UserDocument` which only has properties that can safely be exposed to the client that owns the user data. */
-export type ClientUser = (
-	Pick<UserDocument, ClientUserDocumentKey>
+export type PrivateUser = (
+	Pick<UserDocument, PrivateUserDocumentKey>
 	& {
 		id: string,
 		created: number,
@@ -16,7 +17,20 @@ export type ClientUser = (
 	}
 );
 
-export const UserContext = React.createContext<ClientUser | undefined>(undefined);
+/** All keys whose values have a serializable type shared by both `DocumentUser` and `PublicUser`. */
+type PublicUserDocumentKey = 'name' | 'description' | 'icon' | 'site' | 'achievements' | 'favs' | 'profileStyle' | 'dev' | 'mod' | 'patron' | 'nameColor';
+
+/** This is a serializable version of `UserDocument` which only has properties that can safely be exposed to any client. */
+export type PublicUser = (
+	Pick<UserDocument, PublicUserDocumentKey>
+	& {
+		id: string,
+		created: number,
+		lastSeen: number
+	}
+);
+
+export const UserContext = React.createContext<PrivateUser | undefined>(undefined);
 
 /**
  * Re-renders the component when the current authenticated user changes (or signs in/out).
@@ -25,20 +39,20 @@ export const UserContext = React.createContext<ClientUser | undefined>(undefined
  */
 export const useUser = () => useContext(UserContext);
 
-let globalUser: undefined | ClientUser;
-let globalSetUserState: undefined | React.Dispatch<React.SetStateAction<ClientUser | undefined>>;
+let globalUser: undefined | PrivateUser;
+let globalSetUserState: undefined | React.Dispatch<React.SetStateAction<PrivateUser | undefined>>;
 
 /** Gets the current authenticated user. */
 export const getUser = () => globalUser;
 
 /** Sets the current authenticated user and re-renders all components using it. */
-export const setUser = (user: ClientUser | undefined) => {
+export const setUser = (user: PrivateUser | undefined) => {
 	if (globalSetUserState) {
 		globalSetUserState(user);
 	}
 };
 
-export const useUserState = (userProp: ClientUser | undefined) => {
+export const useUserState = (userProp: PrivateUser | undefined) => {
 	const [user, setUserState] = useState(userProp);
 	
 	globalUser = user;

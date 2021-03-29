@@ -1,10 +1,10 @@
 import type { APIHandler } from 'modules/server/api';
-import users, { getClientUser } from 'modules/server/users';
+import users, { getPrivateUser } from 'modules/server/users';
 import type { ExternalAuthMethod, InternalAuthMethod, UserDocument } from 'modules/server/users';
 import { authenticate, checkExternalAuthMethod, createSession } from 'modules/server/auth';
 import argon2 from 'argon2';
 import Cookies from 'cookies';
-import type { ClientUser } from 'modules/client/users';
+import type { PrivateUser } from 'modules/client/users';
 import validate from './index.validate';
 
 export type SessionBody = {
@@ -25,7 +25,7 @@ const Handler: APIHandler<(
 ), (
 	{
 		method: 'POST',
-		body: ClientUser
+		body: PrivateUser
 	}
 )> = async (req, res) => {
 	await validate(req, res);
@@ -81,7 +81,7 @@ const Handler: APIHandler<(
 		
 		await createSession(req, res, user);
 		
-		res.status(200).send(getClientUser(user));
+		res.status(200).send(getPrivateUser(user));
 		return;
 	}
 	

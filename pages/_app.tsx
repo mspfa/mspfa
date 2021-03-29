@@ -3,7 +3,7 @@ import type { AppProps, AppContext } from 'next/app';
 import Head from 'next/head';
 import { SWRConfig } from 'swr';
 import { authenticate } from 'modules/server/auth'; // @server-only
-import { getClientUser } from 'modules/server/users'; // @server-only
+import { getPrivateUser } from 'modules/server/users'; // @server-only
 import { UserContext, useUserState } from 'modules/client/users';
 import * as MSPFA from 'modules/client/MSPFA'; // @client-only
 import 'styles/global.scss';
@@ -57,7 +57,7 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
 	if (req && res) {
 		const { user } = await authenticate(req, res);
 		if (user) {
-			appProps.pageProps.user = getClientUser(user);
+			appProps.pageProps.user = getPrivateUser(user);
 		}
 	}
 	
