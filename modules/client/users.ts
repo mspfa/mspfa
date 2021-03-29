@@ -6,7 +6,7 @@ import type { APIClient } from 'modules/client/api';
 /** All keys whose values have the same serializable type in both `DocumentUser` and `PrivateUser`. */
 type PrivateUserDocumentKey = 'name' | 'email' | 'verified' | 'description' | 'icon' | 'site' | 'comicSaves' | 'achievements' | 'favs' | 'profileStyle' | 'settings' | 'perms' | 'dev' | 'mod' | 'patron' | 'nameColor';
 
-/** This is a serializable version of `UserDocument` which only has properties that can safely be exposed to the client that owns the user data. */
+/** A serializable version of `UserDocument` which only has properties that can safely be exposed to the client that owns the user data. */
 export type PrivateUser = (
 	Pick<UserDocument, PrivateUserDocumentKey>
 	& {
@@ -20,7 +20,7 @@ export type PrivateUser = (
 /** All keys whose values have the same serializable type in both `DocumentUser` and `PublicUser`. */
 type PublicUserDocumentKey = 'name' | 'description' | 'icon' | 'site' | 'achievements' | 'favs' | 'profileStyle' | 'dev' | 'mod' | 'patron' | 'nameColor';
 
-/** This is a serializable version of `UserDocument` which only has properties that can safely be exposed to any client. */
+/** A serializable version of `UserDocument` which only has properties that can safely be exposed to any client. */
 export type PublicUser = (
 	Pick<UserDocument, PublicUserDocumentKey>
 	& {
