@@ -17,15 +17,32 @@ const Nav = () => {
 		router.push(`/?s=${Math.random()}&p=1`);
 	}, [router]);
 	
+	const notificationsBubble = 23;
+	const messagesBubble = 1;
+	
 	return (
 		<nav>
 			<NavGroup id="primary">
 				<NavItem id="home" label="Home" href="/" />
 				{(user
 					? (
-						<NavMenu id="signed-in" label="My MSPFA">
-							<NavItem id="notifications" label="Notifications" href={`/users/${user.id}/notifications`} />
-							<NavItem id="messages" label="Messages" href={`/users/${user.id}/messages`} />
+						<NavMenu
+							id="signed-in"
+							label="My MSPFA"
+							bubble={!!(notificationsBubble + messagesBubble)}
+						>
+							<NavItem
+								id="notifications"
+								label="Notifications"
+								href={`/users/${user.id}/notifications`}
+								bubble={notificationsBubble}
+							/>
+							<NavItem
+								id="messages"
+								label="Messages"
+								href={`/users/${user.id}/messages`}
+								bubble={messagesBubble}
+							/>
 							<div className="separator" />
 							<NavItem id="comics" label="Adventures" href={`/users/${user.id}/comics`} />
 							<NavItem id="favorites" label="Favorites" href={`/users/${user.id}/favorites`} />

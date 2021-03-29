@@ -12,11 +12,12 @@ export type NavItemProps = {
 	/** The text displayed on the nav item. */
 	label: string,
 	className?: never,
-	children?: never
+	children?: never,
+	bubble?: number | boolean
 } & LinkProps;
 
 const NavItem = React.forwardRef((
-	{ id, label, ...props }: NavItemProps,
+	{ id, label, bubble, ...props }: NavItemProps,
 	ref: Parameters<typeof Link>[0]['ref']
 ) => (
 	<Link
@@ -25,7 +26,12 @@ const NavItem = React.forwardRef((
 		{...props}
 		ref={ref}
 	>
-		{label}
+		<span className="nav-label">{label}</span>
+		{bubble ? (
+			<div className="bubble">
+				{bubble === true ? '!' : bubble}
+			</div>
+		) : undefined}
 	</Link>
 ));
 

@@ -75,16 +75,17 @@ $nav-group-colors: (
 		background-color: inherit;
 		flex-direction: column;
 		
-		&:hover, .nav-item:hover + & {
+		&-container:hover & {
 			z-index: 1;
 			display: flex;
 		}
 		
-		&.force-open, .nav-item:focus + & {
+		&-container.force-open & {
 			display: flex;
 		}
 		
 		.nav-item {
+			display: flex;
 			padding: 0 10px 0 5px;
 			
 			&:hover {
@@ -95,5 +96,34 @@ $nav-group-colors: (
 	
 	&-item {
 		display: inline-block;
+		position: relative;
+	}
+}
+
+.bubble {
+	display: inline-block;
+	position: absolute;
+	line-height: 14px;
+	padding: 0 3px;
+	color: #ffffff;
+	background-color: #ff0000;
+	border: 1px solid #ffffff;
+	
+	// Select bubbles on nav menu labels.
+	.nav-menu-container > .nav-item > & {
+		left: calc(100% - 3px);
+		bottom: calc(100% - 3px);
+	}
+	
+	// Select bubbles on labels of open nav menus.
+	.nav-menu-container:hover > .nav-item > &,
+	.nav-menu-container.force-open > .nav-item > & {
+		display: none;
+	}
+	
+	// Select bubbles on labels in nav menus.
+	.nav-menu & {
+		align-self: center;
+		left: calc(100% - 5px);
 	}
 }
