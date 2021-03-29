@@ -14,7 +14,7 @@ const Nav = () => {
 	const visitRandomComic = useCallback(() => {
 		// TODO
 		
-		router.push(`/?s=${Math.random()}&p=1`);
+		router.push(`/s/${Math.random()}/p/1`);
 	}, [router]);
 	
 	const notificationsBubble = 23;
@@ -34,22 +34,22 @@ const Nav = () => {
 							<NavItem
 								id="notifications"
 								label="Notifications"
-								href={`/users/${user.id}/notifications`}
+								href={`/u/${user.id}/notifications`}
 								bubble={notificationsBubble}
 							/>
 							<NavItem
 								id="messages"
 								label="Messages"
-								href={`/users/${user.id}/messages`}
+								href={`/u/${user.id}/messages`}
 								bubble={messagesBubble}
 							/>
 							<div className="separator" />
-							<NavItem id="comics" label="Adventures" href={`/users/${user.id}/comics`} />
-							<NavItem id="favorites" label="Favorites" href={`/users/${user.id}/favorites`} />
-							<NavItem id="comic-saves" label="Game Saves" href={`/users/${user.id}/comic-saves`} />
+							<NavItem id="comics" label="Adventures" href={`/u/${user.id}/comics`} />
+							<NavItem id="favorites" label="Favorites" href={`/u/${user.id}/favorites`} />
+							<NavItem id="comic-saves" label="Game Saves" href={`/u/${user.id}/comic-saves`} />
 							<div className="separator" />
-							<NavItem id="profile" label="Profile" href={`/users/${user.id}`} />
-							<NavItem id="settings" label="Settings" href={`/users/${user.id}/settings`} />
+							<NavItem id="profile" label="Profile" href={`/u/${user.id}`} />
+							<NavItem id="settings" label="Settings" href={`/u/${user.id}/settings`} />
 							<div className="separator" />
 							<NavItem id="sign-out" label="Sign Out" onClick={signOut} />
 						</NavMenu>
@@ -62,8 +62,8 @@ const Nav = () => {
 				<NavItem id="random" label="Mystery" title="Take me to a random adventure!" onClick={visitRandomComic} />
 			</NavGroup>
 			<NavGroup id="comic">
-				<NavItem id="comic-log" label="Log" href="/comics/log" />
-				<NavItem id="comic-search" label="Search" href="/comics/search" />
+				<NavItem id="comic-log" label="Log" href={`/s/${0}/log`} />
+				<NavItem id="comic-search" label="Search" href={`/s/${0}/search`} />
 			</NavGroup>
 			<NavGroup id="more">
 				<NavMenu id="help" label="Help">
