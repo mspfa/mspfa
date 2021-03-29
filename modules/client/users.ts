@@ -18,7 +18,7 @@ export type PrivateUser = (
 );
 
 /** All keys whose values have the same serializable type in both `DocumentUser` and `PublicUser`. */
-type PublicUserDocumentKey = 'name' | 'description' | 'icon' | 'site' | 'achievements' | 'favs' | 'profileStyle' | 'dev' | 'mod' | 'patron' | 'nameColor';
+type PublicUserDocumentKey = 'name' | 'description' | 'icon' | 'site' | 'achievements' | 'profileStyle' | 'dev' | 'mod' | 'patron' | 'nameColor';
 
 /** A serializable version of `UserDocument` which only has properties that can safely be exposed to any client. */
 export type PublicUser = (
@@ -26,7 +26,8 @@ export type PublicUser = (
 	& {
 		id: string,
 		created: number,
-		lastSeen: number
+		lastSeen: number,
+		favs?: UserDocument['favs']
 	}
 );
 

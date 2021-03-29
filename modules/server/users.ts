@@ -185,7 +185,7 @@ export const getPublicUser = (user: UserDocument): PublicUser => ({
 	icon: user.icon,
 	site: user.site,
 	achievements: user.achievements,
-	favs: user.favs,
+	favs: user.settings.favsPublic ? user.favs : undefined,
 	profileStyle: user.profileStyle,
 	dev: user.dev,
 	mod: user.mod,
