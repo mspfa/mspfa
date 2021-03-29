@@ -23,7 +23,17 @@ const Nav = () => {
 				<NavItem id="home" label="Home" href="/" />
 				{(user
 					? (
-						<NavMenu id="my-mspfa" label="My MSPFA">
+						<NavMenu id="signed-in" label="My MSPFA">
+							<NavItem id="notifications" label="Notifications" href={`/users/${user.id}/notifications`} />
+							<NavItem id="messages" label="Messages" href={`/users/${user.id}/messages`} />
+							<div className="separator" />
+							<NavItem id="comics" label="Adventures" href={`/users/${user.id}/comics`} />
+							<NavItem id="favorites" label="Favorites" href={`/users/${user.id}/favorites`} />
+							<NavItem id="comic-saves" label="Game Saves" href={`/users/${user.id}/comic-saves`} />
+							<div className="separator" />
+							<NavItem id="profile" label="Profile" href={`/users/${user.id}`} />
+							<NavItem id="settings" label="Settings" href={`/users/${user.id}/settings`} />
+							<div className="separator" />
 							<NavItem id="sign-out" label="Sign Out" onClick={signOut} />
 						</NavMenu>
 					)

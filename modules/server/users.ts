@@ -59,6 +59,7 @@ export type UserDocument = {
 	description: string,
 	icon?: URLString,
 	site?: URLString,
+	/** An object where each key is a comic ID, and its value is a page number of that comic. */
 	comicSaves: Record<number, number>,
 	achievements: Partial<Record<keyof typeof achievements, true>>,
 	favs: number[],

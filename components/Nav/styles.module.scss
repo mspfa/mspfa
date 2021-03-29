@@ -16,6 +16,12 @@ nav {
 	.stick {
 		color: #bbbbbb;
 	}
+	
+	.separator {
+		height: 1px;
+		background-color: rgba(128, 128, 128, 0.5);
+		margin: 1px 0;
+	}
 }
 
 $nav-group-colors: (
@@ -67,18 +73,18 @@ $nav-group-colors: (
 		position: absolute;
 		margin-left: -5px;
 		background-color: inherit;
+		flex-direction: column;
 		
-		.nav-item:hover + &, &:hover {
+		&:hover, .nav-item:hover + & {
 			z-index: 1;
-			display: block;
+			display: flex;
 		}
 		
-		.nav-item:focus + &, &.force-open {
-			display: block;
+		&.force-open, .nav-item:focus + & {
+			display: flex;
 		}
 		
 		.nav-item {
-			display: block;
 			padding: 0 10px 0 5px;
 			
 			&:hover {

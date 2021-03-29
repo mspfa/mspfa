@@ -44,13 +44,21 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 		});
 	}, []);
 	
-	/** Adds `onFocus={onFocus}` and `onBlur={onBlur}` props to the links in the menu. */
-	const addEventListeners = (child: JSX.Element) =>
+	/** Sets array `key`s and adds `onFocus={onFocus}` and `onBlur={onBlur}` props to the links in the menu. */
+	const processChild = (child: JSX.Element, index: number) => (
 		React.cloneElement(child, {
-			key: child.props.id,
-			onFocus,
-			onBlur
-		} as Partial<Parameters<typeof NavItem>[0]>);
+			key: child.props.id || index,
+			...(
+				// Only add the event listeners if this item is a component (i.e. `NavItem`) rather than an element.
+				typeof child.type === 'string'
+					? undefined
+					: {
+						onFocus,
+						onBlur
+					}
+			)
+		})
+	);
 	
 	return (
 		<div id={`nav-menu-container-${id}`} className="nav-menu-container">
@@ -86,7 +94,7 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 				className={`nav-menu${forceOpen ? ' force-open' : ''}`}
 				ref={menuRef}
 			>
-				{Array.isArray(children) ? children.map(addEventListeners) : addEventListeners(children)}
+				{Array.isArray(children) ? children.map(processChild) : processChild(children, 0)}
 			</div>
 		</div>
 	);

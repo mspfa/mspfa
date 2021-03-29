@@ -1,6 +1,5 @@
 import Delimit from 'components/Delimit';
 import Stick from 'components/Stick';
-import './styles.module.scss';
 
 export type NavGroupProps = {
 	children: JSX.Element | JSX.Element[],
