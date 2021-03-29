@@ -114,11 +114,16 @@ export const createSession = async (
 /**
  * Checks if the HTTP `Authorization` header or `auth` cookie represents a valid existing session.
  * 
- * Returns the authenticated user's `UserDocument` if so. Returns `undefined` if not.
+ * Returns the authenticated user and the hashed session token, or undefined for each of those if there is no valid session.
  * 
  * Also updates the user's `lastSeen` and session `lastUsed` dates in the DB. The returned user data is from before this update.
  */
-export const authenticate = async (req: IncomingMessage, res: ServerResponse) => {
+export const authenticate = async (
+	req: IncomingMessage,
+	res: ServerResponse,
+	/** Whether this should update the user's `lastSeen` and session `lastUsed` dates in the DB. */
+	updateDB = true
+) => {
 	let cookies: Cookies | undefined;
 	
 	/** The auth credentials in the format `${userID}:${token}`, decoded from either the `Authorization` header or the `auth` cookie. */
@@ -150,19 +155,24 @@ export const authenticate = async (req: IncomingMessage, res: ServerResponse) =>
 							cookies.set('auth', credentials, authCookieOptions);
 						}
 						
-						// Update the existing session in the DB.
-						users.updateOne({
-							_id: user._id,
-							'sessions.token': session.token
-						}, {
-							$set: {
-								lastSeen: new Date(),
-								'sessions.$.lastUsed': new Date(),
-								'sessions.$.ip': req.headers['x-real-ip']
-							}
-						});
+						if (updateDB) {
+							// Update the existing session in the DB.
+							users.updateOne({
+								_id: user._id,
+								'sessions.token': session.token
+							}, {
+								$set: {
+									lastSeen: new Date(),
+									'sessions.$.lastUsed': new Date(),
+									'sessions.$.ip': req.headers['x-real-ip']
+								}
+							});
+						}
 						
-						return user;
+						return {
+							user,
+							token: session.token
+						};
 					}
 				}
 			}
@@ -173,4 +183,9 @@ export const authenticate = async (req: IncomingMessage, res: ServerResponse) =>
 			cookies.set('auth', undefined);
 		}
 	}
+	
+	return {
+		user: undefined,
+		token: undefined
+	};
 };

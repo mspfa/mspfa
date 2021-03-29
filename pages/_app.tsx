@@ -55,7 +55,7 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
 	
 	const { req, res } = appContext.ctx;
 	if (req && res) {
-		const user = await authenticate(req, res);
+		const { user } = await authenticate(req, res);
 		if (user) {
 			appProps.pageProps.user = getClientUser(user);
 		}

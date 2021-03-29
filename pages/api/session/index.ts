@@ -1,7 +1,7 @@
 import type { APIHandler } from 'modules/server/api';
 import users, { getClientUser } from 'modules/server/users';
 import type { ExternalAuthMethod, InternalAuthMethod, UserDocument } from 'modules/server/users';
-import { checkExternalAuthMethod, createSession } from 'modules/server/auth';
+import { authenticate, checkExternalAuthMethod, createSession } from 'modules/server/auth';
 import validate from './index.validate';
 import argon2 from 'argon2';
 import Cookies from 'cookies';
@@ -84,11 +84,27 @@ const Handler: APIHandler<(
 	
 	// If this point is reached, `req.method === 'DELETE'`.
 	
-	users.updateOne();
+	const { user, token } = await authenticate(req, res, false);
 	
-	new Cookies(req, res).set('auth', undefined);
-	
-	res.status(200).end();
+	if (user) {
+		users.updateOne({
+			_id: user._id
+		}, {
+			$pull: {
+				sessions: {
+					token
+				}
+			}
+		});
+		
+		new Cookies(req, res).set('auth', undefined);
+		
+		res.status(200).end();
+	} else {
+		res.status(404).send({
+			message: 'No valid user session was found.'
+		});
+	}
 };
 
 export default Handler;
