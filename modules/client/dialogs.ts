@@ -216,20 +216,20 @@ export class Dialog extends Promise<DialogResult> {
 	}
 }
 
-if (process.browser) {
-	document.addEventListener('keydown', evt => {
-		// This check is necessary because of https://bugs.chromium.org/p/chromium/issues/detail?id=581537.
-		if (evt.key) {
-			if (
-				// The escape key should set `evt.key` to `Escape`, but it can be `Esc` on old browsers.
-				evt.key.startsWith('Esc')
-			) {
-				// Resolve the last dialog with `undefined`.
-				const topDialog = dialogs.length && dialogs[dialogs.length - 1];
-				if (topDialog) {
-					topDialog.resolve();
-				}
+// @client-only {
+document.addEventListener('keydown', evt => {
+	// This check is necessary because of https://bugs.chromium.org/p/chromium/issues/detail?id=581537.
+	if (evt.key) {
+		if (
+			// The escape key should set `evt.key` to `Escape`, but it can be `Esc` on old browsers.
+			evt.key.startsWith('Esc')
+		) {
+			// Resolve the last dialog with `undefined`.
+			const topDialog = dialogs.length && dialogs[dialogs.length - 1];
+			if (topDialog) {
+				topDialog.resolve();
 			}
 		}
-	});
-}
+	}
+});
+// @client-only }

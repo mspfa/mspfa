@@ -2,10 +2,10 @@ import type { APIHandler } from 'modules/server/api';
 import users, { getClientUser } from 'modules/server/users';
 import type { ExternalAuthMethod, InternalAuthMethod, UserDocument } from 'modules/server/users';
 import { authenticate, checkExternalAuthMethod, createSession } from 'modules/server/auth';
-import validate from './index.validate';
 import argon2 from 'argon2';
 import Cookies from 'cookies';
 import type { ClientUser } from 'modules/client/users';
+import validate from './index.validate';
 
 export type SessionBody = {
 	authMethod: ExternalAuthMethod
@@ -15,7 +15,10 @@ export type SessionBody = {
 };
 
 const Handler: APIHandler<(
-	{ method: 'DELETE' } | {
+	{
+		method: 'DELETE',
+		body?: undefined
+	} | {
 		method: 'POST',
 		body: SessionBody
 	}

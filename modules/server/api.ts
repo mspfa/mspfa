@@ -7,13 +7,9 @@ export type APIRequest<
 	Request extends Record<string, unknown> = { body: any }
 > = (
 	IncomingMessage
-	& Request extends {}
-		? (
-			Omit<NextApiRequest, 'body' | keyof Request>
-			& Request
-			& { body: unknown }
-		)
-		: NextApiRequest
+	& Omit<NextApiRequest, 'body' | keyof Request>
+	& Request
+	& { body: unknown }
 );
 
 /** The server-side API response object. */
@@ -46,6 +42,11 @@ export const createValidator = (schema: Record<string, unknown>) => {
 	
 	return (req: APIRequest, res: APIResponse) => (
 		new Promise<void>(resolve => {
+			if (req.body === '') {
+				// `req.body === ''` by default when the request body is unspecified. This sets it to `undefined`.
+				req.body = undefined;
+			}
+			
 			const valid = validate(req);
 			
 			if (valid) {

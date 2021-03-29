@@ -14,6 +14,9 @@ export default createValidator({
 						method: {
 							type: 'string',
 							const: 'DELETE'
+						},
+						body: {
+							not: {}
 						}
 					},
 					required: [
