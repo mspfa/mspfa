@@ -52,6 +52,13 @@ export type SignInProps = {
 const SignIn = ({ page }: SignInProps) => {
 	useFormValuesUpdater();
 	
+	/**
+	 * ```
+	 * new Date().getFullYear()
+	 * ```
+	 */
+	const nowFullYear = new Date().getFullYear();
+	
 	return (
 		<div id="sign-in-content">
 			{page !== 2 && (
@@ -130,9 +137,16 @@ const SignIn = ({ page }: SignInProps) => {
 								autoComplete="bday-year"
 								required
 								placeholder="YYYY"
-								min={1}
-								max={new Date().getFullYear()}
-								size={new Date().getFullYear().toString().length + 2}
+								min={
+									// The maximum age is 1000 years old.
+									nowFullYear - 1000
+									// Maybe in the distant future, when anyone can live that long, or when aliens with longer life spans use our internet, MSPFA will still be here.
+								}
+								max={
+									// The minimum age is 13 years old.
+									nowFullYear - 13
+								}
+								size={nowFullYear.toString().length + 2}
 								value={formValues.birthYear}
 								onChange={onChange}
 							/>
