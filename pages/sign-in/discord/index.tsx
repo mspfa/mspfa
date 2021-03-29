@@ -5,7 +5,7 @@ const Component = () => {
 	const router = useRouter();
 	
 	useEffect(() => {
-		if (router.isReady) {
+		if (Object.keys(router.query).length) {
 			window.opener.postMessage(router.query, location.origin);
 			window.close();
 		}
