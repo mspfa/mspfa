@@ -1,4 +1,4 @@
-import { signIn, promptExternalSignIn } from 'modules/client/auth';
+import { setSignInPage, promptExternalSignIn } from 'modules/client/auth';
 import Head from 'next/head';
 import Link from 'components/Link';
 import createUpdater from 'react-component-updater';
@@ -6,7 +6,7 @@ import type { ChangeEvent } from 'react';
 import './styles.module.scss';
 
 const startSigningUp = () => {
-	signIn(1);
+	setSignInPage(1);
 };
 
 const [useFormValuesUpdater, updateFormValues] = createUpdater();
@@ -46,15 +46,15 @@ const onChange = (
 
 export type SignInProps = {
 	/** 0 if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
-	signUpStage: number
+	page: number
 };
 
-const SignIn = ({ signUpStage }: SignInProps) => {
+const SignIn = ({ page }: SignInProps) => {
 	useFormValuesUpdater();
 	
 	return (
 		<div id="sign-in-content">
-			{signUpStage !== 2 && (
+			{page !== 2 && (
 				<>
 					<Head>
 						<meta name="google-signin-client_id" content="910008890195-oqbrg6h1r62vv8fql0p6iffn9j9kanm2.apps.googleusercontent.com" />
@@ -62,7 +62,7 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 						<script src="https://apis.google.com/js/platform.js" defer />
 					</Head>
 					<div className="translucent">
-						{signUpStage ? 'Sign up with' : 'Sign in with'}
+						{page ? 'Sign up with' : 'Sign in with'}
 					</div>
 					<div id="sign-in-methods-external">
 						<button id="sign-in-with-google" type="button" onClick={promptExternalSignIn.google}>Google</button>
@@ -72,7 +72,7 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 				</>
 			)}
 			<div id="sign-in-inputs">
-				{signUpStage === 2 ? (
+				{page === 2 ? (
 					<>
 						<label htmlFor="sign-in-name">Username:</label>
 						<input
@@ -142,7 +142,7 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 					<>
 						<label htmlFor="sign-in-email">Email:</label>
 						<input
-							key={signUpStage} // This is necessary to re-render this element when `signUpStage` changes, or else `autoFocus` will not work correctly.
+							key={page} // This is necessary to re-render this element when `page` changes, or else `autoFocus` will not work correctly.
 							id="sign-in-email"
 							name="email"
 							type="email"
@@ -158,13 +158,13 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 							id="sign-in-password"
 							name="password"
 							type="password"
-							autoComplete={signUpStage ? 'new-password' : 'current-password'}
+							autoComplete={page ? 'new-password' : 'current-password'}
 							required
 							minLength={8}
 							value={formValues.password}
 							onChange={onChange}
 						/>
-						{signUpStage === 0 ? (
+						{page === 0 ? (
 							<div id="reset-password-link-container">
 								<Link className="translucent">Reset Password</Link>
 							</div>
@@ -190,7 +190,7 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 					</>
 				)}
 			</div>
-			{signUpStage === 2 && (
+			{page === 2 && (
 				<>
 					<div id="terms-agreed-container">
 						<input
@@ -207,7 +207,7 @@ const SignIn = ({ signUpStage }: SignInProps) => {
 					</div>
 				</>
 			)}
-			{signUpStage === 0 && (
+			{page === 0 && (
 				<div id="sign-up-link-container">
 					<span className="translucent">Don't have an account? </span>
 					<Link onClick={startSigningUp}>Sign Up</Link>

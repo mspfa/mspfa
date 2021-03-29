@@ -17,7 +17,7 @@ const SignIn = dynamic(() => import('components/SignIn'), {
 
 let signInDialog: Dialog | undefined;
 /** 0 if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
-let signUpStage = 0;
+let signInPage = 0;
 
 let authMethod: AuthMethod;
 
@@ -92,7 +92,15 @@ export const promptExternalSignIn = {
 let signInLoading = false;
 
 /** Opens a dialog prompting the user to sign in or sign up. */
-export const signIn = (newSignUpStage = 0) => {
+export const signIn = () => {
+	setSignInPage(0);
+};
+
+/** Sets the sign-in page of the sign-in dialog. Opens the sign-in dialog if it is not already open. */
+export const setSignInPage = (
+	/** 0 if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
+	newSignInPage: number
+) => {
 	if (signInLoading) {
 		new Dialog({
 			title: 'Error',
@@ -101,7 +109,7 @@ export const signIn = (newSignUpStage = 0) => {
 		return;
 	}
 	
-	signUpStage = newSignUpStage;
+	signInPage = newSignInPage;
 	
 	if (signInDialog && !signInDialog.resolved) {
 		// Manually resolve the previous sign-in dialog with a value other than `undefined` so that `resetForm` is not called when switching between sign-up stages.
@@ -111,15 +119,15 @@ export const signIn = (newSignUpStage = 0) => {
 	signInDialog = new Dialog({
 		id: 'sign-in',
 		index: 0, // This is necessary to prevent the sign-in dialog from covering up sign-in error dialogs.
-		title: signUpStage ? 'Sign Up' : 'Sign In',
-		content: <SignIn signUpStage={signUpStage} />,
-		actions: signUpStage === 0
+		title: signInPage ? 'Sign Up' : 'Sign In',
+		content: <SignIn page={signInPage} />,
+		actions: signInPage === 0
 			? [
 				{ label: 'Sign In', value: 'password', focus: false },
 				{ label: 'Cancel', value: 'exit' }
 			]
 			: [
-				signUpStage === 1
+				signInPage === 1
 					? { label: 'Continue', value: 'password', focus: false }
 					: { label: 'Sign Up', focus: false },
 				{ label: 'Go Back', value: 'back' }
@@ -128,7 +136,7 @@ export const signIn = (newSignUpStage = 0) => {
 	signInDialog.then(result => {
 		if (result) {
 			if (result.submit) {
-				if (signUpStage === 1) {
+				if (signInPage === 1) {
 					// If the user submits the form while on the first stage of sign-up, move them to the next stage.
 					if (result.value === 'password') {
 						authMethod = {
@@ -136,14 +144,14 @@ export const signIn = (newSignUpStage = 0) => {
 							value: formValues.password
 						};
 					}
-					signIn(2);
+					setSignInPage(2);
 				} else {
 					// If the user submits the form while on the sign-in screen or on the last stage of sign-up, attempt sign-in or sign-up.
 					signInLoading = true;
-					(api as SessionAPI | UsersAPI).post(signUpStage === 0 ? 'session' : 'users', {
+					(api as SessionAPI | UsersAPI).post(signInPage === 0 ? 'session' : 'users', {
 						email: authMethod.type === 'password' ? formValues.email : undefined,
 						authMethod,
-						...(signUpStage === 0 ? undefined : {
+						...(signInPage === 0 ? undefined : {
 							name: formValues.name,
 							birthdate: +new Date(+formValues.birthYear, +formValues.birthMonth - 1, +formValues.birthDay)
 						})
@@ -155,13 +163,13 @@ export const signIn = (newSignUpStage = 0) => {
 					}).catch(() => {
 						// If sign-in or sign-up fails, go back to sign-in screen.
 						signInLoading = false;
-						signIn(signUpStage);
+						setSignInPage(signInPage);
 					});
 				}
 			} else if (result.value === 'exit') {
 				resetFormValues();
 			} else if (result.value === 'back') {
-				signIn(signUpStage - 1);
+				setSignInPage(signInPage - 1);
 			}
 		} else {
 			resetFormValues();

@@ -84,7 +84,10 @@ const Handler: APIHandler<(
 	
 	// If this point is reached, `req.method === 'DELETE'`.
 	
+	users.updateOne();
+	
 	new Cookies(req, res).set('auth', undefined);
+	
 	res.status(200).end();
 };
 

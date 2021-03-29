@@ -4,20 +4,21 @@ import Head from 'next/head';
 import { SWRConfig } from 'swr';
 import { authenticate } from 'modules/server/auth'; // @server-only
 import { getClientUser } from 'modules/server/users'; // @server-only
-import { setUser } from 'modules/client/users';
+import { UserContext, useUserState } from 'modules/client/users';
 import * as MSPFA from 'modules/client/MSPFA'; // @client-only
 import 'styles/global.scss';
-import { useEffect } from 'react';
 
 (global as any).MSPFA = MSPFA; // @client-only
 
 const MyApp = ({
 	Component,
-	pageProps: { user, ...pageProps }
+	pageProps: {
+		// This value is the user data passed in from the server in `getInitialProps`. Any re-renders will set this value to `undefined`.
+		user: userProp,
+		...pageProps
+	}
 }: AppProps) => {
-	useEffect(() => {
-		setUser(user);
-	}, [user]);
+	const user = useUserState(userProp);
 	
 	return (
 		<>
@@ -39,7 +40,9 @@ const MyApp = ({
 					revalidateOnReconnect: false
 				}}
 			>
-				<Component {...pageProps} />
+				<UserContext.Provider value={user}>
+					<Component {...pageProps} />
+				</UserContext.Provider>
 			</SWRConfig>
 		</>
 	);
