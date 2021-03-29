@@ -19,9 +19,11 @@ let signInDialog: Dialog | undefined;
 /** 0 if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
 let signInPage = 0;
 
-let authMethod: AuthMethod;
+let authMethod: AuthMethod | undefined;
 
-const resolveExternalSignIn = () => {
+/** Resolves the sign-in dialog upon completion of an external auth method. */
+const resolveExternalSignIn = (newAuthMethod: AuthMethod) => {
+	authMethod = newAuthMethod;
 	signInDialog!.resolve({ submit: true, value: authMethod.type });
 };
 
@@ -43,11 +45,10 @@ export const promptExternalSignIn = {
 			gapi.auth2.init().then((auth2: any) => {
 				auth2.signIn().then((user: any) => {
 					if (signInDialog!.open) {
-						authMethod = {
+						resolveExternalSignIn({
 							type: 'google',
 							value: user.getAuthResponse().id_token
-						};
-						resolveExternalSignIn();
+						});
 					}
 				}).catch(onError);
 			}).catch(onError);
@@ -77,11 +78,10 @@ export const promptExternalSignIn = {
 						});
 					}
 				} else if (signInDialog!.open) {
-					authMethod = {
+					resolveExternalSignIn({
 						type: 'discord',
 						value: evt.data.code
-					};
-					resolveExternalSignIn();
+					});
 				}
 			}
 		};
@@ -136,20 +136,21 @@ export const setSignInPage = (
 	signInDialog.then(result => {
 		if (result) {
 			if (result.submit) {
+				if (result.value === 'password') {
+					authMethod = {
+						type: 'password',
+						value: formValues.password
+					};
+				}
+				
 				if (signInPage === 1) {
 					// If the user submits the form while on the first stage of sign-up, move them to the next stage.
-					if (result.value === 'password') {
-						authMethod = {
-							type: 'password',
-							value: formValues.password
-						};
-					}
 					setSignInPage(2);
 				} else {
 					// If the user submits the form while on the sign-in screen or on the last stage of sign-up, attempt sign-in or sign-up.
 					signInLoading = true;
 					(api as SessionAPI | UsersAPI).post(signInPage === 0 ? 'session' : 'users', {
-						email: authMethod.type === 'password' ? formValues.email : undefined,
+						email: authMethod!.type === 'password' ? formValues.email : undefined,
 						authMethod,
 						...(signInPage === 0 ? undefined : {
 							name: formValues.name,
