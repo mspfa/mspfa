@@ -19,7 +19,6 @@ const Component = ({ publicUser }: ServerSideProps) => (
 
 export default Component;
 
-// @server-only {
 export const getServerSideProps: GetServerSideProps = async context => {
 	const props: ServerSideProps = {};
 	
@@ -36,4 +35,3 @@ export const getServerSideProps: GetServerSideProps = async context => {
 	
 	return { props };
 };
-// @server-only }
