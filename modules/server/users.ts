@@ -152,48 +152,68 @@ export const defaultUser = {
 } as const;
 
 /** Converts a `UserDocument` to a `PrivateUser`. */
-export const getPrivateUser = (user: UserDocument): PrivateUser => ({
-	id: user._id.toString(),
-	created: +user.created,
-	lastSeen: +user.lastSeen,
-	birthdate: +user.birthdate,
-	name: user.name,
-	email: user.email,
-	verified: user.verified,
-	description: user.description,
-	icon: user.icon,
-	site: user.site,
-	comicSaves: user.comicSaves,
-	achievements: user.achievements,
-	favs: user.favs,
-	profileStyle: user.profileStyle,
-	settings: user.settings,
-	perms: user.perms,
-	dev: user.dev,
-	mod: user.mod,
-	patron: user.patron,
-	nameColor: user.nameColor
-	// Yes, this could be shortened and automated, but that would be less efficient.
-});
+export const getPrivateUser = (user: UserDocument): PrivateUser => {
+	const privateUser = {
+		id: user._id.toString(),
+		created: +user.created,
+		lastSeen: +user.lastSeen,
+		birthdate: +user.birthdate,
+		name: user.name,
+		email: user.email,
+		verified: user.verified,
+		description: user.description,
+		icon: user.icon,
+		site: user.site,
+		comicSaves: user.comicSaves,
+		achievements: user.achievements,
+		favs: user.favs,
+		profileStyle: user.profileStyle,
+		settings: user.settings,
+		perms: user.perms,
+		dev: user.dev,
+		mod: user.mod,
+		patron: user.patron,
+		nameColor: user.nameColor
+	};
+	
+	// Remove any `undefined` properties from the object so it is serializable.
+	for (const key in privateUser) {
+		if (privateUser[key as keyof typeof privateUser] === undefined) {
+			delete privateUser[key as keyof typeof privateUser];
+		}
+	}
+	
+	return privateUser;
+};
 
 /** Converts a `UserDocument` to a `PublicUser`. */
-export const getPublicUser = (user: UserDocument): PublicUser => ({
-	id: user._id.toString(),
-	created: +user.created,
-	lastSeen: +user.lastSeen,
-	name: user.name,
-	description: user.description,
-	icon: user.icon,
-	site: user.site,
-	achievements: user.achievements,
-	favs: user.settings.favsPublic ? user.favs : undefined,
-	profileStyle: user.profileStyle,
-	dev: user.dev,
-	mod: user.mod,
-	patron: user.patron,
-	nameColor: user.nameColor
-	// Yes, this could be shortened and automated, but that would be less efficient.
-});
+export const getPublicUser = (user: UserDocument): PublicUser => {
+	const publicUser = {
+		id: user._id.toString(),
+		created: +user.created,
+		lastSeen: +user.lastSeen,
+		name: user.name,
+		description: user.description,
+		icon: user.icon,
+		site: user.site,
+		achievements: user.achievements,
+		favs: user.settings.favsPublic ? user.favs : undefined,
+		profileStyle: user.profileStyle,
+		dev: user.dev,
+		mod: user.mod,
+		patron: user.patron,
+		nameColor: user.nameColor
+	};
+	
+	// Remove any `undefined` properties from the object so it is serializable.
+	for (const key in publicUser) {
+		if (publicUser[key as keyof typeof publicUser] === undefined) {
+			delete publicUser[key as keyof typeof publicUser];
+		}
+	}
+	
+	return publicUser;
+};
 
 const users = db.collection<UserDocument>('users');
 

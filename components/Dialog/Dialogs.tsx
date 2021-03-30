@@ -4,7 +4,7 @@ import Dialog from 'components/Dialog';
 /**
  * The component which renders the dialog stack.
  * 
- * ⚠️ This should never be rendered from outside the `Page` component.
+ * ⚠️ This should never be rendered anywhere but in the `Page` component's direct children.
  */
 const Dialogs = () => {
 	const dialogs = useDialogs();

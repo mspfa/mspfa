@@ -9,7 +9,7 @@ export type DialogProps = {
 /**
  * The component for a dialog.
  * 
- * ⚠️ This should never be rendered from outside the `Dialogs` component.
+ * ⚠️ This should never be rendered anywhere but in the `Dialogs` component's direct children.
  */
 const Dialog = React.memo(({ dialog }: DialogProps) => {
 	const formRef = useRef<HTMLFormElement>(null);

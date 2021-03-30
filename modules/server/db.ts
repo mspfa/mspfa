@@ -1,4 +1,4 @@
-import mongodb, { MongoClient } from 'mongodb';
+import mongodb, { MongoClient, ObjectId } from 'mongodb';
 import type { Db, Collection } from 'mongodb';
 
 // `as any` below is to make TypeScript not angry when this module is imported from `scripts/setup`.
@@ -22,6 +22,13 @@ export const connection = client.connect().then(() => {
 /** An array of the keys of a `Collection` instance. */
 const collectionKeys: Array<keyof Collection> = Object.keys((mongodb as any).Collection.prototype) as any[];
 
+/** A `Collection` with only its async function properties. */
+type PartialCollection<Document extends Record<string, any> = any> = {
+	[Key in keyof Collection<Document>]: Collection<Document>[Key] extends (...args: any) => Promise<any>
+		? Collection<Document>[Key]
+		: undefined
+};
+
 const db = {
 	collection: <Document>(name: string) => {
 		// Check if the database has already connected.
@@ -29,19 +36,12 @@ const db = {
 			return mspfaDB.collection<Document>(name);
 		}
 		
-		/** `Collection<Document>` with only its async function properties. */
-		type PartialCollection = {
-			[Key in keyof Collection<Document>]: Collection<Document>[Key] extends (...args: any) => Promise<any>
-				? Collection<Document>[Key]
-				: undefined
-		};
-		
 		/**
-		 * Before the DB connects, this is the collection with only its async function properties (`PartialCollection`).
+		 * Before the DB connects, this is the collection with only its async function properties (`PartialCollection<Document>`).
 		 * 
 		 * After the DB connects, this is set to the full collection (`Collection<Document>`).
 		 */
-		const partialCollection: Collection<Document> | PartialCollection = {} as any;
+		const partialCollection: Collection<Document> | PartialCollection<Document> = {} as any;
 		
 		const collectionUpdate = connection.then(() => {
 			const collection = mspfaDB!.collection<Document>(name);
@@ -66,3 +66,14 @@ const db = {
 };
 
 export default db;
+
+/** Calls `new ObjectId(id)` but returns `undefined` instead of throwing when `id` is invalid. */
+export const safeObjectID = (
+	id: ConstructorParameters<typeof ObjectId>[0]
+) => {
+	try {
+		return new ObjectId(id);
+	} catch {
+		return undefined;
+	}
+};
