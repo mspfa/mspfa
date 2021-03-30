@@ -43,14 +43,14 @@ const Nav = () => {
 								href={`/u/${user.id}/messages`}
 								bubble={messagesBubble}
 							/>
-							<div className="separator" />
+							<div className="divider" />
 							<NavItem id="comics" label="Adventures" href={`/u/${user.id}/comics`} />
 							<NavItem id="favorites" label="Favorites" href={`/u/${user.id}/favorites`} />
 							<NavItem id="comic-saves" label="Game Saves" href={`/u/${user.id}/comic-saves`} />
-							<div className="separator" />
+							<div className="divider" />
 							<NavItem id="profile" label="Profile" href={`/u/${user.id}`} />
 							<NavItem id="settings" label="Settings" href={`/u/${user.id}/settings`} />
-							<div className="separator" />
+							<div className="divider" />
 							<NavItem id="sign-out" label="Sign Out" onClick={signOut} />
 						</NavMenu>
 					)

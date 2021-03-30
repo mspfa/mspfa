@@ -17,7 +17,7 @@ nav {
 		color: #bbbbbb;
 	}
 	
-	.separator {
+	.divider {
 		height: 1px;
 		background-color: rgba(128, 128, 128, 0.5);
 		margin: 1px 0;
@@ -74,6 +74,7 @@ $nav-group-colors: (
 		margin-left: -5px;
 		background-color: inherit;
 		flex-direction: column;
+		padding-bottom: 1px;
 		
 		&-container:hover & {
 			z-index: 1;
