@@ -3,15 +3,18 @@ import type { GetServerSideProps } from 'next';
 import type { PublicUser } from 'modules/client/users';
 import { safeObjectID } from 'modules/server/db'; // @server-only
 import users, { getPublicUser } from 'modules/server/users'; // @server-only
+import ErrorPage from 'pages/_error';
 
 type ServerSideProps = {
 	publicUser?: PublicUser
 };
 
 const Component = ({ publicUser }: ServerSideProps) => (
-	<Page>
-		{publicUser?.id}
-	</Page>
+	publicUser ? (
+		<Page>
+			{publicUser.id}
+		</Page>
+	) : <ErrorPage />
 );
 
 export default Component;
