@@ -13,7 +13,7 @@ ErrorPage.getInitialProps = ({ res, error }: {
 	res?: ServerResponse,
 	error?: any
 }) => ({
-	statusCode: res?.statusCode || error?.statusCode || 404
+	statusCode: res?.statusCode || error?.statusCode
 });
 
 export default ErrorPage;
