@@ -49,7 +49,7 @@ const MyApp = ({
 };
 
 // @server-only {
-/** This runs server-side on every page request. */
+/** This runs server-side on every page request (only for initial requests by the browser, not by the Next router). */
 MyApp.getInitialProps = async (appContext: AppContext) => {
 	const appProps = await App.getInitialProps(appContext);
 	
