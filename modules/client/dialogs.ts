@@ -72,7 +72,10 @@ export type DialogOptions = {
 };
 
 export type DialogResult = Partial<DialogAction> | undefined;
+
 let resolvePromise: (value?: DialogResult) => void;
+
+let nextDialogID = 0;
 
 export class Dialog extends Promise<DialogResult> {
 	readonly [Symbol.toStringTag] = 'Dialog';
@@ -122,7 +125,7 @@ export class Dialog extends Promise<DialogResult> {
 	}
 	
 	constructor({
-		id = Math.random().toString().slice(2),
+		id = nextDialogID++,
 		index = -1,
 		parent,
 		title,
