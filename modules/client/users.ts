@@ -40,8 +40,8 @@ export const UserContext = React.createContext<PrivateUser | undefined>(undefine
  */
 export const useUser = () => useContext(UserContext);
 
-let globalUser: undefined | PrivateUser;
-let globalSetUserState: undefined | React.Dispatch<React.SetStateAction<PrivateUser | undefined>>;
+let globalUser: PrivateUser | undefined;
+let globalSetUserState: React.Dispatch<React.SetStateAction<PrivateUser | undefined>> | undefined;
 
 /** Gets the current authenticated user. */
 export const getUser = () => globalUser;
