@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { Dialog } from 'modules/client/dialogs';
 import type { APIHandler } from 'modules/server/api';
 import type { AxiosRequestConfig, AxiosInstance } from 'axios';
 import type { Method, MethodWithData } from 'modules/types';
+import { Dialog } from 'modules/client/dialogs';
 import { startLoading, stopLoading } from 'components/LoadingIndicator';
 
 const apiExtension = {
@@ -12,6 +12,8 @@ const apiExtension = {
 
 /**
  * An [axios](https://github.com/axios/axios#readme) instance for the MSPFA API.
+ * 
+ * ⚠️ Never call this server-side.
  * 
  * ⚠️ When using this to make API calls, use it `as` an `APIClient` type, or else you will get no type safety on the request or response.
  */
@@ -30,7 +32,6 @@ const api: (
 	apiExtension
 );
 
-/** This function works as if it is automatically plugged into every API call's `.catch`. */
 const onReject = (error: any) => {
 	new Dialog({
 		title: 'Error',
