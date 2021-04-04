@@ -67,8 +67,8 @@ export const useUserState = (userProp: PrivateUser | undefined) => {
 export const signIn = async () => {
 	startLoading();
 	const { openSignInDialog } = await import('modules/client/auth');
-	openSignInDialog();
 	stopLoading();
+	openSignInDialog();
 };
 
 type SessionAPI = APIClient<typeof import('pages/api/session').default>;
