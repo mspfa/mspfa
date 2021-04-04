@@ -356,12 +356,6 @@
 		],
 		"@typescript-eslint/prefer-includes": "error",
 		"react/button-has-type": "warn",
-		"react/default-props-match-prop-types": [
-			"error",
-			{
-				"allowRequiredDefaults": false
-			}
-		],
 		"react/display-name": "off",
 		"react/forbid-elements": [
 			"error",
@@ -383,6 +377,7 @@
 		"react/no-unused-state": "warn",
 		"react/no-will-update-set-state": "error",
 		"react/prefer-stateless-function": "error",
+		"react/prop-types": "off", // This is off because we have TypeScript to handle this.
 		"react/self-closing-comp": [
 			"warn",
 			{

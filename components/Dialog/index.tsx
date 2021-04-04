@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import type { Dialog as DialogClass } from 'modules/client/dialogs';
+import { Form, Formik } from 'formik';
 import './styles.module.scss';
 
 export type DialogProps = {
-	dialog: DialogClass
+	dialog: DialogClass<any>
 };
 
 /**
@@ -12,11 +13,8 @@ export type DialogProps = {
  * ⚠️ This should never be rendered anywhere but in the `Dialogs` component's direct children.
  */
 const Dialog = React.memo(({ dialog }: DialogProps) => {
-	const formRef = useRef<HTMLFormElement>(null);
-	
 	useEffect(() => {
 		dialog.open = true;
-		dialog.form = formRef.current!;
 		if (dialog.onMount) {
 			dialog.onMount(dialog);
 		}
@@ -27,12 +25,10 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 	}, [dialog]);
 	
 	return (
-		<form
-			className="dialog-container"
-			ref={formRef}
+		<Formik<any>
+			initialValues={dialog.initialValues}
 			onSubmit={
-				useCallback((evt: React.FormEvent<HTMLFormElement>) => {
-					evt.preventDefault();
+				useCallback(() => {
 					if (dialog.submitAction) {
 						dialog.submitAction.onClick();
 					} else {
@@ -41,30 +37,42 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 				}, [dialog])
 			}
 		>
-			<dialog id={`dialog-${dialog.id}`} open>
-				<h2 className="dialog-title">
-					{dialog.title}
-				</h2>
-				<div className="dialog-content">
-					{dialog.content}
-				</div>
-				{!!dialog.actions.length && (
-					<div className="dialog-actions">
-						{dialog.actions.map((action, index) => (
-							<button
-								key={index}
-								type={action.submit ? 'submit' : 'button'}
-								className="dialog-action"
-								autoFocus={action.focus}
-								onClick={action.submit ? undefined : action.onClick}
-							>
-								{action.label}
-							</button>
-						))}
-					</div>
-				)}
-			</dialog>
-		</form>
+			{props => {
+				dialog.values = props.values;
+				dialog.helpers = props;
+				
+				return (
+					<Form className="dialog-container">
+						<dialog data-id={dialog.id} open>
+							<h2 className="dialog-title">
+								{dialog.title}
+							</h2>
+							<div className="dialog-content">
+								{(typeof dialog.content === 'function'
+									? dialog.content(props)
+									: dialog.content
+								)}
+							</div>
+							{!!dialog.actions.length && (
+								<div className="dialog-actions">
+									{dialog.actions.map((action, index) => (
+										<button
+											key={index}
+											type={action.submit ? 'submit' : 'button'}
+											className="dialog-action"
+											autoFocus={action.focus}
+											onClick={action.submit ? undefined : action.onClick}
+										>
+											{action.label}
+										</button>
+									))}
+								</div>
+							)}
+						</dialog>
+					</Form>
+				);
+			}}
+		</Formik>
 	);
 });
 

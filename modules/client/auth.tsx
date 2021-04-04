@@ -1,6 +1,7 @@
 import { Dialog } from 'modules/client/dialogs';
 import dynamic from 'next/dynamic';
-import { formValues, resetFormValues } from 'components/SignIn';
+import { initialValues, resetSignInForm } from 'components/SignIn';
+import type { SignInValues } from 'components/SignIn';
 import api from 'modules/client/api';
 import type { AuthMethod } from 'modules/server/users';
 import type { APIClient } from 'modules/client/api';
@@ -15,7 +16,7 @@ const SignIn = dynamic(() => import('components/SignIn'), {
 	loading: () => <>Loading...</>
 });
 
-let signInDialog: Dialog | undefined;
+let signInDialog: Dialog<SignInValues> | undefined;
 /** 0 if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
 let signInPage = 0;
 
@@ -120,7 +121,14 @@ export const setSignInPage = (
 		id: 'sign-in',
 		index: 0, // This is necessary to prevent the sign-in dialog from covering up sign-in error dialogs.
 		title: signInPage ? 'Sign Up' : 'Sign In',
-		content: <SignIn page={signInPage} />,
+		content: ({ values, setValues }) => (
+			<SignIn
+				page={signInPage}
+				values={values}
+				setValues={setValues}
+			/>
+		),
+		initialValues,
 		actions: signInPage === 0
 			? [
 				{ label: 'Sign In', value: 'password', focus: false },
@@ -139,7 +147,7 @@ export const setSignInPage = (
 				if (result.value === 'password') {
 					authMethod = {
 						type: 'password',
-						value: formValues.password
+						value: signInDialog!.values.password!
 					};
 				}
 				
@@ -149,17 +157,24 @@ export const setSignInPage = (
 				} else {
 					// If the user submits the form while on the sign-in screen or on the last stage of sign-up, attempt sign-in or sign-up.
 					signInLoading = true;
-					(api as SessionAPI | UsersAPI).post(signInPage === 0 ? 'session' : 'users', {
-						email: authMethod!.type === 'password' ? formValues.email : undefined,
-						authMethod,
-						...(signInPage === 0 ? undefined : {
-							name: formValues.name,
-							birthdate: +new Date(+formValues.birthYear, +formValues.birthMonth - 1, +formValues.birthDay)
-						})
-					} as any).then(response => {
+					(api as SessionAPI | UsersAPI).post(
+						signInPage === 0 ? 'session' : 'users',
+						{
+							email: authMethod!.type === 'password' ? signInDialog!.values.email : undefined,
+							authMethod,
+							...(signInPage === 0 ? undefined : {
+								name: signInDialog!.values.name,
+								birthdate: +new Date(
+									+signInDialog!.values.birthYear!,
+									+signInDialog!.values.birthMonth! - 1,
+									+signInDialog!.values.birthDay!
+								)
+							})
+						} as any
+					).then(response => {
 						// If sign-in or sign-up succeeds, reset the sign-in form and update the client's user state.
 						signInLoading = false;
-						resetFormValues();
+						resetSignInForm(signInDialog!);
 						setUser(response);
 					}).catch(() => {
 						// If sign-in or sign-up fails, go back to sign-in screen.
@@ -168,12 +183,12 @@ export const setSignInPage = (
 					});
 				}
 			} else if (result.value === 'exit') {
-				resetFormValues();
+				resetSignInForm(signInDialog!);
 			} else if (result.value === 'back') {
 				setSignInPage(signInPage - 1);
 			}
 		} else {
-			resetFormValues();
+			resetSignInForm(signInDialog!);
 		}
 	});
 };

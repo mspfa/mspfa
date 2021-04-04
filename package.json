@@ -27,6 +27,7 @@
 		"argon2": "^0.27.1",
 		"axios": "^0.21.1",
 		"cookies": "^0.8.0",
+		"formik": "^2.2.6",
 		"fs-extra": "^9.1.0",
 		"global-react-state": "^1.2.0",
 		"google-auth-library": "^7.0.3",

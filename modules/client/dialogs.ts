@@ -1,8 +1,9 @@
 import createUpdater from 'react-component-updater';
 import type { ReactNode, Key } from 'react';
+import type { FormikHelpers, FormikProps } from 'formik';
 
 /** The array of all dialogs. */
-export const dialogs: Dialog[] = [];
+export const dialogs: Array<Dialog<any>> = [];
 const [useDialogsUpdater, updateDialogs] = createUpdater();
 
 /** A hook which keeps the component updated with `dialogs`. */
@@ -36,7 +37,7 @@ export type DialogAction = DialogActionOption & {
 	onClick: () => void
 };
 
-export type DialogOptions = {
+export type DialogOptions<Values extends Record<string, string | number | boolean> = any> = {
 	/**
 	 * The React array key for the dialog's component.
 	 * 
@@ -54,15 +55,17 @@ export type DialogOptions = {
 	 */
 	index?: number,
 	/** A dialog which, when closed, should forcibly close this dialog and resolve it with `undefined`. */
-	parent?: Dialog,
+	parent?: Dialog<Values>,
 	/** The title of the dialog. */
-	title: Dialog['title'],
+	title: Dialog<Values>['title'],
 	/**
 	 * The content of the dialog.
 	 * 
-	 * Any content element with `autoFocus="true"` will be auto-focused when the dialog opens.
+	 * If set to a function, it must return the content of the dialog, and it will be passed a parameter of the Formik props when called.
 	 */
-	content: Dialog['content'],
+	content: Dialog<Values>['content'],
+	/** Initial field values for the dialog's form. Keys are field `name`s. */
+	initialValues?: Dialog<Values>['initialValues'],
 	/**
 	 * The actions which the user can select to close the dialog.
 	 * 
@@ -77,18 +80,20 @@ let resolvePromise: (value?: DialogResult) => void;
 
 let nextDialogID = 0;
 
-export class Dialog extends Promise<DialogResult> {
+export class Dialog<Values extends Record<string, string | number | boolean>> extends Promise<DialogResult> {
 	readonly [Symbol.toStringTag] = 'Dialog';
 	// This is so `then`, `catch`, etc. return a `Promise` rather than a `Dialog`. Weird errors occur when this is not here.
 	static readonly [Symbol.species] = Promise;
 	
 	id: Key;
-	parent?: Dialog;
+	parent?: Dialog<any>;
 	title: ReactNode;
-	content: ReactNode;
+	content: ReactNode | ((props: FormikProps<Values>) => ReactNode);
+	initialValues: Partial<Values>;
+	values: Partial<Values> = {};
+	/** The dialog's form helpers from Formik. */
+	helpers: FormikHelpers<Values> | undefined;
 	actions: DialogAction[];
-	/** The form element wrapping this dialog. Never undefined after the dialog's component is mounted. */
-	form?: HTMLFormElement;
 	/** Whether the dialog has been resolved. */
 	resolved = false;
 	/** Whether the dialog's component is currently mounted. */
@@ -96,7 +101,7 @@ export class Dialog extends Promise<DialogResult> {
 	/** The action with `submit: true`. */
 	submitAction: DialogAction | undefined;
 	/** A function called when the dialog's component is mounted, called with an argument of the `Dialog` instance which was mounted. */
-	onMount?: (dialog: Dialog) => void;
+	onMount?: (dialog: Dialog<Values>) => void;
 	
 	#resolvePromise: typeof resolvePromise;
 	
@@ -129,9 +134,10 @@ export class Dialog extends Promise<DialogResult> {
 		index = -1,
 		parent,
 		title,
+		initialValues = {},
 		content,
 		actions: actionsOption = ['Okay']
-	}: DialogOptions) {
+	}: DialogOptions<Values>) {
 		super(resolve => {
 			// `this.#resolvePromise` cannot be set here directly, because then a class property would be set before `super` is called, which throws an error.
 			resolvePromise = resolve;
@@ -141,6 +147,7 @@ export class Dialog extends Promise<DialogResult> {
 		this.id = id;
 		this.parent = parent;
 		this.title = title;
+		this.initialValues = initialValues;
 		this.content = content;
 		this.actions = actionsOption.map((actionOption, index) => {
 			const action: DialogAction = Object.assign(
