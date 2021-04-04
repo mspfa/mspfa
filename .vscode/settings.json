@@ -10,7 +10,8 @@
 	"files.exclude": {
 		".next": true,
 		"next-env.d.ts": true,
-		".env*.local": true, // This should be hidden to avoid accidental misclicks. If you want to open these files, open them from outside VS Code.
+		// The following env files should be hidden to avoid accidental misclicks. If you want to open these files, open them from outside VS Code.
+		".env*.{local,production}": true,
 		"**/*.validate.ts": true
 	}
 }

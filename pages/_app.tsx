@@ -59,7 +59,7 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
 	
 	// These environment variables will be sent to the client.
 	appProps.pageProps.env = {
-		HCAPTCHA_SITEKEY: process.env.HCAPTCHA_SITEKEY,
+		HCAPTCHA_SITE_KEY: process.env.HCAPTCHA_SITE_KEY,
 		GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
 		DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID
 	};
