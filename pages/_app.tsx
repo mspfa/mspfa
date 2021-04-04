@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { SWRConfig } from 'swr';
 import { authenticate } from 'modules/server/auth'; // @server-only
 import { getPrivateUser } from 'modules/server/users'; // @server-only
+import env from 'modules/client/env';
 import { UserContext, useUserState } from 'modules/client/users';
 import * as MSPFA from 'modules/client/MSPFA'; // @client-only
 import 'styles/global.scss';
@@ -13,11 +14,14 @@ import 'styles/global.scss';
 const MyApp = ({
 	Component,
 	pageProps: {
+		env: envProp,
 		// This value is the user data passed in from the server in `getInitialProps`. Any re-renders will set this value to `undefined`.
 		user: userProp,
 		...pageProps
 	}
 }: AppProps) => {
+	Object.assign(env, envProp);
+	
 	const user = useUserState(userProp);
 	
 	return (
@@ -52,6 +56,13 @@ const MyApp = ({
 /** This runs server-side on every page request (only for initial requests by the browser, not by the Next router). */
 MyApp.getInitialProps = async (appContext: AppContext) => {
 	const appProps = await App.getInitialProps(appContext);
+	
+	// These environment variables will be sent to the client.
+	appProps.pageProps.env = {
+		HCAPTCHA_SITEKEY: process.env.HCAPTCHA_SITEKEY,
+		GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+		DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID
+	};
 	
 	const { req, res } = appContext.ctx;
 	if (req && res) {

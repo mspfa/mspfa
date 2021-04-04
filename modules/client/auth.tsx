@@ -4,6 +4,7 @@ import api from 'modules/client/api';
 import type { AuthMethod } from 'modules/server/users';
 import type { APIClient } from 'modules/client/api';
 import { setUser } from 'modules/client/users';
+import env from 'modules/client/env';
 
 type SessionAPI = APIClient<typeof import('pages/api/session').default>;
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
@@ -50,7 +51,7 @@ export const promptExternalSignIn = {
 		});
 	},
 	discord: () => {
-		const win = window.open(`https://discord.com/api/oauth2/authorize?client_id=822288507451080715&redirect_uri=${encodeURIComponent(location.origin)}%2Fsign-in%2Fdiscord&response_type=code&scope=identify%20email`, 'SignInWithDiscord');
+		const win = window.open(`https://discord.com/api/oauth2/authorize?client_id=${env.DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(location.origin)}%2Fsign-in%2Fdiscord&response_type=code&scope=identify%20email`, 'SignInWithDiscord');
 		const winClosedPoll = setInterval(() => {
 			if (!win || win.closed) {
 				clearInterval(winClosedPoll);

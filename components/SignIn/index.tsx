@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Link from 'components/Link';
 import createUpdater from 'react-component-updater';
 import type { ChangeEvent } from 'react';
+import env from 'modules/client/env';
 import './styles.module.scss';
 
 const startSigningUp = () => {
@@ -65,7 +66,7 @@ const SignIn = ({ page }: SignInProps) => {
 			{page !== 2 && (
 				<>
 					<Head>
-						<meta name="google-signin-client_id" content="910008890195-oqbrg6h1r62vv8fql0p6iffn9j9kanm2.apps.googleusercontent.com" />
+						<meta name="google-signin-client_id" content={env.GOOGLE_CLIENT_ID} />
 						<script src="https://apis.google.com/js/platform.js" defer />
 					</Head>
 					<div className="translucent">
