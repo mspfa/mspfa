@@ -7,10 +7,13 @@ import argon2 from 'argon2';
 import { ObjectId } from 'bson';
 import validate from './index.validate';
 import type { PrivateUser } from 'modules/client/users';
+import axios from 'axios';
 
 const Handler: APIHandler<{
 	method: 'POST',
 	body: SessionBody & {
+		/** @minLength 1 */
+		captchaToken: string,
 		name: UserDocument['name'],
 		birthdate: number
 	}
@@ -53,6 +56,23 @@ const Handler: APIHandler<{
 	if (await users.findOne({ email })) {
 		res.status(422).send({
 			message: 'The specified email is already taken.'
+		});
+		return;
+	}
+	
+	if (!(
+		await axios.post('https://hcaptcha.com/siteverify', new URLSearchParams({
+			secret: process.env.HCAPTCHA_SECRET_KEY!,
+			sitekey: process.env.HCAPTCHA_SITE_KEY!,
+			response: req.body.captchaToken,
+			...(typeof req.headers['x-real-ip'] === 'string'
+				? { remoteip: req.headers['x-real-ip'] }
+				: undefined
+			)
+		}))
+	).data.success) {
+		res.status(422).send({
+			message: 'Your CAPTCHA token is invalid. Please try again.'
 		});
 		return;
 	}

@@ -18,6 +18,10 @@ export default createValidator({
 						{
 							type: 'object',
 							properties: {
+								captchaToken: {
+									type: 'string',
+									minLength: 1
+								},
 								name: {
 									type: 'string',
 									minLength: 1
@@ -32,12 +36,17 @@ export default createValidator({
 							required: [
 								'authMethod',
 								'birthdate',
+								'captchaToken',
 								'name'
 							]
 						},
 						{
 							type: 'object',
 							properties: {
+								captchaToken: {
+									type: 'string',
+									minLength: 1
+								},
 								name: {
 									type: 'string',
 									minLength: 1
@@ -71,6 +80,7 @@ export default createValidator({
 							required: [
 								'authMethod',
 								'birthdate',
+								'captchaToken',
 								'email',
 								'name'
 							]

@@ -60,12 +60,16 @@
 	font-size: 0.85em;
 }
 
+#captcha {
+	margin-top: 2.5ch;
+}
+
 #terms-agreed-container {
 	display: grid;
 	grid-template-columns: auto auto;
 	grid-gap: 1ch;
 	align-items: center;
-	margin-top: 3ch;
+	margin-top: 2ch;
 	font-size: 0.85em;
 	
 	input {

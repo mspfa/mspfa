@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import type { Dialog as DialogClass } from 'modules/client/dialogs';
 import { Form, Formik } from 'formik';
 import './styles.module.scss';

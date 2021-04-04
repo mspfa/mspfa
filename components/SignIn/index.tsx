@@ -4,6 +4,7 @@ import Link from 'components/Link';
 import createUpdater from 'react-component-updater';
 import type { ChangeEvent } from 'react';
 import env from 'modules/client/env';
+import Captcha from 'components/SignIn/Captcha';
 import './styles.module.scss';
 
 const startSigningUp = () => {
@@ -13,7 +14,7 @@ const startSigningUp = () => {
 const [useSignInValuesUpdater, updateSignInValues] = createUpdater();
 
 /** The initial values of the sign-in dialog's form. */
-const initialSignInValues = {
+export const initialSignInValues = {
 	email: '',
 	password: '',
 	confirmPassword: '',
@@ -21,7 +22,8 @@ const initialSignInValues = {
 	termsAgreed: false,
 	birthDay: '',
 	birthMonth: '',
-	birthYear: ''
+	birthYear: '',
+	captchaToken: ''
 };
 
 export let signInValues = { ...initialSignInValues };
@@ -106,6 +108,8 @@ const SignIn = ({ page }: SignInProps) => {
 								min={1}
 								max={new Date(+signInValues.birthYear, +signInValues.birthMonth, 0).getDate() || 31}
 								size={4}
+								value={signInValues.birthDay}
+								onChange={onChange}
 							/>
 							<select
 								id="sign-in-birth-month"
@@ -204,19 +208,22 @@ const SignIn = ({ page }: SignInProps) => {
 				)}
 			</div>
 			{page === 2 && (
-				<div id="terms-agreed-container">
-					<input
-						id="sign-in-terms-agreed"
-						name="termsAgreed"
-						type="checkbox"
-						required
-						checked={signInValues.termsAgreed}
-						onChange={onChange}
-					/>
-					<label htmlFor="sign-in-terms-agreed" className="translucent">
-						I agree to the <Link href="/terms" target="_blank">terms of service</Link>.
-					</label>
-				</div>
+				<>
+					<Captcha />
+					<div id="terms-agreed-container">
+						<input
+							id="sign-in-terms-agreed"
+							name="termsAgreed"
+							type="checkbox"
+							required
+							checked={signInValues.termsAgreed}
+							onChange={onChange}
+						/>
+						<label htmlFor="sign-in-terms-agreed" className="translucent">
+							I agree to the <Link href="/terms" target="_blank">terms of service</Link>.
+						</label>
+					</div>
+				</>
 			)}
 			{page === 0 && (
 				<div id="sign-up-link-container">

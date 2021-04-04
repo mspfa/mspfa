@@ -144,6 +144,16 @@ export const setSignInPage = (
 					setSignInPage(2);
 				} else {
 					// If the user submits the form while on the sign-in screen or on the last stage of sign-up, attempt sign-in or sign-up.
+					
+					if (signInPage === 2 && !signInValues.captchaToken) {
+						new Dialog({
+							title: 'Error',
+							content: 'Please complete the CAPTCHA challenge.'
+						});
+						setSignInPage(signInPage);
+						return;
+					}
+					
 					signInLoading = true;
 					(api as SessionAPI | UsersAPI).post(
 						signInPage === 0 ? 'session' : 'users',
@@ -151,6 +161,7 @@ export const setSignInPage = (
 							email: authMethod!.type === 'password' ? signInValues.email : undefined,
 							authMethod,
 							...(signInPage === 0 ? undefined : {
+								captchaToken: signInValues.captchaToken,
 								name: signInValues.name,
 								birthdate: +new Date(
 									+signInValues.birthYear,
