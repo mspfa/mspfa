@@ -62,8 +62,15 @@ export const useUserState = (userProp: PrivateUser | undefined) => {
 	return user;
 };
 
+/** Opens a dialog prompting the user to sign in or sign up. */
+export const signIn = async () => {
+	const { openSignInDialog } = await import('modules/client/auth');
+	openSignInDialog();
+};
+
 type SessionAPI = APIClient<typeof import('pages/api/session').default>;
 
+/** Deletes the user's sign-in session. */
 export const signOut = async () => {
 	await (api as SessionAPI).delete('session');
 	setUser(undefined);

@@ -1,6 +1,5 @@
 import { Dialog } from 'modules/client/dialogs';
-import dynamic from 'next/dynamic';
-import { signInValues, resetSignInValues } from 'components/SignIn';
+import SignIn, { signInValues, resetSignInValues } from 'components/SignIn';
 import api from 'modules/client/api';
 import type { AuthMethod } from 'modules/server/users';
 import type { APIClient } from 'modules/client/api';
@@ -10,10 +9,6 @@ type SessionAPI = APIClient<typeof import('pages/api/session').default>;
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
 
 declare const gapi: any;
-
-const SignIn = dynamic(() => import('components/SignIn'), {
-	loading: () => <>Loading...</>
-});
 
 let signInDialog: Dialog<{}> | undefined;
 /** 0 if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
@@ -91,8 +86,8 @@ export const promptExternalSignIn = {
 
 let signInLoading = false;
 
-/** Opens a dialog prompting the user to sign in or sign up. */
-export const signIn = () => {
+export const openSignInDialog = () => {
+	resetSignInValues();
 	setSignInPage(0);
 };
 

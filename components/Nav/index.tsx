@@ -3,9 +3,8 @@ import NavItem from 'components/Nav/NavItem';
 import NavMenu from 'components/Nav/NavMenu';
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
-import { signIn } from 'modules/client/auth';
 import './styles.module.scss';
-import { signOut, useUser } from 'modules/client/users';
+import { signIn, signOut, useUser } from 'modules/client/users';
 
 const Nav = () => {
 	const router = useRouter();
