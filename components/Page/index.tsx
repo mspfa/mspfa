@@ -2,6 +2,7 @@ import Header from 'components/Header';
 import type { ReactNode } from 'react';
 import Footer from 'components/Footer';
 import Dialogs from 'components/Dialog/Dialogs';
+import LoadingIndicator from 'components/LoadingIndicator';
 import './styles.module.scss';
 
 export type PageProps = { children: ReactNode };
@@ -17,6 +18,7 @@ const Page = ({ children }: PageProps) => (
 			</main>
 			<Footer />
 		</div>
+		<LoadingIndicator />
 	</>
 );
 

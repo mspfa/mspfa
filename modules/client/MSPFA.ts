@@ -3,3 +3,4 @@
 export { default as api } from 'modules/client/api';
 export { Dialog } from 'modules/client/dialogs';
 export { getUser, signIn, signOut } from 'modules/client/users';
+export { startLoading, stopLoading } from 'components/LoadingIndicator';

@@ -2,6 +2,7 @@ import type { UserDocument } from 'modules/server/users';
 import React, { useContext, useState } from 'react';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
+import { startLoading, stopLoading } from 'components/LoadingIndicator';
 
 /** All keys whose values have the same serializable type in both `DocumentUser` and `PrivateUser`. */
 type PrivateUserDocumentKey = 'name' | 'email' | 'verified' | 'description' | 'icon' | 'site' | 'comicSaves' | 'achievements' | 'favs' | 'profileStyle' | 'settings' | 'perms' | 'dev' | 'mod' | 'patron' | 'nameColor';
@@ -64,8 +65,10 @@ export const useUserState = (userProp: PrivateUser | undefined) => {
 
 /** Opens a dialog prompting the user to sign in or sign up. */
 export const signIn = async () => {
+	startLoading();
 	const { openSignInDialog } = await import('modules/client/auth');
 	openSignInDialog();
+	stopLoading();
 };
 
 type SessionAPI = APIClient<typeof import('pages/api/session').default>;

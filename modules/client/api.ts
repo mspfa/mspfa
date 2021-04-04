@@ -3,6 +3,7 @@ import { Dialog } from 'modules/client/dialogs';
 import type { APIHandler } from 'modules/server/api';
 import type { AxiosRequestConfig, AxiosInstance } from 'axios';
 import type { Method, MethodWithData } from 'modules/types';
+import { startLoading, stopLoading } from 'components/LoadingIndicator';
 
 const apiExtension = {
 	/** Use this config object in API requests to not reject the request's promise on HTTP 4xx errors. */
@@ -39,12 +40,21 @@ const onReject = (error: any) => {
 	return Promise.reject(error);
 };
 api.interceptors.request.use(
-	undefined,
+	value => {
+		startLoading();
+		return value;
+	},
 	onReject
 );
 api.interceptors.response.use(
-	undefined,
-	onReject
+	value => {
+		stopLoading();
+		return value;
+	},
+	error => {
+		stopLoading();
+		return onReject(error);
+	}
 );
 
 export default api;
