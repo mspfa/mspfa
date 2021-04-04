@@ -1,18 +1,18 @@
 import { setSignInPage, promptExternalSignIn } from 'modules/client/auth';
 import Head from 'next/head';
 import Link from 'components/Link';
-import { Field } from 'formik';
-import { useEffect } from 'react';
-import type { SetStateAction } from 'react';
-import type { Dialog } from 'modules/client/dialogs';
+import createUpdater from 'react-component-updater';
+import type { ChangeEvent } from 'react';
 import './styles.module.scss';
 
 const startSigningUp = () => {
 	setSignInPage(1);
 };
 
+const [useSignInValuesUpdater, updateSignInValues] = createUpdater();
+
 /** The initial values of the sign-in dialog's form. */
-export const initialValues = {
+const initialSignInValues = {
 	email: '',
 	password: '',
 	confirmPassword: '',
@@ -23,40 +23,35 @@ export const initialValues = {
 	birthYear: ''
 };
 
-/** Values of the sign-in dialog's form. */
-export type SignInValues = typeof initialValues;
+export let signInValues = { ...initialSignInValues };
+
+export const resetSignInValues = () => {
+	signInValues = { ...initialSignInValues };
+	updateSignInValues();
+};
+
+const onChange = (
+	evt: ChangeEvent<(
+		HTMLInputElement
+		& HTMLSelectElement
+		& { name: keyof typeof signInValues }
+	)>
+) => {
+	if (evt.target.type === 'checkbox') {
+		(signInValues[evt.target.name] as boolean) = evt.target.checked;
+	} else {
+		(signInValues[evt.target.name] as string) = evt.target.value;
+	}
+	updateSignInValues();
+};
 
 export type SignInProps = {
 	/** 0 if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
-	page: number,
-	/** The current values of the sign-in dialog's form. */
-	values: SignInValues,
-	setValues: (values: SetStateAction<SignInValues>) => void
+	page: number
 };
 
-let globalValues: SignInProps['values'];
-let globalSetValues: SignInProps['setValues'] | undefined;
-let preservedValues: SignInValues = initialValues;
-
-export const resetSignInForm = (signInDialog: Dialog<SignInValues>) => {
-	signInDialog.helpers!.resetForm();
-	globalValues = preservedValues = initialValues;
-};
-
-const SignIn = ({ page, values, setValues }: SignInProps) => {
-	globalValues = values;
-	globalSetValues = setValues;
-	
-	useEffect(() => {
-		if (globalSetValues && globalValues !== preservedValues) {
-			globalSetValues(preservedValues);
-		}
-		
-		return () => {
-			globalSetValues = undefined;
-			preservedValues = globalValues;
-		};
-	}, [page]);
+const SignIn = ({ page }: SignInProps) => {
+	useSignInValuesUpdater();
 	
 	/**
 	 * ```
@@ -87,18 +82,20 @@ const SignIn = ({ page, values, setValues }: SignInProps) => {
 				{page === 2 ? (
 					<>
 						<label htmlFor="sign-in-name">Username:</label>
-						<Field
+						<input
 							id="sign-in-name"
 							name="name"
 							autoComplete="username"
 							required
 							minLength={1}
 							maxLength={32}
-							autoFocus={!values.name}
+							autoFocus={!signInValues.name}
+							value={signInValues.name}
+							onChange={onChange}
 						/>
 						<label htmlFor="sign-in-birth-day">Birthdate:</label>
 						<div id="sign-in-birthdate">
-							<Field
+							<input
 								id="sign-in-birth-day"
 								name="birthDay"
 								type="number"
@@ -106,16 +103,16 @@ const SignIn = ({ page, values, setValues }: SignInProps) => {
 								required
 								placeholder="DD"
 								min={1}
-								max={new Date(+values.birthYear, +values.birthMonth, 0).getDate() || 31}
+								max={new Date(+signInValues.birthYear, +signInValues.birthMonth, 0).getDate() || 31}
 								size={4}
 							/>
-							<Field
-								as="select"
+							<select
 								id="sign-in-birth-month"
 								name="birthMonth"
 								autoComplete="bday-month"
 								required
-								value={values.birthMonth}
+								value={signInValues.birthMonth}
+								onChange={onChange}
 							>
 								<option value="" disabled hidden>Month</option>
 								<option value={1}>January</option>
@@ -130,8 +127,8 @@ const SignIn = ({ page, values, setValues }: SignInProps) => {
 								<option value={10}>October</option>
 								<option value={11}>November</option>
 								<option value={12}>December</option>
-							</Field>
-							<Field
+							</select>
+							<input
 								id="sign-in-birth-year"
 								name="birthYear"
 								type="number"
@@ -148,13 +145,15 @@ const SignIn = ({ page, values, setValues }: SignInProps) => {
 									nowFullYear - 13
 								}
 								size={nowFullYear.toString().length + 2}
+								value={signInValues.birthYear}
+								onChange={onChange}
 							/>
 						</div>
 					</>
 				) : (
 					<>
 						<label htmlFor="sign-in-email">Email:</label>
-						<Field
+						<input
 							key={page} // This is necessary to re-render this element when `page` changes, or else `autoFocus` will not work correctly.
 							id="sign-in-email"
 							name="email"
@@ -162,16 +161,20 @@ const SignIn = ({ page, values, setValues }: SignInProps) => {
 							autoComplete="email"
 							required
 							maxLength={254}
-							autoFocus={!values.email}
+							autoFocus={!signInValues.email}
+							value={signInValues.email}
+							onChange={onChange}
 						/>
 						<label htmlFor="sign-in-password">Password:</label>
-						<Field
+						<input
 							id="sign-in-password"
 							name="password"
 							type="password"
 							autoComplete={page ? 'new-password' : 'current-password'}
 							required
 							minLength={8}
+							value={signInValues.password}
+							onChange={onChange}
 						/>
 						{page === 0 ? (
 							<div id="reset-password-link-container">
@@ -180,7 +183,7 @@ const SignIn = ({ page, values, setValues }: SignInProps) => {
 						) : (
 							<>
 								<label htmlFor="sign-in-confirm-password">Confirm:</label>
-								<Field
+								<input
 									id="sign-in-confirm-password"
 									name="confirmPassword"
 									type="password"
@@ -189,8 +192,10 @@ const SignIn = ({ page, values, setValues }: SignInProps) => {
 									placeholder="Re-type Password"
 									pattern={
 										// Validate the confirmed password to match the password by escaping the password as a regular expression.
-										values.password.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+										signInValues.password.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 									}
+									value={signInValues.confirmPassword}
+									onChange={onChange}
 								/>
 							</>
 						)}
@@ -199,11 +204,13 @@ const SignIn = ({ page, values, setValues }: SignInProps) => {
 			</div>
 			{page === 2 && (
 				<div id="terms-agreed-container">
-					<Field
+					<input
 						id="sign-in-terms-agreed"
 						name="termsAgreed"
 						type="checkbox"
 						required
+						checked={signInValues.termsAgreed}
+						onChange={onChange}
 					/>
 					<label htmlFor="sign-in-terms-agreed" className="translucent">
 						I agree to the <Link href="/terms" target="_blank">terms of service</Link>.
