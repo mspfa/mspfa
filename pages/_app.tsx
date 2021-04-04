@@ -13,9 +13,9 @@ import 'styles/global.scss';
 
 const MyApp = ({
 	Component,
+	// Any re-renders will set all of `pageProps`'s properties to `undefined`.
 	pageProps: {
 		env: envProp,
-		// This value is the user data passed in from the server in `getInitialProps`. Any re-renders will set this value to `undefined`.
 		user: userProp,
 		...pageProps
 	}
