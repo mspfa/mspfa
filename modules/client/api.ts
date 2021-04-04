@@ -67,7 +67,7 @@ export default api;
  * ```
  * type SomeRouteAPI = APIClient<typeof import('pages/api/some/route').default>;
  * 
- * const response = (api as SomeRouteAPI).post('some/route', { someData: true });
+ * (api as SomeRouteAPI).post('some/route', { someData: true });
  * ```
  */
 export type APIClient<Handler> = Omit<typeof api, Method> & (
