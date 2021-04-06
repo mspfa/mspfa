@@ -14,7 +14,7 @@
 	"scripts": {
 		"dev": "next dev",
 		"generate-validators": "ts-node scripts/generate-validators",
-		"build-start": "next build && next start",
+		"build-start": "npm run build && npm start",
 		"build": "next build",
 		"start": "next start",
 		"setup": "ts-node scripts/setup"

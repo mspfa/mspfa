@@ -7,7 +7,10 @@ module.exports = {
 				for (const rule of oneOf) {
 					if (Array.isArray(rule.use)) {
 						for (const entry of rule.use) {
-							if (entry.loader.includes(`${path.sep}css-loader${path.sep}`)) {
+							if (
+								entry.options.modules instanceof Object
+								&& entry.loader.includes(`${path.sep}css-loader${path.sep}`)
+							) {
 								// Let global styles be used in style modules.
 								entry.options.modules.mode = 'local';
 								
