@@ -13,7 +13,7 @@ const Button = React.forwardRef((
 	{ submit, children, className, ...props }: ButtonProps,
 	ref: React.ForwardedRef<HTMLButtonElement & HTMLButtonElement>
 ) => {
-	const buttonClassName = `button layer-front translucent-text${className ? ` ${className}` : ''}`;
+	const buttonClassName = `button${className ? ` ${className}` : ''}`;
 	
 	return (
 		<button
