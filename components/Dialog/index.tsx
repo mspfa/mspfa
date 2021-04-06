@@ -43,7 +43,7 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 				dialog.helpers = props;
 				
 				return (
-					<Form className="dialog-container">
+					<Form id={`dialog-container-${dialog.id}`} className="dialog-container">
 						<dialog id={`dialog-${dialog.id}`} open>
 							<h2 className="dialog-title layer-mid translucent-text">
 								{dialog.title}
