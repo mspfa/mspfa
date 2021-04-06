@@ -1,7 +1,7 @@
 import Page from 'components/Page';
 import type { MyGetServerSideProps } from 'modules/server/pages';
 import type { PrivateUser } from 'modules/client/users';
-import { getUserByUnsafeID, getPrivateUser } from 'modules/server/users'; // @server-only
+import { getUserByUnsafeID, getPrivateUser } from 'modules/server/users';
 import ErrorPage from 'pages/_error';
 
 type ServerSideProps = {
@@ -11,7 +11,7 @@ type ServerSideProps = {
 
 const Component = ({ user, statusCode }: ServerSideProps) => (
 	user ? (
-		<Page>
+		<Page heading="Settings" margin>
 			{user.id}
 		</Page>
 	) : <ErrorPage statusCode={statusCode} />

@@ -1,11 +1,11 @@
 import type { IncomingMessage } from 'http';
 import type { GetServerSideProps } from 'next';
-import type { MyAppPageProps } from 'pages/_app';
+import type { MyAppInitialProps } from 'pages/_app';
 import type { UserDocument } from 'modules/server/users';
 
 export type PageRequest = IncomingMessage & {
 	user?: UserDocument,
-	pageProps: MyAppPageProps
+	appProps: MyAppInitialProps
 };
 
 type MyGetServerSidePropsContext = {

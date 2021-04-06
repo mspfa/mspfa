@@ -1,5 +1,5 @@
 import App from 'next/app'; // @server-only
-import type { AppProps, AppContext } from 'next/app';
+import type { AppProps, AppContext, AppInitialProps } from 'next/app';
 import Head from 'next/head';
 import { SWRConfig } from 'swr';
 import { authenticate } from 'modules/server/auth'; // @server-only
@@ -22,17 +22,13 @@ export type MyAppPageProps = {
 const MyApp = ({
 	Component,
 	// Any re-renders will set all of `pageProps`'s properties to `undefined`.
-	pageProps: {
-		env: envProp,
-		user: userProp,
-		...pageProps
-	}
+	pageProps
 }: Omit<AppProps, 'pageProps'> & {
 	pageProps: MyAppPageProps
 }) => {
-	Object.assign(env, envProp);
+	Object.assign(env, pageProps.env);
 	
-	const user = useUserState(userProp);
+	const user = useUserState(pageProps.user);
 	
 	return (
 		<>
@@ -55,21 +51,23 @@ const MyApp = ({
 				}}
 			>
 				<UserContext.Provider value={user}>
-					<Component {...pageProps} />
+					<Component {...pageProps as any} />
 				</UserContext.Provider>
 			</SWRConfig>
 		</>
 	);
 };
 
+export type MyAppInitialProps = (
+	AppInitialProps
+	& { pageProps: MyAppPageProps }
+);
+
 // @server-only {
 /** This runs server-side on every page request (only for initial requests by the browser, not by the Next router). */
 MyApp.getInitialProps = async (appContext: AppContext) => {
 	const appProps = await App.getInitialProps(appContext);
-	const { pageProps } = appProps as (
-		typeof appProps
-		& { pageProps: MyAppPageProps }
-	);
+	const { pageProps } = appProps as MyAppInitialProps;
 	
 	// These environment variables will be sent to the client.
 	pageProps.env = {
@@ -83,7 +81,8 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
 		& { req?: PageRequest }
 	);
 	if (req && res) {
-		req.pageProps = pageProps;
+		// This exposes `appProps` to any page's `getServerSideProps` method.
+		req.appProps = appProps;
 		
 		const { user } = await authenticate(req, res);
 		if (user) {
