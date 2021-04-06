@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import type { Dialog as DialogClass } from 'modules/client/dialogs';
 import { Form, Formik } from 'formik';
+import Button from 'components/Button';
 import './styles.module.scss';
 
 export type DialogProps = {
@@ -56,15 +57,15 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 							{!!dialog.actions.length && (
 								<div className="dialog-actions layer-front">
 									{dialog.actions.map((action, index) => (
-										<button
+										<Button
 											key={index}
-											type={action.submit ? 'submit' : 'button'}
+											submit={action.submit}
 											className="dialog-action"
 											autoFocus={action.focus}
 											onClick={action.submit ? undefined : action.onClick}
 										>
 											{action.label}
-										</button>
+										</Button>
 									))}
 								</div>
 							)}

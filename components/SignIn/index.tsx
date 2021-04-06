@@ -1,6 +1,7 @@
 import { setSignInPage, promptExternalSignIn } from 'modules/client/auth';
 import Head from 'next/head';
 import Link from 'components/Link';
+import Button from 'components/Button';
 import createUpdater from 'react-component-updater';
 import type { ChangeEvent } from 'react';
 import env from 'modules/client/env';
@@ -75,8 +76,8 @@ const SignIn = ({ page }: SignInProps) => {
 						{page ? 'Sign up with' : 'Sign in with'}
 					</div>
 					<div id="sign-in-methods-external">
-						<button id="sign-in-with-google" type="button" onClick={promptExternalSignIn.google}>Google</button>
-						<button id="sign-in-with-discord" type="button" onClick={promptExternalSignIn.discord}>Discord</button>
+						<Button id="sign-in-with-google" onClick={promptExternalSignIn.google}>Google</Button>
+						<Button id="sign-in-with-discord" onClick={promptExternalSignIn.discord}>Discord</Button>
 					</div>
 					<div id="sign-in-divider" className="translucent-text">or</div>
 				</>

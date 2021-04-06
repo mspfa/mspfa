@@ -1,0 +1,22 @@
+@import 'styles/buttons';
+
+.button {
+	user-select: none;
+	font-family: 'Homestuck-Regular';
+	font-size: 1.5rem;
+	font-weight: normal;
+	border: none;
+	position: relative;
+	margin-right: 4px;
+	margin-bottom: 4px;
+	@include colored-button($front-background, false, true);
+	
+	&:active {
+		left: 2px;
+		top: 2px;
+	}
+	
+	& + & {
+		margin-left: 0.75rem;
+	}
+}

@@ -6,11 +6,11 @@ import type { AnchorHTMLAttributes } from 'react';
 import './styles.module.scss';
 
 // `href` is omitted here because NextLinkProps has a more inclusive `href`, accepting URL objects in addition to strings.
-type AnchorProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>;
+type HTMLAnchorProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>;
 // `passHref` is omitted here because it is not useful enough to be worth implementing.
 type NextLinkProps = Omit<OriginalNextLinkProps, 'passHref'>;
 // NextLinkProps is `Partial`ed in LinkProps below to make `href` optional in the Link component. NextLinkProps above is not `Partial`ed because `href` is required in NextLink's props.
-export type LinkProps = AnchorProps & Partial<NextLinkProps>;
+export type LinkProps = HTMLAnchorProps & Partial<NextLinkProps>;
 
 /**
  * Should be used in place of `a`. Accepts any props which `a` accepts.
@@ -29,7 +29,7 @@ const Link = React.forwardRef((
 		scroll,
 		shallow,
 		locale,
-
+		
 		// All non-NextLink-exclusive props.
 		className,
 		href,
