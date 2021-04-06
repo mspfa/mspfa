@@ -18,7 +18,7 @@ const Footer = () => {
 							}
 						`}</style>
 					)}
-					<div className="mspface" />
+					<div className="mspface layer-front" />
 					<div className="wealth-spawner-container" />
 				</div>
 			</footer>

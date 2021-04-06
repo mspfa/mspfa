@@ -2,9 +2,6 @@
 @import 'styles/themes';
 
 input, textarea, select, option {
-	font-family: $monospace;
-	font-weight: bold;
-	@include theme(color, $text-color);
 	@include theme(background-color, $frontest-background);
 }
 

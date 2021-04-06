@@ -1,5 +1,3 @@
-@import 'styles/themes';
-
 .dialog {
 	&-container {
 		pointer-events: none;
@@ -22,12 +20,6 @@
 		font-family: 'Homestuck-Regular';
 		font-weight: normal;
 		font-size: 1.75rem;
-		@include theme(background-color, $mid-background);
-		@include theme(color, $translucent-text-color);
-	}
-	
-	&-content, &-actions {
-		@include theme(background-color, $front-background);
 	}
 	
 	&-content {

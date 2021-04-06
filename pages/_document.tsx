@@ -11,7 +11,7 @@ export default class extends Document {
 		return (
 			<Html lang="en">
 				<Head />
-				<body>
+				<body className="layer-back">
 					<Main />
 					<NextScript />
 				</body>

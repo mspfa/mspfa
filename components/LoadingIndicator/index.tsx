@@ -38,7 +38,7 @@ const LoadingIndicator = () => {
 	return (
 		<div
 			id="loading-indicator"
-			className={loadingCount ? 'loading' : ''}
+			className={loadingCount ? 'loading' : undefined}
 		/>
 	);
 };

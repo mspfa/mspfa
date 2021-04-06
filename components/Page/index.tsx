@@ -13,7 +13,7 @@ const Page = ({ children }: PageProps) => (
 		<span id="preload-font" />
 		{/* It is necessary for dialogs to be before the page so that dialog elements are reached first when tabbing. */}
 		<Dialogs />
-		<div id="page">
+		<div id="page" className="layer-mid">
 			<Header />
 			<main>
 				{children}

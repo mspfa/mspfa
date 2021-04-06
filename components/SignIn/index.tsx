@@ -71,14 +71,14 @@ const SignIn = ({ page }: SignInProps) => {
 						<meta name="google-signin-client_id" content={env.GOOGLE_CLIENT_ID} />
 						<script src="https://apis.google.com/js/platform.js" defer />
 					</Head>
-					<div className="translucent">
+					<div className="translucent-text">
 						{page ? 'Sign up with' : 'Sign in with'}
 					</div>
 					<div id="sign-in-methods-external">
 						<button id="sign-in-with-google" type="button" onClick={promptExternalSignIn.google}>Google</button>
 						<button id="sign-in-with-discord" type="button" onClick={promptExternalSignIn.discord}>Discord</button>
 					</div>
-					<div id="sign-in-divider" className="translucent">or</div>
+					<div id="sign-in-divider" className="translucent-text">or</div>
 				</>
 			)}
 			<div id="sign-in-inputs">
@@ -183,7 +183,7 @@ const SignIn = ({ page }: SignInProps) => {
 						/>
 						{page === 0 ? (
 							<div id="reset-password-link-container">
-								<Link className="translucent">Reset Password</Link>
+								<Link className="translucent-text">Reset Password</Link>
 							</div>
 						) : (
 							<>
@@ -219,7 +219,7 @@ const SignIn = ({ page }: SignInProps) => {
 							checked={signInValues.termsAgreed}
 							onChange={onChange}
 						/>
-						<label htmlFor="sign-in-terms-agreed" className="translucent">
+						<label htmlFor="sign-in-terms-agreed" className="translucent-text">
 							I agree to the <Link href="/terms" target="_blank">terms of service</Link>.
 						</label>
 					</div>
@@ -227,7 +227,7 @@ const SignIn = ({ page }: SignInProps) => {
 			)}
 			{page === 0 && (
 				<div id="sign-up-link-container">
-					<span className="translucent">Don't have an account? </span>
+					<span className="translucent-text">Don't have an account? </span>
 					<Link onClick={startSigningUp}>Sign Up</Link>
 				</div>
 			)}

@@ -22,17 +22,33 @@
 body {
 	margin: 0;
 	overflow-y: scroll; // To make the scrollbar not change visibility and offset the page horizontally when changing the page height e.g. by toggling tall spoilers on a short page.
-	@include theme(background-color, $back-background);
-	@include theme(color, $text-color);
-	font-family: $monospace;
 	font-size: 0.75em; // We are using ems so the browser's font scale is multiplied. The default scale is 1em = 16px.
-	font-weight: bold;
 	
 	@media screen and (max-width: 950px) {
 		font-size: 1.1em;
 	}
 }
 
-.translucent {
+body, input, textarea, select, option {
+	font-family: $monospace;
+	font-weight: bold;
+	@include theme(color, $text-color);
+}
+
+.translucent-text {
 	@include theme(color, $translucent-text-color);
+}
+
+.layer {
+	&-back {
+		@include theme(background-color, $back-background);
+	}
+	
+	&-mid {
+		@include theme(background-color, $mid-background);
+	}
+	
+	&-front {
+		@include theme(background-color, $front-background);
+	}
 }

@@ -8,13 +8,19 @@ const FlashyTitle = () => {
 	const router = useRouter();
 
 	return 's' in router.query ? null : (
-		<div id="flashy-title-container">
+		<div id="flashy-title-container" className="layer-front">
 			<style jsx global>{`
 				#flashy-title {
 					background-image: url(/images/flashy-titles/${1 + Math.floor(Math.random() * NUMBER_OF_FLASHY_TITLES)}.png);
 				}
 			`}</style>
-			<Link id="flashy-title" href="/" title="MSPFA Home" tabIndex={-1} draggable={false} />
+			<Link
+				id="flashy-title"
+				href="/"
+				title="MSPFA Home"
+				tabIndex={-1}
+				draggable={false}
+			/>
 		</div>
 	);
 };

@@ -39,7 +39,7 @@
 	// A color value or a map of themes to color values for the color of the button.
 	$colors,
 	// Optional override for the default button text color.
-	$text-color,
+	$button-text-color,
 	// Whether `$colors` represents the color behind the button and not the color of the button.
 	$color-is-behind-button: false
 ) {
@@ -53,8 +53,8 @@
 		}
 	}
 	
-	@if $text-color {
-		color: $text-color;
+	@if $button-text-color {
+		color: $button-text-color;
 	} @else {
 		@include theme(color, $translucent-text-color);
 	}

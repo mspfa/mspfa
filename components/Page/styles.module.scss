@@ -1,9 +1,10 @@
-@import 'styles/themes';
+#preload-font {
+	font-family: 'Homestuck-Regular';
+}
 
 #page {
 	width: 940px;
 	margin: 0 auto;
-	@include theme(background-color, $mid-background);
 	
 	@media screen and (max-width: 950px) {
 		width: 100%;
@@ -22,7 +23,6 @@
 	margin-right: 4px;
 	background-repeat: no-repeat;
 	background-position: center;
-	@include theme(background-color, $front-background);
 	
 	@media screen and (max-width: 950px) {
 		display: none;
@@ -33,6 +33,6 @@
 	flex-grow: 1;
 }
 
-#preload-font {
-	font-family: 'Homestuck-Regular';
+main.margin {
+	margin: 1.75rem 3.5rem;
 }
