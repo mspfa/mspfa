@@ -6,10 +6,18 @@ import { authenticate } from 'modules/server/auth'; // @server-only
 import { getPrivateUser } from 'modules/server/users'; // @server-only
 import env from 'modules/client/env';
 import { UserContext, useUserState } from 'modules/client/users';
+import type { PrivateUser } from 'modules/client/users';
 import * as MSPFA from 'modules/client/MSPFA'; // @client-only
+import type { PageRequest } from 'modules/server/pages';
 import 'styles/global.scss';
 
 (global as any).MSPFA = MSPFA; // @client-only
+
+export type MyAppPageProps = {
+	[key: string]: any,
+	env: Partial<typeof process.env>,
+	user?: PrivateUser
+};
 
 const MyApp = ({
 	Component,
@@ -19,7 +27,9 @@ const MyApp = ({
 		user: userProp,
 		...pageProps
 	}
-}: AppProps) => {
+}: Omit<AppProps, 'pageProps'> & {
+	pageProps: MyAppPageProps
+}) => {
 	Object.assign(env, envProp);
 	
 	const user = useUserState(userProp);
@@ -56,19 +66,28 @@ const MyApp = ({
 /** This runs server-side on every page request (only for initial requests by the browser, not by the Next router). */
 MyApp.getInitialProps = async (appContext: AppContext) => {
 	const appProps = await App.getInitialProps(appContext);
+	const { pageProps } = appProps;
 	
 	// These environment variables will be sent to the client.
-	appProps.pageProps.env = {
+	pageProps.env = {
 		HCAPTCHA_SITE_KEY: process.env.HCAPTCHA_SITE_KEY,
 		GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
 		DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID
 	};
 	
-	const { req, res } = appContext.ctx;
+	const { req, res } = appContext.ctx as (
+		typeof appContext.ctx
+		& { req?: PageRequest }
+	);
 	if (req && res) {
+		req.pageProps = pageProps;
+		
 		const { user } = await authenticate(req, res);
 		if (user) {
-			appProps.pageProps.user = getPrivateUser(user);
+			// This exposes `pageProps` to any page's `getServerSideProps` method.
+			req.user = user;
+			
+			pageProps.user = getPrivateUser(user);
 		}
 	}
 	

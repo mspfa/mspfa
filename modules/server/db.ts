@@ -67,10 +67,10 @@ const db = {
 
 export default db;
 
+export type UnsafeObjectID = ConstructorParameters<typeof ObjectId>[0] | undefined;
+
 /** Calls `new ObjectId(id)` but returns `undefined` instead of throwing when `id` is invalid. */
-export const safeObjectID = (
-	id: ConstructorParameters<typeof ObjectId>[0]
-) => {
+export const safeObjectID = (id: UnsafeObjectID) => {
 	try {
 		return new ObjectId(id);
 	} catch {

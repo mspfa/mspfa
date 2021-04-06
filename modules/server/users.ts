@@ -1,9 +1,10 @@
-import db from 'modules/server/db';
+import db, { safeObjectID } from 'modules/server/db';
 import type { ObjectId } from 'mongodb';
 import { Theme } from 'modules/server/themes';
 import type { achievements } from 'modules/server/achievements';
 import type { URLString } from 'modules/types';
 import type { PrivateUser, PublicUser } from 'modules/client/users';
+import type { UnsafeObjectID } from 'modules/server/db';
 
 export type ExternalAuthMethod = {
 	type: 'google' | 'discord',
@@ -218,3 +219,20 @@ export const getPublicUser = (user: UserDocument): PublicUser => {
 const users = db.collection<UserDocument>('users');
 
 export default users;
+
+/**
+ * Finds and returns a `UserDocument` by a possibly unsafe ID.
+ * 
+ * Returns `undefined` if the ID is invalid or the user is not found.
+ */
+export const getUserByUnsafeID = async (id: UnsafeObjectID) => {
+	const userID = safeObjectID(id);
+	if (userID) {
+		const user = await users.findOne({
+			_id: userID
+		});
+		if (user) {
+			return user;
+		}
+	}
+};

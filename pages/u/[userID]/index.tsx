@@ -1,8 +1,7 @@
 import Page from 'components/Page';
-import type { GetServerSideProps } from 'next';
+import type { MyGetServerSideProps } from 'modules/server/pages';
 import type { PublicUser } from 'modules/client/users';
-import { safeObjectID } from 'modules/server/db'; // @server-only
-import users, { getPublicUser } from 'modules/server/users'; // @server-only
+import { getUserByUnsafeID, getPublicUser } from 'modules/server/users'; // @server-only
 import ErrorPage from 'pages/_error';
 
 type ServerSideProps = {
@@ -19,18 +18,13 @@ const Component = ({ publicUser }: ServerSideProps) => (
 
 export default Component;
 
-export const getServerSideProps: GetServerSideProps = async context => {
+export const getServerSideProps: MyGetServerSideProps<ServerSideProps> = async context => {
 	const props: ServerSideProps = {};
 	
-	const userID = safeObjectID(context.params!.userID as string);
+	const user = await getUserByUnsafeID(context.params!.userID as string);
 	
-	if (userID) {
-		const user = await users.findOne({
-			_id: userID
-		});
-		if (user) {
-			props.publicUser = getPublicUser(user);
-		}
+	if (user) {
+		props.publicUser = getPublicUser(user);
 	}
 	
 	return { props };
