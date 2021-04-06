@@ -14,7 +14,7 @@ import 'styles/global.scss';
 (global as any).MSPFA = MSPFA; // @client-only
 
 export type MyAppPageProps = {
-	[key: string]: any,
+	readonly [key: string]: any,
 	env: Partial<typeof process.env>,
 	user?: PrivateUser
 };
@@ -66,7 +66,10 @@ const MyApp = ({
 /** This runs server-side on every page request (only for initial requests by the browser, not by the Next router). */
 MyApp.getInitialProps = async (appContext: AppContext) => {
 	const appProps = await App.getInitialProps(appContext);
-	const { pageProps } = appProps;
+	const { pageProps } = appProps as (
+		typeof appProps
+		& { pageProps: MyAppPageProps }
+	);
 	
 	// These environment variables will be sent to the client.
 	pageProps.env = {

@@ -8,12 +8,17 @@ export type PageRequest = IncomingMessage & {
 	pageProps: MyAppPageProps
 };
 
+type MyGetServerSidePropsContext = {
+	req: PageRequest,
+	params: Record<string, string | undefined>
+};
+
 export type MyGetServerSideProps<
 	ServerSideProps extends Record<string, any> = {}
 > = (
 	GetServerSideProps extends (context: infer Context) => any
 		? (
-			context: Context & { req: PageRequest }
+			context: Omit<Context, keyof MyGetServerSidePropsContext> & MyGetServerSidePropsContext
 		) => Promise<{
 			props: ServerSideProps
 		}>
