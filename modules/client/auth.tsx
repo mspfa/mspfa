@@ -174,7 +174,7 @@ export const setSignInPage = (
 						// If sign-in or sign-up succeeds, reset the sign-in form and update the client's user state.
 						signInLoading = false;
 						resetSignInValues();
-						setUser(response);
+						setUser(response.data);
 					}).catch(() => {
 						// If sign-in or sign-up fails, go back to sign-in screen.
 						signInLoading = false;

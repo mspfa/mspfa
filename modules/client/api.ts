@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import type { APIHandler } from 'modules/server/api';
 import type { AxiosRequestConfig, AxiosInstance } from 'axios';
 import type { Method, MethodWithData } from 'modules/types';
@@ -87,9 +87,11 @@ export type APIClient<Handler> = Omit<typeof api, Method> & (
 						? [config: AxiosRequestConfig & { data: RequestBody & Partial<Record<string, undefined>> }]
 						: [config?: Omit<AxiosRequestConfig, 'data'>]
 			) => Promise<(
-				Response extends { body: {} }
-					? (Response & { method: Uppercase<RequestMethod> })['body']
-					: unknown
+				AxiosResponse<(
+					Response extends { body: {} }
+						? (Response & { method: Uppercase<RequestMethod> })['body']
+						: unknown
+				)>
 			)>
 		}
 		: never
