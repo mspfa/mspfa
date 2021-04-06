@@ -580,6 +580,10 @@
 				"@typescript-eslint/no-duplicate-imports": "error",
 				"no-extra-semi": "off",
 				"@typescript-eslint/no-extra-semi": "error",
+				"no-redeclare": "off",
+				"@typescript-eslint/no-redeclare": [
+					"error"
+				],
 				"no-throw-literal": "off",
 				"@typescript-eslint/no-throw-literal": "error",
 				"no-unused-vars": "off",
