@@ -5,8 +5,6 @@
 	"editor.defaultFormatter": null,
 	"javascript.preferences.quoteStyle": "single",
 	"typescript.preferences.quoteStyle": "single",
-	"editor.trimAutoWhitespace": false,
-	"trailing-spaces.includeEmptyLines": false,
 	"files.exclude": {
 		".next": true,
 		"next-env.d.ts": true,
