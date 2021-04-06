@@ -3,6 +3,7 @@ import React, { useContext, useState } from 'react';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
 import { startLoading, stopLoading } from 'components/LoadingIndicator';
+import { Dialog } from 'modules/client/dialogs';
 
 /** All keys whose values have the same serializable type in both `DocumentUser` and `PrivateUser`. */
 type PrivateUserDocumentKey = 'name' | 'email' | 'verified' | 'description' | 'icon' | 'site' | 'comicSaves' | 'achievements' | 'favs' | 'profileStyle' | 'settings' | 'perms' | 'dev' | 'mod' | 'patron' | 'nameColor';
@@ -73,8 +74,16 @@ export const signIn = async () => {
 
 type SessionAPI = APIClient<typeof import('pages/api/session').default>;
 
-/** Deletes the user's sign-in session. */
+/** Opens a dialog prompting the user to sign out. */
 export const signOut = async () => {
-	await (api as SessionAPI).delete('session');
-	setUser(undefined);
+	const dialog = await new Dialog({
+		id: 'sign-out',
+		title: 'Sign Out',
+		content: 'Are you sure you want to sign out?',
+		actions: ['Yes', 'No']
+	});
+	if (dialog?.submit) {
+		await (api as SessionAPI).delete('session');
+		setUser(undefined);
+	}
 };
