@@ -34,7 +34,7 @@
 	&-inputs {
 		display: grid;
 		grid-template-columns: auto auto;
-		grid-gap: 1ch;
+		gap: 1ch;
 		
 		label {
 			justify-self: right;
@@ -67,7 +67,7 @@
 #terms-agreed-container {
 	display: grid;
 	grid-template-columns: auto auto;
-	grid-gap: 1ch;
+	gap: 1ch;
 	align-items: center;
 	margin-top: 2ch;
 	font-size: 0.85em;

@@ -51,3 +51,7 @@ body, input, textarea, select, option {
 		@include theme(background-color, $front-background);
 	}
 }
+
+.bolder {
+	text-shadow: 0 0 currentColor;
+}

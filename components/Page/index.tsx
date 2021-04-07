@@ -3,11 +3,13 @@ import type { ReactNode } from 'react';
 import Footer from 'components/Footer';
 import Dialogs from 'components/Dialog/Dialogs';
 import LoadingIndicator from 'components/LoadingIndicator';
-import Heading from 'components/Heading';
+import PageHeading from 'components/Page/PageHeading';
 import './styles.module.scss';
 
 export type PageProps = {
+	/** The content of the heading displayed at the top of the page. */
 	heading?: ReactNode,
+	/** Whether the page has margins. */
 	margin?: boolean,
 	children: ReactNode
 };
@@ -22,7 +24,7 @@ const Page = ({ heading, margin, children }: PageProps) => (
 			<Header />
 			<main className={margin ? 'margin' : undefined}>
 				{(heading
-					? <Heading>{heading}</Heading>
+					? <PageHeading>{heading}</PageHeading>
 					: null
 				)}
 				{children}

@@ -45,9 +45,9 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 				return (
 					<Form id={`dialog-container-${dialog.id}`} className="dialog-container">
 						<dialog id={`dialog-${dialog.id}`} open>
-							<h2 className="dialog-title layer-mid translucent-text">
+							<div className="dialog-title layer-mid translucent-text">
 								{dialog.title}
-							</h2>
+							</div>
 							<div className="dialog-content layer-front">
 								{(typeof dialog.content === 'function'
 									? dialog.content(props)

@@ -3,6 +3,8 @@ import type { MyGetServerSideProps } from 'modules/server/pages';
 import type { PrivateUser } from 'modules/client/users';
 import { getUserByUnsafeID, getPrivateUser } from 'modules/server/users';
 import ErrorPage from 'pages/_error';
+import GridSection from 'components/GridSection';
+import GridSectionHeading from 'components/GridSection/GridSectionHeading';
 
 type ServerSideProps = {
 	user?: PrivateUser,
@@ -12,7 +14,9 @@ type ServerSideProps = {
 const Component = ({ user, statusCode }: ServerSideProps) => (
 	user ? (
 		<Page heading="Settings" margin>
-			{user.id}
+			<GridSection>
+				<GridSectionHeading>{user.name}</GridSectionHeading>
+			</GridSection>
 		</Page>
 	) : <ErrorPage statusCode={statusCode} />
 );
