@@ -76,6 +76,7 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 						onBlur();
 						// When the menu's label is blurred, it is (obviously) no longer focused from being clicked.
 						setClickedLabel(false);
+						
 						// This ESLint comment is necessary because the rule thinks `onBlur` should be a dependency here. It shouldn't because it is memoized in its definition with no dependencies and thus can never change.
 						// eslint-disable-next-line react-hooks/exhaustive-deps
 					}, [])

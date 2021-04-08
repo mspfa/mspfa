@@ -1,5 +1,6 @@
 import App from 'next/app'; // @server-only
 import type { AppProps, AppContext } from 'next/app';
+import type { NextPageContext } from 'next';
 import Head from 'next/head';
 import { SWRConfig } from 'swr';
 import { authenticate } from 'modules/server/auth'; // @server-only
@@ -9,11 +10,12 @@ import { UserContext, useUserState } from 'modules/client/users';
 import type { PrivateUser } from 'modules/client/users';
 import * as MSPFA from 'modules/client/MSPFA'; // @client-only
 import type { PageRequest } from 'modules/server/pages';
+import { useEffect } from 'react';
 import 'styles/global.scss';
 
 (global as any).MSPFA = MSPFA; // @client-only
 
-export type MyInitialProps = {
+export type MyAppInitialProps = {
 	env: Partial<typeof process.env>,
 	user?: PrivateUser
 };
@@ -22,7 +24,7 @@ export type MyAppProps = Omit<AppProps, 'pageProps'> & {
 	/** An object with the app's `pageProps` on all server-side renders and the first client-side render, but an empty object on subsequent renders. */
 	pageProps: Record<string, undefined> | {
 		readonly [key: string]: unknown,
-		initialProps: MyInitialProps
+		initialProps: MyAppInitialProps
 	}
 };
 
@@ -33,6 +35,21 @@ const MyApp = ({
 	Object.assign(env, pageProps.initialProps?.env);
 	
 	const user = useUserState(pageProps.initialProps?.user);
+	
+	useEffect(() => {
+		if (user) {
+			const themeClassName = `theme-${user.settings.theme}`;
+			
+			document.body.classList.add(themeClassName);
+			
+			return () => {
+				document.body.classList.remove(themeClassName);
+			};
+		}
+		
+		// This ESLint comment is necessary because the rule incorrectly thinks `user` is not a dependency here.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [user?.settings.theme]);
 	
 	return (
 		<>
@@ -57,7 +74,7 @@ const MyApp = ({
 				<UserContext.Provider value={user}>
 					<Component
 						{
-							// It is necessary that the props passed here is the original `pageProps` object and not a shallow clone thereof, because props from a page's `getServerSideProps` are assigned to the original `pageProps` object and would otherwise not be passed into the page component.
+							// It is necessary that the props object passed here is the original `pageProps` object and not a shallow clone thereof, because props from a page's `getServerSideProps` are assigned to the original `pageProps` object and would otherwise not be passed into the page component.
 							...pageProps as any
 						}
 					/>
@@ -72,7 +89,7 @@ const MyApp = ({
 MyApp.getInitialProps = async (appContext: AppContext) => {
 	const appProps = await App.getInitialProps(appContext) as MyAppProps;
 	
-	const initialProps: MyInitialProps = {
+	const initialProps: MyAppInitialProps = {
 		env: {
 			HCAPTCHA_SITE_KEY: process.env.HCAPTCHA_SITE_KEY,
 			GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
@@ -83,21 +100,19 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
 	// This exposes `initialProps` to `MyApp` (on the server and the client) and to every page's props (on the client).
 	appProps.pageProps.initialProps = initialProps;
 	
-	const { req, res } = appContext.ctx as (
-		typeof appContext.ctx
-		& { req?: PageRequest }
-	);
-	if (req && res) {
-		// This exposes `initialProps` to every page's `getServerSideProps` (on the server).
-		req.initialProps = initialProps;
+	// `req` and `res` below are exposed to every page's `getServerSideProps` (on the server) and `pages/_document` (on the server).
+	const { req, res } = appContext.ctx as NextPageContext & {
+		req: PageRequest,
+		res: NonNullable<NextPageContext['res']>
+	};
+	
+	req.initialProps = initialProps;
+	
+	const { user } = await authenticate(req, res);
+	if (user) {
+		req.user = user;
 		
-		const { user } = await authenticate(req, res);
-		if (user) {
-			// This exposes `user` to every page's `getServerSideProps` (on the server).
-			req.user = user;
-			
-			appProps.pageProps.initialProps.user = getPrivateUser(user);
-		}
+		appProps.pageProps.initialProps.user = getPrivateUser(user);
 	}
 	
 	return appProps;

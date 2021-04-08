@@ -157,11 +157,11 @@ export const authenticate = async (
 						if (updateDB) {
 							// Update the existing session in the DB.
 							users.updateOne({
-								_id: user._id,
+								'_id': user._id,
 								'sessions.token': session.token
 							}, {
 								$set: {
-									lastSeen: new Date(),
+									'lastSeen': new Date(),
 									'sessions.$.lastUsed': new Date(),
 									'sessions.$.ip': req.headers['x-real-ip']
 								}

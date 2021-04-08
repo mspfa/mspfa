@@ -1,17 +1,28 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document';
-import type { DocumentContext } from 'next/document';
+import type { DocumentContext, DocumentInitialProps } from 'next/document';
+import type { PageRequest } from 'modules/server/pages';
 
-export default class extends Document {
+type MyDocumentInitialProps = DocumentInitialProps & {
+	req: PageRequest
+};
+
+class MyDocument extends Document {
 	static async getInitialProps(ctx: DocumentContext) {
-		const initialProps = await Document.getInitialProps(ctx);
-		return { ...initialProps };
+		const initialProps = await Document.getInitialProps(ctx) as MyDocumentInitialProps;
+		
+		// The type assertion below is necessary because `ctx.req` is initially not a `PageRequest` but is mutated into a `PageRequest` in `pages/_app`'s `getInitialProps`.
+		initialProps.req = ctx.req as PageRequest;
+		
+		return initialProps;
 	}
-
+	
 	render() {
+		const req: PageRequest = (this.props as any).req;
+		
 		return (
 			<Html lang="en">
 				<Head />
-				<body className="layer-back">
+				<body className={`layer-back${req.user ? ` theme-${req.user.settings.theme}` : ''}`}>
 					<Main />
 					<NextScript />
 				</body>
@@ -19,3 +30,5 @@ export default class extends Document {
 		);
 	}
 }
+
+export default MyDocument;

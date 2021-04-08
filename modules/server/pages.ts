@@ -1,10 +1,12 @@
 import type { IncomingMessage } from 'http';
 import type { GetServerSideProps } from 'next';
-import type { MyInitialProps } from 'pages/_app';
+import type { MyAppInitialProps } from 'pages/_app';
 import type { UserDocument } from 'modules/server/users';
 
 export type PageRequest = IncomingMessage & {
-	initialProps: MyInitialProps,
+	/** The `initialProps` from `pages/_app`'s `getInitialProps`. */
+	initialProps: MyAppInitialProps,
+	/** The current authenticated user from `pages/_app`'s `getInitialProps`. */
 	user?: UserDocument
 };
 
