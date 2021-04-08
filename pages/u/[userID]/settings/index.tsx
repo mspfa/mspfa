@@ -48,12 +48,10 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 				onSubmit={submitSettings}
 			>
 				<Form>
-					<GridSection>
+					<GridSection id="settings">
 						<GridSectionHeading>Display</GridSectionHeading>
-						<GridSubsection id="settings-theme" className="setting">
-							<label htmlFor="setting-theme" className="setting-label">
-								Theme:
-							</label>
+						<GridSubsection>
+							<label htmlFor="setting-theme">Theme:</label>
 							<div className="setting-input">
 								<Field
 									as="select"
@@ -67,10 +65,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 									))}
 								</Field>
 							</div>
-
-							<label htmlFor="setting-sticky-nav" className="setting-label">
-								Sticky nav bar:
-							</label>
+							<label htmlFor="setting-sticky-nav">Sticky nav bar:</label>
 							<div className="setting-input">
 								<Field
 									id="setting-sticky-nav"
@@ -78,10 +73,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 									type="checkbox"
 								/>
 							</div>
-
-							<label htmlFor="setting-pixelated-images" className="setting-label">
-								Pixelated images:
-							</label>
+							<label htmlFor="setting-pixelated-images">Pixelated images:</label>
 							<div className="setting-input">
 								<Field
 									id="setting-pixelated-images"
@@ -89,10 +81,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 									type="checkbox"
 								/>
 							</div>
-
-							<label htmlFor="setting-ads-side" className="setting-label">
-								Side ad:
-							</label>
+							<label htmlFor="setting-ads-side">Side ad:</label>
 							<div className="setting-input">
 								<Field
 									id="setting-ads-side"
@@ -100,10 +89,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 									type="checkbox"
 								/>
 							</div>
-
-							<label htmlFor="setting-ads-matched-content" className="setting-label">
-								Matched content ad:
-							</label>
+							<label htmlFor="setting-ads-matched-content">Matched content ad:</label>
 							<div className="setting-input">
 								<Field
 									id="setting-ads-matched-content"
@@ -112,9 +98,9 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 								/>
 							</div>
 						</GridSubsection>
-						<GridSectionHeading>Something Else</GridSectionHeading>
-						<GridSubsection id="settings-ads" className="setting">
-							<label htmlFor="" className="setting-label">Label:</label>
+						<GridSectionHeading>Utility</GridSectionHeading>
+						<GridSubsection>
+							<label htmlFor="">Label:</label>
 							<div className="setting-input" />
 						</GridSubsection>
 					</GridSection>

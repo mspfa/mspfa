@@ -5,7 +5,7 @@ export type GridSubsectionProps = HTMLAttributes<HTMLDivElement> & { children: R
 
 const GridSubsection = ({ children, className, ...props }: GridSubsectionProps) => (
 	<div
-		className={`grid-subsection layer-front ${className ? ` ${className}` : ''}`}
+		className={`grid-subsection layer-front${className ? ` ${className}` : ''}`}
 		{...props}
 	>
 		{children}
