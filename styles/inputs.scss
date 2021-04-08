@@ -9,7 +9,7 @@ input, textarea, select {
 	border-radius: 0;
 	border: 2px solid;
 	@include theme(border-color, $border-color);
-	
+
 	&:focus {
 		@include theme(border-color, $focused-border-color);
 	}
@@ -22,7 +22,7 @@ input, textarea {
 select {
 	// For some reason `select` elements are larger than `input` elements by default. This fixes it. Not sure if this is the best way to do it though.
 	padding: 1px;
-	
+
 	&:invalid {
 		// `select` elements are generally only `:invalid` if a disabled option is selected, so this is effectively the `placeholder` attribute color, except `select`s don't have `placeholder`s.
 		// This color code matches Chrome's default.

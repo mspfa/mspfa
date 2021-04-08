@@ -10,12 +10,12 @@
 	margin-right: 4px;
 	margin-bottom: 4px;
 	@include colored-button($front-background, false, true);
-	
+
 	&:active {
 		left: 2px;
 		top: 2px;
 	}
-	
+
 	& + & {
 		margin-left: 0.75rem;
 	}

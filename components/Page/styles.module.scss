@@ -5,7 +5,7 @@
 #page {
 	width: 940px;
 	margin: 0 auto;
-	
+
 	@media screen and (max-width: 950px) {
 		width: 100%;
 	}
@@ -23,7 +23,7 @@
 	margin-right: 4px;
 	background-repeat: no-repeat;
 	background-position: center;
-	
+
 	@media screen and (max-width: 950px) {
 		display: none;
 	}

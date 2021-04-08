@@ -4,44 +4,44 @@
 	&-content {
 		text-align: center;
 	}
-	
+
 	&-divider {
 		margin: 2ch 0;
 	}
-	
+
 	&-methods-external {
 		margin-top: 2ch;
-		
+
 		.theme-dark & {
 			opacity: 0.85;
 		}
 	}
-	
+
 	&-with {
 		&-password {
 			margin-top: 1.5ch;
 		}
-		
+
 		&-google {
 			@include colored-button(#4285f4, #ffffff);
 		}
-		
+
 		&-discord {
 			@include colored-button(#7289da, #ffffff);
 		}
 	}
-	
+
 	&-inputs {
 		display: grid;
 		grid-template-columns: auto auto;
 		gap: 1ch;
-		
+
 		label {
 			justify-self: right;
 			align-self: center;
 		}
 	}
-	
+
 	&-birth-month {
 		margin: 0 1ch;
 	}
@@ -71,11 +71,11 @@
 	align-items: center;
 	margin-top: 2ch;
 	font-size: 0.85em;
-	
+
 	input {
 		justify-self: right;
 	}
-	
+
 	label {
 		justify-self: left;
 	}

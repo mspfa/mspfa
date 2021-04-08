@@ -10,7 +10,7 @@
 	background-image: url(/images/loading.gif); // Loading animation by Toreodere
 	transition: opacity 0.1s linear;
 	opacity: 0;
-	
+
 	&.loading {
 		opacity: 0.5;
 	}

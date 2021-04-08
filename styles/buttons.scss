@@ -28,7 +28,7 @@
 // Applies a pixelated shadow which gives the element 3D depth. Lowers the depth on `:active`.
 @mixin depth-shadow($colors) {
 	@include theme(box-shadow, $colors, meta.get-function('depth-shadow'));
-	
+
 	&:active {
 		@include theme(box-shadow, $colors, meta.get-function('depth-shadow'), 1);
 	}
@@ -46,22 +46,22 @@
 	@if type-of($colors) != 'map' {
 		$colors: (standard: $colors);
 	}
-	
+
 	@if $color-is-behind-button {
 		@each $theme, $color in $colors {
 			$colors: map.set($colors, $theme, adjust-color($color, -12));
 		}
 	}
-	
+
 	@if $button-text-color {
 		color: $button-text-color;
 	} @else {
 		@include theme(color, $translucent-text-color);
 	}
-	
+
 	@include depth-shadow($colors);
 	@include theme(background-color, $colors);
-	
+
 	&:focus:not(:active) {
 		@include theme(background-color, $colors, meta.get-function('adjust-color'), 28);
 	}
