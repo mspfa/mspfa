@@ -10,7 +10,7 @@ let mspfaDB: Db | undefined;
 
 /**
  * A promise which resolves when the DB connects.
- * 
+ *
  * The resolution value is the raw MSPFA DB instance.
  */
 export const connection = client.connect().then(() => {
@@ -35,24 +35,24 @@ const db = {
 		if (mspfaDB) {
 			return mspfaDB.collection<Document>(name);
 		}
-		
+
 		/**
 		 * Before the DB connects, this is the collection with only its async function properties (`PartialCollection<Document>`).
-		 * 
+		 *
 		 * After the DB connects, this is set to the full collection (`Collection<Document>`).
 		 */
 		const partialCollection: Collection<Document> | PartialCollection<Document> = {} as any;
-		
+
 		const collectionUpdate = connection.then(() => {
 			const collection = mspfaDB!.collection<Document>(name);
-			
+
 			// Now that the DB has connected, set all of the properties of the full collection.
 			for (const key of collectionKeys) {
 				const value = collection[key];
 				partialCollection[key] = typeof value === 'function' ? value.bind(collection) : value;
 			}
 		});
-		
+
 		// The DB has not connected yet, so set only the async function properties on the `partialCollection`.
 		for (const key of collectionKeys) {
 			partialCollection[key] = async (...args: any[]) => {
@@ -60,7 +60,7 @@ const db = {
 				return partialCollection[key](...args);
 			};
 		}
-		
+
 		return partialCollection;
 	}
 };

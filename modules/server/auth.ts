@@ -13,7 +13,7 @@ const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 /**
  * Authenticate an auth method object with an external auth method.
- * 
+ *
  * If an error occurs, the promise returned by this function will never resolve.
  */
 export const checkExternalAuthMethod = (
@@ -39,7 +39,7 @@ export const checkExternalAuthMethod = (
 			});
 			return;
 		}
-		
+
 		// Authenticate with Discord.
 		const referrerOrigin = req.headers.referer?.slice(
 			0,
@@ -78,7 +78,7 @@ const TOKEN_LENGTH = 64;
 
 /**
  * Sets the `auth` cookie to new session data which is pushed to the user's sessions in the DB.
- * 
+ *
  * Returns a `UserSession` of that session data.
  */
 export const createSession = async (
@@ -88,9 +88,9 @@ export const createSession = async (
 	user: UserDocument
 ) => {
 	const token = crypto.randomBytes(TOKEN_LENGTH).toString('base64');
-	
+
 	new Cookies(req, res).set('auth', `${user._id}:${token}`, authCookieOptions);
-	
+
 	const session: UserSession = {
 		token: await argon2.hash(token),
 		lastUsed: new Date()
@@ -98,7 +98,7 @@ export const createSession = async (
 	if (typeof req.headers['x-real-ip'] === 'string') {
 		session.ip = req.headers['x-real-ip'];
 	}
-	
+
 	await users.updateOne({
 		_id: user._id
 	}, {
@@ -106,15 +106,15 @@ export const createSession = async (
 			sessions: session
 		}
 	});
-	
+
 	return session;
 };
 
 /**
  * Checks if the HTTP `Authorization` header or `auth` cookie represents a valid existing session.
- * 
+ *
  * Returns the authenticated user and the hashed session token, or undefined for each of those if there is no valid session.
- * 
+ *
  * Also updates the user's `lastSeen` and session `lastUsed` dates in the DB. The returned user data is from before this update.
  */
 export const authenticate = async (
@@ -124,10 +124,10 @@ export const authenticate = async (
 	updateDB = true
 ) => {
 	let cookies: Cookies | undefined;
-	
+
 	/** The auth credentials in the format `${userID}:${token}`, decoded from either the `Authorization` header or the `auth` cookie. */
 	let credentials: string | undefined;
-	
+
 	/** The client's [HTTP `Authorization` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization). */
 	const authorization = req.headers.authorization;
 	if (authorization && authorization.startsWith('Basic ')) {
@@ -136,7 +136,7 @@ export const authenticate = async (
 		cookies = new Cookies(req, res);
 		credentials = cookies.get('auth');
 	}
-	
+
 	if (credentials) {
 		const match = /^([^:]+):([^:]+)$/.exec(credentials);
 		if (match) {
@@ -148,12 +148,12 @@ export const authenticate = async (
 				for (const session of user.sessions) {
 					if (await argon2.verify(session.token, token)) {
 						// Authentication succeeded.
-						
+
 						if (cookies) {
 							// An `auth` cookie is set, so update its expiration date.
 							cookies.set('auth', credentials, authCookieOptions);
 						}
-						
+
 						if (updateDB) {
 							// Update the existing session in the DB.
 							users.updateOne({
@@ -167,7 +167,7 @@ export const authenticate = async (
 								}
 							});
 						}
-						
+
 						return {
 							user,
 							token: session.token
@@ -176,13 +176,13 @@ export const authenticate = async (
 				}
 			}
 		}
-		
+
 		if (cookies) {
 			// Authentication failed but an `auth` cookie is set, so delete it.
 			cookies.set('auth', undefined);
 		}
 	}
-	
+
 	return {
 		user: undefined,
 		token: undefined

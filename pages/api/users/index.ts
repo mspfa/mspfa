@@ -24,7 +24,7 @@ const Handler: APIHandler<{
 	}
 )> = async (req, res) => {
 	await validate(req, res);
-	
+
 	const now = new Date();
 	if (req.body.birthdate > +new Date(now.getFullYear() - 13, now.getMonth(), now.getDate())) {
 		// The user is under 13 years old, which breaks the terms of service.
@@ -33,7 +33,7 @@ const Handler: APIHandler<{
 		});
 		return;
 	}
-	
+
 	if (req.body.birthdate < +new Date(now.getFullYear() - 1000, now.getMonth(), now.getDate())) {
 		// The user is over 1000 years old, which, as far as I know, is impossible.
 		res.status(400).send({
@@ -41,25 +41,25 @@ const Handler: APIHandler<{
 		});
 		return;
 	}
-	
+
 	let email: string;
 	let verified = false;
 	let authMethodValue: string;
-	
+
 	if (req.body.authMethod.type === 'password') {
 		email = (req.body as { email: UserDocument['email'] }).email.toLowerCase();
 		authMethodValue = await argon2.hash(req.body.authMethod.value);
 	} else {
 		({ value: authMethodValue, email, verified } = await checkExternalAuthMethod(req, res));
 	}
-	
+
 	if (await users.findOne({ email })) {
 		res.status(422).send({
 			message: 'The specified email is already taken.'
 		});
 		return;
 	}
-	
+
 	if (!(
 		await axios.post('https://hcaptcha.com/siteverify', new URLSearchParams({
 			secret: process.env.HCAPTCHA_SECRET_KEY!,
@@ -76,7 +76,7 @@ const Handler: APIHandler<{
 		});
 		return;
 	}
-	
+
 	const user: UserDocument = {
 		...defaultUser,
 		_id: new ObjectId(),
@@ -92,9 +92,9 @@ const Handler: APIHandler<{
 		verified
 	};
 	await users.insertOne(user);
-	
+
 	await createSession(req, res, user);
-	
+
 	res.status(200).send(getPrivateUser(user));
 };
 

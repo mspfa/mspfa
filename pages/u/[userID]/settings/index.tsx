@@ -32,7 +32,7 @@ const getSettingsValuesFromUser = ({ settings }: PrivateUser) => ({
 type Values = ReturnType<typeof getSettingsValuesFromUser>;
 
 const submitSettings = (values: Values, formikHelpers: FormikHelpers<Values>) => {
-	
+
 };
 
 type ServerSideProps = {
@@ -67,7 +67,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 									))}
 								</Field>
 							</div>
-							
+
 							<label htmlFor="setting-sticky-nav" className="setting-label">
 								Sticky nav bar:
 							</label>
@@ -78,7 +78,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 									type="checkbox"
 								/>
 							</div>
-							
+
 							<label htmlFor="setting-pixelated-images" className="setting-label">
 								Pixelated images:
 							</label>
@@ -89,7 +89,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 									type="checkbox"
 								/>
 							</div>
-							
+
 							<label htmlFor="setting-ads-side" className="setting-label">
 								Side ad:
 							</label>
@@ -100,7 +100,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 									type="checkbox"
 								/>
 							</div>
-							
+
 							<label htmlFor="setting-ads-matched-content" className="setting-label">
 								Matched content ad:
 							</label>
@@ -128,7 +128,7 @@ export default Component;
 
 export const getServerSideProps: MyGetServerSideProps = async context => {
 	const props: ServerSideProps = {};
-	
+
 	if (context.req.user) {
 		const userFromParams = await getUserByUnsafeID(context.params.userID);
 		if (userFromParams) {
@@ -147,6 +147,6 @@ export const getServerSideProps: MyGetServerSideProps = async context => {
 	} else {
 		props.statusCode = 403;
 	}
-	
+
 	return { props };
 };

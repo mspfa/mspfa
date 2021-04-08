@@ -9,16 +9,16 @@ import { signIn, signOut, useUser } from 'modules/client/users';
 const Nav = () => {
 	const router = useRouter();
 	const user = useUser();
-	
+
 	const visitRandomComic = useCallback(() => {
 		// TODO
-		
+
 		router.push(`/s/${Math.random()}/p/1`);
 	}, [router]);
-	
+
 	const notificationsBubble = 0;
 	const messagesBubble = 0;
-	
+
 	return (
 		<nav>
 			<NavGroup id="primary">

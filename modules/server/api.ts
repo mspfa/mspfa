@@ -39,22 +39,22 @@ const ajv = new Ajv({ allErrors: true });
 
 export const createValidator = (schema: Record<string, unknown>) => {
 	const validate = ajv.compile(schema);
-	
+
 	return (req: APIRequest, res: APIResponse) => (
 		new Promise<void>(resolve => {
 			if (req.body === '') {
 				// `req.body === ''` by default when the request body is unspecified. This sets it to `undefined`.
 				req.body = undefined;
 			}
-			
+
 			const valid = validate(req);
-			
+
 			if (valid) {
 				resolve();
 			} else {
 				let methodNotAllowed = false;
 				const errorMessages: string[] = [];
-				
+
 				for (const error of validate.errors!) {
 					let errorMessage = error.message!;
 					// Filter out unhelpful error messages.
@@ -64,7 +64,7 @@ export const createValidator = (schema: Record<string, unknown>) => {
 							errorMessages.push(errorMessage);
 						}
 					}
-					
+
 					// Check if the property which has a schema mismatch is `req.method`.
 					if (error.dataPath === '/method') {
 						methodNotAllowed = true;
@@ -72,7 +72,7 @@ export const createValidator = (schema: Record<string, unknown>) => {
 						break;
 					}
 				}
-				
+
 				if (methodNotAllowed) {
 					res.status(405).end();
 				} else {

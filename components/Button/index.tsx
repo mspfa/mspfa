@@ -14,7 +14,7 @@ const Button = React.forwardRef((
 	ref: React.ForwardedRef<HTMLButtonElement & HTMLButtonElement>
 ) => {
 	const buttonClassName = `button${className ? ` ${className}` : ''}`;
-	
+
 	return (
 		<button
 			type={submit ? 'submit' : 'button'}

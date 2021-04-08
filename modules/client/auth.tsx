@@ -36,7 +36,7 @@ export const promptExternalSignIn = {
 				});
 			}
 		};
-		
+
 		gapi.load('auth2', () => {
 			gapi.auth2.init().then((auth2: any) => {
 				auth2.signIn().then((user: any) => {
@@ -104,14 +104,14 @@ export const setSignInPage = (
 		});
 		return;
 	}
-	
+
 	signInPage = newSignInPage;
-	
+
 	if (signInDialog && !signInDialog.resolved) {
 		// Manually resolve the previous sign-in dialog with a value other than `undefined` so that `resetForm` is not called when switching between sign-up stages.
 		signInDialog.resolve({ value: 'overwrite' }, false);
 	}
-	
+
 	signInDialog = new Dialog({
 		id: 'sign-in',
 		index: 0, // This is necessary to prevent the sign-in dialog from covering up sign-in error dialogs.
@@ -138,13 +138,13 @@ export const setSignInPage = (
 						value: signInValues.password
 					};
 				}
-				
+
 				if (signInPage === 1) {
 					// If the user submits the form while on the first stage of sign-up, move them to the next stage.
 					setSignInPage(2);
 				} else {
 					// If the user submits the form while on the sign-in screen or on the last stage of sign-up, attempt sign-in or sign-up.
-					
+
 					if (signInPage === 2 && !signInValues.captchaToken) {
 						new Dialog({
 							title: 'Error',
@@ -153,7 +153,7 @@ export const setSignInPage = (
 						setSignInPage(signInPage);
 						return;
 					}
-					
+
 					signInLoading = true;
 					(api as SessionAPI | UsersAPI).post(
 						signInPage === 0 ? 'session' : 'users',

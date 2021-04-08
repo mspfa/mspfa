@@ -1,6 +1,6 @@
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import type { APIHandler } from 'modules/server/api';
-import type { AxiosRequestConfig, AxiosInstance } from 'axios';
+import type { AxiosRequestConfig, AxiosInstance, AxiosResponse } from 'axios';
 import type { Method, MethodWithData } from 'modules/types';
 import { Dialog } from 'modules/client/dialogs';
 import { startLoading, stopLoading } from 'components/LoadingIndicator';
@@ -12,9 +12,9 @@ const apiExtension = {
 
 /**
  * An [axios](https://github.com/axios/axios#readme) instance for the MSPFA API.
- * 
+ *
  * ⚠️ Never call this server-side.
- * 
+ *
  * ⚠️ When using this to make API calls, use it `as` an `APIClient` type, or else you will get no type safety on the request or response.
  */
 const api: (
@@ -37,7 +37,7 @@ const onReject = (error: any) => {
 		title: 'Error',
 		content: error.response?.data.message || error.message
 	});
-	
+
 	return Promise.reject(error);
 };
 api.interceptors.request.use(
@@ -62,11 +62,11 @@ export default api;
 
 /**
  * Adds type safety for client `api` calls based on the server API's exported `APIHandler` type.
- * 
+ *
  * Usage:
  * ```
  * type SomeRouteAPI = APIClient<typeof import('pages/api/some/route').default>;
- * 
+ *
  * (api as SomeRouteAPI).post('some/route', { someData: true });
  * ```
  */

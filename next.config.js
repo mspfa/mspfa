@@ -13,7 +13,7 @@ module.exports = {
 							) {
 								// Let global styles be used in style modules.
 								entry.options.modules.mode = 'local';
-								
+
 								// Undo the default hashing of style module class names.
 								entry.options.modules.getLocalIdent = (context, localIdentName, localName) => localName;
 							}
@@ -22,7 +22,7 @@ module.exports = {
 				}
 			}
 		}
-		
+
 		// Here are some stupid workarounds with comments above each to explain what they are trying to work around.
 		// If you're editing these, try to avoid replacements causing line numbers to change.
 		config.module.rules.push({
@@ -37,13 +37,13 @@ module.exports = {
 							: /^[^\n]+ \/\/ @server-only$|\/\/ @server-only {$.*?\/\/ @server-only }$|\/\* @server-only { \*\/.*?\/\* @server-only } \*\//gms,
 						replace: ''
 					},
-					
+
 					// Normally, the minifier thinks `import`ed style modules which have nothing `import`ed `from` them are unused, so it omits them from the production build.
 					{
 						search: /^import '(.+?(\w+)\.module\.(?:s?css|sass))';$/gm,
 						replace: "import __styles_$2 from '$1'; __styles_$2;"
 					},
-					
+
 					// If a global JSX style is in a component's children but not wrapped in curly brackets, it will add randomized class names to all the components in the same block of JSX.
 					{
 						search: /(?<!\(\s+)(<style jsx global>.*?<\/style>)/gs,
@@ -52,7 +52,7 @@ module.exports = {
 				]
 			}
 		});
-		
+
 		return config;
 	},
 	poweredByHeader: false,

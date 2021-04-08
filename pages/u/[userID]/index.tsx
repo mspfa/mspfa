@@ -20,12 +20,12 @@ export default Component;
 
 export const getServerSideProps: MyGetServerSideProps<ServerSideProps> = async context => {
 	const props: ServerSideProps = {};
-	
+
 	const userFromParams = await getUserByUnsafeID(context.params.userID);
-	
+
 	if (userFromParams) {
 		props.publicUser = getPublicUser(userFromParams);
 	}
-	
+
 	return { props };
 };

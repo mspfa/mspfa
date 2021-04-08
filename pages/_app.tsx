@@ -33,24 +33,24 @@ const MyApp = ({
 	pageProps
 }: MyAppProps) => {
 	Object.assign(env, pageProps.initialProps?.env);
-	
+
 	const user = useUserState(pageProps.initialProps?.user);
-	
+
 	useEffect(() => {
 		if (user) {
 			const themeClassName = `theme-${user.settings.theme}`;
-			
+
 			document.body.classList.add(themeClassName);
-			
+
 			return () => {
 				document.body.classList.remove(themeClassName);
 			};
 		}
-		
+
 		// This ESLint comment is necessary because the rule incorrectly thinks `user` is not a dependency here.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [user?.settings.theme]);
-	
+
 	return (
 		<>
 			<Head>
@@ -88,7 +88,7 @@ const MyApp = ({
 /** This runs server-side on every page request (only for initial requests by the browser, not by the Next router). */
 MyApp.getInitialProps = async (appContext: AppContext) => {
 	const appProps = await App.getInitialProps(appContext) as MyAppProps;
-	
+
 	const initialProps: MyAppInitialProps = {
 		env: {
 			HCAPTCHA_SITE_KEY: process.env.HCAPTCHA_SITE_KEY,
@@ -96,25 +96,25 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
 			DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID
 		}
 	};
-	
+
 	// This exposes `initialProps` to `MyApp` (on the server and the client) and to every page's props (on the client).
 	appProps.pageProps.initialProps = initialProps;
-	
+
 	// `req` and `res` below are exposed to every page's `getServerSideProps` (on the server) and `pages/_document` (on the server).
 	const { req, res } = appContext.ctx as NextPageContext & {
 		req: PageRequest,
 		res: NonNullable<NextPageContext['res']>
 	};
-	
+
 	req.initialProps = initialProps;
-	
+
 	const { user } = await authenticate(req, res);
 	if (user) {
 		req.user = user;
-		
+
 		appProps.pageProps.initialProps.user = getPrivateUser(user);
 	}
-	
+
 	return appProps;
 };
 // @server-only }

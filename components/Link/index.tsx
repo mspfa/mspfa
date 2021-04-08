@@ -14,7 +14,7 @@ export type LinkProps = HTMLAnchorProps & Partial<NextLinkProps>;
 
 /**
  * Should be used in place of `a`. Accepts any props which `a` accepts.
- * 
+ *
  * Also has all props from [Next's `Link` component](https://nextjs.org/docs/api-reference/next/link), except:
  * - `href` is optional. Leaving `href` undefined uses a `button.link` element instead of an `a` element.
  * - `prefetch` defaults to `false`.
@@ -29,7 +29,7 @@ const Link = React.forwardRef((
 		scroll,
 		shallow,
 		locale,
-		
+
 		// All non-NextLink-exclusive props.
 		className,
 		href,
@@ -38,7 +38,7 @@ const Link = React.forwardRef((
 	ref: React.ForwardedRef<HTMLAnchorElement & HTMLButtonElement>
 ) => {
 	const linkClassName = `link${className ? ` ${className}` : ''}`;
-	
+
 	if (href === undefined) {
 		return (
 			<button
@@ -49,17 +49,17 @@ const Link = React.forwardRef((
 			/>
 		);
 	}
-	
+
 	const hrefString = href.toString();
 	const external = /^(?:(?:[^:/]+:)|\/\/)/.test(hrefString);
-	
+
 	const anchorProps: Omit<LinkProps, 'href'> & { href?: string } = {
 		...props,
 		className: linkClassName,
 		// Anchors don't accept URL objects like NextLink's `href` prop does, so in case `href` is a URL object, it should be overwritten with the string version in `anchorProps`.
 		href: hrefString
 	};
-	
+
 	// NextLinks aren't useful for external links, so if the link is external, just return the anchor.
 	if (external) {
 		// If the link should open in a new tab, add `noreferrer noopener` to its `rel` since you can't trust external targets with [`window.opener`](https://developer.mozilla.org/en-US/docs/Web/API/Window/opener) on older browsers.
@@ -73,10 +73,10 @@ const Link = React.forwardRef((
 				anchorProps.rel = 'noreferrer noopener';
 			}
 		}
-		
+
 		return <a {...anchorProps} ref={ref} />;
 	}
-	
+
 	// Otherwise, if the link is not external, wrap the anchor in a NextLink to get those [nice features](https://nextjs.org/docs/api-reference/next/link).
 	return (
 		<NextLink

@@ -13,7 +13,7 @@ const resetCaptchaToken = () => {
 
 const Captcha = () => {
 	useEffect(resetCaptchaToken, []);
-	
+
 	return (
 		<HCaptcha
 			id="captcha"

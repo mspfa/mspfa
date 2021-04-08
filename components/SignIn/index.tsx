@@ -56,14 +56,14 @@ export type SignInProps = {
 
 const SignIn = ({ page }: SignInProps) => {
 	useSignInValuesUpdater();
-	
+
 	/**
 	 * ```
 	 * new Date().getFullYear()
 	 * ```
 	 */
 	const nowFullYear = new Date().getFullYear();
-	
+
 	return (
 		<div id="sign-in-content">
 			{page !== 2 && (

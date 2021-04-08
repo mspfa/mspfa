@@ -17,17 +17,17 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 	// This state is whether the menu container should have the `force-open` class, which forces it to be visible.
 	// Note: The menu can still be visible without the `force-open` class, for example if it or its label is hovered over.
 	const [forceOpen, setForceOpen] = useState(false);
-	
+
 	/** A ref to the underlying link element of this menu's label. */
 	const labelRef = useRef<HTMLAnchorElement & HTMLButtonElement>(null);
 	const menuContainerRef = useRef<HTMLDivElement>(null);
-	
+
 	/** Handles the focus event on the menu's label or any link in the menu. */
 	const onFocus = useCallback(() => {
 		// When the menu's label or any link in the menu is focused, add the `force-open` class to the menu container.
 		setForceOpen(true);
 	}, []);
-	
+
 	/** Handles the blur event on the menu's label or any link in the menu. */
 	const onBlur = useCallback(() => {
 		// `setTimeout` is necessary here because otherwise, for example when tabbing through links in the menu, this will run before the next link in the menu focuses, so the `if` statement would not detect that the menu is in focus.
@@ -43,7 +43,7 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 			}
 		});
 	}, []);
-	
+
 	/** Sets array `key`s and adds `onFocus={onFocus}` and `onBlur={onBlur}` props to the links in the menu. */
 	const processChild = (child: JSX.Element, index: number) => (
 		React.cloneElement(child, {
@@ -59,7 +59,7 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 			)
 		})
 	);
-	
+
 	return (
 		<div
 			id={`nav-menu-container-${id}`}
@@ -76,7 +76,7 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 						onBlur();
 						// When the menu's label is blurred, it is (obviously) no longer focused from being clicked.
 						setClickedLabel(false);
-						
+
 						// This ESLint comment is necessary because the rule thinks `onBlur` should be a dependency here. It shouldn't because it is memoized in its definition with no dependencies and thus can never change.
 						// eslint-disable-next-line react-hooks/exhaustive-deps
 					}, [])

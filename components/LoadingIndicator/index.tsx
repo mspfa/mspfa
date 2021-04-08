@@ -5,7 +5,7 @@ const [useLoadingCount, setLoadingCount, getLoadingCount] = createGlobalState(0)
 
 /**
  * Increment the count which displays the loading indicator when non-zero.
- * 
+ *
  * Returns the new value of the count.
  */
 export const startLoading = (
@@ -19,7 +19,7 @@ export const startLoading = (
 
 /**
  * Decrement the count which displays the loading indicator when non-zero.
- * 
+ *
  * Returns the new value of the count.
  */
 export const stopLoading = (
@@ -34,7 +34,7 @@ export const stopLoading = (
  */
 const LoadingIndicator = () => {
 	const [loadingCount] = useLoadingCount();
-	
+
 	return (
 		<div
 			id="loading-indicator"

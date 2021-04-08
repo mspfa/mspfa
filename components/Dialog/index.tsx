@@ -10,7 +10,7 @@ export type DialogProps = {
 
 /**
  * The component for a dialog.
- * 
+ *
  * ⚠️ This should never be rendered anywhere but in the `Dialogs` component's direct children.
  */
 const Dialog = React.memo(({ dialog }: DialogProps) => {
@@ -19,12 +19,12 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 		if (dialog.onMount) {
 			dialog.onMount(dialog);
 		}
-		
+
 		return () => {
 			dialog.open = false;
 		};
 	}, [dialog]);
-	
+
 	return (
 		<Formik<any>
 			initialValues={dialog.initialValues}
@@ -41,7 +41,7 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 			{props => {
 				dialog.values = props.values;
 				dialog.helpers = props;
-				
+
 				return (
 					<Form id={`dialog-container-${dialog.id}`} className="dialog-container">
 						<dialog id={`dialog-${dialog.id}`} open>

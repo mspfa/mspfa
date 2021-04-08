@@ -5,7 +5,7 @@ import type { LinkProps } from 'components/Link';
 export type NavItemProps = {
 	/**
 	 * The ID of this nav item. Must be unique among all nav items.
-	 * 
+	 *
 	 * Appended to `nav-item-` to get the internal element's `id` attribute.
 	 */
 	id: string,

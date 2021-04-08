@@ -37,7 +37,7 @@ export const UserContext = React.createContext<PrivateUser | undefined>(undefine
 
 /**
  * Re-renders the component when the current authenticated user changes (or signs in/out).
- * 
+ *
  * Returns the current authenticated user.
  */
 export const useUser = () => useContext(UserContext);
@@ -57,10 +57,10 @@ export const setUser = (user: PrivateUser | undefined) => {
 
 export const useUserState = (userProp: PrivateUser | undefined) => {
 	const [user, setUserState] = useState(userProp);
-	
+
 	globalUser = user;
 	globalSetUserState = setUserState;
-	
+
 	return user;
 };
 

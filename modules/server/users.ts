@@ -176,14 +176,14 @@ export const getPrivateUser = (user: UserDocument): PrivateUser => {
 		patron: user.patron,
 		nameColor: user.nameColor
 	};
-	
+
 	// Remove any `undefined` properties from the object so it is serializable.
 	for (const key in privateUser) {
 		if (privateUser[key as keyof typeof privateUser] === undefined) {
 			delete privateUser[key as keyof typeof privateUser];
 		}
 	}
-	
+
 	return privateUser;
 };
 
@@ -205,14 +205,14 @@ export const getPublicUser = (user: UserDocument): PublicUser => {
 		patron: user.patron,
 		nameColor: user.nameColor
 	};
-	
+
 	// Remove any `undefined` properties from the object so it is serializable.
 	for (const key in publicUser) {
 		if (publicUser[key as keyof typeof publicUser] === undefined) {
 			delete publicUser[key as keyof typeof publicUser];
 		}
 	}
-	
+
 	return publicUser;
 };
 
@@ -222,7 +222,7 @@ export default users;
 
 /**
  * Finds and returns a `UserDocument` by a possibly unsafe ID.
- * 
+ *
  * Returns `undefined` if the ID is invalid or the user is not found.
  */
 export const getUserByUnsafeID = async (id: UnsafeObjectID) => {

@@ -17,13 +17,13 @@ export type DialogActionOption = {
 	label: ReactNode,
 	/**
 	 * Whether submitting the dialog form (e.g. by pressing `enter` with a form field focused) will trigger the action.
-	 * 
+	 *
 	 * If no action has `submit: true`, it will be set on the first action.
 	 */
 	submit?: boolean,
 	/**
 	 * Whether the action should be auto-focused when the dialog opens.
-	 * 
+	 *
 	 * If no action has `focus: true`, it will be set by default, either on the action with `submit: true` or on the first action.
 	 */
 	focus?: boolean,
@@ -40,13 +40,13 @@ export type DialogAction = DialogActionOption & {
 export type DialogOptions<Values extends Record<string, string | number | boolean> = any> = {
 	/**
 	 * The React array key for the dialog's component.
-	 * 
+	 *
 	 * If set, any other dialog with the same `id` will be resolved with `undefined` when this dialog is created.
 	 */
 	id?: Key,
 	/**
 	 * The index at which this dialog should be inserted into the dialog stack. Negative numbers count from the top of the stack.
-	 * 
+	 *
 	 * Examples:
 	 * - `-1` (default) puts the dialog on top.
 	 * - `-2` puts the dialog below the top one.
@@ -60,7 +60,7 @@ export type DialogOptions<Values extends Record<string, string | number | boolea
 	title: Dialog<Values>['title'],
 	/**
 	 * The content of the dialog.
-	 * 
+	 *
 	 * If set to a function, it must return the content of the dialog, and it will be passed a parameter of the Formik props when called.
 	 */
 	content: Dialog<Values>['content'],
@@ -68,7 +68,7 @@ export type DialogOptions<Values extends Record<string, string | number | boolea
 	initialValues?: Dialog<Values>['initialValues'],
 	/**
 	 * The actions which the user can select to close the dialog.
-	 * 
+	 *
 	 * A `value` in this array (such as a string) which isn't a valid `DialogActionOption` is shorthand for `{ label: value }`.
 	 */
 	actions?: Array<DialogActionOption['label'] | DialogActionOption>
@@ -84,7 +84,7 @@ export class Dialog<Values extends Record<string, string | number | boolean>> ex
 	readonly [Symbol.toStringTag] = 'Dialog';
 	// This is so `then`, `catch`, etc. return a `Promise` rather than a `Dialog`. Weird errors occur when this is not here.
 	static readonly [Symbol.species] = Promise;
-	
+
 	id: Key;
 	parent?: Dialog<any>;
 	title: ReactNode;
@@ -102,9 +102,9 @@ export class Dialog<Values extends Record<string, string | number | boolean>> ex
 	submitAction: DialogAction | undefined;
 	/** A function called when the dialog's component is mounted, called with an argument of the `Dialog` instance which was mounted. */
 	onMount?: (dialog: Dialog<Values>) => void;
-	
+
 	#resolvePromise: typeof resolvePromise;
-	
+
 	/** Closes the dialog and resolves its promise. */
 	resolve(
 		/** The result of the dialog's promise. */
@@ -128,7 +128,7 @@ export class Dialog<Values extends Record<string, string | number | boolean>> ex
 			}
 		}
 	}
-	
+
 	constructor({
 		id = nextDialogID++,
 		index = -1,
@@ -143,7 +143,7 @@ export class Dialog<Values extends Record<string, string | number | boolean>> ex
 			resolvePromise = resolve;
 		});
 		this.#resolvePromise = resolvePromise;
-		
+
 		this.id = id;
 		this.parent = parent;
 		this.title = title;
@@ -161,7 +161,7 @@ export class Dialog<Values extends Record<string, string | number | boolean>> ex
 					}
 				}
 			);
-			
+
 			if (action.submit) {
 				if (this.submitAction) {
 					// Ensure there is at most one action with `submit: true`.
@@ -171,10 +171,10 @@ export class Dialog<Values extends Record<string, string | number | boolean>> ex
 					this.submitAction = action;
 				}
 			}
-			
+
 			return action;
 		});
-		
+
 		if (this.actions.length) {
 			// If no action has `submit: true`, set it on the first action (unless it explicitly sets `submit` already).
 			if (
@@ -184,7 +184,7 @@ export class Dialog<Values extends Record<string, string | number | boolean>> ex
 				this.submitAction = this.actions[0];
 				this.submitAction.submit = true;
 			}
-			
+
 			// If no action has `focus: true`...
 			if (!this.actions.some(action => action.focus)) {
 				if (this.submitAction) {
@@ -198,13 +198,13 @@ export class Dialog<Values extends Record<string, string | number | boolean>> ex
 				}
 			}
 		}
-		
+
 		// Remove any other dialog with the same `id`.
 		const duplicateDialog = dialogs.find(dialog => dialog.id === this.id);
 		if (duplicateDialog) {
 			duplicateDialog.resolve(undefined, false);
 		}
-		
+
 		// Render the dialog's component.
 		if (index === -1) {
 			dialogs.push(this);
@@ -215,10 +215,10 @@ export class Dialog<Values extends Record<string, string | number | boolean>> ex
 			if (index < 0) {
 				index += dialogs.length;
 			}
-			
+
 			// Limit `index` to the range [0, `dialogs.length - 1`].
 			index = Math.min(Math.max(index, 0), dialogs.length - 1);
-			
+
 			// Insert `this` into `dialogs` at index `index`.
 			dialogs.splice(index, 0, this);
 		}

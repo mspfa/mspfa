@@ -6,7 +6,7 @@ import './styles.module.scss';
 const Footer = () => {
 	const footers: string[] | undefined = useSWR('/api/footers').data;
 	const footer = footers && footers[Math.floor(Math.random() * footers.length)];
-	
+
 	return (
 		<>
 			<footer>

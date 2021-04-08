@@ -29,15 +29,15 @@ const Handler: APIHandler<(
 	}
 )> = async (req, res) => {
 	await validate(req, res);
-	
+
 	if (req.method === 'POST') {
 		let user: UserDocument | undefined | null;
-		
+
 		if (req.body.authMethod.type === 'password') {
 			user = await users.findOne({
 				email: (req.body as { email: string }).email.toLowerCase()
 			});
-			
+
 			if (user) {
 				let incorrect = true;
 				for (const authMethod of user.authMethods) {
@@ -68,7 +68,7 @@ const Handler: APIHandler<(
 					value: (await checkExternalAuthMethod(req, res)).value
 				}
 			});
-			
+
 			if (!user) {
 				res.status(404).send({
 					message: 'No user was found with the specified sign-in method.'
@@ -78,17 +78,17 @@ const Handler: APIHandler<(
 		}
 
 		// Authentication succeeded.
-		
+
 		await createSession(req, res, user);
-		
+
 		res.status(200).send(getPrivateUser(user));
 		return;
 	}
-	
+
 	// If this point is reached, `req.method === 'DELETE'`.
-	
+
 	const { user, token } = await authenticate(req, res, false);
-	
+
 	if (user) {
 		users.updateOne({
 			_id: user._id
@@ -99,9 +99,9 @@ const Handler: APIHandler<(
 				}
 			}
 		});
-		
+
 		new Cookies(req, res).set('auth', undefined);
-		
+
 		res.status(200).end();
 	} else {
 		res.status(404).send({
