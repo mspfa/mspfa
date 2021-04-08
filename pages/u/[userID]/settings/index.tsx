@@ -66,7 +66,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 							<Setting label="Auto-open spoilers" name="autoOpenSpoilers" />
 							<Setting label="Preload images" name="preloadImages" />
 						</SettingGroup>
-						<SettingGroup id="settings-group-notifications" heading="Notifications">
+						<SettingGroup id="settings-group-notifications" heading="General Notifications">
 							<div id="settings-notifications">
 								<div id="settings-notifications-heading-email" className="settings-notifications-heading">
 									Email
@@ -74,7 +74,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 								<div id="settings-notifications-heading-site" className="settings-notifications-heading">
 									Site
 								</div>
-								<label className="setting-label">Messages:</label>
+								<label className="setting-label">Messages</label>
 								<div className="setting-input">
 									<Field
 										id="setting-notifications-"
@@ -89,7 +89,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 										type="checkbox"
 									/>
 								</div>
-								<label className="setting-label">User tags:</label>
+								<label className="setting-label">User tags</label>
 								<div className="setting-input">
 									<Field
 										id="setting-notifications-"
@@ -104,7 +104,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 										type="checkbox"
 									/>
 								</div>
-								<label className="setting-label">Comment replies:</label>
+								<label className="setting-label">Comment replies</label>
 								<div className="setting-input">
 									<Field
 										id="setting-notifications-"
@@ -119,7 +119,17 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 										type="checkbox"
 									/>
 								</div>
-								<label className="setting-label">Adventure default - Updates:</label>
+							</div>
+						</SettingGroup>
+						<SettingGroup id="settings-group-notifications" heading="Default Adventure Notifications">
+							<div id="settings-notifications">
+								<div id="settings-notifications-heading-email" className="settings-notifications-heading">
+									Email
+								</div>
+								<div id="settings-notifications-heading-site" className="settings-notifications-heading">
+									Site
+								</div>
+								<label className="setting-label">Updates</label>
 								<div className="setting-input">
 									<Field
 										id="setting-notifications-"
@@ -134,7 +144,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 										type="checkbox"
 									/>
 								</div>
-								<label className="setting-label">Adventure default - News:</label>
+								<label className="setting-label">News</label>
 								<div className="setting-input">
 									<Field
 										id="setting-notifications-"
@@ -149,7 +159,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 										type="checkbox"
 									/>
 								</div>
-								<label className="setting-label">Adventure default - New comments:</label>
+								<label className="setting-label">Comments</label>
 								<div className="setting-input">
 									<Field
 										id="setting-notifications-"

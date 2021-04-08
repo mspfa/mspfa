@@ -14,12 +14,12 @@ const Setting = ({
 	type = 'checkbox',
 	...props
 }: SettingProps) => {
-	const id = `setting-${name}`;
+	const id = `setting-${name.replace(/([A-Z])/g, '-$1').replace(/\W/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').toLowerCase()}`;
 
 	return (
 		<>
 			<label className="setting-label" htmlFor={id}>
-				{label}:
+				{label}
 			</label>
 			<div className="setting-input">
 				<Field
