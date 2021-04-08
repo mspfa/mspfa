@@ -1,0 +1,15 @@
+.setting {
+	display: grid;
+	grid-template-columns: auto auto;
+	gap: 1ch;
+	
+	&-label {
+		justify-self: right;
+		align-self: center;
+	}
+	
+	&-input {
+		justify-self: left;
+		align-self: center;
+	}
+}

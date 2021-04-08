@@ -5,7 +5,7 @@ export type GridSectionHeadingProps = HTMLAttributes<HTMLDivElement> & { childre
 
 const GridSectionHeading = ({ children, className, ...props }: GridSectionHeadingProps) => (
 	<div
-		className={`grid-section-heading bolder${className ? ` ${className}` : ''}`}
+		className={`grid-section-heading layer-front${className ? ` ${className}` : ''}`}
 		{...props}
 	>
 		{children}

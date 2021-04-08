@@ -128,7 +128,7 @@ export const defaultUser = {
 		},
 		autoOpenSpoilers: false,
 		preloadImages: true,
-		stickyNav: true,
+		stickyNav: false,
 		pixelatedImages: false,
 		theme: Theme.Standard,
 		style: '',

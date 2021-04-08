@@ -35,3 +35,7 @@ input:-webkit-autofill::first-line {
 	font-family: $monospace;
 	font-weight: bold;
 }
+
+label {
+	user-select: none;
+}
