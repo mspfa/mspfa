@@ -1,19 +1,30 @@
 #settings {
-	.grid-subsection {
+	&-group-notifications {
+		display: flex;
+		justify-content: center;
+	}
+
+	&-notifications {
 		display: grid;
-		grid-template-columns: auto auto;
+		grid-template-columns: auto auto auto;
 		gap: 1ch;
-	}
 
-	label {
-		justify-self: right;
-		align-self: center;
-	}
-}
+		&-heading {
+			text-align: center;
 
-.setting-input {
-	justify-self: left;
-	align-self: center;
-	display: flex;
-	align-items: center;
+			&-email {
+				grid-column: 2;
+			}
+
+			&-site {
+				grid-column: 3;
+			}
+		}
+
+		.setting-input {
+			&, & input {
+				width: 100%;
+			}
+		}
+	}
 }

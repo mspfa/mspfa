@@ -3,7 +3,7 @@ import './styles.module.scss';
 
 export type GridSectionHeadingProps = HTMLAttributes<HTMLDivElement> & { children: ReactNode };
 
-const GridSectionHeading = ({ children, className, ...props }: GridSectionHeadingProps) => (
+const GridSectionHeading = ({ className, children, ...props }: GridSectionHeadingProps) => (
 	<div
 		className={`grid-section-heading layer-front bolder${className ? ` ${className}` : ''}`}
 		{...props}

@@ -3,19 +3,19 @@ import type { MyGetServerSideProps } from 'modules/server/pages';
 import type { PrivateUser } from 'modules/client/users';
 import { getUserByUnsafeID, getPrivateUser } from 'modules/server/users';
 import ErrorPage from 'pages/_error';
-import { Field, Form, Formik } from 'formik';
+import { Form, Formik, Field } from 'formik';
 import type { FormikHelpers } from 'formik';
 import GridSection from 'components/GridSection';
-import GridSectionHeading from 'components/GridSection/GridSectionHeading';
-import GridSubsection from 'components/GridSection/GridSubsection';
+import SettingGroup from 'components/Setting/SettingGroup';
+import Setting from 'components/Setting';
 import { themeNames } from 'modules/client/themes';
 import type { Theme } from 'modules/client/themes';
 import './styles.module.scss';
 
 const getSettingsValuesFromUser = ({ settings }: PrivateUser) => ({
 	ads: settings.ads,
-	autoOpenSpoilers: settings.autoOpenSpoilers, // TODO
-	preloadImages: settings.preloadImages, // TODO
+	autoOpenSpoilers: settings.autoOpenSpoilers,
+	preloadImages: settings.preloadImages,
 	stickyNav: settings.stickyNav,
 	pixelatedImages: settings.pixelatedImages,
 	theme: settings.theme,
@@ -49,60 +49,123 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 			>
 				<Form>
 					<GridSection id="settings">
-						<GridSectionHeading>Display</GridSectionHeading>
-						<GridSubsection>
-							<label htmlFor="setting-theme">Theme:</label>
-							<div className="setting-input">
-								<Field
-									as="select"
-									id="setting-theme"
-									name="theme"
-								>
-									{(Object.keys(themeNames) as Theme[]).map(theme => (
-										<option key={theme} value={theme}>
-											{themeNames[theme]}
-										</option>
-									))}
-								</Field>
+						<SettingGroup heading="Display" normal>
+							<Setting label="Theme" as="select" name="theme">
+								{(Object.keys(themeNames) as Theme[]).map(theme => (
+									<option key={theme} value={theme}>
+										{themeNames[theme]}
+									</option>
+								))}
+							</Setting>
+							<Setting label="Sticky nav bar" name="stickyNav" />
+							<Setting label="Pixelated images" name="pixelatedImages" />
+							<Setting label="Side ad" name="ads.side" />
+							<Setting label="Matched content ad" name="ads.matchedContent" />
+						</SettingGroup>
+						<SettingGroup heading="Utility" normal>
+							<Setting label="Auto-open spoilers" name="autoOpenSpoilers" />
+							<Setting label="Preload images" name="preloadImages" />
+						</SettingGroup>
+						<SettingGroup id="settings-group-notifications" heading="Notifications">
+							<div id="settings-notifications">
+								<div id="settings-notifications-heading-email" className="settings-notifications-heading">
+									Email
+								</div>
+								<div id="settings-notifications-heading-site" className="settings-notifications-heading">
+									Site
+								</div>
+								<label className="setting-label">Messages:</label>
+								<div className="setting-input">
+									<Field
+										id="setting-notifications-"
+										name="notifications."
+										type="checkbox"
+									/>
+								</div>
+								<div className="setting-input">
+									<Field
+										id="setting-notifications-"
+										name="notifications."
+										type="checkbox"
+									/>
+								</div>
+								<label className="setting-label">User tags:</label>
+								<div className="setting-input">
+									<Field
+										id="setting-notifications-"
+										name="notifications."
+										type="checkbox"
+									/>
+								</div>
+								<div className="setting-input">
+									<Field
+										id="setting-notifications-"
+										name="notifications."
+										type="checkbox"
+									/>
+								</div>
+								<label className="setting-label">Comment replies:</label>
+								<div className="setting-input">
+									<Field
+										id="setting-notifications-"
+										name="notifications."
+										type="checkbox"
+									/>
+								</div>
+								<div className="setting-input">
+									<Field
+										id="setting-notifications-"
+										name="notifications."
+										type="checkbox"
+									/>
+								</div>
+								<label className="setting-label">Adventure default - Updates:</label>
+								<div className="setting-input">
+									<Field
+										id="setting-notifications-"
+										name="notifications."
+										type="checkbox"
+									/>
+								</div>
+								<div className="setting-input">
+									<Field
+										id="setting-notifications-"
+										name="notifications."
+										type="checkbox"
+									/>
+								</div>
+								<label className="setting-label">Adventure default - News:</label>
+								<div className="setting-input">
+									<Field
+										id="setting-notifications-"
+										name="notifications."
+										type="checkbox"
+									/>
+								</div>
+								<div className="setting-input">
+									<Field
+										id="setting-notifications-"
+										name="notifications."
+										type="checkbox"
+									/>
+								</div>
+								<label className="setting-label">Adventure default - New comments:</label>
+								<div className="setting-input">
+									<Field
+										id="setting-notifications-"
+										name="notifications."
+										type="checkbox"
+									/>
+								</div>
+								<div className="setting-input">
+									<Field
+										id="setting-notifications-"
+										name="notifications."
+										type="checkbox"
+									/>
+								</div>
 							</div>
-							<label htmlFor="setting-sticky-nav">Sticky nav bar:</label>
-							<div className="setting-input">
-								<Field
-									id="setting-sticky-nav"
-									name="stickyNav"
-									type="checkbox"
-								/>
-							</div>
-							<label htmlFor="setting-pixelated-images">Pixelated images:</label>
-							<div className="setting-input">
-								<Field
-									id="setting-pixelated-images"
-									name="pixelatedImages"
-									type="checkbox"
-								/>
-							</div>
-							<label htmlFor="setting-ads-side">Side ad:</label>
-							<div className="setting-input">
-								<Field
-									id="setting-ads-side"
-									name="ads.side"
-									type="checkbox"
-								/>
-							</div>
-							<label htmlFor="setting-ads-matched-content">Matched content ad:</label>
-							<div className="setting-input">
-								<Field
-									id="setting-ads-matched-content"
-									name="ads.matchedContent"
-									type="checkbox"
-								/>
-							</div>
-						</GridSubsection>
-						<GridSectionHeading>Utility</GridSectionHeading>
-						<GridSubsection>
-							<label htmlFor="">Label:</label>
-							<div className="setting-input" />
-						</GridSubsection>
+						</SettingGroup>
 					</GridSection>
 				</Form>
 			</Formik>

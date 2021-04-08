@@ -1,0 +1,13 @@
+.setting {
+	&-input {
+		justify-self: left;
+		align-self: center;
+		display: flex;
+		align-items: center;
+	}
+
+	&-label {
+		justify-self: right;
+		align-self: center;
+	}
+}

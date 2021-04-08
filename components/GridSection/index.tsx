@@ -3,7 +3,7 @@ import './styles.module.scss';
 
 export type GridSectionProps = HTMLAttributes<HTMLElement> & { children: ReactNode };
 
-const GridSection = ({ children, className, ...props }: GridSectionProps) => (
+const GridSection = ({ className, children, ...props }: GridSectionProps) => (
 	<section
 		className={`grid-section${className ? ` ${className}` : ''}`}
 		{...props}

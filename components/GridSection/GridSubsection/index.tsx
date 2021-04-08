@@ -3,7 +3,7 @@ import './styles.module.scss';
 
 export type GridSubsectionProps = HTMLAttributes<HTMLDivElement> & { children: ReactNode };
 
-const GridSubsection = ({ children, className, ...props }: GridSubsectionProps) => (
+const GridSubsection = ({ className, children, ...props }: GridSubsectionProps) => (
 	<div
 		className={`grid-subsection layer-front${className ? ` ${className}` : ''}`}
 		{...props}

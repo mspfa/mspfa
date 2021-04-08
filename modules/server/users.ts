@@ -35,11 +35,26 @@ export enum NotificationSetting {
 	All = 0b11
 }
 
-export type ComicNotificationSettings = {
-	updates: NotificationSetting,
-	news: NotificationSetting,
+type ExclusiveComicEditorNotificationSettings = {
 	comments: NotificationSetting
 };
+
+export type ComicReaderNotificationSettings = {
+	updates: NotificationSetting,
+	news: NotificationSetting
+} & Partial<Record<keyof ExclusiveComicEditorNotificationSettings, undefined>>;
+
+export type ComicEditorNotificationSettings = (
+	Omit<ComicReaderNotificationSettings, keyof ExclusiveComicEditorNotificationSettings>
+	& ExclusiveComicEditorNotificationSettings
+);
+
+/**
+ * `true` if the setting should inherit the user's default comic notification settings.
+ *
+ * `ComicReaderNotificationSettings | ComicEditorNotificationSettings` otherwise.
+ */
+export type ComicNotificationSettings = true | ComicReaderNotificationSettings | ComicEditorNotificationSettings;
 
 export type UserDocument = {
 	_id: ObjectId,
@@ -91,7 +106,7 @@ export type UserDocument = {
 			userTags: NotificationSetting,
 			commentReplies: NotificationSetting,
 			/** These are the comic notification settings set by default when the user first enables notifications for a comic. */
-			comicDefaults: ComicNotificationSettings,
+			comicDefaults: ComicEditorNotificationSettings,
 			comics: Record<number, ComicNotificationSettings>
 		}
 	},

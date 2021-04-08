@@ -6,7 +6,7 @@ export type NavGroupProps = {
 	id: string
 };
 
-const NavGroup = ({ children, id }: NavGroupProps) => (
+const NavGroup = ({ id, children }: NavGroupProps) => (
 	<div id={`nav-group-${id}`} className="nav-group">
 		<Delimit with={<Stick />}>
 			{children}
