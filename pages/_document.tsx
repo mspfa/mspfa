@@ -20,9 +20,9 @@ class MyDocument extends Document {
 		const req: PageRequest = (this.props as any).req;
 
 		return (
-			<Html lang="en">
+			<Html lang="en" className={req.user && `theme-${req.user.settings.theme}`}>
 				<Head />
-				<body className={`back${req.user ? ` theme-${req.user.settings.theme}` : ''}`}>
+				<body className="back">
 					<Main />
 					<NextScript />
 				</body>
