@@ -1,30 +1,7 @@
-#settings {
-	&-group-notifications {
-		display: flex;
-		justify-content: center;
-	}
+#notification-settings {
+	grid-template-columns: 0.5fr 0.5fr;
 
-	&-notifications {
-		display: grid;
-		grid-template-columns: auto auto auto;
-		gap: 1ch;
-
-		&-heading {
-			text-align: center;
-
-			&-email {
-				grid-column: 2;
-			}
-
-			&-site {
-				grid-column: 3;
-			}
-		}
-
-		.setting-input {
-			&, & input {
-				width: 100%;
-			}
-		}
+	& > .grid-heading {
+		grid-row: 1;
 	}
 }

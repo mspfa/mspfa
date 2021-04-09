@@ -1,0 +1,26 @@
+.notification-setting {
+	&-group {
+		display: flex;
+		justify-content: center;
+	}
+
+	&-container {
+		display: grid;
+		grid-template-columns: auto auto auto;
+		gap: 1ch;
+
+		.setting-input {
+			&, & input {
+				width: 100%;
+			}
+		}
+	}
+
+	&-column-heading {
+		text-align: center;
+
+		&:first-child {
+			grid-column: 2;
+		}
+	}
+}

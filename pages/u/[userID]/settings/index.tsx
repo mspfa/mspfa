@@ -8,6 +8,7 @@ import type { FormikHelpers } from 'formik';
 import Grid from 'components/Grid';
 import SettingGroup from 'components/Setting/SettingGroup';
 import Setting from 'components/Setting';
+import NotificationSettingGroup from 'components/Setting/NotificationSettingGroup';
 import { themeNames } from 'modules/client/themes';
 import type { Theme } from 'modules/client/themes';
 import './styles.module.scss';
@@ -49,7 +50,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 			>
 				<Form>
 					<Grid id="settings">
-						<SettingGroup heading="Display" normal>
+						<SettingGroup heading="Display">
 							<Setting label="Theme" as="select" name="theme">
 								{(Object.keys(themeNames) as Theme[]).map(theme => (
 									<option key={theme} value={theme}>
@@ -62,18 +63,12 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 							<Setting label="Side ad" name="ads.side" />
 							<Setting label="Matched content ad" name="ads.matchedContent" />
 						</SettingGroup>
-						<SettingGroup heading="Utility" normal>
+						<SettingGroup heading="Utility">
 							<Setting label="Auto-open spoilers" name="autoOpenSpoilers" />
 							<Setting label="Preload images" name="preloadImages" />
 						</SettingGroup>
-						<SettingGroup id="settings-group-notifications" heading="General Notifications">
-							<div id="settings-notifications">
-								<div id="settings-notifications-heading-email" className="settings-notifications-heading">
-									Email
-								</div>
-								<div id="settings-notifications-heading-site" className="settings-notifications-heading">
-									Site
-								</div>
+						<Grid id="notification-settings">
+							<NotificationSettingGroup heading="General Notifications">
 								<label className="setting-label">Messages</label>
 								<div className="setting-input">
 									<Field
@@ -119,16 +114,8 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 										type="checkbox"
 									/>
 								</div>
-							</div>
-						</SettingGroup>
-						<SettingGroup id="settings-group-notifications" heading="Default Adventure Notifications">
-							<div id="settings-notifications">
-								<div id="settings-notifications-heading-email" className="settings-notifications-heading">
-									Email
-								</div>
-								<div id="settings-notifications-heading-site" className="settings-notifications-heading">
-									Site
-								</div>
+							</NotificationSettingGroup>
+							<NotificationSettingGroup heading="Default Adventure Notifications">
 								<label className="setting-label">Updates</label>
 								<div className="setting-input">
 									<Field
@@ -174,8 +161,8 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 										type="checkbox"
 									/>
 								</div>
-							</div>
-						</SettingGroup>
+							</NotificationSettingGroup>
+						</Grid>
 					</Grid>
 				</Form>
 			</Formik>

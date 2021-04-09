@@ -4,14 +4,11 @@ import type { GridContentProps } from 'components/Grid/GridContent';
 import './styles.module.scss';
 
 export type SettingGroupProps = GridContentProps & {
-	heading: string,
-	/** Whether this setting group is a normal, two-column settings group of labels on the left and inputs on the right. */
-	normal?: boolean
+	heading: string
 };
 
 const SettingGroup = ({
 	heading,
-	normal = false,
 	className,
 	...props
 }: SettingGroupProps) => (
@@ -20,7 +17,7 @@ const SettingGroup = ({
 			{heading}
 		</GridHeading>
 		<GridContent
-			className={(normal ? 'setting-group' : '') + (className ? ` ${className}` : '')}
+			className={`setting-group${className ? ` ${className}` : ''}`}
 			{...props}
 		/>
 	</>
