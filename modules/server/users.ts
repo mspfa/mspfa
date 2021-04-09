@@ -35,8 +35,9 @@ export enum NotificationSetting {
 	All = 0b11
 }
 
-type ComicReaderNotificationSettingKeys = 'updates' | 'news';
-type ComicEditorNotificationSettingKeys = 'comments';
+export type ComicReaderNotificationSettingKeys = 'updates' | 'news';
+
+export type ComicEditorNotificationSettingKeys = 'comments';
 
 export type ComicReaderNotificationSettings = (
 	// Include the reader keys.
