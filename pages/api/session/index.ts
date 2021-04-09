@@ -5,12 +5,13 @@ import { authenticate, checkExternalAuthMethod, createSession } from 'modules/se
 import argon2 from 'argon2';
 import Cookies from 'cookies';
 import type { PrivateUser } from 'modules/client/users';
+import type { EmailString } from 'modules/types';
 import validate from './index.validate';
 
 export type SessionBody = {
 	authMethod: ExternalAuthMethod
 } | {
-	email: UserDocument['email'],
+	email: EmailString,
 	authMethod: Pick<InternalAuthMethod, 'type' | 'value'>
 };
 

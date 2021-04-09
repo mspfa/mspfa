@@ -2,7 +2,7 @@ import db, { safeObjectID } from 'modules/server/db';
 import type { ObjectId } from 'mongodb';
 import { Theme } from 'modules/client/themes';
 import type { achievements } from 'modules/server/achievements';
-import type { URLString } from 'modules/types';
+import type { URLString, EmailString } from 'modules/types';
 import type { PrivateUser, PublicUser } from 'modules/client/users';
 import type { UnsafeObjectID } from 'modules/server/db';
 
@@ -35,18 +35,19 @@ export enum NotificationSetting {
 	All = 0b11
 }
 
-type ExclusiveComicEditorNotificationSettings = {
-	comments: NotificationSetting
-};
+type ComicReaderNotificationSettingKeys = 'updates' | 'news';
+type ComicEditorNotificationSettingKeys = 'comments';
 
-export type ComicReaderNotificationSettings = {
-	updates: NotificationSetting,
-	news: NotificationSetting
-} & Partial<Record<keyof ExclusiveComicEditorNotificationSettings, undefined>>;
+export type ComicReaderNotificationSettings = (
+	// Include the reader keys.
+	Record<ComicReaderNotificationSettingKeys, NotificationSetting>
+	// Include the editor keys as optional `undefined`s.
+	& Partial<Record<ComicEditorNotificationSettingKeys, undefined>>
+);
 
 export type ComicEditorNotificationSettings = (
-	Omit<ComicReaderNotificationSettings, keyof ExclusiveComicEditorNotificationSettings>
-	& ExclusiveComicEditorNotificationSettings
+	// Include the reader and editor keys.
+	Record<ComicReaderNotificationSettingKeys | ComicEditorNotificationSettingKeys, NotificationSetting>
 );
 
 /**
@@ -66,11 +67,7 @@ export type UserDocument = {
 	birthdate: Date,
 	/** @minLength 1 */
 	name: string,
-	/**
-	 * The following regular expression is copied directly from https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
-	 * @pattern ^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$
-	 */
-	email: string,
+	email: EmailString,
 	verified: boolean,
 	description: string,
 	icon?: URLString,
