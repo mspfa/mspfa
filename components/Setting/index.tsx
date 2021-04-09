@@ -28,7 +28,7 @@ const Setting = ({
 				<Field
 					id={id}
 					name={name}
-					type={type}
+					type={props.as ? undefined : type}
 					{...props}
 				/>
 			</div>

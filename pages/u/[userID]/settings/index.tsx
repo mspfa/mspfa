@@ -10,8 +10,7 @@ import SettingGroup from 'components/Setting/SettingGroup';
 import Setting from 'components/Setting';
 import NotificationSettingGroup from 'components/Setting/NotificationSettingGroup';
 import NotificationSetting from 'components/Setting/NotificationSetting';
-import { themeNames } from 'modules/client/themes';
-import type { Theme } from 'modules/client/themes';
+import { Theme } from 'modules/client/themes';
 import './styles.module.scss';
 
 const getSettingsValuesFromUser = ({ settings }: PrivateUser) => ({
@@ -57,11 +56,11 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 								name="theme"
 								label="Theme"
 							>
-								{(Object.keys(themeNames) as Theme[]).map(theme => (
-									<option key={theme} value={theme}>
-										{themeNames[theme]}
-									</option>
-								))}
+								<option value={Theme.Standard}>Standard</option>
+								<option value={Theme.Dark}>Dark</option>
+								<option value={Theme.Felt}>Felt</option>
+								<option value={Theme.SBaHJ}>SBaHJ</option>
+								<option value={Theme.Trickster}>Trickster</option>
 							</Setting>
 							<Setting
 								name="stickyNav"
