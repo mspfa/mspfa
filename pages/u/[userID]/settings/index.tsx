@@ -51,21 +51,45 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 				<Form>
 					<Grid id="settings">
 						<SettingGroup heading="Display">
-							<Setting label="Theme" as="select" name="theme">
+							<Setting
+								as="select"
+								name="theme"
+								label="Theme"
+							>
 								{(Object.keys(themeNames) as Theme[]).map(theme => (
 									<option key={theme} value={theme}>
 										{themeNames[theme]}
 									</option>
 								))}
 							</Setting>
-							<Setting label="Sticky nav bar" name="stickyNav" />
-							<Setting label="Image sharpening" name="imageSharpening" />
-							<Setting label="Side ad" name="ads.side" />
-							<Setting label="Matched content ad" name="ads.matchedContent" />
+							<Setting
+								name="stickyNav"
+								label="Sticky nav bar"
+							/>
+							<Setting
+								name="imageSharpening"
+								label="Image sharpening"
+							/>
+							<Setting
+								name="ads.side"
+								label="Side ad"
+							/>
+							<Setting
+								name="ads.matchedContent"
+								label="Matched content ad"
+							/>
 						</SettingGroup>
-						<SettingGroup heading="Utility">
-							<Setting label="Auto-open spoilers" name="autoOpenSpoilers" />
-							<Setting label="Preload images" name="preloadImages" />
+						<SettingGroup
+							heading="Utility"
+						>
+							<Setting
+								name="autoOpenSpoilers"
+								label="Auto-open spoilers"
+							/>
+							<Setting
+								name="preloadImages"
+								label="Preload images"
+							/>
 						</SettingGroup>
 						<Grid id="notification-settings">
 							<NotificationSettingGroup heading="General Notifications">

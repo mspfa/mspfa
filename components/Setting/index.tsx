@@ -14,7 +14,7 @@ const Setting = ({
 	type = 'checkbox',
 	...props
 }: SettingProps) => {
-	// Determine the form field element's `id` based on its `name`, converting from camelCase to kebab-case.
+	// Determine the form `Field`'s `id` based on its `name`, converting from camelCase to kebab-case.
 	const id = `setting-${name.replace(/([A-Z])/g, '-$1').replace(/\W/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').toLowerCase()}`;
 
 	return (
