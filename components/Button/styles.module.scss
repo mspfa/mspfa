@@ -1,4 +1,5 @@
 @import 'styles/buttons';
+@import 'styles/themes';
 
 .button {
 	user-select: none;
@@ -18,5 +19,9 @@
 
 	& + & {
 		margin-left: 0.75rem;
+	}
+
+	&.alt {
+		@include colored-button($front-alt, $text-color-alt);
 	}
 }

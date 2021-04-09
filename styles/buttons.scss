@@ -39,12 +39,16 @@
 	// A color value or a map of themes to color values for the color of the button.
 	$colors,
 	// Optional override for the default button text color.
-	$button-text-color,
+	$button-text-color: $translucent-text-colo,
 	// Whether `$colors` represents the color behind the button and not the color of the button.
 	$color-is-behind-button: false
 ) {
 	@if type-of($colors) != 'map' {
 		$colors: (standard: $colors);
+	}
+
+	@if type-of($button-text-color) != 'map' {
+		$button-text-color: (standard: $button-text-color);
 	}
 
 	@if $color-is-behind-button {
@@ -53,14 +57,9 @@
 		}
 	}
 
-	@if $button-text-color {
-		color: $button-text-color;
-	} @else {
-		@include theme(color, $translucent-text-color);
-	}
-
 	@include depth-shadow($colors);
 	@include theme(background-color, $colors);
+	@include theme(color, $button-text-color);
 
 	&:focus:not(:active) {
 		@include theme(background-color, $colors, meta.get-function('adjust-color'), 28);

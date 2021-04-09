@@ -12,7 +12,7 @@ import NotificationSettingGroup from 'components/Setting/NotificationSettingGrou
 import NotificationSetting from 'components/Setting/NotificationSetting';
 import ControlSetting from 'components/Setting/ControlSetting';
 import Theme from 'modules/client/themes';
-import GridContent from 'components/Grid/GridContent';
+import GridFooter from 'components/Grid/GridFooter';
 import Button from 'components/Button';
 import './styles.module.scss';
 
@@ -149,6 +149,9 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 								placeholder={"Paste SCSS here.\nIf you don't know what this is, don't worry about it."}
 							/>
 						</SettingGroup>
+						<GridFooter>
+							<Button className="alt" type="submit">Save</Button>
+						</GridFooter>
 					</Grid>
 				</Form>
 			</Formik>
