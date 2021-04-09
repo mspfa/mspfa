@@ -93,7 +93,7 @@ export type UserDocument = {
 		/** This makes the nav bar always stay at the top of the screen when scrolling below it. */
 		stickyNav: boolean,
 		/** This sets the image rendering style to nearest-neighbor on images which the user might want that on (such as comic panels). */
-		pixelatedImages: boolean,
+		imageSharpening: boolean,
 		theme: Theme,
 		style: string,
 		keybinds: {
@@ -144,7 +144,7 @@ export const defaultUser = {
 		autoOpenSpoilers: false,
 		preloadImages: true,
 		stickyNav: false,
-		pixelatedImages: false,
+		imageSharpening: false,
 		theme: Theme.Standard,
 		style: '',
 		keybinds: {

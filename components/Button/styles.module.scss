@@ -9,7 +9,7 @@
 	position: relative;
 	margin-right: 4px;
 	margin-bottom: 4px;
-	@include colored-button($front-background, false, true);
+	@include colored-button($front, false, true);
 
 	&:active {
 		left: 2px;

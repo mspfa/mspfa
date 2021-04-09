@@ -2,7 +2,7 @@
 @import 'styles/themes';
 
 input, textarea, select, option {
-	@include theme(background-color, $frontest-background);
+	@include theme(background-color, $frontest);
 }
 
 input, textarea, select {

@@ -8,8 +8,8 @@
 
 	&-label {
 		grid-column: 1;
-		justify-self: right;
 		align-self: center;
+		text-align: right;
 
 		&::after {
 			content: ':';

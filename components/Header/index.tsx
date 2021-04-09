@@ -7,7 +7,7 @@ const Header = () => (
 	<>
 		<header>
 			<div className="mspface-container">
-				<Link className="mspface layer-front" href="/" title="MSPFA Home" tabIndex={-1} draggable={false} />
+				<Link className="mspface front" href="/" title="MSPFA Home" tabIndex={-1} draggable={false} />
 				<div className="wealth-spawner-container" />
 			</div>
 			<FlashyTitle />

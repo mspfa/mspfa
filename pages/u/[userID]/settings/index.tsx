@@ -5,7 +5,7 @@ import { getUserByUnsafeID, getPrivateUser } from 'modules/server/users';
 import ErrorPage from 'pages/_error';
 import { Form, Formik, Field } from 'formik';
 import type { FormikHelpers } from 'formik';
-import GridSection from 'components/GridSection';
+import Grid from 'components/Grid';
 import SettingGroup from 'components/Setting/SettingGroup';
 import Setting from 'components/Setting';
 import { themeNames } from 'modules/client/themes';
@@ -17,7 +17,7 @@ const getSettingsValuesFromUser = ({ settings }: PrivateUser) => ({
 	autoOpenSpoilers: settings.autoOpenSpoilers,
 	preloadImages: settings.preloadImages,
 	stickyNav: settings.stickyNav,
-	pixelatedImages: settings.pixelatedImages,
+	imageSharpening: settings.imageSharpening,
 	theme: settings.theme,
 	style: settings.style, // TODO
 	keybinds: settings.keybinds, // TODO
@@ -48,7 +48,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 				onSubmit={submitSettings}
 			>
 				<Form>
-					<GridSection id="settings">
+					<Grid id="settings">
 						<SettingGroup heading="Display" normal>
 							<Setting label="Theme" as="select" name="theme">
 								{(Object.keys(themeNames) as Theme[]).map(theme => (
@@ -58,7 +58,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 								))}
 							</Setting>
 							<Setting label="Sticky nav bar" name="stickyNav" />
-							<Setting label="Pixelated images" name="pixelatedImages" />
+							<Setting label="Image sharpening" name="imageSharpening" />
 							<Setting label="Side ad" name="ads.side" />
 							<Setting label="Matched content ad" name="ads.matchedContent" />
 						</SettingGroup>
@@ -176,7 +176,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 								</div>
 							</div>
 						</SettingGroup>
-					</GridSection>
+					</Grid>
 				</Form>
 			</Formik>
 		</Page>

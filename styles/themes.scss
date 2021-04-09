@@ -30,22 +30,32 @@ $text-color: (
 	dark: #e4e4e4
 );
 
-$back-background: (
+$text-color-alt: (
+	standard: #f2f2f2,
+	dark: #f2f2f2
+);
+
+$back: (
 	standard: #535353,
 	dark: #141414
 );
 
-$mid-background: (
+$mid: (
 	standard: #c6c6c6,
 	dark: #202020
 );
 
-$front-background: (
+$front: (
 	standard: #eeeeee,
 	dark: #323232
 );
 
-$frontest-background: (
+$front-alt: (
+	standard: #606060,
+	dark: #606060
+);
+
+$frontest: (
 	standard: #ffffff,
 	dark: #1a1a1a
 );

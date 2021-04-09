@@ -20,7 +20,7 @@ const Page = ({ heading, margin, children }: PageProps) => (
 		<span id="preload-font" />
 		{/* It is necessary for dialogs to be before the page so that dialog elements are reached first when tabbing. */}
 		<Dialogs />
-		<div id="page" className="layer-mid">
+		<div id="page" className="mid">
 			<Header />
 			<main className={margin ? 'margin' : undefined}>
 				{(heading

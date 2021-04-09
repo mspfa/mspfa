@@ -45,17 +45,17 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 				return (
 					<Form id={`dialog-container-${dialog.id}`} className="dialog-container">
 						<dialog id={`dialog-${dialog.id}`} open>
-							<div className="dialog-title layer-mid translucent-text">
+							<div className="dialog-title mid translucent-text">
 								{dialog.title}
 							</div>
-							<div className="dialog-content layer-front">
+							<div className="dialog-content front">
 								{(typeof dialog.content === 'function'
 									? dialog.content(props)
 									: dialog.content
 								)}
 							</div>
 							{!!dialog.actions.length && (
-								<div className="dialog-actions layer-front">
+								<div className="dialog-actions front">
 									{dialog.actions.map((action, index) => (
 										<Button
 											key={index}
