@@ -1,2 +1,8 @@
+@mixin mobile {
+	@media screen and (max-width: 950px) {
+		@content;
+	}
+}
+
 $monospace: 'Courier New', 'Courier', monospace;
 $sans-serif: Verdana, Arial, Helvetica, sans-serif;

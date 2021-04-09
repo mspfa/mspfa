@@ -1,4 +1,4 @@
-@import 'styles/variables';
+@import 'styles/general';
 @import 'styles/themes';
 
 input, textarea, select, option {
@@ -28,12 +28,6 @@ select {
 		// This color code matches Chrome's default.
 		color: #757575;
 	}
-}
-
-// This is to stop the browser from changing the font of the `input` while hovering over autocomplete options.
-input:-webkit-autofill::first-line {
-	font-family: $monospace;
-	font-weight: bold;
 }
 
 label {

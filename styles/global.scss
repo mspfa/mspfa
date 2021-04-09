@@ -1,4 +1,4 @@
-@import 'styles/variables';
+@import 'styles/general';
 @import 'styles/themes';
 @import 'styles/inputs';
 
@@ -23,12 +23,18 @@ body {
 	overflow-y: scroll; // To make the scrollbar not change visibility and offset the page horizontally when changing the page height e.g. by toggling tall spoilers on a short page.
 	font-size: 0.75em; // We are using ems so the browser's font scale is multiplied. The default scale is 1em = 16px.
 
-	@media screen and (max-width: 950px) {
+	@include mobile {
 		font-size: 1.1em;
 	}
 }
 
-body, input, textarea, select, option {
+body,
+input,
+// This is to stop the browser from changing the font of the `input` while hovering over autocomplete options.
+input:-webkit-autofill::first-line,
+textarea,
+select,
+option {
 	font-family: $monospace;
 	font-weight: bold;
 	@include theme(color, $text-color);

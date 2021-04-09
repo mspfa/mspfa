@@ -3,7 +3,7 @@ import type { MyGetServerSideProps } from 'modules/server/pages';
 import type { PrivateUser } from 'modules/client/users';
 import { getUserByUnsafeID, getPrivateUser } from 'modules/server/users';
 import ErrorPage from 'pages/_error';
-import { Form, Formik, Field } from 'formik';
+import { Form, Formik } from 'formik';
 import type { FormikHelpers } from 'formik';
 import Grid from 'components/Grid';
 import SettingGroup from 'components/Setting/SettingGroup';
