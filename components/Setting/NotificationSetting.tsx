@@ -1,7 +1,6 @@
 import { Field } from 'formik';
 import type { ExclusiveSettingProps } from 'components/Setting';
 import type { FieldAttributes } from 'formik';
-import './styles.module.scss';
 
 export type NotificationSettingProps = ExclusiveSettingProps & {
 	emailFieldProps?: Partial<FieldAttributes<unknown>>,
