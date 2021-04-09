@@ -34,5 +34,10 @@
 }
 
 main.padded {
-	padding: 1.25rem 3.5rem;
+	padding: 1rem 3.5rem;
+
+	@media screen and (max-width: 950px) {
+		padding-left: 0;
+		padding-right: 0;
+	}
 }
