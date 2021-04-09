@@ -10,6 +10,7 @@ import SettingGroup from 'components/Setting/SettingGroup';
 import Setting from 'components/Setting';
 import NotificationSettingGroup from 'components/Setting/NotificationSettingGroup';
 import NotificationSetting from 'components/Setting/NotificationSetting';
+import ControlSetting from 'components/Setting/ControlSetting';
 import { Theme } from 'modules/client/themes';
 import './styles.module.scss';
 
@@ -94,9 +95,6 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 								<NotificationSetting
 									name="notifications.messages"
 									label="Messages"
-									siteFieldProps={{
-										disabled: true
-									}}
 								/>
 								<NotificationSetting
 									name="notifications.userTags"
@@ -122,14 +120,21 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 								/>
 							</NotificationSettingGroup>
 						</Grid>
-						<SettingGroup heading="Utility">
-							<Setting
-								name="autoOpenSpoilers"
-								label="Auto-open spoilers"
+						<SettingGroup heading="Controls">
+							<div className="info translucent-text">
+								Select a box and press a key. Press escape to remove a shortcut.
+							</div>
+							<ControlSetting
+								name="controls.back"
+								label="Back"
 							/>
-							<Setting
-								name="preloadImages"
-								label="Preload images"
+							<ControlSetting
+								name="controls.forward"
+								label="Forward"
+							/>
+							<ControlSetting
+								name="controls.toggleSpoilers"
+								label="Toggle Spoilers"
 							/>
 						</SettingGroup>
 					</Grid>

@@ -8,7 +8,7 @@ export type ExclusiveSettingProps = {
 	name: string
 };
 
-export type SettingProps = Omit<FieldAttributes<any>, 'id'> & ExclusiveSettingProps;
+export type SettingProps = Omit<FieldAttributes<unknown>, 'id'> & ExclusiveSettingProps;
 
 const Setting = ({
 	label,
