@@ -10,7 +10,7 @@ export type ButtonProps = HTMLButtonProps & {
 
 /** A styled `button` element. Accepts any props which `button` accepts, except `type` which is replaced with the `submit?: boolean` prop. */
 const Button = React.forwardRef((
-	{ submit, className, children, ...props }: ButtonProps,
+	{ submit, className, ...props }: ButtonProps,
 	ref: React.ForwardedRef<HTMLButtonElement & HTMLButtonElement>
 ) => {
 	const buttonClassName = `button${className ? ` ${className}` : ''}`;
@@ -21,9 +21,7 @@ const Button = React.forwardRef((
 			className={buttonClassName}
 			{...props}
 			ref={ref}
-		>
-			{children}
-		</button>
+		/>
 	);
 });
 

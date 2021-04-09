@@ -1,4 +1,4 @@
-import type { HTMLAttributes, ReactNode } from 'react';
+import type { HTMLAttributes } from 'react';
 import './styles.module.scss';
 
 export type GridContentProps = HTMLAttributes<HTMLDivElement>;

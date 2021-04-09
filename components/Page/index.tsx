@@ -7,14 +7,16 @@ import PageHeading from 'components/Page/PageHeading';
 import './styles.module.scss';
 
 export type PageProps = {
-	/** The content of the heading displayed at the top of the page. */
+	/**
+	 * The content of the heading displayed at the top of the page.
+	 *
+	 * When set, padding is added to the `main` element via `className="padded"`.
+	 */
 	heading?: ReactNode,
-	/** Whether the page has margins. */
-	margin?: boolean,
 	children: ReactNode
 };
 
-const Page = ({ heading, margin, children }: PageProps) => (
+const Page = ({ heading, children }: PageProps) => (
 	<>
 		{/* This only exists to preload the Homestuck-Regular font so that, later, a fallback font doesn't flicker for a moment while Homestuck-Regular lazy-loads. */}
 		<span id="preload-font" />
@@ -22,7 +24,7 @@ const Page = ({ heading, margin, children }: PageProps) => (
 		<Dialogs />
 		<div id="page" className="mid">
 			<Header />
-			<main className={margin ? 'margin' : undefined}>
+			<main className={heading ? 'padded' : undefined}>
 				{(heading
 					? <PageHeading>{heading}</PageHeading>
 					: null

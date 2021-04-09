@@ -42,7 +42,7 @@ type ServerSideProps = {
 
 const Component = ({ user, statusCode }: ServerSideProps) => (
 	user ? (
-		<Page heading="Settings" margin>
+		<Page heading="Settings">
 			<Formik
 				initialValues={getSettingsValuesFromUser(user)}
 				onSubmit={submitSettings}

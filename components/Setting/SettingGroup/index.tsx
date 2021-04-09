@@ -13,7 +13,6 @@ const SettingGroup = ({
 	heading,
 	normal = false,
 	className,
-	children,
 	...props
 }: SettingGroupProps) => (
 	<>
@@ -23,9 +22,7 @@ const SettingGroup = ({
 		<GridContent
 			className={(normal ? 'setting-group' : '') + (className ? ` ${className}` : '')}
 			{...props}
-		>
-			{children}
-		</GridContent>
+		/>
 	</>
 );
 
