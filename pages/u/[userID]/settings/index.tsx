@@ -21,12 +21,12 @@ const getSettingsValuesFromUser = ({ settings }: PrivateUser) => ({
 	imageSharpening: settings.imageSharpening,
 	theme: settings.theme,
 	style: settings.style, // TODO
-	keybinds: settings.keybinds, // TODO
+	controls: settings.controls, // TODO
 	notifications: {
-		messages: settings.notifications.messages, // TODO
-		userTags: settings.notifications.userTags, // TODO
-		commentReplies: settings.notifications.commentReplies, // TODO
-		comicDefaults: settings.notifications.comicDefaults // TODO
+		messages: settings.notifications.messages,
+		userTags: settings.notifications.userTags,
+		commentReplies: settings.notifications.commentReplies,
+		comicDefaults: settings.notifications.comicDefaults
 	}
 });
 
@@ -122,6 +122,16 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 								/>
 							</NotificationSettingGroup>
 						</Grid>
+						<SettingGroup heading="Utility">
+							<Setting
+								name="autoOpenSpoilers"
+								label="Auto-open spoilers"
+							/>
+							<Setting
+								name="preloadImages"
+								label="Preload images"
+							/>
+						</SettingGroup>
 					</Grid>
 				</Form>
 			</Formik>

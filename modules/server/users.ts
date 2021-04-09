@@ -92,7 +92,7 @@ export type UserDocument = {
 		imageSharpening: boolean,
 		theme: Theme,
 		style: string,
-		keybinds: {
+		controls: {
 			back: string,
 			forward: string,
 			toggleSpoilers: string
@@ -144,7 +144,7 @@ export const defaultUser = {
 		imageSharpening: false,
 		theme: Theme.Standard,
 		style: '',
-		keybinds: {
+		controls: {
 			back: 'ArrowLeft',
 			forward: 'ArrowRight',
 			toggleSpoilers: 'Space'
