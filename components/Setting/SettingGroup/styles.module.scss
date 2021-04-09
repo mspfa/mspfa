@@ -2,4 +2,9 @@
 	display: grid;
 	grid-template-columns: auto auto;
 	gap: 1ch;
+
+	& > .tip {
+		grid-column: 1 / span 2;
+		margin-bottom: 1ch;
+	}
 }

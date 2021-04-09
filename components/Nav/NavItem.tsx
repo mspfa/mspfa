@@ -1,4 +1,5 @@
 import React from 'react';
+import type { ReactNode } from 'react';
 import Link from 'components/Link';
 import type { LinkProps } from 'components/Link';
 
@@ -10,7 +11,7 @@ export type NavItemProps = {
 	 */
 	id: string,
 	/** The text displayed on the nav item. */
-	label: string,
+	label: ReactNode,
 	className?: never,
 	children?: never,
 	/** If true, shows an exclamation point. If a number > 0, shows the number. Otherwise, is hidden. */

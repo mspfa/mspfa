@@ -1,15 +1,23 @@
 import GridHeading from 'components/Grid/GridHeading';
 import GridContent from 'components/Grid/GridContent';
 import type { GridContentProps } from 'components/Grid/GridContent';
+import type { ReactNode } from 'react';
 import './styles.module.scss';
 
 export type SettingGroupProps = GridContentProps & {
-	heading: string
+	heading: ReactNode,
+	/** `true` if this setting group is not a two-column settings group of labels on the left and inputs on the right, and it should not have `className="setting-group"`. */
+	special?: boolean,
+	/** Something displayed translucently at the top of the setting group's content. */
+	tip?: ReactNode
 };
 
 const SettingGroup = ({
 	heading,
+	special,
 	className,
+	tip,
+	children,
 	...props
 }: SettingGroupProps) => (
 	<>
@@ -17,9 +25,19 @@ const SettingGroup = ({
 			{heading}
 		</GridHeading>
 		<GridContent
-			className={`setting-group${className ? ` ${className}` : ''}`}
+			className={
+				(special ? '' : 'setting-group')
+				+ (className ? ` ${className}` : '')
+			}
 			{...props}
-		/>
+		>
+			{tip && (
+				<div className="tip translucent-text">
+					{tip}
+				</div>
+			)}
+			{children}
+		</GridContent>
 	</>
 );
 

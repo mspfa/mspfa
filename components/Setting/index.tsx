@@ -1,9 +1,10 @@
 import { Field } from 'formik';
 import type { FieldAttributes } from 'formik';
+import type { ReactNode } from 'react';
 import './styles.module.scss';
 
 export type ExclusiveSettingProps = {
-	label: string,
+	label: ReactNode,
 	/** The form `Field`'s `name` prop of this setting. */
 	name: string
 };

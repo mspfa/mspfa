@@ -59,7 +59,7 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 									{dialog.actions.map((action, index) => (
 										<Button
 											key={index}
-											submit={action.submit}
+											type={action.submit ? 'submit' : 'button'}
 											className="dialog-action"
 											autoFocus={action.focus}
 											onClick={action.submit ? undefined : action.onClick}

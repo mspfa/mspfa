@@ -3,7 +3,7 @@ import type { MyGetServerSideProps } from 'modules/server/pages';
 import type { PrivateUser } from 'modules/client/users';
 import { getUserByUnsafeID, getPrivateUser } from 'modules/server/users';
 import ErrorPage from 'pages/_error';
-import { Form, Formik } from 'formik';
+import { Form, Formik, Field } from 'formik';
 import type { FormikHelpers } from 'formik';
 import Grid from 'components/Grid';
 import SettingGroup from 'components/Setting/SettingGroup';
@@ -11,7 +11,9 @@ import Setting from 'components/Setting';
 import NotificationSettingGroup from 'components/Setting/NotificationSettingGroup';
 import NotificationSetting from 'components/Setting/NotificationSetting';
 import ControlSetting from 'components/Setting/ControlSetting';
-import { Theme } from 'modules/client/themes';
+import Theme from 'modules/client/themes';
+import GridContent from 'components/Grid/GridContent';
+import Button from 'components/Button';
 import './styles.module.scss';
 
 const getSettingsValuesFromUser = ({ settings }: PrivateUser) => ({
@@ -21,8 +23,8 @@ const getSettingsValuesFromUser = ({ settings }: PrivateUser) => ({
 	stickyNav: settings.stickyNav,
 	imageSharpening: settings.imageSharpening,
 	theme: settings.theme,
-	style: settings.style, // TODO
-	controls: settings.controls, // TODO
+	style: settings.style,
+	controls: settings.controls,
 	notifications: {
 		messages: settings.notifications.messages,
 		userTags: settings.notifications.userTags,
@@ -120,10 +122,10 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 								/>
 							</NotificationSettingGroup>
 						</Grid>
-						<SettingGroup heading="Controls">
-							<div className="info translucent-text">
-								Select a box and press a key. Press escape to remove a shortcut.
-							</div>
+						<SettingGroup
+							heading="Controls"
+							tip="Select a box and press a key. Press escape to remove a shortcut."
+						>
 							<ControlSetting
 								name="controls.back"
 								label="Back"
@@ -135,6 +137,16 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 							<ControlSetting
 								name="controls.toggleSpoilers"
 								label="Toggle Spoilers"
+							/>
+						</SettingGroup>
+						<SettingGroup heading="Advanced" special>
+							<label className="setting-label" htmlFor="setting-style">Custom Site Style</label><br />
+							<Field
+								as="textarea"
+								id="setting-style"
+								name="style"
+								rows={5}
+								placeholder={"Paste SCSS here.\nIf you don't know what this is, don't worry about it."}
 							/>
 						</SettingGroup>
 					</Grid>

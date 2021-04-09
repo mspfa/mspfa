@@ -6,6 +6,7 @@ input, textarea, select, option {
 }
 
 input, textarea, select {
+	box-sizing: border-box;
 	border-radius: 0;
 	border: 2px solid;
 	@include theme(border-color, $border-color);
@@ -17,6 +18,10 @@ input, textarea, select {
 
 input, textarea {
 	padding: 2px;
+}
+
+textarea {
+	resize: vertical;
 }
 
 select {

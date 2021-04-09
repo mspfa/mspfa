@@ -1,6 +1,6 @@
 import db, { safeObjectID } from 'modules/server/db';
 import type { ObjectId } from 'mongodb';
-import { Theme } from 'modules/client/themes';
+import Theme from 'modules/client/themes';
 import type { achievements } from 'modules/server/achievements';
 import type { URLString, EmailString } from 'modules/types';
 import type { PrivateUser, PublicUser } from 'modules/client/users';

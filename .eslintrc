@@ -355,7 +355,6 @@
 			"after"
 		],
 		"@typescript-eslint/prefer-includes": "error",
-		"react/button-has-type": "warn",
 		"react/display-name": "off",
 		"react/forbid-elements": [
 			"error",
