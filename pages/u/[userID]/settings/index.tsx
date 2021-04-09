@@ -92,29 +92,32 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 						<Grid id="notification-settings">
 							<NotificationSettingGroup heading="General Notifications">
 								<NotificationSetting
-									name="notifications."
+									name="notifications.messages"
 									label="Messages"
+									siteFieldProps={{
+										disabled: true
+									}}
 								/>
 								<NotificationSetting
-									name="notifications."
+									name="notifications.userTags"
 									label="User tags"
 								/>
 								<NotificationSetting
-									name="notifications."
-									label="Comment replies"
+									name="notifications.commentReplies"
+									label="Replies to comments"
 								/>
 							</NotificationSettingGroup>
 							<NotificationSettingGroup heading="Default Adventure Notifications">
 								<NotificationSetting
-									name="notifications."
+									name="notifications.comicDefaults.updates"
 									label="Updates"
 								/>
 								<NotificationSetting
-									name="notifications."
+									name="notifications.comicDefaults.news"
 									label="News"
 								/>
 								<NotificationSetting
-									name="notifications."
+									name="notifications.comicDefaults.comments"
 									label="Comments"
 								/>
 							</NotificationSettingGroup>

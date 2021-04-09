@@ -28,12 +28,10 @@ export type UserSession = {
 	ip?: string
 };
 
-export enum NotificationSetting {
-	Off = 0b00,
-	Site = 0b01,
-	Email = 0b10,
-	All = 0b11
-}
+export type NotificationSetting = {
+	email: boolean,
+	site: boolean
+};
 
 export type ComicReaderNotificationSettingKeys = 'updates' | 'news';
 
@@ -124,6 +122,7 @@ export type UserDocument = {
 	legacyID?: number
 };
 
+/** A `Partial<UserDocument>` used to spread some general properties on newly inserted `UserDocument`s. */
 export const defaultUser = {
 	sessions: [] as never[],
 	verified: false,
@@ -151,13 +150,13 @@ export const defaultUser = {
 			toggleSpoilers: 'Space'
 		},
 		notifications: {
-			messages: NotificationSetting.All,
-			userTags: NotificationSetting.All,
-			commentReplies: NotificationSetting.All,
+			messages: { email: true, site: true },
+			userTags: { email: true, site: true },
+			commentReplies: { email: true, site: true },
 			comicDefaults: {
-				updates: NotificationSetting.All,
-				news: NotificationSetting.All,
-				comments: NotificationSetting.All
+				updates: { email: true, site: true },
+				news: { email: true, site: true },
+				comments: { email: true, site: true }
 			},
 			comics: {} as Record<never, never>
 		}

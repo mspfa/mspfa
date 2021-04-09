@@ -1,12 +1,18 @@
 import { Field } from 'formik';
 import type { ExclusiveSettingProps } from 'components/Setting';
+import type { FieldAttributes } from 'formik';
 import './styles.module.scss';
 
-export type NotificationSettingProps = ExclusiveSettingProps;
+export type NotificationSettingProps = ExclusiveSettingProps & {
+	emailFieldProps?: Partial<FieldAttributes<unknown>>,
+	siteFieldProps?: Partial<FieldAttributes<unknown>>
+};
 
 const NotificationSetting = ({
 	label,
-	name
+	name,
+	emailFieldProps,
+	siteFieldProps
 }: NotificationSettingProps) => (
 	<>
 		<label className="setting-label">
@@ -14,14 +20,16 @@ const NotificationSetting = ({
 		</label>
 		<div className="setting-input">
 			<Field
-				name="notifications."
+				name={`${name}.email`}
 				type="checkbox"
+				{...emailFieldProps}
 			/>
 		</div>
 		<div className="setting-input">
 			<Field
-				name="notifications."
+				name={`${name}.site`}
 				type="checkbox"
+				{...siteFieldProps}
 			/>
 		</div>
 	</>
