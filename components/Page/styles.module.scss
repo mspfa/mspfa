@@ -10,18 +10,19 @@
 
 	@include mobile {
 		width: 100%;
+		overflow: hidden;
 	}
 }
 
 .mspface-container {
 	display: flex;
-	height: 102px;
 }
 
 .mspface {
 	flex-shrink: 0;
 	display: block;
 	width: 208px;
+	height: 102px;
 	margin-right: 4px;
 	background-repeat: no-repeat;
 	background-position: center;
@@ -29,10 +30,6 @@
 	@include mobile {
 		display: none;
 	}
-}
-
-.wealth-spawner-container {
-	flex-grow: 1;
 }
 
 main.padded {

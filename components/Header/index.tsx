@@ -1,6 +1,7 @@
 import Link from 'components/Link';
 import FlashyTitle from 'components/FlashyTitle';
 import Nav from 'components/Nav';
+import WealthDungeon from 'components/WealthDungeon';
 import './styles.module.scss';
 
 const Header = () => (
@@ -8,7 +9,7 @@ const Header = () => (
 		<header>
 			<div className="mspface-container">
 				<Link className="mspface front" href="/" title="MSPFA Home" tabIndex={-1} draggable={false} />
-				<div className="wealth-spawner-container" />
+				<WealthDungeon />
 			</div>
 			<FlashyTitle />
 		</header>

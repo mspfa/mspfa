@@ -1,7 +1,17 @@
+@import 'styles/general';
+
 #notification-settings {
 	grid-template-columns: 0.5fr 0.5fr;
 
+	@include mobile {
+		grid-template-columns: auto;
+	}
+
 	& > .grid-heading {
 		grid-row: 1;
+
+		@include mobile {
+			grid-row: auto;
+		}
 	}
 }

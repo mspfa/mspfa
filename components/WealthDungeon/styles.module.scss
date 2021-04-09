@@ -1,0 +1,13 @@
+.wealth {
+	&-dungeon {
+		flex-grow: 1;
+	}
+
+	&-spawner-cage {
+		$width: 728;
+		$height: 102;
+
+		position: relative;
+		padding-bottom: #{100% * $height / $width}
+	}
+}

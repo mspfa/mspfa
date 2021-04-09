@@ -1,9 +1,10 @@
-$flashy-title-ratio: 940 / 68;
-
 #flashy-title {
 	&-container {
+		$width: 940;
+		$height: 68;
+
 		position: relative;
-		padding-bottom: #{100% / $flashy-title-ratio}
+		padding-bottom: #{100% * $height / $width}
 	}
 
 	display: block;

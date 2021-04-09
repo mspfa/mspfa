@@ -1,6 +1,7 @@
 import useSWR from 'swr';
 import Stick from 'components/Stick';
 import Link from 'components/Link';
+import WealthDungeon from 'components/WealthDungeon';
 import './styles.module.scss';
 
 const Footer = () => {
@@ -19,7 +20,7 @@ const Footer = () => {
 						`}</style>
 					)}
 					<div className="mspface front" />
-					<div className="wealth-spawner-container" />
+					<WealthDungeon />
 				</div>
 			</footer>
 			<div id="legal">
