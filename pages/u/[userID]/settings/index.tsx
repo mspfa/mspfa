@@ -80,9 +80,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 								label="Matched content ad"
 							/>
 						</SettingGroup>
-						<SettingGroup
-							heading="Utility"
-						>
+						<SettingGroup heading="Utility">
 							<Setting
 								name="autoOpenSpoilers"
 								label="Auto-open spoilers"
