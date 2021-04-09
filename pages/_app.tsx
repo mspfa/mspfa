@@ -40,10 +40,10 @@ const MyApp = ({
 		if (user) {
 			const themeClassName = `theme-${user.settings.theme}`;
 
-			document.body.classList.add(themeClassName);
+			document.documentElement.classList.add(themeClassName);
 
 			return () => {
-				document.body.classList.remove(themeClassName);
+				document.documentElement.classList.remove(themeClassName);
 			};
 		}
 
