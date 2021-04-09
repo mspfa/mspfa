@@ -1,0 +1,18 @@
+.setting {
+	&-input {
+		justify-self: left;
+		align-self: center;
+		display: flex;
+		align-items: center;
+	}
+
+	&-label {
+		grid-column: 1;
+		align-self: center;
+		text-align: right;
+
+		&::after {
+			content: ':';
+		}
+	}
+}

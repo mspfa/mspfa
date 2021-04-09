@@ -9,6 +9,7 @@ import Grid from 'components/Grid';
 import SettingGroup from 'components/Setting/SettingGroup';
 import Setting from 'components/Setting';
 import NotificationSettingGroup from 'components/Setting/NotificationSettingGroup';
+import NotificationSetting from 'components/Setting/NotificationSetting';
 import { themeNames } from 'modules/client/themes';
 import type { Theme } from 'modules/client/themes';
 import './styles.module.scss';
@@ -49,7 +50,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 				onSubmit={submitSettings}
 			>
 				<Form>
-					<Grid id="settings">
+					<Grid>
 						<SettingGroup heading="Display">
 							<Setting
 								as="select"
@@ -93,98 +94,32 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 						</SettingGroup>
 						<Grid id="notification-settings">
 							<NotificationSettingGroup heading="General Notifications">
-								<label className="setting-label">Messages</label>
-								<div className="setting-input">
-									<Field
-										id="setting-notifications-"
-										name="notifications."
-										type="checkbox"
-									/>
-								</div>
-								<div className="setting-input">
-									<Field
-										id="setting-notifications-"
-										name="notifications."
-										type="checkbox"
-									/>
-								</div>
-								<label className="setting-label">User tags</label>
-								<div className="setting-input">
-									<Field
-										id="setting-notifications-"
-										name="notifications."
-										type="checkbox"
-									/>
-								</div>
-								<div className="setting-input">
-									<Field
-										id="setting-notifications-"
-										name="notifications."
-										type="checkbox"
-									/>
-								</div>
-								<label className="setting-label">Comment replies</label>
-								<div className="setting-input">
-									<Field
-										id="setting-notifications-"
-										name="notifications."
-										type="checkbox"
-									/>
-								</div>
-								<div className="setting-input">
-									<Field
-										id="setting-notifications-"
-										name="notifications."
-										type="checkbox"
-									/>
-								</div>
+								<NotificationSetting
+									name="notifications."
+									label="Messages"
+								/>
+								<NotificationSetting
+									name="notifications."
+									label="User tags"
+								/>
+								<NotificationSetting
+									name="notifications."
+									label="Comment replies"
+								/>
 							</NotificationSettingGroup>
 							<NotificationSettingGroup heading="Default Adventure Notifications">
-								<label className="setting-label">Updates</label>
-								<div className="setting-input">
-									<Field
-										id="setting-notifications-"
-										name="notifications."
-										type="checkbox"
-									/>
-								</div>
-								<div className="setting-input">
-									<Field
-										id="setting-notifications-"
-										name="notifications."
-										type="checkbox"
-									/>
-								</div>
-								<label className="setting-label">News</label>
-								<div className="setting-input">
-									<Field
-										id="setting-notifications-"
-										name="notifications."
-										type="checkbox"
-									/>
-								</div>
-								<div className="setting-input">
-									<Field
-										id="setting-notifications-"
-										name="notifications."
-										type="checkbox"
-									/>
-								</div>
-								<label className="setting-label">Comments</label>
-								<div className="setting-input">
-									<Field
-										id="setting-notifications-"
-										name="notifications."
-										type="checkbox"
-									/>
-								</div>
-								<div className="setting-input">
-									<Field
-										id="setting-notifications-"
-										name="notifications."
-										type="checkbox"
-									/>
-								</div>
+								<NotificationSetting
+									name="notifications."
+									label="Updates"
+								/>
+								<NotificationSetting
+									name="notifications."
+									label="News"
+								/>
+								<NotificationSetting
+									name="notifications."
+									label="Comments"
+								/>
 							</NotificationSettingGroup>
 						</Grid>
 					</Grid>

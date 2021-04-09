@@ -2,11 +2,13 @@ import { Field } from 'formik';
 import type { FieldAttributes } from 'formik';
 import './styles.module.scss';
 
-export type SettingProps = Omit<FieldAttributes<any>, 'id'> & {
+export type ExclusiveSettingProps = {
 	label: string,
 	/** The form `Field`'s `name` prop of this setting. */
 	name: string
 };
+
+export type SettingProps = Omit<FieldAttributes<any>, 'id'> & ExclusiveSettingProps;
 
 const Setting = ({
 	label,
