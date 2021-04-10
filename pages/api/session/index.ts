@@ -17,8 +17,7 @@ export type SessionBody = {
 
 const Handler: APIHandler<(
 	{
-		method: 'DELETE',
-		body?: undefined
+		method: 'DELETE'
 	} | {
 		method: 'POST',
 		body: SessionBody

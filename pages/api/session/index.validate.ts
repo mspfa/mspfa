@@ -10,13 +10,12 @@ export default createValidator({
 			anyOf: [
 				{
 					type: 'object',
+					additionalProperties: false,
 					properties: {
+						body: {},
 						method: {
 							type: 'string',
 							const: 'DELETE'
-						},
-						body: {
-							not: {}
 						}
 					},
 					required: [
@@ -25,18 +24,19 @@ export default createValidator({
 				},
 				{
 					type: 'object',
+					additionalProperties: false,
 					properties: {
+						body: {
+							$ref: '#/definitions/SessionBody'
+						},
 						method: {
 							type: 'string',
 							const: 'POST'
-						},
-						body: {
-							$ref: '#/definitions/SessionBody'
 						}
 					},
 					required: [
-						'method',
-						'body'
+						'body',
+						'method'
 					]
 				}
 			]
@@ -52,7 +52,8 @@ export default createValidator({
 					},
 					required: [
 						'authMethod'
-					]
+					],
+					additionalProperties: false
 				},
 				{
 					type: 'object',
@@ -75,13 +76,15 @@ export default createValidator({
 							required: [
 								'type',
 								'value'
-							]
+							],
+							additionalProperties: false
 						}
 					},
 					required: [
 						'email',
 						'authMethod'
-					]
+					],
+					additionalProperties: false
 				}
 			]
 		},
@@ -103,7 +106,8 @@ export default createValidator({
 			required: [
 				'type',
 				'value'
-			]
+			],
+			additionalProperties: false
 		},
 		EmailString: {
 			type: 'string',

@@ -30,7 +30,10 @@ export type APIHandler<
 > = (
 	((req: APIRequest<Request>, res: APIResponse<Response>) => void | Promise<void>)
 	// This is so you can use `NonNullable<APIHandler['Request']>` and `NonNullable<APIHandler['Response']>` instead of having to use a conditional type with `infer` to get the request and response types.
-	& { Request?: Request, Response?: Response }
+	& {
+		Request?: Request & { body?: unknown },
+		Response?: Response
+	}
 );
 
 export type ErrorResponseBody = { message: string };
@@ -47,7 +50,10 @@ export const createValidator = (schema: Record<string, unknown>) => {
 				req.body = undefined;
 			}
 
-			const valid = validate(req);
+			const valid = validate({
+				method: req.method,
+				body: req.body ? req.body : undefined
+			});
 
 			if (valid) {
 				resolve();

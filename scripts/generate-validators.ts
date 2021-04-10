@@ -83,7 +83,8 @@ const generateValidator = async (
 			createGenerator({
 				path: inputPath,
 				tsconfig: 'tsconfig.json',
-				additionalProperties: true
+				// This is `false` so the server can trust that the client isn't adding any invalid properties to objects in the request body.
+				additionalProperties: false
 			}).createSchema('Request'),
 			null,
 			'\t'

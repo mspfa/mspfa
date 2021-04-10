@@ -8,15 +8,13 @@ export default createValidator({
 	definitions: {
 		Request: {
 			type: 'object',
+			additionalProperties: false,
 			properties: {
-				method: {
-					type: 'string',
-					const: 'POST'
-				},
 				body: {
 					anyOf: [
 						{
 							type: 'object',
+							additionalProperties: false,
 							properties: {
 								captchaToken: {
 									type: 'string',
@@ -42,6 +40,7 @@ export default createValidator({
 						},
 						{
 							type: 'object',
+							additionalProperties: false,
 							properties: {
 								captchaToken: {
 									type: 'string',
@@ -72,7 +71,8 @@ export default createValidator({
 									required: [
 										'type',
 										'value'
-									]
+									],
+									additionalProperties: false
 								}
 							},
 							required: [
@@ -84,11 +84,15 @@ export default createValidator({
 							]
 						}
 					]
+				},
+				method: {
+					type: 'string',
+					const: 'POST'
 				}
 			},
 			required: [
-				'method',
-				'body'
+				'body',
+				'method'
 			]
 		},
 		ExternalAuthMethod: {
@@ -109,7 +113,8 @@ export default createValidator({
 			required: [
 				'type',
 				'value'
-			]
+			],
+			additionalProperties: false
 		},
 		EmailString: {
 			type: 'string',

@@ -8,7 +8,9 @@ export default createValidator({
 	definitions: {
 		Request: {
 			type: 'object',
+			additionalProperties: false,
 			properties: {
+				body: {},
 				method: {
 					type: 'string',
 					const: 'GET'
