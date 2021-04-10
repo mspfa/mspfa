@@ -4,27 +4,22 @@ import { createValidator } from 'modules/server/api';
 
 export default createValidator({
 	$schema: 'http://json-schema.org/draft-07/schema#',
+	$ref: '#/definitions/RequestMethod',
+	definitions: {
+		RequestMethod: {
+			type: 'string',
+			enum: [
+				'DELETE',
+				'PUT'
+			]
+		}
+	}
+}, {
+	$schema: 'http://json-schema.org/draft-07/schema#',
 	$ref: '#/definitions/Request',
 	definitions: {
 		'Request': {
 			anyOf: [
-				{
-					type: 'object',
-					additionalProperties: false,
-					properties: {
-						body: {
-							$ref: '#/definitions/RecursivePartial%3Calias-731470504-70254-70395-731470504-0-212312%3Cdef-alias--644-941--0-30251776781619%2Calias--433-684--0-1062308207794%3E%3E'
-						},
-						method: {
-							type: 'string',
-							const: 'PUT'
-						}
-					},
-					required: [
-						'body',
-						'method'
-					]
-				},
 				{
 					type: 'object',
 					additionalProperties: false,
@@ -38,23 +33,41 @@ export default createValidator({
 					required: [
 						'method'
 					]
+				},
+				{
+					type: 'object',
+					additionalProperties: false,
+					properties: {
+						body: {
+							$ref: '#/definitions/RecursivePartial%3Calias-731470504-70254-70395-731470504-0-212312%3Cdef-alias--644-941--0-30251776781619%2Calias--433-684--0-1064308207794%3E%3E'
+						},
+						method: {
+							type: 'string',
+							const: 'PUT'
+						}
+					},
+					required: [
+						'body',
+						'method'
+					]
 				}
 			]
 		},
-		'RecursivePartial<alias-731470504-70254-70395-731470504-0-212312<def-alias--644-941--0-30251776781619,alias--433-684--0-1062308207794>>': {
+		'RecursivePartial<alias-731470504-70254-70395-731470504-0-212312<def-alias--644-941--0-30251776781619,alias--433-684--0-1064308207794>>': {
 			type: 'object',
 			properties: {
 				birthdate: {
-					$ref: '#/definitions/RecursivePartial%3Cnumber%3E'
+					type: 'number'
 				},
 				name: {
-					$ref: '#/definitions/RecursivePartial%3Cstring1529909876%3E'
+					type: 'string',
+					minLength: 1
 				},
 				email: {
-					$ref: '#/definitions/RecursivePartial%3CEmailString%3E'
+					$ref: '#/definitions/EmailString'
 				},
 				description: {
-					$ref: '#/definitions/RecursivePartial%3Cstring%3E'
+					type: 'string'
 				},
 				icon: {
 					$ref: '#/definitions/URLString'
@@ -63,7 +76,7 @@ export default createValidator({
 					$ref: '#/definitions/URLString'
 				},
 				profileStyle: {
-					$ref: '#/definitions/RecursivePartial%3Cstring%3E'
+					type: 'string'
 				},
 				settings: {
 					$ref: '#/definitions/RecursivePartial%3Cstructure--2379-3387--2368-3388--1794-3673--1766-3674--0-6872%3E'
@@ -74,21 +87,10 @@ export default createValidator({
 			},
 			additionalProperties: false
 		},
-		'RecursivePartial<number>': {
-			type: 'object',
-			additionalProperties: false
-		},
-		'RecursivePartial<string1529909876>': {
-			type: 'object',
-			additionalProperties: false
-		},
-		'RecursivePartial<EmailString>': {
-			type: 'object',
-			additionalProperties: false
-		},
-		'RecursivePartial<string>': {
-			type: 'object',
-			additionalProperties: false
+		'EmailString': {
+			type: 'string',
+			description: 'The following regular expression is copied directly from https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.',
+			pattern: "^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
 		},
 		'URLString': {
 			type: 'string',
@@ -98,31 +100,41 @@ export default createValidator({
 			type: 'object',
 			properties: {
 				emailPublic: {
-					$ref: '#/definitions/RecursivePartial%3Cboolean%3E'
+					type: 'boolean'
 				},
 				favsPublic: {
-					$ref: '#/definitions/RecursivePartial%3Cboolean%3E'
+					type: 'boolean'
 				},
 				ads: {
 					$ref: '#/definitions/RecursivePartial%3Cstructure--2435-2486--2428-2487--2379-3387--2368-3388--1794-3673--1766-3674--0-6872%3E'
 				},
 				autoOpenSpoilers: {
-					$ref: '#/definitions/RecursivePartial%3Cboolean%3E'
+					type: 'boolean'
 				},
 				preloadImages: {
-					$ref: '#/definitions/RecursivePartial%3Cboolean1937454692%3E'
+					type: 'boolean',
+					description: 'This makes images on adjacent pages always preload when a user visits a comic page.'
 				},
 				stickyNav: {
-					$ref: '#/definitions/RecursivePartial%3Cboolean1007666225%3E'
+					type: 'boolean',
+					description: 'This makes the nav bar always stay at the top of the screen when scrolling below it.'
 				},
 				imageSharpening: {
-					$ref: '#/definitions/RecursivePartial%3Cboolean592335370%3E'
+					type: 'boolean',
+					description: 'This sets the image rendering style to nearest-neighbor on images which the user might want that on (such as comic panels).'
 				},
 				theme: {
-					$ref: '#/definitions/RecursivePartial%3Cenum--0-113--0-136%3E'
+					type: 'string',
+					enum: [
+						'standard',
+						'dark',
+						'felt',
+						'sbahj',
+						'trickster'
+					]
 				},
 				style: {
-					$ref: '#/definitions/RecursivePartial%3Cstring%3E'
+					type: 'string'
 				},
 				controls: {
 					$ref: '#/definitions/RecursivePartial%3Cstructure--2957-3026--2945-3027--2379-3387--2368-3388--1794-3673--1766-3674--0-6872%3E'
@@ -133,49 +145,29 @@ export default createValidator({
 			},
 			additionalProperties: false
 		},
-		'RecursivePartial<boolean>': {
-			type: 'object',
-			additionalProperties: false
-		},
 		'RecursivePartial<structure--2435-2486--2428-2487--2379-3387--2368-3388--1794-3673--1766-3674--0-6872>': {
 			type: 'object',
 			properties: {
 				side: {
-					$ref: '#/definitions/RecursivePartial%3Cboolean%3E'
+					type: 'boolean'
 				},
 				matchedContent: {
-					$ref: '#/definitions/RecursivePartial%3Cboolean%3E'
+					type: 'boolean'
 				}
 			},
-			additionalProperties: false
-		},
-		'RecursivePartial<boolean1937454692>': {
-			type: 'object',
-			additionalProperties: false
-		},
-		'RecursivePartial<boolean1007666225>': {
-			type: 'object',
-			additionalProperties: false
-		},
-		'RecursivePartial<boolean592335370>': {
-			type: 'object',
-			additionalProperties: false
-		},
-		'RecursivePartial<enum--0-113--0-136>': {
-			type: 'object',
 			additionalProperties: false
 		},
 		'RecursivePartial<structure--2957-3026--2945-3027--2379-3387--2368-3388--1794-3673--1766-3674--0-6872>': {
 			type: 'object',
 			properties: {
 				back: {
-					$ref: '#/definitions/RecursivePartial%3Cstring%3E'
+					type: 'string'
 				},
 				forward: {
-					$ref: '#/definitions/RecursivePartial%3Cstring%3E'
+					type: 'string'
 				},
 				toggleSpoilers: {
-					$ref: '#/definitions/RecursivePartial%3Cstring%3E'
+					type: 'string'
 				}
 			},
 			additionalProperties: false
@@ -205,10 +197,10 @@ export default createValidator({
 			type: 'object',
 			properties: {
 				email: {
-					$ref: '#/definitions/RecursivePartial%3Cboolean%3E'
+					type: 'boolean'
 				},
 				site: {
-					$ref: '#/definitions/RecursivePartial%3Cboolean%3E'
+					type: 'boolean'
 				}
 			},
 			additionalProperties: false
@@ -235,12 +227,12 @@ export default createValidator({
 					$ref: '#/definitions/RecursivePartial%3CNotificationSetting%3E'
 				},
 				comments: {
-					$ref: '#/definitions/NotificationSetting'
+					$ref: '#/definitions/RecursivePartial%3C(undefined%7CNotificationSetting)%3E'
 				}
 			},
 			additionalProperties: false
 		},
-		'NotificationSetting': {
+		'RecursivePartial<(undefined|NotificationSetting)>': {
 			type: 'object',
 			properties: {
 				email: {
@@ -250,10 +242,6 @@ export default createValidator({
 					type: 'boolean'
 				}
 			},
-			required: [
-				'email',
-				'site'
-			],
 			additionalProperties: false
 		}
 	}

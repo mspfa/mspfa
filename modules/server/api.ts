@@ -40,15 +40,21 @@ export type ErrorResponseBody = { message: string };
 
 const ajv = new Ajv({ allErrors: true });
 
-export const createValidator = (schema: Record<string, unknown>) => {
+export const createValidator = (methodSchema: Record<string, unknown>, schema: Record<string, unknown>) => {
+	const validateMethod = ajv.compile(methodSchema);
 	const validate = ajv.compile(schema);
 
 	return (req: APIRequest, res: APIResponse) => (
 		new Promise<void>(resolve => {
-			if (req.body === '') {
-				// `req.body === ''` by default when the request body is unspecified. This sets it to `undefined`.
-				req.body = undefined;
+			if (!validateMethod(req.method)) {
+				res.status(405).end();
+				return;
 			}
+
+			validate({
+				method: req.method,
+				body: req.body ? req.body : undefined
+			});
 
 			const valid = validate({
 				method: req.method,
@@ -58,7 +64,6 @@ export const createValidator = (schema: Record<string, unknown>) => {
 			if (valid) {
 				resolve();
 			} else {
-				let methodNotAllowed = false;
 				const errorMessages: string[] = [];
 
 				for (const error of validate.errors!) {
@@ -70,26 +75,15 @@ export const createValidator = (schema: Record<string, unknown>) => {
 							errorMessages.push(errorMessage);
 						}
 					}
-
-					// Check if the property which has a schema mismatch is `req.method`.
-					if (error.dataPath === '/method') {
-						methodNotAllowed = true;
-						// This break is an optimization, because once error 405 is detected, we know all other errors are unused and don't need to pushed to the `errors` array.
-						break;
-					}
 				}
 
-				if (methodNotAllowed) {
-					res.status(405).end();
-				} else {
-					let message = errorMessages.join('\n');
-					if (errorMessages.length > 1) {
-						message = `One or more of the following errors apply:\n${message}`;
-					}
-					res.status(400).send({
-						message
-					});
+				let message = errorMessages.join('\n');
+				if (errorMessages.length > 1) {
+					message = `One or more of the following errors apply:\n${message}`;
 				}
+				res.status(400).send({
+					message
+				});
 			}
 		})
 	);

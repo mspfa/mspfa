@@ -4,6 +4,15 @@ import { createValidator } from 'modules/server/api';
 
 export default createValidator({
 	$schema: 'http://json-schema.org/draft-07/schema#',
+	$ref: '#/definitions/RequestMethod',
+	definitions: {
+		RequestMethod: {
+			type: 'string',
+			const: 'GET'
+		}
+	}
+}, {
+	$schema: 'http://json-schema.org/draft-07/schema#',
 	$ref: '#/definitions/Request',
 	definitions: {
 		Request: {
