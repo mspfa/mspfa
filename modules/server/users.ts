@@ -108,7 +108,7 @@ export type UserDocument = {
 		}
 	},
 	perms: Partial<{
-		/** Permission to grant or revoke perms for any user. */
+		/** Permission to grant or revoke perms for any user (including yourself). */
 		writePerms: true,
 		/** Permission to access (but not edit or delete) anything which at least one normal client can access. */
 		sudoRead: true,
