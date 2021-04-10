@@ -39,12 +39,16 @@
 	// A color value or a map of themes to color values for the color of the button.
 	$colors,
 	// Optional override for the default button text color.
-	$button-text-color: $translucent-text-colo,
+	$button-text-color: false,
 	// Whether `$colors` represents the color behind the button and not the color of the button.
 	$color-is-behind-button: false
 ) {
 	@if type-of($colors) != 'map' {
 		$colors: (standard: $colors);
+	}
+
+	@if $button-text-color == false {
+		$button-text-color: $translucent-text-color;
 	}
 
 	@if type-of($button-text-color) != 'map' {

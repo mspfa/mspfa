@@ -5,7 +5,7 @@ export type GridFooterProps = HTMLAttributes<HTMLDivElement>;
 
 const GridFooter = ({ className, ...props }: GridFooterProps) => (
 	<div
-		className={`grid-content grid-footer${className ? ` ${className}` : ''}`}
+		className={`grid-footer${className ? ` ${className}` : ''}`}
 		{...props}
 	/>
 );
