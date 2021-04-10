@@ -18,7 +18,7 @@ ErrorPage.getInitialProps = ({ res, error }: {
 
 export default ErrorPage;
 
-/** Wraps a page's component to serve an error page instead of the page component when a `statusCode` prop set to an HTTP error code is passed to it. */
+/** Wraps a page's component to serve an error page instead of the page component when a `statusCode` prop is passed to the page. */
 export const withErrorPage = <
 	/** The props of the page's component. */
 	Props extends Record<string, any> = Record<string, unknown>
