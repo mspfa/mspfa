@@ -50,7 +50,7 @@ const Component = ({ user, statusCode }: ServerSideProps) => {
 	const initialValues = user ? getSettingsValuesFromUser(user) : undefined;
 
 	const onSubmit = useCallback((values: Values) => {
-		const changedValues = getChangedValues(initialValues, values);
+		const changedValues = getChangedValues(initialValues!, values);
 
 		if (changedValues) {
 			(api as UserAPI).put(`users/${user!.id}`, {
