@@ -81,10 +81,10 @@ export type APIClient<Handler> = Omit<typeof api, Method> & (
 				url: string,
 				...args: RequestMethod extends MethodWithData
 					? Request & { method: Uppercase<RequestMethod> } extends { body: infer RequestBody }
-						? [data: RequestBody & Partial<Record<string, undefined>>, config?: Omit<AxiosRequestConfig, 'data'>]
+						? [data: RequestBody, config?: Omit<AxiosRequestConfig, 'data'>]
 						: [data?: undefined, config?: Omit<AxiosRequestConfig, 'data'>]
 					: Request & { method: Uppercase<RequestMethod> } extends { body: infer RequestBody }
-						? [config: AxiosRequestConfig & { data: RequestBody & Partial<Record<string, undefined>> }]
+						? [config: AxiosRequestConfig & { data: RequestBody }]
 						: [config?: Omit<AxiosRequestConfig, 'data'>]
 			) => Promise<(
 				AxiosResponse<(
