@@ -113,16 +113,19 @@ export const createSession = async (
 /**
  * Checks if the HTTP `Authorization` header or `auth` cookie represents a valid existing session.
  *
- * Returns the authenticated user and the hashed session token, or undefined for each of those if there is no valid session.
- *
- * Also updates the user's `lastSeen` and session `lastUsed` dates in the DB. The returned user data is from before this update.
+ * Also optionally updates the user's `lastSeen` and session `lastUsed` dates in the DB. The returned user data is from before this update.
  */
 export const authenticate = async (
 	req: IncomingMessage,
 	res: ServerResponse,
 	/** Whether this should update the user's `lastSeen` and session `lastUsed` dates in the DB. */
 	updateDB = true
-) => {
+): Promise<{
+	/** The authenticated user. */
+	user?: UserDocument,
+	/** The authenticated user's hashed session token. */
+	token?: string
+}> => {
 	let cookies: Cookies | undefined;
 
 	/** The auth credentials in the format `${userID}:${token}`, decoded from either the `Authorization` header or the `auth` cookie. */
@@ -188,3 +191,7 @@ export const authenticate = async (
 		token: undefined
 	};
 };
+
+export const permission = () => {};
+
+export const permissionToAccessUser = () => {};

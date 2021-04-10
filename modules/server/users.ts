@@ -108,15 +108,20 @@ export type UserDocument = {
 		}
 	},
 	perms: Partial<{
-		unrestrictedAccess: true,
+		/** Permission to grant or revoke perms for any user. */
+		writePerms: true,
+		/** Permission to access (but not edit or delete) anything which at least one normal client can access. */
+		sudoRead: true,
+		/** Permission to edit (but not delete) anything which at least one normal client can edit. */
+		sudoWrite: true,
+		/** Permission to delete anything (except other users with this perm) which at least one normal client can delete, and permission to ban any user without this perm. */
+		sudoDelete: true,
+		/** Permission to verify the security of potentially insecure scripts written by users. */
 		verifyScripts: true,
-		manageComics: true,
-		destroyComics: true,
-		ban: true,
-		manageComments: true,
-		manageAchievements: true
+		/** Permission to edit the achievements of any user. */
+		writeAchievements: true
 	}>,
-	dev?: true, // Hey that's me.
+	dev?: true,
 	mod?: true,
 	patron?: true,
 	nameColor?: string,
