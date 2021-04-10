@@ -1,5 +1,14 @@
 // This file is for general types that don't really fit under a single scope.
 
+export type RecursivePartial<Type> = Partial<{
+	[Key in keyof Type]?: (
+		// I would use `extends Record<string, any>` and invert the condition, except for some reason the JSON schema generator thinks primitive types extend objects.
+		Type[Key] extends string | number | boolean | undefined | null
+			? Type[Key]
+			: RecursivePartial<Type[Key]>
+	)
+}>;
+
 /** @pattern ^https?:// */
 export type URLString = string;
 

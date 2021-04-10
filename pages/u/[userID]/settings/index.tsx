@@ -5,6 +5,8 @@ import { getUserByUnsafeID, getPrivateUser } from 'modules/server/users';
 import ErrorPage from 'pages/_error';
 import { Form, Formik, Field } from 'formik';
 import type { FormikHelpers } from 'formik';
+import { useCallback } from 'react';
+import { getChangedValues } from 'modules/client/forms';
 import Grid from 'components/Grid';
 import SettingGroup from 'components/Setting/SettingGroup';
 import Setting from 'components/Setting';
@@ -14,7 +16,11 @@ import ControlSetting from 'components/Setting/ControlSetting';
 import Theme from 'modules/client/themes';
 import GridFooter from 'components/Grid/GridFooter';
 import Button from 'components/Button';
+import api from 'modules/client/api';
+import type { APIClient } from 'modules/client/api';
 import './styles.module.scss';
+
+type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 
 const getSettingsValuesFromUser = ({ settings }: PrivateUser) => ({
 	ads: settings.ads,
@@ -35,21 +41,32 @@ const getSettingsValuesFromUser = ({ settings }: PrivateUser) => ({
 
 type Values = ReturnType<typeof getSettingsValuesFromUser>;
 
-const submitSettings = (values: Values, formikHelpers: FormikHelpers<Values>) => {
-
-};
-
 type ServerSideProps = {
 	user?: PrivateUser,
 	statusCode?: number
 };
 
-const Component = ({ user, statusCode }: ServerSideProps) => (
-	user ? (
+const Component = ({ user, statusCode }: ServerSideProps) => {
+	const initialValues = user ? getSettingsValuesFromUser(user) : undefined;
+
+	const onSubmit = useCallback((values: Values) => {
+		const changedValues = getChangedValues(initialValues, values);
+
+		if (changedValues) {
+			(api as UserAPI).put(`users/${user!.id}`, {
+				settings: changedValues
+			});
+		}
+
+		// This ESLint comment is necessary because the rule incorrectly thinks `initialValues` should be a dependency here, despite that `initialValues` depends on `user` which is already a dependency.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [user]);
+
+	return user ? (
 		<Page heading="Settings">
 			<Formik
-				initialValues={getSettingsValuesFromUser(user)}
-				onSubmit={submitSettings}
+				initialValues={initialValues!}
+				onSubmit={onSubmit}
 			>
 				<Form>
 					<Grid>
@@ -156,8 +173,8 @@ const Component = ({ user, statusCode }: ServerSideProps) => (
 				</Form>
 			</Formik>
 		</Page>
-	) : <ErrorPage statusCode={statusCode} />
-);
+	) : <ErrorPage statusCode={statusCode} />;
+};
 
 export default Component;
 
