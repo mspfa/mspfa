@@ -177,14 +177,14 @@ const Component = withErrorPage<ServerSideProps>(({ user }) => {
 
 export default Component;
 
-export const getServerSideProps: MyGetServerSideProps<ServerSideProps> = async context => {
-	if (context.req.user) {
-		const userFromParams = await getUserByUnsafeID(context.params.userID);
+export const getServerSideProps: MyGetServerSideProps<ServerSideProps> = async ({ req, params }) => {
+	if (req.user) {
+		const userFromParams = await getUserByUnsafeID(params.userID);
 		if (userFromParams) {
-			// Check if `context.req.user` has permission to access `userFromParams`.
+			// Check if `req.user` has permission to access `userFromParams`.
 			if (
-				userFromParams._id.equals(context.req.user._id)
-				|| context.req.user.perms.unrestrictedAccess
+				userFromParams._id.equals(req.user._id)
+				|| req.user.perms.sudoRead
 			) {
 				return {
 					props: {

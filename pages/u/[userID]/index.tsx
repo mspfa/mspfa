@@ -18,8 +18,8 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser }) => (
 
 export default Component;
 
-export const getServerSideProps: MyGetServerSideProps<ServerSideProps> = async context => {
-	const userFromParams = await getUserByUnsafeID(context.params.userID);
+export const getServerSideProps: MyGetServerSideProps<ServerSideProps> = async ({ params }) => {
+	const userFromParams = await getUserByUnsafeID(params.userID);
 
 	if (userFromParams) {
 		return {
