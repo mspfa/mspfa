@@ -2,9 +2,8 @@ import Page from 'components/Page';
 import type { MyGetServerSideProps } from 'modules/server/pages';
 import type { PrivateUser } from 'modules/client/users';
 import { getUserByUnsafeID, getPrivateUser } from 'modules/server/users';
-import ErrorPage from 'pages/_error';
+import { withErrorPage } from 'pages/_error';
 import { Form, Formik, Field } from 'formik';
-import type { FormikHelpers } from 'formik';
 import { useCallback } from 'react';
 import { getChangedValues } from 'modules/client/forms';
 import Grid from 'components/Grid';
@@ -42,18 +41,19 @@ const getSettingsValuesFromUser = ({ settings }: PrivateUser) => ({
 type Values = ReturnType<typeof getSettingsValuesFromUser>;
 
 type ServerSideProps = {
-	user?: PrivateUser,
-	statusCode?: number
+	user: PrivateUser
+} | {
+	statusCode: number
 };
 
-const Component = ({ user, statusCode }: ServerSideProps) => {
-	const initialValues = user ? getSettingsValuesFromUser(user) : undefined;
+const Component = withErrorPage<ServerSideProps>(({ user }) => {
+	const initialValues = getSettingsValuesFromUser(user);
 
 	const onSubmit = useCallback((values: Values) => {
-		const changedValues = getChangedValues(initialValues!, values);
+		const changedValues = getChangedValues(initialValues, values);
 
 		if (changedValues) {
-			(api as UserAPI).put(`users/${user!.id}`, {
+			(api as UserAPI).put(`users/${user.id}`, {
 				settings: changedValues
 			});
 		}
@@ -62,10 +62,10 @@ const Component = ({ user, statusCode }: ServerSideProps) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [user]);
 
-	return user ? (
+	return (
 		<Page heading="Settings">
 			<Formik
-				initialValues={initialValues!}
+				initialValues={initialValues}
 				onSubmit={onSubmit}
 			>
 				<Form>
@@ -173,14 +173,12 @@ const Component = ({ user, statusCode }: ServerSideProps) => {
 				</Form>
 			</Formik>
 		</Page>
-	) : <ErrorPage statusCode={statusCode} />;
-};
+	);
+});
 
 export default Component;
 
-export const getServerSideProps: MyGetServerSideProps = async context => {
-	const props: ServerSideProps = {};
-
+export const getServerSideProps: MyGetServerSideProps<ServerSideProps> = async context => {
 	if (context.req.user) {
 		const userFromParams = await getUserByUnsafeID(context.params.userID);
 		if (userFromParams) {
@@ -189,16 +187,18 @@ export const getServerSideProps: MyGetServerSideProps = async context => {
 				userFromParams._id.equals(context.req.user._id)
 				|| context.req.user.perms.unrestrictedAccess
 			) {
-				props.user = getPrivateUser(userFromParams);
-			} else {
-				props.statusCode = 403;
+				return {
+					props: {
+						user: getPrivateUser(userFromParams)
+					}
+				};
 			}
-		} else {
-			props.statusCode = 404;
+
+			return { props: { statusCode: 403 } };
 		}
-	} else {
-		props.statusCode = 403;
+
+		return { props: { statusCode: 404 } };
 	}
 
-	return { props };
+	return { props: { statusCode: 403 } };
 };
