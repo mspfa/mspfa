@@ -12,7 +12,6 @@ import Setting from 'components/Setting';
 import NotificationSettingGroup from 'components/Setting/NotificationSettingGroup';
 import NotificationSetting from 'components/Setting/NotificationSetting';
 import ControlSetting from 'components/Setting/ControlSetting';
-import Theme from 'modules/client/themes';
 import GridFooter from 'components/Grid/GridFooter';
 import Button from 'components/Button';
 import api from 'modules/client/api';
@@ -76,11 +75,11 @@ const Component = withErrorPage<ServerSideProps>(({ user }) => {
 								name="theme"
 								label="Theme"
 							>
-								<option value={Theme.Standard}>Standard</option>
-								<option value={Theme.Dark}>Dark</option>
-								<option value={Theme.Felt}>Felt</option>
-								<option value={Theme.SBaHJ}>SBaHJ</option>
-								<option value={Theme.Trickster}>Trickster</option>
+								<option value="standard">Standard</option>
+								<option value="dark">Dark</option>
+								<option value="felt">Felt</option>
+								<option value="sbahj">SBaHJ</option>
+								<option value="trickster">Trickster</option>
 							</Setting>
 							<Setting
 								name="stickyNav"
