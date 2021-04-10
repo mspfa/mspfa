@@ -5,21 +5,23 @@ import type { RecursivePartial } from 'modules/types';
  *
  * Returns `undefined` if there are no changed values.
  */
-export const getChangedValues = <Values = any>(initialValues: Values, values: Values) => {
+export const getChangedValues = <
+	Values extends Record<string, unknown> = Record<string, unknown>
+>(initialValues: Values, values: Values) => {
 	let changed = false;
 	const changedValues: RecursivePartial<Values> = {};
 
 	for (const key in values) {
 		if (values[key] instanceof Object) {
-			const changedSubValues = getChangedValues(initialValues[key], values[key]);
+			const changedSubValues = getChangedValues(initialValues[key] as any, values[key]);
 
 			if (changedSubValues) {
-				(changedValues as Values)[key] = changedSubValues as Values[typeof key];
+				(changedValues as any)[key] = changedSubValues;
 
 				changed = true;
 			}
 		} else if (initialValues[key] !== values[key]) {
-			(changedValues as Values)[key] = values[key];
+			(changedValues as any)[key] = values[key];
 
 			changed = true;
 		}
