@@ -1,10 +1,8 @@
 import type { APIHandler } from 'modules/server/api';
-import users, { getPrivateUser } from 'modules/server/users';
-import type { UserDocument } from 'modules/server/users';
-import { checkExternalAuthMethod, createSession } from 'modules/server/auth';
-import argon2 from 'argon2';
 import type { PrivateUser } from 'modules/client/users';
 import type { RecursivePartial } from 'modules/types';
+import { Perm, permToGetUserInAPI } from 'modules/server/perms';
+import { getPrivateUser } from 'modules/server/users';
 import validate from './index.validate';
 
 /** The keys of all `PrivateUser` properties which the client should be able to `PUT` into their `UserDocument`. */
@@ -23,11 +21,9 @@ const Handler: APIHandler<(
 	await validate(req, res);
 
 	if (req.method === 'PUT') {
-		let user: UserDocument | undefined | null;
+		const user = await permToGetUserInAPI(req, res, req.query.userID as string, Perm.sudoWrite);
 
-
-
-		// res.status(200).send(getPrivateUser(user));
+		res.status(200).send(getPrivateUser(user));
 	}
 };
 

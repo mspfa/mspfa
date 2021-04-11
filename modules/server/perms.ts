@@ -1,7 +1,9 @@
 import { getUserByUnsafeID } from 'modules/server/users';
 import type { UserDocument } from 'modules/server/users';
 import type { UnsafeObjectID } from 'modules/server/db';
-import type { APIResponse } from 'modules/server/api';
+import type { APIRequest, APIResponse } from 'modules/server/api';
+import type { PageRequest } from 'modules/server/pages';
+import { authenticate } from './auth';
 
 export enum Perm {
 	/** Permission to grant or revoke perms for any user (including yourself). */
@@ -33,7 +35,7 @@ export enum Perm {
  * ```
  */
 export function userHasPerm(
-	/** This request's `APIResponse` object, or `false` if no response should be sent on error (e.g. if this is a page and not an API). */
+	/** This request's `APIResponse` object, or `false` if no response should be sent on error (i.e. if this is a page and not an API). */
 	res: APIResponse,
 	/** The user to check the perms of. */
 	user: UserDocument | undefined,
@@ -42,7 +44,7 @@ export function userHasPerm(
 ): Promise<void>;
 
 export function userHasPerm(
-	/** This request's `APIResponse` object, or `false` if no response should be sent on error (e.g. if this is a page and not an API). */
+	/** This request's `APIResponse` object, or `false` if no response should be sent on error (i.e. if this is a page and not an API). */
 	res: APIResponse | false,
 	/** The user to check the perms of. */
 	user: UserDocument | undefined,
@@ -53,7 +55,7 @@ export function userHasPerm(
 // This ESLint comment is necessary because the rule wants me to use an arrow function, which does not allow for the overloading used here.
 // eslint-disable-next-line func-style
 export function userHasPerm(
-	/** This request's `APIResponse` object, or `false` if no response should be sent on error (e.g. if this is a page and not an API). */
+	/** This request's `APIResponse` object, or `false` if no response should be sent on error (i.e. if this is a page and not an API). */
 	res: APIResponse | false,
 	/** The user to check the perms of. */
 	user: UserDocument | undefined,
@@ -89,7 +91,7 @@ export function userHasPerm(
 }
 
 /**
- * Requires a user to have permission to get another user by ID. Returns the other user if so.
+ * Requires a user to have permission to get another user by potentially unsafe ID.
  *
  * Returns a promise which either:
  * * Resolves with an object of the requested user if `user` is the requested user or `user` has at least one of the perms.
@@ -98,12 +100,12 @@ export function userHasPerm(
  *
  * Examples:
  * ```
- * const { user } = await permToGetUserByUnsafeID(res, authenticatedUser, req.query.userID as string, [Perm.sudoWrite, Perm.sudoDelete]);
- * const { user, statusCode } = await permToGetUserByUnsafeID(false, req.user, params.userID, Perm.sudoRead);
+ * const { user } = await permToGetUser(res, authenticatedUser, req.query.userID as string, Perm.sudoRead);
+ * const { user, statusCode } = await permToGetUser(false, req.user, params.userID, [Perm.sudoWrite, Perm.sudoDelete]);
  * ```
  */
-export function permToGetUserByUnsafeID(
-	/** This request's `APIResponse` object, or `false` if no response should be sent on error (e.g. if this is a page and not an API). */
+function permToGetUser(
+	/** This request's `APIResponse` object, or `false` if no response should be sent on error (i.e. if this is a page and not an API). */
 	res: APIResponse,
 	/** The user to check the perms of. */
 	user: UserDocument | undefined,
@@ -116,7 +118,7 @@ export function permToGetUserByUnsafeID(
 	statusCode?: undefined
 }>;
 
-export function permToGetUserByUnsafeID(
+function permToGetUser(
 	/** This request's `APIResponse` object, or `false` if no response should be sent on error (e.g. if this is a page and not an API). */
 	res: APIResponse | false,
 	/** The user to check the perms of. */
@@ -135,8 +137,8 @@ export function permToGetUserByUnsafeID(
 
 // This ESLint comment is necessary because the rule wants me to use an arrow function, which does not allow for the overloading used here.
 // eslint-disable-next-line func-style
-export function permToGetUserByUnsafeID(
-	/** This request's `APIResponse` object, or `false` if no response should be sent on error (e.g. if this is a page and not an API). */
+function permToGetUser(
+	/** This request's `APIResponse` object, or `false` if no response should be sent on error (i.e. if this is a page and not an API). */
 	res: APIResponse | false,
 	/** The user to check the perms of. */
 	user: UserDocument | undefined,
@@ -200,3 +202,49 @@ export function permToGetUserByUnsafeID(
 		}
 	});
 }
+
+/**
+ * Authenticates the request and requires the authenticated user to have permission to get another user by potentially unsafe ID.
+ *
+ * Returns the other user if successful.
+ *
+ * Example:
+ * ```
+ * const user = await permToGetUserInAPI(req, res, req.query.userID as string, Perm.sudoWrite);
+ * const user = await permToGetUserInAPI(req, res, req.query.userID as string, [Perm.sudoWrite, Perm.sudoDelete]);
+ * ```
+ */
+export const permToGetUserInAPI = async (
+	req: APIRequest,
+	res: APIResponse,
+	/** The potentially unsafe user ID of the user to get. */
+	id: UnsafeObjectID,
+	/** The perm or perms to require. If set to an empty array, the user will always have insufficient perms. */
+	perms: Perm | Perm[]
+) => (
+	await permToGetUser(
+		res,
+		(await authenticate(req, res)).user,
+		id,
+		perms
+	)
+).user;
+
+/**
+ * Requires a user to have permission to get another user by potentially unsafe ID.
+ *
+ * Returns an object of the other user if successful, or an object of the HTTP error status code if not.
+ *
+ * Example:
+ * ```
+ * const { user, statusCode } = await permToGetUserInPage(req, params.userID, Perm.sudoRead);
+ * const { user, statusCode } = await permToGetUserInPage(req, params.userID, [Perm.sudoWrite, Perm.sudoDelete]);
+ * ```
+ */
+export const permToGetUserInPage = async (
+	req: PageRequest,
+	/** The potentially unsafe user ID of the user to get. */
+	id: UnsafeObjectID,
+	/** The perm or perms to require. If set to an empty array, the user will always have insufficient perms. */
+	perms: Perm | Perm[]
+) => permToGetUser(false, req.user, id, perms);

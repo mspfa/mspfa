@@ -1,7 +1,7 @@
 import Page from 'components/Page';
 import type { MyGetServerSideProps } from 'modules/server/pages';
 import type { PrivateUser } from 'modules/client/users';
-import { Perm, permToGetUserByUnsafeID } from 'modules/server/perms';
+import { Perm, permToGetUserInPage } from 'modules/server/perms';
 import { getPrivateUser } from 'modules/server/users';
 import { withErrorPage } from 'pages/_error';
 import { Form, Formik, Field } from 'formik';
@@ -179,7 +179,7 @@ const Component = withErrorPage<ServerSideProps>(({ user }) => {
 export default Component;
 
 export const getServerSideProps: MyGetServerSideProps<ServerSideProps> = async ({ req, params }) => {
-	const { user, statusCode } = await permToGetUserByUnsafeID(false, req.user, params.userID, Perm.sudoRead);
+	const { user, statusCode } = await permToGetUserInPage(req, params.userID, Perm.sudoRead);
 
 	if (statusCode) {
 		return { props: { statusCode } };
