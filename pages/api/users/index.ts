@@ -96,7 +96,7 @@ const Handler: APIHandler<{
 
 	await createSession(req, res, user);
 
-	res.status(200).send(getPrivateUser(user));
+	res.status(201).send(getPrivateUser(user));
 };
 
 export default Handler;

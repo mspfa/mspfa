@@ -3,8 +3,10 @@ import type { PrivateUser } from 'modules/client/users';
 import type { RecursivePartial } from 'modules/types';
 import { Perm, permToGetUserInAPI } from 'modules/server/perms';
 import users, { getPrivateUser } from 'modules/server/users';
-import validate from './index.validate';
+import type { UserDocument } from 'modules/server/users';
 import { flatten } from 'modules/server/db';
+import _ from 'lodash';
+import validate from './index.validate';
 
 /** The keys of all `PrivateUser` properties which the client should be able to `PUT` into their `UserDocument`. */
 type PuttableUserKeys = 'birthdate' | 'name' | 'email' | 'description' | 'icon' | 'site' | 'profileStyle' | 'settings' | 'nameColor';
@@ -25,18 +27,22 @@ const Handler: APIHandler<(
 		const user = await permToGetUserInAPI(req, res, req.query.userID as string, Perm.sudoWrite);
 
 		if (Object.keys(req.body).length) {
-			users.updateOne({
+			const userChanges: RecursivePartial<UserDocument> = {
+				...req.body as Omit<typeof req.body, 'birthdate'>,
+				...(
+					req.body.birthdate ? {
+						birthdate: new Date(req.body.birthdate)
+					} : {}
+				)
+			};
+
+			await users.updateOne({
 				_id: user._id
 			}, {
-				$set: flatten({
-					...req.body as Omit<typeof req.body, 'birthdate'>,
-					...(
-						req.body.birthdate ? {
-							birthdate: new Date(req.body.birthdate)
-						} : {}
-					)
-				})
+				$set: flatten(userChanges)
 			});
+
+			_.merge(user, userChanges);
 		}
 
 		res.status(200).send(getPrivateUser(user));

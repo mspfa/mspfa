@@ -2,8 +2,7 @@
 
 export type RecursivePartial<Type> = Partial<{
 	[Key in keyof Type]?: (
-		// I would use `extends Record<string, any>` and invert the condition, except for some reason the JSON schema generator thinks primitive types extend objects.
-		Type[Key] extends string | number | boolean | undefined | null
+		Type[Key] extends string | number | boolean | undefined | null | Date
 			? Type[Key]
 			: RecursivePartial<Type[Key]>
 	)
