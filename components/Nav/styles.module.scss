@@ -13,6 +13,11 @@ nav {
 	text-transform: uppercase;
 	background-color: #000000;
 
+	&.sticky {
+		position: sticky;
+		top: 0;
+	}
+
 	.stick {
 		color: #bbbbbb;
 	}

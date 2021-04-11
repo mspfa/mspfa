@@ -20,7 +20,9 @@ const Nav = () => {
 	const messagesBubble = 0;
 
 	return (
-		<nav>
+		<nav
+			className={user?.settings.stickyNav ? 'sticky' : undefined}
+		>
 			<NavGroup id="primary">
 				<NavItem id="home" label="Home" href="/" />
 				{(user
