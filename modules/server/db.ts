@@ -77,3 +77,55 @@ export const safeObjectID = (id: UnsafeObjectID) => {
 		return undefined;
 	}
 };
+
+/**
+ * Flattens an object so it can be used in `$set` operations with deep merging instead of the default shallow merging.
+ *
+ * Ingores `undefined`.
+ *
+ * Example:
+ * ```
+ * flatten({
+ * 	a: {
+ * 		b: 1,
+ * 		c: [2, 3],
+ * 		d: undefined
+ * 	},
+ * 	e: 4
+ * }) === {
+ * 	'a.b': 1,
+ * 	'a.c.0': 2,
+ * 	'a.c.1': 3,
+ * 	'e': 4
+ * }
+ * ```
+ */
+export const flatten = (
+	object: Record<any, unknown> | unknown[],
+	prefix = '',
+	flatObject: Record<string, any> = {}
+) => {
+	if (Array.isArray(object)) {
+		for (let i = 0; i < object.length; i++) {
+			const item = object[i];
+
+			if (item instanceof Object) {
+				flatten(item as any, `${prefix + i}.`, flatObject);
+			} else if (item !== undefined) {
+				flatObject[prefix + i] = item;
+			}
+		}
+	} else {
+		for (const key in object) {
+			const value = object[key];
+
+			if (value instanceof Object) {
+				flatten(value as any, `${prefix + key}.`, flatObject);
+			} else if (value !== undefined) {
+				flatObject[prefix + key] = value;
+			}
+		}
+	}
+
+	return flatObject;
+};
