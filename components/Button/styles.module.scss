@@ -12,13 +12,17 @@
 	margin-bottom: 4px;
 	@include colored-button($front, false, true);
 
+	& + & {
+		margin-left: 0.75rem;
+	}
+
 	&:active {
 		left: 2px;
 		top: 2px;
 	}
 
-	& + & {
-		margin-left: 0.75rem;
+	&:disabled {
+		opacity: 0.5;
 	}
 
 	&.alt {

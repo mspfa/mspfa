@@ -7,7 +7,7 @@ import { getPrivateUser } from 'modules/server/users';
 import { withErrorPage } from 'pages/_error';
 import { Form, Formik, Field } from 'formik';
 import { useCallback, useState } from 'react';
-import { getChangedValues } from 'modules/client/forms';
+import { getChangedValues, useLeaveConfirmation } from 'modules/client/forms';
 import Grid from 'components/Grid';
 import SettingGroup from 'components/Setting/SettingGroup';
 import Setting from 'components/Setting';
@@ -57,17 +57,15 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser }) => {
 	const onSubmit = useCallback((values: Values) => {
 		const changedValues = getChangedValues(initialValues, values);
 
-		if (changedValues) {
-			(api as UserAPI).put(`users/${requestedUser.id}`, {
-				settings: changedValues
-			}).then(({ data }) => {
-				setRequestedUser(data);
+		(api as UserAPI).put(`users/${requestedUser.id}`, {
+			settings: changedValues
+		}).then(({ data }) => {
+			setRequestedUser(data);
 
-				if (user.id === data.id) {
-					setUser(data);
-				}
-			});
-		}
+			if (user.id === data.id) {
+				setUser(data);
+			}
+		});
 
 		// This ESLint comment is necessary because the rule incorrectly thinks `initialValues` should be a dependency here, despite that `initialValues` depends on `requestedUser` which is already a dependency.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -78,118 +76,123 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser }) => {
 			<Formik
 				initialValues={initialValues}
 				onSubmit={onSubmit}
+				enableReinitialize
 			>
-				{({ handleChange }) => (
-					<Form>
-						<Grid>
-							<SettingGroup heading="Display">
-								<Setting
-									as="select"
-									name="theme"
-									label="Theme"
-									onChange={useCallback(evt => {
-										handleChange(evt);
+				{({ handleChange, dirty }) => {
+					useLeaveConfirmation(dirty);
 
-										// Preview the changed theme.
-										setTheme(evt.target.value);
-									}, [handleChange])}
+					return (
+						<Form>
+							<Grid>
+								<SettingGroup heading="Display">
+									<Setting
+										as="select"
+										name="theme"
+										label="Theme"
+										onChange={useCallback(evt => {
+											handleChange(evt);
+
+											// Preview the changed theme.
+											setTheme(evt.target.value);
+										}, [handleChange])}
+									>
+										<option value="standard">Standard</option>
+										<option value="dark">Dark</option>
+										<option value="felt">Felt</option>
+										<option value="sbahj">SBaHJ</option>
+										<option value="trickster">Trickster</option>
+									</Setting>
+									<Setting
+										name="stickyNav"
+										label="Sticky nav bar"
+									/>
+									<Setting
+										name="imageSharpening"
+										label="Image sharpening"
+									/>
+									<Setting
+										name="ads.side"
+										label="Side ad"
+									/>
+									<Setting
+										name="ads.matchedContent"
+										label="Matched content ad"
+									/>
+								</SettingGroup>
+								<SettingGroup heading="Utility">
+									<Setting
+										name="autoOpenSpoilers"
+										label="Auto-open spoilers"
+									/>
+									<Setting
+										name="preloadImages"
+										label="Preload images"
+									/>
+								</SettingGroup>
+								<Grid id="notification-settings">
+									<NotificationSettingGroup heading="General Notifications">
+										<NotificationSetting
+											name="notifications.messages"
+											label="Messages"
+										/>
+										<NotificationSetting
+											name="notifications.userTags"
+											label="User tags"
+										/>
+										<NotificationSetting
+											name="notifications.commentReplies"
+											label="Replies to comments"
+										/>
+									</NotificationSettingGroup>
+									<NotificationSettingGroup heading="Default Adventure Notifications">
+										<NotificationSetting
+											name="notifications.comicDefaults.updates"
+											label="Updates"
+										/>
+										<NotificationSetting
+											name="notifications.comicDefaults.news"
+											label="News"
+										/>
+										<NotificationSetting
+											name="notifications.comicDefaults.comments"
+											label="Comments"
+										/>
+									</NotificationSettingGroup>
+								</Grid>
+								<SettingGroup
+									heading="Controls"
+									tip="Select a box and press a key. Press escape to remove a control."
 								>
-									<option value="standard">Standard</option>
-									<option value="dark">Dark</option>
-									<option value="felt">Felt</option>
-									<option value="sbahj">SBaHJ</option>
-									<option value="trickster">Trickster</option>
-								</Setting>
-								<Setting
-									name="stickyNav"
-									label="Sticky nav bar"
-								/>
-								<Setting
-									name="imageSharpening"
-									label="Image sharpening"
-								/>
-								<Setting
-									name="ads.side"
-									label="Side ad"
-								/>
-								<Setting
-									name="ads.matchedContent"
-									label="Matched content ad"
-								/>
-							</SettingGroup>
-							<SettingGroup heading="Utility">
-								<Setting
-									name="autoOpenSpoilers"
-									label="Auto-open spoilers"
-								/>
-								<Setting
-									name="preloadImages"
-									label="Preload images"
-								/>
-							</SettingGroup>
-							<Grid id="notification-settings">
-								<NotificationSettingGroup heading="General Notifications">
-									<NotificationSetting
-										name="notifications.messages"
-										label="Messages"
+									<ControlSetting
+										name="controls.back"
+										label="Back"
 									/>
-									<NotificationSetting
-										name="notifications.userTags"
-										label="User tags"
+									<ControlSetting
+										name="controls.forward"
+										label="Forward"
 									/>
-									<NotificationSetting
-										name="notifications.commentReplies"
-										label="Replies to comments"
+									<ControlSetting
+										name="controls.toggleSpoilers"
+										label="Toggle Spoilers"
 									/>
-								</NotificationSettingGroup>
-								<NotificationSettingGroup heading="Default Adventure Notifications">
-									<NotificationSetting
-										name="notifications.comicDefaults.updates"
-										label="Updates"
+								</SettingGroup>
+								<SettingGroup heading="Advanced" special>
+									<label className="setting-label" htmlFor="setting-style">Custom Site Style</label><br />
+									<Field
+										as="textarea"
+										id="setting-style"
+										name="style"
+										rows={5}
+										placeholder={"Paste SCSS here.\nIf you don't know what this is, don't worry about it."}
 									/>
-									<NotificationSetting
-										name="notifications.comicDefaults.news"
-										label="News"
-									/>
-									<NotificationSetting
-										name="notifications.comicDefaults.comments"
-										label="Comments"
-									/>
-								</NotificationSettingGroup>
+								</SettingGroup>
+								<GridFooter>
+									<Button className="alt" type="submit" disabled={!dirty}>Save</Button>
+								</GridFooter>
 							</Grid>
-							<SettingGroup
-								heading="Controls"
-								tip="Select a box and press a key. Press escape to remove a control."
-							>
-								<ControlSetting
-									name="controls.back"
-									label="Back"
-								/>
-								<ControlSetting
-									name="controls.forward"
-									label="Forward"
-								/>
-								<ControlSetting
-									name="controls.toggleSpoilers"
-									label="Toggle Spoilers"
-								/>
-							</SettingGroup>
-							<SettingGroup heading="Advanced" special>
-								<label className="setting-label" htmlFor="setting-style">Custom Site Style</label><br />
-								<Field
-									as="textarea"
-									id="setting-style"
-									name="style"
-									rows={5}
-									placeholder={"Paste SCSS here.\nIf you don't know what this is, don't worry about it."}
-								/>
-							</SettingGroup>
-							<GridFooter>
-								<Button className="alt" type="submit">Save</Button>
-							</GridFooter>
-						</Grid>
-					</Form>
-				)}
+						</Form>
+					);
+				}}
 			</Formik>
 		</Page>
 	);
