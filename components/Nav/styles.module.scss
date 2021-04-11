@@ -71,14 +71,15 @@ $nav-group-colors: (
 
 		display: none;
 		position: absolute;
+		z-index: 10;
 		margin-left: -5px;
 		background-color: inherit;
 		flex-direction: column;
 		padding-bottom: 1px;
 
 		&-container:hover & {
-			z-index: 1;
 			display: flex;
+			z-index: 11;
 		}
 
 		&-container.force-open & {
