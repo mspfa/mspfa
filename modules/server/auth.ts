@@ -191,7 +191,3 @@ export const authenticate = async (
 		token: undefined
 	};
 };
-
-export const permission = () => {};
-
-export const permissionToAccessUser = () => {};

@@ -1,7 +1,8 @@
 import Page from 'components/Page';
 import type { MyGetServerSideProps } from 'modules/server/pages';
 import type { PrivateUser } from 'modules/client/users';
-import { getUserByUnsafeID, getPrivateUser } from 'modules/server/users';
+import { Perm, permToGetUserByUnsafeID } from 'modules/server/perms';
+import { getPrivateUser } from 'modules/server/users';
 import { withErrorPage } from 'pages/_error';
 import { Form, Formik, Field } from 'formik';
 import { useCallback } from 'react';
@@ -140,7 +141,7 @@ const Component = withErrorPage<ServerSideProps>(({ user }) => {
 						</Grid>
 						<SettingGroup
 							heading="Controls"
-							tip="Select a box and press a key. Press escape to remove a shortcut."
+							tip="Select a box and press a key. Press escape to remove a control."
 						>
 							<ControlSetting
 								name="controls.back"
@@ -178,26 +179,15 @@ const Component = withErrorPage<ServerSideProps>(({ user }) => {
 export default Component;
 
 export const getServerSideProps: MyGetServerSideProps<ServerSideProps> = async ({ req, params }) => {
-	if (req.user) {
-		const userFromParams = await getUserByUnsafeID(params.userID);
-		if (userFromParams) {
-			// Check if `req.user` has permission to access `userFromParams`.
-			if (
-				userFromParams._id.equals(req.user._id)
-				|| req.user.perms.sudoRead
-			) {
-				return {
-					props: {
-						user: getPrivateUser(userFromParams)
-					}
-				};
-			}
+	const { user, statusCode } = await permToGetUserByUnsafeID(false, req.user, params.userID, Perm.sudoRead);
 
-			return { props: { statusCode: 403 } };
-		}
-
-		return { props: { statusCode: 404 } };
+	if (statusCode) {
+		return { props: { statusCode } };
 	}
 
-	return { props: { statusCode: 403 } };
+	return {
+		props: {
+			user: getPrivateUser(user!)
+		}
+	};
 };

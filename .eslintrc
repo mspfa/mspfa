@@ -66,7 +66,7 @@
 		"no-unused-labels": "warn",
 		"no-useless-call": "error",
 		"no-useless-concat": "error",
-		"no-useless-return": "error",
+		"no-useless-return": "warn",
 		"no-void": "error",
 		"prefer-regex-literals": "error",
 		"no-unused-vars": [

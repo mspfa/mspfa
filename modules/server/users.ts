@@ -4,6 +4,7 @@ import type { achievements } from 'modules/server/achievements';
 import type { URLString, EmailString } from 'modules/types';
 import type { PrivateUser, PublicUser } from 'modules/client/users';
 import type { UnsafeObjectID } from 'modules/server/db';
+import type { Perm } from 'modules/server/perms';
 
 export type ExternalAuthMethod = {
 	type: 'google' | 'discord',
@@ -107,20 +108,7 @@ export type UserDocument = {
 			comics: Record<number, ComicNotificationSettings>
 		}
 	},
-	perms: Partial<{
-		/** Permission to grant or revoke perms for any user (including yourself). */
-		writePerms: true,
-		/** Permission to access (but not edit or delete) anything which at least one normal client can access. */
-		sudoRead: true,
-		/** Permission to edit (but not delete) anything which at least one normal client can edit. */
-		sudoWrite: true,
-		/** Permission to delete anything (except other users with this perm) which at least one normal client can delete, and permission to ban any user without this perm. */
-		sudoDelete: true,
-		/** Permission to verify the security of potentially insecure scripts written by users. */
-		verifyScripts: true,
-		/** Permission to edit the achievements of any user. */
-		writeAchievements: true
-	}>,
+	perms: Partial<Record<Perm, true>>,
 	dev?: true,
 	mod?: true,
 	patron?: true,
