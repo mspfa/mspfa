@@ -18,6 +18,7 @@ import GridFooter from 'components/Grid/GridFooter';
 import Button from 'components/Button';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
+import { setTheme } from 'modules/client/themes';
 import './styles.module.scss';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
@@ -90,13 +91,7 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser }) => {
 										handleChange(evt);
 
 										// Preview the changed theme.
-										setUser({
-											...user,
-											settings: {
-												...user.settings,
-												theme: evt.target.value
-											}
-										});
+										setTheme(evt.target.value);
 									}, [handleChange])}
 								>
 									<option value="standard">Standard</option>

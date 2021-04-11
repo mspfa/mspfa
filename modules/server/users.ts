@@ -4,6 +4,7 @@ import type { achievements } from 'modules/server/achievements';
 import type { URLString, EmailString } from 'modules/types';
 import type { PrivateUser, PublicUser } from 'modules/client/users';
 import type { UnsafeObjectID } from 'modules/server/db';
+import type { Theme } from 'modules/client/themes';
 import type { Perm } from 'modules/server/perms';
 
 export type ExternalAuthMethod = {
@@ -27,8 +28,6 @@ export type UserSession = {
 	lastUsed: Date,
 	ip?: string
 };
-
-export type Theme = 'standard' | 'dark' | 'felt' | 'sbahj' | 'trickster';
 
 export type NotificationSetting = {
 	email: boolean,
