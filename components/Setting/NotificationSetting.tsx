@@ -11,21 +11,21 @@ export type NotificationSettingProps = ExclusiveSettingProps & {
 const NotificationSetting = ({
 	label,
 	name,
-	info,
+	help,
 	emailFieldProps,
 	siteFieldProps
 }: NotificationSettingProps) => (
 	<>
-		<label className="setting-label">
+		<span className="setting-label">
 			{label}
-			{info && (
+			{help && (
 				<HelpButton className="spaced">
 					{label}:<br />
 					<br />
-					{info}
+					{help}
 				</HelpButton>
 			)}
-		</label>
+		</span>
 		<div className="setting-input">
 			<Field
 				name={`${name}.email`}

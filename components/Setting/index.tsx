@@ -9,7 +9,7 @@ export type ExclusiveSettingProps = {
 	/** The form `Field`'s `name` prop of this setting. */
 	name: string,
 	/** Adds a help button next to the setting's label which can be clicked to open a dialog with this value as its content. */
-	info?: ReactNode
+	help?: ReactNode
 };
 
 export type SettingProps = Omit<FieldAttributes<unknown>, 'id'> & ExclusiveSettingProps;
@@ -18,7 +18,7 @@ const Setting = ({
 	label,
 	name,
 	type = 'checkbox',
-	info,
+	help,
 	...props
 }: SettingProps) => {
 	// Determine the form `Field`'s `id` based on its `name`, converting from camelCase to kebab-case.
@@ -28,11 +28,11 @@ const Setting = ({
 		<>
 			<label className="setting-label" htmlFor={id}>
 				{label}
-				{info && (
+				{help && (
 					<HelpButton className="spaced">
 						{label}:<br />
 						<br />
-						{info}
+						{help}
 					</HelpButton>
 				)}
 			</label>
