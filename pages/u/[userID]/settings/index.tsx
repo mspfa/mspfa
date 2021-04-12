@@ -110,7 +110,7 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser }) => {
 									<Setting
 										name="imageSharpening"
 										label="Image sharpening"
-										info="Sharpens images in adventure pages which are scaled a different size from their original (using nearest-neighbor scaling instead of antialiasing)."
+										info="Sharpens images in adventure pages which are scaled to a different size from their original (using nearest-neighbor scaling instead of antialiasing)."
 									/>
 									<Setting
 										name="ads.side"
