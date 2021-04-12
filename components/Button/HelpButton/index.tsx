@@ -5,13 +5,14 @@ import { useCallback } from 'react';
 import { Dialog } from 'modules/client/dialogs';
 import './styles.module.scss';
 
-export type HelpButtonProps = Omit<ButtonProps, 'onClick' | 'children'> & {
+export type HelpButtonProps = Omit<ButtonProps, 'children' | 'onClick' | 'title'> & {
 	children: ReactNode
 };
 
 const HelpButton = ({ className, children, ...props }: HelpButtonProps) => (
 	<Button
 		className={`icon help${className ? ` ${className}` : ''}`}
+		title="Help"
 		onClick={
 			useCallback(() => {
 				new Dialog({

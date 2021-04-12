@@ -110,7 +110,7 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser }) => {
 									<Setting
 										name="imageSharpening"
 										label="Image sharpening"
-										help="Disables anti-aliasing for images in adventure pages which are scaled to a different size from their original (using nearest-neighbor scaling)."
+										help={'Disables anti-aliasing in images from adventure pages (using nearest-neighbor scaling).\n\nWhat this means is images, when scaled, will tend to have more crisp edges rather than becoming blurry.'}
 									/>
 									<Setting
 										name="ads.side"
