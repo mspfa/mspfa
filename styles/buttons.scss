@@ -45,6 +45,11 @@
 		top: #{$offset}px;
 		@include theme(box-shadow, $colors, meta.get-function('depth-shadow'), $scale, $depth-active);
 	}
+
+	&::after {
+		padding-right: #{$margin}px;
+		padding-bottom: #{$margin}px;
+	}
 }
 
 // Applies styles to color and add depth to a `button` element.

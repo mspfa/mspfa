@@ -20,6 +20,15 @@
 		opacity: 0.5;
 	}
 
+	&::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+	}
+
 	&.alt {
 		@include styled-button($front-alt, $text-color-alt);
 	}
