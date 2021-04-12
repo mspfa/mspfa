@@ -20,6 +20,23 @@ input, textarea {
 	padding: 2px;
 }
 
+input[type=checkbox] {
+	appearance: none;
+	width: 16px;
+	height: 16px;
+	overflow: hidden;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 13px;
+
+	&:checked::before {
+		content: '✔';
+		pointer-events: none;
+	}
+}
+
 textarea {
 	resize: vertical;
 }
@@ -27,6 +44,7 @@ textarea {
 select {
 	// For some reason `select` elements are larger than `input` elements by default. This fixes it. Not sure if this is the best way to do it though.
 	padding: 1px;
+	cursor: pointer;
 
 	&:invalid {
 		// `select` elements are generally only `:invalid` if a disabled option is selected, so this is effectively the `placeholder` attribute color, except `select`s don't have `placeholder`s.

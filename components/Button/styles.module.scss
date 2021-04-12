@@ -16,6 +16,10 @@
 		margin-left: 1ch;
 	}
 
+	&:enabled {
+		cursor: pointer;
+	}
+
 	&:disabled {
 		opacity: 0.5;
 	}
