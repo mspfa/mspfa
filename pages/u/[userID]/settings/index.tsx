@@ -155,7 +155,7 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser }) => {
 										<NotificationSetting
 											name="notifications.comicDefaults.updates"
 											label="Updates"
-											info="Get notified when an adventure updates."
+											info="Get notified when an adventure publishes new pages."
 										/>
 										<NotificationSetting
 											name="notifications.comicDefaults.news"
@@ -165,7 +165,7 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser }) => {
 										<NotificationSetting
 											name="notifications.comicDefaults.comments"
 											label="Comments"
-											info="Get notified when an adventure which you edit receives a new comment."
+											info="Get notified when an adventure you edit receives a new comment."
 										/>
 									</NotificationSettingGroup>
 								</Grid>
