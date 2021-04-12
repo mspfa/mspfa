@@ -47,7 +47,7 @@ select {
 	cursor: pointer;
 
 	&:invalid {
-		// `select` elements are generally only `:invalid` if a disabled option is selected, so this is effectively the `placeholder` attribute color, except `select`s don't have `placeholder`s.
+		// `select` elements are generally only `:invalid` if a disabled option is selected, so this is effectively the `placeholder` attribute color, because `select`s don't have `placeholder`s.
 		// This color code matches Chrome's default.
 		color: #757575;
 	}
