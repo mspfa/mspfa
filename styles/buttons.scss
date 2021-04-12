@@ -13,7 +13,7 @@
 	);
 }
 
-@function depth-shadow($color, $depth: 2, $lightness: -33%, $scale: 2) {
+@function depth-shadow($color, $scale: 2, $depth: 2, $lightness: -33%) {
 	$box-shadow: ();
 	@for $offset from 1 through $depth {
 		$box-shadow: list.append(
@@ -26,22 +26,38 @@
 }
 
 // Applies a pixelated shadow which gives the element 3D depth. Lowers the depth on `:active`.
-@mixin depth-shadow($colors) {
-	@include theme(box-shadow, $colors, meta.get-function('depth-shadow'));
+@mixin depth-shadow(
+	$colors,
+	$scale: 2,
+	$depth: 2,
+	$depth-active: $depth / 2
+) {
+	$margin: $scale * $depth;
+
+	margin-right: #{$margin}px;
+	margin-bottom: #{$margin}px;
+	@include theme(box-shadow, $colors, meta.get-function('depth-shadow'), $scale, $depth);
 
 	&:active {
-		@include theme(box-shadow, $colors, meta.get-function('depth-shadow'), 1);
+		$offset: $scale * ($depth - $depth-active);
+
+		left: #{$offset}px;
+		top: #{$offset}px;
+		@include theme(box-shadow, $colors, meta.get-function('depth-shadow'), $scale, $depth-active);
 	}
 }
 
-// Applies styles to color a `button` element.
-@mixin colored-button(
+// Applies styles to color and add depth to a `button` element.
+@mixin styled-button(
 	// A color value or a map of themes to color values for the color of the button.
 	$colors,
 	// Optional override for the default button text color.
 	$button-text-color: false,
 	// Whether `$colors` represents the color behind the button and not the color of the button.
-	$color-is-behind-button: false
+	$color-is-behind-button: false,
+	$scale: 2,
+	$depth: 2,
+	$depth-active: $depth / 2
 ) {
 	@if type-of($colors) != 'map' {
 		$colors: (standard: $colors);
@@ -61,7 +77,7 @@
 		}
 	}
 
-	@include depth-shadow($colors);
+	@include depth-shadow($colors, $scale, $depth, $depth-active);
 	@include theme(background-color, $colors);
 	@include theme(color, $button-text-color);
 

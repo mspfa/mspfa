@@ -9,14 +9,14 @@ export type SettingGroupProps = GridContentProps & {
 	/** `true` if this setting group is not a two-column settings group of labels on the left and inputs on the right, and it should not have `className="setting-group"`. */
 	special?: boolean,
 	/** Something displayed translucently at the top of the setting group's content. */
-	tip?: ReactNode
+	info?: ReactNode
 };
 
 const SettingGroup = ({
 	heading,
 	special,
 	className,
-	tip,
+	info,
 	children,
 	...props
 }: SettingGroupProps) => (
@@ -27,13 +27,20 @@ const SettingGroup = ({
 		<GridContent
 			className={
 				(special ? '' : 'setting-group')
-				+ (className ? ` ${className}` : '')
+				+ (
+					className
+						? (
+							(special ? '' : ' ')
+							+ className
+						)
+						: ''
+				)
 			}
 			{...props}
 		>
-			{tip && (
-				<div className="tip translucent-text">
-					{tip}
+			{info && (
+				<div className="info translucent-text">
+					{info}
 				</div>
 			)}
 			{children}

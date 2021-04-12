@@ -105,10 +105,12 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser }) => {
 									<Setting
 										name="stickyNav"
 										label="Sticky nav bar"
+										info="Makes the nav bar stick to the top of your screen when you scroll down instead of scrolling out of the page."
 									/>
 									<Setting
 										name="imageSharpening"
 										label="Image sharpening"
+										info="Sharpens images in adventure pages which are scaled a different size from their original (using nearest-neighbor scaling instead of antialiasing)."
 									/>
 									<Setting
 										name="ads.side"
@@ -123,10 +125,12 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser }) => {
 									<Setting
 										name="autoOpenSpoilers"
 										label="Auto-open spoilers"
+										info="Makes spoilers open by default instead of closed."
 									/>
 									<Setting
 										name="preloadImages"
 										label="Preload images"
+										info="Loads images on adjacent adventure pages so they may already be loaded when an adjacent page is opened."
 									/>
 								</SettingGroup>
 								<Grid id="notification-settings">
@@ -134,34 +138,40 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser }) => {
 										<NotificationSetting
 											name="notifications.messages"
 											label="Messages"
+											info="Get notified when a user sends you a new private message."
 										/>
 										<NotificationSetting
 											name="notifications.userTags"
 											label="User tags"
+											info="Get notified when you are tagged in a comment."
 										/>
 										<NotificationSetting
 											name="notifications.commentReplies"
 											label="Replies to comments"
+											info="Get notified when one of your comments receives a reply."
 										/>
 									</NotificationSettingGroup>
 									<NotificationSettingGroup heading="Default Adventure Notifications">
 										<NotificationSetting
 											name="notifications.comicDefaults.updates"
 											label="Updates"
+											info="Get notified when an adventure updates."
 										/>
 										<NotificationSetting
 											name="notifications.comicDefaults.news"
 											label="News"
+											info="Get notified when an adventure publishes a new news post."
 										/>
 										<NotificationSetting
 											name="notifications.comicDefaults.comments"
 											label="Comments"
+											info="Get notified when an adventure which you edit receives a new comment."
 										/>
 									</NotificationSettingGroup>
 								</Grid>
 								<SettingGroup
 									heading="Controls"
-									tip="Select a box and press a key. Press escape to remove a control."
+									info="Select a box and press a key. Press escape to remove a control."
 								>
 									<ControlSetting
 										name="controls.back"

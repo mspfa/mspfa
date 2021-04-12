@@ -1,6 +1,7 @@
 import { Field } from 'formik';
 import type { ExclusiveSettingProps } from 'components/Setting';
 import type { FieldAttributes } from 'formik';
+import HelpButton from 'components/Button/HelpButton';
 
 export type NotificationSettingProps = ExclusiveSettingProps & {
 	emailFieldProps?: Partial<FieldAttributes<unknown>>,
@@ -10,12 +11,20 @@ export type NotificationSettingProps = ExclusiveSettingProps & {
 const NotificationSetting = ({
 	label,
 	name,
+	info,
 	emailFieldProps,
 	siteFieldProps
 }: NotificationSettingProps) => (
 	<>
 		<label className="setting-label">
 			{label}
+			{info && (
+				<HelpButton className="spaced">
+					{label}:<br />
+					<br />
+					{info}
+				</HelpButton>
+			)}
 		</label>
 		<div className="setting-input">
 			<Field

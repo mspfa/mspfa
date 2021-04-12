@@ -12,6 +12,7 @@ nav {
 	line-height: $nav-height;
 	text-transform: uppercase;
 	background-color: #000000;
+	z-index: 1;
 
 	&.sticky {
 		position: sticky;

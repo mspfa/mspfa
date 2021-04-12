@@ -8,17 +8,12 @@
 	font-weight: normal;
 	border: none;
 	position: relative;
-	margin-right: 4px;
-	margin-bottom: 4px;
-	@include colored-button($front, false, true);
+	padding: 1px 8px;
+	vertical-align: middle;
+	@include styled-button($front, false, true);
 
-	& + & {
-		margin-left: 0.75rem;
-	}
-
-	&:active {
-		left: 2px;
-		top: 2px;
+	&.spaced, & + & {
+		margin-left: 1ch;
 	}
 
 	&:disabled {
@@ -26,6 +21,15 @@
 	}
 
 	&.alt {
-		@include colored-button($front-alt, $text-color-alt);
+		@include styled-button($front-alt, $text-color-alt);
+	}
+
+	&.icon {
+		width: 18px;
+		height: 18px;
+		font-size: 1em;
+		background-repeat: no-repeat;
+		background-position: center;
+		@include styled-button($front, false, true, 1);
 	}
 }
