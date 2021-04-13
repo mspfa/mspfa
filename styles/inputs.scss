@@ -25,20 +25,27 @@ input[type=checkbox] {
 	width: 16px;
 	height: 16px;
 	cursor: pointer;
+	margin: 3px;
 	padding: 0;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+	overflow: hidden;
+	font-size: 13px;
 
 	&:checked::before {
-		content: '';
-		width: 100%;
-		height: 100%;
-		background-color: currentColor;
-		mask: url(/images/checkmark.svg);
-		mask-repeat: no-repeat;
-		mask-position: center;
+		content: '✔';
 		pointer-events: none;
+
+		@supports (mask: url(/images/checkmark.svg)) {
+			width: 100%;
+			height: 100%;
+			background-color: currentColor;
+			mask: url(/images/checkmark.svg);
+			mask-repeat: no-repeat;
+			mask-position: center;
+			pointer-events: none;
+		}
 	}
 }
 
