@@ -17,7 +17,7 @@ const HelpButton = ({ className, children, ...props }: HelpButtonProps) => (
 			useCallback(() => {
 				new Dialog({
 					id: 'help',
-					title: 'Info',
+					title: 'Help',
 					content: children
 				});
 			}, [children])
