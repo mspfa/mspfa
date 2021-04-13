@@ -2,6 +2,7 @@ import { Field } from 'formik';
 import type { FieldAttributes } from 'formik';
 import type { ReactNode } from 'react';
 import HelpButton from 'components/Button/HelpButton';
+import { toClassName } from 'modules/client/forms';
 import './styles.module.scss';
 
 export type ExclusiveSettingProps = {
@@ -22,12 +23,14 @@ const Setting = ({
 	...props
 }: SettingProps) => {
 	// Determine the form `Field`'s `id` based on its `name`, converting from camelCase to kebab-case.
-	const id = `setting-${name.replace(/([A-Z])/g, '-$1').replace(/\W/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').toLowerCase()}`;
+	const id = `setting-${toClassName(name)}`;
 
 	return (
 		<>
-			<label className="setting-label" htmlFor={id}>
-				{label}
+			<div className="setting-label">
+				<label htmlFor={id}>
+					{label}
+				</label>
 				{help && (
 					<HelpButton className="spaced">
 						{label}:<br />
@@ -35,7 +38,7 @@ const Setting = ({
 						{help}
 					</HelpButton>
 				)}
-			</label>
+			</div>
 			<div className="setting-input">
 				<Field
 					id={id}

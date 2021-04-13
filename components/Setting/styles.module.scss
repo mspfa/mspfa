@@ -8,9 +8,11 @@
 	}
 
 	&-label {
-		grid-column: 1;
-		align-self: center;
-		text-align: right;
+		.setting-group.normal & {
+			grid-column: 1;
+			align-self: center;
+			text-align: right;
+		}
 
 		&::after {
 			content: ':';

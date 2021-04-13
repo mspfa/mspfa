@@ -3,6 +3,24 @@ import { useEffect } from 'react';
 import Router from 'next/router';
 
 /**
+ * Converts any string to a `className`-friendly format.
+ *
+ * Example:
+ * ```
+ * toClassName('THEQuick... brown.foxJumps!') === 't-h-e-quick-brown-fox-jumps'
+ * ```
+ */
+export const toClassName = (string: string) => (
+	string
+		.replace(/([A-Z])/g, '-$1')
+		.replace(/\W/g, '-')
+		.replace(/-+/g, '-')
+		.replace(/^-|-$/g, '')
+		.toLowerCase()
+);
+console.log(toClassName('THEQuick... brown.foxJumps!'));
+
+/**
  * Returns an object with only the properties in `values` which are not equal in `initialValues` (recursively).
  *
  * Returns `undefined` if there are no changed values.

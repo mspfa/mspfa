@@ -16,8 +16,8 @@ const NotificationSetting = ({
 	siteFieldProps
 }: NotificationSettingProps) => (
 	<>
-		<span className="setting-label">
-			{label}
+		<div className="setting-label">
+			<span>{label}</span>
 			{help && (
 				<HelpButton className="spaced">
 					{label}:<br />
@@ -25,7 +25,7 @@ const NotificationSetting = ({
 					{help}
 				</HelpButton>
 			)}
-		</span>
+		</div>
 		<div className="setting-input">
 			<Field
 				name={`${name}.email`}

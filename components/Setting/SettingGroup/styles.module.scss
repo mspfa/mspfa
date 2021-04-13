@@ -1,11 +1,10 @@
 .setting-group {
-	display: grid;
-	grid-template-columns: auto auto;
-	gap: 1ch;
+	&.normal {
+		display: grid;
+		grid-template-columns: auto auto;
+		gap: 1ch;
+	}
 
-}
-
-.setting-group, .notification-setting-group {
 	& > .info {
 		grid-column: 1 / span 2;
 		text-align: center;

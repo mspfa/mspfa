@@ -4,6 +4,11 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+
+		.setting-label {
+			align-self: center;
+			text-align: right;
+		}
 	}
 
 	&-container {

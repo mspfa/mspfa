@@ -104,32 +104,32 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser }) => {
 									</Setting>
 									<Setting
 										name="stickyNav"
-										label="Sticky nav bar"
+										label="Sticky Nav Bar"
 										help="Makes the nav bar stick to the top of your screen when you scroll down instead of scrolling out of the page."
 									/>
 									<Setting
 										name="imageSharpening"
-										label="Image sharpening"
+										label="Image Sharpening"
 										help={'Disables anti-aliasing in images from adventure pages (using nearest-neighbor scaling).\n\nWhat this means is images, when scaled, will tend to have more crisp edges rather than becoming blurry.'}
 									/>
 									<Setting
 										name="ads.side"
-										label="Side ad"
+										label="Side Ad"
 									/>
 									<Setting
 										name="ads.matchedContent"
-										label="Matched content ad"
+										label="Matched Content Ad"
 									/>
 								</SettingGroup>
 								<SettingGroup heading="Utility">
 									<Setting
 										name="autoOpenSpoilers"
-										label="Auto-open spoilers"
+										label="Auto-Open Spoilers"
 										help="Makes spoilers open by default instead of closed."
 									/>
 									<Setting
 										name="preloadImages"
-										label="Preload images"
+										label="Preload Images"
 										help="Loads images on adjacent adventure pages so they may already be loaded when an adjacent page is opened."
 									/>
 								</SettingGroup>
@@ -142,12 +142,12 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser }) => {
 										/>
 										<NotificationSetting
 											name="notifications.userTags"
-											label="User tags"
+											label="User Tags"
 											help="Get notified when you are tagged in a comment."
 										/>
 										<NotificationSetting
 											name="notifications.commentReplies"
-											label="Replies to comments"
+											label="Replies to Comments"
 											help="Get notified when one of your comments receives a reply."
 										/>
 									</NotificationSettingGroup>
@@ -187,7 +187,11 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser }) => {
 									/>
 								</SettingGroup>
 								<SettingGroup heading="Advanced" special>
-									<label className="setting-label" htmlFor="setting-style">Custom Site Style</label><br />
+									<div className="setting-label">
+										<label htmlFor="setting-style">
+											Custom Site Style
+										</label>
+									</div>
 									<Field
 										as="textarea"
 										id="setting-style"

@@ -25,17 +25,7 @@ const SettingGroup = ({
 			{heading}
 		</GridHeading>
 		<GridContent
-			className={
-				(special ? '' : 'setting-group')
-				+ (
-					className
-						? (
-							(special ? '' : ' ')
-							+ className
-						)
-						: ''
-				)
-			}
+			className={`setting-group${special ? '' : ' normal'}${className ? ` ${className}` : ''}`}
 			{...props}
 		>
 			{info && (
