@@ -5,13 +5,13 @@ import './styles.module.scss';
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
 
 /** A styled `button` element. Accepts any props which `button` accepts, except `type` which is replaced with the `submit?: boolean` prop. */
-const Button = React.forwardRef((
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((
 	{
 		type = 'button',
 		className,
 		...props
-	}: ButtonProps,
-	ref: React.ForwardedRef<HTMLButtonElement & HTMLButtonElement>
+	},
+	ref
 ) => {
 	const buttonClassName = `button${className ? ` ${className}` : ''}`;
 

@@ -18,9 +18,9 @@ export type NavItemProps = {
 	bubble?: number | boolean
 } & LinkProps;
 
-const NavItem = React.forwardRef((
-	{ id, label, bubble, ...props }: NavItemProps,
-	ref: Parameters<typeof Link>[0]['ref']
+const NavItem = React.forwardRef<HTMLAnchorElement & HTMLButtonElement, NavItemProps>((
+	{ id, label, bubble, ...props },
+	ref
 ) => (
 	<Link
 		id={`nav-item-${id}`}

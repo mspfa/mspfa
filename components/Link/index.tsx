@@ -20,7 +20,7 @@ export type LinkProps = HTMLAnchorProps & Partial<NextLinkProps>;
  * - `prefetch` defaults to `false`.
  * - `passHref` is removed because it is not useful enough to be worth implementing.
  */
-const Link = React.forwardRef((
+const Link = React.forwardRef<HTMLAnchorElement & HTMLButtonElement, LinkProps>((
 	{
 		// All NextLink-exclusive props.
 		as,
@@ -34,8 +34,8 @@ const Link = React.forwardRef((
 		className,
 		href,
 		...props
-	}: LinkProps,
-	ref: React.ForwardedRef<HTMLAnchorElement & HTMLButtonElement>
+	},
+	ref
 ) => {
 	const linkClassName = `link${className ? ` ${className}` : ''}`;
 
