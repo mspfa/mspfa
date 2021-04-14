@@ -1,11 +1,5 @@
 @import 'styles/general';
 
-.todo-normal {
-	display: grid;
-	grid-template-columns: auto auto;
-	gap: 1ch;
-}
-
 #notification-settings {
 	grid-template-columns: 0.5fr 0.5fr;
 

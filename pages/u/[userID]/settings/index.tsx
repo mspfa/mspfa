@@ -10,6 +10,7 @@ import { useCallback, useState } from 'react';
 import { getChangedValues, useLeaveConfirmation } from 'modules/client/forms';
 import Grid from 'components/Grid';
 import GridSection from 'components/Grid/GridSection';
+import GridRowSection from 'components/Grid/GridRowSection';
 import FieldGridRow from 'components/Grid/FieldGridRow';
 import NotificationSettingGroup from 'components/Setting/NotificationSettingGroup';
 import NotificationSetting from 'components/Setting/NotificationSetting';
@@ -22,6 +23,7 @@ import { setTheme } from 'modules/client/themes';
 import _ from 'lodash';
 import { Dialog } from 'modules/client/dialogs';
 import './styles.module.scss';
+import Label from 'components/Label';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 
@@ -92,7 +94,7 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 					return (
 						<Form>
 							<Grid>
-								<GridSection className="todo-normal" heading="Display">
+								<GridRowSection heading="Display">
 									<FieldGridRow
 										as="select"
 										name="theme"
@@ -128,8 +130,8 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 										name="ads.matchedContent"
 										label="Matched Content Ad"
 									/>
-								</GridSection>
-								<GridSection className="todo-normal" heading="Utility">
+								</GridRowSection>
+								<GridRowSection heading="Utility">
 									<FieldGridRow
 										name="autoOpenSpoilers"
 										label="Auto-Open Spoilers"
@@ -140,7 +142,7 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 										label="Preload Images"
 										help="Loads images on adjacent adventure pages so they may already be loaded when an adjacent page is opened."
 									/>
-								</GridSection>
+								</GridRowSection>
 								<Grid id="notification-settings">
 									<NotificationSettingGroup heading="General Notifications">
 										<NotificationSetting
@@ -177,7 +179,7 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 										/>
 									</NotificationSettingGroup>
 								</Grid>
-								<GridSection className="todo-normal" heading="Controls">
+								<GridRowSection heading="Controls">
 									<div className="info translucent-text">
 										Select a box and press a key. Press escape to remove a control.
 									</div>
@@ -193,13 +195,11 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 										name="controls.toggleSpoilers"
 										label="Toggle Spoilers"
 									/>
-								</GridSection>
-								<GridSection className="setting-group" heading="Advanced">
-									<div className="setting-label">
-										<label htmlFor="setting-style">
-											Custom Site Style
-										</label>
-									</div>
+								</GridRowSection>
+								<GridSection heading="Advanced">
+									<Label htmlFor="setting-style">
+										Custom Site Style
+									</Label>
 									<Field
 										as="textarea"
 										id="setting-style"

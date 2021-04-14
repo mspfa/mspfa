@@ -1,12 +1,8 @@
 .grid-row {
-	&-label-container {
+	&-label {
 		grid-column: 1;
 		align-self: center;
 		text-align: right;
-
-		&::after {
-			content: ':';
-		}
 	}
 
 	&-content {
