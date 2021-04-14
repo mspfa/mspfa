@@ -18,9 +18,9 @@ const Handler: APIHandler<(
 		method: 'PUT',
 		body: RecursivePartial<Pick<PrivateUser, PuttableUserKeys>>
 	}
-), (
-	{ body: PrivateUser }
-)> = async (req, res) => {
+), {
+	body: PrivateUser
+}> = async (req, res) => {
 	await validate(req, res);
 
 	if (req.method === 'PUT') {

@@ -8,18 +8,18 @@ const flashyTitleColors = [
 	'#63d606',
 	'#4193c4',
 	'#953ddb'
-] as const;
-// The above type assertion is necessary because removing it mysteriously results in this component never re-rendering its JSX `style`. This must be a bug.
+];
+
+/** Returns a random item of `flashyTitleColors`. */
+const getFlashyTitleColor = () => flashyTitleColors[Math.floor(Math.random() * flashyTitleColors.length)];
 
 const FlashyTitle = () => (
 	<div id="flashy-title-container" className="front">
-		{process.browser && (
-			<style jsx global>{`
-				#flashy-title {
-					background-color: ${flashyTitleColors[Math.floor(Math.random() * flashyTitleColors.length)]};
-				}
-			`}</style>
-		)}
+		<style jsx global>{`
+			#flashy-title {
+				background-color: ${getFlashyTitleColor()};
+			}
+		`}</style>
 		<Link
 			id="flashy-title"
 			href="/"

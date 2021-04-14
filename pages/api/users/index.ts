@@ -18,12 +18,10 @@ const Handler: APIHandler<{
 		name: UserDocument['name'],
 		birthdate: number
 	}
-}, (
-	{
-		method: 'POST',
-		body: PrivateUser
-	}
-)> = async (req, res) => {
+}, {
+	method: 'POST',
+	body: PrivateUser
+}> = async (req, res) => {
 	await validate(req, res);
 
 	const now = new Date();

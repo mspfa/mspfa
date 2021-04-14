@@ -4,9 +4,10 @@ import Link from 'components/Link';
 import WealthDungeon from 'components/WealthDungeon';
 import './styles.module.scss';
 
+type FooterAPIResponse = NonNullable<typeof import('pages/api/images/footer').default['Response']>['body'];
+
 const Footer = () => {
-	const footers: string[] | undefined = useSWR('/api/footers').data;
-	const footer = footers && footers[Math.floor(Math.random() * footers.length)];
+	const footer: FooterAPIResponse | undefined = useSWR('/api/images/footer').data;
 
 	return (
 		<>
@@ -15,7 +16,7 @@ const Footer = () => {
 					{footer && (
 						<style jsx global>{`
 							footer .mspface {
-								background-image: url(/images/footers/${footer});
+								background-image: url(/images/footers/${footer.name});
 							}
 						`}</style>
 					)}

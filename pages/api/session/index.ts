@@ -22,12 +22,10 @@ const Handler: APIHandler<(
 		method: 'POST',
 		body: SessionBody
 	}
-), (
-	{
-		method: 'POST',
-		body: PrivateUser
-	}
-)> = async (req, res) => {
+), {
+	method: 'POST',
+	body: PrivateUser
+}> = async (req, res) => {
 	await validate(req, res);
 
 	if (req.method === 'POST') {
