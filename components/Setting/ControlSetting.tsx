@@ -1,6 +1,6 @@
 import { Field, FormikContext } from 'formik';
 import type { ExclusiveSettingProps } from 'components/Setting';
-import { toClassName } from 'modules/client/forms';
+import { toKebabCase } from 'modules/client/utilities';
 import type { FieldAttributes } from 'formik';
 import type { KeyboardEvent } from 'react';
 import { useCallback, useContext } from 'react';
@@ -14,14 +14,14 @@ const ControlSetting = ({
 	help,
 	...props
 }: ControlSettingProps) => {
-	const id = `setting-${toClassName(name)}`;
+	const idKebab = `setting-${toKebabCase(name)}`;
 
 	const { setFieldValue } = useContext(FormikContext);
 
 	return (
 		<>
 			<div className="setting-label">
-				<label htmlFor={id}>
+				<label htmlFor={idKebab}>
 					{label}
 				</label>
 				{help && (
@@ -34,7 +34,7 @@ const ControlSetting = ({
 			</div>
 			<div className="setting-input">
 				<Field
-					id={id}
+					id={idKebab}
 					name={name}
 					placeholder="(None)"
 					{...props}

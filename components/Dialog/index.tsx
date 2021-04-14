@@ -3,6 +3,7 @@ import type { Dialog as DialogClass } from 'modules/client/dialogs';
 import { Form, Formik } from 'formik';
 import Button from 'components/Button';
 import './styles.module.scss';
+import { toKebabCase } from 'modules/client/utilities';
 
 export type DialogProps = {
 	dialog: DialogClass<any>
@@ -14,6 +15,8 @@ export type DialogProps = {
  * ⚠️ This should never be rendered anywhere but in the `Dialogs` component's direct children.
  */
 const Dialog = React.memo(({ dialog }: DialogProps) => {
+	const idKebab = toKebabCase(dialog.id.toString());
+
 	useEffect(() => {
 		dialog.open = true;
 		if (dialog.onMount) {
@@ -43,8 +46,8 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 				dialog.helpers = props;
 
 				return (
-					<Form id={`dialog-container-${dialog.id}`} className="dialog-container">
-						<dialog id={`dialog-${dialog.id}`} open>
+					<Form id={`dialog-container-${idKebab}`} className="dialog-container">
+						<dialog id={`dialog-${idKebab}`} open>
 							<div className="dialog-title mid translucent-text">
 								{dialog.title}
 							</div>

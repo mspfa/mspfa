@@ -157,6 +157,10 @@ export const defaultUser = {
 	perms: {} as Record<never, never>
 } as const;
 
+// This is just for type safety on `defaultUser` and should never be referenced.
+const typeCheckedDefaultUser: Partial<UserDocument> = defaultUser;
+typeCheckedDefaultUser;
+
 /** Converts a `UserDocument` to a `PrivateUser`. */
 export const getPrivateUser = (user: UserDocument): PrivateUser => {
 	const privateUser = {

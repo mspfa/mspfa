@@ -2,7 +2,7 @@ import { Field } from 'formik';
 import type { FieldAttributes } from 'formik';
 import type { ReactNode } from 'react';
 import HelpButton from 'components/Button/HelpButton';
-import { toClassName } from 'modules/client/forms';
+import { toKebabCase } from 'modules/client/utilities';
 import './styles.module.scss';
 
 export type ExclusiveSettingProps = {
@@ -23,7 +23,7 @@ const Setting = ({
 	...props
 }: SettingProps) => {
 	// Determine the form `Field`'s `id` based on its `name`, converting from camelCase to kebab-case.
-	const id = `setting-${toClassName(name)}`;
+	const id = `setting-${toKebabCase(name)}`;
 
 	return (
 		<>

@@ -3,7 +3,7 @@ import type { MyGetServerSideProps } from 'modules/server/pages';
 import { setUser, useUser } from 'modules/client/users';
 import type { PrivateUser } from 'modules/client/users';
 import { Perm, permToGetUserInPage } from 'modules/server/perms';
-import { getPrivateUser } from 'modules/server/users';
+import { defaultUser, getPrivateUser } from 'modules/server/users';
 import { withErrorPage } from 'pages/_error';
 import { Form, Formik, Field } from 'formik';
 import { useCallback, useState } from 'react';
@@ -20,10 +20,12 @@ import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
 import { setTheme } from 'modules/client/themes';
 import './styles.module.scss';
+import _ from 'lodash';
+import { Dialog } from 'modules/client/dialogs';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 
-const getSettingsValuesFromUser = ({ settings }: PrivateUser) => ({
+const getSettingsValues = (settings: PrivateUser['settings']) => ({
 	ads: settings.ads,
 	autoOpenSpoilers: settings.autoOpenSpoilers,
 	preloadImages: settings.preloadImages,
@@ -40,19 +42,25 @@ const getSettingsValuesFromUser = ({ settings }: PrivateUser) => ({
 	}
 });
 
-type Values = ReturnType<typeof getSettingsValuesFromUser>;
+type Values = ReturnType<typeof getSettingsValues>;
+
+let defaultValues: Values | undefined;
 
 type ServerSideProps = {
-	user: PrivateUser
+	user: PrivateUser,
+	defaultSettings: PrivateUser['settings']
 } | {
 	statusCode: number
 };
 
-const Component = withErrorPage<ServerSideProps>(({ user: initialUser }) => {
+const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSettings }) => {
 	const [requestedUser, setRequestedUser] = useState(initialUser);
-	const user = useUser()!;
+	const user = useUser();
 
-	const initialValues = getSettingsValuesFromUser(requestedUser);
+	if (!defaultValues) {
+		defaultValues = getSettingsValues(defaultSettings);
+	}
+	const initialValues = getSettingsValues(requestedUser.settings);
 
 	const onSubmit = useCallback((values: Values) => {
 		const changedValues = getChangedValues(initialValues, values);
@@ -62,7 +70,7 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser }) => {
 		}).then(({ data }) => {
 			setRequestedUser(data);
 
-			if (user.id === data.id) {
+			if (user!.id === data.id) {
 				setUser(data);
 			}
 		});
@@ -78,7 +86,7 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser }) => {
 				onSubmit={onSubmit}
 				enableReinitialize
 			>
-				{({ handleChange, dirty }) => {
+				{({ handleChange, dirty, setValues, values }) => {
 					useLeaveConfirmation(dirty);
 
 					return (
@@ -201,7 +209,33 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser }) => {
 									/>
 								</SettingGroup>
 								<GridFooter>
-									<Button className="alt" type="submit" disabled={!dirty}>Save</Button>
+									<Button
+										className="alt"
+										type="submit"
+										disabled={!dirty}
+									>
+										Save
+									</Button>
+									<Button
+										title="Reset settings to default"
+										disabled={_.isEqual(values, defaultValues!)}
+										onClick={
+											useCallback(() => {
+												new Dialog({
+													id: 'reset',
+													title: 'Reset',
+													content: 'Are you sure you want to reset your settings to default?\n\nAny unsaved changes will be lost.',
+													actions: ['Yes', 'No']
+												}).then(result => {
+													if (result?.submit) {
+														setValues(defaultValues!);
+													}
+												});
+											}, [setValues])
+										}
+									>
+										Reset
+									</Button>
 								</GridFooter>
 							</Grid>
 						</Form>
@@ -223,7 +257,8 @@ export const getServerSideProps: MyGetServerSideProps<ServerSideProps> = async (
 
 	return {
 		props: {
-			user: getPrivateUser(user!)
+			user: getPrivateUser(user!),
+			defaultSettings: defaultUser.settings
 		}
 	};
 };
