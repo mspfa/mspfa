@@ -3,7 +3,6 @@ import type { FieldAttributes } from 'formik';
 import { toKebabCase } from 'modules/client/utilities';
 import GridRow from 'components/Grid/GridRow';
 import type { GridRowProps } from 'components/Grid/GridRow';
-import './styles.module.scss';
 
 export type ExclusiveFieldGridRowProps = Pick<GridRowProps, 'label' | 'help'> & {
 	/**
