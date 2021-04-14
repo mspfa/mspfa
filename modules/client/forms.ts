@@ -18,7 +18,6 @@ export const toClassName = (string: string) => (
 		.replace(/^-|-$/g, '')
 		.toLowerCase()
 );
-console.log(toClassName('THEQuick... brown.foxJumps!'));
 
 /**
  * Returns an object with only the properties in `values` which are not equal in `initialValues` (recursively).
