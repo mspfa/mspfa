@@ -230,7 +230,7 @@
 			"consistent-as-needed"
 		],
 		"quotes": [
-			"error",
+			"warn",
 			"single",
 			{
 				"avoidEscape": true
@@ -597,7 +597,7 @@
 				"@typescript-eslint/no-useless-constructor": "warn",
 				"quotes": "off",
 				"@typescript-eslint/quotes": [
-					"error",
+					"warn",
 					"single",
 					{
 						"avoidEscape": true
