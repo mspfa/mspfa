@@ -61,6 +61,11 @@ option {
 	@include theme(color, $text-color-alt);
 }
 
+.justify-center {
+	text-align: center;
+	justify-content: center;
+}
+
 .bolder {
 	text-shadow: 0.25px 0 currentColor;
 }

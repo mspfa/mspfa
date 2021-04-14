@@ -65,7 +65,10 @@ export type UserDocument = {
 	/** The date of the last authenticated request the user sent to the site. */
 	lastSeen: Date,
 	birthdate: Date,
-	/** @minLength 1 */
+	/**
+	 * @minLength 1
+	 * @maxLength 32
+	 */
 	name: string,
 	email: EmailString,
 	verified: boolean,

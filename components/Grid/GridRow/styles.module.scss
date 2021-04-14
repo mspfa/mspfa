@@ -1,0 +1,16 @@
+.grid-row {
+	&-label-container {
+		grid-column: 1;
+		align-self: center;
+		text-align: right;
+
+		&::after {
+			content: ':';
+		}
+	}
+
+	&-content {
+		display: flex;
+		align-items: center;
+	}
+}

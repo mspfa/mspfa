@@ -1,5 +1,11 @@
 @import 'styles/general';
 
+.todo-normal {
+	display: grid;
+	grid-template-columns: auto auto;
+	gap: 1ch;
+}
+
 #notification-settings {
 	grid-template-columns: 0.5fr 0.5fr;
 
@@ -14,6 +20,12 @@
 			grid-row: auto;
 		}
 	}
+}
+
+.grid-content > .info {
+	grid-column: 1 / span 2;
+	text-align: center;
+	margin-bottom: 1ch;
 }
 
 #setting-style {

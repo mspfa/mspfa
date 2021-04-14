@@ -9,8 +9,8 @@ import { Form, Formik, Field } from 'formik';
 import { useCallback, useState } from 'react';
 import { getChangedValues, useLeaveConfirmation } from 'modules/client/forms';
 import Grid from 'components/Grid';
-import SettingGroup from 'components/Setting/SettingGroup';
-import Setting from 'components/Setting';
+import GridSection from 'components/Grid/GridSection';
+import FieldGridRow from 'components/Grid/FieldGridRow';
 import NotificationSettingGroup from 'components/Setting/NotificationSettingGroup';
 import NotificationSetting from 'components/Setting/NotificationSetting';
 import ControlSetting from 'components/Setting/ControlSetting';
@@ -19,9 +19,9 @@ import Button from 'components/Button';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
 import { setTheme } from 'modules/client/themes';
-import './styles.module.scss';
 import _ from 'lodash';
 import { Dialog } from 'modules/client/dialogs';
+import './styles.module.scss';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 
@@ -92,8 +92,8 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 					return (
 						<Form>
 							<Grid>
-								<SettingGroup heading="Display">
-									<Setting
+								<GridSection className="todo-normal" heading="Display">
+									<FieldGridRow
 										as="select"
 										name="theme"
 										label="Theme"
@@ -109,38 +109,38 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 										<option value="felt">Felt</option>
 										<option value="sbahj">SBaHJ</option>
 										<option value="trickster">Trickster</option>
-									</Setting>
-									<Setting
+									</FieldGridRow>
+									<FieldGridRow
 										name="stickyNav"
 										label="Sticky Nav Bar"
 										help="Makes the nav bar stick to the top of your screen when you scroll down instead of scrolling out of the page."
 									/>
-									<Setting
+									<FieldGridRow
 										name="imageSharpening"
 										label="Image Sharpening"
 										help={'Disables anti-aliasing in images from adventure pages (using nearest-neighbor scaling).\n\nWhat this means is images, when scaled, will tend to have more crisp edges rather than becoming blurry.'}
 									/>
-									<Setting
+									<FieldGridRow
 										name="ads.side"
 										label="Side Ad"
 									/>
-									<Setting
+									<FieldGridRow
 										name="ads.matchedContent"
 										label="Matched Content Ad"
 									/>
-								</SettingGroup>
-								<SettingGroup heading="Utility">
-									<Setting
+								</GridSection>
+								<GridSection className="todo-normal" heading="Utility">
+									<FieldGridRow
 										name="autoOpenSpoilers"
 										label="Auto-Open Spoilers"
 										help="Makes spoilers open by default instead of closed."
 									/>
-									<Setting
+									<FieldGridRow
 										name="preloadImages"
 										label="Preload Images"
 										help="Loads images on adjacent adventure pages so they may already be loaded when an adjacent page is opened."
 									/>
-								</SettingGroup>
+								</GridSection>
 								<Grid id="notification-settings">
 									<NotificationSettingGroup heading="General Notifications">
 										<NotificationSetting
@@ -177,10 +177,10 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 										/>
 									</NotificationSettingGroup>
 								</Grid>
-								<SettingGroup
-									heading="Controls"
-									info="Select a box and press a key. Press escape to remove a control."
-								>
+								<GridSection className="todo-normal" heading="Controls">
+									<div className="info translucent-text">
+										Select a box and press a key. Press escape to remove a control.
+									</div>
 									<ControlSetting
 										name="controls.back"
 										label="Back"
@@ -193,8 +193,8 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 										name="controls.toggleSpoilers"
 										label="Toggle Spoilers"
 									/>
-								</SettingGroup>
-								<SettingGroup heading="Advanced" special>
+								</GridSection>
+								<GridSection className="setting-group" heading="Advanced">
 									<div className="setting-label">
 										<label htmlFor="setting-style">
 											Custom Site Style
@@ -207,7 +207,7 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 										rows={5}
 										placeholder={"Paste SCSS here.\nIf you don't know what this is, don't worry about it."}
 									/>
-								</SettingGroup>
+								</GridSection>
 								<GridFooter>
 									<Button
 										className="alt"

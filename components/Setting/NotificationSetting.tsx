@@ -1,46 +1,32 @@
 import { Field } from 'formik';
-import type { ExclusiveSettingProps } from 'components/Setting';
-import type { FieldAttributes } from 'formik';
-import HelpButton from 'components/Button/HelpButton';
+import type { ExclusiveFieldGridRowProps } from 'components/Grid/FieldGridRow';
+import GridRow from 'components/Grid/GridRow';
 
-export type NotificationSettingProps = ExclusiveSettingProps & {
-	emailFieldProps?: Partial<FieldAttributes<unknown>>,
-	siteFieldProps?: Partial<FieldAttributes<unknown>>
-};
+export type NotificationSettingProps = ExclusiveFieldGridRowProps;
 
 const NotificationSetting = ({
 	label,
 	name,
-	help,
-	emailFieldProps,
-	siteFieldProps
+	help
 }: NotificationSettingProps) => (
-	<>
-		<div className="setting-label">
-			<span>{label}</span>
-			{help && (
-				<HelpButton className="spaced">
-					{label}:<br />
-					<br />
-					{help}
-				</HelpButton>
-			)}
-		</div>
-		<div className="setting-input">
+	<GridRow
+		label={label}
+		help={help}
+		customContent
+	>
+		<div className="grid-row-content justify-center">
 			<Field
 				name={`${name}.email`}
 				type="checkbox"
-				{...emailFieldProps}
 			/>
 		</div>
-		<div className="setting-input">
+		<div className="grid-row-content justify-center">
 			<Field
 				name={`${name}.site`}
 				type="checkbox"
-				{...siteFieldProps}
 			/>
 		</div>
-	</>
+	</GridRow>
 );
 
 export default NotificationSetting;

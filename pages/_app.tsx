@@ -12,6 +12,7 @@ import * as MSPFA from 'modules/client/MSPFA'; // @client-only
 import type { PageRequest } from 'modules/server/pages';
 import { useEffect } from 'react';
 import { setTheme } from 'modules/client/themes';
+import { useRouter } from 'next/router';
 import 'styles/global.scss';
 
 (global as any).MSPFA = MSPFA; // @client-only
@@ -35,11 +36,14 @@ const MyApp = ({
 }: MyAppProps) => {
 	Object.assign(env, pageProps.initialProps?.env);
 
+	const router = useRouter();
 	const user = useUserState(pageProps.initialProps?.user);
 
+	const userThemeSetting = user?.settings.theme;
+
 	useEffect(() => {
-		setTheme(user?.settings.theme);
-	}, [user?.settings.theme]);
+		setTheme(userThemeSetting);
+	}, [userThemeSetting, router.asPath]);
 
 	return (
 		<>

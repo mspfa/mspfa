@@ -1,17 +1,16 @@
-import SettingGroup from 'components/Setting/SettingGroup';
-import type { SettingGroupProps } from 'components/Setting/SettingGroup';
+import GridSection from 'components/Grid/GridSection';
+import type { GridSectionProps } from 'components/Grid/GridSection';
 import './styles.module.scss';
 
-export type NotificationSettingGroupProps = SettingGroupProps;
+export type NotificationSettingGroupProps = GridSectionProps;
 
 const NotificationSettingGroup = ({
 	className,
 	children,
 	...props
 }: NotificationSettingGroupProps) => (
-	<SettingGroup
+	<GridSection
 		className={`notification-setting-group${className ? ` ${className}` : ''}`}
-		special
 		{...props}
 	>
 		<div className="notification-setting-container">
@@ -23,7 +22,7 @@ const NotificationSettingGroup = ({
 			</div>
 			{children}
 		</div>
-	</SettingGroup>
+	</GridSection>
 );
 
 export default NotificationSettingGroup;

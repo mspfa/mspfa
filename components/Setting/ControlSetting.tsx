@@ -1,60 +1,41 @@
-import { Field, FormikContext } from 'formik';
-import type { ExclusiveSettingProps } from 'components/Setting';
-import { toKebabCase } from 'modules/client/utilities';
-import type { FieldAttributes } from 'formik';
+import { useFormikContext } from 'formik';
+import FieldGridRow from 'components/Grid/FieldGridRow';
+import type { ExclusiveFieldGridRowProps } from 'components/Grid/FieldGridRow';
 import type { KeyboardEvent } from 'react';
-import { useCallback, useContext } from 'react';
-import HelpButton from 'components/Button/HelpButton';
+import { useCallback } from 'react';
 
-export type ControlSettingProps = ExclusiveSettingProps & FieldAttributes<unknown>;
+export type ControlSettingProps = ExclusiveFieldGridRowProps;
 
 const ControlSetting = ({
 	label,
 	name,
-	help,
-	...props
+	help
 }: ControlSettingProps) => {
-	const idKebab = `setting-${toKebabCase(name)}`;
-
-	const { setFieldValue } = useContext(FormikContext);
+	const { setFieldValue } = useFormikContext();
 
 	return (
-		<>
-			<div className="setting-label">
-				<label htmlFor={idKebab}>
-					{label}
-				</label>
-				{help && (
-					<HelpButton className="spaced">
-						{label}:<br />
-						<br />
-						{help}
-					</HelpButton>
-				)}
-			</div>
-			<div className="setting-input">
-				<Field
-					id={idKebab}
-					name={name}
-					placeholder="(None)"
-					{...props}
-					readOnly
-					onKeyDown={
-						useCallback((evt: KeyboardEvent<HTMLInputElement> & { target: HTMLInputElement }) => {
-							if (!evt.target.disabled) {
-								evt.preventDefault();
+		<FieldGridRow
+			name={name}
+			label={label}
+			help={help}
+			type="text"
+			placeholder="(None)"
+			readOnly
+			onKeyDown={
+				useCallback((evt: KeyboardEvent<HTMLInputElement> & { target: HTMLInputElement }) => {
+					if (!evt.target.disabled) {
+						evt.preventDefault();
 
-								if (evt.code === 'Escape') {
-									setFieldValue(name, '');
-								} else {
-									setFieldValue(name, evt.code);
-								}
-							}
-						}, [name, setFieldValue])
+						setFieldValue(
+							name,
+							evt.code === 'Escape'
+								? ''
+								: evt.code
+						);
 					}
-				/>
-			</div>
-		</>
+				}, [name, setFieldValue])
+			}
+		/>
 	);
 };
 
