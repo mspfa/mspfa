@@ -10,6 +10,7 @@ import { UserContext, useUserState } from 'modules/client/users';
 import type { PrivateUser } from 'modules/client/users';
 import * as MSPFA from 'modules/client/MSPFA'; // @client-only
 import type { PageRequest } from 'modules/server/pages';
+import { useEffect } from 'react';
 import { setTheme } from 'modules/client/themes';
 import 'styles/global.scss';
 
@@ -36,7 +37,9 @@ const MyApp = ({
 
 	const user = useUserState(pageProps.initialProps?.user);
 
-	setTheme(user?.settings.theme);
+	useEffect(() => {
+		setTheme(user?.settings.theme);
+	}, [user?.settings.theme]);
 
 	return (
 		<>

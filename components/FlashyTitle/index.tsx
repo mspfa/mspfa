@@ -1,5 +1,4 @@
 import Link from 'components/Link';
-import { useState } from 'react';
 import './styles.module.scss';
 
 const flashyTitleColors = [
@@ -10,27 +9,25 @@ const flashyTitleColors = [
 	'#4193c4',
 	'#953ddb'
 ] as const;
+// The above type assertion is necessary because removing it mysteriously results in this component never re-rendering its JSX `style`. This must be a bug.
 
-const FlashyTitle = () => {
-	// This is mysteriously necessary so the `style` tag below re-renders when this component re-renders.
-	useState();
-
-	return (
-		<div id="flashy-title-container" className="front">
+const FlashyTitle = () => (
+	<div id="flashy-title-container" className="front">
+		{process.browser && (
 			<style jsx global>{`
 				#flashy-title {
 					background-color: ${flashyTitleColors[Math.floor(Math.random() * flashyTitleColors.length)]};
 				}
 			`}</style>
-			<Link
-				id="flashy-title"
-				href="/"
-				title="MSPFA Home"
-				tabIndex={-1}
-				draggable={false}
-			/>
-		</div>
-	);
-};
+		)}
+		<Link
+			id="flashy-title"
+			href="/"
+			title="MSPFA Home"
+			tabIndex={-1}
+			draggable={false}
+		/>
+	</div>
+);
 
 export default FlashyTitle;
