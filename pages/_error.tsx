@@ -4,7 +4,7 @@ import type { ServerResponse } from 'http';
 export type ErrorPageProps = { statusCode?: number };
 
 const ErrorPage = ({ statusCode = 404 }: ErrorPageProps) => (
-	<Page>
+	<Page flashyTitle>
 		{statusCode}
 	</Page>
 );

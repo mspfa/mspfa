@@ -80,7 +80,7 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 	}, [requestedUser, user]);
 
 	return (
-		<Page heading="Settings">
+		<Page flashyTitle heading="Settings">
 			<Formik
 				initialValues={initialValues}
 				onSubmit={onSubmit}

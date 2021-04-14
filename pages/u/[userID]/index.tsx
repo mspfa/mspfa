@@ -11,7 +11,7 @@ type ServerSideProps = {
 };
 
 const Component = withErrorPage<ServerSideProps>(({ publicUser }) => (
-	<Page>
+	<Page flashyTitle>
 		{publicUser.id}
 	</Page>
 ));

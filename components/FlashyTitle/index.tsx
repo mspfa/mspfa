@@ -1,17 +1,25 @@
 import Link from 'components/Link';
-import { useRouter } from 'next/router';
+import { useState } from 'react';
 import './styles.module.scss';
 
-const NUMBER_OF_FLASHY_TITLES = 6;
+const flashyTitleColors = [
+	'#de3535',
+	'#dd8137',
+	'#f3ff5b',
+	'#63d606',
+	'#4193c4',
+	'#953ddb'
+] as const;
 
 const FlashyTitle = () => {
-	const router = useRouter();
+	// This is mysteriously necessary so the `style` tag below re-renders when this component re-renders.
+	useState();
 
-	return 's' in router.query ? null : (
+	return (
 		<div id="flashy-title-container" className="front">
 			<style jsx global>{`
 				#flashy-title {
-					background-image: url(/images/flashy-titles/${1 + Math.floor(Math.random() * NUMBER_OF_FLASHY_TITLES)}.png);
+					background-color: ${flashyTitleColors[Math.floor(Math.random() * flashyTitleColors.length)]};
 				}
 			`}</style>
 			<Link
