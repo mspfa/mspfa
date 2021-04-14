@@ -2,12 +2,14 @@ import type { HTMLAttributes, LabelHTMLAttributes, ReactNode } from 'react';
 import HelpButton from 'components/Button/HelpButton';
 import './styles.module.scss';
 
-export type LabelProps = HTMLAttributes<HTMLDivElement> & {
+export type ExclusiveLabelProps = {
 	/** The `htmlFor` prop of the `label` element. If undefined, the label will instead be a `span`. */
 	htmlFor?: LabelHTMLAttributes<HTMLLabelElement>['htmlFor'],
 	/** Adds a help button next to the label which can be clicked to open a dialog with this value as its content. */
 	help?: ReactNode
 };
+
+export type LabelProps = HTMLAttributes<HTMLDivElement> & ExclusiveLabelProps;
 
 const Label = ({ htmlFor, help, className, children, ...props }: LabelProps) => (
 	<div

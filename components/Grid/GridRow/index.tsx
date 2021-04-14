@@ -1,11 +1,11 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import Label from 'components/Label';
-import type { LabelProps } from 'components/Label';
+import type { ExclusiveLabelProps } from 'components/Label';
 import './styles.module.scss';
 
 type DivPropsWithoutChildren = Omit<HTMLAttributes<HTMLDivElement>, 'children'>;
 
-export type GridRowProps = LabelProps & {
+export type GridRowProps = ExclusiveLabelProps & {
 	/** The content of the row's label. */
 	label: ReactNode,
 	/** Whether this component's children should be inserted directly instead of inside a content element. */

@@ -1,16 +1,3 @@
-#notification-settings {
-	.grid-content {
-		grid-template-columns: auto 0fr 0fr;
-		justify-content: center;
-		align-content: center;
-		align-items: center;
-	}
-
-	.grid-row-content {
-		justify-content: center;
-	}
-}
-
 .grid-content > .info {
 	grid-column: 1 / span 2;
 	text-align: center;

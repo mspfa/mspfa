@@ -1,7 +1,20 @@
-.notification-setting-column-heading {
-	text-align: center;
+.notification-setting {
+	&-group {
+		grid-template-columns: auto 0fr 0fr;
+		justify-content: center;
+		align-content: center;
+		align-items: center;
 
-	&:first-child {
-		grid-column: 2;
+		.grid-row-content {
+			justify-content: center;
+		}
+	}
+
+	&-column-heading {
+		text-align: center;
+
+		&:first-child {
+			grid-column: 2;
+		}
 	}
 }

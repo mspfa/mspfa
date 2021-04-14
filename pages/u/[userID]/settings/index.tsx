@@ -144,7 +144,7 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 										help="Loads images on adjacent adventure pages so they may already be loaded when an adjacent page is opened."
 									/>
 								</GridRowSection>
-								<ColumnGrid id="notification-settings">
+								<ColumnGrid>
 									<NotificationSettingGroup heading="General Notifications">
 										<NotificationSetting
 											name="notifications.messages"

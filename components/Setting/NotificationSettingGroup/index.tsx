@@ -4,11 +4,11 @@ import './styles.module.scss';
 
 export type NotificationSettingGroupProps = GridRowSectionProps;
 
-const NotificationSettingGroup = ({
-	children,
-	...props
-}: NotificationSettingGroupProps) => (
-	<GridRowSection {...props}>
+const NotificationSettingGroup = ({ className, children, ...props }: NotificationSettingGroupProps) => (
+	<GridRowSection
+		className={`notification-setting-group${className ? ` ${className}` : ''}`}
+		{...props}
+	>
 		<div className="notification-setting-column-heading">
 			Email
 		</div>
