@@ -1,31 +1,7 @@
-.notification-setting {
-	&-group {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
+.notification-setting-column-heading {
+	text-align: center;
 
-		.setting-label {
-			align-self: center;
-			text-align: right;
-		}
-	}
-
-	&-container {
-		display: grid;
-		grid-template-columns: auto auto auto;
-		gap: 1ch;
-
-		.setting-input {
-			width: 100%;
-		}
-	}
-
-	&-column-heading {
-		text-align: center;
-
-		&:first-child {
-			grid-column: 2;
-		}
+	&:first-child {
+		grid-column: 2;
 	}
 }

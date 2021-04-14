@@ -4,23 +4,19 @@ import GridRow from 'components/Grid/GridRow';
 
 export type NotificationSettingProps = ExclusiveFieldGridRowProps;
 
-const NotificationSetting = ({
-	label,
-	name,
-	help
-}: NotificationSettingProps) => (
+const NotificationSetting = ({ label, name, help }: NotificationSettingProps) => (
 	<GridRow
 		label={label}
 		help={help}
 		customContent
 	>
-		<div className="grid-row-content justify-center">
+		<div className="grid-row-content">
 			<Field
 				name={`${name}.email`}
 				type="checkbox"
 			/>
 		</div>
-		<div className="grid-row-content justify-center">
+		<div className="grid-row-content">
 			<Field
 				name={`${name}.site`}
 				type="checkbox"

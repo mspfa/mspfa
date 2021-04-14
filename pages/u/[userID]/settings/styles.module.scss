@@ -1,18 +1,13 @@
-@import 'styles/general';
-
 #notification-settings {
-	grid-template-columns: 0.5fr 0.5fr;
-
-	@include mobile {
-		grid-template-columns: auto;
+	.grid-content {
+		grid-template-columns: auto 0fr 0fr;
+		justify-content: center;
+		align-content: center;
+		align-items: center;
 	}
 
-	& > .grid-heading {
-		grid-row: 1;
-
-		@include mobile {
-			grid-row: auto;
-		}
+	.grid-row-content {
+		justify-content: center;
 	}
 }
 
@@ -20,8 +15,4 @@
 	grid-column: 1 / span 2;
 	text-align: center;
 	margin-bottom: 1ch;
-}
-
-#setting-style {
-	width: 100%;
 }

@@ -1,28 +1,22 @@
-import GridSection from 'components/Grid/GridSection';
-import type { GridSectionProps } from 'components/Grid/GridSection';
+import GridRowSection from 'components/Grid/GridRowSection';
+import type { GridRowSectionProps } from 'components/Grid/GridRowSection';
 import './styles.module.scss';
 
-export type NotificationSettingGroupProps = GridSectionProps;
+export type NotificationSettingGroupProps = GridRowSectionProps;
 
 const NotificationSettingGroup = ({
-	className,
 	children,
 	...props
 }: NotificationSettingGroupProps) => (
-	<GridSection
-		className={`notification-setting-group${className ? ` ${className}` : ''}`}
-		{...props}
-	>
-		<div className="notification-setting-container">
-			<div className="notification-setting-column-heading">
-				Email
-			</div>
-			<div className="notification-setting-column-heading">
-				Site
-			</div>
-			{children}
+	<GridRowSection {...props}>
+		<div className="notification-setting-column-heading">
+			Email
 		</div>
-	</GridSection>
+		<div className="notification-setting-column-heading">
+			Site
+		</div>
+		{children}
+	</GridRowSection>
 );
 
 export default NotificationSettingGroup;

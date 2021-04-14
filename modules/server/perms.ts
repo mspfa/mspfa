@@ -3,7 +3,7 @@ import type { UserDocument } from 'modules/server/users';
 import type { UnsafeObjectID } from 'modules/server/db';
 import type { APIRequest, APIResponse } from 'modules/server/api';
 import type { PageRequest } from 'modules/server/pages';
-import { authenticate } from './auth';
+import { authenticate } from 'modules/server/auth';
 
 export enum Perm {
 	/** Permission to grant or revoke perms for any user (including yourself). */

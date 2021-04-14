@@ -9,6 +9,7 @@ import { Form, Formik, Field } from 'formik';
 import { useCallback, useState } from 'react';
 import { getChangedValues, useLeaveConfirmation } from 'modules/client/forms';
 import Grid from 'components/Grid';
+import ColumnGrid from 'components/Grid/ColumnGrid';
 import GridSection from 'components/Grid/GridSection';
 import GridRowSection from 'components/Grid/GridRowSection';
 import FieldGridRow from 'components/Grid/FieldGridRow';
@@ -143,7 +144,7 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 										help="Loads images on adjacent adventure pages so they may already be loaded when an adjacent page is opened."
 									/>
 								</GridRowSection>
-								<Grid id="notification-settings">
+								<ColumnGrid id="notification-settings">
 									<NotificationSettingGroup heading="General Notifications">
 										<NotificationSetting
 											name="notifications.messages"
@@ -178,7 +179,7 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 											help="Get notified when an adventure you edit receives a new comment."
 										/>
 									</NotificationSettingGroup>
-								</Grid>
+								</ColumnGrid>
 								<GridRowSection heading="Controls">
 									<div className="info translucent-text">
 										Select a box and press a key. Press escape to remove a control.
@@ -197,12 +198,12 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 									/>
 								</GridRowSection>
 								<GridSection heading="Advanced">
-									<Label htmlFor="setting-style">
+									<Label htmlFor="field-style">
 										Custom Site Style
 									</Label>
 									<Field
 										as="textarea"
-										id="setting-style"
+										id="field-style"
 										name="style"
 										rows={5}
 										placeholder={"Paste SCSS here.\nIf you don't know what this is, don't worry about it."}
