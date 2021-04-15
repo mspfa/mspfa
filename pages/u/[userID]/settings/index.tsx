@@ -1,6 +1,6 @@
 import Page from 'components/Page';
 import type { MyGetServerSideProps } from 'modules/server/pages';
-import { setUser, useUser } from 'modules/client/users';
+import { setUser, setUserMerge, useUser } from 'modules/client/users';
 import type { PrivateUser } from 'modules/client/users';
 import { Perm, permToGetUserInPage } from 'modules/server/perms';
 import { defaultUser, getPrivateUser } from 'modules/server/users';
@@ -87,6 +87,12 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [requestedUser, user]);
 
+	useEffect(() => (
+		() => {
+			setUserMerge({});
+		}
+	), []);
+
 	return (
 		<Page flashyTitle heading="Settings">
 			<Formik
@@ -101,14 +107,12 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 						if (formChanged) {
 							formChanged = false;
 
-							setUser(_.merge(user, { settings: values })); // TODO: Fix this
+							setUserMerge({ settings: values });
 						}
 					});
 
 					return (
-						<Form
-							onChange={onFormChange}
-						>
+						<Form onChange={onFormChange}>
 							<Grid>
 								<GridRowSection heading="Display">
 									<FieldGridRow

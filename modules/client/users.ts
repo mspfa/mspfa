@@ -5,6 +5,8 @@ import type { APIClient } from 'modules/client/api';
 import { startLoading, stopLoading } from 'components/LoadingIndicator';
 import { Dialog } from 'modules/client/dialogs';
 import createUpdater from 'react-component-updater';
+import createGlobalState from 'global-react-state';
+import type { RecursivePartial } from 'modules/types';
 
 /** All keys whose values have the same serializable type in both `DocumentUser` and `PrivateUser`. */
 type PrivateUserDocumentKey = 'name' | 'email' | 'verified' | 'description' | 'icon' | 'site' | 'comicSaves' | 'achievements' | 'favs' | 'profileStyle' | 'settings' | 'perms' | 'dev' | 'mod' | 'patron' | 'nameColor';
@@ -63,7 +65,7 @@ export const setUser = (user: PrivateUser | undefined) => {
 /**
  * Same as `useUser` but without the React context middleman.
  *
- * ⚠️ This should only be used in `pages/_app`. Please use `useUser` instead whenever possible, because it allows for better server-side rendering via React context.
+ * ⚠️ This should only be used in `pages/_app`. Please use `useUser` instead whenever possible, because it allows for better server-side rendering via React context, as well as allowing for modifications passed into the context's value from `pages/_app`.
  */
 export const useUserState = (initialUserState: PrivateUser | undefined) => {
 	if (globalUserUnset) {
@@ -75,6 +77,8 @@ export const useUserState = (initialUserState: PrivateUser | undefined) => {
 
 	return globalUser;
 };
+
+export const [useUserMerge, setUserMerge] = createGlobalState<RecursivePartial<PrivateUser>>({});
 
 /** Opens a dialog prompting the user to sign in or sign up. */
 export const signIn = async () => {

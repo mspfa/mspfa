@@ -6,13 +6,14 @@ import { SWRConfig } from 'swr';
 import { authenticate } from 'modules/server/auth'; // @server-only
 import { getPrivateUser } from 'modules/server/users'; // @server-only
 import env from 'modules/client/env';
-import { UserContext, useUserState } from 'modules/client/users';
+import { UserContext, useUserMerge, useUserState } from 'modules/client/users';
 import type { PrivateUser } from 'modules/client/users';
 import * as MSPFA from 'modules/client/MSPFA'; // @client-only
 import type { PageRequest } from 'modules/server/pages';
 import { useEffect } from 'react';
 import { setTheme } from 'modules/client/themes';
 import { useRouter } from 'next/router';
+import _ from 'lodash';
 import 'styles/global.scss';
 
 (global as any).MSPFA = MSPFA; // @client-only
@@ -36,14 +37,13 @@ const MyApp = ({
 }: MyAppProps) => {
 	Object.assign(env, pageProps.initialProps?.env);
 
-	const router = useRouter();
 	const user = useUserState(pageProps.initialProps?.user);
-
-	const userThemeSetting = user?.settings.theme;
+	const [userMerge] = useUserMerge();
+	const mergedUser = _.merge({}, user, userMerge);
 
 	useEffect(() => {
-		setTheme(userThemeSetting);
-	}, [userThemeSetting, router.asPath]);
+		setTheme(mergedUser.settings.theme);
+	}, [mergedUser.settings.theme]);
 
 	return (
 		<>
@@ -65,7 +65,7 @@ const MyApp = ({
 					revalidateOnReconnect: false
 				}}
 			>
-				<UserContext.Provider value={user}>
+				<UserContext.Provider value={mergedUser}>
 					<Component
 						{
 							// It is necessary that the props object passed here is the original `pageProps` object and not a shallow clone thereof, because props from a page's `getServerSideProps` are assigned to the original `pageProps` object and would otherwise not be passed into the page component.
