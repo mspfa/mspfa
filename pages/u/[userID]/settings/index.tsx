@@ -89,7 +89,8 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 
 	useEffect(() => (
 		() => {
-			setUserMerge({});
+			// The page unmounted, so reset the previewed unsaved settings.
+			setUserMerge(undefined);
 		}
 	), []);
 
@@ -107,6 +108,7 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 						if (formChanged) {
 							formChanged = false;
 
+							// Preview the unsaved settings by merging them with the user state.
 							setUserMerge({ settings: values });
 						}
 					});

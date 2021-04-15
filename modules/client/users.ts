@@ -78,7 +78,7 @@ export const useUserState = (initialUserState: PrivateUser | undefined) => {
 	return globalUser;
 };
 
-export const [useUserMerge, setUserMerge] = createGlobalState<RecursivePartial<PrivateUser>>({});
+export const [useUserMerge, setUserMerge, getUserMerge] = createGlobalState<RecursivePartial<PrivateUser | undefined>>(undefined);
 
 /** Opens a dialog prompting the user to sign in or sign up. */
 export const signIn = async () => {

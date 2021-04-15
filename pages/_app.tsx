@@ -39,11 +39,13 @@ const MyApp = ({
 
 	const user = useUserState(pageProps.initialProps?.user);
 	const [userMerge] = useUserMerge();
-	const mergedUser = _.merge({}, user, userMerge);
+	const mergedUser = userMerge ? _.merge({}, user, userMerge) : user;
+
+	const theme = mergedUser?.settings.theme ?? 'standard';
 
 	useEffect(() => {
-		setTheme(mergedUser.settings.theme);
-	}, [mergedUser.settings.theme]);
+		setTheme(theme);
+	}, [theme]);
 
 	return (
 		<>
