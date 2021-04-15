@@ -1,9 +1,10 @@
 import type { UserDocument } from 'modules/server/users';
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
 import { startLoading, stopLoading } from 'components/LoadingIndicator';
 import { Dialog } from 'modules/client/dialogs';
+import createUpdater from 'react-component-updater';
 
 /** All keys whose values have the same serializable type in both `DocumentUser` and `PrivateUser`. */
 type PrivateUserDocumentKey = 'name' | 'email' | 'verified' | 'description' | 'icon' | 'site' | 'comicSaves' | 'achievements' | 'favs' | 'profileStyle' | 'settings' | 'perms' | 'dev' | 'mod' | 'patron' | 'nameColor';
@@ -34,6 +35,7 @@ export type PublicUser = (
 );
 
 export const UserContext = React.createContext<PrivateUser | undefined>(undefined);
+// Using a React context is necessary here so the user data can be used server-side.
 
 /**
  * Re-renders the component when the current authenticated user changes (or signs in/out).
@@ -43,25 +45,35 @@ export const UserContext = React.createContext<PrivateUser | undefined>(undefine
 export const useUser = () => useContext(UserContext);
 
 let globalUser: PrivateUser | undefined;
-let globalSetUserState: React.Dispatch<React.SetStateAction<PrivateUser | undefined>> | undefined;
+
+/** True until `globalUser` has been set at least once (even if it's to `undefined`). */
+let globalUserUnset = true;
+
+const [useUserStateUpdater, updateUserState] = createUpdater();
 
 /** Gets the current authenticated user. */
 export const getUser = () => globalUser;
 
 /** Sets the current authenticated user and re-renders all components using it. */
 export const setUser = (user: PrivateUser | undefined) => {
-	if (globalSetUserState) {
-		globalSetUserState(user);
-	}
+	globalUser = user;
+	updateUserState();
 };
 
-export const useUserState = (userProp: PrivateUser | undefined) => {
-	const [user, setUserState] = useState(userProp);
+/**
+ * Same as `useUser` but without the React context middleman.
+ *
+ * ⚠️ This should only be used in `pages/_app`. Please use `useUser` instead whenever possible, because it allows for better server-side rendering via React context.
+ */
+export const useUserState = (initialUserState: PrivateUser | undefined) => {
+	if (globalUserUnset) {
+		globalUserUnset = false;
+		globalUser = initialUserState;
+	}
 
-	globalUser = user;
-	globalSetUserState = setUserState;
+	useUserStateUpdater();
 
-	return user;
+	return globalUser;
 };
 
 /** Opens a dialog prompting the user to sign in or sign up. */

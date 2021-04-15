@@ -6,7 +6,7 @@ import { Perm, permToGetUserInPage } from 'modules/server/perms';
 import { defaultUser, getPrivateUser } from 'modules/server/users';
 import { withErrorPage } from 'pages/_error';
 import { Form, Formik, Field } from 'formik';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getChangedValues, useLeaveConfirmation } from 'modules/client/forms';
 import Grid from 'components/Grid';
 import ColumnGrid from 'components/Grid/ColumnGrid';
@@ -20,7 +20,6 @@ import GridFooter from 'components/Grid/GridFooter';
 import Button from 'components/Button';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
-import { setTheme } from 'modules/client/themes';
 import _ from 'lodash';
 import { Dialog } from 'modules/client/dialogs';
 import './styles.module.scss';
@@ -48,6 +47,12 @@ const getSettingsValues = (settings: PrivateUser['settings']) => ({
 type Values = ReturnType<typeof getSettingsValues>;
 
 let defaultValues: Values | undefined;
+
+let formChanged = false;
+
+const onFormChange = () => {
+	formChanged = true;
+};
 
 type ServerSideProps = {
 	user: PrivateUser,
@@ -89,23 +94,27 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 				onSubmit={onSubmit}
 				enableReinitialize
 			>
-				{({ handleChange, dirty, setValues, values }) => {
+				{({ dirty, setValues, values }) => {
 					useLeaveConfirmation(dirty);
 
+					useEffect(() => {
+						if (formChanged) {
+							formChanged = false;
+
+							setUser(_.merge(user, { settings: values })); // TODO: Fix this
+						}
+					});
+
 					return (
-						<Form>
+						<Form
+							onChange={onFormChange}
+						>
 							<Grid>
 								<GridRowSection heading="Display">
 									<FieldGridRow
 										as="select"
 										name="theme"
 										label="Theme"
-										onChange={useCallback(evt => {
-											handleChange(evt);
-
-											// Preview the changed theme.
-											setTheme(evt.target.value);
-										}, [handleChange])}
 									>
 										<option value="standard">Standard</option>
 										<option value="dark">Dark</option>
