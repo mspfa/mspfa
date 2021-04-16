@@ -25,9 +25,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser }) => (
 					{publicUser.name}
 				</GridSection>
 				<GridRowSection heading="Stats">
-					<GridRow
-						label="Last Connection"
-					>
+					<GridRow label="Last Connection">
 						<Timestamp>{publicUser.lastSeen}</Timestamp>
 					</GridRow>
 				</GridRowSection>

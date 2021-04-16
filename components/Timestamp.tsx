@@ -100,6 +100,7 @@ const Timestamp = ({ className, children, ...props }: TimestampProps) => {
 			className={`timestamp${className ? ` ${className}` : ''}`}
 			title={preciseDate}
 			{...props}
+			suppressHydrationWarning
 		>
 			{relativeDate}
 		</span>
