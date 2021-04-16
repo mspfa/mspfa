@@ -30,7 +30,7 @@ type TimestampProps = Omit<HTMLAttributes<HTMLSpanElement>, 'children'> & {
 };
 
 const Timestamp = ({ className, children, ...props }: TimestampProps) => {
-	const dateNow = new Date(2021, 3, 5);
+	const dateNow = new Date();
 	const now = +dateNow;
 	const dateThen = children instanceof Date ? children : new Date(children);
 	const then = +children;
