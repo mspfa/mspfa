@@ -82,6 +82,7 @@ export type UserDocument = {
 	profileStyle: string,
 	settings: {
 		emailPublic: boolean,
+		birthdatePublic: boolean,
 		favsPublic: boolean,
 		ads: {
 			side: boolean,
@@ -129,6 +130,7 @@ export const defaultUser = {
 	profileStyle: '',
 	settings: {
 		emailPublic: false,
+		birthdatePublic: false,
 		favsPublic: true,
 		ads: {
 			side: true,
@@ -205,6 +207,7 @@ export const getPublicUser = (user: UserDocument): PublicUser => {
 		id: user._id.toString(),
 		created: +user.created,
 		lastSeen: +user.lastSeen,
+		birthdate: user.settings.birthdatePublic ? user.birthdatePublic : undefined,
 		name: user.name,
 		description: user.description,
 		icon: user.icon,

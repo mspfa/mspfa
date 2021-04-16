@@ -32,6 +32,7 @@ export type PublicUser = (
 		id: string,
 		created: number,
 		lastSeen: number,
+		birthdate?: number,
 		favs?: UserDocument['favs']
 	}
 );
