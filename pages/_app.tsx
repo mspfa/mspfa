@@ -12,7 +12,6 @@ import * as MSPFA from 'modules/client/MSPFA'; // @client-only
 import type { PageRequest } from 'modules/server/pages';
 import { useEffect } from 'react';
 import { setTheme } from 'modules/client/themes';
-import { useRouter } from 'next/router';
 import _ from 'lodash';
 import 'styles/global.scss';
 
