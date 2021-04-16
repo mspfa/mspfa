@@ -4,6 +4,11 @@ import type { PublicUser } from 'modules/client/users';
 import { getUserByUnsafeID, getPublicUser } from 'modules/server/users';
 import { withErrorPage } from 'pages/_error';
 import Grid from 'components/Grid';
+import ColumnGrid from 'components/Grid/ColumnGrid';
+import GridSection from 'components/Grid/GridSection';
+import GridRowSection from 'components/Grid/GridRowSection';
+import GridRow from 'components/Grid/GridRow';
+import Timestamp from 'components/Timestamp';
 import './styles.module.scss';
 
 type ServerSideProps = {
@@ -15,7 +20,18 @@ type ServerSideProps = {
 const Component = withErrorPage<ServerSideProps>(({ publicUser }) => (
 	<Page flashyTitle heading="Profile">
 		<Grid>
-			<
+			<ColumnGrid id="profile-column-grid">
+				<GridSection heading="Presence">
+					{publicUser.name}
+				</GridSection>
+				<GridRowSection heading="Stats">
+					<GridRow
+						label="Last Connection"
+					>
+						<Timestamp>{publicUser.lastSeen}</Timestamp>
+					</GridRow>
+				</GridRowSection>
+			</ColumnGrid>
 		</Grid>
 	</Page>
 ));
