@@ -11,3 +11,9 @@
 .grid-with-single-section {
 	grid-template-rows: 0fr auto;
 }
+
+#section {
+	&-meta, &-description {
+		text-align: center;
+	}
+}

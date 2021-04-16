@@ -9,8 +9,10 @@ import GridSection from 'components/Grid/GridSection';
 import GridRowSection from 'components/Grid/GridRowSection';
 import GridRow from 'components/Grid/GridRow';
 import Timestamp from 'components/Timestamp';
-import './styles.module.scss';
 import Link from 'components/Link';
+import GridFooter from 'components/Grid/GridFooter';
+import Button from 'components/Button';
+import './styles.module.scss';
 
 type ServerSideProps = {
 	publicUser: PublicUser
@@ -23,7 +25,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser }) => (
 		<Grid>
 			<ColumnGrid id="profile-column-grid">
 				<Grid className="grid-with-single-section">
-					<GridSection heading="Meta">
+					<GridSection id="section-meta" heading="Meta">
 						{publicUser.name}
 					</GridSection>
 				</Grid>
@@ -67,6 +69,12 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser }) => (
 					)}
 				</Grid>
 			</ColumnGrid>
+			<GridSection id="section-description" heading="Description">
+				{publicUser.description}
+			</GridSection>
+			<GridFooter>
+				<Button>Edit</Button>
+			</GridFooter>
 		</Grid>
 	</Page>
 ));
