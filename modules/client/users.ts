@@ -6,7 +6,7 @@ import { startLoading, stopLoading } from 'components/LoadingIndicator';
 import { Dialog } from 'modules/client/dialogs';
 import createUpdater from 'react-component-updater';
 import createGlobalState from 'global-react-state';
-import type { RecursivePartial } from 'modules/types';
+import type { EmailString, RecursivePartial } from 'modules/types';
 
 /** All keys whose values have the same serializable type in both `DocumentUser` and `PrivateUser`. */
 type PrivateUserDocumentKey = 'name' | 'email' | 'verified' | 'description' | 'icon' | 'site' | 'comicSaves' | 'achievements' | 'favs' | 'profileStyle' | 'settings' | 'perms' | 'dev' | 'mod' | 'patron' | 'nameColor';
@@ -33,6 +33,7 @@ export type PublicUser = (
 		created: number,
 		lastSeen: number,
 		birthdate?: number,
+		email?: UserDocument['email'],
 		favs?: UserDocument['favs']
 	}
 );

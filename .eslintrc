@@ -648,7 +648,7 @@
 					"tag-aligned"
 				],
 				"react/jsx-curly-brace-presence": [
-					"error",
+					"warn",
 					"never"
 				],
 				"react/jsx-curly-newline": [

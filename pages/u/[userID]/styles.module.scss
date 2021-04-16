@@ -7,3 +7,7 @@
 		grid-template-columns: auto;
 	}
 }
+
+.grid-with-single-section {
+	grid-template-rows: 0fr auto;
+}
