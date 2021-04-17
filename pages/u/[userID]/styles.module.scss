@@ -17,3 +17,14 @@
 		text-align: center;
 	}
 }
+
+.grid-row {
+	&-section {
+		justify-content: center;
+		column-gap: 2em;
+	}
+
+	&-label {
+		text-align: left;
+	}
+}
