@@ -66,12 +66,9 @@ export const setUser = (user: PrivateUser | undefined) => {
  * ⚠️ This should only be used in `pages/_app`. Please use `useUser` instead because it allows for server-side rendering via React context, and it allows for user modifications passed into the context's value from `pages/_app`.
  */
 export const useUserInApp = (initialUserState: PrivateUser | undefined) => {
-	const [user, setUserState] = useState(initialUserState);
+	[globalUserState, globalSetUserState] = useState(initialUserState);
 
-	globalUserState = user;
-	globalSetUserState = setUserState;
-
-	return user;
+	return globalUserState;
 };
 
 export const [useUserMerge, setUserMerge, getUserMerge] = createGlobalState<RecursivePartial<PrivateUser | undefined>>(undefined);
