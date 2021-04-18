@@ -1,10 +1,23 @@
 @import 'styles/global';
 
-#profile-column-grid {
-	grid-template-columns: auto 1fr;
+#profile-grid {
+	.column-grid {
+		grid-template-columns: auto 1fr;
 
-	@include mobile {
-		grid-template-columns: auto;
+		@include mobile {
+			grid-template-columns: auto;
+		}
+	}
+
+	.grid-row {
+		&-section {
+			justify-content: center;
+			column-gap: 2em;
+		}
+
+		&-label {
+			text-align: left;
+		}
 	}
 }
 
@@ -15,16 +28,5 @@
 #section {
 	&-meta, &-description {
 		text-align: center;
-	}
-}
-
-.grid-row {
-	&-section {
-		justify-content: center;
-		column-gap: 2em;
-	}
-
-	&-label {
-		text-align: left;
 	}
 }
