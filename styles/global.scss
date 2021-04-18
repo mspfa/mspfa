@@ -61,6 +61,10 @@ option {
 	@include theme(color, $text-color-alt);
 }
 
+.spaced {
+	margin-left: 1ch;
+}
+
 .bolder {
 	text-shadow: 0.25px 0 currentColor;
 }

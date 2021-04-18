@@ -298,7 +298,15 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 																	<br />
 																	This action is IRREVERSIBLE.<br />
 																	<br />
-																	<span className="bolder">Please ensure that you are in a good state of mind before continuing!</span>
+																	<Field
+																		id="delete-user-confirm"
+																		name="confirm"
+																		type="checkbox"
+																		required
+																	/>
+																	<label className="spaced bolder" htmlFor="delete-user-confirm">
+																		I am sure I want to delete my account: {privateUser.name}
+																	</label>
 																</>,
 																actions: [
 																	'Yes',
@@ -313,13 +321,13 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 													setSubmitting(true);
 
 													(api as UserAPI).delete(`users/${privateUser.id}`).then(() => {
-														preventLeaveConfirmations();
-														preventReloads();
-														Router.push('/');
-
 														if (user.id === privateUser.id) {
+															preventReloads();
 															setUser(undefined);
 														}
+
+														preventLeaveConfirmations();
+														Router.push('/');
 													}).catch(() => {
 														setSubmitting(false);
 													});

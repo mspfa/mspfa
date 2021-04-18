@@ -12,7 +12,7 @@
 	vertical-align: middle;
 	@include styled-button($front, false, true);
 
-	&.spaced, & + & {
+	& + & {
 		margin-left: 1ch;
 	}
 
