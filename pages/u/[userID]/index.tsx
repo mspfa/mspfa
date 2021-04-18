@@ -27,7 +27,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser }) => {
 	return (
 		<Page flashyTitle heading="Profile">
 			<Grid id="profile-grid">
-				<ColumnGrid id="profile-column-grid">
+				<ColumnGrid>
 					<Grid className="grid-with-single-section">
 						<GridSection id="section-meta" heading="Meta">
 							{publicUser.name}
