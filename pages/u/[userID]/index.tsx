@@ -1,5 +1,6 @@
 import Page from 'components/Page';
 import type { MyGetServerSideProps } from 'modules/server/pages';
+import { useUser } from 'modules/client/users';
 import type { PublicUser } from 'modules/client/users';
 import { getUserByUnsafeID, getPublicUser } from 'modules/server/users';
 import { withErrorPage } from 'pages/_error';
@@ -20,64 +21,73 @@ type ServerSideProps = {
 	statusCode: number
 };
 
-const Component = withErrorPage<ServerSideProps>(({ publicUser }) => (
-	<Page flashyTitle heading="Profile">
-		<Grid>
-			<ColumnGrid id="profile-column-grid">
-				<Grid className="grid-with-single-section">
-					<GridSection id="section-meta" heading="Meta">
-						{publicUser.name}
-					</GridSection>
-				</Grid>
-				<Grid>
-					<GridRowSection heading="Stats">
-						<GridRow label="Last Connection">
-							<Timestamp relative withTime>{publicUser.lastSeen}</Timestamp>
-						</GridRow>
-						<GridRow label="Joined MSPFA">
-							<Timestamp>{publicUser.created}</Timestamp>
-						</GridRow>
-						{publicUser.birthdate && (
-							<GridRow label="Birthdate">
-								<Timestamp>{publicUser.birthdate}</Timestamp>
+const Component = withErrorPage<ServerSideProps>(({ publicUser }) => {
+	const user = useUser();
+
+	return (
+		<Page flashyTitle heading="Profile">
+			<Grid>
+				<ColumnGrid id="profile-column-grid">
+					<Grid className="grid-with-single-section">
+						<GridSection id="section-meta" heading="Meta">
+							{publicUser.name}
+						</GridSection>
+					</Grid>
+					<Grid>
+						<GridRowSection heading="Stats">
+							<GridRow label="Last Connection">
+								<Timestamp relative withTime>{publicUser.lastSeen}</Timestamp>
 							</GridRow>
-						)}
-					</GridRowSection>
-					{(publicUser.email || publicUser.site) && (
-						<GridRowSection heading="Contact">
-							{publicUser.email && (
-								<GridRow label="Email">
-									<Link
-										href={`mailto:${publicUser.email}`}
-										target="_blank"
-									>
-										{publicUser.email}
-									</Link>
-								</GridRow>
-							)}
-							{publicUser.site && (
-								<GridRow label="Website">
-									<Link
-										href={publicUser.site}
-										target="_blank"
-									>
-										{publicUser.site}
-									</Link>
+							<GridRow label="Joined MSPFA">
+								<Timestamp>{publicUser.created}</Timestamp>
+							</GridRow>
+							{publicUser.birthdate && (
+								<GridRow label="Birthdate">
+									<Timestamp>{publicUser.birthdate}</Timestamp>
 								</GridRow>
 							)}
 						</GridRowSection>
-					)}
-				</Grid>
-			</ColumnGrid>
-			<GridSection id="section-description" heading="Description">
-				{publicUser.description}
-			</GridSection>
-			<GridFooter>
-				<Button>Edit</Button>
-			</GridFooter>
-		</Grid>
-	</Page>
-));
+						{(publicUser.email || publicUser.site) && (
+							<GridRowSection heading="Contact">
+								{publicUser.email && (
+									<GridRow label="Email">
+										<Link
+											href={`mailto:${publicUser.email}`}
+											target="_blank"
+										>
+											{publicUser.email}
+										</Link>
+									</GridRow>
+								)}
+								{publicUser.site && (
+									<GridRow label="Website">
+										<Link
+											href={publicUser.site}
+											target="_blank"
+										>
+											{publicUser.site}
+										</Link>
+									</GridRow>
+								)}
+							</GridRowSection>
+						)}
+					</Grid>
+				</ColumnGrid>
+				<GridSection id="section-description" heading="Description">
+					{publicUser.description}
+				</GridSection>
+				{user && (
+					user.id === publicUser.id
+					|| user.perms.sudoRead
+				) && (
+					<GridFooter>
+						<Button>Edit</Button>
+					</GridFooter>
+				)}
+			</Grid>
+		</Page>
+	);
+});
 
 export default Component;
 
