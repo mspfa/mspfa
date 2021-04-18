@@ -43,7 +43,7 @@ const Handler: APIHandler<(
 			_.merge(user, userChanges);
 		}
 
-		res.status(200).send(getPrivateUser(user));
+		res.send(getPrivateUser(user));
 	}
 };
 

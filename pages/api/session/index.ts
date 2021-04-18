@@ -79,7 +79,7 @@ const Handler: APIHandler<(
 
 		await createSession(req, res, user);
 
-		res.status(200).send(getPrivateUser(user));
+		res.send(getPrivateUser(user));
 		return;
 	}
 
@@ -100,7 +100,7 @@ const Handler: APIHandler<(
 
 		new Cookies(req, res).set('auth', undefined);
 
-		res.status(200).end();
+		res.end();
 	} else {
 		res.status(404).send({
 			message: 'No valid user session was found.'
