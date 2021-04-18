@@ -33,7 +33,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser }) => {
 							<div id="profile-name">
 								{publicUser.name}
 							</div>
-							<img id="profile-icon" src={publicUser.icon} width={150} height={150} />
+							<img id="profile-icon" src={publicUser.icon} />
 						</GridSection>
 					</Grid>
 					<Grid>
