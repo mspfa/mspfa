@@ -53,6 +53,7 @@
 		"no-case-declarations": "off",
 		"no-constructor-return": "error",
 		"no-else-return": "error",
+		"no-empty-pattern": "warn",
 		"no-extra-bind": "error",
 		"no-extra-label": "warn",
 		"no-floating-decimal": "error",

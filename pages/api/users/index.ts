@@ -64,10 +64,9 @@ const Handler: APIHandler<{
 			secret: process.env.HCAPTCHA_SECRET_KEY!,
 			sitekey: process.env.HCAPTCHA_SITE_KEY!,
 			response: req.body.captchaToken,
-			...(typeof req.headers['x-real-ip'] === 'string'
-				? { remoteip: req.headers['x-real-ip'] }
-				: undefined
-			)
+			...typeof req.headers['x-real-ip'] === 'string' && {
+				remoteip: req.headers['x-real-ip']
+			}
 		}))
 	).data.success) {
 		res.status(422).send({

@@ -48,15 +48,11 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 	const processChild = (child: JSX.Element, index: number) => (
 		React.cloneElement(child, {
 			key: child.props.id || index,
-			...(
-				// Only add the event listeners if this item is a component (i.e. `NavItem`) rather than an element.
-				typeof child.type === 'string'
-					? undefined
-					: {
-						onFocus,
-						onBlur
-					}
-			)
+			// Only add the event listeners if this item is a component (e.g. `NavItem`) rather than an element.
+			...typeof child.type !== 'string' && {
+				onFocus,
+				onBlur
+			}
 		})
 	);
 
@@ -74,6 +70,7 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 				onBlur={
 					useCallback(() => {
 						onBlur();
+
 						// When the menu's label is blurred, it is (obviously) no longer focused from being clicked.
 						setClickedLabel(false);
 

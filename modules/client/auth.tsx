@@ -160,7 +160,7 @@ export const setSignInPage = (
 						{
 							email: authMethod!.type === 'password' ? signInValues.email : undefined,
 							authMethod,
-							...(signInPage === 0 ? undefined : {
+							...signInPage !== 0 && {
 								captchaToken: signInValues.captchaToken,
 								name: signInValues.name,
 								birthdate: +new Date(
@@ -168,7 +168,7 @@ export const setSignInPage = (
 									+signInValues.birthMonth - 1,
 									+signInValues.birthDay
 								)
-							})
+							}
 						} as any
 					).then(response => {
 						// If sign-in or sign-up succeeds, reset the sign-in form and update the client's user state.

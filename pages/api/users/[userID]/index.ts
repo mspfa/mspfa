@@ -29,11 +29,9 @@ const Handler: APIHandler<(
 		if (Object.keys(req.body).length) {
 			const userChanges: RecursivePartial<UserDocument> = {
 				...req.body as Omit<typeof req.body, 'birthdate'>,
-				...(
-					req.body.birthdate ? {
-						birthdate: new Date(req.body.birthdate)
-					} : {}
-				)
+				...req.body.birthdate && {
+					birthdate: new Date(req.body.birthdate)
+				}
 			};
 
 			await users.updateOne({
