@@ -55,53 +55,50 @@ const onFormChange = () => {
 };
 
 type ServerSideProps = {
-	user: PrivateUser,
+	initialPrivateUser: PrivateUser,
 	defaultSettings: PrivateUser['settings']
 } | {
 	statusCode: number
 };
 
-const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSettings }) => {
-	const [requestedUser, setRequestedUser] = useState(initialUser);
-	const user = useUser();
+const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultSettings }) => {
+	const [privateUser, setPrivateUser] = useState(initialPrivateUser);
+	const user = useUser()!;
 
 	if (!defaultValues) {
 		defaultValues = getSettingsValues(defaultSettings);
 	}
-	const initialValues = getSettingsValues(requestedUser.settings);
 
-	const onSubmit = useCallback((values: Values) => {
-		const changedValues = getChangedValues(initialValues, values);
+	const initialValues = getSettingsValues(privateUser.settings);
 
-		(api as UserAPI).put(`users/${requestedUser.id}`, {
-			settings: changedValues
-		}).then(({ data }) => {
-			setRequestedUser(data);
-
-			if (user!.id === data.id) {
-				setUser(data);
-			}
-		});
-
-		// This ESLint comment is necessary because the rule incorrectly thinks `initialValues` should be a dependency here, despite that `initialValues` depends on `requestedUser` which is already a dependency.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [requestedUser, user]);
-
-	useEffect(() => (
-		() => {
-			// The page unmounted, so reset the previewed unsaved settings.
-			setUserMerge(undefined);
-		}
-	), []);
+	useEffect(() => () => {
+		// The page unmounted, so reset the previewed unsaved settings.
+		setUserMerge(undefined);
+	}, []);
 
 	return (
 		<Page flashyTitle heading="Settings">
 			<Formik
 				initialValues={initialValues}
-				onSubmit={onSubmit}
+				onSubmit={
+					useCallback(async (values: Values) => {
+						const { data } = await (api as UserAPI).put(`users/${privateUser.id}`, {
+							settings: getChangedValues(initialValues, values)
+						});
+
+						setPrivateUser(data);
+
+						if (user.id === data.id) {
+							setUser(data);
+						}
+
+						// This ESLint comment is necessary because the rule incorrectly thinks `initialValues` should be a dependency here, despite that `initialValues` depends on `privateUser` which is already a dependency.
+						// eslint-disable-next-line react-hooks/exhaustive-deps
+					}, [privateUser, user])
+				}
 				enableReinitialize
 			>
-				{({ dirty, setValues, values }) => {
+				{({ isSubmitting, dirty, setValues, values }) => {
 					useLeaveConfirmation(dirty);
 
 					useEffect(() => {
@@ -228,7 +225,7 @@ const Component = withErrorPage<ServerSideProps>(({ user: initialUser, defaultSe
 									<Button
 										className="alt"
 										type="submit"
-										disabled={!dirty}
+										disabled={isSubmitting || !dirty}
 									>
 										Save
 									</Button>
@@ -273,7 +270,7 @@ export const getServerSideProps: MyGetServerSideProps<ServerSideProps> = async (
 
 	return {
 		props: {
-			user: getPrivateUser(user!),
+			initialPrivateUser: getPrivateUser(user!),
 			defaultSettings: defaultUser.settings
 		}
 	};
