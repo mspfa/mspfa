@@ -5,7 +5,7 @@ export type IconImageProps = HTMLAttributes<HTMLDivElement> & {
 	src?: string
 };
 
-/** Displays a user-submitted icon image (or a wat face if undefined). */
+/** Displays a user-submitted icon image (or a wat face if undefined). Default size is 150x150. */
 const IconImage = ({ src, className, style, ...props }: IconImageProps) => (
 	<div
 		className={`icon-image${className ? ` ${className}` : ''}`}
