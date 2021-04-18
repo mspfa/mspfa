@@ -1,12 +1,11 @@
 import type { UserDocument } from 'modules/server/users';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
 import { startLoading, stopLoading } from 'components/LoadingIndicator';
 import { Dialog } from 'modules/client/dialogs';
-import createUpdater from 'react-component-updater';
 import createGlobalState from 'global-react-state';
-import type { EmailString, RecursivePartial } from 'modules/types';
+import type { RecursivePartial } from 'modules/types';
 
 /** All keys whose values have the same serializable type in both `DocumentUser` and `PrivateUser`. */
 type PrivateUserDocumentKey = 'name' | 'email' | 'verified' | 'description' | 'icon' | 'site' | 'comicSaves' | 'achievements' | 'favs' | 'profileStyle' | 'settings' | 'perms' | 'dev' | 'mod' | 'patron' | 'nameColor';
@@ -48,36 +47,31 @@ export const UserContext = React.createContext<PrivateUser | undefined>(undefine
  */
 export const useUser = () => useContext(UserContext);
 
-let globalUser: PrivateUser | undefined;
-
-/** True until `globalUser` has been set at least once (even if it's to `undefined`). */
-let globalUserUnset = true;
-
-const [useUserStateUpdater, updateUserState] = createUpdater();
+let globalUserState: PrivateUser | undefined;
+let globalSetUserState: React.Dispatch<React.SetStateAction<PrivateUser | undefined>> | undefined;
 
 /** Gets the current authenticated user. */
-export const getUser = () => globalUser;
+export const getUser = () => globalUserState;
 
 /** Sets the current authenticated user and re-renders all components using it. */
 export const setUser = (user: PrivateUser | undefined) => {
-	globalUser = user;
-	updateUserState();
+	if (globalSetUserState) {
+		globalSetUserState(user);
+	}
 };
 
 /**
- * Same as `useUser` but without the React context middleman.
+ * Similar to `useUser` but without the React context middleman and allows passing the initial user state.
  *
- * ⚠️ This should only be used in `pages/_app`. Please use `useUser` instead whenever possible, because it allows for better server-side rendering via React context, as well as allowing for modifications passed into the context's value from `pages/_app`.
+ * ⚠️ This should only be used in `pages/_app`. Please use `useUser` instead because it allows for server-side rendering via React context, and it allows for user modifications passed into the context's value from `pages/_app`.
  */
-export const useUserState = (initialUserState: PrivateUser | undefined) => {
-	if (globalUserUnset) {
-		globalUserUnset = false;
-		globalUser = initialUserState;
-	}
+export const useUserInApp = (initialUserState: PrivateUser | undefined) => {
+	const [user, setUserState] = useState(initialUserState);
 
-	useUserStateUpdater();
+	globalUserState = user;
+	globalSetUserState = setUserState;
 
-	return globalUser;
+	return user;
 };
 
 export const [useUserMerge, setUserMerge, getUserMerge] = createGlobalState<RecursivePartial<PrivateUser | undefined>>(undefined);

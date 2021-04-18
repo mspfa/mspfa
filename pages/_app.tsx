@@ -6,7 +6,7 @@ import { SWRConfig } from 'swr';
 import { authenticate } from 'modules/server/auth'; // @server-only
 import { getPrivateUser } from 'modules/server/users'; // @server-only
 import env from 'modules/client/env';
-import { UserContext, useUserMerge, useUserState } from 'modules/client/users';
+import { UserContext, useUserMerge, useUserInApp } from 'modules/client/users';
 import type { PrivateUser } from 'modules/client/users';
 import * as MSPFA from 'modules/client/MSPFA'; // @client-only
 import type { PageRequest } from 'modules/server/pages';
@@ -36,9 +36,13 @@ const MyApp = ({
 }: MyAppProps) => {
 	Object.assign(env, pageProps.initialProps?.env);
 
-	const user = useUserState(pageProps.initialProps?.user);
+	const user = useUserInApp(pageProps.initialProps?.user);
 	const [userMerge] = useUserMerge();
-	const mergedUser = userMerge ? _.merge({}, user, userMerge) : user;
+	const mergedUser = (
+		userMerge
+			? user && _.merge({}, user, userMerge)
+			: user
+	);
 
 	const theme = mergedUser?.settings.theme ?? 'standard';
 
