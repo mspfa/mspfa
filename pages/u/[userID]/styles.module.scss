@@ -22,10 +22,6 @@
 		}
 	}
 
-	&-meta-grid {
-		grid-template-rows: 0fr auto;
-	}
-
 	&-meta, &-description {
 		text-align: center;
 	}
@@ -35,6 +31,10 @@
 	}
 
 	&-icon {
+		&-container {
+			width: 150px;
+		}
+
 		max-width: 150px;
 		max-height: 150px;
 	}

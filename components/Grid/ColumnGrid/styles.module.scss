@@ -9,6 +9,8 @@
 	}
 
 	& > .grid {
+		grid-template-rows: 0fr;
+
 		&-heading {
 			grid-row: 1;
 

@@ -13,6 +13,7 @@ import Timestamp from 'components/Timestamp';
 import Link from 'components/Link';
 import GridFooter from 'components/Grid/GridFooter';
 import Button from 'components/Button';
+import IconImage from 'components/IconImage';
 import './styles.module.scss';
 
 type ServerSideProps = {
@@ -33,7 +34,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser }) => {
 							<div id="profile-name">
 								{publicUser.name}
 							</div>
-							<img id="profile-icon" src={publicUser.icon} />
+							<IconImage id="profile-icon" src={publicUser.icon} />
 						</GridSection>
 					</Grid>
 					<Grid>
@@ -76,9 +77,11 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser }) => {
 						)}
 					</Grid>
 				</ColumnGrid>
-				<GridSection id="profile-description" heading="Description">
-					{publicUser.description}
-				</GridSection>
+				{publicUser.description && (
+					<GridSection id="profile-description" heading="Description">
+						{publicUser.description}
+					</GridSection>
+				)}
 				{user && (
 					user.id === publicUser.id
 					|| user.perms.sudoRead
