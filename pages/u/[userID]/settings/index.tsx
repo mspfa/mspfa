@@ -136,7 +136,40 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										<Button
 											disabled={isSubmitting}
 											onClick={
-												useCallback(() => {
+												useCallback(async () => {
+													if (!(
+														(
+															await new Dialog({
+																id: 'delete-user',
+																title: 'Delete Account',
+																content: 'Are you sure you want to delete your account?\n\nThis action is irreversible.',
+																actions: [
+																	'Yes',
+																	{ label: 'No', focus: true }
+																]
+															})
+														)?.submit
+														&& (
+															await new Dialog({
+																id: 'delete-user',
+																title: 'Delete Account',
+																content: <>
+																	Are you REALLY sure you want to delete your account?<br />
+																	<br />
+																	This action is IRREVERSIBLE.<br />
+																	<br />
+																	<span className="bolder">Please ensure that you are in a good state of mind before continuing!</span>
+																</>,
+																actions: [
+																	'Yes',
+																	{ label: 'No', focus: true }
+																]
+															})
+														)?.submit
+													)) {
+														return;
+													}
+
 													setSubmitting(true);
 
 													(api as UserAPI).delete(`users/${privateUser.id}`).then(() => {
