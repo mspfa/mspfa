@@ -2,7 +2,6 @@ import { useUser } from 'modules/client/users';
 import Router from 'next/router';
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import type { MyGetServerSideProps } from 'modules/server/pages';
 
 const ErrorPage = dynamic(() => import('pages/_error'));
 
@@ -26,22 +25,5 @@ export const withErrorPage = <
 				? <Component {...props as any} />
 				: <ErrorPage statusCode={statusCode} />
 		);
-	}
-);
-
-/** Sets `res.statusCode` based on the returned `statusCode` prop. */
-export const withStatusCode = <
-	ServerSideProps extends Record<string, any> = {}
->(getServerSideProps: MyGetServerSideProps<ServerSideProps>): MyGetServerSideProps<ServerSideProps> => (
-	async props => {
-		const serverSideProps = await getServerSideProps(props);
-
-		if (serverSideProps.props.statusCode) {
-			// This ESLint comment is necessary because I'm pretty sure there's no race condition here.
-			// eslint-disable-next-line require-atomic-updates
-			props.res.statusCode = serverSideProps.props.statusCode;
-		}
-
-		return serverSideProps;
 	}
 );
