@@ -16,9 +16,7 @@ export type ExternalAuthMethod = {
 export type InternalAuthMethod = {
 	type: 'password',
 	/** @minLength 8 */
-	value: string,
-	/** Whether the password was created on the old site. */
-	legacy?: true
+	value: string
 };
 
 export type AuthMethod = ExternalAuthMethod | InternalAuthMethod;

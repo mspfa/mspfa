@@ -12,7 +12,7 @@ export type SessionBody = {
 	authMethod: ExternalAuthMethod
 } | {
 	email: EmailString,
-	authMethod: Pick<InternalAuthMethod, 'type' | 'value'>
+	authMethod: InternalAuthMethod
 };
 
 const Handler: APIHandler<(
