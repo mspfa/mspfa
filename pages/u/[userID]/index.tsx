@@ -28,9 +28,12 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser }) => {
 		<Page flashyTitle heading="Profile">
 			<Grid id="profile-grid">
 				<ColumnGrid>
-					<Grid className="grid-with-single-section">
-						<GridSection id="section-meta" heading="Meta">
-							{publicUser.name}
+					<Grid id="profile-meta-grid">
+						<GridSection id="profile-meta" heading="Meta">
+							<div id="profile-name">
+								{publicUser.name}
+							</div>
+							<img id="profile-icon" src={publicUser.icon} width={150} height={150} />
 						</GridSection>
 					</Grid>
 					<Grid>
@@ -73,7 +76,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser }) => {
 						)}
 					</Grid>
 				</ColumnGrid>
-				<GridSection id="section-description" heading="Description">
+				<GridSection id="profile-description" heading="Description">
 					{publicUser.description}
 				</GridSection>
 				{user && (

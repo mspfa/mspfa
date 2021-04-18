@@ -1,32 +1,36 @@
 @import 'styles/global';
 
-#profile-grid {
-	.column-grid {
-		grid-template-columns: auto 1fr;
+#profile {
+	&-grid {
+		.column-grid {
+			grid-template-columns: auto 1fr;
 
-		@include mobile {
-			grid-template-columns: auto;
+			@include mobile {
+				grid-template-columns: auto;
+			}
+		}
+
+		.grid-row {
+			&-section {
+				justify-content: center;
+				column-gap: 2em;
+			}
+
+			&-label {
+				text-align: left;
+			}
 		}
 	}
 
-	.grid-row {
-		&-section {
-			justify-content: center;
-			column-gap: 2em;
-		}
-
-		&-label {
-			text-align: left;
-		}
+	&-meta-grid {
+		grid-template-rows: 0fr auto;
 	}
-}
 
-.grid-with-single-section {
-	grid-template-rows: 0fr auto;
-}
-
-#section {
 	&-meta, &-description {
 		text-align: center;
+	}
+
+	&-name {
+		margin-bottom: 1ch;
 	}
 }
