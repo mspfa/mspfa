@@ -132,63 +132,6 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										maxLength={254}
 										label="Email"
 									/>
-									<div className="grid-row-uniform">
-										<Button
-											disabled={isSubmitting}
-											onClick={
-												useCallback(async () => {
-													if (!(
-														(
-															await new Dialog({
-																id: 'delete-user',
-																title: 'Delete Account',
-																content: 'Are you sure you want to delete your account?\n\nThis action is irreversible.',
-																actions: [
-																	'Yes',
-																	{ label: 'No', focus: true }
-																]
-															})
-														)?.submit
-														&& (
-															await new Dialog({
-																id: 'delete-user',
-																title: 'Delete Account',
-																content: <>
-																	Are you REALLY sure you want to delete your account?<br />
-																	<br />
-																	This action is IRREVERSIBLE.<br />
-																	<br />
-																	<span className="bolder">Please ensure that you are in a good state of mind before continuing!</span>
-																</>,
-																actions: [
-																	'Yes',
-																	{ label: 'No', focus: true }
-																]
-															})
-														)?.submit
-													)) {
-														return;
-													}
-
-													setSubmitting(true);
-
-													(api as UserAPI).delete(`users/${privateUser.id}`).then(() => {
-														preventLeaveConfirmations();
-														preventReloads();
-														Router.push('/');
-
-														if (user.id === privateUser.id) {
-															setUser(undefined);
-														}
-													}).catch(() => {
-														setSubmitting(false);
-													});
-												}, [setSubmitting])
-											}
-										>
-											Delete Account
-										</Button>
-									</div>
 								</GridRowSection>
 								<GridRowSection heading="Display">
 									<FieldGridRow
@@ -299,34 +242,93 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 									/>
 								</GridSection>
 								<GridFooter>
-									<Button
-										className="alt"
-										type="submit"
-										disabled={isSubmitting || !dirty}
-									>
-										Save
-									</Button>
-									<Button
-										title="Reset settings to default"
-										disabled={_.isEqual(values.settings, defaultValues!.settings)}
-										onClick={
-											useCallback(() => {
-												new Dialog({
-													id: 'reset',
-													title: 'Reset',
-													content: 'Are you sure you want to reset your settings to default?\n\nAny unsaved changes will be lost.',
-													actions: ['Yes', 'No']
-												}).then(result => {
-													if (result?.submit) {
-														setFieldValue('settings', defaultValues!.settings);
-														onFormChange();
+									<div className="grid-row-uniform">
+										<Button
+											className="alt"
+											type="submit"
+											disabled={isSubmitting || !dirty}
+										>
+											Save
+										</Button>
+										<Button
+											title="Reset settings to default"
+											disabled={_.isEqual(values.settings, defaultValues!.settings)}
+											onClick={
+												useCallback(() => {
+													new Dialog({
+														id: 'reset',
+														title: 'Reset',
+														content: 'Are you sure you want to reset your settings to default?\n\nAny unsaved changes will be lost.',
+														actions: ['Yes', 'No']
+													}).then(result => {
+														if (result?.submit) {
+															setFieldValue('settings', defaultValues!.settings);
+															onFormChange();
+														}
+													});
+												}, [setFieldValue])
+											}
+										>
+											Reset
+										</Button>
+									</div>
+									<div className="grid-row-uniform">
+										<Button
+											disabled={isSubmitting}
+											onClick={
+												useCallback(async () => {
+													if (!(
+														(
+															await new Dialog({
+																id: 'delete-user',
+																title: 'Delete Account',
+																content: 'Are you sure you want to delete your account?\n\nThis action is irreversible.',
+																actions: [
+																	'Yes',
+																	{ label: 'No', focus: true }
+																]
+															})
+														)?.submit
+														&& (
+															await new Dialog({
+																id: 'delete-user',
+																title: 'Delete Account',
+																content: <>
+																	Are you REALLY sure you want to delete your account?<br />
+																	<br />
+																	This action is IRREVERSIBLE.<br />
+																	<br />
+																	<span className="bolder">Please ensure that you are in a good state of mind before continuing!</span>
+																</>,
+																actions: [
+																	'Yes',
+																	{ label: 'No', focus: true }
+																]
+															})
+														)?.submit
+													)) {
+														return;
 													}
-												});
-											}, [setFieldValue])
-										}
-									>
-										Reset
-									</Button>
+
+													setSubmitting(true);
+
+													(api as UserAPI).delete(`users/${privateUser.id}`).then(() => {
+														preventLeaveConfirmations();
+														preventReloads();
+														Router.push('/');
+
+														if (user.id === privateUser.id) {
+															setUser(undefined);
+														}
+													}).catch(() => {
+														setSubmitting(false);
+													});
+												}, [setSubmitting])
+											}
+										>
+											Delete Account
+										</Button>
+									</div>
 								</GridFooter>
 							</Grid>
 						</Form>
