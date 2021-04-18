@@ -5,6 +5,17 @@ import dynamic from 'next/dynamic';
 
 const ErrorPage = dynamic(() => import('pages/_error'));
 
+let reloadsToPrevent = 0;
+
+/** Prevent a number of the following reloads caused by user ID updates. */
+export const preventReloads = (
+	/** How many additional reloads to prevent. */
+	count = 1
+) => {
+	reloadsToPrevent += count;
+	return reloadsToPrevent;
+};
+
 /** Wraps a page's component to serve an error page instead of the page component when a `statusCode` prop is passed to the page. */
 export const withErrorPage = <
 	/** The props of the page's component. */
@@ -14,10 +25,14 @@ export const withErrorPage = <
 		const user = useUser();
 
 		useEffect(() => () => {
-			// When the client switches users, reload the page so its server-side props are requested again, possibly updating `statusCode`.
-			// For example, if a client is signed out on a page which they need to sign into in order to access, `statusCode === 403`. If they then sign in, the server-side props will return no `statusCode`, as well is any necessary data which only that user has access to for that page.
-			// This incidentally causes a real window reload if the server tries to send the client an HTTP error status code.
-			Router.replace(Router.asPath);
+			if (reloadsToPrevent) {
+				reloadsToPrevent--;
+			} else {
+				// When the client switches users, reload the page so its server-side props are requested again, possibly updating `statusCode`.
+				// For example, if a client is signed out on a page which they need to sign into in order to access, `statusCode === 403`. If they then sign in, the server-side props will return no `statusCode`, as well is any necessary data which only that user has access to for that page.
+				// This incidentally causes a real window reload if the server tries to send the client an HTTP error status code.
+				Router.replace(Router.asPath);
+			}
 		}, [user?.id]);
 
 		return (

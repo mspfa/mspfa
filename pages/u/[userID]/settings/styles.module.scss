@@ -1,5 +1,12 @@
-.grid-content > .info {
+.grid-content > .grid-row-uniform {
 	grid-column: 1 / -1;
 	text-align: center;
-	margin-bottom: 1ch;
+
+	&:not(:last-child) {
+		margin-bottom: 1em;
+	}
+
+	&:not(:first-child) {
+		margin-top: 1em;
+	}
 }

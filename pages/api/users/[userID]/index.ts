@@ -45,6 +45,18 @@ const Handler: APIHandler<(
 
 		res.send(getPrivateUser(user));
 	}
+
+	// If this point is reached, `req.method === 'DELETE'`.
+
+	const user = await permToGetUserInAPI(req, res, req.query.userID as string, Perm.sudoDelete);
+
+	// TODO: Delete other things as well.
+
+	await users.deleteOne({
+		_id: user._id
+	});
+
+	res.end();
 };
 
 export default Handler;

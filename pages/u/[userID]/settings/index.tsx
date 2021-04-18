@@ -3,11 +3,11 @@ import { setUser, setUserMerge, useUser } from 'modules/client/users';
 import type { PrivateUser } from 'modules/client/users';
 import { Perm, permToGetUserInPage } from 'modules/server/perms';
 import { defaultUser, getPrivateUser } from 'modules/server/users';
-import { withErrorPage } from 'modules/client/errors';
+import { preventReloads, withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
 import { Form, Formik, Field } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
-import { getChangedValues, useLeaveConfirmation } from 'modules/client/forms';
+import { getChangedValues, preventLeaveConfirmations, useLeaveConfirmation } from 'modules/client/forms';
 import Grid from 'components/Grid';
 import ColumnGrid from 'components/Grid/ColumnGrid';
 import GridSection from 'components/Grid/GridSection';
@@ -22,29 +22,33 @@ import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
 import _ from 'lodash';
 import { Dialog } from 'modules/client/dialogs';
-import './styles.module.scss';
 import Label from 'components/Label';
+import Router from 'next/router';
+import './styles.module.scss';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 
-const getSettingsValues = (settings: PrivateUser['settings']) => ({
-	ads: settings.ads,
-	autoOpenSpoilers: settings.autoOpenSpoilers,
-	preloadImages: settings.preloadImages,
-	stickyNav: settings.stickyNav,
-	imageSharpening: settings.imageSharpening,
-	theme: settings.theme,
-	style: settings.style,
-	controls: settings.controls,
-	notifications: {
-		messages: settings.notifications.messages,
-		userTags: settings.notifications.userTags,
-		commentReplies: settings.notifications.commentReplies,
-		comicDefaults: settings.notifications.comicDefaults
+const getValuesFromUser = (privateUser: Pick<PrivateUser, 'settings'> & Partial<Omit<PrivateUser, 'settings'>>) => ({
+	email: privateUser.email,
+	settings: {
+		ads: privateUser.settings.ads,
+		autoOpenSpoilers: privateUser.settings.autoOpenSpoilers,
+		preloadImages: privateUser.settings.preloadImages,
+		stickyNav: privateUser.settings.stickyNav,
+		imageSharpening: privateUser.settings.imageSharpening,
+		theme: privateUser.settings.theme,
+		style: privateUser.settings.style,
+		controls: privateUser.settings.controls,
+		notifications: {
+			messages: privateUser.settings.notifications.messages,
+			userTags: privateUser.settings.notifications.userTags,
+			commentReplies: privateUser.settings.notifications.commentReplies,
+			comicDefaults: privateUser.settings.notifications.comicDefaults
+		}
 	}
 });
 
-type Values = ReturnType<typeof getSettingsValues>;
+type Values = ReturnType<typeof getValuesFromUser>;
 
 let defaultValues: Values | undefined;
 
@@ -66,10 +70,10 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 	const user = useUser()!;
 
 	if (!defaultValues) {
-		defaultValues = getSettingsValues(defaultSettings);
+		defaultValues = getValuesFromUser({ settings: defaultSettings });
 	}
 
-	const initialValues = getSettingsValues(privateUser.settings);
+	const initialValues = getValuesFromUser(privateUser);
 
 	useEffect(() => () => {
 		// The page unmounted, so reset the previewed unsaved settings.
@@ -82,13 +86,19 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 				initialValues={initialValues}
 				onSubmit={
 					useCallback(async (values: Values) => {
-						const { data } = await (api as UserAPI).put(`users/${privateUser.id}`, {
-							settings: getChangedValues(initialValues, values)
-						});
+						const changedValues = getChangedValues(initialValues, values);
+
+						if (!changedValues) {
+							return;
+						}
+
+						const { data } = await (api as UserAPI).put(
+							`users/${privateUser.id}`,
+							changedValues
+						);
 
 						setPrivateUser(data);
-
-						if (user.id === data.id) {
+						if (user.id === privateUser.id) {
 							setUser(data);
 						}
 
@@ -98,7 +108,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 				}
 				enableReinitialize
 			>
-				{({ isSubmitting, dirty, setValues, values }) => {
+				{({ isSubmitting, dirty, values, setFieldValue, setSubmitting }) => {
 					useLeaveConfirmation(dirty);
 
 					useEffect(() => {
@@ -106,17 +116,51 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 							formChanged = false;
 
 							// Preview the unsaved settings by merging them with the user state.
-							setUserMerge({ settings: values });
+							setUserMerge({ settings: values.settings });
 						}
 					});
 
 					return (
 						<Form onChange={onFormChange}>
 							<Grid>
+								<GridRowSection heading="Account">
+									<FieldGridRow
+										name="email"
+										type="email"
+										autoComplete="email"
+										required
+										maxLength={254}
+										label="Email"
+									/>
+									<div className="grid-row-uniform">
+										<Button
+											disabled={isSubmitting}
+											onClick={
+												useCallback(() => {
+													setSubmitting(true);
+
+													(api as UserAPI).delete(`users/${privateUser.id}`).then(() => {
+														preventLeaveConfirmations();
+														preventReloads();
+														Router.push('/');
+
+														if (user.id === privateUser.id) {
+															setUser(undefined);
+														}
+													}).catch(() => {
+														setSubmitting(false);
+													});
+												}, [setSubmitting])
+											}
+										>
+											Delete Account
+										</Button>
+									</div>
+								</GridRowSection>
 								<GridRowSection heading="Display">
 									<FieldGridRow
 										as="select"
-										name="theme"
+										name="settings.theme"
 										label="Theme"
 									>
 										<option value="standard">Standard</option>
@@ -126,32 +170,32 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										<option value="trickster">Trickster</option>
 									</FieldGridRow>
 									<FieldGridRow
-										name="stickyNav"
+										name="settings.stickyNav"
 										label="Sticky Nav Bar"
 										help="Makes the nav bar stick to the top of your screen when you scroll down instead of scrolling out of the page."
 									/>
 									<FieldGridRow
-										name="imageSharpening"
+										name="settings.imageSharpening"
 										label="Image Sharpening"
 										help={'Disables anti-aliasing in images from adventure pages (using nearest-neighbor scaling).\n\nWhat this means is images, when scaled, will tend to have more crisp edges rather than becoming blurry.'}
 									/>
 									<FieldGridRow
-										name="ads.side"
+										name="settings.ads.side"
 										label="Side Ad"
 									/>
 									<FieldGridRow
-										name="ads.matchedContent"
+										name="settings.ads.matchedContent"
 										label="Matched Content Ad"
 									/>
 								</GridRowSection>
 								<GridRowSection heading="Utility">
 									<FieldGridRow
-										name="autoOpenSpoilers"
+										name="settings.autoOpenSpoilers"
 										label="Auto-Open Spoilers"
 										help="Makes spoilers open by default instead of closed."
 									/>
 									<FieldGridRow
-										name="preloadImages"
+										name="settings.preloadImages"
 										label="Preload Images"
 										help="Loads images on adjacent adventure pages so they may already be loaded when an adjacent page is opened."
 									/>
@@ -159,53 +203,53 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 								<ColumnGrid>
 									<NotificationSettingGroup heading="General Notifications">
 										<NotificationSetting
-											name="notifications.messages"
+											name="settings.notifications.messages"
 											label="Messages"
 											help="Get notified when a user sends you a new private message."
 										/>
 										<NotificationSetting
-											name="notifications.userTags"
+											name="settings.notifications.userTags"
 											label="User Tags"
 											help="Get notified when you are tagged in a comment."
 										/>
 										<NotificationSetting
-											name="notifications.commentReplies"
+											name="settings.notifications.commentReplies"
 											label="Replies to Comments"
 											help="Get notified when one of your comments receives a reply."
 										/>
 									</NotificationSettingGroup>
 									<NotificationSettingGroup heading="Default Adventure Notifications">
 										<NotificationSetting
-											name="notifications.comicDefaults.updates"
+											name="settings.notifications.comicDefaults.updates"
 											label="Updates"
 											help="Get notified when an adventure publishes new pages."
 										/>
 										<NotificationSetting
-											name="notifications.comicDefaults.news"
+											name="settings.notifications.comicDefaults.news"
 											label="News"
 											help="Get notified when an adventure publishes a news post."
 										/>
 										<NotificationSetting
-											name="notifications.comicDefaults.comments"
+											name="settings.notifications.comicDefaults.comments"
 											label="Comments"
 											help="Get notified when an adventure you edit receives a new comment."
 										/>
 									</NotificationSettingGroup>
 								</ColumnGrid>
 								<GridRowSection heading="Controls">
-									<div className="info translucent-text">
+									<div className="grid-row-uniform translucent-text">
 										Select a box and press a key. Press escape to remove a control.
 									</div>
 									<ControlSetting
-										name="controls.back"
+										name="settings.controls.back"
 										label="Back"
 									/>
 									<ControlSetting
-										name="controls.forward"
+										name="settings.controls.forward"
 										label="Forward"
 									/>
 									<ControlSetting
-										name="controls.toggleSpoilers"
+										name="settings.controls.toggleSpoilers"
 										label="Toggle Spoilers"
 									/>
 								</GridRowSection>
@@ -216,7 +260,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 									<Field
 										as="textarea"
 										id="field-style"
-										name="style"
+										name="settings.style"
 										rows={5}
 										placeholder={"Paste SCSS here.\nIf you don't know what this is, don't worry about it."}
 									/>
@@ -231,7 +275,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 									</Button>
 									<Button
 										title="Reset settings to default"
-										disabled={_.isEqual(values, defaultValues!)}
+										disabled={_.isEqual(values.settings, defaultValues!.settings)}
 										onClick={
 											useCallback(() => {
 												new Dialog({
@@ -241,10 +285,11 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 													actions: ['Yes', 'No']
 												}).then(result => {
 													if (result?.submit) {
-														setValues(defaultValues!);
+														setFieldValue('settings', defaultValues!.settings);
+														onFormChange();
 													}
 												});
-											}, [setValues])
+											}, [setFieldValue])
 										}
 									>
 										Reset
