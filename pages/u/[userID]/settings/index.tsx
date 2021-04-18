@@ -1,10 +1,9 @@
 import Page from 'components/Page';
-import type { MyGetServerSideProps } from 'modules/server/pages';
 import { setUser, setUserMerge, useUser } from 'modules/client/users';
 import type { PrivateUser } from 'modules/client/users';
 import { Perm, permToGetUserInPage } from 'modules/server/perms';
 import { defaultUser, getPrivateUser } from 'modules/server/users';
-import { withErrorPage } from 'pages/_error';
+import { withErrorPage, withStatusCode } from 'modules/client/errors';
 import { Form, Formik, Field } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
 import { getChangedValues, useLeaveConfirmation } from 'modules/client/forms';
@@ -261,7 +260,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 
 export default Component;
 
-export const getServerSideProps: MyGetServerSideProps<ServerSideProps> = async ({ req, params }) => {
+export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, params }) => {
 	const { user, statusCode } = await permToGetUserInPage(req, params.userID, Perm.sudoRead);
 
 	if (statusCode) {
@@ -274,4 +273,4 @@ export const getServerSideProps: MyGetServerSideProps<ServerSideProps> = async (
 			defaultSettings: defaultUser.settings
 		}
 	};
-};
+});

@@ -1,9 +1,8 @@
 import Page from 'components/Page';
-import type { MyGetServerSideProps } from 'modules/server/pages';
 import { useUser } from 'modules/client/users';
 import type { PublicUser } from 'modules/client/users';
 import { getUserByUnsafeID, getPublicUser } from 'modules/server/users';
-import { withErrorPage } from 'pages/_error';
+import { withErrorPage, withStatusCode } from 'modules/client/errors';
 import Grid from 'components/Grid';
 import ColumnGrid from 'components/Grid/ColumnGrid';
 import GridSection from 'components/Grid/GridSection';
@@ -91,7 +90,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser }) => {
 
 export default Component;
 
-export const getServerSideProps: MyGetServerSideProps<ServerSideProps> = async ({ params }) => {
+export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ params }) => {
 	const userFromParams = await getUserByUnsafeID(params.userID);
 
 	if (userFromParams) {
@@ -103,4 +102,4 @@ export const getServerSideProps: MyGetServerSideProps<ServerSideProps> = async (
 	}
 
 	return { props: { statusCode: 404 } };
-};
+});
