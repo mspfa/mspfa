@@ -43,7 +43,7 @@ const getValuesFromUser = (privateUser: Pick<PrivateUser, 'settings'> & Partial<
 			messages: privateUser.settings.notifications.messages,
 			userTags: privateUser.settings.notifications.userTags,
 			commentReplies: privateUser.settings.notifications.commentReplies,
-			comicDefaults: privateUser.settings.notifications.comicDefaults
+			storyDefaults: privateUser.settings.notifications.storyDefaults
 		}
 	}
 });
@@ -196,17 +196,17 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 									</NotificationSettingGroup>
 									<NotificationSettingGroup heading="Default Adventure Notifications">
 										<NotificationSetting
-											name="settings.notifications.comicDefaults.updates"
+											name="settings.notifications.storyDefaults.updates"
 											label="Updates"
 											help="Get notified when an adventure publishes new pages."
 										/>
 										<NotificationSetting
-											name="settings.notifications.comicDefaults.news"
+											name="settings.notifications.storyDefaults.news"
 											label="News"
 											help="Get notified when an adventure publishes a news post."
 										/>
 										<NotificationSetting
-											name="settings.notifications.comicDefaults.comments"
+											name="settings.notifications.storyDefaults.comments"
 											label="Comments"
 											help="Get notified when an adventure you edit receives a new comment."
 										/>

@@ -2,7 +2,7 @@ import db from 'modules/server/db';
 import type { Quirk } from 'modules/server/quirks';
 import type { URLString } from 'modules/types';
 
-export type ComicPage = {
+export type StoryPage = {
 	published: Date,
 	title: string,
 	content: string,
@@ -12,18 +12,18 @@ export type ComicPage = {
 	commentary?: string
 };
 
-export type ComicPageDraft = ComicPage & {
+export type StoryPageDraft = StoryPage & {
 	notify: boolean
 };
 
-export enum ComicStatus {
+export enum StoryStatus {
 	Inactive = 0,
 	Ongoing,
 	Complete,
 	Discontinued
 }
 
-export type ComicComment = {
+export type StoryComment = {
 	posted: Date,
 	edited?: Date,
 	page: number,
@@ -34,30 +34,30 @@ export type ComicComment = {
 	private: boolean
 };
 
-export type ComicColor = {
+export type StoryColor = {
 	value: string,
 	name: string
 };
 
-export type ComicDocument = {
+export type StoryDocument = {
 	_id: number,
 	created: Date,
 	updated: Date,
 	title: string,
-	status: ComicStatus,
+	status: StoryStatus,
 	owner: string,
 	editors: string[],
 	author?: {
 		name: string,
 		site?: URLString
 	},
-	pages: ComicPage[],
-	drafts: ComicPageDraft[],
+	pages: StoryPage[],
+	drafts: StoryPageDraft[],
 	description: string,
 	icon?: URLString,
 	banner?: URLString,
 	style: string,
-	/** Whether the comic should ignore the reader's theme setting. */
+	/** Whether the story should ignore the reader's theme setting. */
 	disableUserTheme: boolean,
 	script: {
 		unverified: string,
@@ -65,19 +65,19 @@ export type ComicDocument = {
 	},
 	tags: string[],
 	commentsEnabled: boolean,
-	comments: ComicComment[],
-	/** Properties of the comic which are only used in the comic editor. */
+	comments: StoryComment[],
+	/** Properties of the story which are only used in the story editor. */
 	editorSettings: {
-		defaultPageTitle: ComicPage['title'],
+		defaultPageTitle: StoryPage['title'],
 		defaultSpoiler: {
 			openLabel: string,
 			closeLabel: string
 		},
-		colors: ComicColor[]
+		colors: StoryColor[]
 	},
 	quirks: Quirk[]
 };
 
-const comics = db.collection<ComicDocument>('comics');
+const stories = db.collection<StoryDocument>('stories');
 
-export default comics;
+export default stories;

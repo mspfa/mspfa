@@ -5,7 +5,7 @@ import Router from 'next/router';
 import { signIn, signOut, useUser } from 'modules/client/users';
 import './styles.module.scss';
 
-const visitRandomComic = () => {
+const visitRandomStory = () => {
 	// TODO
 
 	Router.push(`/s/${Math.random()}/p/1`);
@@ -43,9 +43,9 @@ const Nav = () => {
 								bubble={messagesBubble}
 							/>
 							<div className="divider" />
-							<NavItem id="comics" label="Adventures" href={`/u/${user.id}/comics`} />
+							<NavItem id="stories" label="Adventures" href={`/u/${user.id}/stories`} />
 							<NavItem id="favorites" label="Favorites" href={`/u/${user.id}/favorites`} />
-							<NavItem id="comic-saves" label="Game Saves" href={`/u/${user.id}/comic-saves`} />
+							<NavItem id="story-saves" label="Game Saves" href={`/u/${user.id}/story-saves`} />
 							<div className="divider" />
 							<NavItem id="profile" label="Profile" href={`/u/${user.id}`} />
 							<NavItem id="settings" label="Settings" href={`/u/${user.id}/settings`} />
@@ -58,11 +58,11 @@ const Nav = () => {
 			</NavGroup>
 			<NavGroup id="secondary">
 				<NavItem id="search" label="Site Search" href="/search" />
-				<NavItem id="random" label="Mystery" title="Take me to a random adventure!" onClick={visitRandomComic} />
+				<NavItem id="random" label="Mystery" title="Take me to a random adventure!" onClick={visitRandomStory} />
 			</NavGroup>
-			<NavGroup id="comic">
-				<NavItem id="comic-log" label="Log" href={`/s/${0}/log`} />
-				<NavItem id="comic-search" label="Search" href={`/s/${0}/search`} />
+			<NavGroup id="story">
+				<NavItem id="story-log" label="Log" href={`/s/${0}/log`} />
+				<NavItem id="story-search" label="Search" href={`/s/${0}/search`} />
 			</NavGroup>
 			<NavGroup id="more">
 				<NavMenu id="help" label="Help">

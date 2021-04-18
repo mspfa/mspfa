@@ -32,28 +32,28 @@ export type NotificationSetting = {
 	site: boolean
 };
 
-export type ComicReaderNotificationSettingKeys = 'updates' | 'news';
+export type StoryReaderNotificationSettingKeys = 'updates' | 'news';
 
-export type ComicEditorNotificationSettingKeys = 'comments';
+export type StoryEditorNotificationSettingKeys = 'comments';
 
-export type ComicReaderNotificationSettings = (
+export type StoryReaderNotificationSettings = (
 	// Include the reader keys.
-	Record<ComicReaderNotificationSettingKeys, NotificationSetting>
+	Record<StoryReaderNotificationSettingKeys, NotificationSetting>
 	// Include the editor keys as optional `undefined`s.
-	& Partial<Record<ComicEditorNotificationSettingKeys, undefined>>
+	& Partial<Record<StoryEditorNotificationSettingKeys, undefined>>
 );
 
-export type ComicEditorNotificationSettings = (
+export type StoryEditorNotificationSettings = (
 	// Include the reader and editor keys.
-	Record<ComicReaderNotificationSettingKeys | ComicEditorNotificationSettingKeys, NotificationSetting>
+	Record<StoryReaderNotificationSettingKeys | StoryEditorNotificationSettingKeys, NotificationSetting>
 );
 
 /**
- * `true` if the setting should inherit the user's default comic notification settings.
+ * `true` if the setting should inherit the user's default story notification settings.
  *
- * `ComicReaderNotificationSettings | ComicEditorNotificationSettings` otherwise.
+ * `StoryReaderNotificationSettings | StoryEditorNotificationSettings` otherwise.
  */
-export type ComicNotificationSettings = true | ComicReaderNotificationSettings | ComicEditorNotificationSettings;
+export type StoryNotificationSettings = true | StoryReaderNotificationSettings | StoryEditorNotificationSettings;
 
 export type UserDocument = {
 	_id: ObjectId,
@@ -73,8 +73,8 @@ export type UserDocument = {
 	description: string,
 	icon?: URLString,
 	site?: URLString,
-	/** An object where each key is a comic ID, and its value is a page number of that comic. */
-	comicSaves: Record<number, number>,
+	/** An object where each key is a story ID, and its value is a page number of that story. */
+	storySaves: Record<number, number>,
 	achievements: Partial<Record<keyof typeof achievements, true>>,
 	favs: number[],
 	profileStyle: string,
@@ -87,11 +87,11 @@ export type UserDocument = {
 			matchedContent: boolean
 		},
 		autoOpenSpoilers: boolean,
-		/** This makes images on adjacent pages always preload when a user visits a comic page. */
+		/** This makes images on adjacent pages always preload when a user visits a story page. */
 		preloadImages: boolean,
 		/** This makes the nav bar always stay at the top of the screen when scrolling below it. */
 		stickyNav: boolean,
-		/** This sets the image rendering style to nearest-neighbor on images which the user might want that on (such as comic panels). */
+		/** This sets the image rendering style to nearest-neighbor on images which the user might want that on (such as story panels). */
 		imageSharpening: boolean,
 		theme: Theme,
 		style: string,
@@ -104,9 +104,9 @@ export type UserDocument = {
 			messages: NotificationSetting,
 			userTags: NotificationSetting,
 			commentReplies: NotificationSetting,
-			/** These are the comic notification settings set by default when the user first enables notifications for a comic. */
-			comicDefaults: ComicEditorNotificationSettings,
-			comics: Record<number, ComicNotificationSettings>
+			/** These are the story notification settings set by default when the user first enables notifications for a story. */
+			storyDefaults: StoryEditorNotificationSettings,
+			stories: Record<number, StoryNotificationSettings>
 		}
 	},
 	perms: Partial<Record<Perm, true>>,
@@ -122,7 +122,7 @@ export const defaultUser = {
 	sessions: [] as never[],
 	verified: false,
 	description: '',
-	comicSaves: {} as Record<never, never>,
+	storySaves: {} as Record<never, never>,
 	achievements: {} as Record<never, never>,
 	favs: [] as never[],
 	profileStyle: '',
@@ -149,12 +149,12 @@ export const defaultUser = {
 			messages: { email: true, site: true },
 			userTags: { email: true, site: true },
 			commentReplies: { email: true, site: true },
-			comicDefaults: {
+			storyDefaults: {
 				updates: { email: true, site: true },
 				news: { email: true, site: true },
 				comments: { email: true, site: true }
 			},
-			comics: {} as Record<never, never>
+			stories: {} as Record<never, never>
 		}
 	},
 	perms: {} as Record<never, never>
@@ -177,7 +177,7 @@ export const getPrivateUser = (user: UserDocument): PrivateUser => {
 		description: user.description,
 		icon: user.icon,
 		site: user.site,
-		comicSaves: user.comicSaves,
+		storySaves: user.storySaves,
 		achievements: user.achievements,
 		favs: user.favs,
 		profileStyle: user.profileStyle,
