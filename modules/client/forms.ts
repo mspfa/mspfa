@@ -81,6 +81,7 @@ export const useLeaveConfirmation = (
 				Router.events.emit('routeChangeError');
 				Router.replace(Router, Router.asPath);
 
+				// Next being opinionated can be bullshit. To see why throwing a string is necessary, see the issue linked in said string.
 				// eslint-disable-next-line @typescript-eslint/no-throw-literal
 				throw 'Route change prevented. Please ignore this error.\nhttps://github.com/vercel/next.js/issues/2476#issuecomment-573460710';
 			}

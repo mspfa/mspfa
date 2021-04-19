@@ -7,6 +7,7 @@ import type { ChangeEvent } from 'react';
 import env from 'modules/client/env';
 import Captcha from 'components/SignIn/Captcha';
 import Label from 'components/Label';
+import { toPattern } from 'modules/client/utilities';
 import './styles.module.scss';
 
 const startSigningUp = () => {
@@ -197,10 +198,7 @@ const SignIn = ({ page }: SignInProps) => {
 									autoComplete="new-password"
 									required
 									placeholder="Re-type Password"
-									pattern={
-										// Validate the confirmed password to match the password by escaping the password as a regular expression.
-										signInValues.password.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-									}
+									pattern={toPattern(signInValues.password)}
 									value={signInValues.confirmPassword}
 									onChange={onChange}
 								/>
