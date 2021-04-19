@@ -114,7 +114,6 @@ export type UserDocument = {
 	dev?: true,
 	mod?: true,
 	patron?: true,
-	nameColor?: string,
 	legacyID?: number
 };
 

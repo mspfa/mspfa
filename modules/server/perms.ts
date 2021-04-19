@@ -6,17 +6,17 @@ import type { PageRequest } from 'modules/server/pages';
 import { authenticate } from 'modules/server/auth';
 
 export enum Perm {
-	/** Permission to grant or revoke perms for any user (including yourself). */
+	/** Permission to grant or revoke perms for users (including yourself). */
 	writePerms = 'writePerms',
-	/** Permission to access (but not edit or delete) anything which at least one normal client can access. */
+	/** Permission to access (but not edit or delete) things which at least one normal client can access. */
 	sudoRead = 'sudoRead',
-	/** Permission to edit (but not delete) anything which at least one normal client can edit. */
+	/** Permission to edit (but not delete) things which at least one normal client can edit. */
 	sudoWrite = 'sudoWrite',
-	/** Permission to delete anything (except other users with this perm) which at least one normal client can delete, and permission to ban any user without this perm. */
+	/** Permission to delete things which at least one normal client can delete, and permission to ban users. */
 	sudoDelete = 'sudoDelete',
 	/** Permission to verify the security of potentially insecure scripts written by users. */
 	verifyScripts = 'verifyScripts',
-	/** Permission to edit the achievements of any user. */
+	/** Permission to edit the achievements of users. */
 	writeAchievements = 'writeAchievements'
 }
 

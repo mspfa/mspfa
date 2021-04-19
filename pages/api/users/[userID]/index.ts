@@ -9,7 +9,7 @@ import _ from 'lodash';
 import validate from './index.validate';
 
 /** The keys of all `PrivateUser` properties which the client should be able to `PUT` into their `UserDocument`. */
-type PuttableUserKeys = 'birthdate' | 'name' | 'email' | 'description' | 'icon' | 'site' | 'profileStyle' | 'settings' | 'nameColor';
+type PuttableUserKeys = 'birthdate' | 'name' | 'email' | 'description' | 'icon' | 'site' | 'profileStyle' | 'settings';
 
 const Handler: APIHandler<(
 	{
