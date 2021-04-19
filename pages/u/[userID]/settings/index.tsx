@@ -132,6 +132,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										maxLength={254}
 										label="Email"
 									/>
+									<div className="grid-row-uniform">
+										<Button className="small">Edit Sign-In Methods</Button>
+									</div>
 								</GridRowSection>
 								<GridRowSection heading="Display">
 									<FieldGridRow

@@ -37,6 +37,10 @@
 		@include styled-button($front-alt, $text-color-alt);
 	}
 
+	&.small {
+		font-size: 1.25em;
+	}
+
 	&.icon {
 		width: 18px;
 		height: 18px;
