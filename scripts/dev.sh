@@ -1,0 +1,1 @@
+NODE_OPTIONS='--inspect' next dev
