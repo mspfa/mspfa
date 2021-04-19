@@ -6,6 +6,7 @@ import createUpdater from 'react-component-updater';
 import type { ChangeEvent } from 'react';
 import env from 'modules/client/env';
 import Captcha from 'components/SignIn/Captcha';
+import Label from 'components/Label';
 import './styles.module.scss';
 
 const startSigningUp = () => {
@@ -85,7 +86,7 @@ const SignIn = ({ page }: SignInProps) => {
 			<div id="sign-in-inputs">
 				{page === 2 ? (
 					<>
-						<label htmlFor="sign-in-name">Username:</label>
+						<Label htmlFor="sign-in-name">Username</Label>
 						<input
 							id="sign-in-name"
 							name="name"
@@ -97,7 +98,7 @@ const SignIn = ({ page }: SignInProps) => {
 							value={signInValues.name}
 							onChange={onChange}
 						/>
-						<label htmlFor="sign-in-birth-day">Birthdate:</label>
+						<Label htmlFor="sign-in-birth-day">Birthdate</Label>
 						<div id="sign-in-birthdate">
 							<input
 								id="sign-in-birth-day"
@@ -158,7 +159,7 @@ const SignIn = ({ page }: SignInProps) => {
 					</>
 				) : (
 					<>
-						<label htmlFor="sign-in-email">Email:</label>
+						<Label htmlFor="sign-in-email">Email</Label>
 						<input
 							key={page} // This is necessary to re-render this element when `page` changes, or else `autoFocus` will not work correctly.
 							id="sign-in-email"
@@ -171,7 +172,7 @@ const SignIn = ({ page }: SignInProps) => {
 							value={signInValues.email}
 							onChange={onChange}
 						/>
-						<label htmlFor="sign-in-password">Password:</label>
+						<Label htmlFor="sign-in-password">Password</Label>
 						<input
 							id="sign-in-password"
 							name="password"
@@ -188,7 +189,7 @@ const SignIn = ({ page }: SignInProps) => {
 							</div>
 						) : (
 							<>
-								<label htmlFor="sign-in-confirm-password">Confirm:</label>
+								<Label htmlFor="sign-in-confirm-password">Confirm</Label>
 								<input
 									id="sign-in-confirm-password"
 									name="confirmPassword"

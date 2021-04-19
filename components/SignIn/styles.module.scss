@@ -33,10 +33,10 @@
 
 	&-inputs {
 		display: grid;
-		grid-template-columns: auto auto;
+		grid-template-columns: 0fr auto;
 		gap: 1ch;
 
-		label {
+		.label-container {
 			justify-self: right;
 			align-self: center;
 		}
