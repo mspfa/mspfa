@@ -21,76 +21,6 @@ export enum Perm {
 }
 
 /**
- * Requires a user to have certain perms.
- *
- * Returns a promise which either:
- * * Resolves with void if the user has at least one of the perms.
- * * Does not resolve and sends an HTTP error response if the user has insufficient perms and an `APIResponse` is provided.
- * * Resolves with an object of the error's status code if the user has insufficient perms and no `APIResponse` is provided.
- *
- * Examples:
- * ```
- * await userHasPerm(res, user, [Perm.sudoWrite, Perm.sudoDelete]);
- * await userHasPerm(false, req.user, Perm.sudoRead);
- * ```
- */
-export function userHasPerm(
-	/** This request's `APIResponse` object, or `false` if no response should be sent on error (i.e. if this is a page and not an API). */
-	res: APIResponse,
-	/** The user to check the perms of. */
-	user: UserDocument | undefined,
-	/** The perm or perms to require. If set to an empty array, the user will always have insufficient perms. */
-	perms: Perm | Perm[]
-): Promise<void>;
-
-export function userHasPerm(
-	/** This request's `APIResponse` object, or `false` if no response should be sent on error (i.e. if this is a page and not an API). */
-	res: APIResponse | false,
-	/** The user to check the perms of. */
-	user: UserDocument | undefined,
-	/** The perm or perms to require. If set to an empty array, the user will always have insufficient perms. */
-	perms: Perm | Perm[]
-): Promise<void | { statusCode: number }>;
-
-// This ESLint comment is necessary because the rule wants me to use an arrow function, which does not allow for the overloading used here.
-// eslint-disable-next-line func-style
-export function userHasPerm(
-	/** This request's `APIResponse` object, or `false` if no response should be sent on error (i.e. if this is a page and not an API). */
-	res: APIResponse | false,
-	/** The user to check the perms of. */
-	user: UserDocument | undefined,
-	/** The perm or perms to require. If set to an empty array, the user will always have insufficient perms. */
-	perms: Perm | Perm[]
-) {
-	return new Promise<void | { statusCode: number }>(resolve => {
-		if (
-			user && (
-				(
-					// `perms` is an array of `Perm`s.
-					Array.isArray(perms)
-					&& perms.some(perm => user.perms[perm])
-				) || (
-					// `perms` is a single `Perm`.
-					user.perms[perms as Perm]
-				)
-			)
-		) {
-			resolve();
-			return;
-		}
-
-		// The user does not have one of the perms.
-		if (res) {
-			res.status(403).send({
-				message: `You are missing at least one of the following perms:\n${Array.isArray(perms) ? perms.join(', ') : perms}`
-			});
-		} else {
-			resolve({ statusCode: 403 });
-		}
-	});
-}
-
-/**
  * Requires a user to have permission to get another user by potentially unsafe ID.
  *
  * Returns a promise which either:
@@ -174,32 +104,61 @@ function permToGetUser(
 			return;
 		}
 
-		// If `res` is an `APIResponse` and the user has insufficient perms, this will never resolve.
-		const error = await userHasPerm(res, user, perms);
-
-		if (error) {
-			// `res` is `false` and the user is trying to access someone else's data without sufficient perms.
-
-			resolve(error);
+		if (!user.permLevel) {
+			if (res) {
+				res.status(403).send({
+					message: 'You have no permission level.'
+				});
+			} else {
+				resolve({ statusCode: 403 });
+			}
 			return;
 		}
 
-		// The user is trying to access someone else's data and has sufficient perms.
+		if (!(
+			Array.isArray(perms)
+				? perms.some(perm => user.perms[perm])
+				: user.perms[perms]
+		)) {
+			// The user does not have one of the `perms`.
+
+			if (res) {
+				res.status(403).send({
+					message: `You are missing one of the following perms:\n${Array.isArray(perms) ? perms.join(', ') : perms}`
+				});
+			} else {
+				resolve({ statusCode: 403 });
+			}
+			return;
+		}
 
 		const requestedUser = await getUserByUnsafeID(id);
 
-		if (requestedUser) {
-			resolve({ user: requestedUser });
+		if (!requestedUser) {
+			if (res) {
+				res.status(404).send({
+					message: 'No user was found with the specified ID.'
+				});
+			} else {
+				resolve({ statusCode: 404 });
+			}
 			return;
 		}
 
-		if (res) {
-			res.status(404).send({
-				message: 'No user was found with the specified ID.'
-			});
-		} else {
-			resolve({ statusCode: 404 });
+		if (requestedUser.permLevel && user.permLevel >= requestedUser.permLevel) {
+			// The user's `permLevel` is not low enough to allow the user to manage the requested user.
+
+			if (res) {
+				res.status(403).send({
+					message: `Your permission level (${user.permLevel}) must be lower than the requested user's permission level (${requestedUser.permLevel}).`
+				});
+			} else {
+				resolve({ statusCode: 403 });
+			}
+			return;
 		}
+
+		resolve({ user: requestedUser });
 	});
 }
 

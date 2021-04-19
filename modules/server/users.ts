@@ -110,6 +110,14 @@ export type UserDocument = {
 			stories: Record<number, StoryNotificationSettings>
 		}
 	},
+	/**
+	 * Determines which users this user is allowed to manage. Lower is more permissive. `undefined` is equivalent to `Infinity`, which prevents managing any users.
+	 *
+	 * Someone with a certain `permLevel` is able to manage any user with a `permLevel` greater than their own (within what is allowed by their `perms`), but they cannot manage anyone whose `permLevel` is less than or equal to their own.
+	 *
+	 * @minimum 1
+	 */
+	permLevel?: number,
 	perms: Partial<Record<Perm, true>>,
 	dev?: true,
 	mod?: true,
