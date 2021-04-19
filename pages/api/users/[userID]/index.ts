@@ -44,6 +44,7 @@ const Handler: APIHandler<(
 		}
 
 		res.send(getPrivateUser(user));
+		return;
 	}
 
 	// If this point is reached, `req.method === 'DELETE'`.

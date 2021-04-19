@@ -68,8 +68,9 @@ export type UserDocument = {
 	 * @maxLength 32
 	 */
 	name: string,
-	email: EmailString,
-	verified: boolean,
+	/** The user's verified email address. */
+	email?: EmailString,
+	unverifiedEmail?: EmailString,
 	description: string,
 	icon?: URLString,
 	site?: URLString,
@@ -120,7 +121,6 @@ export type UserDocument = {
 /** A `Partial<UserDocument>` used to spread some general properties on newly inserted `UserDocument`s. */
 export const defaultUser = {
 	sessions: [] as never[],
-	verified: false,
 	description: '',
 	storySaves: {} as Record<never, never>,
 	achievements: {} as Record<never, never>,
@@ -173,7 +173,7 @@ export const getPrivateUser = (user: UserDocument): PrivateUser => {
 		birthdate: +user.birthdate,
 		name: user.name,
 		email: user.email,
-		verified: user.verified,
+		unverifiedEmail: user.unverifiedEmail,
 		description: user.description,
 		icon: user.icon,
 		site: user.site,
@@ -185,8 +185,7 @@ export const getPrivateUser = (user: UserDocument): PrivateUser => {
 		perms: user.perms,
 		dev: user.dev,
 		mod: user.mod,
-		patron: user.patron,
-		nameColor: user.nameColor
+		patron: user.patron
 	};
 
 	// Remove any `undefined` properties from the object so it is serializable.
@@ -216,8 +215,7 @@ export const getPublicUser = (user: UserDocument): PublicUser => {
 		profileStyle: user.profileStyle,
 		dev: user.dev,
 		mod: user.mod,
-		patron: user.patron,
-		nameColor: user.nameColor
+		patron: user.patron
 	};
 
 	// Remove any `undefined` properties from the object so it is serializable.
@@ -241,10 +239,12 @@ export default users;
  */
 export const getUserByUnsafeID = async (id: UnsafeObjectID) => {
 	const userID = safeObjectID(id);
+
 	if (userID) {
 		const user = await users.findOne({
 			_id: userID
 		});
+
 		if (user) {
 			return user;
 		}

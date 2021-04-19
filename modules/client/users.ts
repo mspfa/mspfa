@@ -8,7 +8,7 @@ import createGlobalState from 'global-react-state';
 import type { RecursivePartial } from 'modules/types';
 
 /** All keys whose values have the same serializable type in both `DocumentUser` and `PrivateUser`. */
-type PrivateUserDocumentKey = 'name' | 'email' | 'verified' | 'description' | 'icon' | 'site' | 'storySaves' | 'achievements' | 'favs' | 'profileStyle' | 'settings' | 'perms' | 'dev' | 'mod' | 'patron' | 'nameColor';
+type PrivateUserDocumentKey = 'name' | 'email' | 'unverifiedEmail' | 'description' | 'icon' | 'site' | 'storySaves' | 'achievements' | 'favs' | 'profileStyle' | 'settings' | 'perms' | 'dev' | 'mod' | 'patron' | 'nameColor';
 
 /** A serializable version of `UserDocument` which only has properties that can safely be exposed to the client that owns the user data. */
 export type PrivateUser = (
@@ -85,13 +85,14 @@ type SessionAPI = APIClient<typeof import('pages/api/session').default>;
 
 /** Opens a dialog prompting the user to sign out. */
 export const signOut = async () => {
-	const dialog = await new Dialog({
-		id: 'sign-out',
-		title: 'Sign Out',
-		content: 'Are you sure you want to sign out?',
-		actions: ['Yes', 'No']
-	});
-	if (dialog?.submit) {
+	if ((
+		await new Dialog({
+			id: 'sign-out',
+			title: 'Sign Out',
+			content: 'Are you sure you want to sign out?',
+			actions: ['Yes', 'No']
+		})
+	)?.submit) {
 		await (api as SessionAPI).delete('session');
 		setUser(undefined);
 	}

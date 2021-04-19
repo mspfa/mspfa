@@ -8,6 +8,7 @@ import type { IncomingMessage, ServerResponse } from 'http';
 import users from 'modules/server/users';
 import type { UserDocument, UserSession } from 'modules/server/users';
 import { OAuth2Client } from 'google-auth-library';
+import type { EmailString } from 'modules/types';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -21,7 +22,7 @@ export const checkExternalAuthMethod = (
 	res: APIResponse
 ): Promise<{
 	value: string,
-	email: string,
+	email: EmailString,
 	verified: boolean
 }> => new Promise(async resolve => {
 	try {
@@ -80,24 +81,32 @@ const TOKEN_LENGTH = 64;
  * Sets the `auth` cookie to new session data which is pushed to the user's sessions in the DB.
  *
  * Returns a `UserSession` of that session data.
+ *
+ * If the user is not verified, sends an error response (to be handled on the client) and returns `undefined`.
  */
 export const createSession = async (
-	req: IncomingMessage,
-	res: ServerResponse,
+	req: APIRequest,
+	res: APIResponse,
 	/** The user which the session is for. */
 	user: UserDocument
 ) => {
+	if (!user.email) {
+		// The user is not verified. No session should be created.
+
+		return undefined;
+	}
+
 	const token = crypto.randomBytes(TOKEN_LENGTH).toString('base64');
 
 	new Cookies(req, res).set('auth', `${user._id}:${token}`, authCookieOptions);
 
 	const session: UserSession = {
 		token: await argon2.hash(token),
-		lastUsed: new Date()
+		lastUsed: new Date(),
+		...typeof req.headers['x-real-ip'] === 'string' && {
+			ip: req.headers['x-real-ip']
+		}
 	};
-	if (typeof req.headers['x-real-ip'] === 'string') {
-		session.ip = req.headers['x-real-ip'];
-	}
 
 	await users.updateOne({
 		_id: user._id

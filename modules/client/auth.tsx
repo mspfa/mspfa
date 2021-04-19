@@ -2,7 +2,7 @@ import { Dialog } from 'modules/client/dialogs';
 import SignIn, { signInValues, resetSignInValues } from 'components/SignIn';
 import api from 'modules/client/api';
 import type { AuthMethod } from 'modules/server/users';
-import type { APIClient } from 'modules/client/api';
+import type { APIClient, APIError } from 'modules/client/api';
 import { setUser } from 'modules/client/users';
 import env from 'modules/client/env';
 
@@ -169,12 +169,27 @@ export const setSignInPage = (
 									+signInValues.birthDay
 								)
 							}
-						} as any
-					).then(response => {
+						} as any,
+						{
+							// Don't show the error dialog for failure to sign into an unverified account.
+							beforeInterceptError: error => {
+								// Check if the response has a user in it but not a verified email.
+								if (error.response?.data.id && !error.response.data.email) {
+									error.preventDefault();
+
+									new Dialog({
+										id: 'verify-email',
+										title: 'Verify Email',
+										content: 'TODO'
+									});
+								}
+							}
+						}
+					).then(({ data }) => {
 						// If sign-in or sign-up succeeds, reset the sign-in form and update the client's user state.
 						signInLoading = false;
 						resetSignInValues();
-						setUser(response.data);
+						setUser(data);
 					}).catch(() => {
 						// If sign-in or sign-up fails, go back to sign-in screen.
 						signInLoading = false;

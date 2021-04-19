@@ -9,10 +9,11 @@ import type { EmailString } from 'modules/types';
 import validate from './index.validate';
 
 export type SessionBody = {
-	authMethod: ExternalAuthMethod
+	authMethod: ExternalAuthMethod,
+	email?: never
 } | {
-	email: EmailString,
-	authMethod: InternalAuthMethod
+	authMethod: InternalAuthMethod,
+	email: EmailString
 };
 
 const Handler: APIHandler<(
@@ -32,12 +33,18 @@ const Handler: APIHandler<(
 		let user: UserDocument | undefined | null;
 
 		if (req.body.authMethod.type === 'password') {
+			const email = req.body.email!.toLowerCase();
+
 			user = await users.findOne({
-				email: (req.body as { email: string }).email.toLowerCase()
+				$or: [
+					{ email },
+					{ unverifiedEmail: email }
+				]
 			});
 
 			if (user) {
 				let incorrect = true;
+
 				for (const authMethod of user.authMethods) {
 					if (
 						authMethod.type === 'password'
@@ -47,9 +54,10 @@ const Handler: APIHandler<(
 						break;
 					}
 				}
+
 				if (incorrect) {
 					res.status(401).send({
-						message: 'The specified password is incorrect.'
+						message: 'The specified password is incorrect, or the specified user does not use a password to sign in.'
 					});
 					return;
 				}
@@ -77,9 +85,9 @@ const Handler: APIHandler<(
 
 		// Authentication succeeded.
 
-		await createSession(req, res, user);
+		const session = await createSession(req, res, user);
 
-		res.send(getPrivateUser(user));
+		res.status(session ? 201 : 403).send(getPrivateUser(user));
 		return;
 	}
 
@@ -103,7 +111,7 @@ const Handler: APIHandler<(
 		res.end();
 	} else {
 		res.status(404).send({
-			message: 'No valid user session was found.'
+			message: 'No valid user session was found to sign out of.'
 		});
 	}
 };

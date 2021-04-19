@@ -41,12 +41,12 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	let email: string;
+	let email: EmailString | undefined;
 	let verified = false;
 	let authMethodValue: string;
 
 	if (req.body.authMethod.type === 'password') {
-		email = (req.body as { email: EmailString }).email.toLowerCase();
+		email = req.body.email!.toLowerCase();
 		authMethodValue = await argon2.hash(req.body.authMethod.value);
 	} else {
 		({ value: authMethodValue, email, verified } = await checkExternalAuthMethod(req, res));
@@ -86,14 +86,14 @@ const Handler: APIHandler<{
 		lastSeen: now,
 		birthdate: new Date(req.body.birthdate),
 		name: req.body.name,
-		email,
-		verified
+		[verified ? 'email' : 'unverifiedEmail']: email
 	};
+
 	await users.insertOne(user);
 
-	await createSession(req, res, user);
+	const session = await createSession(req, res, user);
 
-	res.status(201).send(getPrivateUser(user));
+	res.status(session ? 201 : 403).send(getPrivateUser(user));
 };
 
 export default Handler;
