@@ -10,13 +10,16 @@ import type { Perm } from 'modules/server/perms';
 export type ExternalAuthMethod = {
 	type: 'google' | 'discord',
 	/** @minLength 1 */
-	value: string
+	value: string,
+	/** A display name to represent this auth method. */
+	name?: string
 };
 
 export type InternalAuthMethod = {
 	type: 'password',
 	/** @minLength 8 */
-	value: string
+	value: string,
+	name?: never
 };
 
 export type AuthMethod = ExternalAuthMethod | InternalAuthMethod;

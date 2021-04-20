@@ -43,16 +43,27 @@ const Handler: APIHandler<{
 
 	let email: EmailString | undefined;
 	let verified = false;
-	let authMethodValue: string;
+	let authMethodValue: string | undefined;
+	let authMethodName: string | undefined;
 
 	if (req.body.authMethod.type === 'password') {
 		email = req.body.email!.toLowerCase();
 		authMethodValue = await argon2.hash(req.body.authMethod.value);
 	} else {
-		({ value: authMethodValue, email, verified } = await checkExternalAuthMethod(req, res));
+		({
+			value: authMethodValue,
+			email,
+			verified,
+			name: authMethodName
+		} = await checkExternalAuthMethod(req, res));
 	}
 
-	if (await users.findOne({ email })) {
+	if (await users.findOne({
+		$or: [
+			{ email },
+			{ unverifiedEmail: email }
+		]
+	})) {
 		res.status(422).send({
 			message: 'The specified email is already taken.'
 		});
@@ -80,7 +91,10 @@ const Handler: APIHandler<{
 		_id: new ObjectId(),
 		authMethods: [{
 			type: req.body.authMethod.type,
-			value: authMethodValue
+			value: authMethodValue,
+			...authMethodName && {
+				name: authMethodName as any
+			}
 		}],
 		created: now,
 		lastSeen: now,

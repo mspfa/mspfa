@@ -9,10 +9,10 @@ import type { EmailString } from 'modules/types';
 import validate from './index.validate';
 
 export type SessionBody = {
-	authMethod: ExternalAuthMethod,
+	authMethod: Omit<ExternalAuthMethod, 'name'>,
 	email?: never
 } | {
-	authMethod: InternalAuthMethod,
+	authMethod: Omit<InternalAuthMethod, 'name'>,
 	email: EmailString
 };
 
@@ -42,36 +42,40 @@ const Handler: APIHandler<(
 				]
 			});
 
-			if (user) {
-				let incorrect = true;
-
-				for (const authMethod of user.authMethods) {
-					if (
-						authMethod.type === 'password'
-						&& await argon2.verify(authMethod.value, req.body.authMethod.value)
-					) {
-						incorrect = false;
-						break;
-					}
-				}
-
-				if (incorrect) {
-					res.status(401).send({
-						message: 'The specified password is incorrect, or the specified user does not use a password to sign in.'
-					});
-					return;
-				}
-			} else {
+			if (!user) {
 				res.status(404).send({
 					message: 'No user was found with the specified email.'
 				});
 				return;
 			}
+
+			let incorrect = true;
+
+			for (const authMethod of user.authMethods) {
+				if (
+					authMethod.type === 'password'
+					&& await argon2.verify(authMethod.value, req.body.authMethod.value)
+				) {
+					incorrect = false;
+					break;
+				}
+			}
+
+			if (incorrect) {
+				res.status(401).send({
+					message: 'The specified password is incorrect, or the specified user does not use a password to sign in.'
+				});
+				return;
+			}
 		} else {
+			const { value: authMethodValue, name: authMethodName } = await checkExternalAuthMethod(req, res);
+
 			user = await users.findOne({
 				authMethods: {
-					type: req.body.authMethod.type,
-					value: (await checkExternalAuthMethod(req, res)).value
+					$elemMatch: {
+						type: req.body.authMethod.type,
+						value: authMethodValue
+					}
 				}
 			});
 
@@ -80,6 +84,19 @@ const Handler: APIHandler<(
 					message: 'No user was found with the specified sign-in method.'
 				});
 				return;
+			}
+
+			if ((
+				user.authMethods.find(authMethod => authMethod.value = authMethodValue)
+			)!.name !== authMethodName) {
+				users.updateOne({
+					'_id': user._id,
+					'authMethods.value': authMethodValue
+				}, {
+					$set: {
+						'authMethods.$.name': authMethodName
+					}
+				});
 			}
 		}
 

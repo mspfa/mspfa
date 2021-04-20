@@ -23,25 +23,29 @@ export const checkExternalAuthMethod = (
 ): Promise<{
 	value: string,
 	email: EmailString,
-	verified: boolean
+	verified: boolean,
+	name: string | undefined
 }> => new Promise(async resolve => {
 	try {
 		if (req.body.authMethod.type === 'google') {
 			// Authenticate with Google.
+
 			const ticket = await googleClient.verifyIdToken({
 				idToken: req.body.authMethod.value,
 				audience: process.env.GOOGLE_CLIENT_ID
 			});
 			const payload = ticket.getPayload()!;
 			resolve({
+				name: payload.email,
 				value: payload.sub,
-				email: payload.email!,
+				email: payload.email!.toLowerCase(),
 				verified: payload.email_verified!
 			});
 			return;
 		}
 
 		// Authenticate with Discord.
+
 		const referrerOrigin = req.headers.referer?.slice(
 			0,
 			// This is the index of end of the origin in the `Referer` header. For example, the index of the single "/" in "https://example.com/path".
@@ -60,6 +64,7 @@ export const checkExternalAuthMethod = (
 			}
 		});
 		resolve({
+			name: discordUser.email,
 			value: discordUser.id,
 			email: discordUser.email.toLowerCase(),
 			verified: discordUser.verified
