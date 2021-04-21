@@ -14,8 +14,10 @@
 	font-style: normal;
 }
 
-:focus {
-	outline: none;
+* {
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-focus-ring-color: transparent;
 }
 
 body {
