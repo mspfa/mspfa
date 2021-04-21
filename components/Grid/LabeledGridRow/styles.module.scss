@@ -1,0 +1,12 @@
+.grid-row {
+	&-label {
+		grid-column: 1;
+		align-self: center;
+		text-align: right;
+	}
+
+	&-content {
+		display: flex;
+		align-items: center;
+	}
+}

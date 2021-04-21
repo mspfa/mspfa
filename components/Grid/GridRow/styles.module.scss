@@ -1,12 +1,12 @@
 .grid-row {
-	&-label {
-		grid-column: 1;
-		align-self: center;
-		text-align: right;
+	grid-column: 1 / -1;
+	text-align: center;
+
+	&:not(:last-child) {
+		margin-bottom: 1em;
 	}
 
-	&-content {
-		display: flex;
-		align-items: center;
+	&:not(:first-child) {
+		margin-top: 1em;
 	}
 }

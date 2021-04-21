@@ -4,7 +4,7 @@ import './styles.module.scss';
 
 export type GridRowSectionProps = GridSectionProps;
 
-/** A `GridSection` to put `GridRow`s in, by default with two columns. */
+/** A `GridSection`, by default with two columns, to put `GridRow`s (of any variant) in. */
 const GridRowSection = ({ className, ...props }: GridRowSectionProps) => (
 	<GridSection
 		className={`grid-row-section${className ? ` ${className}` : ''}`}

@@ -24,7 +24,7 @@ import _ from 'lodash';
 import { Dialog } from 'modules/client/dialogs';
 import Label from 'components/Label';
 import Router from 'next/router';
-import FullGridRow from 'components/Grid/FullGridRow';
+import GridRow from 'components/Grid/GridRow';
 import './styles.module.scss';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
@@ -133,9 +133,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										maxLength={254}
 										label="Email"
 									/>
-									<FullGridRow>
+									<GridRow>
 										<Button className="small">Edit Sign-In Methods</Button>
-									</FullGridRow>
+									</GridRow>
 								</GridRowSection>
 								<GridRowSection heading="Display">
 									<FieldGridRow
@@ -217,9 +217,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 									</NotificationSettingGroup>
 								</ColumnGrid>
 								<GridRowSection heading="Controls">
-									<FullGridRow className="translucent-text">
+									<GridRow className="translucent-text">
 										Select a box and press a key. Press escape to remove a control.
-									</FullGridRow>
+									</GridRow>
 									<ControlSetting
 										name="settings.controls.back"
 										label="Back"
@@ -246,7 +246,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 									/>
 								</GridSection>
 								<GridFooter>
-									<FullGridRow>
+									<GridRow>
 										<Button
 											className="alt"
 											type="submit"
@@ -275,8 +275,8 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										>
 											Reset
 										</Button>
-									</FullGridRow>
-									<FullGridRow>
+									</GridRow>
+									<GridRow>
 										<Button
 											disabled={isSubmitting}
 											onClick={
@@ -340,7 +340,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										>
 											Delete Account
 										</Button>
-									</FullGridRow>
+									</GridRow>
 								</GridFooter>
 							</Grid>
 						</Form>

@@ -8,7 +8,7 @@ import Grid from 'components/Grid';
 import ColumnGrid from 'components/Grid/ColumnGrid';
 import GridSection from 'components/Grid/GridSection';
 import GridRowSection from 'components/Grid/GridRowSection';
-import GridRow from 'components/Grid/GridRow';
+import GridRow from 'components/Grid/LabeledGridRow';
 import Timestamp from 'components/Timestamp';
 import Link from 'components/Link';
 import GridFooter from 'components/Grid/GridFooter';

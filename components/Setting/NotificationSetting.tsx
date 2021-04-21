@@ -1,6 +1,6 @@
 import { Field } from 'formik';
 import type { ExclusiveFieldGridRowProps } from 'components/Grid/FieldGridRow';
-import GridRow from 'components/Grid/GridRow';
+import GridRow from 'components/Grid/LabeledGridRow';
 
 export type NotificationSettingProps = ExclusiveFieldGridRowProps;
 
