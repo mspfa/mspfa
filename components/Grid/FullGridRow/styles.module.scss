@@ -1,0 +1,12 @@
+.full-grid-row {
+	grid-column: 1 / -1;
+	text-align: center;
+
+	&:not(:last-child) {
+		margin-bottom: 1em;
+	}
+
+	&:not(:first-child) {
+		margin-top: 1em;
+	}
+}

@@ -24,6 +24,7 @@ import _ from 'lodash';
 import { Dialog } from 'modules/client/dialogs';
 import Label from 'components/Label';
 import Router from 'next/router';
+import FullGridRow from 'components/Grid/FullGridRow';
 import './styles.module.scss';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
@@ -132,9 +133,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										maxLength={254}
 										label="Email"
 									/>
-									<div className="grid-row-uniform">
+									<FullGridRow>
 										<Button className="small">Edit Sign-In Methods</Button>
-									</div>
+									</FullGridRow>
 								</GridRowSection>
 								<GridRowSection heading="Display">
 									<FieldGridRow
@@ -216,9 +217,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 									</NotificationSettingGroup>
 								</ColumnGrid>
 								<GridRowSection heading="Controls">
-									<div className="grid-row-uniform translucent-text">
+									<FullGridRow className="translucent-text">
 										Select a box and press a key. Press escape to remove a control.
-									</div>
+									</FullGridRow>
 									<ControlSetting
 										name="settings.controls.back"
 										label="Back"
@@ -245,7 +246,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 									/>
 								</GridSection>
 								<GridFooter>
-									<div className="grid-row-uniform">
+									<FullGridRow>
 										<Button
 											className="alt"
 											type="submit"
@@ -274,8 +275,8 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										>
 											Reset
 										</Button>
-									</div>
-									<div className="grid-row-uniform">
+									</FullGridRow>
+									<FullGridRow>
 										<Button
 											disabled={isSubmitting}
 											onClick={
@@ -339,7 +340,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										>
 											Delete Account
 										</Button>
-									</div>
+									</FullGridRow>
 								</GridFooter>
 							</Grid>
 						</Form>
