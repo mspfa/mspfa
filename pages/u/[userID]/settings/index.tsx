@@ -297,21 +297,23 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 															await new Dialog({
 																id: 'delete-user',
 																title: 'Delete Account',
-																content: <>
-																	Are you REALLY sure you want to delete your account?<br />
-																	<br />
-																	This action is IRREVERSIBLE.<br />
-																	<br />
-																	<Field
-																		id="delete-user-confirm"
-																		name="confirm"
-																		type="checkbox"
-																		required
-																	/>
-																	<label className="spaced bolder" htmlFor="delete-user-confirm">
-																		I am sure I want to delete my account: {privateUser.name}
-																	</label>
-																</>,
+																content: (
+																	<>
+																		Are you REALLY sure you want to delete your account?<br />
+																		<br />
+																		This action is IRREVERSIBLE.<br />
+																		<br />
+																		<Field
+																			id="delete-user-confirm"
+																			name="confirm"
+																			type="checkbox"
+																			required
+																		/>
+																		<label className="spaced bolder" htmlFor="delete-user-confirm">
+																			I am sure I want to delete my account: {privateUser.name}
+																		</label>
+																	</>
+																),
 																actions: [
 																	'Yes',
 																	{ label: 'No', focus: true }
