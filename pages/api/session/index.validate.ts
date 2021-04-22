@@ -59,7 +59,25 @@ export default createValidator({
 					type: 'object',
 					properties: {
 						authMethod: {
-							$ref: '#/definitions/ExternalAuthMethod'
+							type: 'object',
+							properties: {
+								type: {
+									type: 'string',
+									enum: [
+										'google',
+										'discord'
+									]
+								},
+								value: {
+									type: 'string',
+									minLength: 1
+								}
+							},
+							required: [
+								'type',
+								'value'
+							],
+							additionalProperties: false
 						}
 					},
 					required: [
@@ -70,9 +88,6 @@ export default createValidator({
 				{
 					type: 'object',
 					properties: {
-						email: {
-							$ref: '#/definitions/EmailString'
-						},
 						authMethod: {
 							type: 'object',
 							properties: {
@@ -90,36 +105,18 @@ export default createValidator({
 								'value'
 							],
 							additionalProperties: false
+						},
+						email: {
+							$ref: '#/definitions/EmailString'
 						}
 					},
 					required: [
-						'email',
-						'authMethod'
+						'authMethod',
+						'email'
 					],
 					additionalProperties: false
 				}
 			]
-		},
-		ExternalAuthMethod: {
-			type: 'object',
-			properties: {
-				type: {
-					type: 'string',
-					enum: [
-						'google',
-						'discord'
-					]
-				},
-				value: {
-					type: 'string',
-					minLength: 1
-				}
-			},
-			required: [
-				'type',
-				'value'
-			],
-			additionalProperties: false
 		},
 		EmailString: {
 			type: 'string',
