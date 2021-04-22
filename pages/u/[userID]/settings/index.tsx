@@ -7,6 +7,7 @@ import { preventReloads, withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
 import { Form, Formik, Field } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
+import type { ChangeEvent } from 'react';
 import { getChangedValues, preventLeaveConfirmations, useLeaveConfirmation } from 'modules/client/forms';
 import Grid from 'components/Grid';
 import ColumnGrid from 'components/Grid/ColumnGrid';
@@ -109,7 +110,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 				}
 				enableReinitialize
 			>
-				{({ isSubmitting, dirty, values, setFieldValue, setSubmitting }) => {
+				{({ isSubmitting, dirty, values, setFieldValue, setSubmitting, handleChange }) => {
 					useLeaveConfirmation(dirty);
 
 					useEffect(() => {
@@ -120,6 +121,22 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 							setUserMerge({ settings: values.settings });
 						}
 					});
+
+					const interceptAdDisable = useCallback(async (evt: ChangeEvent<{ name: string }>) => {
+						if ((
+							await new Dialog({
+								id: 'disable-ad',
+								title: 'Disable Ads',
+								content: "Ads are how we earn money, how we fund the website. By disabling this ad, a fraction of our funds are decreased.\n\nWe're okay with that if you don't think it's worth the unpleasant visual experience, but please first consider the effect of it.",
+								actions: [
+									'I understand the impact of my decision and wish to proceed.',
+									{ label: 'Cancel', focus: true }
+								]
+							})
+						)?.submit) {
+							setFieldValue(evt.target.name, false);
+						}
+					}, [setFieldValue]);
 
 					return (
 						<Form onChange={onFormChange}>
@@ -162,10 +179,12 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 									<FieldGridRow
 										name="settings.ads.side"
 										label="Side Ad"
+										onChange={values.settings.ads.side ? interceptAdDisable : handleChange}
 									/>
 									<FieldGridRow
 										name="settings.ads.matchedContent"
 										label="Matched Content Ad"
+										onChange={values.settings.ads.matchedContent ? interceptAdDisable : handleChange}
 									/>
 								</GridRowSection>
 								<GridRowSection heading="Utility">
@@ -301,7 +320,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 																	<>
 																		Are you REALLY sure you want to delete your account?<br />
 																		<br />
-																		This action is IRREVERSIBLE.<br />
+																		TODO: Make not irreversible.<br />
 																		<br />
 																		<Field
 																			id="delete-user-confirm"
