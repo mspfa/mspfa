@@ -1,3 +1,8 @@
+@use 'sass:meta';
+@use 'sass:color';
+
+@import 'styles/themes';
+
 .dialog {
 	&-container {
 		pointer-events: none;
@@ -45,7 +50,18 @@ dialog {
 	min-width: 320px;
 	max-width: 880px;
 	color: inherit;
-	box-shadow: 16px 16px 0 0 rgba(0, 0, 0, 0.25);
 	background: none;
-	border: 1px solid rgba(128, 128, 128, 0.25);
+	border: 1px solid;
+
+	@function half-opacity($color) {
+		@return color.scale($color, $alpha: -50%);
+	}
+
+	@include theme(border-color, $back, meta.get-function('half-opacity'));
+
+	@function box-shadow($color) {
+		@return 16px 16px 0 0 half-opacity($color);
+	}
+
+	@include theme(box-shadow, $back, meta.get-function('box-shadow'));
 }
