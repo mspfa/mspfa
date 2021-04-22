@@ -151,6 +151,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										label="Email"
 									/>
 									<GridRow>
+										<Button className="small">Change Password</Button>
+									</GridRow>
+									<GridRow>
 										<Button className="small">Edit Sign-In Methods</Button>
 									</GridRow>
 								</GridRowSection>
