@@ -11,6 +11,7 @@ nav {
 	flex-wrap: wrap;
 	background-color: #000000;
 	z-index: 1;
+	padding: 0 1ch;
 
 	&.sticky {
 		position: sticky;
