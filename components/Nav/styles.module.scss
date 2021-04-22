@@ -1,16 +1,14 @@
 @import 'styles/general';
 
-$nav-height: 20px;
-
 nav {
 	display: flex;
 	justify-content: center;
 	font-family: $sans-serif;
 	font-weight: bold;
 	font-size: 9px;
-	height: $nav-height;
-	line-height: $nav-height;
+	line-height: 20px;
 	text-transform: uppercase;
+	flex-wrap: wrap;
 	background-color: #000000;
 	z-index: 1;
 
