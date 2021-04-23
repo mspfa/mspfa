@@ -2,6 +2,7 @@
 // This is awful. But that's okay because it's funny. Oh, and also useful.
 
 import { createGenerator } from 'ts-json-schema-generator';
+import type { SchemaGenerator } from 'ts-json-schema-generator';
 import fs from 'fs-extra';
 import path from 'path';
 import { exec } from 'child_process';
@@ -15,6 +16,14 @@ const run = (command: string) => new Promise(resolve => {
 const sourcePaths: string[] = [];
 /** All old `.validate.ts` files to be deleted. */
 const validatorPaths: string[] = [];
+
+/** The path of the file from which the validator types are read. */
+const inputPath = '__validators.ts';
+/** The lines of code to be written to the input path. */
+const inputLines: string[] = [];
+
+/** The schema generator used to generate the validators for both request methods and request bodies. */
+let generator: SchemaGenerator;
 
 const walk = (dir: string) => {
 	for (const dirent of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -44,28 +53,28 @@ const getMetadata = (
 	const sourcePathNoExtension = sourcePath.slice(0, -3);
 	const sourcePathModule = sourcePathNoExtension.split(path.sep).join('/');
 	const outputPath = `${sourcePathNoExtension}.validate.ts`;
-	const inputPath = ['', ...sourcePath.split(path.sep)].join('__');
 
-	return { sourcePathModule, outputPath, inputPath };
+	return { sourcePathModule, outputPath };
 };
 
 const initializeValidator = async (
 	/** The TS file to generate a validator for. */
-	sourcePath: string
+	sourcePath: string,
+	index: number
 ) => {
-	const { sourcePathModule, outputPath, inputPath } = getMetadata(sourcePath);
+	const { sourcePathModule, outputPath } = getMetadata(sourcePath);
 
-	await fs.createFile(outputPath);
 	// This is necessary so validator imports don't throw errors and prevent TS compilation.
+	await fs.createFile(outputPath);
 	await fs.writeFile(
 		outputPath,
 		'export default {} as any;'
 	);
 
-	await fs.createFile(inputPath);
-	await fs.writeFile(
-		inputPath,
-		`import type Handler from '${sourcePathModule}';\n\nexport type Request = NonNullable<typeof Handler['Request']>;\n\nexport type RequestMethod = Request['method'];`
+	inputLines.push(
+		`import type Handler${index} from '${sourcePathModule}';`,
+		`export type Request${index} = NonNullable<typeof Handler${index}['Request']>;`,
+		`export type RequestMethod${index} = Request${index}['method'];`
 	);
 };
 
@@ -74,30 +83,22 @@ const generateValidator = async (
 	sourcePath: string,
 	index: number
 ) => {
-	const { sourcePathModule, outputPath, inputPath } = getMetadata(sourcePath);
+	const { sourcePathModule, outputPath } = getMetadata(sourcePath);
 
 	console.log(`${c.gray(sourcePathModule)} ${c.blue('Generating...')} ${c.gray(`(${index}/${sourcePaths.length})`)}`);
 
 	try {
 		const methodSchemaString = JSON.stringify(
-			createGenerator({
-				path: inputPath,
-				tsconfig: 'tsconfig.json'
-			}).createSchema('RequestMethod'),
+			generator.createSchema(`RequestMethod${index}`),
 			null,
 			'\t'
-		);
+		).replace(new RegExp(`(RequestMethod)${index}`, 'g'), '$1');
 
 		const schemaString = JSON.stringify(
-			createGenerator({
-				path: inputPath,
-				tsconfig: 'tsconfig.json',
-				// This is `false` so the server can trust that the client isn't adding any invalid properties to objects in the request body.
-				additionalProperties: false
-			}).createSchema('Request'),
+			generator.createSchema(`Request${index}`),
 			null,
 			'\t'
-		);
+		).replace(new RegExp(`(Request)${index}`, 'g'), '$1');
 
 		await fs.writeFile(
 			outputPath,
@@ -111,8 +112,6 @@ const generateValidator = async (
 
 		await fs.unlink(outputPath);
 	}
-
-	fs.unlink(inputPath);
 };
 
 const finishValidator = async (
@@ -129,6 +128,19 @@ const finishValidator = async (
 	console.log(c.blue('Initializing...'));
 	await Promise.all(sourcePaths.map(initializeValidator));
 
+	// Instantiate the schema generator.
+	await fs.createFile(inputPath);
+	await fs.writeFile(
+		inputPath,
+		inputLines.join('\n')
+	);
+	generator = createGenerator({
+		path: inputPath,
+		tsconfig: 'tsconfig.json',
+		// This is `false` so the server can trust that the client isn't adding any invalid properties to objects in the request body.
+		additionalProperties: false
+	});
+
 	// Generate validators in series.
 	for (let i = 0; i < sourcePaths.length; i++) {
 		await generateValidator(sourcePaths[i], i);
@@ -137,6 +149,7 @@ const finishValidator = async (
 	// Finish validators in parallel.
 	console.log(c.blue('Finishing...'));
 	await Promise.all(sourcePaths.map(finishValidator));
+	await fs.unlink(inputPath);
 
 	console.log(c.green('Done!'));
 	process.exit();
