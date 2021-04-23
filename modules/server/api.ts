@@ -55,14 +55,10 @@ export const createValidator = (methodSchema: Record<string, unknown>, schema: R
 				return;
 			}
 
-			validate({
-				method: req.method,
-				body: req.body ? req.body : undefined
-			});
-
 			const valid = validate({
 				method: req.method,
-				body: req.body ? req.body : undefined
+				body: req.body ? req.body : undefined,
+				query: req.query
 			});
 
 			if (valid) {

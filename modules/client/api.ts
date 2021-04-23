@@ -95,6 +95,21 @@ api.interceptors.response.use(
 
 export default api;
 
+type APIClientArgs<
+	Request extends Record<string, unknown>,
+	Response extends Record<string, unknown>,
+	RequestMethod extends Method,
+	RequestQuery extends AnyAPIQuery = {}
+> = (
+	RequestMethod extends MethodWithData
+		? Request & { method: Uppercase<RequestMethod> } extends { body: infer RequestBody }
+			? [data: RequestBody, config?: APIConfig<Response['body'], RequestQuery>]
+			: [data?: undefined, config?: APIConfig<Response['body'], RequestQuery>]
+		: Request & { method: Uppercase<RequestMethod> } extends { body: infer RequestBody }
+			? [config: APIConfig<Response['body'], RequestQuery> & { data: RequestBody }]
+			: [config?: APIConfig<Response['body'], RequestQuery>]
+);
+
 /**
  * Adds type safety for client `api` calls based on the server API's exported `APIHandler` type.
  *
@@ -114,15 +129,9 @@ export type APIClient<Handler> = Omit<AxiosInstance, Method> & typeof apiExtensi
 					: Method
 			)]: (
 				url: string,
-				...args: Request & { method: Uppercase<RequestMethod> } extends { query?: infer RequestQuery } | unknown
-					? RequestMethod extends MethodWithData
-						? Request & { method: Uppercase<RequestMethod> } extends { body: infer RequestBody }
-							? [data: RequestBody, config?: APIConfig<Response['body'], RequestQuery>]
-							: [data?: undefined, config?: APIConfig<Response['body'], RequestQuery>]
-						: Request & { method: Uppercase<RequestMethod> } extends { body: infer RequestBody }
-							? [config: APIConfig<Response['body'], RequestQuery> & { data: RequestBody }]
-							: [config?: APIConfig<Response['body'], RequestQuery>]
-					: never
+				...args: Request & { method: Uppercase<RequestMethod> } extends { query: infer RequestQuery }
+					? APIClientArgs<Request, Response, RequestMethod, RequestQuery>
+					: APIClientArgs<Request, Response, RequestMethod>
 			) => Promise<(
 				AxiosResponse<(
 					Response extends { body: {} }
