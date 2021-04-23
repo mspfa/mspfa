@@ -177,11 +177,8 @@ export const setSignInPage = (
 								if (error.response?.data.id && !error.response.data.email) {
 									error.preventDefault();
 
-									new Dialog({
-										id: 'verify-email',
-										title: 'Verify Email',
-										content: 'TODO'
-									});
+									// Set a property on `error` to be read in the `catch` block afterward.
+									error.unverifiedEmail = true;
 								}
 							}
 						}
@@ -190,10 +187,22 @@ export const setSignInPage = (
 						signInLoading = false;
 						resetSignInValues();
 						setUser(data);
-					}).catch(() => {
+					}).catch(({ unverifiedEmail }) => {
 						// If sign-in or sign-up fails, go back to sign-in screen.
 						signInLoading = false;
 						setSignInPage(signInPage);
+
+						if (unverifiedEmail) {
+							const verifyEmailDialog = new Dialog({
+								id: 'verify-email',
+								title: 'Verify Email',
+								content: 'TODO'
+							});
+
+							signInDialog!.then(() => {
+								verifyEmailDialog.resolve();
+							});
+						}
 					});
 				}
 			} else if (result.value === 'exit') {

@@ -17,6 +17,12 @@ import 'styles/global.scss';
 
 (global as any).MSPFA = MSPFA; // @client-only
 
+const swrConfig = {
+	revalidateOnMount: true,
+	revalidateOnFocus: false,
+	revalidateOnReconnect: false
+};
+
 export type MyAppInitialProps = {
 	env: Partial<typeof process.env>,
 	user?: PrivateUser
@@ -63,13 +69,7 @@ const MyApp = ({
 				<meta property="og:image" content="/images/icon.png" />
 				<link rel="icon" href="/images/icon.png" /* Perfectly generic icon by heyitskane */ />
 			</Head>
-			<SWRConfig
-				value={{
-					revalidateOnMount: true,
-					revalidateOnFocus: false,
-					revalidateOnReconnect: false
-				}}
-			>
+			<SWRConfig value={swrConfig}>
 				<UserContext.Provider value={mergedUser}>
 					<Component
 						{

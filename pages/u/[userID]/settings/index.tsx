@@ -167,7 +167,10 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 														return;
 													}
 
-
+													new Dialog({
+														title: 'Change Password',
+														content: ''
+													});
 												}, [])
 											}
 										>

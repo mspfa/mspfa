@@ -54,8 +54,6 @@ export type DialogOptions<Values extends Record<string, string | number | boolea
 	 * - `0` puts the dialog on the bottom.
 	 */
 	index?: number,
-	/** A dialog which, when closed, should forcibly close this dialog and resolve it with `undefined`. */
-	parent?: Dialog<Values>,
 	/** The title of the dialog. */
 	title: Dialog<Values>['title'],
 	/**
@@ -86,7 +84,6 @@ export class Dialog<Values extends Record<string, string | number | boolean>> ex
 	static readonly [Symbol.species] = Promise;
 
 	id: Key;
-	parent?: Dialog<any>;
 	title: ReactNode;
 	content: ReactNode | ((props: FormikProps<Values>) => ReactNode);
 	initialValues: Partial<Values>;
@@ -105,34 +102,9 @@ export class Dialog<Values extends Record<string, string | number | boolean>> ex
 
 	#resolvePromise: typeof resolvePromise;
 
-	/** Closes the dialog and resolves its promise. */
-	resolve(
-		/** The result of the dialog's promise. */
-		value?: DialogResult,
-		/** Whether dialogs should be re-rendered upon completion. */
-		shouldUpdateDialogs = true
-	) {
-		this.#resolvePromise(value);
-		this.resolved = true;
-		for (let i = 0; i < dialogs.length; i++) {
-			const dialog = dialogs[i];
-			if (dialog === this) {
-				// Remove this dialog from the array.
-				dialogs.splice(i--, 1);
-				if (shouldUpdateDialogs) {
-					updateDialogs();
-				}
-			} else if (dialog.parent === this) {
-				// Resolve `dialog` with `undefined` if it needs to close because of its parent (`this`) closing.
-				dialog.resolve(undefined, shouldUpdateDialogs);
-			}
-		}
-	}
-
 	constructor({
 		id = nextDialogID++,
 		index = -1,
-		parent,
 		title,
 		initialValues = {},
 		content,
@@ -145,7 +117,6 @@ export class Dialog<Values extends Record<string, string | number | boolean>> ex
 		this.#resolvePromise = resolvePromise;
 
 		this.id = id;
-		this.parent = parent;
 		this.title = title;
 		this.initialValues = initialValues;
 		this.content = content;
@@ -222,7 +193,34 @@ export class Dialog<Values extends Record<string, string | number | boolean>> ex
 			// Insert `this` into `dialogs` at index `index`.
 			dialogs.splice(index, 0, this);
 		}
+
 		updateDialogs();
+	}
+
+	/** Closes the dialog and resolves its promise. */
+	resolve(
+		/** The result of the dialog's promise. */
+		value?: DialogResult,
+		/** Whether dialogs should be re-rendered upon completion. */
+		shouldUpdateDialogs = true
+	) {
+		this.#resolvePromise(value);
+		this.resolved = true;
+
+		for (let i = 0; i < dialogs.length; i++) {
+			const dialog = dialogs[i];
+
+			if (dialog === this) {
+				// Remove this dialog from the array.
+				dialogs.splice(i--, 1);
+
+				if (shouldUpdateDialogs) {
+					updateDialogs();
+				}
+
+				break;
+			}
+		}
 	}
 }
 
