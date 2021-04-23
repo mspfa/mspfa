@@ -197,7 +197,7 @@ const SignIn = ({ page }: SignInProps) => {
 									type="password"
 									autoComplete="new-password"
 									required
-									placeholder="Re-type Password"
+									placeholder="Re-Type Password"
 									pattern={toPattern(signInValues.password)}
 									value={signInValues.confirmPassword}
 									onChange={onChange}

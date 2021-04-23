@@ -30,7 +30,7 @@ export enum Perm {
  *
  * Examples:
  * ```
- * const { user } = await permToGetUser(res, authenticatedUser, req.query.userID as string, Perm.sudoRead);
+ * const { user } = await permToGetUser(res, authenticatedUser, req.query.userID, Perm.sudoRead);
  * const { user, statusCode } = await permToGetUser(false, req.user, params.userID, [Perm.sudoWrite, Perm.sudoDelete]);
  * ```
  */
@@ -169,8 +169,8 @@ function permToGetUser(
  *
  * Example:
  * ```
- * const user = await permToGetUserInAPI(req, res, req.query.userID as string, Perm.sudoWrite);
- * const user = await permToGetUserInAPI(req, res, req.query.userID as string, [Perm.sudoWrite, Perm.sudoDelete]);
+ * const user = await permToGetUserInAPI(req, res, req.query.userID, Perm.sudoWrite);
+ * const user = await permToGetUserInAPI(req, res, req.query.userID, [Perm.sudoWrite, Perm.sudoDelete]);
  * ```
  */
 export const permToGetUserInAPI = async (

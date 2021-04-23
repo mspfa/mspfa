@@ -5,19 +5,31 @@ import type { Method, MethodWithData } from 'modules/types';
 import { Dialog } from 'modules/client/dialogs';
 import { startLoading, stopLoading } from 'components/LoadingIndicator';
 
+export type AnyAPIQuery = Partial<Record<string, string | string[]>>;
+
 export type APIError<
-	Response = Record<string, unknown>
-> = Record<string, unknown> & Omit<AxiosError<Response>, 'config'> & {
-	config?: APIConfig<Response>,
+	ResponseBody = Record<string, unknown>,
+	RequestQuery extends AnyAPIQuery = {}
+> = Record<string, unknown> & Omit<AxiosError<ResponseBody>, 'config'> & {
+	config?: APIConfig<ResponseBody, RequestQuery>,
 	/** If called before the error is intercepted, prevents the error's default interception functionality (which is to display an error dialog). */
 	preventDefault: () => void
 };
 
 export type APIConfig<
-	Response = Record<string, unknown>
-> = AxiosRequestConfig & {
+	ResponseBody = Record<string, unknown>,
+	RequestQuery extends AnyAPIQuery = {}
+> = Omit<AxiosRequestConfig, 'data' | 'query'> & {
+	// This has to be optional and partial because server-side route params are also on this type but should not be set by the client.
+	// The limitations in Next.js mentioned below are that there is no official distinction between query parameters and route parameters.
+	/**
+	 * The query parameters.
+	 *
+	 * ⚠️ This property is not necessarily type-safe due to limitations in Next.js, so any required parameters will appear optional.
+	 */
+	query?: Partial<RequestQuery>,
 	/** A function called immediately before the default error interception functionality is run. */
-	beforeInterceptError?: (error: APIError<Response>) => void | Promise<void>
+	beforeInterceptError?: (error: APIError<ResponseBody>) => void | Promise<void>
 };
 
 const apiExtension = {
@@ -102,13 +114,15 @@ export type APIClient<Handler> = Omit<AxiosInstance, Method> & typeof apiExtensi
 					: Method
 			)]: (
 				url: string,
-				...args: RequestMethod extends MethodWithData
-					? Request & { method: Uppercase<RequestMethod> } extends { body: infer RequestBody }
-						? [data: RequestBody, config?: Omit<APIConfig<Response['body']>, 'data'>]
-						: [data?: undefined, config?: Omit<APIConfig<Response['body']>, 'data'>]
-					: Request & { method: Uppercase<RequestMethod> } extends { body: infer RequestBody }
-						? [config: APIConfig<Response['body']> & { data: RequestBody }]
-						: [config?: Omit<APIConfig<Response['body']>, 'data'>]
+				...args: Request & { method: Uppercase<RequestMethod> } extends { query?: infer RequestQuery } | unknown
+					? RequestMethod extends MethodWithData
+						? Request & { method: Uppercase<RequestMethod> } extends { body: infer RequestBody }
+							? [data: RequestBody, config?: APIConfig<Response['body'], RequestQuery>]
+							: [data?: undefined, config?: APIConfig<Response['body'], RequestQuery>]
+						: Request & { method: Uppercase<RequestMethod> } extends { body: infer RequestBody }
+							? [config: APIConfig<Response['body'], RequestQuery> & { data: RequestBody }]
+							: [config?: APIConfig<Response['body'], RequestQuery>]
+					: never
 			) => Promise<(
 				AxiosResponse<(
 					Response extends { body: {} }

@@ -11,7 +11,9 @@ import validate from './index.validate';
 /** The keys of all `PrivateUser` properties which the client should be able to `PUT` into their `UserDocument`. */
 type PuttableUserKeys = 'birthdate' | 'name' | 'email' | 'description' | 'icon' | 'site' | 'profileStyle' | 'settings';
 
-const Handler: APIHandler<(
+const Handler: APIHandler<{
+	query: { userID: string }
+} & (
 	{
 		method: 'DELETE'
 	} | {
@@ -24,7 +26,7 @@ const Handler: APIHandler<(
 	await validate(req, res);
 
 	if (req.method === 'PUT') {
-		const user = await permToGetUserInAPI(req, res, req.query.userID as string, Perm.sudoWrite);
+		const user = await permToGetUserInAPI(req, res, req.query.userID, Perm.sudoWrite);
 
 		if (Object.keys(req.body).length) {
 			const userChanges: RecursivePartial<UserDocument> = {
@@ -49,7 +51,7 @@ const Handler: APIHandler<(
 
 	// If this point is reached, `req.method === 'DELETE'`.
 
-	const user = await permToGetUserInAPI(req, res, req.query.userID as string, Perm.sudoDelete);
+	const user = await permToGetUserInAPI(req, res, req.query.userID, Perm.sudoDelete);
 
 	// TODO: Delete other things as well.
 

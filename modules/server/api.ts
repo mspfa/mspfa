@@ -1,15 +1,19 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { IncomingMessage } from 'http';
+import type { AnyAPIQuery } from 'modules/client/api';
 import Ajv from 'ajv';
 
 /** The server-side API request object. */
 export type APIRequest<
-	Request extends Record<string, unknown> = { body: any }
+	Request extends Record<string, unknown> = { body: any, query: AnyAPIQuery }
 > = (
 	IncomingMessage
-	& Omit<NextApiRequest, 'body' | keyof Request>
+	& Omit<NextApiRequest, 'body' | 'query' | keyof Request>
 	& Request
-	& { body: unknown }
+	& {
+		body: unknown,
+		query: {}
+	}
 );
 
 /** The server-side API response object. */
@@ -25,7 +29,7 @@ export type APIResponse<
 
 /** The server-side API handler function to be the type of an API's default export. */
 export type APIHandler<
-	Request extends Record<string, unknown> = { body: any },
+	Request extends Record<string, unknown> = { body: any, query: any },
 	Response extends Record<string, unknown> = any
 > = (
 	((req: APIRequest<Request>, res: APIResponse<Response>) => void | Promise<void>)
