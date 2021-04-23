@@ -20,6 +20,7 @@ export default createValidator({
 			additionalProperties: false,
 			properties: {
 				body: {},
+				query: {},
 				method: {
 					type: 'string',
 					const: 'GET'

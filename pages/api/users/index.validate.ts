@@ -114,6 +114,7 @@ export default createValidator({
 						}
 					]
 				},
+				query: {},
 				method: {
 					type: 'string',
 					const: 'POST'

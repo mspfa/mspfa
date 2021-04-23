@@ -25,6 +25,7 @@ export default createValidator({
 					additionalProperties: false,
 					properties: {
 						body: {},
+						query: {},
 						method: {
 							type: 'string',
 							const: 'DELETE'
@@ -41,6 +42,7 @@ export default createValidator({
 						body: {
 							$ref: '#/definitions/SessionBody'
 						},
+						query: {},
 						method: {
 							type: 'string',
 							const: 'POST'
