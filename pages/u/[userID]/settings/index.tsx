@@ -26,6 +26,7 @@ import { Dialog } from 'modules/client/dialogs';
 import Label from 'components/Label';
 import Router from 'next/router';
 import GridRow from 'components/Grid/GridRow';
+import { toPattern } from 'modules/client/utilities';
 import './styles.module.scss';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
@@ -167,10 +168,54 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 														return;
 													}
 
-													new Dialog({
+													const changePasswordDialog = new Dialog({
 														title: 'Change Password',
-														content: ''
+														initialValues: {
+															currentPassword: '',
+															password: '',
+															confirmPassword: ''
+														},
+														content: ({ values }) => (
+															<div id="change-password-inputs">
+																<FieldGridRow
+																	name="currentPassword"
+																	type="password"
+																	autoComplete="current-password"
+																	required
+																	minLength={8}
+																	label="Current Password"
+																	autoFocus
+																/>
+																<FieldGridRow
+																	name="password"
+																	type="password"
+																	autoComplete="new-password"
+																	required
+																	minLength={8}
+																	label="New Password"
+																/>
+																<FieldGridRow
+																	name="confirmPassword"
+																	type="password"
+																	autoComplete="new-password"
+																	required
+																	placeholder="Re-Type Password"
+																	pattern={toPattern(values.password)}
+																	label="Confirm"
+																/>
+															</div>
+														),
+														actions: [
+															{ label: 'Okay', focus: false },
+															'Cancel'
+														]
 													});
+
+													if ((await changePasswordDialog)?.submit) {
+														await (api as AuthMethodsAPI).put(`users/${privateUser.id}/authMethods`, {
+
+														});
+													}
 												}, [])
 											}
 										>

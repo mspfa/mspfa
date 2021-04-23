@@ -9,10 +9,10 @@ import type { EmailString } from 'modules/types';
 import validate from './index.validate';
 
 export type SessionBody = {
-	authMethod: Omit<ExternalAuthMethod, 'name'>,
+	authMethod: Pick<ExternalAuthMethod, 'type' | 'value'>,
 	email?: never
 } | {
-	authMethod: Omit<InternalAuthMethod, 'name'>,
+	authMethod: Pick<InternalAuthMethod, 'type' | 'value'>,
 	email: EmailString
 };
 

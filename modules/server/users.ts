@@ -7,19 +7,21 @@ import type { UnsafeObjectID } from 'modules/server/db';
 import type { Theme } from 'modules/client/themes';
 import type { Perm } from 'modules/server/perms';
 
-export type ExternalAuthMethod = {
-	type: 'google' | 'discord',
-	/** @minLength 1 */
-	value: string,
+type AuthMethodProperties = {
 	/** A display name to represent this auth method. */
 	name?: string
 };
 
-export type InternalAuthMethod = {
+export type ExternalAuthMethod = AuthMethodProperties & {
+	type: 'google' | 'discord',
+	/** @minLength 1 */
+	value: string
+};
+
+export type InternalAuthMethod = AuthMethodProperties & {
 	type: 'password',
 	/** @minLength 8 */
-	value: string,
-	name?: never
+	value: string
 };
 
 export type AuthMethod = ExternalAuthMethod | InternalAuthMethod;
