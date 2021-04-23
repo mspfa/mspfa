@@ -49,21 +49,36 @@ const Handler: APIHandler<(
 				return;
 			}
 
-			let incorrect = true;
+			/**
+			 * `0`: Password is correct.
+			 *
+			 * `1`: There is no password.
+			 *
+			 * `2`: Password is incorrect.
+			 */
+			let error: 0 | 1 | 2 = 1;
 
 			for (const authMethod of user.authMethods) {
-				if (
-					authMethod.type === 'password'
-					&& await argon2.verify(authMethod.value, req.body.authMethod.value)
-				) {
-					incorrect = false;
-					break;
+				if (authMethod.type === 'password') {
+					error = 2;
+
+					if (await argon2.verify(authMethod.value, req.body.authMethod.value)) {
+						error = 0;
+						break;
+					}
 				}
 			}
 
-			if (incorrect) {
+			if (error === 1) {
 				res.status(401).send({
-					message: 'The specified password is incorrect, or the specified user does not use a password to sign in.'
+					message: 'The specified user does not use a password to sign in.'
+				});
+				return;
+			}
+
+			if (error === 2) {
+				res.status(401).send({
+					message: 'The specified password is incorrect.'
 				});
 				return;
 			}
