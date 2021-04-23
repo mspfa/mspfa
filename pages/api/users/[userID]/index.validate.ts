@@ -28,10 +28,23 @@ export default createValidator({
 						method: {
 							type: 'string',
 							const: 'DELETE'
+						},
+						query: {
+							type: 'object',
+							properties: {
+								userID: {
+									type: 'string'
+								}
+							},
+							required: [
+								'userID'
+							],
+							additionalProperties: false
 						}
 					},
 					required: [
-						'method'
+						'method',
+						'query'
 					]
 				},
 				{
@@ -39,21 +52,34 @@ export default createValidator({
 					additionalProperties: false,
 					properties: {
 						body: {
-							$ref: '#/definitions/RecursivePartial%3Calias-731470504-70254-70395-731470504-0-212312%3Cdef-alias--744-1041--0-37081776781619%2Calias--460-697--0-1737308207794%3E%3E'
+							$ref: '#/definitions/RecursivePartial%3Calias-731470504-70254-70395-731470504-0-212312%3Cdef-alias--744-1041--0-37081776781619%2Calias--460-697--0-1750308207794%3E%3E'
 						},
 						method: {
 							type: 'string',
 							const: 'PUT'
+						},
+						query: {
+							type: 'object',
+							properties: {
+								userID: {
+									type: 'string'
+								}
+							},
+							required: [
+								'userID'
+							],
+							additionalProperties: false
 						}
 					},
 					required: [
 						'body',
-						'method'
+						'method',
+						'query'
 					]
 				}
 			]
 		},
-		'RecursivePartial<alias-731470504-70254-70395-731470504-0-212312<def-alias--744-1041--0-37081776781619,alias--460-697--0-1737308207794>>': {
+		'RecursivePartial<alias-731470504-70254-70395-731470504-0-212312<def-alias--744-1041--0-37081776781619,alias--460-697--0-1750308207794>>': {
 			type: 'object',
 			properties: {
 				birthdate: {

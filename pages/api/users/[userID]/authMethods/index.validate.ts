@@ -20,13 +20,26 @@ export default createValidator({
 			additionalProperties: false,
 			properties: {
 				body: {},
+				query: {
+					type: 'object',
+					properties: {
+						userID: {
+							type: 'string'
+						}
+					},
+					required: [
+						'userID'
+					],
+					additionalProperties: false
+				},
 				method: {
 					type: 'string',
 					const: 'GET'
 				}
 			},
 			required: [
-				'method'
+				'method',
+				'query'
 			]
 		}
 	}
