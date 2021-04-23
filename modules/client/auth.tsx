@@ -85,6 +85,7 @@ export const promptExternalSignIn = {
 	}
 };
 
+/** Whether new sign-in dialogs should be prevented from opening due to a previous sign-in dialog already loading. */
 let signInLoading = false;
 
 export const openSignInDialog = () => {
@@ -190,18 +191,17 @@ export const setSignInPage = (
 					}).catch(({ unverifiedEmail }) => {
 						// If sign-in or sign-up fails, go back to sign-in screen.
 						signInLoading = false;
-						setSignInPage(signInPage);
 
 						if (unverifiedEmail) {
-							const verifyEmailDialog = new Dialog({
+							resetSignInValues();
+
+							new Dialog({
 								id: 'verify-email',
 								title: 'Verify Email',
 								content: 'TODO'
 							});
-
-							signInDialog!.then(() => {
-								verifyEmailDialog.resolve();
-							});
+						} else {
+							setSignInPage(signInPage);
 						}
 					});
 				}
