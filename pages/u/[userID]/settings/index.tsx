@@ -29,6 +29,7 @@ import GridRow from 'components/Grid/GridRow';
 import './styles.module.scss';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
+type AuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;
 
 const getValuesFromUser = (privateUser: Pick<PrivateUser, 'settings'> & Partial<Omit<PrivateUser, 'settings'>>) => ({
 	email: privateUser.email,
@@ -151,7 +152,27 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										label="Email"
 									/>
 									<GridRow>
-										<Button className="small">Change Password</Button>
+										{/* It is better if this button remains visible even for those who do not have a password sign-in method, because those people may think they do regardless, and they should be informed that they don't upon clicking this button, to minimize confusion. */}
+										<Button
+											className="small"
+											onClick={
+												useCallback(async () => {
+													const { data: authMethods } = await (api as AuthMethodsAPI).get(`users/${privateUser.id}/authMethods`);
+
+													if (!authMethods.some(authMethod => authMethod.type === 'password')) {
+														new Dialog({
+															title: 'Error',
+															content: 'Your account does not use a password to sign in. If you want to add a password to your account, select the "Edit Sign-In Methods" button instead.'
+														});
+														return;
+													}
+
+
+												}, [])
+											}
+										>
+											Change Password
+										</Button>
 									</GridRow>
 									<GridRow>
 										<Button className="small">Edit Sign-In Methods</Button>
