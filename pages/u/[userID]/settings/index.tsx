@@ -85,6 +85,77 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 		setUserMerge(undefined);
 	}, []);
 
+	const onClickChangePassword = useCallback(async () => {
+		const { data: authMethods } = await (api as AuthMethodsAPI).get(`users/${privateUser.id}/authMethods`, {
+			params: {
+				type: 'password'
+			}
+		});
+
+		if (!authMethods.length) {
+			new Dialog({
+				title: 'Error',
+				content: 'Your account does not use a password to sign in. If you want to add a password to your account, select the "Edit Sign-In Methods" button instead.'
+			});
+			return;
+		}
+
+		const changePasswordDialog = new Dialog({
+			title: 'Change Password',
+			initialValues: {
+				currentPassword: '' as string,
+				newPassword: '' as string,
+				confirmPassword: '' as string
+			},
+			content: ({ values }) => (
+				<div id="change-password-inputs">
+					<FieldGridRow
+						name="currentPassword"
+						type="password"
+						autoComplete="current-password"
+						required
+						minLength={8}
+						label="Current Password"
+						autoFocus
+					/>
+					<FieldGridRow
+						name="newPassword"
+						type="password"
+						autoComplete="new-password"
+						required
+						minLength={8}
+						label="New Password"
+					/>
+					<FieldGridRow
+						name="confirmPassword"
+						type="password"
+						autoComplete="new-password"
+						required
+						placeholder="Re-Type Password"
+						pattern={toPattern(values.newPassword)}
+						label="Confirm"
+					/>
+				</div>
+			),
+			actions: [
+				{ label: 'Okay', focus: false },
+				'Cancel'
+			]
+		});
+
+		if ((await changePasswordDialog)?.submit) {
+			await (api as PasswordAPI).put(`users/${privateUser.id}/authMethods/password`, {
+				currentPassword: changePasswordDialog.values.currentPassword!,
+				newPassword: changePasswordDialog.values.newPassword!
+			});
+
+			new Dialog({
+				title: 'Change Password',
+				content: 'Success! Your password has been changed.'
+			});
+		}
+	}, [privateUser.id]);
+
 	return (
 		<Page flashyTitle heading="Settings">
 			<Formik
@@ -157,78 +228,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										{/* It is better if this button remains visible even for those who do not have a password sign-in method, because those people may think they do regardless, and they should be informed that they don't upon clicking this button, to minimize confusion. */}
 										<Button
 											className="small"
-											onClick={
-												useCallback(async () => {
-													const { data: authMethods } = await (api as AuthMethodsAPI).get(`users/${privateUser.id}/authMethods`, {
-														params: {
-															type: 'password'
-														}
-													});
-
-													if (!authMethods.length) {
-														new Dialog({
-															title: 'Error',
-															content: 'Your account does not use a password to sign in. If you want to add a password to your account, select the "Edit Sign-In Methods" button instead.'
-														});
-														return;
-													}
-
-													const changePasswordDialog = new Dialog({
-														title: 'Change Password',
-														initialValues: {
-															currentPassword: '' as string,
-															newPassword: '' as string,
-															confirmPassword: '' as string
-														},
-														content: ({ values }) => (
-															<div id="change-password-inputs">
-																<FieldGridRow
-																	name="currentPassword"
-																	type="password"
-																	autoComplete="current-password"
-																	required
-																	minLength={8}
-																	label="Current Password"
-																	autoFocus
-																/>
-																<FieldGridRow
-																	name="newPassword"
-																	type="password"
-																	autoComplete="new-password"
-																	required
-																	minLength={8}
-																	label="New Password"
-																/>
-																<FieldGridRow
-																	name="confirmPassword"
-																	type="password"
-																	autoComplete="new-password"
-																	required
-																	placeholder="Re-Type Password"
-																	pattern={toPattern(values.newPassword)}
-																	label="Confirm"
-																/>
-															</div>
-														),
-														actions: [
-															{ label: 'Okay', focus: false },
-															'Cancel'
-														]
-													});
-
-													if ((await changePasswordDialog)?.submit) {
-														await (api as PasswordAPI).put(`users/${privateUser.id}/authMethods/password`, {
-															currentPassword: changePasswordDialog.values.currentPassword!,
-															newPassword: changePasswordDialog.values.newPassword!
-														});
-
-														new Dialog({
-															title: 'Change Password',
-															content: 'Success! Your password has been changed.'
-														});
-													}
-												}, [])
-											}
+											onClick={onClickChangePassword}
 										>
 											Change Password
 										</Button>
