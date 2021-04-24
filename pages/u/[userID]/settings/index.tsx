@@ -398,8 +398,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 																	{ label: 'No', focus: true }
 																]
 															})
-														)?.submit
-														&& (
+														)?.submit && (
 															await new Dialog({
 																id: 'delete-user',
 																title: 'Delete Account',
