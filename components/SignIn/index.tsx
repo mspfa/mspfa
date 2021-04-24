@@ -37,16 +37,16 @@ export const resetSignInValues = () => {
 };
 
 const onChange = (
-	evt: ChangeEvent<(
+	event: ChangeEvent<(
 		HTMLInputElement
 		& HTMLSelectElement
 		& { name: keyof typeof signInValues }
 	)>
 ) => {
-	if (evt.target.type === 'checkbox') {
-		(signInValues[evt.target.name] as boolean) = evt.target.checked;
+	if (event.target.type === 'checkbox') {
+		(signInValues[event.target.name] as boolean) = event.target.checked;
 	} else {
-		(signInValues[evt.target.name] as string) = evt.target.value;
+		(signInValues[event.target.name] as string) = event.target.value;
 	}
 	updateSignInValues();
 };

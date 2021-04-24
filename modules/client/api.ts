@@ -7,14 +7,14 @@ import { startLoading, stopLoading } from 'components/LoadingIndicator';
 
 // @client-only {
 window.addEventListener('unhandledrejection', (
-	evt: Omit<PromiseRejectionEvent, 'reason'> & {
+	event: Omit<PromiseRejectionEvent, 'reason'> & {
 		// In reality, `reason` is `unknown`, but using `reason: unknown` here would necessitate ruining the JS logic.
 		reason: { isAxiosError?: false } | AxiosError<unknown> | undefined
 	}
 ) => {
-	if (evt.reason?.isAxiosError && evt.reason.response!.status >= 400) {
+	if (event.reason?.isAxiosError && event.reason.response!.status >= 400) {
 		// Prevent all unhandled API promise rejection errors, because there is no reason for API errors to throw uncaught errors.
-		evt.preventDefault();
+		event.preventDefault();
 	}
 });
 // @client-only }

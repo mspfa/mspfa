@@ -125,7 +125,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 						}
 					});
 
-					const interceptAdDisable = useCallback(async (evt: ChangeEvent<{ name: string }>) => {
+					const interceptAdDisable = useCallback(async (event: ChangeEvent<{ name: string }>) => {
 						if ((
 							await new Dialog({
 								id: 'disable-ad',
@@ -137,7 +137,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 								]
 							})
 						)?.submit) {
-							setFieldValue(evt.target.name, false);
+							setFieldValue(event.target.name, false);
 						}
 					}, [setFieldValue]);
 

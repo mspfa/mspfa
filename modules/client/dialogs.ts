@@ -225,10 +225,10 @@ export class Dialog<Values extends Record<string, string | number | boolean>> ex
 }
 
 // @client-only {
-document.addEventListener('keydown', evt => {
+document.addEventListener('keydown', event => {
 	// This check is necessary because of https://bugs.chromium.org/p/chromium/issues/detail?id=581537.
-	if (evt.key) {
-		if (evt.key === 'Escape') {
+	if (event.key) {
+		if (event.key === 'Escape') {
 			// Resolve the last dialog with `undefined`.
 			const topDialog = dialogs.length && dialogs[dialogs.length - 1];
 			if (topDialog) {

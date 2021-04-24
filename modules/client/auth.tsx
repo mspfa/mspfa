@@ -58,25 +58,25 @@ export const promptExternalSignIn = {
 				console.warn('The Discord sign-in page was closed.');
 			}
 		}, 200);
-		const onMessage = (evt: MessageEvent<any>) => {
-			if (evt.origin === window.origin && evt.source === win) {
+		const onMessage = (event: MessageEvent<any>) => {
+			if (event.origin === window.origin && event.source === win) {
 				window.removeEventListener('message', onMessage);
 				clearInterval(winClosedPoll);
-				if (evt.data.error) {
-					if (evt.data.error === 'access_denied') {
+				if (event.data.error) {
+					if (event.data.error === 'access_denied') {
 						// Ignore `access_denied` because it is triggered when the user selects "Cancel" on the Discord auth screen.
-						console.warn(evt.data);
+						console.warn(event.data);
 					} else {
-						console.error(evt.data);
+						console.error(event.data);
 						new Dialog({
 							title: 'Error',
-							content: evt.data.error_description
+							content: event.data.error_description
 						});
 					}
 				} else if (signInDialog!.open) {
 					resolveExternalSignIn({
 						type: 'discord',
-						value: evt.data.code
+						value: event.data.code
 					});
 				}
 			}

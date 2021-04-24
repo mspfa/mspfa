@@ -22,15 +22,15 @@ const ControlSetting = ({
 			placeholder="(None)"
 			readOnly
 			onKeyDown={
-				useCallback((evt: KeyboardEvent<HTMLInputElement> & { target: HTMLInputElement }) => {
-					if (!evt.target.disabled) {
-						evt.preventDefault();
+				useCallback((event: KeyboardEvent<HTMLInputElement> & { target: HTMLInputElement }) => {
+					if (!event.target.disabled) {
+						event.preventDefault();
 
 						setFieldValue(
 							name,
-							evt.code === 'Escape'
+							event.code === 'Escape'
 								? ''
-								: evt.code
+								: event.code
 						);
 					}
 				}, [name, setFieldValue])

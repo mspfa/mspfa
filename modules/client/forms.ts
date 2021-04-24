@@ -64,10 +64,10 @@ export const useLeaveConfirmation = (
 	}, [unsavedChanges]);
 
 	useEffect(() => {
-		const onBeforeUnload = (evt: BeforeUnloadEvent) => {
+		const onBeforeUnload = (event: BeforeUnloadEvent) => {
 			if (shouldConfirmLeave()) {
-				evt.preventDefault();
-				evt.returnValue = message;
+				event.preventDefault();
+				event.returnValue = message;
 				return message;
 			}
 		};
