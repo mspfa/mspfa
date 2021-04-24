@@ -96,6 +96,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 
 		if (!authMethods.length) {
 			new Dialog({
+				id: 'change-password',
 				title: 'Error',
 				content: 'Your account does not use a password to sign in. If you want to add a password to your account, select the "Edit Sign-In Methods" button instead.'
 			});
