@@ -5,6 +5,20 @@ import type { Method, MethodWithData } from 'modules/types';
 import { Dialog } from 'modules/client/dialogs';
 import { startLoading, stopLoading } from 'components/LoadingIndicator';
 
+// @client-only {
+window.addEventListener('unhandledrejection', (
+	evt: Omit<PromiseRejectionEvent, 'reason'> & {
+		// In reality, `reason` is `unknown`, but using `reason: unknown` here would necessitate ruining the JS logic.
+		reason: { isAxiosError?: false } | AxiosError<unknown> | undefined
+	}
+) => {
+	if (evt.reason?.isAxiosError && evt.reason.response!.status >= 400) {
+		// Prevent all unhandled API promise rejection errors, because there is no reason for API errors to throw uncaught errors.
+		evt.preventDefault();
+	}
+});
+// @client-only }
+
 export type AnyAPIQuery = Partial<Record<string, string | string[]>>;
 
 export type APIError<

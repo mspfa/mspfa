@@ -8,14 +8,12 @@ import { getPrivateUser } from 'modules/server/users'; // @server-only
 import env from 'modules/client/env';
 import { UserContext, useUserMerge, useUserInApp } from 'modules/client/users';
 import type { PrivateUser } from 'modules/client/users';
-import * as MSPFA from 'modules/client/MSPFA'; // @client-only
 import type { PageRequest } from 'modules/server/pages';
 import { useEffect } from 'react';
 import { setTheme } from 'modules/client/themes';
 import _ from 'lodash';
+import 'modules/client/global'; // @client-only
 import 'styles/global.scss';
-
-(global as any).MSPFA = MSPFA; // @client-only
 
 const swrConfig = {
 	revalidateOnMount: true,
