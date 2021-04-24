@@ -28,6 +28,8 @@ import Router from 'next/router';
 import GridRow from 'components/Grid/GridRow';
 import { toPattern } from 'modules/client/utilities';
 import LabeledDialogGrid from 'components/Grid/LabeledDialogGrid';
+import ForgotPassword from 'components/ForgotPassword';
+import './styles.module.scss';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 type AuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;
@@ -101,6 +103,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 		}
 
 		const changePasswordDialog = new Dialog({
+			id: 'change-password',
 			title: 'Change Password',
 			initialValues: {
 				currentPassword: '' as string,
@@ -118,6 +121,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 						label="Current Password"
 						autoFocus
 					/>
+					<ForgotPassword className="no-line-height" />
 					<FieldGridRow
 						name="password"
 						type="password"

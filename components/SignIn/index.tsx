@@ -9,6 +9,7 @@ import Captcha from 'components/SignIn/Captcha';
 import Label from 'components/Label';
 import { toPattern } from 'modules/client/utilities';
 import LabeledDialogGrid from 'components/Grid/LabeledDialogGrid';
+import ForgotPassword from 'components/ForgotPassword';
 import './styles.module.scss';
 
 const startSigningUp = () => {
@@ -186,9 +187,7 @@ const SignIn = ({ page }: SignInProps) => {
 							onChange={onChange}
 						/>
 						{page === 0 ? (
-							<div id="reset-password-link-container">
-								<Link className="translucent-text">Reset Password</Link>
-							</div>
+							<ForgotPassword />
 						) : (
 							<>
 								<Label htmlFor="sign-in-confirm-password">Confirm</Label>
