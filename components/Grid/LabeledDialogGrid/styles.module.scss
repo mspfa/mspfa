@@ -1,0 +1,11 @@
+.labeled-dialog-grid {
+	display: grid;
+	grid-template-columns: 0fr auto;
+	gap: 1ch;
+	justify-content: center;
+
+	.label-container {
+		justify-self: right;
+		align-self: center;
+	}
+}

@@ -26,8 +26,7 @@ import { Dialog } from 'modules/client/dialogs';
 import Label from 'components/Label';
 import Router from 'next/router';
 import GridRow from 'components/Grid/GridRow';
-import { toPattern } from 'modules/client/utilities';
-import './styles.module.scss';
+import PasswordFieldGrid from 'components/PasswordFieldGrid';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 type AuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;
@@ -103,40 +102,11 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 		const changePasswordDialog = new Dialog({
 			title: 'Change Password',
 			initialValues: {
-				currentPassword: '' as string,
-				newPassword: '' as string,
-				confirmPassword: '' as string
+				currentPassword: '',
+				password: '',
+				confirmPassword: ''
 			},
-			content: ({ values }) => (
-				<div id="change-password-inputs">
-					<FieldGridRow
-						name="currentPassword"
-						type="password"
-						autoComplete="current-password"
-						required
-						minLength={8}
-						label="Current Password"
-						autoFocus
-					/>
-					<FieldGridRow
-						name="newPassword"
-						type="password"
-						autoComplete="new-password"
-						required
-						minLength={8}
-						label="New Password"
-					/>
-					<FieldGridRow
-						name="confirmPassword"
-						type="password"
-						autoComplete="new-password"
-						required
-						placeholder="Re-Type Password"
-						pattern={toPattern(values.newPassword)}
-						label="Confirm"
-					/>
-				</div>
-			),
+			content: PasswordFieldGrid,
 			actions: [
 				{ label: 'Okay', focus: false },
 				'Cancel'
@@ -146,7 +116,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 		if ((await changePasswordDialog)?.submit) {
 			await (api as PasswordAPI).put(`users/${privateUser.id}/authMethods/password`, {
 				currentPassword: changePasswordDialog.values.currentPassword!,
-				newPassword: changePasswordDialog.values.newPassword!
+				newPassword: changePasswordDialog.values.password!
 			});
 
 			new Dialog({

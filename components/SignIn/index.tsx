@@ -8,6 +8,7 @@ import env from 'modules/client/env';
 import Captcha from 'components/SignIn/Captcha';
 import Label from 'components/Label';
 import { toPattern } from 'modules/client/utilities';
+import LabeledDialogGrid from 'components/Grid/LabeledDialogGrid';
 import './styles.module.scss';
 
 const startSigningUp = () => {
@@ -84,7 +85,7 @@ const SignIn = ({ page }: SignInProps) => {
 					<div id="sign-in-divider" className="translucent-text">or</div>
 				</>
 			)}
-			<div id="sign-in-inputs">
+			<LabeledDialogGrid>
 				{page === 2 ? (
 					<>
 						<Label htmlFor="sign-in-name">Username</Label>
@@ -206,7 +207,7 @@ const SignIn = ({ page }: SignInProps) => {
 						)}
 					</>
 				)}
-			</div>
+			</LabeledDialogGrid>
 			{page === 2 && (
 				<>
 					<Captcha />
