@@ -364,8 +364,8 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 											onClick={
 												useCallback(async () => {
 													if (await Dialog.confirm({
-														id: 'reset',
-														title: 'Reset',
+														id: 'reset-settings',
+														title: 'Reset Settings',
 														content: 'Are you sure you want to reset your settings to default?\n\nAny unsaved changes will be lost.'
 													})) {
 														setFieldValue('settings', defaultValues!.settings);
