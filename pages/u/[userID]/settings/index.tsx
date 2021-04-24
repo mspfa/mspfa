@@ -26,7 +26,8 @@ import { Dialog } from 'modules/client/dialogs';
 import Label from 'components/Label';
 import Router from 'next/router';
 import GridRow from 'components/Grid/GridRow';
-import PasswordFieldGrid from 'components/PasswordFieldGrid';
+import { toPattern } from 'modules/client/utilities';
+import LabeledDialogGrid from 'components/Grid/LabeledDialogGrid';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 type AuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;
@@ -102,11 +103,40 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 		const changePasswordDialog = new Dialog({
 			title: 'Change Password',
 			initialValues: {
-				currentPassword: '',
-				password: '',
-				confirmPassword: ''
+				currentPassword: '' as string,
+				password: '' as string,
+				confirmPassword: '' as string
 			},
-			content: PasswordFieldGrid,
+			content: ({ values }) => (
+				<LabeledDialogGrid>
+					<FieldGridRow
+						name="currentPassword"
+						type="password"
+						autoComplete="current-password"
+						required
+						minLength={8}
+						label="Current Password"
+						autoFocus
+					/>
+					<FieldGridRow
+						name="password"
+						type="password"
+						autoComplete="new-password"
+						required
+						minLength={8}
+						label="New Password"
+					/>
+					<FieldGridRow
+						name="confirmPassword"
+						type="password"
+						autoComplete="new-password"
+						required
+						placeholder="Re-Type Password"
+						pattern={toPattern(values.password)}
+						label="Confirm"
+					/>
+				</LabeledDialogGrid>
+			),
 			actions: [
 				{ label: 'Okay', focus: false },
 				'Cancel'
