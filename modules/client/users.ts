@@ -85,14 +85,11 @@ type SessionAPI = APIClient<typeof import('pages/api/session').default>;
 
 /** Opens a dialog prompting the user to sign out. */
 export const signOut = async () => {
-	if ((
-		await new Dialog({
-			id: 'sign-out',
-			title: 'Sign Out',
-			content: 'Are you sure you want to sign out?',
-			actions: ['Yes', 'No']
-		})
-	)?.submit) {
+	if (await Dialog.confirm({
+		id: 'sign-out',
+		title: 'Sign Out',
+		content: 'Are you sure you want to sign out?'
+	})) {
 		await (api as SessionAPI).delete('session');
 		setUser(undefined);
 	}

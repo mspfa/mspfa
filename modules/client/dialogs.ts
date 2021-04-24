@@ -198,12 +198,12 @@ export class Dialog<Values extends Record<string, string | number | boolean>> ex
 	}
 
 	/** Closes the dialog and resolves its promise. */
-	resolve(
+	resolve = (
 		/** The result of the dialog's promise. */
 		value?: DialogResult,
 		/** Whether dialogs should be re-rendered upon completion. */
 		shouldUpdateDialogs = true
-	) {
+	) => {
 		this.#resolvePromise(value);
 		this.resolved = true;
 
@@ -221,7 +221,20 @@ export class Dialog<Values extends Record<string, string | number | boolean>> ex
 				break;
 			}
 		}
-	}
+	};
+
+	/**
+	 * `Dialog.confirm` is equivalent to `new Dialog`, except:
+	 *
+	 * * Instead of returning a `Dialog` instance, it resolves after the dialog closes with a boolean for whether its `submit` property is `true`.
+	 * * Its default `actions` option is `['Yes', 'No']`.
+	 */
+	static confirm = async <Values extends Record<string, string | number | boolean>>(
+		{
+			actions = ['Yes', 'No'],
+			...options
+		}: DialogOptions<Values>
+	) => !!(await new Dialog({ actions, ...options }))?.submit;
 }
 
 // @client-only {

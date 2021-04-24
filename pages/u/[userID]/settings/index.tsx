@@ -201,17 +201,15 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 					});
 
 					const interceptAdDisable = useCallback(async (event: ChangeEvent<{ name: string }>) => {
-						if ((
-							await new Dialog({
-								id: 'disable-ad',
-								title: 'Disable Ads',
-								content: "Ads are how we earn money, how we fund the website. By disabling this ad, a fraction of our funds are decreased.\n\nWe're okay with that if you don't think it's worth the unpleasant visual experience, but please first consider the effect of it.",
-								actions: [
-									'I understand the impact of my decision and wish to proceed.',
-									{ label: 'Cancel', focus: true }
-								]
-							})
-						)?.submit) {
+						if (await Dialog.confirm({
+							id: 'disable-ad',
+							title: 'Disable Ads',
+							content: "Ads are how we earn money, how we fund the website. By disabling this ad, a fraction of our funds are decreased.\n\nWe're okay with that if you don't think it's worth the unpleasant visual experience, but please first consider the effect of it.",
+							actions: [
+								'I understand the impact of my decision and wish to proceed.',
+								{ label: 'Cancel', focus: true }
+							]
+						})) {
 							setFieldValue(event.target.name, false);
 						}
 					}, [setFieldValue]);
@@ -364,18 +362,15 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 											title="Reset settings to default"
 											disabled={_.isEqual(values.settings, defaultValues!.settings)}
 											onClick={
-												useCallback(() => {
-													new Dialog({
+												useCallback(async () => {
+													if (await Dialog.confirm({
 														id: 'reset',
 														title: 'Reset',
-														content: 'Are you sure you want to reset your settings to default?\n\nAny unsaved changes will be lost.',
-														actions: ['Yes', 'No']
-													}).then(result => {
-														if (result?.submit) {
-															setFieldValue('settings', defaultValues!.settings);
-															onFormChange();
-														}
-													});
+														content: 'Are you sure you want to reset your settings to default?\n\nAny unsaved changes will be lost.'
+													})) {
+														setFieldValue('settings', defaultValues!.settings);
+														onFormChange();
+													}
 												}, [setFieldValue])
 											}
 										>
@@ -388,43 +383,39 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 											onClick={
 												useCallback(async () => {
 													if (!(
-														(
-															await new Dialog({
-																id: 'delete-user',
-																title: 'Delete Account',
-																content: 'Are you sure you want to delete your account?\n\nThis action is irreversible.',
-																actions: [
-																	'Yes',
-																	{ label: 'No', focus: true }
-																]
-															})
-														)?.submit && (
-															await new Dialog({
-																id: 'delete-user',
-																title: 'Delete Account',
-																content: (
-																	<>
-																		Are you REALLY sure you want to delete your account?<br />
-																		<br />
-																		TODO: Make not irreversible.<br />
-																		<br />
-																		<Field
-																			id="delete-user-confirm"
-																			name="confirm"
-																			type="checkbox"
-																			required
-																		/>
-																		<label className="spaced bolder" htmlFor="delete-user-confirm">
-																			I am sure I want to delete my account: {privateUser.name}
-																		</label>
-																	</>
-																),
-																actions: [
-																	'Yes',
-																	{ label: 'No', focus: true }
-																]
-															})
-														)?.submit
+														await Dialog.confirm({
+															id: 'delete-user',
+															title: 'Delete Account',
+															content: 'Are you sure you want to delete your account?\n\nThis action is irreversible.',
+															actions: [
+																'Yes',
+																{ label: 'No', focus: true }
+															]
+														}) && await Dialog.confirm({
+															id: 'delete-user',
+															title: 'Delete Account',
+															content: (
+																<>
+																	Are you REALLY sure you want to delete your account?<br />
+																	<br />
+																	TODO: Make not irreversible.<br />
+																	<br />
+																	<Field
+																		id="delete-user-confirm"
+																		name="confirm"
+																		type="checkbox"
+																		required
+																	/>
+																	<label className="spaced bolder" htmlFor="delete-user-confirm">
+																		I am sure I want to delete my account: {privateUser.name}
+																	</label>
+																</>
+															),
+															actions: [
+																'Yes',
+																{ label: 'No', focus: true }
+															]
+														})
 													)) {
 														return;
 													}
