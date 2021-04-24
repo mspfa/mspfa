@@ -98,8 +98,7 @@ export default createValidator({
 									const: 'password'
 								},
 								value: {
-									type: 'string',
-									minLength: 8
+									$ref: '#/definitions/PasswordString'
 								}
 							},
 							required: [
@@ -119,6 +118,10 @@ export default createValidator({
 					additionalProperties: false
 				}
 			]
+		},
+		PasswordString: {
+			type: 'string',
+			minLength: 8
 		},
 		EmailString: {
 			type: 'string',

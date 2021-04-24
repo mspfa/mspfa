@@ -18,10 +18,12 @@ export type ExternalAuthMethod = AuthMethodProperties & {
 	value: string
 };
 
+/** @minLength 8 */
+export type PasswordString = string;
+
 export type InternalAuthMethod = AuthMethodProperties & {
 	type: 'password',
-	/** @minLength 8 */
-	value: string
+	value: PasswordString
 };
 
 export type AuthMethod = ExternalAuthMethod | InternalAuthMethod;

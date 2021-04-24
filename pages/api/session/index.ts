@@ -1,8 +1,7 @@
 import type { APIHandler } from 'modules/server/api';
 import users, { getPrivateUser } from 'modules/server/users';
 import type { ExternalAuthMethod, InternalAuthMethod, UserDocument } from 'modules/server/users';
-import { authenticate, checkExternalAuthMethod, createSession } from 'modules/server/auth';
-import argon2 from 'argon2';
+import { authenticate, checkExternalAuthMethod, createSession, verifyPassword, VerifyPasswordResult } from 'modules/server/auth';
 import Cookies from 'cookies';
 import type { PrivateUser } from 'modules/client/users';
 import type { EmailString } from 'modules/types';
@@ -49,39 +48,10 @@ const Handler: APIHandler<(
 				return;
 			}
 
-			/**
-			 * `0`: Password is correct.
-			 *
-			 * `1`: There is no password.
-			 *
-			 * `2`: Password is incorrect.
-			 */
-			let error: 0 | 1 | 2 = 1;
-
-			for (const authMethod of user.authMethods) {
-				if (authMethod.type === 'password') {
-					error = 2;
-
-					if (await argon2.verify(authMethod.value, req.body.authMethod.value)) {
-						error = 0;
-						break;
-					}
-				}
-			}
-
-			if (error === 1) {
-				res.status(401).send({
-					message: 'The specified user does not use a password to sign in.'
-				});
-				return;
-			}
-
-			if (error === 2) {
-				res.status(401).send({
-					message: 'The specified password is incorrect.'
-				});
-				return;
-			}
+			await verifyPassword(res, user, req.body.authMethod.value, {
+				[VerifyPasswordResult.NotFound]: 401,
+				[VerifyPasswordResult.Incorrect]: 401
+			});
 		} else {
 			const { value: authMethodValue, name: authMethodName } = await checkExternalAuthMethod(req, res);
 

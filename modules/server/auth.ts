@@ -205,3 +205,60 @@ export const authenticate = async (
 		token: undefined
 	};
 };
+
+export enum VerifyPasswordResult {
+	NotFound,
+	Correct,
+	Incorrect
+}
+
+export const verifyPassword = (
+	res: APIResponse,
+	/** The user to verify the password of. */
+	user: UserDocument,
+	/** The user-inputted password to verify. */
+	password: string,
+	/**
+	 * A partial record of `VerifyPasswordResult` keys to HTTP status code values.
+	 *
+	 * If a value is 0, the corresponding `VerifyPasswordResult` will resolve this promise rather than sending an HTTP error.
+	 */
+	status: Partial<Record<Exclude<VerifyPasswordResult, VerifyPasswordResult.Correct>, number>> = {}
+) => new Promise<VerifyPasswordResult>(async resolve => {
+	let result = VerifyPasswordResult.NotFound;
+
+	for (const authMethod of user.authMethods) {
+		if (authMethod.type === 'password') {
+			result = VerifyPasswordResult.Incorrect;
+
+			if (await argon2.verify(authMethod.value, password)) {
+				result = VerifyPasswordResult.Correct;
+				break;
+			}
+		}
+	}
+
+	if (result === VerifyPasswordResult.NotFound) {
+		const resultStatus = status[VerifyPasswordResult.NotFound] ?? 404;
+
+		if (resultStatus !== 0) {
+			res.status(resultStatus).send({
+				message: 'The specified user does not use a password to sign in.'
+			});
+			return;
+		}
+	}
+
+	if (result === VerifyPasswordResult.Incorrect) {
+		const resultStatus = status[VerifyPasswordResult.NotFound] ?? 403;
+
+		if (resultStatus !== 0) {
+			res.status(resultStatus).send({
+				message: 'The specified password is incorrect.'
+			});
+			return;
+		}
+	}
+
+	resolve(result);
+});

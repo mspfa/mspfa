@@ -12,7 +12,9 @@ import validate from './index.validate';
 type PuttableUserKeys = 'birthdate' | 'name' | 'email' | 'description' | 'icon' | 'site' | 'profileStyle' | 'settings';
 
 const Handler: APIHandler<{
-	query: { userID: string }
+	query: {
+		userID: string
+	}
 } & (
 	{
 		method: 'DELETE'

@@ -8,7 +8,7 @@ export default createValidator({
 	definitions: {
 		RequestMethod: {
 			type: 'string',
-			const: 'GET'
+			const: 'PUT'
 		}
 	}
 }, {
@@ -19,20 +19,27 @@ export default createValidator({
 			type: 'object',
 			additionalProperties: false,
 			properties: {
-				body: {},
+				body: {
+					type: 'object',
+					properties: {
+						currentPassword: {
+							$ref: '#/definitions/PasswordString'
+						},
+						newPassword: {
+							$ref: '#/definitions/PasswordString'
+						}
+					},
+					required: [
+						'currentPassword',
+						'newPassword'
+					],
+					additionalProperties: false
+				},
 				query: {
 					type: 'object',
 					properties: {
 						userID: {
 							type: 'string'
-						},
-						type: {
-							type: 'string',
-							enum: [
-								'google',
-								'discord',
-								'password'
-							]
 						}
 					},
 					required: [
@@ -42,13 +49,18 @@ export default createValidator({
 				},
 				method: {
 					type: 'string',
-					const: 'GET'
+					const: 'PUT'
 				}
 			},
 			required: [
+				'body',
 				'method',
 				'query'
 			]
+		},
+		PasswordString: {
+			type: 'string',
+			minLength: 8
 		}
 	}
 });

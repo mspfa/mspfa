@@ -31,6 +31,7 @@ import './styles.module.scss';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 type AuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;
+type PasswordAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods/password').default>;
 
 const getValuesFromUser = (privateUser: Pick<PrivateUser, 'settings'> & Partial<Omit<PrivateUser, 'settings'>>) => ({
 	email: privateUser.email,
@@ -158,9 +159,13 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 											className="small"
 											onClick={
 												useCallback(async () => {
-													const { data: authMethods } = await (api as AuthMethodsAPI).get(`users/${privateUser.id}/authMethods`);
+													const { data: authMethods } = await (api as AuthMethodsAPI).get(`users/${privateUser.id}/authMethods`, {
+														params: {
+															type: 'password'
+														}
+													});
 
-													if (!authMethods.some(authMethod => authMethod.type === 'password')) {
+													if (!authMethods.length) {
 														new Dialog({
 															title: 'Error',
 															content: 'Your account does not use a password to sign in. If you want to add a password to your account, select the "Edit Sign-In Methods" button instead.'
@@ -171,9 +176,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 													const changePasswordDialog = new Dialog({
 														title: 'Change Password',
 														initialValues: {
-															currentPassword: '',
-															password: '',
-															confirmPassword: ''
+															currentPassword: '' as string,
+															newPassword: '' as string,
+															confirmPassword: '' as string
 														},
 														content: ({ values }) => (
 															<div id="change-password-inputs">
@@ -187,7 +192,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 																	autoFocus
 																/>
 																<FieldGridRow
-																	name="password"
+																	name="newPassword"
 																	type="password"
 																	autoComplete="new-password"
 																	required
@@ -200,7 +205,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 																	autoComplete="new-password"
 																	required
 																	placeholder="Re-Type Password"
-																	pattern={toPattern(values.password)}
+																	pattern={toPattern(values.newPassword)}
 																	label="Confirm"
 																/>
 															</div>
@@ -212,8 +217,14 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 													});
 
 													if ((await changePasswordDialog)?.submit) {
-														await (api as AuthMethodsAPI).put(`users/${privateUser.id}/authMethods`, {
+														await (api as PasswordAPI).put(`users/${privateUser.id}/authMethods/password`, {
+															currentPassword: changePasswordDialog.values.currentPassword!,
+															newPassword: changePasswordDialog.values.newPassword!
+														});
 
+														new Dialog({
+															title: 'Change Password',
+															content: 'Success! Your password has been changed.'
 														});
 													}
 												}, [])
