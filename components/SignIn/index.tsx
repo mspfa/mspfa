@@ -6,7 +6,7 @@ import createUpdater from 'react-component-updater';
 import type { ChangeEvent } from 'react';
 import env from 'modules/client/env';
 import Captcha from 'components/SignIn/Captcha';
-import Label from 'components/Label';
+import LabeledGridRow from 'components/Grid/LabeledGridRow';
 import { toPattern } from 'modules/client/utilities';
 import LabeledDialogGrid from 'components/Grid/LabeledDialogGrid';
 import ForgotPassword from 'components/ForgotPassword';
@@ -89,20 +89,20 @@ const SignIn = ({ page }: SignInProps) => {
 			<LabeledDialogGrid>
 				{page === 2 ? (
 					<>
-						<Label htmlFor="sign-in-name">Username</Label>
-						<input
-							id="sign-in-name"
-							name="name"
-							autoComplete="username"
-							required
-							minLength={1}
-							maxLength={32}
-							autoFocus={!signInValues.name}
-							value={signInValues.name}
-							onChange={onChange}
-						/>
-						<Label htmlFor="sign-in-birth-day">Birthdate</Label>
-						<div id="sign-in-birthdate">
+						<LabeledGridRow htmlFor="sign-in-name" label="Username">
+							<input
+								id="sign-in-name"
+								name="name"
+								autoComplete="username"
+								required
+								minLength={1}
+								maxLength={32}
+								autoFocus={!signInValues.name}
+								value={signInValues.name}
+								onChange={onChange}
+							/>
+						</LabeledGridRow>
+						<LabeledGridRow htmlFor="sign-in-birth-day" label="Birthdate">
 							<input
 								id="sign-in-birth-day"
 								name="birthDay"
@@ -158,39 +158,40 @@ const SignIn = ({ page }: SignInProps) => {
 								value={signInValues.birthYear}
 								onChange={onChange}
 							/>
-						</div>
+						</LabeledGridRow>
 					</>
 				) : (
 					<>
-						<Label htmlFor="sign-in-email">Email</Label>
-						<input
-							key={page} // This is necessary to re-render this element when `page` changes, or else `autoFocus` will not work correctly.
-							id="sign-in-email"
-							name="email"
-							type="email"
-							autoComplete="email"
-							required
-							maxLength={254}
-							autoFocus={!signInValues.email}
-							value={signInValues.email}
-							onChange={onChange}
-						/>
-						<Label htmlFor="sign-in-password">Password</Label>
-						<input
-							id="sign-in-password"
-							name="password"
-							type="password"
-							autoComplete={page ? 'new-password' : 'current-password'}
-							required
-							minLength={8}
-							value={signInValues.password}
-							onChange={onChange}
-						/>
+						<LabeledGridRow htmlFor="sign-in-email" label="Email">
+							<input
+								key={page} // This is necessary to re-render this element when `page` changes, or else `autoFocus` will not work correctly.
+								id="sign-in-email"
+								name="email"
+								type="email"
+								autoComplete="email"
+								required
+								maxLength={254}
+								autoFocus={!signInValues.email}
+								value={signInValues.email}
+								onChange={onChange}
+							/>
+						</LabeledGridRow>
+						<LabeledGridRow htmlFor="sign-in-password" label="Password">
+							<input
+								id="sign-in-password"
+								name="password"
+								type="password"
+								autoComplete={page ? 'new-password' : 'current-password'}
+								required
+								minLength={8}
+								value={signInValues.password}
+								onChange={onChange}
+							/>
+						</LabeledGridRow>
 						{page === 0 ? (
 							<ForgotPassword />
 						) : (
-							<>
-								<Label htmlFor="sign-in-confirm-password">Confirm</Label>
+							<LabeledGridRow htmlFor="sign-in-confirm-password" label="Confirm">
 								<input
 									id="sign-in-confirm-password"
 									name="confirmPassword"
@@ -202,7 +203,7 @@ const SignIn = ({ page }: SignInProps) => {
 									value={signInValues.confirmPassword}
 									onChange={onChange}
 								/>
-							</>
+							</LabeledGridRow>
 						)}
 					</>
 				)}

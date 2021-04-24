@@ -1,7 +1,7 @@
 import { Field } from 'formik';
 import type { FieldAttributes } from 'formik';
 import { toKebabCase } from 'modules/client/utilities';
-import GridRow from 'components/Grid/LabeledGridRow';
+import LabeledGridRow from 'components/Grid/LabeledGridRow';
 import type { LabeledGridRowProps } from 'components/Grid/LabeledGridRow';
 
 export type ExclusiveFieldGridRowProps = Pick<LabeledGridRowProps, 'label' | 'help'> & {
@@ -15,7 +15,7 @@ export type ExclusiveFieldGridRowProps = Pick<LabeledGridRowProps, 'label' | 'he
 
 export type FieldGridRowProps = FieldAttributes<unknown> & { id?: never } & ExclusiveFieldGridRowProps;
 
-/** A `GridRow` containing a `Field`. Defaults to a checkbox. Accepts any props which `Field` accepts. */
+/** A `LabeledGridRow` containing a `Field`. Defaults to a checkbox. Accepts any props which `Field` accepts. */
 const FieldGridRow = ({
 	label,
 	name,
@@ -27,7 +27,7 @@ const FieldGridRow = ({
 	const fieldID = `field-${toKebabCase(name)}`;
 
 	return (
-		<GridRow
+		<LabeledGridRow
 			label={label}
 			htmlFor={fieldID}
 			help={help}
@@ -38,7 +38,7 @@ const FieldGridRow = ({
 				type={props.as ? undefined : type}
 				{...props}
 			/>
-		</GridRow>
+		</LabeledGridRow>
 	);
 };
 
