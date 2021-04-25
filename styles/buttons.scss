@@ -33,17 +33,22 @@
 	$depth-active: $depth / 2
 ) {
 	$margin: $scale * $depth;
+	$offset-active: $scale * ($depth - $depth-active);
 
 	margin-right: #{$margin}px;
 	margin-bottom: #{$margin}px;
 	@include theme(box-shadow, $colors, meta.get-function('depth-shadow'), $scale, $depth);
 
 	&:active {
-		$offset: $scale * ($depth - $depth-active);
-
-		left: #{$offset}px;
-		top: #{$offset}px;
+		left: #{$offset-active}px;
+		top: #{$offset-active}px;
 		@include theme(box-shadow, $colors, meta.get-function('depth-shadow'), $scale, $depth-active);
+
+		&::after {
+			// Prevent the button's bounding box from moving when active.
+			left: -#{$offset-active}px;
+			top: -#{$offset-active}px;
+		}
 	}
 
 	&::after {
