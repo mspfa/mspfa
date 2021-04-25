@@ -52,6 +52,7 @@
 	}
 
 	&::after {
+		// Ensure the button's shadow is part of its bounding box.
 		padding-right: #{$margin}px;
 		padding-bottom: #{$margin}px;
 	}
