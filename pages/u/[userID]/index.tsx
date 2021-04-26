@@ -14,6 +14,7 @@ import Link from 'components/Link';
 import GridFooter from 'components/Grid/GridFooter';
 import Button from 'components/Button';
 import IconImage from 'components/IconImage';
+import './styles.module.scss';
 
 type ServerSideProps = {
 	publicUser: PublicUser
