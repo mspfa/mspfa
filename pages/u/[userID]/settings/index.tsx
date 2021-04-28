@@ -29,6 +29,7 @@ import GridRow from 'components/Grid/GridRow';
 import { toPattern } from 'modules/client/utilities';
 import LabeledDialogGrid from 'components/Grid/LabeledDialogGrid';
 import ForgotPassword from 'components/ForgotPassword';
+import type { AuthMethod } from 'modules/server/users';
 import './styles.module.scss';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
@@ -166,14 +167,28 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 	const onClickEditAuthMethods = useCallback(async () => {
 		const { data: authMethods } = await (api as AuthMethodsAPI).get(`users/${privateUser.id}/authMethods`);
 
+		const authMethodTypes: Record<AuthMethod['type'], string> = {
+			password: 'Password',
+			google: 'Google',
+			discord: 'Discord'
+		};
+
 		new Dialog({
 			id: 'auth-methods',
 			title: 'Edit Sign-In Methods',
 			content: (
 				<>
 					{authMethods.map(authMethod => (
-						<div key={authMethod.id}>
-							{authMethod.type}: {authMethod.name}
+						<div className="auth-method" key={authMethod.id}>
+							<div className="auth-method-type">
+								{authMethodTypes[authMethod.type]}
+							</div>
+							{authMethod.name && (
+								<div className="auth-method-name">
+									{authMethod.name}
+								</div>
+							)}
+							<Button className="small">Remove</Button>
 						</div>
 					))}
 					<Button
