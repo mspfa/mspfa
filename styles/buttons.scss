@@ -13,7 +13,7 @@
 	);
 }
 
-@function depth-shadow($color, $scale: 2, $depth: 2, $lightness: -33%) {
+@function elevation($color, $scale: 2, $depth: 2, $lightness: -33%) {
 	$box-shadow: ();
 	@for $offset from 1 through $depth {
 		$box-shadow: list.append(
@@ -26,7 +26,7 @@
 }
 
 // Applies a pixelated shadow which gives the element 3D depth. Lowers the depth on `:active`.
-@mixin depth-shadow(
+@mixin elevation(
 	$colors,
 	$scale: 2,
 	$depth: 2,
@@ -37,12 +37,12 @@
 
 	margin-right: #{$margin}px;
 	margin-bottom: #{$margin}px;
-	@include theme(box-shadow, $colors, meta.get-function('depth-shadow'), $scale, $depth);
+	@include theme(box-shadow, $colors, meta.get-function('elevation'), $scale, $depth);
 
 	&:active {
 		left: #{$offset-active}px;
 		top: #{$offset-active}px;
-		@include theme(box-shadow, $colors, meta.get-function('depth-shadow'), $scale, $depth-active);
+		@include theme(box-shadow, $colors, meta.get-function('elevation'), $scale, $depth-active);
 
 		&::after {
 			// Prevent the button's bounding box from moving when active.
@@ -88,7 +88,7 @@
 		}
 	}
 
-	@include depth-shadow($colors, $scale, $depth, $depth-active);
+	@include elevation($colors, $scale, $depth, $depth-active);
 	@include theme(background-color, $colors);
 	@include theme(color, $button-text-color);
 
