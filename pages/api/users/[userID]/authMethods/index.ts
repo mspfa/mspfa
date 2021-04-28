@@ -10,13 +10,13 @@ const Handler: APIHandler<{
 	},
 	method: 'GET'
 }, {
-	body: Array<Pick<AuthMethod, 'type' | 'name'>>
+	body: Array<Pick<AuthMethod, 'id' | 'type' | 'name'>>
 }> = async (req, res) => {
 	await validate(req, res);
 
 	const user = await permToGetUserInAPI(req, res, req.query.userID, Perm.sudoRead);
 
-	let authMethods = user.authMethods.map(({ type, name }) => ({ type, name }));
+	let authMethods = user.authMethods.map(({ id, type, name }) => ({ id, type, name }));
 
 	if (req.query.type) {
 		authMethods = authMethods.filter(authMethod => authMethod.type === req.query.type);

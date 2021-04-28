@@ -8,6 +8,7 @@ import { ObjectId } from 'bson';
 import type { PrivateUser } from 'modules/client/users';
 import axios from 'axios';
 import type { EmailString } from 'modules/types';
+import crypto from 'crypto';
 import validate from './index.validate';
 
 const Handler: APIHandler<{
@@ -90,10 +91,11 @@ const Handler: APIHandler<{
 		...defaultUser,
 		_id: new ObjectId(),
 		authMethods: [{
+			id: crypto.createHash('sha1').update(req.body.authMethod.type).update(authMethodValue).digest('hex'),
 			type: req.body.authMethod.type,
 			value: authMethodValue,
 			...authMethodName && {
-				name: authMethodName as any
+				name: authMethodName
 			}
 		}],
 		created: now,

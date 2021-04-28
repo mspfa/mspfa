@@ -161,6 +161,39 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 		}
 	}, [privateUser.id]);
 
+	// The hooks immediately above and below cannot be inline and must be defined in this scope, because this scope is where `privateUser.id` (the dependency of those callbacks) can be checked for updates at a minimal frequency.
+
+	const onClickEditAuthMethods = useCallback(async () => {
+		const { data: authMethods } = await (api as AuthMethodsAPI).get(`users/${privateUser.id}/authMethods`);
+
+		new Dialog({
+			id: 'auth-methods',
+			title: 'Edit Sign-In Methods',
+			content: (
+				<>
+					{authMethods.map(authMethod => (
+						<div key={authMethod.id}>
+							{authMethod.type}: {authMethod.name}
+						</div>
+					))}
+					<Button
+						className="small"
+						// This ESLint comment is necessary because re-renders due to function identity cannot occur here, since this is not inside a component.
+						// eslint-disable-next-line react/jsx-no-bind
+						onClick={() => {
+
+						}}
+					>
+						Add Sign-In Method
+					</Button>
+				</>
+			),
+			actions: [
+				{ label: 'Done', focus: false }
+			]
+		});
+	}, [privateUser.id]);
+
 	return (
 		<Page flashyTitle heading="Settings">
 			<Formik
@@ -237,7 +270,10 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										</Button>
 									</GridRow>
 									<GridRow>
-										<Button className="small">Edit Sign-In Methods</Button>
+										<Button
+											className="small"
+											onClick={onClickEditAuthMethods}
+										>Edit Sign-In Methods</Button>
 									</GridRow>
 								</GridRowSection>
 								<GridRowSection heading="Display">

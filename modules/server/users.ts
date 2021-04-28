@@ -8,6 +8,7 @@ import type { Theme } from 'modules/client/themes';
 import type { Perm } from 'modules/server/perms';
 
 type AuthMethodProperties = {
+	id: string,
 	/** A display name to represent this auth method. */
 	name?: string
 };
