@@ -203,9 +203,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 					</Button>
 				</>
 			),
-			actions: [
-				{ label: 'Done', focus: false }
-			]
+			actions: ['Done']
 		});
 	}, [privateUser.id]);
 
