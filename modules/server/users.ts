@@ -129,8 +129,7 @@ export type UserDocument = {
 	perms: Partial<Record<Perm, true>>,
 	dev?: true,
 	mod?: true,
-	patron?: true,
-	legacyID?: number
+	patron?: true
 };
 
 /** A `Partial<UserDocument>` used to spread some general properties on newly inserted `UserDocument`s. */
