@@ -29,7 +29,6 @@ import GridRow from 'components/Grid/GridRow';
 import { toPattern } from 'modules/client/utilities';
 import LabeledDialogGrid from 'components/Grid/LabeledDialogGrid';
 import ForgotPassword from 'components/ForgotPassword';
-import type { AuthMethod } from 'modules/server/users';
 import AuthMethods from 'components/AuthMethod/AuthMethods';
 import './styles.module.scss';
 
