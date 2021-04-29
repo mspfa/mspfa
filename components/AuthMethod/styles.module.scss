@@ -1,0 +1,13 @@
+.auth-method {
+	display: flex;
+	align-items: center;
+	padding-bottom: 0.5em;
+
+	&:not(:first-child) {
+		padding-top: 0.5em;
+	}
+
+	&-content {
+		flex-grow: 1;
+	}
+}

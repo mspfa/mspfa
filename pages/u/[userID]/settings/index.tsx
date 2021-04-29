@@ -30,7 +30,7 @@ import { toPattern } from 'modules/client/utilities';
 import LabeledDialogGrid from 'components/Grid/LabeledDialogGrid';
 import ForgotPassword from 'components/ForgotPassword';
 import type { AuthMethod } from 'modules/server/users';
-import EditAuthMethods from 'components/EditAuthMethods';
+import AuthMethods from 'components/AuthMethod/AuthMethods';
 import './styles.module.scss';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
@@ -171,7 +171,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 		new Dialog({
 			id: 'auth-methods',
 			title: 'Edit Sign-In Methods',
-			content: <EditAuthMethods authMethods={authMethods} />,
+			content: <AuthMethods userID={privateUser.id} authMethods={authMethods} />,
 			actions: [
 				{ label: 'Done', focus: false }
 			]
@@ -200,7 +200,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 							setUser(data);
 						}
 
-						// This ESLint comment is necessary because the rule incorrectly thinks `initialValues` should be a dependency here, despite that `initialValues` depends on `privateUser` which is already a dependency.
+						// This ESLint comment is necessary because the rule incorrectly thinks `initialValues` should be a dependency here, despite that it depends on `privateUser` which is already a dependency.
 						// eslint-disable-next-line react-hooks/exhaustive-deps
 					}, [privateUser, user])
 				}

@@ -3,20 +3,6 @@
 @import 'styles/general';
 @import 'styles/themes';
 
-.auth-method {
-	display: flex;
-	align-items: center;
-	padding-bottom: 0.5em;
-
-	&:not(:first-child) {
-		padding-top: 0.5em;
-	}
-
-	&-content {
-		flex-grow: 1;
-	}
-}
-
 #auth-methods > :not(:first-child) {
 	border-top: 1px solid;
 	@include theme(border-top-color, $back, meta.get-function('half-opacity'));

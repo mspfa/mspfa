@@ -21,9 +21,14 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	await users.deleteOne({
-		'_id': user._id,
-		'authMethods.id': req.query.authMethodID
+	await users.updateOne({
+		_id: user._id
+	}, {
+		$pull: {
+			authMethods: {
+				id: req.query.authMethodID
+			}
+		}
 	});
 
 	res.end();
