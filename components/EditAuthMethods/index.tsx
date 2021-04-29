@@ -4,7 +4,7 @@ import { useState } from 'react';
 import './styles.module.scss';
 
 const authMethodTypes: Record<AuthMethod['type'], string> = {
-	password: 'Password',
+	password: 'Email and Password',
 	google: 'Google',
 	discord: 'Discord'
 };
