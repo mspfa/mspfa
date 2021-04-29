@@ -72,5 +72,5 @@ $focused-border-color: (
 
 $translucent-text-color: ();
 @each $theme, $color in $text-color {
-	$translucent-text-color: map.set($translucent-text-color, $theme, color.scale($color, $alpha: -35%));
+	$translucent-text-color: map.set($translucent-text-color, $theme, color.scale($color, $alpha: -30%));
 }
