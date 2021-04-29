@@ -126,7 +126,8 @@ export type UserDocument = {
 	 * @minimum 1
 	 */
 	permLevel?: number,
-	perms: Partial<Record<Perm, true>>,
+	/** A bitwise OR of the user's `Perm`s. */
+	perms: number,
 	dev?: true,
 	mod?: true,
 	patron?: true
@@ -171,7 +172,7 @@ export const defaultUser = {
 			stories: {} as Record<never, never>
 		}
 	},
-	perms: {} as Record<never, never>
+	perms: 0
 } as const;
 
 // This is just for type safety on `defaultUser` and should never be referenced.

@@ -14,6 +14,7 @@ import Link from 'components/Link';
 import GridFooter from 'components/Grid/GridFooter';
 import Button from 'components/Button';
 import IconImage from 'components/IconImage';
+import { Perm } from 'modules/server/perms';
 import './styles.module.scss';
 
 type ServerSideProps = {
@@ -84,7 +85,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser }) => {
 				)}
 				{user && (
 					user.id === publicUser.id
-					|| user.perms.sudoRead
+					|| user.perms & Perm.sudoRead
 				) && (
 					<GridFooter>
 						<Button>Edit</Button>

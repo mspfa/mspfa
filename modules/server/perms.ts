@@ -7,17 +7,17 @@ import { authenticate } from 'modules/server/auth';
 
 export enum Perm {
 	/** Permission to grant or revoke perms for users (including yourself). */
-	writePerms = 'writePerms',
+	writePerms = 0b000001,
 	/** Permission to access (but not edit or delete) things which at least one normal client can access. */
-	sudoRead = 'sudoRead',
+	sudoRead = 0b000010,
 	/** Permission to edit (but not delete) things which at least one normal client can edit. */
-	sudoWrite = 'sudoWrite',
+	sudoWrite = 0b000100,
 	/** Permission to delete things which at least one normal client can delete, and permission to ban users. */
-	sudoDelete = 'sudoDelete',
+	sudoDelete = 0b001000,
 	/** Permission to verify the security of potentially insecure scripts written by users. */
-	verifyScripts = 'verifyScripts',
+	verifyScripts = 0b010000,
 	/** Permission to edit the achievements of users. */
-	writeAchievements = 'writeAchievements'
+	writeAchievements = 0b100000
 }
 
 /**
@@ -31,7 +31,7 @@ export enum Perm {
  * Examples:
  * ```
  * const { user } = await permToGetUser(res, authenticatedUser, req.query.userID, Perm.sudoRead);
- * const { user, statusCode } = await permToGetUser(false, req.user, params.userID, [Perm.sudoWrite, Perm.sudoDelete]);
+ * const { user, statusCode } = await permToGetUser(false, req.user, params.userID, Perm.sudoWrite | Perm.sudoDelete);
  * ```
  */
 function permToGetUser(
@@ -41,8 +41,12 @@ function permToGetUser(
 	user: UserDocument | undefined,
 	/** The potentially unsafe user ID of the user to get. */
 	id: UnsafeObjectID,
-	/** The perm or perms to require. If set to an empty array, the user will always have insufficient perms. */
-	perms: Perm | Perm[]
+	/**
+	 * The perm or binary OR of perms to require.
+	 *
+	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
+	 */
+	perms: number
 ): Promise<{
 	user: UserDocument,
 	statusCode?: undefined
@@ -55,8 +59,12 @@ function permToGetUser(
 	user: UserDocument | undefined,
 	/** The potentially unsafe user ID of the user to get. */
 	id: UnsafeObjectID,
-	/** The perm or perms to require. If set to an empty array, the user will always have insufficient perms. */
-	perms: Perm | Perm[]
+	/**
+	 * The perm or binary OR of perms to require.
+	 *
+	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
+	 */
+	perms: number
 ): Promise<{
 	user: UserDocument,
 	statusCode?: undefined
@@ -74,8 +82,12 @@ function permToGetUser(
 	user: UserDocument | undefined,
 	/** The potentially unsafe user ID of the user to get. */
 	id: UnsafeObjectID,
-	/** The perm or perms to require. If set to an empty array, the user will always have insufficient perms. */
-	perms: Perm | Perm[]
+	/**
+	 * The perm or bitwise OR of perms to require.
+	 *
+	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
+	 */
+	perms: number
 ) {
 	return new Promise<{
 		user: UserDocument,
@@ -115,16 +127,14 @@ function permToGetUser(
 			return;
 		}
 
-		if (!(
-			Array.isArray(perms)
-				? perms.some(perm => user.perms[perm])
-				: user.perms[perms]
-		)) {
+		if (!(user.perms & perms)) {
 			// The user does not have one of the `perms`.
 
 			if (res) {
 				res.status(403).send({
-					message: `You are missing one of the following perms:\n${Array.isArray(perms) ? perms.join(', ') : perms}`
+					message: 'You have insufficient perms.',
+					userPerms: user.perms,
+					requiredPerms: perms
 				});
 			} else {
 				resolve({ statusCode: 403 });
@@ -170,14 +180,18 @@ function permToGetUser(
  * Example:
  * ```
  * const user = await permToGetUserInAPI(req, res, Perm.sudoWrite);
- * const user = await permToGetUserInAPI(req, res, [Perm.sudoWrite, Perm.sudoDelete]);
+ * const user = await permToGetUserInAPI(req, res, Perm.sudoWrite | Perm.sudoDelete);
  * ```
  */
 export const permToGetUserInAPI = async (
 	req: APIRequest<{ query: { userID: string } }>,
 	res: APIResponse,
-	/** The perm or perms to require. If set to an empty array, the user will always have insufficient perms. */
-	perms: Perm | Perm[]
+	/**
+	 * The perm or binary OR of perms to require.
+	 *
+	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
+	 */
+	perms: number
 ) => (
 	await permToGetUser(
 		res,
@@ -195,13 +209,17 @@ export const permToGetUserInAPI = async (
  * Example:
  * ```
  * const { user, statusCode } = await permToGetUserInPage(req, params.userID, Perm.sudoRead);
- * const { user, statusCode } = await permToGetUserInPage(req, params.userID, [Perm.sudoWrite, Perm.sudoDelete]);
+ * const { user, statusCode } = await permToGetUserInPage(req, params.userID, Perm.sudoWrite | Perm.sudoDelete);
  * ```
  */
 export const permToGetUserInPage = async (
 	req: PageRequest,
 	/** The potentially unsafe user ID of the user to get. */
 	id: UnsafeObjectID,
-	/** The perm or perms to require. If set to an empty array, the user will always have insufficient perms. */
-	perms: Perm | Perm[]
+	/**
+	 * The perm or binary OR of perms to require.
+	 *
+	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
+	 */
+	perms: number
 ) => permToGetUser(false, req.user, id, perms);
