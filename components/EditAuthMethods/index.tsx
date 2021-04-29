@@ -28,6 +28,7 @@ const EditAuthMethods = ({ authMethods: initialAuthMethods }: EditAuthMethodsPro
 					</div>
 					<Button
 						className="small spaced"
+						disabled={authMethods.length === 1}
 						onClick={() => {
 
 						}}
