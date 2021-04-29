@@ -163,7 +163,7 @@ function permToGetUser(
 }
 
 /**
- * Authenticates the request and requires the authenticated user to have permission to get another user by potentially unsafe ID.
+ * Authenticates the request and requires the authenticated user to have permission to get the user of ID `req.query.userID`.
  *
  * Returns the other user if successful.
  *
