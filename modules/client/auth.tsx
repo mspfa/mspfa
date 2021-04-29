@@ -9,16 +9,19 @@ import env from 'modules/client/env';
 type SessionAPI = APIClient<typeof import('pages/api/session').default>;
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
 
+/** The global Google API object. */
 declare const gapi: any;
 
 let signInDialog: Dialog<{}> | undefined;
 /** 0 if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
 let signInPage = 0;
 
-let authMethod: AuthMethod | undefined;
+type AuthMethodOptions = Pick<AuthMethod, 'type' | 'value'>;
+
+let authMethod: AuthMethodOptions | undefined;
 
 /** Resolves the sign-in dialog upon completion of an external auth method. */
-const resolveExternalSignIn = (newAuthMethod: AuthMethod) => {
+const resolveExternalSignIn = (newAuthMethod: AuthMethodOptions) => {
 	authMethod = newAuthMethod;
 	signInDialog!.resolve({ submit: true, value: authMethod.type });
 };

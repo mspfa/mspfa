@@ -1,6 +1,7 @@
 @use 'sass:meta';
 @use 'sass:color';
 
+@import 'styles/general';
 @import 'styles/themes';
 
 .dialog {
@@ -31,7 +32,9 @@
 		padding: 1rem 0.75rem;
 		font-size: 1rem;
 		overflow-y: auto;
+		overflow-x: hidden;
 		white-space: pre-wrap;
+		word-break: break-word;
 	}
 
 	&-actions {
@@ -52,10 +55,6 @@ dialog {
 	color: inherit;
 	background: none;
 	border: 1px solid;
-
-	@function half-opacity($color) {
-		@return color.scale($color, $alpha: -50%);
-	}
 
 	@include theme(border-color, $back, meta.get-function('half-opacity'));
 

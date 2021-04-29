@@ -52,7 +52,7 @@ export default createValidator({
 					additionalProperties: false,
 					properties: {
 						body: {
-							$ref: '#/definitions/RecursivePartial%3Calias-731470504-70254-70395-731470504-0-212312%3Cdef-alias--744-1041--0-37081776781619%2Calias--460-697--0-1753308207794%3E%3E'
+							$ref: '#/definitions/RecursivePartial%3Calias-731470504-70254-70395-731470504-0-212312%3Cdef-alias--744-1041--0-36661776781619%2Calias--460-697--0-1753308207794%3E%3E'
 						},
 						query: {
 							type: 'object',
@@ -79,7 +79,7 @@ export default createValidator({
 				}
 			]
 		},
-		'RecursivePartial<alias-731470504-70254-70395-731470504-0-212312<def-alias--744-1041--0-37081776781619,alias--460-697--0-1753308207794>>': {
+		'RecursivePartial<alias-731470504-70254-70395-731470504-0-212312<def-alias--744-1041--0-36661776781619,alias--460-697--0-1753308207794>>': {
 			type: 'object',
 			properties: {
 				birthdate: {
@@ -107,7 +107,7 @@ export default createValidator({
 					type: 'string'
 				},
 				settings: {
-					$ref: '#/definitions/RecursivePartial%3Cstructure--2638-3675--2627-3676--1973-4226--1945-4227--0-7696%3E'
+					$ref: '#/definitions/RecursivePartial%3Cstructure--2651-3688--2640-3689--1986-4239--1958-4240--0-7709%3E'
 				}
 			},
 			additionalProperties: false
@@ -121,7 +121,7 @@ export default createValidator({
 			type: 'string',
 			pattern: '^https?://'
 		},
-		'RecursivePartial<structure--2638-3675--2627-3676--1973-4226--1945-4227--0-7696>': {
+		'RecursivePartial<structure--2651-3688--2640-3689--1986-4239--1958-4240--0-7709>': {
 			type: 'object',
 			properties: {
 				emailPublic: {
@@ -134,7 +134,7 @@ export default createValidator({
 					type: 'boolean'
 				},
 				ads: {
-					$ref: '#/definitions/RecursivePartial%3Cstructure--2722-2773--2715-2774--2638-3675--2627-3676--1973-4226--1945-4227--0-7696%3E'
+					$ref: '#/definitions/RecursivePartial%3Cstructure--2735-2786--2728-2787--2651-3688--2640-3689--1986-4239--1958-4240--0-7709%3E'
 				},
 				autoOpenSpoilers: {
 					type: 'boolean'
@@ -158,15 +158,15 @@ export default createValidator({
 					type: 'string'
 				},
 				controls: {
-					$ref: '#/definitions/RecursivePartial%3Cstructure--3244-3313--3232-3314--2638-3675--2627-3676--1973-4226--1945-4227--0-7696%3E'
+					$ref: '#/definitions/RecursivePartial%3Cstructure--3257-3326--3245-3327--2651-3688--2640-3689--1986-4239--1958-4240--0-7709%3E'
 				},
 				notifications: {
-					$ref: '#/definitions/RecursivePartial%3Cstructure--3331-3672--3314-3672--2638-3675--2627-3676--1973-4226--1945-4227--0-7696%3E'
+					$ref: '#/definitions/RecursivePartial%3Cstructure--3344-3685--3327-3685--2651-3688--2640-3689--1986-4239--1958-4240--0-7709%3E'
 				}
 			},
 			additionalProperties: false
 		},
-		'RecursivePartial<structure--2722-2773--2715-2774--2638-3675--2627-3676--1973-4226--1945-4227--0-7696>': {
+		'RecursivePartial<structure--2735-2786--2728-2787--2651-3688--2640-3689--1986-4239--1958-4240--0-7709>': {
 			type: 'object',
 			properties: {
 				side: {
@@ -188,7 +188,7 @@ export default createValidator({
 				'trickster'
 			]
 		},
-		'RecursivePartial<structure--3244-3313--3232-3314--2638-3675--2627-3676--1973-4226--1945-4227--0-7696>': {
+		'RecursivePartial<structure--3257-3326--3245-3327--2651-3688--2640-3689--1986-4239--1958-4240--0-7709>': {
 			type: 'object',
 			properties: {
 				back: {
@@ -203,7 +203,7 @@ export default createValidator({
 			},
 			additionalProperties: false
 		},
-		'RecursivePartial<structure--3331-3672--3314-3672--2638-3675--2627-3676--1973-4226--1945-4227--0-7696>': {
+		'RecursivePartial<structure--3344-3685--3327-3685--2651-3688--2640-3689--1986-4239--1958-4240--0-7709>': {
 			type: 'object',
 			properties: {
 				messages: {
@@ -216,10 +216,10 @@ export default createValidator({
 					$ref: '#/definitions/RecursivePartial%3CNotificationSetting%3E'
 				},
 				storyDefaults: {
-					$ref: '#/definitions/RecursivePartial%3Cdef-alias--1455-1649--0-76962047801771%3E'
+					$ref: '#/definitions/RecursivePartial%3Cdef-alias--1468-1662--0-77092047801771%3E'
 				},
 				stories: {
-					$ref: '#/definitions/RecursivePartial%3Cdef-alias--1649-1945--0-7696127147939%5B%5D%3E'
+					$ref: '#/definitions/RecursivePartial%3Cdef-alias--1662-1958--0-7709127147939%5B%5D%3E'
 				}
 			},
 			additionalProperties: false
@@ -236,13 +236,13 @@ export default createValidator({
 			},
 			additionalProperties: false
 		},
-		'RecursivePartial<def-alias--1455-1649--0-76962047801771>': {
+		'RecursivePartial<def-alias--1468-1662--0-77092047801771>': {
 			type: 'object',
 			additionalProperties: {
 				$ref: '#/definitions/RecursivePartial%3CNotificationSetting%3E'
 			}
 		},
-		'RecursivePartial<def-alias--1649-1945--0-7696127147939[]>': {
+		'RecursivePartial<def-alias--1662-1958--0-7709127147939[]>': {
 			type: 'array',
 			items: {
 				$ref: '#/definitions/RecursivePartial%3CStoryNotificationSettings%3E'

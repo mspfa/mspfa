@@ -1,8 +1,14 @@
+@use 'sass:color';
+
+$monospace: 'Courier New', 'Courier', monospace;
+$sans-serif: Verdana, Arial, Helvetica, sans-serif;
+
 @mixin mobile {
 	@media screen and (max-width: 940px) {
 		@content;
 	}
 }
 
-$monospace: 'Courier New', 'Courier', monospace;
-$sans-serif: Verdana, Arial, Helvetica, sans-serif;
+@function half-opacity($color) {
+	@return color.scale($color, $alpha: -50%);
+}
