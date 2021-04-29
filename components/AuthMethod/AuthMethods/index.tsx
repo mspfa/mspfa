@@ -1,17 +1,11 @@
 import Button from 'components/Button';
 import type { PrivateUser } from 'modules/client/users';
-import { useState } from 'react';
-import AuthMethod from 'components/AuthMethod';
+import { useCallback, useState } from 'react';
+import AuthMethod, { authMethodTypes } from 'components/AuthMethod';
 import type { AuthMethodProps } from 'components/AuthMethod';
 import './styles.module.scss';
 
 type AuthMethodProp = AuthMethodProps['authMethod'];
-
-const authMethodTypes: Record<AuthMethodProp['type'], string> = {
-	password: 'Email and Password',
-	google: 'Google',
-	discord: 'Discord'
-};
 
 export type AuthMethodsProps = {
 	userID: PrivateUser['id'],
@@ -36,9 +30,11 @@ const AuthMethods = ({ userID, authMethods: initialAuthMethods }: AuthMethodsPro
 				<Button
 					className="small"
 					autoFocus
-					onClick={() => {
-						// TODO
-					}}
+					onClick={
+						useCallback(() => {
+							// TODO
+						}, [])
+					}
 				>
 					Add Sign-In Method
 				</Button>

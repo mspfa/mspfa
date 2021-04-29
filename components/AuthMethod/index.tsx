@@ -12,7 +12,8 @@ type AuthMethodAPI = APIClient<typeof import('pages/api/users/[userID]/authMetho
 
 type AuthMethodProp = Pick<AuthMethodType, 'type' | 'name' | 'id'>;
 
-const authMethodTypes: Record<AuthMethodProp['type'], string> = {
+// TODO: Remove this after locales are implemented.
+export const authMethodTypes: Record<AuthMethodProp['type'], string> = {
 	password: 'Email and Password',
 	google: 'Google',
 	discord: 'Discord'
