@@ -169,22 +169,20 @@ function permToGetUser(
  *
  * Example:
  * ```
- * const user = await permToGetUserInAPI(req, res, req.query.userID, Perm.sudoWrite);
- * const user = await permToGetUserInAPI(req, res, req.query.userID, [Perm.sudoWrite, Perm.sudoDelete]);
+ * const user = await permToGetUserInAPI(req, res, Perm.sudoWrite);
+ * const user = await permToGetUserInAPI(req, res, [Perm.sudoWrite, Perm.sudoDelete]);
  * ```
  */
 export const permToGetUserInAPI = async (
-	req: APIRequest,
+	req: APIRequest & { query: { userID: string } },
 	res: APIResponse,
-	/** The potentially unsafe user ID of the user to get. */
-	id: UnsafeObjectID,
 	/** The perm or perms to require. If set to an empty array, the user will always have insufficient perms. */
 	perms: Perm | Perm[]
 ) => (
 	await permToGetUser(
 		res,
 		(await authenticate(req, res)).user,
-		id,
+		req.query.userID,
 		perms
 	)
 ).user;

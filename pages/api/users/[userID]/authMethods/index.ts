@@ -14,7 +14,7 @@ const Handler: APIHandler<{
 }> = async (req, res) => {
 	await validate(req, res);
 
-	const user = await permToGetUserInAPI(req, res, req.query.userID, Perm.sudoRead);
+	const user = await permToGetUserInAPI(req, res, Perm.sudoRead);
 
 	let authMethods = user.authMethods.map(({ id, type, name }) => ({ id, type, name }));
 

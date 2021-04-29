@@ -28,7 +28,7 @@ const Handler: APIHandler<{
 	await validate(req, res);
 
 	if (req.method === 'PUT') {
-		const user = await permToGetUserInAPI(req, res, req.query.userID, Perm.sudoWrite);
+		const user = await permToGetUserInAPI(req, res, Perm.sudoWrite);
 
 		if (Object.keys(req.body).length) {
 			const userChanges: RecursivePartial<UserDocument> = {
@@ -53,7 +53,7 @@ const Handler: APIHandler<{
 
 	// If this point is reached, `req.method === 'DELETE'`.
 
-	const user = await permToGetUserInAPI(req, res, req.query.userID, Perm.sudoDelete);
+	const user = await permToGetUserInAPI(req, res, Perm.sudoDelete);
 
 	// TODO: Delete other things as well.
 

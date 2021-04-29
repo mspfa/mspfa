@@ -18,7 +18,7 @@ const Handler: APIHandler<{
 }> = async (req, res) => {
 	await validate(req, res);
 
-	const user = await permToGetUserInAPI(req, res, req.query.userID, Perm.sudoWrite);
+	const user = await permToGetUserInAPI(req, res, Perm.sudoWrite);
 
 	await verifyPassword(res, user, req.body.currentPassword);
 
