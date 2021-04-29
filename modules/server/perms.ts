@@ -174,7 +174,7 @@ function permToGetUser(
  * ```
  */
 export const permToGetUserInAPI = async (
-	req: APIRequest & { query: { userID: string } },
+	req: APIRequest<{ query: { userID: string } }>,
 	res: APIResponse,
 	/** The perm or perms to require. If set to an empty array, the user will always have insufficient perms. */
 	perms: Perm | Perm[]
