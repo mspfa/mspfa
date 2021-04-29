@@ -17,7 +17,7 @@ const EditAuthMethods = ({ authMethods: initialAuthMethods }: EditAuthMethodsPro
 	const [authMethods, setAuthMethods] = useState(initialAuthMethods);
 
 	return (
-		<>
+		<div id="auth-methods">
 			{authMethods.map(authMethod => (
 				<div className="auth-method" key={authMethod.id}>
 					<div className="auth-method-content">
@@ -47,7 +47,7 @@ const EditAuthMethods = ({ authMethods: initialAuthMethods }: EditAuthMethodsPro
 					Add Sign-In Method
 				</Button>
 			</div>
-		</>
+		</div>
 	);
 };
 
