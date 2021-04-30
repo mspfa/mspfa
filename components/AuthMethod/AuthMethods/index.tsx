@@ -2,10 +2,14 @@ import Button from 'components/Button';
 import type { PrivateUser } from 'modules/client/users';
 import { useCallback, useState } from 'react';
 import AuthMethod from 'components/AuthMethod';
-import type { ClientAuthMethod } from 'components/AuthMethod';
 import { Dialog } from 'modules/client/dialogs';
 import AuthButton from 'components/Button/AuthButton';
+import api from 'modules/client/api';
+import type { APIClient } from 'modules/client/api';
+import type { AuthMethodOptions, ClientAuthMethod } from 'pages/api/users/[userID]/authMethods';
 import './styles.module.scss';
+
+type AuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;
 
 export type AuthMethodsProps = {
 	userID: PrivateUser['id'],
@@ -14,6 +18,12 @@ export type AuthMethodsProps = {
 
 const AuthMethods = ({ userID, authMethods: initialAuthMethods }: AuthMethodsProps) => {
 	const [authMethods, setAuthMethods] = useState(initialAuthMethods);
+
+	const onResolve = useCallback(async (authMethodOptions: AuthMethodOptions) => {
+		const { data: authMethod } = await (api as AuthMethodsAPI).post(`users/${userID}/authMethods`, authMethodOptions);
+
+		setAuthMethods([...authMethods, authMethod]);
+	}, [userID, authMethods]);
 
 	return (
 		<div id="auth-methods">
@@ -37,14 +47,16 @@ const AuthMethods = ({ userID, authMethods: initialAuthMethods }: AuthMethodsPro
 								title: 'Add Sign-In Method',
 								content: (
 									<>
-										<AuthButton type="password" />
-										<AuthButton type="google" />
-										<AuthButton type="discord" />
+										{!authMethods.some(({ type }) => type === 'password') && (
+											<AuthButton type="password" onResolve={onResolve} />
+										)}
+										<AuthButton type="google" onResolve={onResolve} />
+										<AuthButton type="discord" onResolve={onResolve} />
 									</>
 								),
 								actions: ['Cancel']
 							});
-						}, [userID, initialAuthMethods])
+						}, [onResolve])
 					}
 				>
 					Add Sign-In Method

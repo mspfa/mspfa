@@ -1,17 +1,18 @@
 import type { APIHandler } from 'modules/server/api';
 import users, { getPrivateUser } from 'modules/server/users';
-import type { ExternalAuthMethod, InternalAuthMethod, UserDocument } from 'modules/server/users';
-import { authenticate, checkExternalAuthMethod, createSession, verifyPassword, VerifyPasswordResult } from 'modules/server/auth';
+import type { UserDocument } from 'modules/server/users';
+import type { ExternalAuthMethodOptions, InternalAuthMethodOptions } from '../users/[userID]/authMethods';
+import { authenticate, getExternalAuthMethodInfo, createSession, verifyPassword, VerifyPasswordResult } from 'modules/server/auth';
 import Cookies from 'cookies';
 import type { PrivateUser } from 'modules/client/users';
 import type { EmailString } from 'modules/types';
 import validate from './index.validate';
 
 export type SessionBody = {
-	authMethod: Pick<ExternalAuthMethod, 'type' | 'value'>,
+	authMethod: ExternalAuthMethodOptions,
 	email?: never
 } | {
-	authMethod: Pick<InternalAuthMethod, 'type' | 'value'>,
+	authMethod: InternalAuthMethodOptions,
 	email: EmailString
 };
 
@@ -53,7 +54,7 @@ const Handler: APIHandler<(
 				[VerifyPasswordResult.Incorrect]: 401
 			});
 		} else {
-			const { value: authMethodValue, name: authMethodName } = await checkExternalAuthMethod(req, res);
+			const { value: authMethodValue, name: authMethodName } = await getExternalAuthMethodInfo(req, res, req.body.authMethod);
 
 			user = await users.findOne({
 				authMethods: {

@@ -1,6 +1,6 @@
 import type { APIHandler } from 'modules/server/api';
 import type { SessionBody } from 'pages/api/session';
-import { checkExternalAuthMethod, createSession } from 'modules/server/auth';
+import { getExternalAuthMethodInfo, createSession } from 'modules/server/auth';
 import users, { defaultUser, getPrivateUser } from 'modules/server/users';
 import type { UserDocument } from 'modules/server/users';
 import argon2 from 'argon2';
@@ -56,7 +56,7 @@ const Handler: APIHandler<{
 			email,
 			verified,
 			name: authMethodName
-		} = await checkExternalAuthMethod(req, res));
+		} = await getExternalAuthMethodInfo(req, res, req.body.authMethod));
 	}
 
 	if (await users.findOne({

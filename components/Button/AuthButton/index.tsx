@@ -1,6 +1,5 @@
 import Button from 'components/Button';
 import { useCallback } from 'react';
-import type { AuthMethod } from 'modules/server/users';
 import Head from 'next/head';
 import env from 'modules/client/env';
 import { Dialog } from 'modules/client/dialogs';
@@ -8,12 +7,11 @@ import LabeledDialogGrid from 'components/Grid/LabeledDialogGrid';
 import FieldGridRow from 'components/Grid/FieldGridRow';
 import { toKebabCase, toPattern } from 'modules/client/utilities';
 import type { ButtonProps } from 'components/Button';
+import type { AuthMethodOptions } from 'pages/api/users/[userID]/authMethods';
 import './styles.module.scss';
 
 /** The global Google API object. */
 declare const gapi: any;
-
-type AuthMethodOptions = Pick<AuthMethod, 'type' | 'value'>;
 
 // TODO: Remove this after locales are implemented.
 const authMethodTypes: Record<AuthMethodOptions['type'], string> = {
@@ -22,9 +20,11 @@ const authMethodTypes: Record<AuthMethodOptions['type'], string> = {
 	discord: 'Discord'
 };
 
+const resolveAddAuthMethodDialog = () => Dialog.getByID('add-auth-method')?.resolve();
+
 const promptAuthMethod = {
 	password: () => new Promise<AuthMethodOptions>(async resolve => {
-		await Dialog.getByID('add-auth-method')?.resolve();
+		await resolveAddAuthMethodDialog();
 
 		const dialog = new Dialog({
 			id: 'add-auth-method',
@@ -132,7 +132,7 @@ const promptAuthMethod = {
 
 export type AuthButtonProps = Omit<ButtonProps, 'type' | 'className' | 'onClick'> & {
 	type: keyof typeof promptAuthMethod,
-	onResolve: (authMethod: AuthMethodOptions) => void | Promise<void>
+	onResolve: (authMethodOptions: AuthMethodOptions) => void
 };
 
 const AuthButton = ({ type, onResolve, ...props }: AuthButtonProps) => (
@@ -148,6 +148,8 @@ const AuthButton = ({ type, onResolve, ...props }: AuthButtonProps) => (
 			onClick={
 				useCallback(async () => {
 					onResolve(await promptAuthMethod[type]());
+
+					await resolveAddAuthMethodDialog();
 				}, [type, onResolve])
 			}
 			{...props}

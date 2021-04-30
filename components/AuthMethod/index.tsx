@@ -1,7 +1,7 @@
 import Button from 'components/Button';
 import api from 'modules/client/api';
 import type { PrivateUser } from 'modules/client/users';
-import type { AuthMethod as AuthMethodType } from 'modules/server/users';
+import type { ClientAuthMethod } from 'pages/api/users/[userID]/authMethods';
 import type { Dispatch, SetStateAction } from 'react';
 import { useCallback } from 'react';
 import type { APIClient } from 'modules/client/api';
@@ -9,8 +9,6 @@ import { Dialog } from 'modules/client/dialogs';
 import './styles.module.scss';
 
 type AuthMethodAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods/[authMethodID]').default>;
-
-export type ClientAuthMethod = Pick<AuthMethodType, 'type' | 'name' | 'id'>;
 
 // TODO: Remove this after locales are implemented.
 export const authMethodTypes: Record<ClientAuthMethod['type'], string> = {

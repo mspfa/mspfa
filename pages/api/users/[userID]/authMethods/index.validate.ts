@@ -8,7 +8,10 @@ export default createValidator({
 	definitions: {
 		RequestMethod: {
 			type: 'string',
-			const: 'GET'
+			enum: [
+				'GET',
+				'POST'
+			]
 		}
 	}
 }, {
@@ -16,39 +19,127 @@ export default createValidator({
 	$ref: '#/definitions/Request',
 	definitions: {
 		Request: {
-			type: 'object',
-			additionalProperties: false,
-			properties: {
-				body: {},
-				query: {
+			anyOf: [
+				{
+					type: 'object',
+					additionalProperties: false,
+					properties: {
+						body: {},
+						query: {
+							type: 'object',
+							properties: {
+								userID: {
+									type: 'string'
+								},
+								type: {
+									type: 'string',
+									enum: [
+										'google',
+										'discord',
+										'password'
+									]
+								}
+							},
+							required: [
+								'userID'
+							],
+							additionalProperties: false
+						},
+						method: {
+							type: 'string',
+							const: 'GET'
+						}
+					},
+					required: [
+						'method',
+						'query'
+					]
+				},
+				{
+					type: 'object',
+					additionalProperties: false,
+					properties: {
+						body: {
+							$ref: '#/definitions/AuthMethodOptions'
+						},
+						query: {
+							type: 'object',
+							properties: {
+								userID: {
+									type: 'string'
+								},
+								type: {
+									type: 'string',
+									enum: [
+										'google',
+										'discord',
+										'password'
+									]
+								}
+							},
+							required: [
+								'userID'
+							],
+							additionalProperties: false
+						},
+						method: {
+							type: 'string',
+							const: 'POST'
+						}
+					},
+					required: [
+						'body',
+						'method',
+						'query'
+					]
+				}
+			]
+		},
+		AuthMethodOptions: {
+			anyOf: [
+				{
 					type: 'object',
 					properties: {
-						userID: {
-							type: 'string'
-						},
 						type: {
 							type: 'string',
 							enum: [
 								'google',
-								'discord',
-								'password'
+								'discord'
 							]
+						},
+						value: {
+							type: 'string',
+							minLength: 1
 						}
 					},
 					required: [
-						'userID'
+						'type',
+						'value'
 					],
 					additionalProperties: false
 				},
-				method: {
-					type: 'string',
-					const: 'GET'
+				{
+					type: 'object',
+					properties: {
+						type: {
+							type: 'string',
+							const: 'password'
+						},
+						value: {
+							$ref: '#/definitions/PasswordString'
+						}
+					},
+					required: [
+						'type',
+						'value'
+					],
+					additionalProperties: false
 				}
-			},
-			required: [
-				'method',
-				'query'
 			]
+		},
+		PasswordString: {
+			type: 'string',
+			minLength: 8
 		}
 	}
 });

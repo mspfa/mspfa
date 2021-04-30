@@ -6,37 +6,41 @@ import { ObjectId } from 'bson';
 import type { APIRequest, APIResponse } from 'modules/server/api';
 import type { IncomingMessage, ServerResponse } from 'http';
 import users from 'modules/server/users';
-import type { UserDocument, UserSession } from 'modules/server/users';
+import type { UserDocument, UserSession, ExternalAuthMethod } from 'modules/server/users';
 import { OAuth2Client } from 'google-auth-library';
 import type { EmailString } from 'modules/types';
+import type { AuthMethodOptions } from 'pages/api/users/[userID]/authMethods';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 /**
- * Authenticate an auth method object with an external auth method.
+ * Get information about and authenticate an external auth method.
  *
  * If an error occurs, the promise returned by this function will never resolve.
  */
-export const checkExternalAuthMethod = (
+export const getExternalAuthMethodInfo = (
 	req: APIRequest,
-	res: APIResponse
+	res: APIResponse,
+	authMethodOptions: AuthMethodOptions & { type: ExternalAuthMethod['type'] }
 ): Promise<{
 	value: string,
 	email: EmailString,
 	verified: boolean,
-	name: string | undefined
+	name: string
 }> => new Promise(async resolve => {
 	try {
-		if (req.body.authMethod.type === 'google') {
+		if (authMethodOptions.type === 'google') {
 			// Authenticate with Google.
 
 			const ticket = await googleClient.verifyIdToken({
-				idToken: req.body.authMethod.value,
+				idToken: authMethodOptions.value,
 				audience: process.env.GOOGLE_CLIENT_ID
 			});
+
 			const payload = ticket.getPayload()!;
+
 			resolve({
-				name: payload.email,
+				name: payload.email!,
 				value: payload.sub,
 				email: payload.email!.toLowerCase(),
 				verified: payload.email_verified!
@@ -51,18 +55,21 @@ export const checkExternalAuthMethod = (
 			// This is the index of end of the origin in the `Referer` header. For example, the index of the single "/" in "https://example.com/path".
 			`${req.headers.referer}/`.indexOf('/', req.headers.referer.indexOf('//') + 2)
 		);
+
 		const { data: discordToken } = await axios.post('https://discord.com/api/oauth2/token', new URLSearchParams({
 			client_id: process.env.DISCORD_CLIENT_ID!,
 			client_secret: process.env.DISCORD_CLIENT_SECRET!,
 			grant_type: 'authorization_code',
-			code: req.body.authMethod.value,
+			code: authMethodOptions.value,
 			redirect_uri: `${referrerOrigin}/sign-in/discord`
 		}));
+
 		const { data: discordUser } = await axios.get('https://discord.com/api/users/@me', {
 			headers: {
 				Authorization: `${discordToken.token_type} ${discordToken.access_token}`
 			}
 		});
+
 		resolve({
 			name: discordUser.email,
 			value: discordUser.id,
@@ -71,6 +78,27 @@ export const checkExternalAuthMethod = (
 		});
 	} catch (error) {
 		res.status(error.status || 422).send({ message: error.message });
+	}
+});
+
+/**
+ * Get information about an auth method. Authenticate it if it is external.
+ *
+ * If an error occurs, the promise returned by this function will never resolve.
+ */
+export const getAuthMethodInfo = (
+	req: APIRequest,
+	res: APIResponse,
+	authMethodOptions: AuthMethodOptions
+): Promise<{
+	value: string,
+	email: EmailString,
+	verified: boolean,
+	name?: string
+}> => new Promise(async resolve => {
+	if (authMethodOptions.type === 'password') {
+		// Authenticate with a password.
+
 	}
 });
 

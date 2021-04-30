@@ -1,7 +1,7 @@
 import { Dialog } from 'modules/client/dialogs';
 import SignIn, { signInValues, resetSignInValues } from 'components/SignIn';
 import api from 'modules/client/api';
-import type { AuthMethod } from 'modules/server/users';
+import type { AuthMethodOptions } from 'pages/api/users/[userID]/authMethods';
 import type { APIClient } from 'modules/client/api';
 import { setUser } from 'modules/client/users';
 
@@ -12,15 +12,13 @@ let signInDialog: Dialog<{}> | undefined;
 /** 0 if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
 let signInPage = 0;
 
-type AuthMethodOptions = Pick<AuthMethod, 'type' | 'value'>;
-
-let authMethod: AuthMethodOptions | undefined;
+let authMethodOptions: AuthMethodOptions | undefined;
 
 /** Resolve the sign-in dialog upon completion of an external auth method. */
-export const resolveExternalSignIn = (newAuthMethod: AuthMethodOptions) => {
+export const resolveExternalSignIn = (newAuthMethodOptions: AuthMethodOptions) => {
 	if (!signInDialog!.resolved) {
-		authMethod = newAuthMethod;
-		signInDialog!.resolve({ submit: true, value: authMethod.type });
+		authMethodOptions = newAuthMethodOptions;
+		signInDialog!.resolve({ submit: true, value: authMethodOptions.type });
 	}
 };
 
@@ -73,7 +71,7 @@ export const setSignInPage = (
 		if (result) {
 			if (result.submit) {
 				if (result.value === 'password') {
-					authMethod = {
+					authMethodOptions = {
 						type: 'password',
 						value: signInValues.password
 					};
@@ -98,8 +96,8 @@ export const setSignInPage = (
 					(api as SessionAPI | UsersAPI).post(
 						signInPage === 0 ? 'session' : 'users',
 						{
-							email: authMethod!.type === 'password' ? signInValues.email : undefined,
-							authMethod,
+							email: authMethodOptions!.type === 'password' ? signInValues.email : undefined,
+							authMethodOptions,
 							...signInPage !== 0 && {
 								captchaToken: signInValues.captchaToken,
 								name: signInValues.name,
