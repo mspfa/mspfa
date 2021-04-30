@@ -57,11 +57,7 @@ const Handler: APIHandler<(
 			const { authMethod } = await getAuthMethodInfo(req, res, req.body.authMethod);
 
 			user = await users.findOne({
-				authMethods: {
-					$elemMatch: {
-						id: authMethod.id
-					}
-				}
+				'authMethods.id': authMethod.id
 			});
 
 			if (!user) {

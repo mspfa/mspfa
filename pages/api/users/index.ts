@@ -45,6 +45,18 @@ const Handler: APIHandler<{
 		authMethod
 	} = await getAuthMethodInfo(req, res, req.body.authMethod);
 
+	if (
+		authMethod.type !== 'password'
+		&& await users.findOne({
+			'authMethods.id': authMethod.id
+		})
+	) {
+		res.status(422).send({
+			message: 'The specified sign-in method is already taken.'
+		});
+		return;
+	}
+
 	if (await users.findOne({
 		$or: [
 			{ email },
