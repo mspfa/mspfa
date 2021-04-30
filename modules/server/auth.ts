@@ -100,7 +100,9 @@ export const getAuthMethodInfo = async <AuthMethodType extends AuthMethod['type'
 			id: crypto.createHash('sha1').update(authMethodOptions.type).update(value).digest('hex'),
 			type: authMethodOptions.type,
 			value,
-			name
+			...name && {
+				name
+			}
 		},
 		email,
 		verified
