@@ -56,7 +56,7 @@ const AuthMethods = ({ userID, authMethods: initialAuthMethods }: AuthMethodsPro
 								),
 								actions: ['Cancel']
 							});
-						}, [onResolve])
+						}, [onResolve, authMethods])
 					}
 				>
 					Add Sign-In Method
