@@ -1,6 +1,6 @@
+import './styles.module.scss';
 import Grid from 'components/Grid';
 import type { GridProps } from 'components/Grid';
-import './styles.module.scss';
 
 export type ColumnGridProps = GridProps;
 

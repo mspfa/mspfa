@@ -1,5 +1,5 @@
-import type { HTMLAttributes } from 'react';
 import './styles.module.scss';
+import type { HTMLAttributes } from 'react';
 
 export type GridRowProps = HTMLAttributes<HTMLDivElement>;
 

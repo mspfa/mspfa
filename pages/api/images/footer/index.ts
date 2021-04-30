@@ -1,7 +1,7 @@
+import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
 import fs from 'fs-extra';
 import path from 'path';
-import validate from './index.validate';
 
 /** The array of footer image filenames. */
 const footers = (fs.readdirSync(

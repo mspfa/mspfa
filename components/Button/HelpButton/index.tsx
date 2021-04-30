@@ -1,9 +1,9 @@
+import './styles.module.scss';
 import Button from 'components/Button';
 import type { ButtonProps } from 'components/Button';
 import type { ReactNode } from 'react';
 import { useCallback } from 'react';
 import { Dialog } from 'modules/client/dialogs';
-import './styles.module.scss';
 
 export type HelpButtonProps = Omit<ButtonProps, 'children' | 'onClick' | 'title'> & {
 	children: ReactNode

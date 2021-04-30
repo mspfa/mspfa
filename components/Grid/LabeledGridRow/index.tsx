@@ -1,7 +1,7 @@
+import './styles.module.scss';
 import type { HTMLAttributes, ReactNode } from 'react';
 import Label from 'components/Label';
 import type { ExclusiveLabelProps } from 'components/Label';
-import './styles.module.scss';
 
 type DivPropsWithoutChildren = Omit<HTMLAttributes<HTMLDivElement>, 'children'>;
 

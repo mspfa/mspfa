@@ -1,3 +1,4 @@
+import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
 import type { PrivateUser } from 'modules/client/users';
 import type { RecursivePartial } from 'modules/types';
@@ -6,7 +7,6 @@ import users, { getPrivateUser } from 'modules/server/users';
 import type { UserDocument } from 'modules/server/users';
 import { flatten } from 'modules/server/db';
 import _ from 'lodash';
-import validate from './index.validate';
 
 /** The keys of all `PrivateUser` properties which the client should be able to `PUT` into their `UserDocument`. */
 type PuttableUserKeys = 'birthdate' | 'name' | 'email' | 'description' | 'icon' | 'site' | 'profileStyle' | 'settings';

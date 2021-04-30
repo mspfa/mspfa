@@ -1,7 +1,7 @@
+import './styles.module.scss';
 import createGlobalState from 'global-react-state';
 import React from 'react';
 import Router from 'next/router';
-import './styles.module.scss';
 
 const [useLoadingCount, setLoadingCount, getLoadingCount] = createGlobalState(0);
 

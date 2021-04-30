@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import Page from 'components/Page';
 import { useUser } from 'modules/client/users';
 import type { PublicUser } from 'modules/client/users';
@@ -15,7 +16,6 @@ import GridFooter from 'components/Grid/GridFooter';
 import Button from 'components/Button';
 import IconImage from 'components/IconImage';
 import { Perm } from 'modules/server/perms';
-import './styles.module.scss';
 
 type ServerSideProps = {
 	publicUser: PublicUser

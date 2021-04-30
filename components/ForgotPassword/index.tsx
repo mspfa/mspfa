@@ -1,5 +1,5 @@
-import Link from 'components/Link';
 import './styles.module.scss';
+import Link from 'components/Link';
 
 export type ForgotPasswordProps = {
 	className?: string

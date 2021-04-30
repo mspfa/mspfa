@@ -1,8 +1,8 @@
+import './styles.module.scss';
 import React, { useCallback, useEffect } from 'react';
 import type { Dialog as DialogClass } from 'modules/client/dialogs';
 import { Form, Formik } from 'formik';
 import Button from 'components/Button';
-import './styles.module.scss';
 import { toKebabCase } from 'modules/client/utilities';
 
 export type DialogProps = {

@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import type { ReactNode } from 'react';
 import Header from 'components/Header';
 import type { HeaderProps } from 'components/Header';
@@ -5,7 +6,6 @@ import Footer from 'components/Footer';
 import Dialogs from 'components/Dialog/Dialogs';
 import LoadingIndicator from 'components/LoadingIndicator';
 import PageHeading from 'components/Page/PageHeading';
-import './styles.module.scss';
 
 export type PageProps = {
 	/**

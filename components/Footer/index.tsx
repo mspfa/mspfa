@@ -1,8 +1,8 @@
+import './styles.module.scss';
 import useSWR from 'swr';
 import Stick from 'components/Stick';
 import Link from 'components/Link';
 import WealthDungeon from 'components/WealthDungeon';
-import './styles.module.scss';
 
 type FooterAPIResponse = NonNullable<typeof import('pages/api/images/footer').default['Response']>['body'];
 

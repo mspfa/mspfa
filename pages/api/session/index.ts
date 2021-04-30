@@ -1,3 +1,4 @@
+import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
 import users, { getPrivateUser } from 'modules/server/users';
 import type { UserDocument } from 'modules/server/users';
@@ -6,7 +7,6 @@ import { authenticate, getExternalAuthMethodInfo, createSession, verifyPassword,
 import Cookies from 'cookies';
 import type { PrivateUser } from 'modules/client/users';
 import type { EmailString } from 'modules/types';
-import validate from './index.validate';
 
 export type SessionBody = {
 	authMethod: ExternalAuthMethodOptions,

@@ -1,3 +1,4 @@
+import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
 import type { SessionBody } from 'pages/api/session';
 import { getExternalAuthMethodInfo, createSession } from 'modules/server/auth';
@@ -9,7 +10,6 @@ import type { PrivateUser } from 'modules/client/users';
 import axios from 'axios';
 import type { EmailString } from 'modules/types';
 import crypto from 'crypto';
-import validate from './index.validate';
 
 const Handler: APIHandler<{
 	method: 'POST',

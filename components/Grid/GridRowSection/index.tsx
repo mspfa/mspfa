@@ -1,6 +1,6 @@
+import './styles.module.scss';
 import GridSection from 'components/Grid/GridSection';
 import type { GridSectionProps } from 'components/Grid/GridSection';
-import './styles.module.scss';
 
 export type GridRowSectionProps = GridSectionProps;
 

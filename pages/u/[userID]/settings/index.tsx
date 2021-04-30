@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import Page from 'components/Page';
 import { setUser, setUserMerge, useUser } from 'modules/client/users';
 import type { PrivateUser } from 'modules/client/users';
@@ -30,7 +31,6 @@ import { toPattern } from 'modules/client/utilities';
 import LabeledDialogGrid from 'components/Grid/LabeledDialogGrid';
 import ForgotPassword from 'components/ForgotPassword';
 import AuthMethods from 'components/AuthMethod/AuthMethods';
-import './styles.module.scss';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 type AuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;

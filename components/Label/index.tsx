@@ -1,6 +1,6 @@
+import './styles.module.scss';
 import type { HTMLAttributes, LabelHTMLAttributes, ReactNode } from 'react';
 import HelpButton from 'components/Button/HelpButton';
-import './styles.module.scss';
 
 export type ExclusiveLabelProps = {
 	/** The `htmlFor` prop of the `label` element. If undefined, the label will instead be a `span`. */

@@ -1,7 +1,7 @@
+import './styles.module.scss';
 import Link from 'components/Link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import './styles.module.scss';
 
 const flashyTitleColors = [
 	'#de3535',

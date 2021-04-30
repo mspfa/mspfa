@@ -1,9 +1,10 @@
 /* eslint-disable react/forbid-elements */
+
+import './styles.module.scss';
 import NextLink from 'next/link';
 import type { LinkProps as OriginalNextLinkProps } from 'next/link';
 import React from 'react';
 import type { AnchorHTMLAttributes } from 'react';
-import './styles.module.scss';
 
 // `href` is omitted here because NextLinkProps has a more inclusive `href`, accepting URL objects in addition to strings.
 type HTMLAnchorProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>;

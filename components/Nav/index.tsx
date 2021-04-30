@@ -1,9 +1,9 @@
+import './styles.module.scss';
 import NavGroup from 'components/Nav/NavGroup';
 import NavItem from 'components/Nav/NavItem';
 import NavMenu from 'components/Nav/NavMenu';
 import Router from 'next/router';
 import { signIn, signOut, useUser } from 'modules/client/users';
-import './styles.module.scss';
 
 const visitRandomStory = () => {
 	// TODO

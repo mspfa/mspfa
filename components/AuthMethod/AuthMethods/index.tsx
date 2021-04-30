@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import Button from 'components/Button';
 import type { PrivateUser } from 'modules/client/users';
 import { useCallback, useState } from 'react';
@@ -7,7 +8,6 @@ import AuthButton from 'components/Button/AuthButton';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
 import type { AuthMethodOptions, ClientAuthMethod } from 'pages/api/users/[userID]/authMethods';
-import './styles.module.scss';
 
 type AuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;
 

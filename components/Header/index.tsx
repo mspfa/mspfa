@@ -1,8 +1,8 @@
+import './styles.module.scss';
 import Link from 'components/Link';
 import Nav from 'components/Nav';
 import WealthDungeon from 'components/WealthDungeon';
 import FlashyTitle from 'components/FlashyTitle';
-import './styles.module.scss';
 
 export type HeaderProps = {
 	/** Whether the flashy title should render at the top of the page. */

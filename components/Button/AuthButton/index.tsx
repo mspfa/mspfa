@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import Button from 'components/Button';
 import { useCallback } from 'react';
 import Head from 'next/head';
@@ -8,7 +9,6 @@ import FieldGridRow from 'components/Grid/FieldGridRow';
 import { toKebabCase, toPattern } from 'modules/client/utilities';
 import type { ButtonProps } from 'components/Button';
 import type { AuthMethodOptions } from 'pages/api/users/[userID]/authMethods';
-import './styles.module.scss';
 
 /** The global Google API object. */
 declare const gapi: any;

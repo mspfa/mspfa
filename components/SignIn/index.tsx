@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import { setSignInPage, resolveExternalSignIn } from 'modules/client/auth';
 import Link from 'components/Link';
 import createUpdater from 'react-component-updater';
@@ -7,7 +8,6 @@ import LabeledGridRow from 'components/Grid/LabeledGridRow';
 import { toPattern } from 'modules/client/utilities';
 import LabeledDialogGrid from 'components/Grid/LabeledDialogGrid';
 import ForgotPassword from 'components/ForgotPassword';
-import './styles.module.scss';
 import AuthButton from 'components/Button/AuthButton';
 
 const startSigningUp = () => {

@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
 import './styles.module.scss';
+import type { ReactNode } from 'react';
 
 export type PageHeadingProps = { children: ReactNode };
 

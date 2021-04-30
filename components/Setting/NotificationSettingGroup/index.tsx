@@ -1,6 +1,6 @@
+import './styles.module.scss';
 import GridRowSection from 'components/Grid/GridRowSection';
 import type { GridRowSectionProps } from 'components/Grid/GridRowSection';
-import './styles.module.scss';
 
 export type NotificationSettingGroupProps = GridRowSectionProps;
 
