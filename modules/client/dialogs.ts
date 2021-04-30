@@ -1,6 +1,7 @@
 import createUpdater from 'react-component-updater';
 import type { ReactNode, Key } from 'react';
 import type { FormikProps } from 'formik';
+import Router from 'next/router';
 
 /** The array of all dialogs. */
 export const dialogs: Array<Dialog<any>> = [];
@@ -244,6 +245,16 @@ export class Dialog<Values extends Record<string, string | number | boolean>> ex
 		id: Dialog<Values>['id']
 	): Dialog<Values> | undefined => dialogs.find(dialog => dialog.id === id);
 }
+
+Router.events.on('routeChangeStart', () => {
+	// Remove dialogs without resolution on route change.
+
+	while (dialogs.length) {
+		dialogs.pop();
+	}
+
+	updateDialogs();
+});
 
 // @client-only {
 document.addEventListener('keydown', event => {
