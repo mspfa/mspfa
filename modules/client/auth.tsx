@@ -4,13 +4,9 @@ import api from 'modules/client/api';
 import type { AuthMethod } from 'modules/server/users';
 import type { APIClient } from 'modules/client/api';
 import { setUser } from 'modules/client/users';
-import env from 'modules/client/env';
 
 type SessionAPI = APIClient<typeof import('pages/api/session').default>;
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
-
-/** The global Google API object. */
-declare const gapi: any;
 
 let signInDialog: Dialog<{}> | undefined;
 /** 0 if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
@@ -20,71 +16,11 @@ type AuthMethodOptions = Pick<AuthMethod, 'type' | 'value'>;
 
 let authMethod: AuthMethodOptions | undefined;
 
-/** Resolves the sign-in dialog upon completion of an external auth method. */
-const resolveExternalSignIn = (newAuthMethod: AuthMethodOptions) => {
-	authMethod = newAuthMethod;
-	signInDialog!.resolve({ submit: true, value: authMethod.type });
-};
-
-export const promptExternalSignIn = {
-	google: () => {
-		const onError = (error: any) => {
-			if (error.error === 'popup_closed_by_user') {
-				console.warn(error);
-			} else {
-				console.error(error);
-				new Dialog({
-					title: 'Error',
-					content: JSON.stringify(error)
-				});
-			}
-		};
-
-		gapi.load('auth2', () => {
-			gapi.auth2.init().then((auth2: any) => {
-				auth2.signIn().then((user: any) => {
-					if (signInDialog!.open) {
-						resolveExternalSignIn({
-							type: 'google',
-							value: user.getAuthResponse().id_token
-						});
-					}
-				}).catch(onError);
-			}).catch(onError);
-		});
-	},
-	discord: () => {
-		const win = window.open(`https://discord.com/api/oauth2/authorize?client_id=${env.DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(location.origin)}%2Fsign-in%2Fdiscord&response_type=code&scope=identify%20email`, 'SignInWithDiscord');
-		const winClosedPoll = setInterval(() => {
-			if (!win || win.closed) {
-				clearInterval(winClosedPoll);
-				console.warn('The Discord sign-in page was closed.');
-			}
-		}, 200);
-		const onMessage = (event: MessageEvent<any>) => {
-			if (event.origin === window.origin && event.source === win) {
-				window.removeEventListener('message', onMessage);
-				clearInterval(winClosedPoll);
-				if (event.data.error) {
-					if (event.data.error === 'access_denied') {
-						// Ignore `access_denied` because it is triggered when the user selects "Cancel" on the Discord auth screen.
-						console.warn(event.data);
-					} else {
-						console.error(event.data);
-						new Dialog({
-							title: 'Error',
-							content: event.data.error_description
-						});
-					}
-				} else if (signInDialog!.open) {
-					resolveExternalSignIn({
-						type: 'discord',
-						value: event.data.code
-					});
-				}
-			}
-		};
-		window.addEventListener('message', onMessage);
+/** Resolve the sign-in dialog upon completion of an external auth method. */
+export const resolveExternalSignIn = (newAuthMethod: AuthMethodOptions) => {
+	if (!signInDialog!.resolved) {
+		authMethod = newAuthMethod;
+		signInDialog!.resolve({ submit: true, value: authMethod.type });
 	}
 };
 

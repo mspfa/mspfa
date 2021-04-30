@@ -151,8 +151,8 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 
 		if ((await changePasswordDialog)?.submit) {
 			await (api as PasswordAPI).put(`users/${privateUser.id}/authMethods/password`, {
-				currentPassword: changePasswordDialog.values.currentPassword!,
-				newPassword: changePasswordDialog.values.password!
+				currentPassword: changePasswordDialog.form!.values.currentPassword,
+				newPassword: changePasswordDialog.form!.values.password
 			});
 
 			new Dialog({

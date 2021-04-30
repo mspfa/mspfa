@@ -1,15 +1,15 @@
 import Button from 'components/Button';
 import type { PrivateUser } from 'modules/client/users';
 import { useCallback, useState } from 'react';
-import AuthMethod, { authMethodTypes } from 'components/AuthMethod';
-import type { AuthMethodProps } from 'components/AuthMethod';
+import AuthMethod from 'components/AuthMethod';
+import type { ClientAuthMethod } from 'components/AuthMethod';
+import { Dialog } from 'modules/client/dialogs';
+import AuthButton from 'components/Button/AuthButton';
 import './styles.module.scss';
-
-type AuthMethodProp = AuthMethodProps['authMethod'];
 
 export type AuthMethodsProps = {
 	userID: PrivateUser['id'],
-	authMethods: AuthMethodProp[]
+	authMethods: ClientAuthMethod[]
 };
 
 const AuthMethods = ({ userID, authMethods: initialAuthMethods }: AuthMethodsProps) => {
@@ -32,8 +32,19 @@ const AuthMethods = ({ userID, authMethods: initialAuthMethods }: AuthMethodsPro
 					autoFocus
 					onClick={
 						useCallback(() => {
-							// TODO
-						}, [])
+							new Dialog({
+								id: 'add-auth-method',
+								title: 'Add Sign-In Method',
+								content: (
+									<>
+										<AuthButton type="password" />
+										<AuthButton type="google" />
+										<AuthButton type="discord" />
+									</>
+								),
+								actions: ['Cancel']
+							});
+						}, [userID, initialAuthMethods])
 					}
 				>
 					Add Sign-In Method

@@ -1,5 +1,3 @@
-@import 'styles/buttons';
-
 #sign-in {
 	&-content {
 		text-align: center;
@@ -17,18 +15,8 @@
 		}
 	}
 
-	&-with {
-		&-password {
-			margin-top: 1.5ch;
-		}
-
-		&-google {
-			@include styled-button(#4285f4, #ffffff);
-		}
-
-		&-discord {
-			@include styled-button(#7289da, #ffffff);
-		}
+	&-with-password {
+		margin-top: 1.5ch;
 	}
 
 	&-name {

@@ -1,0 +1,11 @@
+@import 'styles/buttons';
+
+.auth-button {
+	&-google {
+		@include styled-button(#4285f4, #ffffff);
+	}
+
+	&-discord {
+		@include styled-button(#7289da, #ffffff);
+	}
+}

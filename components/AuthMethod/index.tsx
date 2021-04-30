@@ -10,20 +10,20 @@ import './styles.module.scss';
 
 type AuthMethodAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods/[authMethodID]').default>;
 
-type AuthMethodProp = Pick<AuthMethodType, 'type' | 'name' | 'id'>;
+export type ClientAuthMethod = Pick<AuthMethodType, 'type' | 'name' | 'id'>;
 
 // TODO: Remove this after locales are implemented.
-export const authMethodTypes: Record<AuthMethodProp['type'], string> = {
-	password: 'Email and Password',
+export const authMethodTypes: Record<ClientAuthMethod['type'], string> = {
+	password: 'Password',
 	google: 'Google',
 	discord: 'Discord'
 };
 
 export type AuthMethodProps = {
 	userID: PrivateUser['id'],
-	authMethod: AuthMethodProp,
-	authMethods: AuthMethodProp[],
-	setAuthMethods: Dispatch<SetStateAction<AuthMethodProp[]>>
+	authMethod: ClientAuthMethod,
+	authMethods: ClientAuthMethod[],
+	setAuthMethods: Dispatch<SetStateAction<ClientAuthMethod[]>>
 };
 
 const AuthMethod = ({ userID, authMethod, authMethods, setAuthMethods }: AuthMethodProps) => {
@@ -32,10 +32,7 @@ const AuthMethod = ({ userID, authMethod, authMethods, setAuthMethods }: AuthMet
 	return (
 		<div className="auth-method" key={authMethod.id}>
 			<div className="auth-method-content">
-				{authMethodType}
-				{authMethod.name && (
-					<> ({authMethod.name})</>
-				)}
+				{authMethodType + (authMethod.name ? ` (${authMethod.name})` : '')}
 			</div>
 			<Button
 				className="small spaced"

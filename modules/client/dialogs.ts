@@ -42,6 +42,8 @@ export type DialogOptions<Values extends Record<string, string | number | boolea
 	 * The React array key for the dialog's component.
 	 *
 	 * If set, any other dialog with the same `id` will be resolved with `undefined` when this dialog is created.
+	 *
+	 * Be careful when setting the same `id` on multiple dialogs with different form values and/or contents.
 	 */
 	id?: Key,
 	/**
@@ -221,6 +223,8 @@ export class Dialog<Values extends Record<string, string | number | boolean>> ex
 				break;
 			}
 		}
+
+		return this;
 	};
 
 	/**
@@ -235,6 +239,10 @@ export class Dialog<Values extends Record<string, string | number | boolean>> ex
 			...options
 		}: DialogOptions<Values>
 	) => !!(await new Dialog({ actions, ...options }))?.submit;
+
+	static getByID = <Values extends Record<string, string | number | boolean>>(
+		id: Dialog<Values>['id']
+	): Dialog<Values> | undefined => dialogs.find(dialog => dialog.id === id);
 }
 
 // @client-only {

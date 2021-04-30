@@ -1,16 +1,14 @@
-import { setSignInPage, promptExternalSignIn } from 'modules/client/auth';
-import Head from 'next/head';
+import { setSignInPage, resolveExternalSignIn } from 'modules/client/auth';
 import Link from 'components/Link';
-import Button from 'components/Button';
 import createUpdater from 'react-component-updater';
 import type { ChangeEvent } from 'react';
-import env from 'modules/client/env';
 import Captcha from 'components/SignIn/Captcha';
 import LabeledGridRow from 'components/Grid/LabeledGridRow';
 import { toPattern } from 'modules/client/utilities';
 import LabeledDialogGrid from 'components/Grid/LabeledDialogGrid';
 import ForgotPassword from 'components/ForgotPassword';
 import './styles.module.scss';
+import AuthButton from 'components/Button/AuthButton';
 
 const startSigningUp = () => {
 	setSignInPage(1);
@@ -72,16 +70,12 @@ const SignIn = ({ page }: SignInProps) => {
 		<div id="sign-in-content">
 			{page !== 2 && (
 				<>
-					<Head>
-						<meta name="google-signin-client_id" content={env.GOOGLE_CLIENT_ID} />
-						<script src="https://apis.google.com/js/platform.js" defer />
-					</Head>
 					<div className="translucent-text">
 						{page ? 'Sign up with' : 'Sign in with'}
 					</div>
 					<div id="sign-in-methods-external">
-						<Button id="sign-in-with-google" onClick={promptExternalSignIn.google}>Google</Button>
-						<Button id="sign-in-with-discord" onClick={promptExternalSignIn.discord}>Discord</Button>
+						<AuthButton type="google" onResolve={resolveExternalSignIn} />
+						<AuthButton type="discord" onResolve={resolveExternalSignIn} />
 					</div>
 					<div id="sign-in-divider" className="translucent-text">or</div>
 				</>
