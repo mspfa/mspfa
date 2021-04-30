@@ -47,14 +47,16 @@ const AuthMethods = ({ userID, authMethods: initialAuthMethods }: AuthMethodsPro
 								title: 'Add Sign-In Method',
 								content: (
 									<>
+										<AuthButton type="google" onResolve={onResolve} autoFocus />
+										<AuthButton type="discord" onResolve={onResolve} />
 										{!authMethods.some(({ type }) => type === 'password') && (
 											<AuthButton type="password" onResolve={onResolve} />
 										)}
-										<AuthButton type="google" onResolve={onResolve} />
-										<AuthButton type="discord" onResolve={onResolve} />
 									</>
 								),
-								actions: ['Cancel']
+								actions: [
+									{ label: 'Cancel', focus: false }
+								]
 							});
 						}, [onResolve, authMethods])
 					}
