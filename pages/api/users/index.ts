@@ -1,15 +1,12 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
 import type { SessionBody } from 'pages/api/session';
-import { getExternalAuthMethodInfo, createSession } from 'modules/server/auth';
+import { getAuthMethodInfo, createSession } from 'modules/server/auth';
 import users, { defaultUser, getPrivateUser } from 'modules/server/users';
 import type { UserDocument } from 'modules/server/users';
-import argon2 from 'argon2';
 import { ObjectId } from 'bson';
 import type { PrivateUser } from 'modules/client/users';
 import axios from 'axios';
-import type { EmailString } from 'modules/types';
-import crypto from 'crypto';
 
 const Handler: APIHandler<{
 	method: 'POST',
@@ -35,29 +32,18 @@ const Handler: APIHandler<{
 	}
 
 	if (req.body.birthdate < +new Date(now.getFullYear() - 1000, now.getMonth(), now.getDate())) {
-		// The user is over 1000 years old, which, as far as I know, is impossible.
+		// The user is over 1000 years old, which, as far as I know, is currently impossible.
 		res.status(400).send({
 			message: 'You should be dead.'
 		});
 		return;
 	}
 
-	let email: EmailString | undefined;
-	let verified = false;
-	let authMethodValue: string | undefined;
-	let authMethodName: string | undefined;
-
-	if (req.body.authMethod.type === 'password') {
-		email = req.body.email!.toLowerCase();
-		authMethodValue = await argon2.hash(req.body.authMethod.value);
-	} else {
-		({
-			value: authMethodValue,
-			email,
-			verified,
-			name: authMethodName
-		} = await getExternalAuthMethodInfo(req, res, req.body.authMethod));
-	}
+	const {
+		email = req.body.email?.toLowerCase(),
+		verified,
+		authMethod
+	} = await getAuthMethodInfo(req, res, req.body.authMethod);
 
 	if (await users.findOne({
 		$or: [
@@ -90,14 +76,7 @@ const Handler: APIHandler<{
 	const user: UserDocument = {
 		...defaultUser,
 		_id: new ObjectId(),
-		authMethods: [{
-			id: crypto.createHash('sha1').update(req.body.authMethod.type).update(authMethodValue).digest('hex'),
-			type: req.body.authMethod.type,
-			value: authMethodValue,
-			...authMethodName && {
-				name: authMethodName
-			}
-		}],
+		authMethods: [authMethod],
 		created: now,
 		lastSeen: now,
 		birthdate: new Date(req.body.birthdate),

@@ -175,7 +175,7 @@ export const defaultUser = {
 	perms: 0
 } as const;
 
-// This is just for type safety on `defaultUser` and should never be referenced.
+// This is just for type safety on `defaultUser`.
 const typeCheckedDefaultUser: Partial<UserDocument> = defaultUser;
 typeCheckedDefaultUser;
 

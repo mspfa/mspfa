@@ -6,101 +6,106 @@ import { ObjectId } from 'bson';
 import type { APIRequest, APIResponse } from 'modules/server/api';
 import type { IncomingMessage, ServerResponse } from 'http';
 import users from 'modules/server/users';
-import type { UserDocument, UserSession, ExternalAuthMethod } from 'modules/server/users';
+import type { UserDocument, UserSession, AuthMethod } from 'modules/server/users';
 import { OAuth2Client } from 'google-auth-library';
 import type { EmailString } from 'modules/types';
 import type { AuthMethodOptions } from 'modules/client/auth';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
+export type AuthMethodInfo<AuthMethodType extends AuthMethod['type'] = AuthMethod['type']> = {
+	authMethod: AuthMethod & (
+		AuthMethod['type'] extends AuthMethodType
+			? unknown
+			: { type: AuthMethodType }
+	),
+	email?: EmailString,
+	verified: boolean
+};
+
 /**
- * Get information about and authenticate an external auth method.
+ * Get information about an auth method. Authenticate it if it is external.
  *
- * If an error occurs, the promise returned by this function will never resolve.
+ * If an error occurs, this function will never resolve.
  */
-export const getExternalAuthMethodInfo = (
+export const getAuthMethodInfo = async <AuthMethodType extends AuthMethod['type'] = AuthMethod['type']>(
 	req: APIRequest,
 	res: APIResponse,
-	authMethodOptions: AuthMethodOptions & { type: ExternalAuthMethod['type'] }
-): Promise<{
-	value: string,
-	email: EmailString,
-	verified: boolean,
-	name: string
-}> => new Promise(async resolve => {
-	try {
+	authMethodOptions: AuthMethodOptions & (
+		AuthMethod['type'] extends AuthMethodType
+			? unknown
+			: { type: AuthMethodType }
+	)
+): Promise<AuthMethodInfo<AuthMethodType>> => {
+	let value: AuthMethod['value'];
+	let email: AuthMethodInfo['email'];
+	let verified: AuthMethodInfo['verified'] = false;
+	let name: AuthMethod['name'];
+
+	if (authMethodOptions.type === 'password') {
+		value = await argon2.hash(authMethodOptions.value);
+	} else {
+		const onReject = (error: any) => new Promise<never>(() => {
+			res.status(error.status || 422).send({
+				message: error.message
+			});
+		});
+
 		if (authMethodOptions.type === 'google') {
 			// Authenticate with Google.
 
 			const ticket = await googleClient.verifyIdToken({
 				idToken: authMethodOptions.value,
 				audience: process.env.GOOGLE_CLIENT_ID
-			});
+			}).catch(onReject);
 
 			const payload = ticket.getPayload()!;
 
-			resolve({
-				name: payload.email!,
-				value: payload.sub,
-				email: payload.email!.toLowerCase(),
-				verified: payload.email_verified!
-			});
-			return;
+			value = payload.sub;
+			email = payload.email!.toLowerCase();
+			verified = payload.email_verified!;
+			name = payload.email;
+		} else {
+			// Authenticate with Discord.
+
+			const referrerOrigin = req.headers.referer?.slice(
+				0,
+				// This is the index of end of the origin in the `Referer` header. For example, the index of the single "/" in "https://example.com/path".
+				`${req.headers.referer}/`.indexOf('/', req.headers.referer.indexOf('//') + 2)
+			);
+
+			const { data: discordToken } = await axios.post('https://discord.com/api/oauth2/token', new URLSearchParams({
+				client_id: process.env.DISCORD_CLIENT_ID!,
+				client_secret: process.env.DISCORD_CLIENT_SECRET!,
+				grant_type: 'authorization_code',
+				code: authMethodOptions.value,
+				redirect_uri: `${referrerOrigin}/sign-in/discord`
+			})).catch(onReject);
+
+			const { data: discordUser } = await axios.get('https://discord.com/api/users/@me', {
+				headers: {
+					Authorization: `${discordToken.token_type} ${discordToken.access_token}`
+				}
+			}).catch(onReject);
+
+			value = discordUser.id;
+			email = discordUser.email.toLowerCase();
+			verified = discordUser.verified;
+			name = discordUser.email;
 		}
-
-		// Authenticate with Discord.
-
-		const referrerOrigin = req.headers.referer?.slice(
-			0,
-			// This is the index of end of the origin in the `Referer` header. For example, the index of the single "/" in "https://example.com/path".
-			`${req.headers.referer}/`.indexOf('/', req.headers.referer.indexOf('//') + 2)
-		);
-
-		const { data: discordToken } = await axios.post('https://discord.com/api/oauth2/token', new URLSearchParams({
-			client_id: process.env.DISCORD_CLIENT_ID!,
-			client_secret: process.env.DISCORD_CLIENT_SECRET!,
-			grant_type: 'authorization_code',
-			code: authMethodOptions.value,
-			redirect_uri: `${referrerOrigin}/sign-in/discord`
-		}));
-
-		const { data: discordUser } = await axios.get('https://discord.com/api/users/@me', {
-			headers: {
-				Authorization: `${discordToken.token_type} ${discordToken.access_token}`
-			}
-		});
-
-		resolve({
-			name: discordUser.email,
-			value: discordUser.id,
-			email: discordUser.email.toLowerCase(),
-			verified: discordUser.verified
-		});
-	} catch (error) {
-		res.status(error.status || 422).send({ message: error.message });
 	}
-});
 
-/**
- * Get information about an auth method. Authenticate it if it is external.
- *
- * If an error occurs, the promise returned by this function will never resolve.
- */
-export const getAuthMethodInfo = (
-	req: APIRequest,
-	res: APIResponse,
-	authMethodOptions: AuthMethodOptions
-): Promise<{
-	value: string,
-	email: EmailString,
-	verified: boolean,
-	name?: string
-}> => new Promise(async resolve => {
-	if (authMethodOptions.type === 'password') {
-		// Authenticate with a password.
-
-	}
-});
+	return {
+		authMethod: {
+			id: crypto.createHash('sha1').update(authMethodOptions.type).update(value).digest('hex'),
+			type: authMethodOptions.type,
+			value,
+			name
+		},
+		email,
+		verified
+	};
+};
 
 const authCookieOptions = {
 	sameSite: 'strict',

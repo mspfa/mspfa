@@ -4,9 +4,7 @@ import { Perm, permToGetUserInAPI } from 'modules/server/perms';
 import users from 'modules/server/users';
 import type { AuthMethod } from 'modules/server/users';
 import type { AuthMethodOptions, ClientAuthMethod } from 'modules/client/auth';
-import crypto from 'crypto';
-import argon2 from 'argon2';
-import { getExternalAuthMethodInfo } from 'modules/server/auth';
+import { getAuthMethodInfo } from 'modules/server/auth';
 
 const Handler: APIHandler<{
 	query: {
@@ -46,33 +44,17 @@ const Handler: APIHandler<{
 
 	// If this point is reached, `req.method === 'POST'`.
 
-	let authMethodValue: string | undefined;
-	let authMethodName: string | undefined;
-
-	if (req.body.type === 'password') {
-		if (user.authMethods.some(({ type }) => type === 'password')) {
-			res.status(422).send({
-				message: 'Your account already has a password sign-in method.'
-			});
-			return;
-		}
-
-		authMethodValue = await argon2.hash(req.body.value);
-	} else {
-		({
-			value: authMethodValue,
-			name: authMethodName
-		} = await getExternalAuthMethodInfo(req, res, req.body));
+	if (
+		req.body.type === 'password'
+		&& user.authMethods.some(({ type }) => type === 'password')
+	) {
+		res.status(422).send({
+			message: 'Your account already has a password.'
+		});
+		return;
 	}
 
-	const authMethod = {
-		id: crypto.createHash('sha1').update(req.body.type).update(authMethodValue).digest('hex'),
-		type: req.body.type,
-		value: authMethodValue,
-		...authMethodName && {
-			name: authMethodName
-		}
-	};
+	const { authMethod } = await getAuthMethodInfo(req, res, req.body);
 
 	if (user.authMethods.some(({ id }) => id === authMethod.id)) {
 		res.status(422).send({

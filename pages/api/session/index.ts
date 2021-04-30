@@ -3,7 +3,7 @@ import type { APIHandler } from 'modules/server/api';
 import users, { getPrivateUser } from 'modules/server/users';
 import type { UserDocument } from 'modules/server/users';
 import type { ExternalAuthMethodOptions, InternalAuthMethodOptions } from 'modules/client/auth';
-import { authenticate, getExternalAuthMethodInfo, createSession, verifyPassword, VerifyPasswordResult } from 'modules/server/auth';
+import { authenticate, getAuthMethodInfo, createSession, verifyPassword, VerifyPasswordResult } from 'modules/server/auth';
 import Cookies from 'cookies';
 import type { PrivateUser } from 'modules/client/users';
 import type { EmailString } from 'modules/types';
@@ -54,13 +54,12 @@ const Handler: APIHandler<(
 				[VerifyPasswordResult.Incorrect]: 401
 			});
 		} else {
-			const { value: authMethodValue, name: authMethodName } = await getExternalAuthMethodInfo(req, res, req.body.authMethod);
+			const { authMethod } = await getAuthMethodInfo(req, res, req.body.authMethod);
 
 			user = await users.findOne({
 				authMethods: {
 					$elemMatch: {
-						type: req.body.authMethod.type,
-						value: authMethodValue
+						id: authMethod.id
 					}
 				}
 			});
@@ -72,15 +71,16 @@ const Handler: APIHandler<(
 				return;
 			}
 
+			// If the auth method's `name` is outdated, update it.
 			if ((
-				user.authMethods.find(authMethod => authMethod.value = authMethodValue)
-			)!.name !== authMethodName) {
+				user.authMethods.find(({ id }) => id === authMethod.id)
+			)!.name !== authMethod.name) {
 				users.updateOne({
 					'_id': user._id,
-					'authMethods.value': authMethodValue
+					'authMethods.id': authMethod.id
 				}, {
 					$set: {
-						'authMethods.$.name': authMethodName
+						'authMethods.$.name': authMethod.name
 					}
 				});
 			}
