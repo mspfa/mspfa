@@ -105,7 +105,7 @@ export const setSignInPage = (
 						signInPage === 0 ? 'session' : 'users',
 						{
 							email: authMethodOptions!.type === 'password' ? signInValues.email : undefined,
-							authMethodOptions,
+							authMethod: authMethodOptions,
 							...signInPage !== 0 && {
 								captchaToken: signInValues.captchaToken,
 								name: signInValues.name,

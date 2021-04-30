@@ -98,48 +98,54 @@ export default createValidator({
 		AuthMethodOptions: {
 			anyOf: [
 				{
-					type: 'object',
-					properties: {
-						type: {
-							type: 'string',
-							enum: [
-								'google',
-								'discord'
-							]
-						},
-						value: {
-							type: 'string',
-							minLength: 1
-						}
-					},
-					required: [
-						'type',
-						'value'
-					],
-					additionalProperties: false
+					$ref: '#/definitions/InternalAuthMethodOptions'
 				},
 				{
-					type: 'object',
-					properties: {
-						type: {
-							type: 'string',
-							const: 'password'
-						},
-						value: {
-							$ref: '#/definitions/PasswordString'
-						}
-					},
-					required: [
-						'type',
-						'value'
-					],
-					additionalProperties: false
+					$ref: '#/definitions/ExternalAuthMethodOptions'
 				}
 			]
+		},
+		InternalAuthMethodOptions: {
+			type: 'object',
+			properties: {
+				type: {
+					type: 'string',
+					const: 'password'
+				},
+				value: {
+					$ref: '#/definitions/PasswordString'
+				}
+			},
+			required: [
+				'type',
+				'value'
+			],
+			additionalProperties: false
 		},
 		PasswordString: {
 			type: 'string',
 			minLength: 8
+		},
+		ExternalAuthMethodOptions: {
+			type: 'object',
+			properties: {
+				type: {
+					type: 'string',
+					enum: [
+						'google',
+						'discord'
+					]
+				},
+				value: {
+					type: 'string',
+					minLength: 1
+				}
+			},
+			required: [
+				'type',
+				'value'
+			],
+			additionalProperties: false
 		}
 	}
 });

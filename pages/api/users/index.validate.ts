@@ -38,25 +38,7 @@ export default createValidator({
 									type: 'number'
 								},
 								authMethod: {
-									type: 'object',
-									properties: {
-										type: {
-											type: 'string',
-											enum: [
-												'google',
-												'discord'
-											]
-										},
-										value: {
-											type: 'string',
-											minLength: 1
-										}
-									},
-									required: [
-										'type',
-										'value'
-									],
-									additionalProperties: false
+									$ref: '#/definitions/ExternalAuthMethodOptions'
 								}
 							},
 							required: [
@@ -83,21 +65,7 @@ export default createValidator({
 									type: 'number'
 								},
 								authMethod: {
-									type: 'object',
-									properties: {
-										type: {
-											type: 'string',
-											const: 'password'
-										},
-										value: {
-											$ref: '#/definitions/PasswordString'
-										}
-									},
-									required: [
-										'type',
-										'value'
-									],
-									additionalProperties: false
+									$ref: '#/definitions/InternalAuthMethodOptions'
 								},
 								email: {
 									$ref: '#/definitions/EmailString'
@@ -123,6 +91,44 @@ export default createValidator({
 				'body',
 				'method'
 			]
+		},
+		ExternalAuthMethodOptions: {
+			type: 'object',
+			properties: {
+				type: {
+					type: 'string',
+					enum: [
+						'google',
+						'discord'
+					]
+				},
+				value: {
+					type: 'string',
+					minLength: 1
+				}
+			},
+			required: [
+				'type',
+				'value'
+			],
+			additionalProperties: false
+		},
+		InternalAuthMethodOptions: {
+			type: 'object',
+			properties: {
+				type: {
+					type: 'string',
+					const: 'password'
+				},
+				value: {
+					$ref: '#/definitions/PasswordString'
+				}
+			},
+			required: [
+				'type',
+				'value'
+			],
+			additionalProperties: false
 		},
 		PasswordString: {
 			type: 'string',
