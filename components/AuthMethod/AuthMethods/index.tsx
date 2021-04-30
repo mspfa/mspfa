@@ -22,7 +22,9 @@ const AuthMethods = ({ userID, authMethods: initialAuthMethods }: AuthMethodsPro
 	const onResolve = useCallback(async (authMethodOptions: AuthMethodOptions) => {
 		const { data: authMethod } = await (api as AuthMethodsAPI).post(`users/${userID}/authMethods`, authMethodOptions);
 
-		setAuthMethods([...authMethods, authMethod]);
+		if (Dialog.getByID('auth-methods')) {
+			setAuthMethods([...authMethods, authMethod]);
+		}
 	}, [userID, authMethods]);
 
 	return (

@@ -95,7 +95,7 @@ const Handler: APIHandler<(
 	const { user, token } = await authenticate(req, res, false);
 
 	if (user) {
-		users.updateOne({
+		await users.updateOne({
 			_id: user._id
 		}, {
 			$pull: {

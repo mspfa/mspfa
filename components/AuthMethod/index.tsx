@@ -51,7 +51,9 @@ const AuthMethod = ({ userID, authMethod, authMethods, setAuthMethods }: AuthMet
 
 						await (api as AuthMethodAPI).delete(`users/${userID}/authMethods/${authMethod.id}`);
 
-						setAuthMethods(authMethods.filter(({ id }) => id !== authMethod.id));
+						if (Dialog.getByID('auth-methods')) {
+							setAuthMethods(authMethods.filter(({ id }) => id !== authMethod.id));
+						}
 
 						// This ESLint comment is necessary because the rule incorrectly thinks `authMethodType` should be a dependency here, despite that it depends on `authMethod` which is already a dependency.
 						// eslint-disable-next-line react-hooks/exhaustive-deps
