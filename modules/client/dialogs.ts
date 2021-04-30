@@ -1,6 +1,6 @@
 import createUpdater from 'react-component-updater';
 import type { ReactNode, Key } from 'react';
-import type { FormikHelpers, FormikProps } from 'formik';
+import type { FormikProps } from 'formik';
 
 /** The array of all dialogs. */
 export const dialogs: Array<Dialog<any>> = [];
@@ -61,7 +61,7 @@ export type DialogOptions<Values extends Record<string, string | number | boolea
 	 *
 	 * If set to a function, it must return the content of the dialog, and it will be passed a parameter of the Formik props when called.
 	 */
-	content: Dialog<Values>['content'],
+	content?: Dialog<Values>['content'],
 	/** Initial field values for the dialog's form. Keys are field `name`s. */
 	initialValues?: Dialog<Values>['initialValues'],
 	/**
@@ -79,17 +79,17 @@ let resolvePromise: (value?: DialogResult) => void;
 let nextDialogID = 0;
 
 export class Dialog<Values extends Record<string, string | number | boolean>> extends Promise<DialogResult> {
-	readonly [Symbol.toStringTag] = 'Dialog';
 	// This is so `then`, `catch`, etc. return a `Promise` rather than a `Dialog`. Weird errors occur when this is not here.
 	static readonly [Symbol.species] = Promise;
+
+	readonly [Symbol.toStringTag] = 'Dialog';
 
 	id: Key;
 	title: ReactNode;
 	content: ReactNode | ((props: FormikProps<Values>) => ReactNode);
 	initialValues: Partial<Values>;
-	values: Partial<Values> = {};
-	/** The dialog's form helpers from Formik. */
-	helpers: FormikHelpers<Values> | undefined;
+	/** The dialog's `FormikProps`. */
+	form: FormikProps<Values> | undefined;
 	actions: DialogAction[];
 	/** Whether the dialog has been resolved. */
 	resolved = false;
@@ -242,7 +242,6 @@ document.addEventListener('keydown', event => {
 	// This check is necessary because of https://bugs.chromium.org/p/chromium/issues/detail?id=581537.
 	if (event.key) {
 		if (event.key === 'Escape') {
-			// Resolve the last dialog with `undefined`.
 			const topDialog = dialogs.length && dialogs[dialogs.length - 1];
 			if (topDialog) {
 				topDialog.resolve();
