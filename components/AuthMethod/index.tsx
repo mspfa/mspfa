@@ -2,7 +2,7 @@ import './styles.module.scss';
 import Button from 'components/Button';
 import api from 'modules/client/api';
 import type { PrivateUser } from 'modules/client/users';
-import type { ClientAuthMethod } from 'pages/api/users/[userID]/authMethods';
+import type { ClientAuthMethod } from 'modules/client/auth';
 import type { Dispatch, SetStateAction } from 'react';
 import { useCallback } from 'react';
 import type { APIClient } from 'modules/client/api';

@@ -2,16 +2,11 @@ import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
 import { Perm, permToGetUserInAPI } from 'modules/server/perms';
 import users from 'modules/server/users';
-import type { AuthMethod, ExternalAuthMethod, InternalAuthMethod } from 'modules/server/users';
+import type { AuthMethod } from 'modules/server/users';
+import type { AuthMethodOptions, ClientAuthMethod } from 'modules/client/auth';
 import crypto from 'crypto';
 import argon2 from 'argon2';
 import { getExternalAuthMethodInfo } from 'modules/server/auth';
-
-export type ExternalAuthMethodOptions = Pick<ExternalAuthMethod, 'type' | 'value'>;
-export type InternalAuthMethodOptions = Pick<InternalAuthMethod, 'type' | 'value'>;
-export type AuthMethodOptions = ExternalAuthMethodOptions | InternalAuthMethodOptions;
-
-export type ClientAuthMethod = Pick<AuthMethod, 'id' | 'type' | 'name'>;
 
 const Handler: APIHandler<{
 	query: {

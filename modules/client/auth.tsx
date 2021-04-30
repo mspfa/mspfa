@@ -1,12 +1,20 @@
 import { Dialog } from 'modules/client/dialogs';
 import SignIn, { signInValues, resetSignInValues } from 'components/SignIn';
 import api from 'modules/client/api';
-import type { AuthMethodOptions } from 'pages/api/users/[userID]/authMethods';
+import type { InternalAuthMethod, ExternalAuthMethod } from 'modules/server/users';
 import type { APIClient } from 'modules/client/api';
 import { setUser } from 'modules/client/users';
 
 type SessionAPI = APIClient<typeof import('pages/api/session').default>;
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
+
+export type InternalAuthMethodOptions = Pick<InternalAuthMethod, 'type' | 'value'>;
+export type ExternalAuthMethodOptions = Pick<ExternalAuthMethod, 'type' | 'value'>;
+export type AuthMethodOptions = InternalAuthMethodOptions | ExternalAuthMethodOptions;
+
+export type ClientInternalAuthMethod = Pick<InternalAuthMethod, 'id' | 'type' | 'name'>;
+export type ClientExternalAuthMethod = Pick<ExternalAuthMethod, 'id' | 'type' | 'name'>;
+export type ClientAuthMethod = ClientInternalAuthMethod | ClientExternalAuthMethod;
 
 let signInDialog: Dialog<{}> | undefined;
 /** 0 if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */

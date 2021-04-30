@@ -2,7 +2,7 @@ import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
 import users, { getPrivateUser } from 'modules/server/users';
 import type { UserDocument } from 'modules/server/users';
-import type { ExternalAuthMethodOptions, InternalAuthMethodOptions } from '../users/[userID]/authMethods';
+import type { ExternalAuthMethodOptions, InternalAuthMethodOptions } from 'modules/client/auth';
 import { authenticate, getExternalAuthMethodInfo, createSession, verifyPassword, VerifyPasswordResult } from 'modules/server/auth';
 import Cookies from 'cookies';
 import type { PrivateUser } from 'modules/client/users';

@@ -8,7 +8,7 @@ import LabeledDialogGrid from 'components/Grid/LabeledDialogGrid';
 import FieldGridRow from 'components/Grid/FieldGridRow';
 import { toKebabCase, toPattern } from 'modules/client/utilities';
 import type { ButtonProps } from 'components/Button';
-import type { AuthMethodOptions } from 'pages/api/users/[userID]/authMethods';
+import type { AuthMethodOptions } from 'modules/client/auth';
 
 /** The global Google API object. */
 declare const gapi: any;

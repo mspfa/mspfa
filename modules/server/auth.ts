@@ -9,7 +9,7 @@ import users from 'modules/server/users';
 import type { UserDocument, UserSession, ExternalAuthMethod } from 'modules/server/users';
 import { OAuth2Client } from 'google-auth-library';
 import type { EmailString } from 'modules/types';
-import type { AuthMethodOptions } from 'pages/api/users/[userID]/authMethods';
+import type { AuthMethodOptions } from 'modules/client/auth';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 

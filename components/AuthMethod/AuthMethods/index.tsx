@@ -7,7 +7,7 @@ import { Dialog } from 'modules/client/dialogs';
 import AuthButton from 'components/Button/AuthButton';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
-import type { AuthMethodOptions, ClientAuthMethod } from 'pages/api/users/[userID]/authMethods';
+import type { AuthMethodOptions, ClientAuthMethod } from 'modules/client/auth';
 
 type AuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;
 
