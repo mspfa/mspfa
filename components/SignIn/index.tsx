@@ -140,8 +140,8 @@ const SignIn = ({ page }: SignInProps) => {
 								required
 								placeholder="YYYY"
 								min={
-									// The maximum age is 1000 years old.
-									nowFullYear - 1000
+									// The maximum age is 200 years old.
+									nowFullYear - 200
 									// Maybe in the distant future, when anyone can live that long, or when aliens with longer life spans use our internet, MSPFA will still be here.
 								}
 								max={

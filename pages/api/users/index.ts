@@ -31,8 +31,8 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	if (req.body.birthdate < +new Date(now.getFullYear() - 1000, now.getMonth(), now.getDate())) {
-		// The user is over 1000 years old, which, as far as I know, is currently impossible.
+	if (req.body.birthdate < +new Date(now.getFullYear() - 200, now.getMonth(), now.getDate())) {
+		// The user is over 200 years old, which, as far as I know, is currently impossible.
 		res.status(400).send({
 			message: 'You should be dead.'
 		});
