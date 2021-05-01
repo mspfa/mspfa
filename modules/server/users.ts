@@ -79,8 +79,8 @@ export type UserDocument = {
 	email?: EmailString,
 	unverifiedEmail?: EmailString,
 	description: string,
-	icon?: URLString,
-	site?: URLString,
+	icon: '' | URLString,
+	site: '' | URLString,
 	/** An object where each key is a story ID, and its value is a page number of that story. */
 	storySaves: Record<number, number>,
 	achievements: Partial<Record<keyof typeof achievements, true>>,
@@ -136,6 +136,8 @@ export type UserDocument = {
 export const defaultUser = {
 	sessions: [] as never[],
 	description: '',
+	icon: '',
+	site: '',
 	storySaves: {} as Record<never, never>,
 	achievements: {} as Record<never, never>,
 	favs: [] as never[],

@@ -35,14 +35,6 @@
 		height: 100%;
 	}
 
-	&.alt {
-		@include styled-button($front-alt, $text-color-alt);
-	}
-
-	&.small {
-		font-size: 1.25em;
-	}
-
 	&.icon {
 		width: 18px;
 		height: 18px;
@@ -50,5 +42,13 @@
 		background-repeat: no-repeat;
 		background-position: center;
 		@include styled-button($front, false, true, 1);
+	}
+
+	&.alt {
+		@include styled-button($front-alt, $text-color-alt);
+	}
+
+	&.small {
+		font-size: 1.25em;
 	}
 }

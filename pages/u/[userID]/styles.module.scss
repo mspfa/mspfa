@@ -1,4 +1,4 @@
-@import 'styles/global';
+@import 'styles/general';
 
 #profile {
 	&-box {
@@ -20,22 +20,5 @@
 				text-align: left;
 			}
 		}
-	}
-
-	&-meta, &-description {
-		text-align: center;
-	}
-
-	&-name {
-		margin-bottom: 1ch;
-	}
-
-	&-icon {
-		&-container {
-			width: 150px;
-		}
-
-		max-width: 150px;
-		max-height: 150px;
 	}
 }

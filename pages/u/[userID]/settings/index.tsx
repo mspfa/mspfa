@@ -358,7 +358,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										label="Toggle Spoilers"
 									/>
 								</BoxRowSection>
-								<BoxSection heading="Advanced">
+								<BoxSection heading="Advanced" collapsible>
 									<Label htmlFor="field-style">
 										Custom Site Style
 									</Label>

@@ -2,6 +2,10 @@
 	&-section {
 		display: flex;
 		flex-direction: column;
+
+		@at-root details#{&}:not([open]) {
+			margin-bottom: 0;
+		}
 	}
 
 	&-heading {

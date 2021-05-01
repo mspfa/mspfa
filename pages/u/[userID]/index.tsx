@@ -15,6 +15,7 @@ import Link from 'components/Link';
 import BoxFooter from 'components/Box/BoxFooter';
 import IconImage from 'components/IconImage';
 import { Perm } from 'modules/client/perms';
+import BoxRow from 'components/Box/BoxRow';
 
 type ServerSideProps = {
 	publicUser: PublicUser
@@ -29,14 +30,14 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser }) => {
 		<Page flashyTitle heading="Profile">
 			<Box id="profile-box">
 				<BoxColumns>
-					<Box id="profile-meta-box">
-						<BoxSection id="profile-meta" heading="Meta">
-							<div id="profile-name">
-								{publicUser.name}
-							</div>
-							<IconImage id="profile-icon" src={publicUser.icon} />
-						</BoxSection>
-					</Box>
+					<BoxSection heading="Meta">
+						<BoxRow id="profile-name">
+							{publicUser.name}
+						</BoxRow>
+						<BoxRow id="profile-icon">
+							<IconImage src={publicUser.icon} />
+						</BoxRow>
+					</BoxSection>
 					<Box>
 						<BoxRowSection heading="Stats">
 							<LabeledBoxRow label="Last Connection">

@@ -42,6 +42,10 @@ option {
 	@include theme(color, $text-color);
 }
 
+summary {
+	cursor: pointer;
+}
+
 .translucent-text {
 	@include theme(color, $translucent-text-color);
 }
