@@ -10,8 +10,9 @@
 	position: relative;
 	padding: 1px 8px;
 	vertical-align: middle;
-	@include styled-button($front, false, true);
+	text-decoration: none;
 	flex-shrink: 0;
+	@include styled-button($front, false, true);
 
 	& + & {
 		margin-left: 1ch;
