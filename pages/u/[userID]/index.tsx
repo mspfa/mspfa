@@ -15,7 +15,7 @@ import Link from 'components/Link';
 import GridFooter from 'components/Grid/GridFooter';
 import Button from 'components/Button';
 import IconImage from 'components/IconImage';
-import { Perm } from 'modules/server/perms';
+import { Perm } from 'modules/client/perms';
 
 type ServerSideProps = {
 	publicUser: PublicUser
