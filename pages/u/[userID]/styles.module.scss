@@ -1,8 +1,8 @@
 @import 'styles/global';
 
 #profile {
-	&-grid {
-		.column-grid {
+	&-box {
+		.box-columns {
 			grid-template-columns: auto 1fr;
 
 			@include mobile {
@@ -10,7 +10,7 @@
 			}
 		}
 
-		.grid-row {
+		.box-row {
 			&-section {
 				justify-content: center;
 				column-gap: 2em;

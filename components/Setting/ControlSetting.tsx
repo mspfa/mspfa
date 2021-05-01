@@ -1,10 +1,10 @@
 import { useFormikContext } from 'formik';
-import FieldGridRow from 'components/Grid/FieldGridRow';
-import type { ExclusiveFieldGridRowProps } from 'components/Grid/FieldGridRow';
+import FieldBoxRow from 'components/Box/FieldBoxRow';
+import type { ExclusiveFieldBoxRowProps } from 'components/Box/FieldBoxRow';
 import type { KeyboardEvent } from 'react';
 import { useCallback } from 'react';
 
-export type ControlSettingProps = ExclusiveFieldGridRowProps;
+export type ControlSettingProps = ExclusiveFieldBoxRowProps;
 
 const ControlSetting = ({
 	label,
@@ -14,7 +14,7 @@ const ControlSetting = ({
 	const { setFieldValue } = useFormikContext();
 
 	return (
-		<FieldGridRow
+		<FieldBoxRow
 			name={name}
 			label={label}
 			help={help}

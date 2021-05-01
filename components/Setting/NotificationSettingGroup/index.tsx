@@ -1,11 +1,11 @@
 import './styles.module.scss';
-import GridRowSection from 'components/Grid/GridRowSection';
-import type { GridRowSectionProps } from 'components/Grid/GridRowSection';
+import BoxRowSection from 'components/Box/BoxRowSection';
+import type { BoxRowSectionProps } from 'components/Box/BoxRowSection';
 
-export type NotificationSettingGroupProps = GridRowSectionProps;
+export type NotificationSettingGroupProps = BoxRowSectionProps;
 
 const NotificationSettingGroup = ({ className, children, ...props }: NotificationSettingGroupProps) => (
-	<GridRowSection
+	<BoxRowSection
 		className={`notification-setting-group${className ? ` ${className}` : ''}`}
 		{...props}
 	>
@@ -16,7 +16,7 @@ const NotificationSettingGroup = ({ className, children, ...props }: Notificatio
 			Site
 		</div>
 		{children}
-	</GridRowSection>
+	</BoxRowSection>
 );
 
 export default NotificationSettingGroup;

@@ -4,9 +4,9 @@ import Link from 'components/Link';
 import createUpdater from 'react-component-updater';
 import type { ChangeEvent } from 'react';
 import Captcha from 'components/SignIn/Captcha';
-import LabeledGridRow from 'components/Grid/LabeledGridRow';
+import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import { toPattern } from 'modules/client/utilities';
-import LabeledDialogGrid from 'components/Grid/LabeledDialogGrid';
+import LabeledDialogBox from 'components/Box/LabeledDialogBox';
 import ForgotPassword from 'components/ForgotPassword';
 import AuthButton from 'components/Button/AuthButton';
 
@@ -80,10 +80,10 @@ const SignIn = ({ page }: SignInProps) => {
 					<div id="sign-in-divider" className="translucent-text">or</div>
 				</>
 			)}
-			<LabeledDialogGrid>
+			<LabeledDialogBox>
 				{page === 2 ? (
 					<>
-						<LabeledGridRow htmlFor="sign-in-name" label="Username">
+						<LabeledBoxRow htmlFor="sign-in-name" label="Username">
 							<input
 								id="sign-in-name"
 								name="name"
@@ -95,8 +95,8 @@ const SignIn = ({ page }: SignInProps) => {
 								value={signInValues.name}
 								onChange={onChange}
 							/>
-						</LabeledGridRow>
-						<LabeledGridRow htmlFor="sign-in-birth-day" label="Birthdate">
+						</LabeledBoxRow>
+						<LabeledBoxRow htmlFor="sign-in-birth-day" label="Birthdate">
 							<input
 								id="sign-in-birth-day"
 								name="birthDay"
@@ -152,11 +152,11 @@ const SignIn = ({ page }: SignInProps) => {
 								value={signInValues.birthYear}
 								onChange={onChange}
 							/>
-						</LabeledGridRow>
+						</LabeledBoxRow>
 					</>
 				) : (
 					<>
-						<LabeledGridRow htmlFor="sign-in-email" label="Email">
+						<LabeledBoxRow htmlFor="sign-in-email" label="Email">
 							<input
 								key={page} // This is necessary to re-render this element when `page` changes, or else `autoFocus` will not work correctly.
 								id="sign-in-email"
@@ -169,8 +169,8 @@ const SignIn = ({ page }: SignInProps) => {
 								value={signInValues.email}
 								onChange={onChange}
 							/>
-						</LabeledGridRow>
-						<LabeledGridRow htmlFor="sign-in-password" label="Password">
+						</LabeledBoxRow>
+						<LabeledBoxRow htmlFor="sign-in-password" label="Password">
 							<input
 								id="sign-in-password"
 								name="password"
@@ -181,11 +181,11 @@ const SignIn = ({ page }: SignInProps) => {
 								value={signInValues.password}
 								onChange={onChange}
 							/>
-						</LabeledGridRow>
+						</LabeledBoxRow>
 						{page === 0 ? (
 							<ForgotPassword />
 						) : (
-							<LabeledGridRow htmlFor="sign-in-confirm-password" label="Confirm">
+							<LabeledBoxRow htmlFor="sign-in-confirm-password" label="Confirm">
 								<input
 									id="sign-in-confirm-password"
 									name="confirmPassword"
@@ -197,11 +197,11 @@ const SignIn = ({ page }: SignInProps) => {
 									value={signInValues.confirmPassword}
 									onChange={onChange}
 								/>
-							</LabeledGridRow>
+							</LabeledBoxRow>
 						)}
 					</>
 				)}
-			</LabeledDialogGrid>
+			</LabeledDialogBox>
 			{page === 2 && (
 				<>
 					<Captcha />

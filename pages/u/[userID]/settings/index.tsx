@@ -11,15 +11,15 @@ import { Form, Formik, Field } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { getChangedValues, preventLeaveConfirmations, useLeaveConfirmation } from 'modules/client/forms';
-import Grid from 'components/Grid';
-import ColumnGrid from 'components/Grid/ColumnGrid';
-import GridSection from 'components/Grid/GridSection';
-import GridRowSection from 'components/Grid/GridRowSection';
-import FieldGridRow from 'components/Grid/FieldGridRow';
+import Box from 'components/Box';
+import BoxColumns from 'components/Box/BoxColumns';
+import BoxSection from 'components/Box/BoxSection';
+import BoxRowSection from 'components/Box/BoxRowSection';
+import FieldBoxRow from 'components/Box/FieldBoxRow';
 import NotificationSettingGroup from 'components/Setting/NotificationSettingGroup';
 import NotificationSetting from 'components/Setting/NotificationSetting';
 import ControlSetting from 'components/Setting/ControlSetting';
-import GridFooter from 'components/Grid/GridFooter';
+import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
@@ -27,9 +27,9 @@ import _ from 'lodash';
 import { Dialog } from 'modules/client/dialogs';
 import Label from 'components/Label';
 import Router from 'next/router';
-import GridRow from 'components/Grid/GridRow';
+import BoxRow from 'components/Box/BoxRow';
 import { toPattern } from 'modules/client/utilities';
-import LabeledDialogGrid from 'components/Grid/LabeledDialogGrid';
+import LabeledDialogBox from 'components/Box/LabeledDialogBox';
 import ForgotPassword from 'components/ForgotPassword';
 import AuthMethods from 'components/AuthMethod/AuthMethods';
 
@@ -114,8 +114,8 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 				confirmPassword: '' as string
 			},
 			content: ({ values }) => (
-				<LabeledDialogGrid>
-					<FieldGridRow
+				<LabeledDialogBox>
+					<FieldBoxRow
 						name="currentPassword"
 						type="password"
 						autoComplete="current-password"
@@ -125,7 +125,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 						autoFocus
 					/>
 					<ForgotPassword className="no-line-height" />
-					<FieldGridRow
+					<FieldBoxRow
 						name="password"
 						type="password"
 						autoComplete="new-password"
@@ -133,7 +133,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 						minLength={8}
 						label="New Password"
 					/>
-					<FieldGridRow
+					<FieldBoxRow
 						name="confirmPassword"
 						type="password"
 						autoComplete="new-password"
@@ -142,7 +142,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 						pattern={toPattern(values.password)}
 						label="Confirm"
 					/>
-				</LabeledDialogGrid>
+				</LabeledDialogBox>
 			),
 			actions: [
 				{ label: 'Okay', focus: false },
@@ -234,9 +234,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 
 					return (
 						<Form onChange={onFormChange}>
-							<Grid>
-								<GridRowSection heading="Account">
-									<FieldGridRow
+							<Box>
+								<BoxRowSection heading="Account">
+									<FieldBoxRow
 										name="email"
 										type="email"
 										autoComplete="email"
@@ -244,7 +244,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										maxLength={254}
 										label="Email"
 									/>
-									<GridRow>
+									<BoxRow>
 										{/* It is better if this button remains visible even for those who do not have a password sign-in method, because those people may think they do regardless, and they should be informed that they don't upon clicking this button, to minimize confusion. */}
 										<Button
 											className="small"
@@ -252,16 +252,16 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										>
 											Change Password
 										</Button>
-									</GridRow>
-									<GridRow>
+									</BoxRow>
+									<BoxRow>
 										<Button
 											className="small"
 											onClick={onClickEditAuthMethods}
 										>Edit Sign-In Methods</Button>
-									</GridRow>
-								</GridRowSection>
-								<GridRowSection heading="Display">
-									<FieldGridRow
+									</BoxRow>
+								</BoxRowSection>
+								<BoxRowSection heading="Display">
+									<FieldBoxRow
 										as="select"
 										name="settings.theme"
 										label="Theme"
@@ -271,41 +271,41 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										<option value="felt">Felt</option>
 										<option value="sbahj">SBaHJ</option>
 										<option value="trickster">Trickster</option>
-									</FieldGridRow>
-									<FieldGridRow
+									</FieldBoxRow>
+									<FieldBoxRow
 										name="settings.stickyNav"
 										label="Sticky Nav Bar"
 										help="Makes the nav bar stick to the top of your screen when you scroll down instead of scrolling out of the page."
 									/>
-									<FieldGridRow
+									<FieldBoxRow
 										name="settings.imageSharpening"
 										label="Image Sharpening"
 										help={'Disables anti-aliasing in images from adventure pages (using nearest-neighbor scaling).\n\nWhat this means is images, when scaled, will tend to have more crisp edges rather than becoming blurry.'}
 									/>
-									<FieldGridRow
+									<FieldBoxRow
 										name="settings.ads.side"
 										label="Side Ad"
 										onChange={values.settings.ads.side ? interceptAdDisable : handleChange}
 									/>
-									<FieldGridRow
+									<FieldBoxRow
 										name="settings.ads.matchedContent"
 										label="Matched Content Ad"
 										onChange={values.settings.ads.matchedContent ? interceptAdDisable : handleChange}
 									/>
-								</GridRowSection>
-								<GridRowSection heading="Utility">
-									<FieldGridRow
+								</BoxRowSection>
+								<BoxRowSection heading="Utility">
+									<FieldBoxRow
 										name="settings.autoOpenSpoilers"
 										label="Auto-Open Spoilers"
 										help="Makes spoilers open by default instead of closed."
 									/>
-									<FieldGridRow
+									<FieldBoxRow
 										name="settings.preloadImages"
 										label="Preload Images"
 										help="Loads images on adjacent adventure pages so they may already be loaded when an adjacent page is opened."
 									/>
-								</GridRowSection>
-								<ColumnGrid>
+								</BoxRowSection>
+								<BoxColumns>
 									<NotificationSettingGroup heading="General Notifications">
 										<NotificationSetting
 											name="settings.notifications.messages"
@@ -340,11 +340,11 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 											help="Get notified when an adventure you edit receives a new comment."
 										/>
 									</NotificationSettingGroup>
-								</ColumnGrid>
-								<GridRowSection heading="Controls">
-									<GridRow className="translucent-text">
+								</BoxColumns>
+								<BoxRowSection heading="Controls">
+									<BoxRow className="translucent-text">
 										Select a box and press a key. Press escape to remove a control.
-									</GridRow>
+									</BoxRow>
 									<ControlSetting
 										name="settings.controls.back"
 										label="Back"
@@ -357,8 +357,8 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										name="settings.controls.toggleSpoilers"
 										label="Toggle Spoilers"
 									/>
-								</GridRowSection>
-								<GridSection heading="Advanced">
+								</BoxRowSection>
+								<BoxSection heading="Advanced">
 									<Label htmlFor="field-style">
 										Custom Site Style
 									</Label>
@@ -369,9 +369,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										rows={5}
 										placeholder={"Paste SCSS here.\nIf you don't know what this is, don't worry about it."}
 									/>
-								</GridSection>
-								<GridFooter>
-									<GridRow>
+								</BoxSection>
+								<BoxFooter>
+									<BoxRow>
 										<Button
 											className="alt"
 											type="submit"
@@ -397,8 +397,8 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										>
 											Reset
 										</Button>
-									</GridRow>
-									<GridRow>
+									</BoxRow>
+									<BoxRow>
 										<Button
 											disabled={isSubmitting}
 											onClick={
@@ -459,9 +459,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										>
 											Delete Account
 										</Button>
-									</GridRow>
-								</GridFooter>
-							</Grid>
+									</BoxRow>
+								</BoxFooter>
+							</Box>
 						</Form>
 					);
 				}}

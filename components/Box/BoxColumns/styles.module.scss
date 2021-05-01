@@ -1,0 +1,12 @@
+@import 'styles/general';
+
+.box-columns {
+	display: grid;
+	gap: 4px;
+	grid-auto-flow: column;
+	grid-auto-columns: 1fr;
+
+	@include mobile {
+		grid-auto-flow: row;
+	}
+}

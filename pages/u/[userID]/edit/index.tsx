@@ -10,17 +10,17 @@ import { withStatusCode } from 'modules/server/errors';
 import { Form, Formik } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
 import { getChangedValues, useLeaveConfirmation } from 'modules/client/forms';
-import Grid from 'components/Grid';
-import ColumnGrid from 'components/Grid/ColumnGrid';
-import GridSection from 'components/Grid/GridSection';
-import GridRowSection from 'components/Grid/GridRowSection';
-import FieldGridRow from 'components/Grid/FieldGridRow';
-import GridFooter from 'components/Grid/GridFooter';
+import Box from 'components/Box';
+import BoxColumns from 'components/Box/BoxColumns';
+import BoxSection from 'components/Box/BoxSection';
+import BoxRowSection from 'components/Box/BoxRowSection';
+import FieldBoxRow from 'components/Box/FieldBoxRow';
+import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
-import LabeledGridRow from 'components/Grid/LabeledGridRow';
-import GridRow from 'components/Grid/GridRow';
+import LabeledBoxRow from 'components/Box/LabeledBoxRow';
+import BoxRow from 'components/Box/BoxRow';
 import Link from 'components/Link';
 import IconImage from 'components/IconImage';
 
@@ -113,57 +113,57 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 
 					return (
 						<Form onChange={onFormChange}>
-							<Grid id="profile-grid">
-								<ColumnGrid>
-									<Grid id="profile-meta-grid">
-										<GridSection id="profile-meta" heading="Meta">
+							<Box id="profile-box">
+								<BoxColumns>
+									<Box id="profile-meta-box">
+										<BoxSection id="profile-meta" heading="Meta">
 											<div id="profile-name">
 												{privateUser.name}
 											</div>
 											<IconImage id="profile-icon" src={privateUser.icon} />
-										</GridSection>
-									</Grid>
-									<Grid>
-										<GridRowSection heading="Stats">
+										</BoxSection>
+									</Box>
+									<Box>
+										<BoxRowSection heading="Stats">
 											{privateUser.birthdate && (
-												<LabeledGridRow label="Birthdate">
+												<LabeledBoxRow label="Birthdate">
 													{privateUser.birthdate}
-												</LabeledGridRow>
+												</LabeledBoxRow>
 											)}
-										</GridRowSection>
+										</BoxRowSection>
 										{(privateUser.email || privateUser.site) && (
-											<GridRowSection heading="Contact">
+											<BoxRowSection heading="Contact">
 												{privateUser.email && (
-													<LabeledGridRow label="Email">
+													<LabeledBoxRow label="Email">
 														<Link
 															href={`mailto:${privateUser.email}`}
 															target="_blank"
 														>
 															{privateUser.email}
 														</Link>
-													</LabeledGridRow>
+													</LabeledBoxRow>
 												)}
 												{privateUser.site && (
-													<LabeledGridRow label="Website">
+													<LabeledBoxRow label="Website">
 														<Link
 															href={privateUser.site}
 															target="_blank"
 														>
 															{privateUser.site}
 														</Link>
-													</LabeledGridRow>
+													</LabeledBoxRow>
 												)}
-											</GridRowSection>
+											</BoxRowSection>
 										)}
-									</Grid>
-								</ColumnGrid>
+									</Box>
+								</BoxColumns>
 								{privateUser.description && (
-									<GridSection id="profile-description" heading="Description">
+									<BoxSection id="profile-description" heading="Description">
 										{privateUser.description}
-									</GridSection>
+									</BoxSection>
 								)}
-								<GridFooter>
-									<GridRow>
+								<BoxFooter>
+									<BoxRow>
 										<Button
 											className="alt"
 											type="submit"
@@ -171,15 +171,15 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										>
 											Save
 										</Button>
-									</GridRow>
+									</BoxRow>
 									<Link
 										className="button"
 										href={`/u/${privateUser.id}`}
 									>
 										Back to Profile
 									</Link>
-								</GridFooter>
-							</Grid>
+								</BoxFooter>
+							</Box>
 						</Form>
 					);
 				}}

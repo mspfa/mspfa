@@ -5,14 +5,14 @@ import type { PublicUser } from 'modules/client/users';
 import { getUserByUnsafeID, getPublicUser } from 'modules/server/users';
 import { withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
-import Grid from 'components/Grid';
-import ColumnGrid from 'components/Grid/ColumnGrid';
-import GridSection from 'components/Grid/GridSection';
-import GridRowSection from 'components/Grid/GridRowSection';
-import LabeledGridRow from 'components/Grid/LabeledGridRow';
+import Box from 'components/Box';
+import BoxColumns from 'components/Box/BoxColumns';
+import BoxSection from 'components/Box/BoxSection';
+import BoxRowSection from 'components/Box/BoxRowSection';
+import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import Timestamp from 'components/Timestamp';
 import Link from 'components/Link';
-import GridFooter from 'components/Grid/GridFooter';
+import BoxFooter from 'components/Box/BoxFooter';
 import IconImage from 'components/IconImage';
 import { Perm } from 'modules/client/perms';
 
@@ -27,75 +27,75 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser }) => {
 
 	return (
 		<Page flashyTitle heading="Profile">
-			<Grid id="profile-grid">
-				<ColumnGrid>
-					<Grid id="profile-meta-grid">
-						<GridSection id="profile-meta" heading="Meta">
+			<Box id="profile-box">
+				<BoxColumns>
+					<Box id="profile-meta-box">
+						<BoxSection id="profile-meta" heading="Meta">
 							<div id="profile-name">
 								{publicUser.name}
 							</div>
 							<IconImage id="profile-icon" src={publicUser.icon} />
-						</GridSection>
-					</Grid>
-					<Grid>
-						<GridRowSection heading="Stats">
-							<LabeledGridRow label="Last Connection">
+						</BoxSection>
+					</Box>
+					<Box>
+						<BoxRowSection heading="Stats">
+							<LabeledBoxRow label="Last Connection">
 								<Timestamp relative withTime>{publicUser.lastSeen}</Timestamp>
-							</LabeledGridRow>
-							<LabeledGridRow label="Joined MSPFA">
+							</LabeledBoxRow>
+							<LabeledBoxRow label="Joined MSPFA">
 								<Timestamp>{publicUser.created}</Timestamp>
-							</LabeledGridRow>
+							</LabeledBoxRow>
 							{publicUser.birthdate && (
-								<LabeledGridRow label="Birthdate">
+								<LabeledBoxRow label="Birthdate">
 									<Timestamp>{publicUser.birthdate}</Timestamp>
-								</LabeledGridRow>
+								</LabeledBoxRow>
 							)}
-						</GridRowSection>
+						</BoxRowSection>
 						{(publicUser.email || publicUser.site) && (
-							<GridRowSection heading="Contact">
+							<BoxRowSection heading="Contact">
 								{publicUser.email && (
-									<LabeledGridRow label="Email">
+									<LabeledBoxRow label="Email">
 										<Link
 											href={`mailto:${publicUser.email}`}
 											target="_blank"
 										>
 											{publicUser.email}
 										</Link>
-									</LabeledGridRow>
+									</LabeledBoxRow>
 								)}
 								{publicUser.site && (
-									<LabeledGridRow label="Website">
+									<LabeledBoxRow label="Website">
 										<Link
 											href={publicUser.site}
 											target="_blank"
 										>
 											{publicUser.site}
 										</Link>
-									</LabeledGridRow>
+									</LabeledBoxRow>
 								)}
-							</GridRowSection>
+							</BoxRowSection>
 						)}
-					</Grid>
-				</ColumnGrid>
+					</Box>
+				</BoxColumns>
 				{publicUser.description && (
-					<GridSection id="profile-description" heading="Description">
+					<BoxSection id="profile-description" heading="Description">
 						{publicUser.description}
-					</GridSection>
+					</BoxSection>
 				)}
 				{user && (
 					user.id === publicUser.id
 					|| user.perms & Perm.sudoRead
 				) && (
-					<GridFooter>
+					<BoxFooter>
 						<Link
 							className="button"
 							href={`/u/${publicUser.id}/edit`}
 						>
 							Edit
 						</Link>
-					</GridFooter>
+					</BoxFooter>
 				)}
-			</Grid>
+			</Box>
 		</Page>
 	);
 });

@@ -2,10 +2,9 @@
 	&-group {
 		grid-template-columns: auto 0fr 0fr;
 		justify-content: center;
-		align-content: center;
 		align-items: center;
 
-		.grid-row-content {
+		.box-row-content {
 			justify-content: center;
 		}
 	}

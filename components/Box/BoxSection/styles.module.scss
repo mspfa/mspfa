@@ -1,0 +1,17 @@
+.box {
+	&-section {
+		display: flex;
+		flex-direction: column;
+	}
+
+	&-heading {
+		text-align: center;
+		padding: 0.25em;
+		margin-bottom: 4px;
+	}
+
+	&-content {
+		flex-grow: 1;
+		padding: 1.5em;
+	}
+}

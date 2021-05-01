@@ -4,8 +4,8 @@ import { useCallback } from 'react';
 import Head from 'next/head';
 import env from 'modules/client/env';
 import { Dialog } from 'modules/client/dialogs';
-import LabeledDialogGrid from 'components/Grid/LabeledDialogGrid';
-import FieldGridRow from 'components/Grid/FieldGridRow';
+import LabeledDialogBox from 'components/Box/LabeledDialogBox';
+import FieldBoxRow from 'components/Box/FieldBoxRow';
 import { toKebabCase, toPattern } from 'modules/client/utilities';
 import type { ButtonProps } from 'components/Button';
 import type { AuthMethodOptions } from 'modules/client/auth';
@@ -34,8 +34,8 @@ const promptAuthMethod = {
 				confirmPassword: '' as string
 			},
 			content: ({ values }) => (
-				<LabeledDialogGrid>
-					<FieldGridRow
+				<LabeledDialogBox>
+					<FieldBoxRow
 						name="password"
 						type="password"
 						autoComplete="new-password"
@@ -44,7 +44,7 @@ const promptAuthMethod = {
 						label="New Password"
 						autoFocus
 					/>
-					<FieldGridRow
+					<FieldBoxRow
 						name="confirmPassword"
 						type="password"
 						autoComplete="new-password"
@@ -53,7 +53,7 @@ const promptAuthMethod = {
 						pattern={toPattern(values.password)}
 						label="Confirm"
 					/>
-				</LabeledDialogGrid>
+				</LabeledDialogBox>
 			),
 			actions: [
 				{ label: 'Okay', focus: false },

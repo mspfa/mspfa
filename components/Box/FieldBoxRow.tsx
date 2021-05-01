@@ -1,10 +1,10 @@
 import { Field } from 'formik';
 import type { FieldAttributes } from 'formik';
 import { toKebabCase } from 'modules/client/utilities';
-import LabeledGridRow from 'components/Grid/LabeledGridRow';
-import type { LabeledGridRowProps } from 'components/Grid/LabeledGridRow';
+import LabeledBoxRow from 'components/Box/LabeledBoxRow';
+import type { LabeledBoxRowProps } from 'components/Box/LabeledBoxRow';
 
-export type ExclusiveFieldGridRowProps = Pick<LabeledGridRowProps, 'label' | 'help'> & {
+export type ExclusiveFieldBoxRowProps = Pick<LabeledBoxRowProps, 'label' | 'help'> & {
 	/**
 	 * The form `Field`'s `name` prop of this setting. Must be unique within the page.
 	 *
@@ -13,21 +13,21 @@ export type ExclusiveFieldGridRowProps = Pick<LabeledGridRowProps, 'label' | 'he
 	name: string
 };
 
-export type FieldGridRowProps = FieldAttributes<unknown> & { id?: never } & ExclusiveFieldGridRowProps;
+export type FieldBoxRowProps = FieldAttributes<unknown> & { id?: never } & ExclusiveFieldBoxRowProps;
 
-/** A `LabeledGridRow` containing a `Field`. Defaults to a checkbox. Accepts any props which `Field` accepts. */
-const FieldGridRow = ({
+/** A `LabeledBoxRow` containing a `Field`. Defaults to a checkbox. Accepts any props which `Field` accepts. */
+const FieldBoxRow = ({
 	label,
 	name,
 	type = 'checkbox',
 	help,
 	...props
-}: FieldGridRowProps) => {
+}: FieldBoxRowProps) => {
 	// Determine the form `Field`'s `id` based on its `name`, converting from camelCase to kebab-case.
 	const fieldID = `field-${toKebabCase(name)}`;
 
 	return (
-		<LabeledGridRow
+		<LabeledBoxRow
 			label={label}
 			htmlFor={fieldID}
 			help={help}
@@ -38,8 +38,8 @@ const FieldGridRow = ({
 				type={props.as ? undefined : type}
 				{...props}
 			/>
-		</LabeledGridRow>
+		</LabeledBoxRow>
 	);
 };
 
-export default FieldGridRow;
+export default FieldBoxRow;
