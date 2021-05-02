@@ -24,7 +24,12 @@ const getMaxDay = (year: number, month: number) => (
 
 type ExclusiveDateFieldProps = {
 	name: string,
-	value?: number,
+	/**
+	 * The controlled value of this date field.
+	 *
+	 * If this is a string, it will automatically be converted to a number.
+	 */
+	value?: number | string,
 	yearProps?: Omit<InputHTMLAttributes<HTMLInputElement>, OmittedPropKeys>,
 	monthProps?: Omit<SelectHTMLAttributes<HTMLSelectElement>, OmittedPropKeys>,
 	dayProps?: Omit<InputHTMLAttributes<HTMLInputElement>, OmittedPropKeys>
@@ -51,11 +56,17 @@ const DateField = ({
 	const [{ value: fieldValue }, , { setValue: setFieldValue }] = useField<number | undefined>(name);
 
 	const date = (
-		typeof propValue === 'number'
-			? new Date(propValue)
-			: typeof fieldValue === 'number'
+		propValue === undefined
+			? typeof fieldValue === 'number'
 				? new Date(fieldValue)
 				: undefined
+			: new Date(
+				typeof propValue === 'string'
+					? propValue
+						? +propValue
+						: NaN
+					: propValue
+			)
 	);
 
 	let year = date ? date.getFullYear() : NaN;
@@ -63,7 +74,6 @@ const DateField = ({
 	let day = date ? date.getDate() : NaN;
 
 	const [fallbackValues, setFallbackValues] = useState({ year, month, day });
-	console.log({ year, month, day }, fallbackValues);
 
 	if (isNaN(year) || isNaN(month) || isNaN(day)) {
 		year = fallbackValues.year;
@@ -79,6 +89,12 @@ const DateField = ({
 	) => {
 		newDay = Math.min(getMaxDay(newYear, newMonth), newDay);
 
+		setFallbackValues({
+			year: newYear,
+			month: newMonth,
+			day: newDay
+		});
+
 		const newValue = +new Date(newYear, newMonth, newDay);
 
 		nativeInput.name = name;
@@ -92,12 +108,6 @@ const DateField = ({
 		onChangeProp?.({
 			...event,
 			target: nativeInput
-		});
-
-		setFallbackValues({
-			year: newYear,
-			month: newMonth,
-			day: newDay
 		});
 	}, [name, propValue, setFieldValue, onChangeProp]);
 

@@ -58,6 +58,8 @@ export type SignInProps = {
 const SignIn = ({ page }: SignInProps) => {
 	useSignInValuesUpdater();
 
+	const now = new Date();
+
 	return (
 		<div id="sign-in-content">
 			{page !== 2 && (
@@ -96,14 +98,14 @@ const SignIn = ({ page }: SignInProps) => {
 								required
 								min={
 									// The maximum age is 200 years old.
-									Date.now() - 1000 * 60 * 60 * 24 * 365 * 200
+									+new Date(now.getFullYear() - 13, now.getMonth(), now.getDate())
 									// Maybe in the distant future, when anyone can live that long, or when aliens with longer life spans use our internet, MSPFA will still be here.
 								}
 								max={
 									// The minimum age is 13 years old.
-									Date.now() - 1000 * 60 * 60 * 24 * 365 * 13
+									+new Date(now.getFullYear() - 200, now.getMonth(), now.getDate())
 								}
-								value={signInValues.birthdate ? +signInValues.birthdate : undefined}
+								value={signInValues.birthdate}
 								onChange={onChange}
 							/>
 						</LabeledBoxRow>
