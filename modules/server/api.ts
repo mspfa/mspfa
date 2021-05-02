@@ -89,3 +89,28 @@ export const createValidator = (methodSchema: Record<string, unknown>, schema: R
 		})
 	);
 };
+
+export const validateBirthdate = (
+	res: NextApiResponse,
+	birthdate: number
+) => new Promise<void>(resolve => {
+	const now = new Date();
+
+	if (birthdate > +new Date(now.getFullYear() - 13, now.getMonth(), now.getDate())) {
+		// The user is under 13 years old, which breaks the terms of service.
+		res.status(400).send({
+			message: 'You must be at least 13 years old to sign up.'
+		});
+		return;
+	}
+
+	if (birthdate < +new Date(now.getFullYear() - 200, now.getMonth(), now.getDate())) {
+		// The user is over 200 years old, which, as far as I know, is currently impossible.
+		res.status(400).send({
+			message: 'You should be dead.'
+		});
+		return;
+	}
+
+	resolve();
+});

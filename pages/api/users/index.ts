@@ -1,4 +1,5 @@
 import validate from './index.validate';
+import { validateBirthdate } from 'modules/server/api';
 import type { APIHandler } from 'modules/server/api';
 import type { SessionBody } from 'pages/api/session';
 import { getAuthMethodInfo, createSession } from 'modules/server/auth';
@@ -21,23 +22,7 @@ const Handler: APIHandler<{
 	body: PrivateUser
 }> = async (req, res) => {
 	await validate(req, res);
-
-	const now = new Date();
-	if (req.body.birthdate > +new Date(now.getFullYear() - 13, now.getMonth(), now.getDate())) {
-		// The user is under 13 years old, which breaks the terms of service.
-		res.status(400).send({
-			message: 'You must be at least 13 years old to sign up.'
-		});
-		return;
-	}
-
-	if (req.body.birthdate < +new Date(now.getFullYear() - 200, now.getMonth(), now.getDate())) {
-		// The user is over 200 years old, which, as far as I know, is currently impossible.
-		res.status(400).send({
-			message: 'You should be dead.'
-		});
-		return;
-	}
+	await validateBirthdate(res, req.body.birthdate);
 
 	const {
 		email = req.body.email?.toLowerCase(),
@@ -84,6 +69,8 @@ const Handler: APIHandler<{
 		});
 		return;
 	}
+
+	const now = new Date();
 
 	const user: UserDocument = {
 		...defaultUser,

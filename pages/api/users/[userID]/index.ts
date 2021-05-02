@@ -1,5 +1,6 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
+import { validateBirthdate } from 'modules/server/api';
 import type { PrivateUser } from 'modules/client/users';
 import type { RecursivePartial } from 'modules/types';
 import { Perm } from 'modules/client/perms';
@@ -33,12 +34,16 @@ const Handler: APIHandler<{
 		const user = await permToGetUserInAPI(req, res, Perm.sudoWrite);
 
 		if (Object.keys(req.body).length) {
-			const userChanges: RecursivePartial<UserDocument> = {
-				...req.body as Omit<typeof req.body, 'birthdate'>,
-				...typeof req.body.birthdate === 'number' && {
-					birthdate: new Date(req.body.birthdate)
-				}
-			};
+			const userChanges: RecursivePartial<(
+				Omit<UserDocument, 'birthdate'>
+				& { birthdate: Date }
+			)> = req.body as Omit<typeof req.body, 'birthdate'>;
+
+			if (req.body.birthdate !== undefined) {
+				await validateBirthdate(res, req.body.birthdate);
+
+				userChanges.birthdate = new Date(req.body.birthdate);
+			}
 
 			await users.updateOne({
 				_id: user._id
