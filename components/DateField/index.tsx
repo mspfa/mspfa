@@ -12,15 +12,15 @@ nativeInput.type = 'number';
 const yearSize = new Date().getFullYear().toString().length + 2;
 
 /** Gets the maximum possible day of the month based on a full year number (e.g. 2001) and a month number (0 to 11). */
-const getMaxDay = (year: number, month: number) => (
-	isNaN(month)
-		? 31
-		: new Date(
-			isNaN(year) ? new Date().getFullYear() : year,
-			month + 1,
-			0
-		).getDate()
-);
+const getMaxDay = (year: number, month: number) => {
+	const maxDay = new Date(
+		isNaN(year) ? new Date().getFullYear() : year,
+		month + 1,
+		0
+	).getDate();
+
+	return isNaN(maxDay) ? 31 : maxDay;
+};
 
 type ExclusiveDateFieldProps = {
 	name: string,
