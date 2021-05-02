@@ -103,7 +103,7 @@ const SignIn = ({ page }: SignInProps) => {
 									// The minimum age is 13 years old.
 									Date.now() - 1000 * 60 * 60 * 24 * 365 * 13
 								}
-								value={+signInValues.birthdate}
+								value={signInValues.birthdate ? +signInValues.birthdate : undefined}
 								onChange={onChange}
 							/>
 						</LabeledBoxRow>
