@@ -118,7 +118,7 @@ const DateField = ({
 			month,
 			day
 		);
-	}, [onChange, day, month]);
+	}, [onChange, month, day]);
 
 	const onChangeMonth = useCallback((event: ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
 		onChange(
@@ -127,7 +127,7 @@ const DateField = ({
 			event.target.value ? +event.target.value : NaN,
 			day
 		);
-	}, [onChange, day, year]);
+	}, [onChange, year, day]);
 
 	const onChangeDay = useCallback((event: ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
 		onChange(
@@ -136,7 +136,7 @@ const DateField = ({
 			month,
 			event.target.value ? +event.target.value : NaN
 		);
-	}, [onChange, month, year]);
+	}, [onChange, year, month]);
 
 	return (
 		<>
