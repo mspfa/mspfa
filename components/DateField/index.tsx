@@ -11,12 +11,19 @@ nativeInput.type = 'number';
 
 const yearSize = new Date().getFullYear().toString().length + 2;
 
+/** Gets the maximum possible day of the month based on a full year number (e.g. 2001) and a month number (0 to 11). */
+const getMaxDay = (year: number, month: number) => (
+	isNaN(year) || isNaN(month)
+		? 31
+		: new Date(year, month + 1, 0).getDate()
+);
+
 type ExclusiveDateFieldProps = {
 	name: string,
 	value?: number,
-	dayProps?: Omit<InputHTMLAttributes<HTMLInputElement>, OmittedPropKeys>,
+	yearProps?: Omit<InputHTMLAttributes<HTMLInputElement>, OmittedPropKeys>,
 	monthProps?: Omit<SelectHTMLAttributes<HTMLSelectElement>, OmittedPropKeys>,
-	yearProps?: Omit<InputHTMLAttributes<HTMLInputElement>, OmittedPropKeys>
+	dayProps?: Omit<InputHTMLAttributes<HTMLInputElement>, OmittedPropKeys>
 };
 
 type PickedPropKeys = 'id' | 'required' | 'min' | 'max' | 'onChange' | 'autoComplete';
@@ -33,9 +40,9 @@ const DateField = ({
 	min = 0,
 	max = Date.now() + 1000 * 60 * 60 * 24 * 365 * 100,
 	autoComplete,
-	dayProps,
+	yearProps,
 	monthProps,
-	yearProps
+	dayProps
 }: DateFieldProps) => {
 	const [{ value: fieldValue }, , { setValue: setFieldValue }] = useField<number | undefined>(name);
 
@@ -47,14 +54,22 @@ const DateField = ({
 				: undefined
 	);
 
-	const day = date ? date.getDate() : NaN;
-	const month = date ? date.getMonth() : NaN;
 	const year = date ? date.getFullYear() : NaN;
+	const month = date ? date.getMonth() : NaN;
+	const day = date ? date.getDate() : NaN;
 
 	const onChange = useCallback((
 		event: ChangeEvent<HTMLInputElement & HTMLSelectElement>,
-		newValue: number
+		newYear: number,
+		newMonth: number,
+		newDay: number
 	) => {
+		const newValue = +new Date(
+			newYear,
+			newMonth,
+			Math.min(getMaxDay(newYear, newMonth), newDay)
+		);
+
 		nativeInput.name = name;
 		nativeInput.value = isNaN(newValue) ? '' : newValue.toString();
 
@@ -69,26 +84,32 @@ const DateField = ({
 		});
 	}, [name, propValue, setFieldValue, onChangeProp]);
 
-	const onChangeDay = useCallback((event: ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
+	const onChangeYear = useCallback((event: ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
 		onChange(
 			event,
-			+new Date(year, month, +event.target.value)
+			+event.target.value,
+			month,
+			day
 		);
-	}, [onChange, month, year]);
+	}, [onChange, day, month]);
 
 	const onChangeMonth = useCallback((event: ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
 		onChange(
 			event,
-			+new Date(year, +event.target.value, day)
+			year,
+			+event.target.value,
+			day
 		);
 	}, [onChange, day, year]);
 
-	const onChangeYear = useCallback((event: ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
+	const onChangeDay = useCallback((event: ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
 		onChange(
 			event,
-			+new Date(+event.target.value, month, day)
+			year,
+			month,
+			+event.target.value
 		);
-	}, [onChange, day, month]);
+	}, [onChange, month, year]);
 
 	return (
 		<>
@@ -100,10 +121,7 @@ const DateField = ({
 				required={required}
 				placeholder="DD"
 				min={1}
-				max={(isNaN(year) || isNaN(month)
-					? 31
-					: new Date(year, month, 0).getDate()
-				)}
+				max={getMaxDay(year, month)}
 				size={4}
 				value={day}
 				onChange={onChangeDay}

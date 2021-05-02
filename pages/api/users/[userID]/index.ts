@@ -35,7 +35,7 @@ const Handler: APIHandler<{
 		if (Object.keys(req.body).length) {
 			const userChanges: RecursivePartial<UserDocument> = {
 				...req.body as Omit<typeof req.body, 'birthdate'>,
-				...req.body.birthdate && {
+				...typeof req.body.birthdate === 'number' && {
 					birthdate: new Date(req.body.birthdate)
 				}
 			};

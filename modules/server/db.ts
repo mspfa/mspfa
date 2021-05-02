@@ -109,7 +109,7 @@ export const flatten = (
 		for (let i = 0; i < object.length; i++) {
 			const item = object[i];
 
-			if (item instanceof Object) {
+			if (item instanceof Object && !(item instanceof Date)) {
 				flatten(item as any, `${prefix + i}.`, flatObject);
 			} else if (item !== undefined) {
 				flatObject[prefix + i] = item;
@@ -119,7 +119,7 @@ export const flatten = (
 		for (const key in object) {
 			const value = object[key];
 
-			if (value instanceof Object) {
+			if (value instanceof Object && !(value instanceof Date)) {
 				flatten(value as any, `${prefix + key}.`, flatObject);
 			} else if (value !== undefined) {
 				flatObject[prefix + key] = value;
