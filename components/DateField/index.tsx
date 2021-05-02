@@ -85,7 +85,7 @@ const DateField = ({
 		nativeInput.value = isNaN(newValue) ? '' : newValue.toString();
 
 		if (propValue === undefined) {
-			// If this component's value is not managed externally, update the Formik value.
+			// If this component's value is not controlled externally, update the Formik value.
 			setFieldValue(isNaN(newValue) ? undefined : newValue);
 		}
 
