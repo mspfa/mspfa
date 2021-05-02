@@ -9,6 +9,7 @@ import { toPattern } from 'modules/client/utilities';
 import LabeledDialogBox from 'components/Box/LabeledDialogBox';
 import ForgotPassword from 'components/ForgotPassword';
 import AuthButton from 'components/Button/AuthButton';
+import DateField from 'components/DateField';
 
 const startSigningUp = () => {
 	setSignInPage(1);
@@ -23,9 +24,7 @@ export const initialSignInValues = {
 	confirmPassword: '',
 	name: '',
 	termsAgreed: false,
-	birthDay: '',
-	birthMonth: '',
-	birthYear: '',
+	birthdate: '',
 	captchaToken: ''
 };
 
@@ -59,13 +58,6 @@ export type SignInProps = {
 const SignIn = ({ page }: SignInProps) => {
 	useSignInValuesUpdater();
 
-	/**
-	 * ```
-	 * new Date().getFullYear()
-	 * ```
-	 */
-	const nowFullYear = new Date().getFullYear();
-
 	return (
 		<div id="sign-in-content">
 			{page !== 2 && (
@@ -96,60 +88,22 @@ const SignIn = ({ page }: SignInProps) => {
 								onChange={onChange}
 							/>
 						</LabeledBoxRow>
-						<LabeledBoxRow htmlFor="sign-in-birth-day" label="Birthdate">
-							<input
-								id="sign-in-birth-day"
-								name="birthDay"
-								type="number"
-								autoComplete="bday-day"
+						<LabeledBoxRow htmlFor="sign-in-birthdate-day" label="Birthdate">
+							<DateField
+								id="sign-in-birthdate"
+								name="birthdate"
+								autoComplete="bday"
 								required
-								placeholder="DD"
-								min={1}
-								max={new Date(+signInValues.birthYear, +signInValues.birthMonth, 0).getDate() || 31}
-								size={4}
-								value={signInValues.birthDay}
-								onChange={onChange}
-							/>
-							<select
-								id="sign-in-birth-month"
-								name="birthMonth"
-								autoComplete="bday-month"
-								required
-								value={signInValues.birthMonth}
-								onChange={onChange}
-							>
-								<option value="" disabled hidden>Month</option>
-								<option value={1}>January</option>
-								<option value={2}>February</option>
-								<option value={3}>March</option>
-								<option value={4}>April</option>
-								<option value={5}>May</option>
-								<option value={6}>June</option>
-								<option value={7}>July</option>
-								<option value={8}>August</option>
-								<option value={9}>September</option>
-								<option value={10}>October</option>
-								<option value={11}>November</option>
-								<option value={12}>December</option>
-							</select>
-							<input
-								id="sign-in-birth-year"
-								name="birthYear"
-								type="number"
-								autoComplete="bday-year"
-								required
-								placeholder="YYYY"
 								min={
 									// The maximum age is 200 years old.
-									nowFullYear - 200
+									Date.now() - 1000 * 60 * 60 * 24 * 365 * 200
 									// Maybe in the distant future, when anyone can live that long, or when aliens with longer life spans use our internet, MSPFA will still be here.
 								}
 								max={
 									// The minimum age is 13 years old.
-									nowFullYear - 13
+									Date.now() - 1000 * 60 * 60 * 24 * 365 * 13
 								}
-								size={nowFullYear.toString().length + 2}
-								value={signInValues.birthYear}
+								value={+signInValues.birthdate}
 								onChange={onChange}
 							/>
 						</LabeledBoxRow>

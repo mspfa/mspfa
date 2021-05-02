@@ -24,16 +24,16 @@ const FieldBoxRow = ({
 	...props
 }: FieldBoxRowProps) => {
 	// Determine the form `Field`'s `id` based on its `name`, converting from camelCase to kebab-case.
-	const fieldID = `field-${toKebabCase(name)}`;
+	const id = `field-${toKebabCase(name)}`;
 
 	return (
 		<LabeledBoxRow
 			label={label}
-			htmlFor={fieldID}
+			htmlFor={id}
 			help={help}
 		>
 			<Field
-				id={fieldID}
+				id={id}
 				name={name}
 				type={props.as ? undefined : type}
 				{...props}

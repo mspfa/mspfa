@@ -109,11 +109,7 @@ export const setSignInPage = (
 							...signInPage !== 0 && {
 								captchaToken: signInValues.captchaToken,
 								name: signInValues.name,
-								birthdate: +new Date(
-									+signInValues.birthYear,
-									+signInValues.birthMonth - 1,
-									+signInValues.birthDay
-								)
+								birthdate: +signInValues.birthdate
 							}
 						} as any,
 						{

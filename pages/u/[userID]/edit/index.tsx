@@ -23,10 +23,12 @@ import IconImage from 'components/IconImage';
 import Label from 'components/Label';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import BoxRow from 'components/Box/BoxRow';
+import DateField from 'components/DateField';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 
 const getValuesFromUser = (privateUser: PrivateUser) => ({
+	birthdate: privateUser.birthdate,
 	name: privateUser.name,
 	icon: privateUser.icon,
 	email: privateUser.email,
@@ -91,7 +93,10 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 											label="Username"
 											name="name"
 											type="text"
+											autoComplete="username"
 											required
+											minLength={1}
+											maxLength={32}
 										/>
 										<FieldBoxRow
 											label="Icon URL"
@@ -105,7 +110,20 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 									<Box>
 										<BoxRowSection heading="Stats">
 											<LabeledBoxRow label="Birthdate">
-												{privateUser.birthdate}
+												<DateField
+													name="birthdate"
+													autoComplete="bday"
+													required
+													min={
+														// The maximum age is 200 years old.
+														Date.now() - 1000 * 60 * 60 * 24 * 365 * 200
+														// Maybe in the distant future, when anyone can live that long, or when aliens with longer life spans use our internet, MSPFA will still be here.
+													}
+													max={
+														// The minimum age is 13 years old.
+														Date.now() - 1000 * 60 * 60 * 24 * 365 * 13
+													}
+												/>
 											</LabeledBoxRow>
 										</BoxRowSection>
 										<BoxRowSection heading="Contact">
