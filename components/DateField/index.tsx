@@ -73,12 +73,10 @@ const DateField = ({
 	let month = date ? date.getMonth() : NaN;
 	let day = date ? date.getDate() : NaN;
 
-	const [fallbackValues, setFallbackValues] = useState({ year, month, day });
+	const [fallbackValues, setFallbackValues] = useState([year, month, day] as const);
 
 	if (isNaN(year) || isNaN(month) || isNaN(day)) {
-		year = fallbackValues.year;
-		month = fallbackValues.month;
-		day = fallbackValues.day;
+		[year, month, day] = fallbackValues;
 	}
 
 	const onChange = useCallback((
@@ -89,11 +87,7 @@ const DateField = ({
 	) => {
 		newDay = Math.min(getMaxDay(newYear, newMonth), newDay);
 
-		setFallbackValues({
-			year: newYear,
-			month: newMonth,
-			day: newDay
-		});
+		setFallbackValues([newYear, newMonth, newDay]);
 
 		const newDate = new Date();
 		newDate.setFullYear(newYear);
@@ -101,13 +95,13 @@ const DateField = ({
 		newDate.setDate(newDay);
 		const newValue = +newDate;
 
-		nativeInput.name = name;
-		nativeInput.value = isNaN(newValue) ? '' : newValue.toString();
-
 		if (propValue === undefined) {
 			// If this component's value is not controlled externally, update the Formik value.
 			setFieldValue(isNaN(newValue) ? undefined : newValue);
 		}
+
+		nativeInput.name = name;
+		nativeInput.value = isNaN(newValue) ? '' : newValue.toString();
 
 		onChangeProp?.({
 			...event,
