@@ -95,7 +95,11 @@ const DateField = ({
 			day: newDay
 		});
 
-		const newValue = +new Date(newYear, newMonth, newDay);
+		const newDate = new Date();
+		newDate.setFullYear(newYear);
+		newDate.setMonth(newMonth);
+		newDate.setDate(newDay);
+		const newValue = +newDate;
 
 		nativeInput.name = name;
 		nativeInput.value = isNaN(newValue) ? '' : newValue.toString();
