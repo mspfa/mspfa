@@ -32,6 +32,8 @@ import { toPattern } from 'modules/client/utilities';
 import LabeledDialogBox from 'components/Box/LabeledDialogBox';
 import ForgotPassword from 'components/ForgotPassword';
 import AuthMethods from 'components/AuthMethod/AuthMethods';
+import LabeledBoxRow from 'components/Box/LabeledBoxRow';
+import BirthdateField from 'components/DateField/BirthdateField';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 type AuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;
@@ -39,6 +41,7 @@ type PasswordAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods
 
 const getValuesFromUser = (privateUser: Pick<PrivateUser, 'settings'> & Partial<Omit<PrivateUser, 'settings'>>) => ({
 	email: privateUser.email,
+	birthdate: privateUser.birthdate,
 	settings: {
 		ads: privateUser.settings.ads,
 		autoOpenSpoilers: privateUser.settings.autoOpenSpoilers,
@@ -244,6 +247,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										maxLength={254}
 										label="Email"
 									/>
+									<LabeledBoxRow htmlFor="field-birthdate-day" label="Birthdate">
+										<BirthdateField required />
+									</LabeledBoxRow>
 									<BoxRow>
 										{/* It is better if this button remains visible even for those who do not have a password sign-in method, because those people may think they do regardless, and they should be informed that they don't upon clicking this button, to minimize confusion. */}
 										<Button

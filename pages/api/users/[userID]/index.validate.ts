@@ -52,7 +52,7 @@ export default createValidator({
 					additionalProperties: false,
 					properties: {
 						body: {
-							$ref: '#/definitions/RecursivePartial%3Calias-731470504-70254-70395-731470504-0-212312%3Cdef-alias--744-1041--0-36661776781619%2Calias--499-736--0-1772308207794%3E%3E'
+							$ref: '#/definitions/RecursivePartial%3Calias-731470504-70254-70395-731470504-0-212312%3Cdef-alias--744-1041--0-36661776781619%2Calias--555-792--0-1949308207794%3E%3E'
 						},
 						query: {
 							type: 'object',
@@ -79,7 +79,7 @@ export default createValidator({
 				}
 			]
 		},
-		'RecursivePartial<alias-731470504-70254-70395-731470504-0-212312<def-alias--744-1041--0-36661776781619,alias--499-736--0-1772308207794>>': {
+		'RecursivePartial<alias-731470504-70254-70395-731470504-0-212312<def-alias--744-1041--0-36661776781619,alias--555-792--0-1949308207794>>': {
 			type: 'object',
 			properties: {
 				birthdate: {

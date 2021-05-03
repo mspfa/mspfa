@@ -58,8 +58,6 @@ export type SignInProps = {
 const SignIn = ({ page }: SignInProps) => {
 	useSignInValuesUpdater();
 
-	const now = new Date();
-
 	return (
 		<div id="sign-in-content">
 			{page !== 2 && (

@@ -84,8 +84,6 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 				{({ isSubmitting, dirty, values }) => {
 					useLeaveConfirmation(dirty);
 
-					const now = new Date();
-
 					return (
 						<Form>
 							<Box>

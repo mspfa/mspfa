@@ -64,20 +64,20 @@ export type StoryNotificationSettings = true | StoryReaderNotificationSettings |
 
 export type UserDocument = {
 	_id: ObjectId,
-	authMethods: AuthMethod[],
-	sessions: UserSession[],
-	created: Date,
-	/** The date of the last authenticated request the user sent to the site. */
-	lastSeen: Date,
-	birthdate: Date,
+	/** The user's verified email address. */
+	email?: EmailString,
+	unverifiedEmail?: EmailString,
 	/**
 	 * @minLength 1
 	 * @maxLength 32
 	 */
 	name: string,
-	/** The user's verified email address. */
-	email?: EmailString,
-	unverifiedEmail?: EmailString,
+	created: Date,
+	/** The date of the last authenticated request the user sent to the site. */
+	lastSeen: Date,
+	birthdate: Date,
+	authMethods: AuthMethod[],
+	sessions: UserSession[],
 	description: string,
 	icon: '' | URLString,
 	site: '' | URLString,
@@ -184,11 +184,11 @@ typeCheckedDefaultUser;
 export const getPrivateUser = (user: UserDocument): PrivateUser => {
 	const privateUser = {
 		id: user._id.toString(),
+		email: user.email,
+		name: user.name,
 		created: +user.created,
 		lastSeen: +user.lastSeen,
 		birthdate: +user.birthdate,
-		name: user.name,
-		email: user.email,
 		unverifiedEmail: user.unverifiedEmail,
 		description: user.description,
 		icon: user.icon,
@@ -218,11 +218,11 @@ export const getPrivateUser = (user: UserDocument): PrivateUser => {
 export const getPublicUser = (user: UserDocument): PublicUser => {
 	const publicUser = {
 		id: user._id.toString(),
+		email: user.settings.emailPublic ? user.email : undefined,
+		name: user.name,
 		created: +user.created,
 		lastSeen: +user.lastSeen,
 		birthdate: user.settings.birthdatePublic ? +user.birthdate : undefined,
-		name: user.name,
-		email: user.settings.emailPublic ? user.email : undefined,
 		description: user.description,
 		icon: user.icon,
 		site: user.site,

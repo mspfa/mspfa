@@ -8,7 +8,7 @@ import createGlobalState from 'global-react-state';
 import type { RecursivePartial } from 'modules/types';
 
 /** All keys whose values have the same serializable type in both `DocumentUser` and `PrivateUser`. */
-type PrivateUserDocumentKey = 'name' | 'email' | 'unverifiedEmail' | 'description' | 'icon' | 'site' | 'storySaves' | 'achievements' | 'favs' | 'profileStyle' | 'settings' | 'perms' | 'dev' | 'mod' | 'patron';
+type PrivateUserDocumentKey = 'email' | 'unverifiedEmail' | 'name' | 'description' | 'icon' | 'site' | 'storySaves' | 'achievements' | 'favs' | 'profileStyle' | 'settings' | 'perms' | 'dev' | 'mod' | 'patron';
 
 /** A serializable version of `UserDocument` which only has properties that can safely be exposed to the client that owns the user data. */
 export type PrivateUser = (
@@ -29,10 +29,10 @@ export type PublicUser = (
 	Pick<UserDocument, PublicUserDocumentKey>
 	& {
 		id: string,
+		email?: UserDocument['email'],
 		created: number,
 		lastSeen: number,
 		birthdate?: number,
-		email?: UserDocument['email'],
 		favs?: UserDocument['favs']
 	}
 );
