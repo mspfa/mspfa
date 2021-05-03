@@ -14,11 +14,13 @@ const Footer = () => {
 			<footer>
 				<div className="mspface-container">
 					{footer && (
-						<style jsx global>{`
-							footer .mspface {
-								background-image: url(/images/footers/${footer.name});
-							}
-						`}</style>
+						<style jsx global>
+							{`
+								footer .mspface {
+									background-image: url(/images/footers/${footer.name});
+								}
+							`}
+						</style>
 					)}
 					<div className="mspface front" />
 					<WealthDungeon />

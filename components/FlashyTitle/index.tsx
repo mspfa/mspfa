@@ -27,11 +27,13 @@ const FlashyTitle = () => {
 
 	return (
 		<div id="flashy-title-container" className="front">
-			<style jsx global>{`
-			#flashy-title {
-				background-color: ${color};
-			}
-		`}</style>
+			<style jsx global>
+				{`
+					#flashy-title {
+						background-color: ${color};
+					}
+				`}
+			</style>
 			<Link
 				id="flashy-title"
 				href="/"

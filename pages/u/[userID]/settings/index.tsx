@@ -257,7 +257,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										<Button
 											className="small"
 											onClick={onClickEditAuthMethods}
-										>Edit Sign-In Methods</Button>
+										>
+											Edit Sign-In Methods
+										</Button>
 									</BoxRow>
 								</BoxRowSection>
 								<BoxRowSection heading="Display">
