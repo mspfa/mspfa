@@ -23,7 +23,7 @@ import IconImage from 'components/IconImage';
 import Label from 'components/Label';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import BoxRow from 'components/Box/BoxRow';
-import DateField from 'components/DateField';
+import BirthdateField from 'components/DateField/BirthdateField';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 
@@ -111,21 +111,8 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 									</BoxRowSection>
 									<Box>
 										<BoxRowSection heading="Stats">
-											<LabeledBoxRow label="Birthdate">
-												<DateField
-													name="birthdate"
-													autoComplete="bday"
-													required
-													min={
-														// The minimum age is 13 years old.
-														+new Date(now.getFullYear() - 200, now.getMonth(), now.getDate())
-													}
-													max={
-														// The maximum age is 200 years old.
-														+new Date(now.getFullYear() - 13, now.getMonth(), now.getDate())
-														// Maybe in the distant future, when anyone can live that long, or when aliens with longer life spans use our internet, MSPFA will still be here.
-													}
-												/>
+											<LabeledBoxRow htmlFor="field-birthdate-day" label="Birthdate">
+												<BirthdateField required />
 											</LabeledBoxRow>
 										</BoxRowSection>
 										<BoxRowSection heading="Contact">

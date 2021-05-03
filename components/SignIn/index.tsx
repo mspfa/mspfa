@@ -9,7 +9,7 @@ import { toPattern } from 'modules/client/utilities';
 import LabeledDialogBox from 'components/Box/LabeledDialogBox';
 import ForgotPassword from 'components/ForgotPassword';
 import AuthButton from 'components/Button/AuthButton';
-import DateField from 'components/DateField';
+import BirthdateField from 'components/DateField/BirthdateField';
 
 const startSigningUp = () => {
 	setSignInPage(1);
@@ -91,20 +91,9 @@ const SignIn = ({ page }: SignInProps) => {
 							/>
 						</LabeledBoxRow>
 						<LabeledBoxRow htmlFor="sign-in-birthdate-day" label="Birthdate">
-							<DateField
+							<BirthdateField
 								id="sign-in-birthdate"
-								name="birthdate"
-								autoComplete="bday"
 								required
-								min={
-									// The minimum age is 13 years old.
-									+new Date(now.getFullYear() - 200, now.getMonth(), now.getDate())
-								}
-								max={
-									// The maximum age is 200 years old.
-									+new Date(now.getFullYear() - 13, now.getMonth(), now.getDate())
-									// Maybe in the distant future, when anyone can live that long, or when aliens with longer life spans use our internet, MSPFA will still be here.
-								}
 								value={signInValues.birthdate}
 								onChange={onChange}
 							/>

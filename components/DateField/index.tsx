@@ -52,9 +52,11 @@ export type DateFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 
 	/**
 	 * The controlled value of the date field.
 	 *
+	 * If this is undefined, the value will be controlled by Formik.
+	 *
 	 * If this is a string, it will automatically be converted to a number.
 	 *
-	 * If this is undefined, the field will be controlled by Formik.
+	 * If this is `NaN`, the value will be controlled internally and without Formik.
 	 */
 	value?: number | string
 };
