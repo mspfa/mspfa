@@ -34,6 +34,7 @@
 	},
 	"rules": {
 		"no-async-promise-executor": "off",
+		"no-debugger": "warn",
 		"no-empty": "off",
 		"no-unsafe-optional-chaining": "error",
 		"no-useless-backreference": "warn",
