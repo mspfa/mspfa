@@ -29,11 +29,20 @@ const yearSize = new Date().getFullYear().toString().length + 2;
 
 /** Gets the maximum possible day of the month based on a full year number (e.g. 2001) and a month number (0 to 11). */
 const getMaxDay = (year: number, month: number) => {
-	const maxDay = new Date(
-		Number.isNaN(year) ? new Date().getFullYear() : year,
+	const lastDayOfTheMonth = new Date(0);
+	lastDayOfTheMonth.setFullYear(
+		// Year 2000 is used as a fallback here because 2000 is a leap year, so if the year is invalid, it will allow up to 29 February by default instead of 28.
+		Number.isNaN(year) ? 2000 : year,
+
+		// The following month.
 		month + 1,
+
+		// Because days start counting at 1, setting the date to day 0 of the above following month causes the date to wrap around to the last day of this month.
 		0
-	).getDate();
+	);
+
+	// Get the last day of the month as described in the previous comment.
+	const maxDay = lastDayOfTheMonth.getDate();
 
 	return Number.isNaN(maxDay) ? 31 : maxDay;
 };
