@@ -1,5 +1,6 @@
 import type { HTMLAttributes } from 'react';
 
+// TODO: Remove this after locales are implemented.
 const monthNames = [
 	'January',
 	'February',
