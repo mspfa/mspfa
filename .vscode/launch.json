@@ -8,14 +8,16 @@
 			"name": "Node",
 			"type": "node",
 			"request": "attach",
-			"port": 9229
+			"port": 9229,
+			"smartStep": true
 		},
 		{
 			"name": "Chrome",
 			"type": "chrome",
 			"request": "attach",
 			"port": 9222,
-			"webRoot": "${workspaceFolder}"
+			"webRoot": "${workspaceFolder}",
+			"smartStep": true
 		}
 	],
 	"compounds": [
