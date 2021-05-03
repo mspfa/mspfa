@@ -1,14 +1,37 @@
+// Install the Chrome debugger extension here: https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome
+// Be sure to launch Chrome with `--remote-debugging-port=9222`, or else the Chrome debugger cannot attach.
+
 {
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"name": "Node",
 			"type": "node",
 			"request": "attach",
-			"name": "Port 9229",
-			"skipFiles": [
-				"<node_internals>/**"
-			],
+			// "request": "launch",
 			"port": 9229,
+			// "runtimeExecutable": "npm",
+			// "runtimeArgs": [
+			// 	"run",
+			// 	"dev"
+			// ],
+			// "console": "integratedTerminal"
+		},
+		{
+			"name": "Chrome",
+			"type": "chrome",
+			"request": "attach",
+			"port": 9222,
+			"webRoot": "${workspaceFolder}"
+		}
+	],
+	"compounds": [
+		{
+			"name": "All",
+			"configurations": [
+				"Node",
+				"Chrome"
+			]
 		}
 	]
 }

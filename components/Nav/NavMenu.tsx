@@ -14,6 +14,7 @@ export type NavMenuProps = {
 const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 	// This state is whether the menu's label is in focus due to being clicked.
 	const [clickedLabel, setClickedLabel] = useState(false);
+
 	// This state is whether the menu container should have the `force-open` class, which forces it to be visible.
 	// Note: The menu can still be visible without the `force-open` class, for example if it or its label is hovered over.
 	const [forceOpen, setForceOpen] = useState(false);
