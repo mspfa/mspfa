@@ -11,28 +11,26 @@ export type ExclusiveLabelProps = {
 
 export type LabelProps = HTMLAttributes<HTMLDivElement> & ExclusiveLabelProps;
 
-const Label = ({ htmlFor, help, className, children, ...props }: LabelProps) => (
-	<div
-		className={`label-container${className ? ` ${className}` : ''}`}
-		{...props}
-	>
-		{htmlFor ? (
-			<label className="label" htmlFor={htmlFor}>
+const Label = ({ htmlFor, help, className, children, ...props }: LabelProps) => {
+	const LabelTag = htmlFor ? 'label' : 'span';
+
+	return (
+		<div
+			className={`label-container${className ? ` ${className}` : ''}`}
+			{...props}
+		>
+			<LabelTag className="label" htmlFor={htmlFor}>
 				{children}
-			</label>
-		) : (
-			<span className="label">
-				{children}
-			</span>
-		)}
-		{help && (
-			<HelpButton className="spaced">
-				{children}:<br />
-				<br />
-				{help}
-			</HelpButton>
-		)}
-	</div>
-);
+			</LabelTag>
+			{help && (
+				<HelpButton className="spaced">
+					{children}:<br />
+					<br />
+					{help}
+				</HelpButton>
+			)}
+		</div>
+	);
+};
 
 export default Label;
