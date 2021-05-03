@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import { useField } from 'formik';
 import { toKebabCase } from 'modules/client/utilities';
-import type { ChangeEvent, InputHTMLAttributes, SelectHTMLAttributes } from 'react';
+import type { ChangeEvent, InputHTMLAttributes } from 'react';
 import { useCallback, useState } from 'react';
 
 // @client-only {
@@ -14,31 +14,25 @@ const yearSize = new Date().getFullYear().toString().length + 2;
 /** Gets the maximum possible day of the month based on a full year number (e.g. 2001) and a month number (0 to 11). */
 const getMaxDay = (year: number, month: number) => {
 	const maxDay = new Date(
-		isNaN(year) ? new Date().getFullYear() : year,
+		Number.isNaN(year) ? new Date().getFullYear() : year,
 		month + 1,
 		0
 	).getDate();
 
-	return isNaN(maxDay) ? 31 : maxDay;
+	return Number.isNaN(maxDay) ? 31 : maxDay;
 };
 
-type ExclusiveDateFieldProps = {
+export type DateFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 'required' | 'min' | 'max' | 'onChange' | 'autoComplete'> & {
 	name: string,
 	/**
-	 * The controlled value of this date field.
+	 * The controlled value of the date field.
 	 *
 	 * If this is a string, it will automatically be converted to a number.
+	 *
+	 * If this is undefined, the field will be controlled by Formik.
 	 */
-	value?: number | string,
-	yearProps?: Omit<InputHTMLAttributes<HTMLInputElement>, OmittedPropKeys>,
-	monthProps?: Omit<SelectHTMLAttributes<HTMLSelectElement>, OmittedPropKeys>,
-	dayProps?: Omit<InputHTMLAttributes<HTMLInputElement>, OmittedPropKeys>
+	value?: number | string
 };
-
-type PickedPropKeys = 'id' | 'required' | 'min' | 'max' | 'onChange' | 'autoComplete';
-type OmittedPropKeys = keyof ExclusiveDateFieldProps | PickedPropKeys | 'id' | 'type' | 'size' | 'placeholder';
-
-export type DateFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, PickedPropKeys> & ExclusiveDateFieldProps;
 
 const DateField = ({
 	name,
@@ -48,10 +42,7 @@ const DateField = ({
 	required,
 	min = 0,
 	max = Date.now() + 1000 * 60 * 60 * 24 * 365 * 100,
-	autoComplete,
-	yearProps,
-	monthProps,
-	dayProps
+	autoComplete
 }: DateFieldProps) => {
 	const [{ value: fieldValue }, , { setValue: setFieldValue }] = useField<number | undefined>(name);
 
@@ -73,68 +64,42 @@ const DateField = ({
 	let month = date ? date.getMonth() : NaN;
 	let day = date ? date.getDate() : NaN;
 
-	const [fallbackValues, setFallbackValues] = useState([year, month, day] as const);
+	const [fallbackValues, setFallbackValues] = useState({ year, month, day } as const);
 
-	if (isNaN(year) || isNaN(month) || isNaN(day)) {
-		[year, month, day] = fallbackValues;
+	if (Number.isNaN(year) || Number.isNaN(month) || Number.isNaN(day)) {
+		({ year, month, day } = fallbackValues);
 	}
 
-	const onChange = useCallback((
-		event: ChangeEvent<HTMLInputElement & HTMLSelectElement>,
-		newYear: number,
-		newMonth: number,
-		newDay: number
-	) => {
-		newDay = Math.min(getMaxDay(newYear, newMonth), newDay);
+	const onChange = useCallback((event: ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
+		const targetType = event.target.id.slice(event.target.id.lastIndexOf('-') + 1) as 'year' | 'month' | 'day';
 
-		setFallbackValues([newYear, newMonth, newDay]);
+		const newValues = { year, month, day };
+		newValues[targetType] = event.target.value ? +event.target.value : NaN;
 
-		const newDate = new Date();
-		newDate.setFullYear(newYear);
-		newDate.setMonth(newMonth);
-		newDate.setDate(newDay);
-		const newValue = +newDate;
+		setFallbackValues(newValues);
+
+		const newValue = +new Date(
+			newValues.year,
+			newValues.month,
+			newValues.day >= 1 && newValues.day <= getMaxDay(newValues.year, newValues.month)
+				? newValues.day
+				// The day is out of the range of possible day values for the selected month, so the date should be invalid.
+				: NaN
+		);
 
 		if (propValue === undefined) {
 			// If this component's value is not controlled externally, update the Formik value.
-			setFieldValue(isNaN(newValue) ? undefined : newValue);
+			setFieldValue(Number.isNaN(newValue) ? undefined : newValue);
 		}
 
 		nativeInput.name = name;
-		nativeInput.value = isNaN(newValue) ? '' : newValue.toString();
+		nativeInput.value = Number.isNaN(newValue) ? '' : newValue.toString();
 
 		onChangeProp?.({
 			...event,
 			target: nativeInput
 		});
-	}, [name, propValue, setFieldValue, onChangeProp]);
-
-	const onChangeYear = useCallback((event: ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
-		onChange(
-			event,
-			event.target.value ? +event.target.value : NaN,
-			month,
-			day
-		);
-	}, [onChange, month, day]);
-
-	const onChangeMonth = useCallback((event: ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
-		onChange(
-			event,
-			year,
-			event.target.value ? +event.target.value : NaN,
-			day
-		);
-	}, [onChange, year, day]);
-
-	const onChangeDay = useCallback((event: ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
-		onChange(
-			event,
-			year,
-			month,
-			event.target.value ? +event.target.value : NaN
-		);
-	}, [onChange, year, month]);
+	}, [year, month, day, name, propValue, setFieldValue, onChangeProp]);
 
 	return (
 		<>
@@ -148,18 +113,16 @@ const DateField = ({
 				min={1}
 				max={getMaxDay(year, month)}
 				size={4}
-				value={isNaN(day) ? '' : day}
-				onChange={onChangeDay}
-				{...dayProps}
+				value={Number.isNaN(day) ? '' : day}
+				onChange={onChange}
 			/>
 			<select
 				id={`${id}-month`}
 				className="date-field-month"
 				autoComplete={autoComplete ? `${autoComplete}-month` : undefined}
 				required={required}
-				value={isNaN(month) ? '' : month}
-				onChange={onChangeMonth}
-				{...monthProps}
+				value={Number.isNaN(month) ? '' : month}
+				onChange={onChange}
 			>
 				<option value="" disabled hidden>Month</option>
 				<option value={0}>January</option>
@@ -185,9 +148,8 @@ const DateField = ({
 				min={new Date(min).getFullYear()}
 				max={new Date(max).getFullYear()}
 				size={yearSize}
-				value={isNaN(year) ? '' : year}
-				onChange={onChangeYear}
-				{...yearProps}
+				value={Number.isNaN(year) ? '' : year}
+				onChange={onChange}
 			/>
 		</>
 	);

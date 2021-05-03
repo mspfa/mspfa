@@ -15,5 +15,5 @@ export const toKebabCase = (string: string) => (
 		.toLowerCase()
 );
 
-/** Converts any string to a `RegExp` which matches exactly that string. */
+/** Converts any string to a regular expression string which matches exactly that string. */
 export const toPattern = (string: string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
