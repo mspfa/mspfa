@@ -188,20 +188,15 @@ const DateField = ({
 				onChange={onChange}
 			>
 				<option value="" disabled hidden>Month</option>
-				{monthNames.map((monthName, i) => {
-					const disabled = i < minMonth || i > maxMonth;
-
-					return (
-						<option
-							key={i}
-							// Setting `value=""` when `disabled={true}` is necessary because of a Chromium bug where, if a selected option becomes disabled, all of the disabled options will function as if they are enabled until the selected option is changed.
-							value={disabled ? '' : i}
-							disabled={disabled}
-						>
-							{monthName}
-						</option>
-					);
-				})}
+				{monthNames.map((monthName, i) => (
+					<option
+						key={i}
+						value={i}
+						disabled={i < minMonth || i > maxMonth}
+					>
+						{monthName}
+					</option>
+				))}
 			</select>
 			<input
 				id={`${id}-year`}
