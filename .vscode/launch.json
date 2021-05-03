@@ -8,14 +8,7 @@
 			"name": "Node",
 			"type": "node",
 			"request": "attach",
-			// "request": "launch",
-			"port": 9229,
-			// "runtimeExecutable": "npm",
-			// "runtimeArgs": [
-			// 	"run",
-			// 	"dev"
-			// ],
-			// "console": "integratedTerminal"
+			"port": 9229
 		},
 		{
 			"name": "Chrome",
