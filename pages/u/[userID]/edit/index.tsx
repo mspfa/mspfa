@@ -28,14 +28,15 @@ import BirthdateField from 'components/DateField/BirthdateField';
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 
 const getValuesFromUser = (privateUser: PrivateUser) => ({
-	birthdate: privateUser.birthdate,
-	name: privateUser.name,
-	icon: privateUser.icon,
 	email: privateUser.email,
-	site: privateUser.site,
+	name: privateUser.name,
+	birthdate: privateUser.birthdate,
 	description: privateUser.description,
+	icon: privateUser.icon,
+	site: privateUser.site,
 	settings: {
-		emailPublic: privateUser.settings.emailPublic
+		emailPublic: privateUser.settings.emailPublic,
+		birthdatePublic: privateUser.settings.birthdatePublic
 	}
 });
 
@@ -112,6 +113,11 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 											<LabeledBoxRow htmlFor="field-birthdate-day" label="Birthdate">
 												<BirthdateField required />
 											</LabeledBoxRow>
+											<FieldBoxRow
+												label="Birthdate Public"
+												name="settings.birthdatePublic"
+												help="Shows your birthdate publicly on your profile."
+											/>
 										</BoxRowSection>
 										<BoxRowSection heading="Contact">
 											<FieldBoxRow
@@ -119,6 +125,11 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 												name="email"
 												type="email"
 												required
+											/>
+											<FieldBoxRow
+												label="Email Public"
+												name="settings.emailPublic"
+												help="Shows your email publicly on your profile."
 											/>
 											<FieldBoxRow
 												label="Website"
