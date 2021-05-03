@@ -86,11 +86,54 @@ const DateField = ({
 		({ year, month, day } = inputValues);
 	}
 
+	const minYear = new Date(min).getFullYear();
+	const maxYear = new Date(max).getFullYear();
+
+	const minMonth = (
+		year === minYear
+			? new Date(min).getMonth()
+			: 0
+	);
+	const maxMonth = (
+		year === maxYear
+			? new Date(max).getMonth()
+			: 11
+	);
+
+	const minDay = (
+		year === minYear && month === minMonth
+			? new Date(min).getDate()
+			: 1
+	);
+	const maxDay = (
+		year === maxYear && month === maxMonth
+			? new Date(max).getDate()
+			: getMaxDay(year, month)
+	);
+
 	const onChange = useCallback((event: ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
 		const targetType = event.target.id.slice(event.target.id.lastIndexOf('-') + 1) as 'year' | 'month' | 'day';
 
 		const newValues = { year, month, day };
 		newValues[targetType] = event.target.value ? +event.target.value : NaN;
+
+		const newMinMonth = (
+			newValues.year === minYear
+				? new Date(min).getMonth()
+				: 0
+		);
+		const newMaxMonth = (
+			newValues.year === maxYear
+				? new Date(max).getMonth()
+				: 11
+		);
+
+		// This is necessary because the form is not invalidated by a `disabled` month `option` element being selected.
+		if (newValues.month < newMinMonth) {
+			newValues.month = newMinMonth;
+		} else if (newValues.month > newMaxMonth) {
+			newValues.month = newMaxMonth;
+		}
 
 		setInputValues(newValues);
 
@@ -116,32 +159,10 @@ const DateField = ({
 			...event,
 			target: nativeInput
 		});
-	}, [year, month, day, name, propValue, setFieldValue, onChangeProp]);
 
-	const minYear = new Date(min).getFullYear();
-	const maxYear = new Date(max).getFullYear();
-
-	const minMonth = (
-		year === minYear
-			? new Date(min).getMonth()
-			: 0
-	);
-	const maxMonth = (
-		year === maxYear
-			? new Date(max).getMonth()
-			: 11
-	);
-
-	const minDay = (
-		year === minYear && month === minMonth
-			? new Date(min).getDate()
-			: 1
-	);
-	const maxDay = (
-		year === maxYear && month === maxMonth
-			? new Date(max).getDate()
-			: getMaxDay(year, month)
-	);
+		// This ESLint comment is necessary because the rule incorrectly thinks `minYear` and `maxYear` should be dependencies here, despite that they depend on `min` and `max` which are already dependencies.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [year, month, day, name, propValue, setFieldValue, onChangeProp, min, max]);
 
 	return (
 		<>
@@ -173,6 +194,7 @@ const DateField = ({
 					return (
 						<option
 							key={i}
+							// Setting `value=""` when `disabled={true}` is necessary because of a Chromium bug where, if a selected option becomes disabled, all of the disabled options will function as if they are enabled until the selected option is changed.
 							value={disabled ? '' : i}
 							disabled={disabled}
 						>
