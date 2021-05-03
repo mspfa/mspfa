@@ -2,7 +2,7 @@
 @import 'styles/themes';
 
 input, textarea, select, option {
-	font-size: 0.875rem;
+	font-size: 0.8333rem;
 	@include theme(background-color, $frontest);
 }
 
