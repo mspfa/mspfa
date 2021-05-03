@@ -80,10 +80,10 @@ const DateField = ({
 	let month = date ? date.getMonth() : NaN;
 	let day = date ? date.getDate() : NaN;
 
-	const [fallbackValues, setFallbackValues] = useState({ year, month, day } as const);
+	const [inputValues, setInputValues] = useState({ year, month, day } as const);
 
 	if (Number.isNaN(year) || Number.isNaN(month) || Number.isNaN(day)) {
-		({ year, month, day } = fallbackValues);
+		({ year, month, day } = inputValues);
 	}
 
 	const onChange = useCallback((event: ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
@@ -92,33 +92,17 @@ const DateField = ({
 		const newValues = { year, month, day };
 		newValues[targetType] = event.target.value ? +event.target.value : NaN;
 
-		setFallbackValues(newValues);
+		setInputValues(newValues);
 
 		// A value must be passed to this `Date` constructor so that the resulting date isn't dependent on the current time.
-		const newDate = new Date(0);
-
-		// Year must be set before day. Otherwise, for example, if the desired date is 29 February on a leap year, then when the day is set to 29, the date's current month will be February (because month must be set before day--see `setDate`'s comment), which may only have 28 days since the date's current year may not be a leap year, causing the date to wrap around to 1 March, which is the incorrect date.
-		// If the date's current year is already set correctly when the day is set, it is impossible for the desired day to be too high for an incorrect year and cause wrapping.
-		newDate.setFullYear(newValues.year);
-
-		// Day must be set to 1 before month is set. Otherwise, for example, if the desired date is 30 April, then when the month is set to April (which only has 30 days), the date's current day may be 31, causing the date to wrap around to 1 May, which is the incorrect date.
-		// If the date's current day is already 1 when the month is set, it is impossible for an incorrect day to be too high for the desired month and cause wrapping.
-		newDate.setDate(1);
-
-		newDate.setMonth(newValues.month);
-
-		// Day must be set after month. Otherwise, for example, if the desired day is 31, then when the day is set to 31, the date's current month may not have 31 days, causing the date to wrap around to day 1 of the next month, which is the incorrect date.
-		// If the date's current month is already set correctly when the day is set, it is impossible for the desired day to be too high for an incorrect month and cause wrapping.
-		newDate.setDate(
+		const newValue = new Date(0).setFullYear(
+			newValues.year,
+			newValues.month,
 			newValues.day >= 1 && newValues.day <= getMaxDay(newValues.year, newValues.month)
 				? newValues.day
 				// The day is out of the range of possible day values for the selected month, so the date should be invalid rather than wrapping around to preceding or following months.
 				: NaN
 		);
-
-		// Holy shit. That took ages to get right.
-
-		const newValue = +newDate;
 
 		if (propValue === undefined) {
 			// If this component's value is not controlled externally, update the Formik value.
