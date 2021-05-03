@@ -32,6 +32,7 @@ export const withErrorPage = <
 				// For example, if a client is signed out on a page which they need to sign into in order to access, `statusCode === 403`. If they then sign in, the server-side props will return no `statusCode`, as well is any necessary data which only that user has access to for that page.
 				// This incidentally causes a real window reload if the server tries to send the client an HTTP error status code.
 				Router.replace(Router.asPath);
+				// Do NOT prevent leave confirmations here. The user should be allowed to sign in or sign out without losing unsaved changes.
 			}
 		}, [user?.id]);
 
