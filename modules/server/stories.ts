@@ -53,6 +53,7 @@ export type StoryDocument = {
 	},
 	pages: StoryPage[],
 	drafts: StoryPageDraft[],
+	/** @maxLength 2000 */
 	description: string,
 	icon?: URLString,
 	banner?: URLString,

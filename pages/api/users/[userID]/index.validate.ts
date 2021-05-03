@@ -95,7 +95,8 @@ export default createValidator({
 					description: "The user's verified email address."
 				},
 				description: {
-					type: 'string'
+					type: 'string',
+					maxLength: 2000
 				},
 				icon: {
 					anyOf: [
@@ -123,7 +124,7 @@ export default createValidator({
 					type: 'string'
 				},
 				settings: {
-					$ref: '#/definitions/RecursivePartial%3Cstructure--2609-3646--2598-3647--1936-4200--1908-4201--0-7636%3E'
+					$ref: '#/definitions/RecursivePartial%3Cstructure--2633-3670--2622-3671--1936-4224--1908-4225--0-7660%3E'
 				}
 			},
 			additionalProperties: false
@@ -137,7 +138,7 @@ export default createValidator({
 			type: 'string',
 			pattern: '^https?://'
 		},
-		'RecursivePartial<structure--2609-3646--2598-3647--1936-4200--1908-4201--0-7636>': {
+		'RecursivePartial<structure--2633-3670--2622-3671--1936-4224--1908-4225--0-7660>': {
 			type: 'object',
 			properties: {
 				emailPublic: {
@@ -150,7 +151,7 @@ export default createValidator({
 					type: 'boolean'
 				},
 				ads: {
-					$ref: '#/definitions/RecursivePartial%3Cstructure--2693-2744--2686-2745--2609-3646--2598-3647--1936-4200--1908-4201--0-7636%3E'
+					$ref: '#/definitions/RecursivePartial%3Cstructure--2717-2768--2710-2769--2633-3670--2622-3671--1936-4224--1908-4225--0-7660%3E'
 				},
 				autoOpenSpoilers: {
 					type: 'boolean'
@@ -174,15 +175,15 @@ export default createValidator({
 					type: 'string'
 				},
 				controls: {
-					$ref: '#/definitions/RecursivePartial%3Cstructure--3215-3284--3203-3285--2609-3646--2598-3647--1936-4200--1908-4201--0-7636%3E'
+					$ref: '#/definitions/RecursivePartial%3Cstructure--3239-3308--3227-3309--2633-3670--2622-3671--1936-4224--1908-4225--0-7660%3E'
 				},
 				notifications: {
-					$ref: '#/definitions/RecursivePartial%3Cstructure--3302-3643--3285-3643--2609-3646--2598-3647--1936-4200--1908-4201--0-7636%3E'
+					$ref: '#/definitions/RecursivePartial%3Cstructure--3326-3667--3309-3667--2633-3670--2622-3671--1936-4224--1908-4225--0-7660%3E'
 				}
 			},
 			additionalProperties: false
 		},
-		'RecursivePartial<structure--2693-2744--2686-2745--2609-3646--2598-3647--1936-4200--1908-4201--0-7636>': {
+		'RecursivePartial<structure--2717-2768--2710-2769--2633-3670--2622-3671--1936-4224--1908-4225--0-7660>': {
 			type: 'object',
 			properties: {
 				side: {
@@ -204,7 +205,7 @@ export default createValidator({
 				'trickster'
 			]
 		},
-		'RecursivePartial<structure--3215-3284--3203-3285--2609-3646--2598-3647--1936-4200--1908-4201--0-7636>': {
+		'RecursivePartial<structure--3239-3308--3227-3309--2633-3670--2622-3671--1936-4224--1908-4225--0-7660>': {
 			type: 'object',
 			properties: {
 				back: {
@@ -219,7 +220,7 @@ export default createValidator({
 			},
 			additionalProperties: false
 		},
-		'RecursivePartial<structure--3302-3643--3285-3643--2609-3646--2598-3647--1936-4200--1908-4201--0-7636>': {
+		'RecursivePartial<structure--3326-3667--3309-3667--2633-3670--2622-3671--1936-4224--1908-4225--0-7660>': {
 			type: 'object',
 			properties: {
 				messages: {
@@ -232,10 +233,10 @@ export default createValidator({
 					$ref: '#/definitions/RecursivePartial%3CNotificationSetting%3E'
 				},
 				storyDefaults: {
-					$ref: '#/definitions/RecursivePartial%3Cdef-alias--1418-1612--0-76362047801771%3E'
+					$ref: '#/definitions/RecursivePartial%3Cdef-alias--1418-1612--0-76602047801771%3E'
 				},
 				stories: {
-					$ref: '#/definitions/RecursivePartial%3Cdef-alias--1612-1908--0-7636127147939%5B%5D%3E'
+					$ref: '#/definitions/RecursivePartial%3Cdef-alias--1612-1908--0-7660127147939%5B%5D%3E'
 				}
 			},
 			additionalProperties: false
@@ -252,13 +253,13 @@ export default createValidator({
 			},
 			additionalProperties: false
 		},
-		'RecursivePartial<def-alias--1418-1612--0-76362047801771>': {
+		'RecursivePartial<def-alias--1418-1612--0-76602047801771>': {
 			type: 'object',
 			additionalProperties: {
 				$ref: '#/definitions/RecursivePartial%3CNotificationSetting%3E'
 			}
 		},
-		'RecursivePartial<def-alias--1612-1908--0-7636127147939[]>': {
+		'RecursivePartial<def-alias--1612-1908--0-7660127147939[]>': {
 			type: 'array',
 			items: {
 				$ref: '#/definitions/RecursivePartial%3CStoryNotificationSettings%3E'

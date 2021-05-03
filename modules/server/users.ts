@@ -78,6 +78,7 @@ export type UserDocument = {
 	birthdate: Date,
 	authMethods: AuthMethod[],
 	sessions: UserSession[],
+	/** @maxLength 2000 */
 	description: string,
 	icon: '' | URLString,
 	site: '' | URLString,
