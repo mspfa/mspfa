@@ -32,6 +32,7 @@
 		"fs-extra": "^9.1.0",
 		"global-react-state": "^1.2.1",
 		"google-auth-library": "^7.0.4",
+		"isomorphic-dompurify": "^0.13.0",
 		"lodash": "^4.17.21",
 		"mongodb": "^3.6.6",
 		"next": "^10.2.0",

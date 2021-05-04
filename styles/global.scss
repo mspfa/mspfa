@@ -45,7 +45,7 @@ summary {
 	@include theme(color, $translucent-text-color);
 }
 
-.back {
+body {
 	@include theme(background-color, $back);
 }
 

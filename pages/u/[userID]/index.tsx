@@ -16,6 +16,7 @@ import BoxFooter from 'components/Box/BoxFooter';
 import IconImage from 'components/IconImage';
 import { Perm } from 'modules/client/perms';
 import BoxRow from 'components/Box/BoxRow';
+import BBCode from 'components/BBCode';
 
 type ServerSideProps = {
 	publicUser: PublicUser
@@ -80,7 +81,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser }) => {
 				</BoxColumns>
 				{publicUser.description && (
 					<BoxSection id="profile-description" heading="Description">
-						{publicUser.description}
+						<BBCode html>{publicUser.description}</BBCode>
 					</BoxSection>
 				)}
 				{user && (
