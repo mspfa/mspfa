@@ -22,6 +22,7 @@ input, textarea {
 }
 
 input, select {
+	height: calc(1rem + 7px);
 	vertical-align: middle;
 }
 
@@ -61,13 +62,6 @@ textarea {
 
 select {
 	cursor: pointer;
-	// For some reason `select` elements are larger than `input` elements by default. This fixes it. Not sure if this is the best way to do it though.
-	padding: 1px;
-
-	@include firefox {
-		// And for some reason it needs an extra pixel in Firefox.
-		padding: 2px;
-	}
 
 	&:invalid {
 		// `select` elements are generally only `:invalid` if a disabled option is selected, so this is effectively the `placeholder` attribute color, because `select`s don't have `placeholder`s.

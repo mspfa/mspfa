@@ -9,12 +9,6 @@ $sans-serif: Verdana, Arial, Helvetica, sans-serif;
 	}
 }
 
-@mixin firefox {
-	@-moz-document url-prefix() {
-		@content;
-	}
-}
-
 @function half-opacity($color) {
 	@return color.scale($color, $alpha: -50%);
 }
