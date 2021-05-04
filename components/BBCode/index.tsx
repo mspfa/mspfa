@@ -6,16 +6,6 @@ import type { HTMLReactParserOptions } from 'html-react-parser';
 import type { BBTagProps } from 'components/BBCode/BBTag';
 import BBTag from 'components/BBCode/BBTag';
 
-DOMPurify.setConfig({
-	// Allow external protocol handlers in URL attributes.
-	ALLOW_UNKNOWN_PROTOCOLS: true,
-	// Prevent unintuitive browser behavior in several edge cases.
-	FORCE_BODY: true,
-	// Disable DOM clobbering protection on output.
-	SANITIZE_DOM: false,
-	ADD_TAGS: ['mspfa-bb']
-});
-
 export type BBCodeProps = {
 	/** Whether HTML should be allowed and parsed. */
 	html?: boolean,
@@ -79,7 +69,7 @@ const parseOptions: HTMLReactParserOptions = {
 
 /** A component which parses its `children` string as BBCode. */
 const BBCode = ({
-	html = false,
+	html,
 	children = ''
 }: BBCodeProps) => {
 	/** The final string. */
@@ -114,9 +104,15 @@ const BBCode = ({
 			{parse(
 				DOMPurify.sanitize(
 					htmlString,
-					html ? {
-						ALLOWED_TAGS: ['mspfa-bb']
-					} : {}
+					{
+						// Allow external protocol handlers in URL attributes.
+						ALLOW_UNKNOWN_PROTOCOLS: true,
+						// Prevent unintuitive browser behavior in several edge cases.
+						FORCE_BODY: true,
+						// Disable DOM clobbering protection on output.
+						SANITIZE_DOM: false,
+						[html ? 'ADD_TAGS' : 'ALLOWED_TAGS']: ['mspfa-bb']
+					}
 				),
 				parseOptions
 			)}
