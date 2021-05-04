@@ -18,11 +18,11 @@ input, textarea, select {
 }
 
 input, textarea {
-	padding: 2px;
+	padding: 0.15em;
 }
 
 input, select {
-	height: calc(1rem + 7px);
+	height: calc(1.425em + 4px);
 	vertical-align: middle;
 }
 
