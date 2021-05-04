@@ -11,7 +11,7 @@ const IconImage = React.memo(({ src, className, style, ...props }: IconImageProp
 	<div
 		className={`icon-image${className ? ` ${className}` : ''}`}
 		style={{
-			backgroundImage: `url(${src ? CSS.escape(src) : `/images/wat/${Math.floor(Math.random() * 4)}.png`})`,
+			backgroundImage: `url(${src ? src.replace(/\)/g, '\\)') : `/images/wat/${Math.floor(Math.random() * 4)}.png`})`,
 			...style
 		}}
 		{...props}
