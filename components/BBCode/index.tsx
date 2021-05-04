@@ -39,7 +39,7 @@ const parseOptions: HTMLReactParserOptions = {
 				} else {
 					attributes = {};
 
-					// Even though we only use the first attribute's capture groups, it is necessary to match additional ones to prevent the first attribute from capturing
+					// Even though we only use the first attribute's capture groups, it is necessary to match additional attributes to prevent the first attribute's capture group from ending early.
 					const attributeTest = /^(([\w-]+)=(["']?)(.*?)\3)(?: [\w-]+=(["']?).*?\5)*$/;
 
 					let match: RegExpExecArray | null;
@@ -47,7 +47,7 @@ const parseOptions: HTMLReactParserOptions = {
 					while (match = attributeTest.exec(rawAttributes)) {
 						const [, rawAttribute, attributeName, , attributeValue] = match;
 
-						attributes[attributeName] = attributeValue;
+						attributes[attributeName.toLowerCase()] = attributeValue;
 
 						// Slice off this attribute from the original string, as well as the trailing space.
 						rawAttributes = rawAttributes.slice(rawAttribute.length + 1);
@@ -72,27 +72,29 @@ const BBCode = ({
 	html,
 	children = ''
 }: BBCodeProps) => {
-	/** The final string. */
+	/** The resulting HTML string to be sanitized and parsed. */
 	let htmlString = '';
 
-	// Even though we don't use the contents of the second capturing group in this regular expression, it is necessary that it is so specific so that a tag with a "]" in its attributes does not stop matching early.
+	// Even though we don't use the contents of the second capturing group in this regular expression, it is necessary that it is so specific so a tag with "]" in its attributes does not end early.
 	const openTagTest = /\[([\w-]+)((?:=(["']?).*?\3)|(?: [\w-]+=(["']?).*?\4)+)?\]/;
 
 	let match: RegExpExecArray | null;
 
 	while (match = openTagTest.exec(children)) {
-		const [tag, tagName, props] = match;
+		const openTag = match[0];
+		const tagName = match[1].toLowerCase();
+		const rawAttributes = match[2];
 
 		// Append the slice of the original string from the end of the previous match to the start of this match.
 		htmlString += children.slice(0, match.index);
 
 		// Remove everything up to the end of this match from the original string.
-		children = children.slice(match.index + tag.length);
+		children = children.slice(match.index + openTag.length);
 
-		htmlString += `<mspfa-bb data-name="${tagName}" data-attributes="${props ? props.trim().replace(/"/g, '&quot;') : ''}">`;
+		htmlString += `<mspfa-bb data-name="${tagName}" data-attributes="${rawAttributes ? rawAttributes.trim().replace(/"/g, '&quot;') : ''}">`;
 
 		// Replace the next closing tag. It doesn't matter if it corresponds to the matched opening tag; valid BBCode will have the same number of opening tags as closing tags.
-		children = children.replace(`[/${tagName}]`, '</mspfa-bb>');
+		children = children.replace(new RegExp(`\\[/${tagName}\\]`, 'i'), '</mspfa-bb>');
 		// The reason it is better to slice off processed portions of the original string is so this replacement doesn't have to scan unnecessary content.
 	}
 
