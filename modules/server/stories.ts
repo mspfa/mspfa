@@ -1,5 +1,5 @@
 import db from 'modules/server/db';
-import type { Quirk } from 'modules/server/quirks';
+import type { Quirk } from 'modules/client/quirks';
 import type { URLString } from 'modules/types';
 
 export type StoryPage = {

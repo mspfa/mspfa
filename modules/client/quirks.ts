@@ -1,6 +1,6 @@
 export type QuirkReplacement = {
-	find: string | RegExp,
-	replace: string
+	from: string | RegExp,
+	to: string
 };
 
 export type Quirk = {

@@ -34,6 +34,7 @@
 	},
 	"rules": {
 		"no-async-promise-executor": "off",
+		"no-cond-assign": "off",
 		"no-debugger": "warn",
 		"no-empty": "off",
 		"no-unsafe-optional-chaining": "error",
@@ -506,7 +507,6 @@
 				"@typescript-eslint/prefer-literal-enum-member": "error",
 				"@typescript-eslint/prefer-reduce-type-parameter": "error",
 				"@typescript-eslint/prefer-regexp-exec": "error",
-				"@typescript-eslint/prefer-string-starts-ends-with": "error",
 				"@typescript-eslint/prefer-ts-expect-error": "error",
 				"@typescript-eslint/triple-slash-reference": "error",
 				"@typescript-eslint/type-annotation-spacing": [
