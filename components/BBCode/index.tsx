@@ -70,6 +70,7 @@ const parseOptions: HTMLReactParserOptions = {
 /** A component which parses its `children` string as BBCode. */
 const BBCode = ({
 	html,
+	/** The original input BBCode string. */
 	children = ''
 }: BBCodeProps) => {
 	/** The resulting HTML string to be sanitized and parsed. */
