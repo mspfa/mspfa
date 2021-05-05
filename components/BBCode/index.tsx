@@ -3,8 +3,8 @@ import DOMPurify from 'isomorphic-dompurify';
 import parse, { domToReact } from 'html-react-parser';
 import { Element } from 'domhandler';
 import type { HTMLReactParserOptions } from 'html-react-parser';
-import type { BBTagProps } from 'components/BBCode/BBTag';
-import BBTag, { BBTags } from 'components/BBCode/BBTag';
+import BBTags from 'components/BBCode/BBTags';
+import type { BBTagProps } from 'components/BBCode/BBTags';
 
 export type BBCodeProps = {
 	/** Whether HTML should be allowed and parsed. */
@@ -55,6 +55,8 @@ const parseOptions: HTMLReactParserOptions = {
 					}
 				}
 			}
+
+			const BBTag = BBTags[tagName];
 
 			return (
 				<BBTag

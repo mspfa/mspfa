@@ -1,9 +1,25 @@
-import type { ReactNode } from 'react';
 import Link from 'components/Link';
+import type { ReactNode } from 'react';
 
-const colorCodeTest = /^#?([0-9a-f]{3}(?:[0-9a-f]{3})?)$/i;
+const hashlessColorCodeTest = /^([0-9a-f]{3}(?:[0-9a-f]{3})?)$/i;
 
-export const BBTags: Record<string, (props: BBTagProps) => JSX.Element> = {
+export type BBTagProps = {
+	/**
+	 * Example:
+	 * * The BBCode `[xyz=123]` would cause this to equal `"xyz"`.
+	 */
+	tagName: string,
+	/**
+	 * Examples:
+	 * * The BBCode `[xyz]` would cause this to equal `undefined`.
+	 * * The BBCode `[xyz=123]` would cause this to equal `"123"`.
+	 * * The BBCode `[xyz a=1 b="2"]` would cause this to equal `{ a: "1", b: "2" }`.
+	 */
+	attributes: undefined | string | Partial<Record<string, string>>,
+	children?: ReactNode
+};
+
+const BBTags: Record<string, (props: BBTagProps) => JSX.Element> = {
 	b: ({ children }) => <b>{children}</b>,
 	i: ({ children }) => <i>{children}</i>,
 	u: ({ children }) => <u>{children}</u>,
@@ -23,7 +39,7 @@ export const BBTags: Record<string, (props: BBTagProps) => JSX.Element> = {
 		<span
 			style={
 				typeof attributes === 'string'
-					? { color: attributes.replace(colorCodeTest, '#$1') }
+					? { color: attributes.replace(hashlessColorCodeTest, '#$1') }
 					: undefined
 			}
 		>
@@ -34,7 +50,7 @@ export const BBTags: Record<string, (props: BBTagProps) => JSX.Element> = {
 		<span
 			style={
 				typeof attributes === 'string'
-					? { backgroundColor: attributes.replace(colorCodeTest, '#$1') }
+					? { backgroundColor: attributes.replace(hashlessColorCodeTest, '#$1') }
 					: undefined
 			}
 		>
@@ -116,30 +132,4 @@ export const BBTags: Record<string, (props: BBTagProps) => JSX.Element> = {
 	// user
 };
 
-export type BBTagProps = {
-	/**
-	 * Example:
-	 * * The BBCode `[xyz=123]` would cause this to equal `"xyz"`.
-	 */
-	tagName: string,
-	/**
-	 * Examples:
-	 * * The BBCode `[xyz]` would cause this to equal `undefined`.
-	 * * The BBCode `[xyz=123]` would cause this to equal `"123"`.
-	 * * The BBCode `[xyz a=1 b="2"]` would cause this to equal `{ a: "1", b: "2" }`.
-	 */
-	attributes: undefined | string | Partial<Record<string, string>>,
-	children?: ReactNode
-};
-
-const BBTag = (props: BBTagProps) => {
-	if (props.tagName in BBTags) {
-		const ThisBBTag = BBTags[props.tagName];
-
-		return <ThisBBTag {...props} />;
-	}
-
-	return <>{props.children}</>;
-};
-
-export default BBTag;
+export default BBTags;
