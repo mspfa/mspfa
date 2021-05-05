@@ -9,6 +9,7 @@ import BBTag, { BBTags } from 'components/BBCode/BBTag';
 export type BBCodeProps = {
 	/** Whether HTML should be allowed and parsed. */
 	html?: boolean,
+	/** The original input BBCode string. */
 	children?: string
 };
 
@@ -70,7 +71,6 @@ const parseOptions: HTMLReactParserOptions = {
 /** A component which parses its `children` string as BBCode. */
 const BBCode = ({
 	html,
-	/** The original input BBCode string. */
 	children = ''
 }: BBCodeProps) => {
 	/** The resulting HTML string to be sanitized and parsed. */
