@@ -77,14 +77,18 @@ export const UserContext = React.createContext<PrivateUser | undefined>(undefine
  *
  * Returns the current authenticated user.
  *
- * ⚠️ Avoid using this if the component does not need to be updated when the user state changes. Use `getUser` instead.
+ * ⚠️ Avoid using this in client-only code if the component does not need to be updated when the user state changes. Use `getUser` instead.
  */
 export const useUser = () => useContext(UserContext);
 
 let globalUserState: PrivateUser | undefined;
 let globalSetUserState: React.Dispatch<React.SetStateAction<PrivateUser | undefined>> | undefined;
 
-/** Gets the current authenticated user. */
+/**
+ * Gets the current authenticated user.
+ *
+ * ⚠️ Calling this server-side leads to race conditions for which user is currently set in the global state. Unless this is being called in client-only code, use `useUser` instead.
+ */
 export const getUser = () => globalUserState;
 
 /** Sets the current authenticated user and re-renders all components using it. */

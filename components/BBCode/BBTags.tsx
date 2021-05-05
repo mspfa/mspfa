@@ -3,7 +3,7 @@
 
 import './styles.module.scss';
 import Link from 'components/Link';
-import { defaultSettings, getUser } from 'modules/client/users';
+import { defaultSettings, useUser, getUser } from 'modules/client/users';
 import type { ReactNode } from 'react';
 import { useEffect, useCallback, useState } from 'react';
 
@@ -133,7 +133,8 @@ const BBTags: Record<string, (props: BBTagProps) => JSX.Element> = {
 		);
 	},
 	spoiler: ({ attributes, children }) => {
-		const [open, setOpen] = useState(getUser()?.settings.autoOpenSpoilers ?? defaultSettings.autoOpenSpoilers);
+		const user = useUser();
+		const [open, setOpen] = useState(user?.settings.autoOpenSpoilers ?? defaultSettings.autoOpenSpoilers);
 
 		useEffect(() => {
 			const onKeyDown = (event: KeyboardEvent) => {
