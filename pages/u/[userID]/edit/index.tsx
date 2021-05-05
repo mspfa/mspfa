@@ -1,5 +1,5 @@
 import Page from 'components/Page';
-import { setUser, useUser } from 'modules/client/users';
+import { getUser, setUser } from 'modules/client/users';
 import type { PrivateUser } from 'modules/client/users';
 import { Perm } from 'modules/client/perms';
 import { permToGetUserInPage } from 'modules/server/perms';
@@ -50,7 +50,6 @@ type ServerSideProps = {
 
 const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 	const [privateUser, setPrivateUser] = useState(initialPrivateUser);
-	const user = useUser()!;
 
 	const initialValues = getValuesFromUser(privateUser);
 
@@ -72,13 +71,13 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 						);
 
 						setPrivateUser(data);
-						if (user.id === privateUser.id) {
+						if (getUser()!.id === privateUser.id) {
 							setUser(data);
 						}
 
 						// This ESLint comment is necessary because the rule incorrectly thinks `initialValues` should be a dependency here, despite that it depends on `privateUser` which is already a dependency.
 						// eslint-disable-next-line react-hooks/exhaustive-deps
-					}, [privateUser, user])
+					}, [privateUser])
 				}
 				enableReinitialize
 			>

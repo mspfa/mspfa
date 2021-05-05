@@ -3,9 +3,7 @@
 
 import './styles.module.scss';
 import Link from 'components/Link';
-import { defaultSettings, useUser } from 'modules/client/users';
-import { ReactNode, useCallback } from 'react';
-import { useState } from 'react';
+import { defaultSettings, getUser } from 'modules/client/users';
 
 const hashlessColorCodeTest = /^([0-9a-f]{3}(?:[0-9a-f]{3}(?:[0-9a-f]{2})?)?)$/i;
 
@@ -133,8 +131,7 @@ const BBTags: Record<string, (props: BBTagProps) => JSX.Element> = {
 		);
 	},
 	spoiler: ({ attributes, children }) => {
-		const user = useUser();
-		const [open, setOpen] = useState(user ? user.settings.autoOpenSpoilers : defaultSettings.autoOpenSpoilers);
+		const [open, setOpen] = useState(getUser()?.settings.autoOpenSpoilers ?? defaultSettings.autoOpenSpoilers);
 
 		return (
 			<div
@@ -144,8 +141,8 @@ const BBTags: Record<string, (props: BBTagProps) => JSX.Element> = {
 					<button
 						onClick={
 							useCallback(() => {
-								setOpen(!open);
-							}, [open])
+								setOpen(open => !open);
+							}, [])
 						}
 					>
 						{(open

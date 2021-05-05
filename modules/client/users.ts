@@ -76,6 +76,8 @@ export const UserContext = React.createContext<PrivateUser | undefined>(undefine
  * Re-renders the component when the current authenticated user changes (or signs in/out).
  *
  * Returns the current authenticated user.
+ *
+ * ⚠️ Avoid using this if the component does not need to be updated when the user state changes. Use `getUser` instead.
  */
 export const useUser = () => useContext(UserContext);
 

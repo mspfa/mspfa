@@ -258,13 +258,10 @@ Router.events.on('routeChangeStart', () => {
 
 // @client-only {
 document.addEventListener('keydown', event => {
-	// This check is necessary because of https://bugs.chromium.org/p/chromium/issues/detail?id=581537.
-	if (event.key) {
-		if (event.key === 'Escape') {
-			const topDialog = dialogs.length && dialogs[dialogs.length - 1];
-			if (topDialog) {
-				topDialog.resolve();
-			}
+	if (event.key === 'Escape') {
+		const topDialog = dialogs.length && dialogs[dialogs.length - 1];
+		if (topDialog) {
+			topDialog.resolve();
 		}
 	}
 });
