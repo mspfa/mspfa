@@ -17,3 +17,12 @@ export const toKebabCase = (string: string) => (
 
 /** Converts any string to a regular expression string which matches exactly that string. */
 export const toPattern = (string: string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** Returns a boolean for whether a keyboard control should be ignored. */
+export const shouldIgnoreControl = () => (
+	document.activeElement && (
+		document.activeElement.tagName === 'input'
+		|| document.activeElement.tagName === 'textarea'
+		|| document.activeElement.tagName === 'select'
+	)
+);

@@ -6,6 +6,7 @@ import Link from 'components/Link';
 import { defaultSettings, useUser, getUser } from 'modules/client/users';
 import type { ReactNode } from 'react';
 import { useEffect, useCallback, useState } from 'react';
+import { shouldIgnoreControl } from 'modules/client/utilities';
 
 const hashlessColorCodeTest = /^([0-9a-f]{3}(?:[0-9a-f]{3}(?:[0-9a-f]{2})?)?)$/i;
 
@@ -138,6 +139,10 @@ const BBTags: Record<string, (props: BBTagProps) => JSX.Element> = {
 
 		useEffect(() => {
 			const onKeyDown = (event: KeyboardEvent) => {
+				if (shouldIgnoreControl()) {
+					return;
+				}
+
 				if (event.code === (getUser()?.settings.controls.toggleSpoilers ?? defaultSettings.autoOpenSpoilers)) {
 					event.preventDefault();
 
