@@ -1,7 +1,7 @@
 import Link from 'components/Link';
 import type { ReactNode } from 'react';
 
-const hashlessColorCodeTest = /^([0-9a-f]{3}(?:[0-9a-f]{3})?)$/i;
+const hashlessColorCodeTest = /^([0-9a-f]{3}(?:[0-9a-f]{3}(?:[0-9a-f]{2})?)?)$/i;
 
 export type BBTagProps = {
 	/**
