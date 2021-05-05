@@ -77,7 +77,7 @@ export const UserContext = React.createContext<PrivateUser | undefined>(undefine
  *
  * Returns the current authenticated user.
  *
- * ⚠️ Avoid using this in client-only code if the component does not need to be updated when the user state changes. Use `getUser` instead.
+ * ⚠️ Avoid using this for client-only purposes if the component does not need to be updated when the user state changes. Use `getUser` instead.
  */
 export const useUser = () => useContext(UserContext);
 
