@@ -28,7 +28,7 @@ const BBTags: Record<string, (props: BBTagProps) => JSX.Element> = {
 		<span
 			style={
 				typeof attributes === 'string'
-					? { fontSize: `${attributes}px` }
+					? { fontSize: +attributes ? `${attributes}px` : attributes }
 					: undefined
 			}
 		>
