@@ -80,25 +80,36 @@ export const BBTags: Record<string, (props: BBTagProps) => JSX.Element> = {
 			{children}
 		</span>
 	),
-	img: ({ attributes, children }) => (
-		<img
-			src={
-				typeof children === 'string'
-					? children
-					: undefined
+	img: ({ attributes, children }) => {
+		let width: string | undefined;
+		let height: string | undefined;
+
+		if (typeof attributes === 'string') {
+			const xIndex = attributes.indexOf('x');
+
+			if (xIndex === -1) {
+				width = attributes;
+			} else {
+				width = attributes.slice(0, xIndex);
+				height = attributes.slice(xIndex + 1);
 			}
-			width={
-				attributes instanceof Object && 'width' in attributes
-					? attributes.width
-					: undefined
-			}
-			height={
-				attributes instanceof Object && 'height' in attributes
-					? attributes.height
-					: undefined
-			}
-		/>
-	)
+		} else if (attributes instanceof Object) {
+			width = attributes.width;
+			height = attributes.height;
+		}
+
+		return (
+			<img
+				src={
+					typeof children === 'string'
+						? children
+						: undefined
+				}
+				width={width}
+				height={height}
+			/>
+		);
+	}
 	// spoiler,
 	// flash,
 	// youtube,
