@@ -4,7 +4,7 @@ import parse, { domToReact } from 'html-react-parser';
 import { Element } from 'domhandler';
 import type { HTMLReactParserOptions } from 'html-react-parser';
 import type { BBTagProps } from 'components/BBCode/BBTag';
-import BBTag from 'components/BBCode/BBTag';
+import BBTag, { BBTags } from 'components/BBCode/BBTag';
 
 export type BBCodeProps = {
 	/** Whether HTML should be allowed and parsed. */
@@ -91,11 +91,15 @@ const BBCode = ({
 		// Remove everything up to the end of this match from the original string.
 		children = children.slice(match.index + openTag.length);
 
-		htmlString += `<mspfa-bb data-name="${tagName}" data-attributes="${rawAttributes ? rawAttributes.trim().replace(/"/g, '&quot;') : ''}">`;
+		if (tagName in BBTags) {
+			htmlString += `<mspfa-bb data-name="${tagName}" data-attributes="${rawAttributes ? rawAttributes.trim().replace(/"/g, '&quot;') : ''}">`;
 
-		// Replace the next closing tag. It doesn't matter if it corresponds to the matched opening tag; valid BBCode will have the same number of opening tags as closing tags.
-		children = children.replace(new RegExp(`\\[/${tagName}\\]`, 'i'), '</mspfa-bb>');
-		// The reason it is better to slice off processed portions of the original string is so this replacement doesn't have to scan unnecessary content.
+			// Replace the next closing tag. It doesn't matter if it corresponds to the matched opening tag; valid BBCode will have the same number of opening tags as closing tags.
+			children = children.replace(new RegExp(`\\[/${tagName}\\]`, 'i'), '</mspfa-bb>');
+			// The reason it is better to slice off processed portions of the original string is so this replacement doesn't have to scan unnecessary content.
+		} else {
+			htmlString += openTag;
+		}
 	}
 
 	// Append the rest of the original string.
