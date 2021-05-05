@@ -1,4 +1,23 @@
 .bbcode {
 	white-space: pre-wrap;
 	word-break: break-word;
+	font-size: 0.875em;
+}
+
+.spoiler {
+    border: 1px dashed #808080;
+    padding: 1px;
+
+	&-heading {
+		text-align: center;
+	}
+
+	&-content {
+		margin: 1em 5%;
+		padding: 3px;
+	}
+
+	&.closed &-content {
+		display: none;
+	}
 }

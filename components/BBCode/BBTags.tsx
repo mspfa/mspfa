@@ -1,5 +1,11 @@
+// This ESLint comment is necessary because otherwise it thinks the values of `BBTags` are not React components due to being lowercase.
+/* eslint-disable react-hooks/rules-of-hooks */
+
+import './styles.module.scss';
 import Link from 'components/Link';
-import type { ReactNode } from 'react';
+import { defaultSettings, useUser } from 'modules/client/users';
+import { ReactNode, useCallback } from 'react';
+import { useState } from 'react';
 
 const hashlessColorCodeTest = /^([0-9a-f]{3}(?:[0-9a-f]{3}(?:[0-9a-f]{2})?)?)$/i;
 
@@ -125,8 +131,35 @@ const BBTags: Record<string, (props: BBTagProps) => JSX.Element> = {
 				height={height}
 			/>
 		);
+	},
+	spoiler: ({ attributes, children }) => {
+		const user = useUser();
+		const [open, setOpen] = useState(user ? user.settings.autoOpenSpoilers : defaultSettings.autoOpenSpoilers);
+
+		return (
+			<div
+				className={`spoiler${open ? ' open' : ' closed'}`}
+			>
+				<div className="spoiler-heading">
+					<button
+						onClick={
+							useCallback(() => {
+								setOpen(!open);
+							}, [open])
+						}
+					>
+						{(open
+							? (attributes instanceof Object && attributes.close) || 'Hide'
+							: (attributes instanceof Object && attributes.open) || 'Show'
+						)}
+					</button>
+				</div>
+				<div className="spoiler-content">
+					{children}
+				</div>
+			</div>
+		);
 	}
-	// spoiler,
 	// flash,
 	// youtube,
 	// user

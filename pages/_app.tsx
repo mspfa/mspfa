@@ -48,7 +48,7 @@ const MyApp = ({
 			: user
 	);
 
-	const theme = mergedUser?.settings.theme ?? 'standard';
+	const theme = mergedUser?.settings.theme || 'standard';
 
 	useEffect(() => {
 		setTheme(theme);

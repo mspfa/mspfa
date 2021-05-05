@@ -1,10 +1,10 @@
 import './styles.module.scss';
 import Page from 'components/Page';
-import { setUser, setUserMerge, useUser } from 'modules/client/users';
+import { setUser, setUserMerge, useUser, defaultSettings } from 'modules/client/users';
 import type { PrivateUser } from 'modules/client/users';
 import { Perm } from 'modules/client/perms';
 import { permToGetUserInPage } from 'modules/server/perms';
-import { defaultUser, getPrivateUser } from 'modules/server/users';
+import { getPrivateUser } from 'modules/server/users';
 import { preventReloads, withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
 import { Form, Formik, Field } from 'formik';
@@ -490,7 +490,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 	return {
 		props: {
 			initialPrivateUser: getPrivateUser(user!),
-			defaultSettings: defaultUser.settings
+			defaultSettings
 		}
 	};
 });

@@ -37,6 +37,38 @@ export type PublicUser = (
 	}
 );
 
+export const defaultSettings: PrivateUser['settings'] = {
+	emailPublic: false,
+	birthdatePublic: false,
+	favsPublic: true,
+	ads: {
+		side: true,
+		matchedContent: true
+	},
+	autoOpenSpoilers: false,
+	preloadImages: true,
+	stickyNav: false,
+	imageSharpening: false,
+	theme: 'standard',
+	style: '',
+	controls: {
+		back: 'ArrowLeft',
+		forward: 'ArrowRight',
+		toggleSpoilers: 'Space'
+	},
+	notifications: {
+		messages: { email: true, site: true },
+		userTags: { email: true, site: true },
+		commentReplies: { email: true, site: true },
+		storyDefaults: {
+			updates: { email: true, site: true },
+			news: { email: true, site: true },
+			comments: { email: true, site: true }
+		},
+		stories: {} as Record<never, never>
+	}
+} as const;
+
 export const UserContext = React.createContext<PrivateUser | undefined>(undefined);
 // Using a React context is necessary here so the user data can be used server-side.
 
