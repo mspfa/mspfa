@@ -42,7 +42,7 @@ const getRelativeTimestamp = (dateThen: Date) => {
 
 	const secondsAgo = Math.floor((now - then) / 1000);
 
-	if (secondsAgo <= 1) {
+	if (secondsAgo <= 5) {
 		return 'Just now!';
 	}
 
