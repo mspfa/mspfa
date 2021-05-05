@@ -4,6 +4,8 @@
 import './styles.module.scss';
 import Link from 'components/Link';
 import { defaultSettings, getUser } from 'modules/client/users';
+import type { ReactNode } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 
 const hashlessColorCodeTest = /^([0-9a-f]{3}(?:[0-9a-f]{3}(?:[0-9a-f]{2})?)?)$/i;
 
@@ -132,6 +134,22 @@ const BBTags: Record<string, (props: BBTagProps) => JSX.Element> = {
 	},
 	spoiler: ({ attributes, children }) => {
 		const [open, setOpen] = useState(getUser()?.settings.autoOpenSpoilers ?? defaultSettings.autoOpenSpoilers);
+
+		useEffect(() => {
+			const onKeyDown = (event: KeyboardEvent) => {
+				if (event.code === (getUser()?.settings.controls.toggleSpoilers ?? defaultSettings.autoOpenSpoilers)) {
+					event.preventDefault();
+
+					setOpen(open => !open);
+				}
+			};
+
+			document.addEventListener('keydown', onKeyDown);
+
+			return () => {
+				document.removeEventListener('keydown', onKeyDown);
+			};
+		}, []);
 
 		return (
 			<div
