@@ -6,13 +6,6 @@ import { Element } from 'domhandler';
 import BBTags from 'components/BBCode/BBTags';
 import type { BBTagProps } from 'components/BBCode/BBTags';
 
-export type BBCodeProps = {
-	/** Whether HTML should be allowed and parsed. */
-	html?: boolean,
-	/** The original input BBCode string. */
-	children?: string
-};
-
 const parseOptions: HTMLReactParserOptions = {
 	replace: domNode => {
 		if (
@@ -68,6 +61,13 @@ const parseOptions: HTMLReactParserOptions = {
 			);
 		}
 	}
+};
+
+export type BBCodeProps = {
+	/** Whether HTML should be allowed and parsed. */
+	html?: boolean,
+	/** The original input BBCode string. */
+	children?: string
 };
 
 /** A component which parses its `children` string as BBCode. */
