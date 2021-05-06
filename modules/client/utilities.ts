@@ -21,5 +21,5 @@ export const toPattern = (string: string) => string.replace(/[.*+?^${}()|[\]\\]/
 /** Returns a boolean for whether a keyboard control should be ignored. */
 export const shouldIgnoreControl = () => (
 	// Check if the element currenly in the focus has a `select` method i.e. if it is a text input.
-	document.activeElement && (document.activeElement as any).select instanceof Function
+	(document.activeElement as any)?.select instanceof Function
 );
