@@ -29,8 +29,8 @@ const attributeWhitespaceTest = /[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u
 const unsafeURLTest = /^(?:\w+script|data):/i;
 
 /** Returns the input URL if it is safe. Returns `undefined` if not. */
-export const sanitizeURL = (url: string) => (
-	unsafeURLTest.test(url.replace(attributeWhitespaceTest, ''))
-		? undefined
-		: url
-);
+export const sanitizeURL = (url: string) => {
+	url = url.replace(attributeWhitespaceTest, '');
+
+	return unsafeURLTest.test(url) ? undefined : url;
+};
