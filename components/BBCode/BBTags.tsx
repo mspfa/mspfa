@@ -6,7 +6,7 @@ import Link from 'components/Link';
 import { defaultSettings, useUser, getUser } from 'modules/client/users';
 import type { ReactNode } from 'react';
 import { useEffect, useCallback, useState } from 'react';
-import { shouldIgnoreControl } from 'modules/client/utilities';
+import { sanitizeURL, shouldIgnoreControl } from 'modules/client/utilities';
 import withBlock from 'components/BBCode/withBlock';
 
 const hashlessColorCodeTest = /^([0-9a-f]{3}(?:[0-9a-f]{3}(?:[0-9a-f]{2})?)?)$/i;
@@ -106,7 +106,6 @@ const BBTags: Partial<Record<string, BBTag>> = {
 						? children
 						: undefined
 			}
-			sanitize
 		>
 			{children}
 		</Link>
@@ -144,7 +143,7 @@ const BBTags: Partial<Record<string, BBTag>> = {
 			<img
 				src={
 					typeof children === 'string'
-						? children
+						? sanitizeURL(children)
 						: undefined
 				}
 				width={width}

@@ -5,19 +5,14 @@ import NextLink from 'next/link';
 import type { LinkProps as OriginalNextLinkProps } from 'next/link';
 import React from 'react';
 import type { AnchorHTMLAttributes } from 'react';
-
-/** The regular expression React uses to warn for `javascript:` URL deprecation. */
-const jsProtocolTest = /^[\u0000-\u001F ]*j[\r\n\t]*a[\r\n\t]*v[\r\n\t]*a[\r\n\t]*s[\r\n\t]*c[\r\n\t]*r[\r\n\t]*i[\r\n\t]*p[\r\n\t]*t[\r\n\t]*\:/i;
+import { sanitizeURL } from 'modules/client/utilities';
 
 // `href` is omitted here because `NextLinkProps` has a more inclusive `href`, accepting URL objects in addition to strings.
 type HTMLAnchorProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>;
 // `passHref` is omitted here because it is not useful enough to be worth implementing.
 type NextLinkProps = Omit<OriginalNextLinkProps, 'passHref'>;
 // `NextLinkProps` is `Partial`ed in `LinkProps` below to make `href` optional in the Link component. `NextLinkProps` above is not `Partial`ed because `href` is required in `NextLink`'s props.
-export type LinkProps = HTMLAnchorProps & Partial<NextLinkProps> & {
-	/** Whether the link's `href` URL should be sanitized. */
-	sanitize?: boolean
-};
+export type LinkProps = HTMLAnchorProps & Partial<NextLinkProps>;
 
 /**
  * Should be used in place of `a`. Accepts any props which `a` accepts.
@@ -40,7 +35,6 @@ const Link = React.forwardRef<HTMLAnchorElement & HTMLButtonElement, LinkProps>(
 		// All non-`NextLink`-exclusive props.
 		className,
 		href,
-		sanitize,
 		...props
 	},
 	ref
@@ -53,14 +47,9 @@ const Link = React.forwardRef<HTMLAnchorElement & HTMLButtonElement, LinkProps>(
 			: 'link'
 	);
 
-	let hrefString = href?.toString();
+	const hrefString = href && sanitizeURL(href.toString());
 
-	if (sanitize && hrefString && jsProtocolTest.test(hrefString)) {
-		// In the future, when React fully disables JavaScript URLs, this may no longer be necessary.
-		hrefString = undefined;
-	}
-
-	if (hrefString === undefined) {
+	if (!hrefString) {
 		return (
 			<button
 				type="button"
