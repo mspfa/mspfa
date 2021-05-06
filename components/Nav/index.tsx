@@ -57,7 +57,7 @@ const Nav = () => {
 				)}
 			</NavGroup>
 			<NavGroup id="secondary">
-				<NavItem id="search" label="Site Search" href="/search" />
+				<NavItem id="search" label="Explore" href="/search" />
 				<NavItem id="random" label="Mystery" title="Take me to a random adventure!" onClick={visitRandomStory} />
 			</NavGroup>
 			<NavGroup id="story">
