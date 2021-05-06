@@ -20,8 +20,8 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 	const [forceOpen, setForceOpen] = useState(false);
 
 	/** A ref to the underlying link element of this menu's label. */
-	const labelRef = useRef<HTMLAnchorElement & HTMLButtonElement>(null);
-	const menuContainerRef = useRef<HTMLDivElement>(null);
+	const labelRef = useRef<HTMLAnchorElement & HTMLButtonElement>(null!);
+	const menuContainerRef = useRef<HTMLDivElement>(null!);
 
 	/** Handles the focus event on the menu's label or any link in the menu. */
 	const onFocus = useCallback(() => {
@@ -37,7 +37,7 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 				// Check if the focused element is the menu's label.
 				document.activeElement !== labelRef.current
 				// Check if the focused element is a link in the menu container.
-				&& !menuContainerRef.current!.contains(document.activeElement)
+				&& !menuContainerRef.current.contains(document.activeElement)
 			) {
 				// If no part of the menu is in focus, remove the `force-open` class.
 				setForceOpen(false);
@@ -84,7 +84,7 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 						event.preventDefault();
 						if (clickedLabel) {
 							// If the label is already clicked and the user clicks it again, it should toggle its focus off, allowing the menu to be hidden.
-							labelRef.current!.blur();
+							labelRef.current.blur();
 						}
 						// When the user clicks the label, toggle whether it is clicked.
 						setClickedLabel(!clickedLabel);
