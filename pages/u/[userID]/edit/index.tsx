@@ -34,6 +34,7 @@ const getValuesFromUser = (privateUser: PrivateUser) => ({
 	description: privateUser.description,
 	icon: privateUser.icon,
 	site: privateUser.site,
+	profileStyle: privateUser.profileStyle,
 	settings: {
 		emailPublic: privateUser.settings.emailPublic,
 		birthdatePublic: privateUser.settings.birthdatePublic
