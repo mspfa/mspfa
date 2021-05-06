@@ -27,11 +27,16 @@ const Footer = () => {
 				</div>
 			</footer>
 			<div id="legal">
-				<span id="copyright">© MS Paint Fan Adventures 2010-{new Date().getFullYear()}</span>
-				<Stick nix />
-				<Link href="/privacy" target="_blank">Privacy Policy</Link>
-				<Stick />
-				<Link href="/terms" target="_blank">Terms of Service</Link>
+				<div id="copyright">
+					© MS Paint Fan Adventures 2010-{new Date().getFullYear()}
+				</div>
+				<div id="boring-important-stuff">
+					<Link href="/privacy" target="_blank">Privacy Policy</Link>
+					<Stick nix />
+					<Link href="/terms" target="_blank">Terms of Service</Link>
+					<Stick />
+					<Link href="/rules" target="_blank">Rules</Link>
+				</div>
 			</div>
 		</>
 	);
