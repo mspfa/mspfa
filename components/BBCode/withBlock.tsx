@@ -21,7 +21,9 @@ const trimLineBreaks = (node: ReactNode) => {
 /**
  * Any `BBTag` which returns a block element (e.g. `div`) should be wrapped with this.
  *
- * Trims line breaks from the start and end of the tag's children. Also removes one line break following the tag.
+ * Trims line breaks from the immediate start and end of the tag's children.
+ *
+ * If there is a line break immediately following the tag, removes it.
  */
 const withBlock = (
 	BBTag: BBTag
