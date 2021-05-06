@@ -7,7 +7,7 @@ import { defaultSettings, useUser, getUser } from 'modules/client/users';
 import type { ReactNode } from 'react';
 import { useEffect, useCallback, useState } from 'react';
 import { shouldIgnoreControl } from 'modules/client/utilities';
-import withBlock from './withBlock';
+import withBlock from 'components/BBCode/withBlock';
 
 const hashlessColorCodeTest = /^([0-9a-f]{3}(?:[0-9a-f]{3}(?:[0-9a-f]{2})?)?)$/i;
 
