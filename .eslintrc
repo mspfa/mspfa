@@ -35,6 +35,7 @@
 	"rules": {
 		"no-async-promise-executor": "off",
 		"no-cond-assign": "off",
+		"no-control-regex": "off",
 		"no-debugger": "warn",
 		"no-empty": "off",
 		"no-unsafe-optional-chaining": "error",

@@ -106,6 +106,7 @@ const BBTags: Partial<Record<string, BBTag>> = {
 						? children
 						: undefined
 			}
+			sanitize
 		>
 			{children}
 		</Link>

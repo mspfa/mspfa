@@ -70,6 +70,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser }) => {
 										<Link
 											href={publicUser.site}
 											target="_blank"
+											sanitize
 										>
 											{publicUser.site}
 										</Link>
