@@ -1,8 +1,8 @@
 import './styles.module.scss';
 import DOMPurify from 'isomorphic-dompurify';
 import parse, { domToReact } from 'html-react-parser';
-import { Element } from 'domhandler';
 import type { HTMLReactParserOptions } from 'html-react-parser';
+import { Element } from 'domhandler';
 import BBTags from 'components/BBCode/BBTags';
 import type { BBTagProps } from 'components/BBCode/BBTags';
 
@@ -56,7 +56,7 @@ const parseOptions: HTMLReactParserOptions = {
 				}
 			}
 
-			const BBTag = BBTags[tagName];
+			const BBTag = BBTags[tagName]!;
 
 			return (
 				<BBTag
@@ -94,11 +94,19 @@ const BBCode = ({
 		// Remove everything up to the end of this match from the original string.
 		children = children.slice(match.index + openTag.length);
 
-		if (tagName in BBTags) {
+		const BBTag = BBTags[tagName];
+
+		if (BBTag) {
 			htmlString += `<mspfa-bb data-name="${tagName}" data-attributes="${rawAttributes ? rawAttributes.trim().replace(/"/g, '&quot;') : ''}">`;
 
 			// Replace the next closing tag. It doesn't matter if it corresponds to the matched opening tag; valid BBCode will have the same number of opening tags as closing tags.
-			children = children.replace(new RegExp(`\\[/${tagName}\\]`, 'i'), '</mspfa-bb>');
+			children = children.replace(
+				new RegExp(`\\[/${tagName}\\]${
+					// If `BBTag` is a block element, we also want to remove one line break after its closing tag to promote intuitive line breaking behavior for the user.
+					BBTag.withBlock ? '\\n?' : ''
+				}`, 'i'),
+				'</mspfa-bb>'
+			);
 			// The reason it is better to slice off processed portions of the original string is so this replacement doesn't have to scan unnecessary content.
 		} else {
 			htmlString += openTag;

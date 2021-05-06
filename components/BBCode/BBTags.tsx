@@ -7,25 +7,9 @@ import { defaultSettings, useUser, getUser } from 'modules/client/users';
 import type { ReactNode } from 'react';
 import { useEffect, useCallback, useState } from 'react';
 import { shouldIgnoreControl } from 'modules/client/utilities';
+import withBlock from './withBlock';
 
 const hashlessColorCodeTest = /^([0-9a-f]{3}(?:[0-9a-f]{3}(?:[0-9a-f]{2})?)?)$/i;
-
-const trimLineBreaks = (node: ReactNode) => {
-	if (Array.isArray(node)) {
-		if (typeof node[0] === 'string') {
-			node[0] = node[0].replace(/^\n+/, '');
-		}
-
-		const lastNode = node[node.length - 1];
-		if (typeof lastNode === 'string') {
-			node[node.length - 1] = lastNode.replace(/\n+$/, '');
-		}
-	} else if (typeof node === 'string') {
-		node = node.replace(/^\n+|\n+$/g, '');
-	}
-
-	return node;
-};
 
 export type BBTagProps = {
 	/**
@@ -43,7 +27,15 @@ export type BBTagProps = {
 	children?: ReactNode
 };
 
-const BBTags: Record<string, (props: BBTagProps) => JSX.Element> = {
+export type BBTag = (
+	((props: BBTagProps) => JSX.Element)
+	& {
+		/** Whether the `BBTag` is wrapped by `withBlock`. */
+		withBlock?: boolean
+	}
+);
+
+const BBTags: Partial<Record<string, BBTag>> = {
 	b: ({ children }) => <b>{children}</b>,
 	i: ({ children }) => <i>{children}</i>,
 	u: ({ children }) => <u>{children}</u>,
@@ -92,26 +84,18 @@ const BBTags: Record<string, (props: BBTagProps) => JSX.Element> = {
 			{children}
 		</span>
 	),
-	center: ({ children }) => (
-		<div className="center">
-			{trimLineBreaks(children)}
-		</div>
-	),
-	left: ({ children }) => (
-		<div className="left">
-			{trimLineBreaks(children)}
-		</div>
-	),
-	right: ({ children }) => (
-		<div className="right">
-			{trimLineBreaks(children)}
-		</div>
-	),
-	justify: ({ children }) => (
-		<div className="justify">
-			{trimLineBreaks(children)}
-		</div>
-	),
+	center: withBlock(({ children }) => (
+		<div className="center">{children}</div>
+	)),
+	left: withBlock(({ children }) => (
+		<div className="left">{children}</div>
+	)),
+	right: withBlock(({ children }) => (
+		<div className="right">{children}</div>
+	)),
+	justify: withBlock(({ children }) => (
+		<div className="justify">{children}</div>
+	)),
 	url: ({ attributes, children }) => (
 		<Link
 			href={
@@ -166,7 +150,7 @@ const BBTags: Record<string, (props: BBTagProps) => JSX.Element> = {
 			/>
 		);
 	},
-	spoiler: ({ attributes, children }) => {
+	spoiler: withBlock(({ attributes, children }) => {
 		const user = useUser();
 		const [open, setOpen] = useState(user?.settings.autoOpenSpoilers ?? defaultSettings.autoOpenSpoilers);
 
@@ -209,11 +193,11 @@ const BBTags: Record<string, (props: BBTagProps) => JSX.Element> = {
 					</button>
 				</div>
 				<div className="spoiler-content">
-					{trimLineBreaks(children)}
+					{children}
 				</div>
 			</div>
 		);
-	}
+	})
 	// flash,
 	// youtube,
 	// user
