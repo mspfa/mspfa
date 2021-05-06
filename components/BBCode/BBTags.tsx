@@ -143,7 +143,7 @@ const BBTags: Record<string, (props: BBTagProps) => JSX.Element> = {
 					return;
 				}
 
-				if (event.code === (getUser()?.settings.controls.toggleSpoilers ?? defaultSettings.autoOpenSpoilers)) {
+				if (event.code === (getUser()?.settings.controls.toggleSpoilers ?? defaultSettings.controls.toggleSpoilers)) {
 					event.preventDefault();
 
 					setOpen(open => !open);
