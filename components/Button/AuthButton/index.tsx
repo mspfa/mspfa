@@ -9,16 +9,10 @@ import FieldBoxRow from 'components/Box/FieldBoxRow';
 import { toKebabCase, toPattern } from 'modules/client/utilities';
 import type { ButtonProps } from 'components/Button';
 import type { AuthMethodOptions } from 'modules/client/auth';
+import { authMethodTypeNames } from 'modules/client/auth';
 
 /** The global Google API object. */
 declare const gapi: any;
-
-// TODO: Remove this after locales are implemented.
-const authMethodTypes: Record<AuthMethodOptions['type'], string> = {
-	password: 'Password',
-	google: 'Google',
-	discord: 'Discord'
-};
 
 const resolveAddAuthMethodDialog = () => Dialog.getByID('add-auth-method')?.resolve();
 
@@ -154,7 +148,7 @@ const AuthButton = ({ type, onResolve, ...props }: AuthButtonProps) => (
 			}
 			{...props}
 		>
-			{authMethodTypes[type]}
+			{authMethodTypeNames[type]}
 		</Button>
 	</>
 );

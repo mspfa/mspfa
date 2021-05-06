@@ -114,7 +114,7 @@ export const [useUserMerge, setUserMerge, getUserMerge] = createGlobalState<Recu
 /** Opens a dialog prompting the user to sign in or sign up. */
 export const signIn = async () => {
 	startLoading();
-	const { openSignInDialog } = await import('modules/client/auth');
+	const { openSignInDialog } = await import('modules/client/signIn');
 	stopLoading();
 	openSignInDialog();
 };

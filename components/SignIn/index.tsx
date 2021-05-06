@@ -1,5 +1,5 @@
 import './styles.module.scss';
-import { setSignInPage, resolveExternalSignIn } from 'modules/client/auth';
+import { setSignInPage, resolveExternalSignIn } from 'modules/client/signIn';
 import Link from 'components/Link';
 import createUpdater from 'react-component-updater';
 import type { ChangeEvent } from 'react';

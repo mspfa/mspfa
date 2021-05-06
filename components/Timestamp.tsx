@@ -1,20 +1,5 @@
+import { monthNames } from 'modules/client/dates';
 import type { HTMLAttributes } from 'react';
-
-// TODO: Remove this after locales are implemented.
-const monthNames = [
-	'January',
-	'February',
-	'March',
-	'April',
-	'May',
-	'June',
-	'July',
-	'August',
-	'September',
-	'October',
-	'November',
-	'December'
-];
 
 /** Outputs a string which is exactly two digits of the input. */
 const twoDigits = (value: any) => `0${value}`.slice(-2);

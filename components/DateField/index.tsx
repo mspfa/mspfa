@@ -3,22 +3,7 @@ import { useField } from 'formik';
 import { toKebabCase } from 'modules/client/utilities';
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
 import { useCallback, useState } from 'react';
-
-// TODO: Remove this after locales are implemented.
-const monthNames = [
-	'January',
-	'February',
-	'March',
-	'April',
-	'May',
-	'June',
-	'July',
-	'August',
-	'September',
-	'October',
-	'November',
-	'December'
-];
+import { monthNames } from 'modules/client/dates';
 
 // @client-only {
 const nativeInput = document.createElement('input');
