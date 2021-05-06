@@ -10,6 +10,23 @@ import { shouldIgnoreControl } from 'modules/client/utilities';
 
 const hashlessColorCodeTest = /^([0-9a-f]{3}(?:[0-9a-f]{3}(?:[0-9a-f]{2})?)?)$/i;
 
+const trimLineBreaks = (node: ReactNode) => {
+	if (Array.isArray(node)) {
+		if (typeof node[0] === 'string') {
+			node[0] = node[0].replace(/^\n+/, '');
+		}
+
+		const lastNode = node[node.length - 1];
+		if (typeof lastNode === 'string') {
+			node[node.length - 1] = lastNode.replace(/\n+$/, '');
+		}
+	} else if (typeof node === 'string') {
+		node = node.replace(/^\n+|\n+$/g, '');
+	}
+
+	return node;
+};
+
 export type BBTagProps = {
 	/**
 	 * Example:
@@ -75,10 +92,26 @@ const BBTags: Record<string, (props: BBTagProps) => JSX.Element> = {
 			{children}
 		</span>
 	),
-	center: ({ children }) => <div className="center">{children}</div>,
-	left: ({ children }) => <div className="left">{children}</div>,
-	right: ({ children }) => <div className="right">{children}</div>,
-	justify: ({ children }) => <div className="justify">{children}</div>,
+	center: ({ children }) => (
+		<div className="center">
+			{trimLineBreaks(children)}
+		</div>
+	),
+	left: ({ children }) => (
+		<div className="left">
+			{trimLineBreaks(children)}
+		</div>
+	),
+	right: ({ children }) => (
+		<div className="right">
+			{trimLineBreaks(children)}
+		</div>
+	),
+	justify: ({ children }) => (
+		<div className="justify">
+			{trimLineBreaks(children)}
+		</div>
+	),
 	url: ({ attributes, children }) => (
 		<Link
 			href={
@@ -176,7 +209,7 @@ const BBTags: Record<string, (props: BBTagProps) => JSX.Element> = {
 					</button>
 				</div>
 				<div className="spoiler-content">
-					{children}
+					{trimLineBreaks(children)}
 				</div>
 			</div>
 		);
