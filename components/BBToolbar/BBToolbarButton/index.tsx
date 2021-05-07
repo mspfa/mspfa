@@ -152,27 +152,25 @@ const tags: Record<string, {
 	spoiler: {
 		title: 'Spoiler',
 		initialValues: {
-			attributes: {
-				open: '',
-				close: ''
-			}
+			open: '',
+			close: ''
 		},
 		content: (
 			<LabeledDialogBox>
 				<FieldBoxRow
-					name="attributes.open"
+					name="open"
 					label={'"Show" Button Text'}
 					autoFocus
 					placeholder="Optional"
 				/>
 				<FieldBoxRow
-					name="attributes.close"
+					name="close"
 					label={'"Hide" Button Text'}
 					placeholder="Optional"
 				/>
 			</LabeledDialogBox>
 		),
-		valuesToProps: ({ attributes: { open, close } }) => ({
+		valuesToProps: ({ open, close }) => ({
 			attributes: (
 				open || close
 					? {
