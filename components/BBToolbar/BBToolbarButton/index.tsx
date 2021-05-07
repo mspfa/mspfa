@@ -17,7 +17,7 @@ const tags: Record<string, {
 	/**
 	 * The initial values of the BB tag's dialog form.
 	 *
-	 * These values are spread to `{ children }` when setting the dialog form's initial values.
+	 * These values are spread to `{ children, attributes: '' }` when setting the dialog form's initial values.
 	 *
 	 * If this is a function, the return value is spread to the initial values instead.
 	 */
@@ -87,6 +87,7 @@ const tags: Record<string, {
 					label="Size in Pixels"
 					required
 					autoFocus
+					min={0}
 				/>
 			</LabeledDialogBox>
 		)
@@ -159,19 +160,20 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 
 					const tagProps: NewBBTagProps = {
 						children: selection,
-						attributes: undefined
+						// This needs to initially be an empty string and not `undefined` so that the form's initial values include this property and any fieldsFields with `name="attributes"` are initially Formik-controlled.
+						attributes: ''
 					};
 
 					if (tag.content) {
 						const dialog = new Dialog({
 							title: tag.title,
 							content: tag.content,
-							initialValues: {
-								children: selection,
-								...tag.initialValues instanceof Function
+							initialValues: Object.assign(
+								tagProps,
+								tag.initialValues instanceof Function
 									? tag.initialValues(selection)
 									: tag.initialValues
-							},
+							),
 							actions: [
 								{ label: 'Okay', autoFocus: false },
 								'Cancel'
@@ -184,10 +186,8 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 
 						Object.assign(
 							tagProps,
-							{
-								...dialog.form!.values,
-								...tag.valuesToProps && tag.valuesToProps(dialog.form!.values)
-							}
+							dialog.form!.values,
+							tag.valuesToProps && tag.valuesToProps(dialog.form!.values)
 						);
 					}
 
