@@ -35,8 +35,8 @@ const promptAuthMethod = {
 						autoComplete="new-password"
 						required
 						minLength={8}
-						label="New Password"
 						autoFocus
+						label="New Password"
 					/>
 					<FieldBoxRow
 						name="confirmPassword"

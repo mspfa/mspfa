@@ -15,11 +15,11 @@ export type ExclusiveFieldBoxRowProps = Pick<LabeledBoxRowProps, 'label' | 'help
 
 export type FieldBoxRowProps = FieldAttributes<unknown> & { id?: never } & ExclusiveFieldBoxRowProps;
 
-/** A `LabeledBoxRow` containing a `Field`. Defaults to a checkbox. Accepts any props which `Field` accepts. */
+/** A `LabeledBoxRow` containing a `Field`. Accepts any props which `Field` accepts. */
 const FieldBoxRow = ({
 	label,
 	name,
-	type = 'checkbox',
+	type,
 	help,
 	...props
 }: FieldBoxRowProps) => {

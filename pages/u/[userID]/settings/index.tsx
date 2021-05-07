@@ -281,21 +281,25 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 									</FieldBoxRow>
 									<FieldBoxRow
 										name="settings.stickyNav"
+										type="checkbox"
 										label="Sticky Nav Bar"
 										help="Makes the nav bar stick to the top of your screen when you scroll down instead of scrolling out of the page."
 									/>
 									<FieldBoxRow
 										name="settings.imageSharpening"
+										type="checkbox"
 										label="Image Sharpening"
 										help={'Disables anti-aliasing in images from adventure pages (using nearest-neighbor scaling).\n\nWhat this means is images, when scaled, will tend to have more crisp edges rather than becoming blurry.'}
 									/>
 									<FieldBoxRow
 										name="settings.ads.side"
+										type="checkbox"
 										label="Side Ad"
 										onChange={values.settings.ads.side ? interceptAdDisable : handleChange}
 									/>
 									<FieldBoxRow
 										name="settings.ads.matchedContent"
+										type="checkbox"
 										label="Matched Content Ad"
 										onChange={values.settings.ads.matchedContent ? interceptAdDisable : handleChange}
 									/>
@@ -303,11 +307,13 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 								<BoxRowSection heading="Utility">
 									<FieldBoxRow
 										name="settings.autoOpenSpoilers"
+										type="checkbox"
 										label="Auto-Open Spoilers"
 										help="Makes spoilers open by default instead of closed."
 									/>
 									<FieldBoxRow
 										name="settings.preloadImages"
+										type="checkbox"
 										label="Preload Images"
 										help="Loads images on adjacent adventure pages so they may already be loaded when an adjacent page is opened."
 									/>
