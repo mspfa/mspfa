@@ -57,13 +57,13 @@ export const setSignInPage = (
 		content: <SignIn page={signInPage} />,
 		actions: signInPage === 0
 			? [
-				{ label: 'Sign In', value: 'password', focus: false },
+				{ label: 'Sign In', value: 'password', autoFocus: false },
 				{ label: 'Cancel', value: 'exit' }
 			]
 			: [
 				signInPage === 1
-					? { label: 'Continue', value: 'password', focus: false }
-					: { label: 'Sign Up', focus: false },
+					? { label: 'Continue', value: 'password', autoFocus: false }
+					: { label: 'Sign Up', autoFocus: false },
 				{ label: 'Go Back', value: 'back' }
 			]
 	});

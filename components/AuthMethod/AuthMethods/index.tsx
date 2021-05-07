@@ -57,7 +57,7 @@ const AuthMethods = ({ userID, authMethods: initialAuthMethods }: AuthMethodsPro
 									</>
 								),
 								actions: [
-									{ label: 'Cancel', focus: false }
+									{ label: 'Cancel', autoFocus: false }
 								]
 							});
 						}, [onResolve, authMethods])

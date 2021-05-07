@@ -147,7 +147,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 				</LabeledDialogBox>
 			),
 			actions: [
-				{ label: 'Okay', focus: false },
+				{ label: 'Okay', autoFocus: false },
 				'Cancel'
 			]
 		});
@@ -175,7 +175,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 			title: 'Edit Sign-In Methods',
 			content: <AuthMethods userID={privateUser.id} authMethods={authMethods} />,
 			actions: [
-				{ label: 'Done', focus: false }
+				{ label: 'Done', autoFocus: false }
 			]
 		});
 	}, [privateUser.id]);
@@ -227,7 +227,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 							content: "Ads are how we earn money, how we fund the website. By disabling this ad, a fraction of our funds are decreased.\n\nWe're okay with that if you don't think it's worth the unpleasant visual experience, but please first consider the effect of it.",
 							actions: [
 								'I understand the impact of my decision and wish to proceed.',
-								{ label: 'Cancel', focus: true }
+								{ label: 'Cancel', autoFocus: true }
 							]
 						})) {
 							setFieldValue(event.target.name, false);
@@ -423,7 +423,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 															content: 'Are you sure you want to delete your account?\n\nThis action is irreversible.',
 															actions: [
 																'Yes',
-																{ label: 'No', focus: true }
+																{ label: 'No', autoFocus: true }
 															]
 														}) && await Dialog.confirm({
 															id: 'delete-user',
@@ -447,7 +447,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 															),
 															actions: [
 																'Yes',
-																{ label: 'No', focus: true }
+																{ label: 'No', autoFocus: true }
 															]
 														})
 													)) {

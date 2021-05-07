@@ -25,9 +25,9 @@ export type DialogActionOption = {
 	/**
 	 * Whether the action should be auto-focused when the dialog opens.
 	 *
-	 * If no action has `focus: true`, it will be set by default, either on the action with `submit: true` or on the first action.
+	 * If no action has `autoFocus: true`, it will be set by default, either on the action with `submit: true` or on the first action.
 	 */
-	focus?: boolean,
+	autoFocus?: boolean,
 	/** Do whatever you want with this property. It does nothing by default. */
 	value?: any
 };
@@ -159,16 +159,16 @@ export class Dialog<Values extends Record<string, any>> extends Promise<DialogRe
 				this.submitAction.submit = true;
 			}
 
-			// If no action has `focus: true`...
-			if (!this.actions.some(action => action.focus)) {
+			// If no action has `autoFocus: true`...
+			if (!this.actions.some(action => action.autoFocus)) {
 				if (this.submitAction) {
-					// ...set `focus: true` on the action with `submit: true` (unless it explicitly sets `focus` already)...
-					if (!('focus' in this.submitAction)) {
-						this.submitAction.focus = true;
+					// ...set `autoFocus: true` on the action with `submit: true` (unless it explicitly sets `autoFocus` already)...
+					if (!('autoFocus' in this.submitAction)) {
+						this.submitAction.autoFocus = true;
 					}
-				} else if (!('focus' in this.actions[0])) {
-					// ...or, if there is no action with `submit: true`, set `focus: true` on the first action (unless it explicitly sets `focus` already).
-					this.actions[0].focus = true;
+				} else if (!('autoFocus' in this.actions[0])) {
+					// ...or, if there is no action with `submit: true`, set `autoFocus: true` on the first action (unless it explicitly sets `autoFocus` already).
+					this.actions[0].autoFocus = true;
 				}
 			}
 		}

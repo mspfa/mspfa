@@ -50,7 +50,7 @@ const promptAuthMethod = {
 				</LabeledDialogBox>
 			),
 			actions: [
-				{ label: 'Okay', focus: false },
+				{ label: 'Okay', autoFocus: false },
 				'Cancel'
 			]
 		});
