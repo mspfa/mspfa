@@ -1,4 +1,3 @@
-import './styles.module.scss';
 import Page from 'components/Page';
 import { setUser, setUserMerge, defaultSettings, getUser } from 'modules/client/users';
 import type { PrivateUser } from 'modules/client/users';
@@ -126,7 +125,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 						label="Current Password"
 						autoFocus
 					/>
-					<ForgotPassword className="no-line-height" />
+					<ForgotPassword />
 					<FieldBoxRow
 						name="password"
 						type="password"

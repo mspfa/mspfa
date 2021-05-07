@@ -4,8 +4,12 @@
 	gap: 1ch;
 	justify-content: center;
 
-	.label-container {
-		justify-self: right;
-		align-self: center;
+	.label {
+		&-container {
+			justify-self: right;
+			align-self: center;
+		}
+
+		white-space: nowrap;
 	}
 }

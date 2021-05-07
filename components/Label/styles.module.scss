@@ -1,5 +1,5 @@
 .label-container {
-	& > label {
+	& > .label {
 		// This prevents spaces from being omitted when wrapping text in labels, which allows space characters at the end of wrapped lines to sometimes line up with the colon.
 		white-space: pre-wrap;
 	}
