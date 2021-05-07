@@ -647,7 +647,7 @@
 			"rules": {
 				"react/jsx-boolean-value": "error",
 				"react/jsx-closing-bracket-location": [
-					"error",
+					"warn",
 					"tag-aligned"
 				],
 				"react/jsx-closing-tag-location": "error",
