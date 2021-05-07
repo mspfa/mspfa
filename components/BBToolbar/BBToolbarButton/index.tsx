@@ -167,9 +167,10 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 
 						Object.assign(
 							tagProps,
-							tag.valuesToProps
-								? tag.valuesToProps(dialog.form!.values)
-								: dialog.form!.values
+							{
+								...dialog.form!.values,
+								...tag.valuesToProps && tag.valuesToProps(dialog.form!.values)
+							}
 						);
 					}
 
