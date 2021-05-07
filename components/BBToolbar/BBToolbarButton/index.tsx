@@ -282,7 +282,7 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 
 					// This ESLint comment is necessary because the rule incorrectly thinks `tagName` should be a dependency here, despite that it depends on `tag` which is already a dependency.
 					// eslint-disable-next-line react-hooks/exhaustive-deps
-				}, [tag, textAreaRef])
+				}, [tag, textAreaRef, setValue])
 			}
 		/>
 	);
