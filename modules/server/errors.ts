@@ -8,8 +8,6 @@ export const withStatusCode = <
 		const serverSideProps = await getServerSideProps(props);
 
 		if (serverSideProps.props.statusCode) {
-			// This ESLint comment is necessary because I'm pretty sure there's no race condition here.
-			// eslint-disable-next-line require-atomic-updates
 			props.res.statusCode = serverSideProps.props.statusCode;
 		}
 

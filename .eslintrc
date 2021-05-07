@@ -40,7 +40,6 @@
 		"no-empty": "off",
 		"no-unsafe-optional-chaining": "error",
 		"no-useless-backreference": "warn",
-		"require-atomic-updates": "warn",
 		"curly": "error",
 		"default-param-last": "error",
 		"dot-location": [
