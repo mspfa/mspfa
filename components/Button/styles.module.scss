@@ -3,6 +3,7 @@
 
 .button {
 	display: inline-block;
+	box-sizing: content-box;
 	user-select: none;
 	font-family: 'Homestuck-Regular';
 	font-size: 1.5em;
@@ -13,9 +14,12 @@
 	vertical-align: middle;
 	text-decoration: none;
 	flex-shrink: 0;
-	@include styled-button($front, false, true);
+	@include styled-button(
+		$front,
+		$color-is-behind-button: true
+	);
 
-	& + & {
+	& + &:not(.icon) {
 		margin-left: 1ch;
 	}
 
@@ -40,9 +44,15 @@
 		width: 18px;
 		height: 18px;
 		font-size: 1em;
+		padding: 0;
 		background-repeat: no-repeat;
 		background-position: center;
-		@include styled-button($front, false, true, 1);
+		@include styled-button(
+			$front,
+			$color-is-behind-button: true,
+			$scale: 1,
+			$border: true
+		);
 	}
 
 	&.alt {
