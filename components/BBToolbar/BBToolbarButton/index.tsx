@@ -26,18 +26,10 @@ const tags: Record<string, {
 		values: Values
 	) => Partial<NewBBTagProps>
 }> = {
-	b: {
-		title: 'Bold'
-	},
-	i: {
-		title: 'Italic'
-	},
-	u: {
-		title: 'Underline'
-	},
-	s: {
-		title: 'Strikethrough'
-	},
+	b: { title: 'Bold' },
+	i: { title: 'Italic' },
+	u: { title: 'Underline' },
+	s: { title: 'Strikethrough' },
 	color: {
 		title: 'Text Color'
 	},
@@ -45,23 +37,27 @@ const tags: Record<string, {
 		title: 'Text Background Color'
 	},
 	size: {
-		title: 'Font Size'
+		title: 'Font Size',
+		content: (
+			<LabeledDialogBox>
+				<FieldBoxRow
+					type="number"
+					name="attributes"
+					label="Font Size"
+					required
+					autoFocus
+					placeholder="Size in Pixels"
+				/>
+			</LabeledDialogBox>
+		)
 	},
 	font: {
 		title: 'Font Family'
 	},
-	left: {
-		title: 'Align Left'
-	},
-	center: {
-		title: 'Align Center'
-	},
-	right: {
-		title: 'Align Right'
-	},
-	justify: {
-		title: 'Align Justify'
-	},
+	left: { title: 'Align Left' },
+	center: { title: 'Align Center' },
+	right: { title: 'Align Right' },
+	justify: { title: 'Align Justify' },
 	url: {
 		title: 'Link'
 	},
@@ -69,14 +65,14 @@ const tags: Record<string, {
 		title: 'Hover Text',
 		content: (
 			<LabeledDialogBox>
-				<FieldBoxRow name="hoverText" label="Hover Text" autoFocus required />
-				<FieldBoxRow name="children" label="Content" />
+				<FieldBoxRow
+					name="attributes"
+					label="Hover Text"
+					required
+					autoFocus
+				/>
 			</LabeledDialogBox>
-		),
-		valuesToProps: ({ hoverText, children }) => ({
-			attributes: hoverText,
-			children
-		})
+		)
 	},
 	img: {
 		title: 'Image'
@@ -146,18 +142,24 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 							return;
 						}
 
-						if (tag.valuesToProps) {
-							Object.assign(tagProps, tag.valuesToProps(dialog.form!.values));
-						}
+						Object.assign(
+							tagProps,
+							tag.valuesToProps
+								? tag.valuesToProps(dialog.form!.values)
+								: dialog.form!.values
+						);
 					}
 
 					const openTag = `[${tagName}${
 						tagProps.attributes
-							? typeof tagProps.attributes === 'string'
-								? `=${tagProps.attributes}` // Perhaps this should be escaped to prevent "]" in `attributes` from closing the tag?
-								: Object.entries(tagProps.attributes).map(
-									([name, value]) => ` ${name}=${value}`
-								).join('')
+							// Perhaps this should be escaped to prevent "]" in `attributes` from closing the tag?
+							? tagProps.attributes instanceof Object
+								? (
+									Object.entries(tagProps.attributes).map(
+										([name, value]) => ` ${name}=${value}`
+									).join('')
+								)
+								: `=${tagProps.attributes}`
 							: ''
 					}]`;
 					const closeTag = `[/${tagName}]`;
