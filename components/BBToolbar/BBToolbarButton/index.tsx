@@ -150,7 +150,38 @@ const tags: Record<string, {
 		title: 'Image'
 	},
 	spoiler: {
-		title: 'Spoiler'
+		title: 'Spoiler',
+		initialValues: {
+			attributes: {
+				open: '',
+				close: ''
+			}
+		},
+		content: (
+			<LabeledDialogBox>
+				<FieldBoxRow
+					name="attributes.open"
+					label={'"Show" Button Text'}
+					autoFocus
+					placeholder="Optional"
+				/>
+				<FieldBoxRow
+					name="attributes.close"
+					label={'"Hide" Button Text'}
+					placeholder="Optional"
+				/>
+			</LabeledDialogBox>
+		),
+		valuesToProps: ({ attributes: { open, close } }) => ({
+			attributes: (
+				open || close
+					? {
+						...!!open && { open },
+						...!!close && { close }
+					}
+					: undefined
+			)
+		})
 	},
 	flash: {
 		title: 'Flash Embed'
