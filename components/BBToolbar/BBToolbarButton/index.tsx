@@ -100,7 +100,38 @@ const tags: Record<string, {
 	right: { title: 'Align Right' },
 	justify: { title: 'Align Justify' },
 	url: {
-		title: 'Link'
+		title: 'Link',
+		initialValues: children => ({
+			attributes: undefined,
+			children: undefined,
+			[children.includes('://') ? 'attributes' : 'children']: children
+		}),
+		content: ({ initialValues }) => (
+			<LabeledDialogBox>
+				<FieldBoxRow
+					type="url"
+					name="attributes"
+					label="URL"
+					required
+					autoFocus={!initialValues.attributes}
+				/>
+				<FieldBoxRow
+					as="textarea"
+					name="children"
+					label="Link Text"
+					placeholder="Optional"
+					autoFocus={!!initialValues.attributes}
+				/>
+			</LabeledDialogBox>
+		),
+		valuesToProps: ({ attributes, children }) => {
+			const childrenIsURL = !children || attributes === children;
+
+			return {
+				attributes: childrenIsURL ? undefined : attributes,
+				children: childrenIsURL ? attributes : children
+			};
+		}
 	},
 	alt: {
 		title: 'Hover Text',
@@ -193,7 +224,7 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 
 					const openTag = `[${tagName}${
 						tagProps.attributes
-							// Perhaps this should be escaped to prevent "]" in `attributes` from closing the tag?
+							// TODO: This should be escaped to prevent "]" in `attributes` from closing the tag, and to prevent "=" from creating new attributes.
 							? tagProps.attributes instanceof Object
 								? (
 									Object.entries(tagProps.attributes).map(
