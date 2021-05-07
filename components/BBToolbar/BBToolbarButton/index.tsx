@@ -228,7 +228,10 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 					};
 
 					if (tag.content) {
+						await Dialog.getByID('bb-toolbar')?.resolve();
+
 						const dialog = new Dialog({
+							id: 'bb-toolbar',
 							title: tag.title,
 							content: tag.content,
 							initialValues: Object.assign(
