@@ -31,10 +31,34 @@ const tags: Record<string, {
 	u: { title: 'Underline' },
 	s: { title: 'Strikethrough' },
 	color: {
-		title: 'Text Color'
+		title: 'Text Color',
+		content: (
+			<LabeledDialogBox>
+				<FieldBoxRow
+					type="color"
+					name="attributes"
+					label="Color"
+					required
+					autoFocus
+					size={9}
+				/>
+			</LabeledDialogBox>
+		)
 	},
 	background: {
-		title: 'Text Background Color'
+		title: 'Text Background Color',
+		content: (
+			<LabeledDialogBox>
+				<FieldBoxRow
+					type="color"
+					name="attributes"
+					label="Color"
+					required
+					autoFocus
+					size={9}
+				/>
+			</LabeledDialogBox>
+		)
 	},
 	size: {
 		title: 'Font Size',
@@ -43,10 +67,9 @@ const tags: Record<string, {
 				<FieldBoxRow
 					type="number"
 					name="attributes"
-					label="Font Size"
+					label="Size in Pixels"
 					required
 					autoFocus
-					placeholder="Size in Pixels"
 				/>
 			</LabeledDialogBox>
 		)
