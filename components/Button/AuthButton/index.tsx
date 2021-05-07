@@ -30,22 +30,22 @@ const promptAuthMethod = {
 			content: ({ values }) => (
 				<LabeledDialogBox>
 					<FieldBoxRow
-						name="password"
 						type="password"
+						name="password"
+						label="New Password"
 						autoComplete="new-password"
 						required
 						minLength={8}
 						autoFocus
-						label="New Password"
 					/>
 					<FieldBoxRow
-						name="confirmPassword"
 						type="password"
+						name="confirmPassword"
+						label="Confirm"
 						autoComplete="new-password"
 						required
 						placeholder="Re-Type Password"
 						pattern={toPattern(values.password)}
-						label="Confirm"
 					/>
 				</LabeledDialogBox>
 			),

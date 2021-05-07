@@ -16,10 +16,10 @@ const ControlSetting = ({
 	return (
 		<FieldBoxRow
 			name={name}
-			help={help}
-			placeholder="(None)"
-			readOnly
 			label={label}
+			readOnly
+			placeholder="(None)"
+			help={help}
 			onKeyDown={
 				useCallback((event: KeyboardEvent<HTMLInputElement> & { target: HTMLInputElement }) => {
 					if (!event.target.disabled) {

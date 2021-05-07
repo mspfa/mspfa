@@ -102,9 +102,9 @@ const SignIn = ({ page }: SignInProps) => {
 						<LabeledBoxRow htmlFor="sign-in-email" label="Email">
 							<input
 								key={page} // This is necessary to re-render this element when `page` changes, or else `autoFocus` will not work correctly.
+								type="email"
 								id="sign-in-email"
 								name="email"
-								type="email"
 								autoComplete="email"
 								required
 								maxLength={254}
@@ -115,9 +115,9 @@ const SignIn = ({ page }: SignInProps) => {
 						</LabeledBoxRow>
 						<LabeledBoxRow htmlFor="sign-in-password" label="Password">
 							<input
+								type="password"
 								id="sign-in-password"
 								name="password"
-								type="password"
 								autoComplete={page ? 'new-password' : 'current-password'}
 								required
 								minLength={8}
@@ -130,9 +130,9 @@ const SignIn = ({ page }: SignInProps) => {
 						) : (
 							<LabeledBoxRow htmlFor="sign-in-confirm-password" label="Confirm">
 								<input
+									type="password"
 									id="sign-in-confirm-password"
 									name="confirmPassword"
-									type="password"
 									autoComplete="new-password"
 									required
 									placeholder="Re-Type Password"
@@ -150,9 +150,9 @@ const SignIn = ({ page }: SignInProps) => {
 					<Captcha />
 					<div id="terms-agreed-container">
 						<input
+							type="checkbox"
 							id="sign-in-terms-agreed"
 							name="termsAgreed"
-							type="checkbox"
 							required
 							checked={signInValues.termsAgreed}
 							onChange={onChange}

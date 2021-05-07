@@ -33,9 +33,9 @@ const FieldBoxRow = ({
 			help={help}
 		>
 			<Field
+				type={props.as ? undefined : type}
 				id={id}
 				name={name}
-				type={props.as ? undefined : type}
 				{...props}
 			/>
 		</LabeledBoxRow>

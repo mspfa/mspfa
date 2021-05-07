@@ -163,9 +163,9 @@ const DateField = ({
 	return (
 		<>
 			<input
+				type="number"
 				id={`${id}-day`}
 				className="date-field-day"
-				type="number"
 				autoComplete={autoComplete ? `${autoComplete}-day` : undefined}
 				required={required}
 				placeholder="DD"
@@ -195,9 +195,9 @@ const DateField = ({
 				))}
 			</select>
 			<input
+				type="number"
 				id={`${id}-year`}
 				className="date-field-year"
-				type="number"
 				autoComplete={autoComplete ? `${autoComplete}-year` : undefined}
 				required={required}
 				placeholder="YYYY"

@@ -12,14 +12,14 @@ const NotificationSetting = ({ label, name, help }: NotificationSettingProps) =>
 	>
 		<div className="box-row-content">
 			<Field
-				name={`${name}.email`}
 				type="checkbox"
+				name={`${name}.email`}
 			/>
 		</div>
 		<div className="box-row-content">
 			<Field
-				name={`${name}.site`}
 				type="checkbox"
+				name={`${name}.site`}
 			/>
 		</div>
 	</BoxRow>

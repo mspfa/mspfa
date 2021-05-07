@@ -93,15 +93,15 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 									<BoxRowSection heading="Meta">
 										<FieldBoxRow
 											name="name"
+											label="Username"
 											autoComplete="username"
 											required
 											minLength={1}
 											maxLength={32}
-											label="Username"
 										/>
 										<FieldBoxRow
-											name="icon"
 											type="url"
+											name="icon"
 											label="Icon URL"
 										/>
 										<BoxRow>
@@ -114,28 +114,28 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 												<BirthdateField required />
 											</LabeledBoxRow>
 											<FieldBoxRow
-												name="settings.birthdatePublic"
 												type="checkbox"
+												name="settings.birthdatePublic"
 												label="Birthdate Public"
 												help="Shows your birthdate publicly on your profile."
 											/>
 										</BoxRowSection>
 										<BoxRowSection heading="Contact">
 											<FieldBoxRow
-												name="email"
 												type="email"
+												name="email"
 												label="Email"
 												required
 											/>
 											<FieldBoxRow
-												name="settings.emailPublic"
 												type="checkbox"
+												name="settings.emailPublic"
 												label="Email Public"
 												help="Shows your email publicly on your profile."
 											/>
 											<FieldBoxRow
-												name="site"
 												type="url"
+												name="site"
 												label="Website"
 											/>
 										</BoxRowSection>
@@ -175,8 +175,8 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 								</BoxSection>
 								<BoxFooter>
 									<Button
-										className="alt"
 										type="submit"
+										className="alt"
 										disabled={isSubmitting || !dirty}
 									>
 										Save

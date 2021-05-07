@@ -117,31 +117,31 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 			content: ({ values }) => (
 				<LabeledDialogBox>
 					<FieldBoxRow
-						name="currentPassword"
 						type="password"
+						name="currentPassword"
+						label="Current Password"
 						autoComplete="current-password"
 						required
 						minLength={8}
-						label="Current Password"
 						autoFocus
 					/>
 					<ForgotPassword />
 					<FieldBoxRow
-						name="password"
 						type="password"
+						name="password"
+						label="New Password"
 						autoComplete="new-password"
 						required
 						minLength={8}
-						label="New Password"
 					/>
 					<FieldBoxRow
-						name="confirmPassword"
 						type="password"
+						name="confirmPassword"
+						label="Confirm"
 						autoComplete="new-password"
 						required
 						placeholder="Re-Type Password"
 						pattern={toPattern(values.password)}
-						label="Confirm"
 					/>
 				</LabeledDialogBox>
 			),
@@ -238,12 +238,12 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 							<Box>
 								<BoxRowSection heading="Account">
 									<FieldBoxRow
-										name="email"
 										type="email"
+										name="email"
+										label="Email"
 										autoComplete="email"
 										required
 										maxLength={254}
-										label="Email"
 									/>
 									<LabeledBoxRow htmlFor="field-birthdate-day" label="Birthdate">
 										<BirthdateField required />
@@ -279,40 +279,40 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										<option value="trickster">Trickster</option>
 									</FieldBoxRow>
 									<FieldBoxRow
-										name="settings.stickyNav"
 										type="checkbox"
+										name="settings.stickyNav"
 										label="Sticky Nav Bar"
 										help="Makes the nav bar stick to the top of your screen when you scroll down instead of scrolling out of the page."
 									/>
 									<FieldBoxRow
-										name="settings.imageSharpening"
 										type="checkbox"
+										name="settings.imageSharpening"
 										label="Image Sharpening"
 										help={'Disables anti-aliasing in images from adventure pages (using nearest-neighbor scaling).\n\nWhat this means is images, when scaled, will tend to have more crisp edges rather than becoming blurry.'}
 									/>
 									<FieldBoxRow
-										name="settings.ads.side"
 										type="checkbox"
+										name="settings.ads.side"
 										label="Side Ad"
 										onChange={values.settings.ads.side ? interceptAdDisable : handleChange}
 									/>
 									<FieldBoxRow
-										name="settings.ads.matchedContent"
 										type="checkbox"
+										name="settings.ads.matchedContent"
 										label="Matched Content Ad"
 										onChange={values.settings.ads.matchedContent ? interceptAdDisable : handleChange}
 									/>
 								</BoxRowSection>
 								<BoxRowSection heading="Utility">
 									<FieldBoxRow
-										name="settings.autoOpenSpoilers"
 										type="checkbox"
+										name="settings.autoOpenSpoilers"
 										label="Auto-Open Spoilers"
 										help="Makes spoilers open by default instead of closed."
 									/>
 									<FieldBoxRow
-										name="settings.preloadImages"
 										type="checkbox"
+										name="settings.preloadImages"
 										label="Preload Images"
 										help="Loads images on adjacent adventure pages so they may already be loaded when an adjacent page is opened."
 									/>
@@ -385,8 +385,8 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 								<BoxFooter>
 									<BoxRow>
 										<Button
-											className="alt"
 											type="submit"
+											className="alt"
 											disabled={isSubmitting || !dirty}
 										>
 											Save
@@ -434,9 +434,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 																	TODO: Make not irreversible.<br />
 																	<br />
 																	<Field
+																		type="checkbox"
 																		id="delete-user-confirm"
 																		name="confirm"
-																		type="checkbox"
 																		required
 																	/>
 																	<label className="spaced bolder" htmlFor="delete-user-confirm">
