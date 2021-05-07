@@ -102,8 +102,8 @@ const tags: Record<string, {
 	url: {
 		title: 'Link',
 		initialValues: children => ({
-			attributes: undefined,
-			children: undefined,
+			attributes: '',
+			children: '',
 			[children.includes('://') ? 'attributes' : 'children']: children
 		}),
 		content: ({ initialValues }) => (
