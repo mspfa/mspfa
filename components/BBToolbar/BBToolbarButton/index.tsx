@@ -14,6 +14,13 @@ type NewBBTagProps = {
 
 const tags: Record<string, {
 	title: string,
+	/**
+	 * The initial values of the BB tag's dialog form.
+	 *
+	 * These values are spread to `{ children }` when setting the dialog form's initial values.
+	 *
+	 * If this is a function, the return value is spread to the initial values instead.
+	 */
 	initialValues?: (
 		Record<string, any>
 		| ((
@@ -21,7 +28,17 @@ const tags: Record<string, {
 			children: string
 		) => Record<string, any>)
 	),
+	/**
+	 * The content of the BB tag dialog which opens when the tag's icon is clicked in the toolbar.
+	 *
+	 * If `undefined`, no dialog will open when this tag's icon is clicked.
+	 */
 	content?: Dialog<Record<string, any>>['content'],
+	/**
+	 * A function called when the BB tag's dialog closes.
+	 *
+	 * The dialog form's values are passed in, and the return value is spread with the form's values to the BB tag's props.
+	 */
 	valuesToProps?: <Values extends Record<string, any>>(
 		values: Values
 	) => Partial<NewBBTagProps>
@@ -118,11 +135,11 @@ const tagIndexes = Object.fromEntries(
 );
 
 export type BBToolbarButtonProps = {
-	/** The name of the BBCode tag which the BB toolbar button creates. */
+	/** The name of the BB tag which the BB toolbar button creates. */
 	tag: string
 };
 
-/** Gives the child text area a BBCode toolbar. */
+/** Adds a BBCode toolbar to the child text area. */
 const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 	const tag = tags[tagName];
 
