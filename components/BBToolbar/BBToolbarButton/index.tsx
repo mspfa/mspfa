@@ -160,7 +160,7 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 
 					const tagProps: NewBBTagProps = {
 						children: selection,
-						// This needs to initially be an empty string and not `undefined` so that the form's initial values include this property and any fieldsFields with `name="attributes"` are initially Formik-controlled.
+						// This needs to initially be an empty string and not `undefined` so that the form's initial values include this property, and any fields with `name="attributes"` are initially Formik-controlled.
 						attributes: ''
 					};
 
