@@ -14,9 +14,13 @@ window.addEventListener('error', event => {
 	if (event.filename.startsWith(`${location.origin}/`)) {
 		new Dialog({
 			title: 'Uncaught Error',
-			content: `${event.message}\n\n${event.error.stack || (
-				`${event.error.message}\n    at ${event.filename}:${event.lineno}${event.colno ? `:${event.colno}` : ''}`
-			)}`
+			content: `${
+				event.message
+			}\n\n${
+				event.error.stack || (
+					`${event.error.message}\n    at ${event.filename}:${event.lineno}${event.colno ? `:${event.colno}` : ''}`
+				)
+			}`
 		});
 	}
 });
