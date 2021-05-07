@@ -1,98 +1,102 @@
 import './styles.module.scss';
-import type { ReactNode } from 'react';
 import { useContext, useCallback } from 'react';
 import { TextAreaRefContext } from 'components/BBToolbar';
 import Button from 'components/Button';
 import { Dialog } from 'modules/client/dialogs';
 import type { BBTagProps } from 'components/BBCode/BBTags';
+import LabeledDialogBox from 'components/Box/LabeledDialogBox';
+import FieldBoxRow from 'components/Box/FieldBoxRow';
 
-type Values = {
+type NewBBTagProps = {
 	children: string,
 	attributes: BBTagProps['attributes']
 };
 
 const tags: Record<string, {
-	/** The index of the tag within the BB toolbar icon sheet. */
-	index: number,
 	title: string,
-	content?: ReactNode,
 	initialValues?: (
-		Values
+		Record<string, any>
 		| ((
-			/** The user's selected text in the text area's value. */
-			selection: string
-		) => Values)
-	)
+			/** The user's selected text in the text area. */
+			children: string
+		) => Record<string, any>)
+	),
+	content?: Dialog<Record<string, any>>['content'],
+	valuesToProps?: <Values extends Record<string, any>>(
+		values: Values
+	) => Partial<NewBBTagProps>
 }> = {
 	b: {
-		index: 0,
 		title: 'Bold'
 	},
 	i: {
-		index: 1,
 		title: 'Italic'
 	},
 	u: {
-		index: 2,
 		title: 'Underline'
 	},
 	s: {
-		index: 3,
 		title: 'Strikethrough'
 	},
 	color: {
-		index: 4,
 		title: 'Text Color'
 	},
 	background: {
-		index: 5,
 		title: 'Text Background Color'
 	},
 	size: {
-		index: 6,
 		title: 'Font Size'
 	},
 	font: {
-		index: 7,
 		title: 'Font Family'
 	},
 	left: {
-		index: 8,
 		title: 'Align Left'
 	},
 	center: {
-		index: 9,
 		title: 'Align Center'
 	},
 	right: {
-		index: 10,
 		title: 'Align Right'
 	},
 	justify: {
-		index: 11,
 		title: 'Align Justify'
 	},
 	url: {
-		index: 12,
 		title: 'Link'
 	},
 	alt: {
-		index: 13,
-		title: 'Hover Text'
+		title: 'Hover Text',
+		content: (
+			<LabeledDialogBox>
+				<FieldBoxRow name="hoverText" label="Hover Text" autoFocus required />
+				<FieldBoxRow name="children" label="Content" />
+			</LabeledDialogBox>
+		),
+		valuesToProps: ({ hoverText, children }) => ({
+			attributes: hoverText,
+			children
+		})
 	},
 	img: {
-		index: 14,
 		title: 'Image'
 	},
 	spoiler: {
-		index: 15,
 		title: 'Spoiler'
 	},
 	flash: {
-		index: 16,
 		title: 'Flash Embed'
 	}
 };
+
+// The above `tags` must be in the same order as the BB toolbar icon sheet.
+
+/** The indexes of each tag within the BB toolbar icon sheet. */
+const tagIndexes = Object.fromEntries(
+	Object.keys(tags).map(
+		(tagName, i) => [tagName, i]
+	)
+);
 
 export type BBToolbarButtonProps = {
 	/** The name of the BBCode tag which the BB toolbar button creates. */
@@ -110,43 +114,48 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 			className="icon"
 			title={tag.title}
 			style={{
-				backgroundPositionX: `${-tag.index}em`
+				backgroundPositionX: `${-tagIndexes[tagName]}em`
 			}}
 			onClick={
 				useCallback(async () => {
 					const { selectionStart, selectionEnd } = textAreaRef.current;
 					const selection = textAreaRef.current.value.slice(selectionStart, selectionEnd);
 
-					let values: Values = {
+					const tagProps: NewBBTagProps = {
 						children: selection,
 						attributes: undefined
 					};
 
 					if (tag.content) {
-						const dialog = new Dialog<Values>({
+						const dialog = new Dialog({
 							title: tag.title,
 							content: tag.content,
-							initialValues: Object.assign(
-								values,
-								tag.initialValues instanceof Function
+							initialValues: {
+								children: selection,
+								...tag.initialValues instanceof Function
 									? tag.initialValues(selection)
 									: tag.initialValues
-							),
-							actions: ['Okay', 'Cancel']
+							},
+							actions: [
+								{ label: 'Okay', autoFocus: false },
+								'Cancel'
+							]
 						});
 
-						if (!await dialog) {
+						if (!(await dialog)?.submit) {
 							return;
 						}
 
-						values = dialog.form!.values;
+						if (tag.valuesToProps) {
+							Object.assign(tagProps, tag.valuesToProps(dialog.form!.values));
+						}
 					}
 
 					const openTag = `[${tagName}${
-						values.attributes
-							? typeof values.attributes === 'string'
-								? `=${values.attributes}` // Perhaps this should be escaped to prevent "]" in `attributes` from closing the tag?
-								: Object.entries(values.attributes).map(
+						tagProps.attributes
+							? typeof tagProps.attributes === 'string'
+								? `=${tagProps.attributes}` // Perhaps this should be escaped to prevent "]" in `attributes` from closing the tag?
+								: Object.entries(tagProps.attributes).map(
 									([name, value]) => ` ${name}=${value}`
 								).join('')
 							: ''
@@ -156,7 +165,7 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 					setValue(
 						textAreaRef.current.value.slice(0, selectionStart)
 						+ openTag
-						+ values.children
+						+ tagProps.children
 						+ closeTag
 						+ textAreaRef.current.value.slice(selectionEnd, textAreaRef.current.value.length)
 					);
@@ -165,7 +174,7 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 					setTimeout(() => {
 						textAreaRef.current.focus();
 						textAreaRef.current.selectionStart = selectionStart + openTag.length;
-						textAreaRef.current.selectionEnd = selectionStart + openTag.length + values.children.length;
+						textAreaRef.current.selectionEnd = selectionStart + openTag.length + tagProps.children.length;
 					});
 
 					// This ESLint comment is necessary because the rule incorrectly thinks `tagName` should be a dependency here, despite that it depends on `tag` which is already a dependency.
