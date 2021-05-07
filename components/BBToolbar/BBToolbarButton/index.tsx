@@ -8,6 +8,7 @@ import LabeledDialogBox from 'components/Box/LabeledDialogBox';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
 
 type NewBBTagProps = {
+	/** The content of the BB tag. */
 	children: string,
 	attributes: BBTagProps['attributes']
 };
@@ -37,7 +38,7 @@ const tags: Record<string, {
 	/**
 	 * A function called when the BB tag's dialog closes.
 	 *
-	 * The dialog form's values are passed in, and the return value is spread with the form's values to the BB tag's props.
+	 * The dialog form's values are passed in, and the return value is spread with the form's values and the current selected `children` to the BB tag's props.
 	 */
 	valuesToProps?: <Values extends Record<string, any>>(
 		values: Values
@@ -215,11 +216,13 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 			}}
 			onClick={
 				useCallback(async () => {
-					const { selectionStart, selectionEnd } = textAreaRef.current;
-					const selection = textAreaRef.current.value.slice(selectionStart, selectionEnd);
+					let children = textAreaRef.current.value.slice(
+						textAreaRef.current.selectionStart,
+						textAreaRef.current.selectionEnd
+					);
 
 					const tagProps: NewBBTagProps = {
-						children: selection,
+						children,
 						// This needs to initially be an empty string and not `undefined` so that the form's initial values include this property, and any fields with `name="attributes"` are initially Formik-controlled.
 						attributes: ''
 					};
@@ -231,7 +234,7 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 							initialValues: Object.assign(
 								tagProps,
 								tag.initialValues instanceof Function
-									? tag.initialValues(selection)
+									? tag.initialValues(children)
 									: tag.initialValues
 							),
 							actions: [
@@ -244,9 +247,17 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 							return;
 						}
 
+						// Update `children` in case the user changed their selection since closing the dialog.
+						children = textAreaRef.current.value.slice(
+							textAreaRef.current.selectionStart,
+							textAreaRef.current.selectionEnd
+						);
+
 						Object.assign(
 							tagProps,
 							dialog.form!.values,
+							// Spread the updated selection in the `children` value to overwrite the old value.
+							{ children },
 							tag.valuesToProps && tag.valuesToProps(dialog.form!.values)
 						);
 					}
@@ -265,19 +276,22 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 					}]`;
 					const closeTag = `[/${tagName}]`;
 
+					const selectionStart = textAreaRef.current.selectionStart;
+
 					setValue(
 						textAreaRef.current.value.slice(0, selectionStart)
 						+ openTag
 						+ tagProps.children
 						+ closeTag
-						+ textAreaRef.current.value.slice(selectionEnd, textAreaRef.current.value.length)
+						+ textAreaRef.current.value.slice(textAreaRef.current.selectionEnd, textAreaRef.current.value.length)
 					);
 
 					// This timeout is necessary so the selection of the new value occurs after the new value renders.
 					setTimeout(() => {
 						textAreaRef.current.focus();
+						// It is necessary to use `selectionStart` instead of `textAreaRef.current.selectionStart` here because the latter gets reset to 0 after the value changes.
 						textAreaRef.current.selectionStart = selectionStart + openTag.length;
-						textAreaRef.current.selectionEnd = selectionStart + openTag.length + tagProps.children.length;
+						textAreaRef.current.selectionEnd = textAreaRef.current.selectionStart + tagProps.children.length;
 					});
 
 					// This ESLint comment is necessary because the rule incorrectly thinks `tagName` should be a dependency here, despite that it depends on `tag` which is already a dependency.
