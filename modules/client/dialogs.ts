@@ -38,7 +38,7 @@ export type DialogAction = DialogActionOption & {
 	onClick: () => void
 };
 
-export type DialogOptions<Values extends Record<string, string | number | boolean> = any> = {
+export type DialogOptions<Values extends Record<string, any> = any> = {
 	/**
 	 * The React array key for the dialog's component.
 	 *
@@ -81,7 +81,7 @@ let resolvePromise: (value?: DialogResult) => void;
 
 let nextDialogID = 0;
 
-export class Dialog<Values extends Record<string, string | number | boolean>> extends Promise<DialogResult> {
+export class Dialog<Values extends Record<string, any>> extends Promise<DialogResult> {
 	// This is so `then`, `catch`, etc. return a `Promise` rather than a `Dialog`. Weird errors occur when this is not here.
 	static readonly [Symbol.species] = Promise;
 
@@ -234,14 +234,14 @@ export class Dialog<Values extends Record<string, string | number | boolean>> ex
 	 * * Instead of returning a `Dialog` instance, it resolves after the dialog closes with a boolean for whether its `submit` property is `true`.
 	 * * Its default `actions` option is `['Yes', 'No']`.
 	 */
-	static confirm = async <Values extends Record<string, string | number | boolean>>(
+	static confirm = async <Values extends Record<string, any>>(
 		{
 			actions = ['Yes', 'No'],
 			...options
 		}: DialogOptions<Values>
 	) => !!(await new Dialog({ actions, ...options }))?.submit;
 
-	static getByID = <Values extends Record<string, string | number | boolean>>(
+	static getByID = <Values extends Record<string, any>>(
 		id: Dialog<Values>['id']
 	): Dialog<Values> | undefined => dialogs.find(dialog => dialog.id === id);
 }

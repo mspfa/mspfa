@@ -24,6 +24,7 @@ import Label from 'components/Label';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import BoxRow from 'components/Box/BoxRow';
 import BirthdateField from 'components/DateField/BirthdateField';
+import BBToolbar from 'components/BBToolbar';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 
@@ -82,7 +83,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 				}
 				enableReinitialize
 			>
-				{({ isSubmitting, dirty, values }) => {
+				{({ isSubmitting, dirty, values, setFieldValue }) => {
 					useLeaveConfirmation(dirty);
 
 					return (
@@ -143,13 +144,21 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 									<Label htmlFor="field-description">
 										Description
 									</Label>
-									<Field
-										as="textarea"
-										id="field-description"
-										name="description"
-										rows={8}
-										maxLength={2000}
-									/>
+									<BBToolbar
+										setValue={
+											useCallback((value: string) => {
+												setFieldValue('description', value);
+											}, [setFieldValue])
+										}
+									>
+										<Field
+											as="textarea"
+											id="field-description"
+											name="description"
+											rows={8}
+											maxLength={2000}
+										/>
+									</BBToolbar>
 								</BoxSection>
 								<BoxSection heading="Advanced" collapsible>
 									<Label htmlFor="field-style">

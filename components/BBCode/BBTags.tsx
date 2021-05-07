@@ -181,6 +181,7 @@ const BBTags: Partial<Record<string, BBTag>> = {
 			>
 				<div className="spoiler-heading">
 					<button
+						type="button"
 						onClick={
 							useCallback(() => {
 								setOpen(open => !open);

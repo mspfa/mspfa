@@ -43,6 +43,7 @@
 	&.icon {
 		width: 18px;
 		height: 18px;
+		// Setting `font-size` to `1em` is necessary so that `1ch` measures the current font size correctly.
 		font-size: 1em;
 		padding: 0;
 		background-repeat: no-repeat;
