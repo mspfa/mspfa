@@ -9,17 +9,22 @@ export type SpoilerProps = {
 	open?: ReactNode,
 	/** The spoiler button's label when clicking it closes the spoiler. */
 	close?: ReactNode,
+	respectAutoOpenSpoilersSetting?: boolean,
 	children?: ReactNode
 };
 
 const Spoiler = ({
 	open: openLabel = 'Show',
 	close: closeLabel = 'Hide',
+	respectAutoOpenSpoilersSetting,
 	children
 }: SpoilerProps) => {
 	const user = useUser();
-	const [open, setOpen] = useState(user?.settings.autoOpenSpoilers ?? defaultSettings.autoOpenSpoilers);
-	const [everOpened, setEverOpened] = useState(open);
+	const [open, setOpen] = useState(
+		respectAutoOpenSpoilersSetting
+			? user?.settings.autoOpenSpoilers ?? defaultSettings.autoOpenSpoilers
+			: false
+	);
 
 	useEffect(() => {
 		const onKeyDown = (event: KeyboardEvent) => {
@@ -41,10 +46,6 @@ const Spoiler = ({
 		};
 	}, []);
 
-	if (open && !everOpened) {
-		setEverOpened(true);
-	}
-
 	return (
 		<div
 			className={`spoiler${open ? ' open' : ' closed'}`}
@@ -61,7 +62,7 @@ const Spoiler = ({
 					{open ? closeLabel : openLabel}
 				</button>
 			</div>
-			{everOpened && (
+			{open && (
 				<div className="spoiler-content">
 					{children}
 				</div>

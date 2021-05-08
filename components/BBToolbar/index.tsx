@@ -2,6 +2,8 @@ import './styles.module.scss';
 import type { ReactElement } from 'react';
 import React, { useRef, useMemo } from 'react';
 import BBToolbarButton from 'components/BBToolbar/BBToolbarButton';
+import BBCode from 'components/BBCode';
+import Spoiler from 'components/Spoiler';
 
 export type TextAreaRef = React.MutableRefObject<HTMLTextAreaElement>;
 
@@ -22,7 +24,7 @@ export type BBToolbarProps = {
 };
 
 /** Gives the child text area a BBCode toolbar. */
-const BBToolbar = ({ setValue, children }: BBToolbarProps) => {
+const BBToolbar = ({ value, setValue, children }: BBToolbarProps) => {
 	const textAreaRef = useRef<HTMLTextAreaElement>(null!);
 
 	return (
@@ -67,6 +69,9 @@ const BBToolbar = ({ setValue, children }: BBToolbarProps) => {
 			{React.cloneElement(children, {
 				innerRef: textAreaRef
 			})}
+			<Spoiler open="Show Preview" close="Hide Preview">
+				<BBCode html>{value}</BBCode>
+			</Spoiler>
 		</TextAreaRefContext.Provider>
 	);
 };
