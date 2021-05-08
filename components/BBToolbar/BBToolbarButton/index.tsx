@@ -70,7 +70,6 @@ const tags: Record<string, {
 					label="Color"
 					required
 					autoFocus
-					size={9}
 				/>
 			</LabeledDialogBox>
 		)
@@ -86,7 +85,6 @@ const tags: Record<string, {
 					label="Color"
 					required
 					autoFocus
-					size={9}
 				/>
 			</LabeledDialogBox>
 		)
@@ -228,14 +226,12 @@ const tags: Record<string, {
 					name="width"
 					label="Width"
 					placeholder="Optional"
-					size={6}
 				/>
 				<FieldBoxRow
 					type="number"
 					name="height"
 					label="Height"
 					placeholder="Optional"
-					size={6}
 				/>
 			</LabeledDialogBox>
 		),
