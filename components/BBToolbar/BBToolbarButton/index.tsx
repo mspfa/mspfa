@@ -348,21 +348,9 @@ const tags: Record<string, {
 					placeholder="Optional"
 					min={200}
 				/>
-				<FieldBoxRow
-					type="checkbox"
-					name="autoplay"
-					label="Autoplay"
-				/>
-				<FieldBoxRow
-					type="checkbox"
-					name="controls"
-					label="Show Player Controls"
-				/>
-				<FieldBoxRow
-					type="checkbox"
-					name="loop"
-					label="Loop"
-				/>
+				<FieldBoxRow type="checkbox" name="autoplay" label="Autoplay" />
+				<FieldBoxRow type="checkbox" name="controls" label="Show Player Controls" />
+				<FieldBoxRow type="checkbox" name="loop" label="Loop" />
 				<FieldBoxRow
 					type="checkbox"
 					name="modestbranding"
