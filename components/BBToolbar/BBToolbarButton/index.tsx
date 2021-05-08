@@ -99,7 +99,7 @@ const tags: Record<string, {
 				<FieldBoxRow
 					type="number"
 					name="attributes"
-					label="Size in Pixels"
+					label="Percent Size"
 					required
 					autoFocus
 					min={0}
@@ -108,17 +108,20 @@ const tags: Record<string, {
 					<Label htmlFor="field-bb-preview">
 						Preview
 					</Label>
-					<Field
-						as="textarea"
-						id="field-bb-preview"
-						name="bbPreview"
-						rows={3}
-						style={(
-							typeof values.attributes === 'number'
-								? { fontSize: `${values.attributes}px` }
-								: undefined
-						)}
-					/>
+					{/* This `.bbcode` container is necessary to give the preview text the correct relative font size. */}
+					<span className="bbcode">
+						<Field
+							as="textarea"
+							id="field-bb-preview"
+							name="bbPreview"
+							rows={3}
+							style={(
+								typeof values.attributes === 'number'
+									? { fontSize: `${values.attributes}%` }
+									: undefined
+							)}
+						/>
+					</span>
 				</BoxRow>
 			</LabeledDialogBox>
 		)

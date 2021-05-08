@@ -45,7 +45,7 @@ const BBTags: Partial<Record<string, BBTag>> = {
 		<span
 			style={
 				typeof attributes === 'string'
-					? { fontSize: +attributes ? `${attributes}px` : attributes }
+					? { fontSize: +attributes ? `${attributes}%` : attributes }
 					: undefined
 			}
 		>
