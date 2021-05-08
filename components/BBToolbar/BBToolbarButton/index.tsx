@@ -299,7 +299,8 @@ const tags: Record<string, {
 			)
 		})
 	},
-	chat: { title: 'Chat' }
+	chat: { title: 'Chat' },
+	youtube: { title: 'YouTube Embed' }
 };
 
 // The above `tags` must be in the same order as the BB toolbar icon sheet.
