@@ -31,7 +31,7 @@ export type BBTag = (
 	((props: BBTagProps) => JSX.Element)
 	& {
 		/** Whether the `BBTag` is wrapped by `withBlock`. */
-		withBlock?: boolean
+		readonly withBlock?: boolean
 	}
 );
 

@@ -34,7 +34,7 @@ const withBlock = (
 		</BBTag>
 	);
 
-	BBTagWithBlock.withBlock = true;
+	BBTagWithBlock.withBlock = true as const;
 
 	return BBTagWithBlock;
 };
