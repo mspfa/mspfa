@@ -4,6 +4,7 @@ import { toKebabCase } from 'modules/client/utilities';
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
 import { useCallback, useState } from 'react';
 import { monthNames } from 'modules/client/dates';
+import { usePrefixedID } from 'modules/client/IDPrefix';
 
 // @client-only {
 const nativeInput = document.createElement('input');
@@ -48,7 +49,7 @@ export type DateFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 
 
 const DateField = ({
 	name,
-	id = `field-${toKebabCase(name)}`,
+	id,
 	value: propValue,
 	onChange: onChangeProp,
 	required,
@@ -56,6 +57,12 @@ const DateField = ({
 	max = Date.now() + 1000 * 60 * 60 * 24 * 365 * 100,
 	autoComplete
 }: DateFieldProps) => {
+	const idPrefix = usePrefixedID();
+
+	if (id === undefined) {
+		id = `${idPrefix}field-${toKebabCase(name)}`;
+	}
+
 	const [{ value: fieldValue }, , { setValue: setFieldValue }] = useField<number | undefined>(name);
 
 	const date = (

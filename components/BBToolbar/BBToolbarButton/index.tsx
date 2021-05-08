@@ -13,6 +13,7 @@ import { Field } from 'formik';
 import BoxRow from 'components/Box/BoxRow';
 import Link from 'components/Link';
 import { getChangedValues } from 'modules/client/forms';
+import IDPrefix from 'modules/client/IDPrefix';
 
 const bbPreview = 'The quick brown fox jumps over the lazy dog.';
 
@@ -437,7 +438,11 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 						const dialog = new Dialog({
 							id: 'bb-toolbar',
 							title: tag.title,
-							content: tag.content,
+							content: (
+								<IDPrefix.Provider value="bb-toolbar">
+									{tag.content}
+								</IDPrefix.Provider>
+							),
 							initialValues: Object.assign(
 								tagProps,
 								tag.initialValues instanceof Function

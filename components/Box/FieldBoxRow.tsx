@@ -3,6 +3,7 @@ import type { FieldAttributes } from 'formik';
 import { toKebabCase } from 'modules/client/utilities';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import type { LabeledBoxRowProps } from 'components/Box/LabeledBoxRow';
+import { usePrefixedID } from 'modules/client/IDPrefix';
 
 export type ExclusiveFieldBoxRowProps = Pick<LabeledBoxRowProps, 'label' | 'help'> & {
 	/**
@@ -23,8 +24,7 @@ const FieldBoxRow = ({
 	help,
 	...props
 }: FieldBoxRowProps) => {
-	// Determine the form `Field`'s `id` based on its `name`, converting from camelCase to kebab-case.
-	const id = `field-${toKebabCase(name)}`;
+	const id = usePrefixedID(`field-${toKebabCase(name)}`);
 
 	return (
 		<LabeledBoxRow
