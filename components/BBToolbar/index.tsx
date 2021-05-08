@@ -69,7 +69,11 @@ const BBToolbar = ({ value, setValue, children }: BBToolbarProps) => {
 			{React.cloneElement(children, {
 				innerRef: textAreaRef
 			})}
-			<Spoiler open="Show Preview" close="Hide Preview">
+			<Spoiler
+				open="Show Preview"
+				close="Hide Preview"
+				initialOpen={false}
+			>
 				<BBCode html>{value}</BBCode>
 			</Spoiler>
 		</TextAreaRefContext.Provider>

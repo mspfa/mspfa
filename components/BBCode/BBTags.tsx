@@ -154,7 +154,6 @@ const BBTags: Partial<Record<string, BBTag>> = {
 		<Spoiler
 			open={attributes instanceof Object ? attributes.open : undefined}
 			close={attributes instanceof Object ? attributes.close : undefined}
-			respectAutoOpenSpoilersSetting
 		>
 			{children}
 		</Spoiler>

@@ -9,21 +9,22 @@ export type SpoilerProps = {
 	open?: ReactNode,
 	/** The spoiler button's label when clicking it closes the spoiler. */
 	close?: ReactNode,
-	respectAutoOpenSpoilersSetting?: boolean,
+	/** Whether the spoiler is initially open. Defaults to the user's `autoOpenSpoilers` setting. */
+	initialOpen?: boolean,
 	children?: ReactNode
 };
 
 const Spoiler = ({
 	open: openLabel = 'Show',
 	close: closeLabel = 'Hide',
-	respectAutoOpenSpoilersSetting,
+	initialOpen,
 	children
 }: SpoilerProps) => {
 	const user = useUser();
 	const [open, setOpen] = useState(
-		respectAutoOpenSpoilersSetting
-			? user?.settings.autoOpenSpoilers ?? defaultSettings.autoOpenSpoilers
-			: false
+		initialOpen
+		?? user?.settings.autoOpenSpoilers
+		?? defaultSettings.autoOpenSpoilers
 	);
 
 	useEffect(() => {
