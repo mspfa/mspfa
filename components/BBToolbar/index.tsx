@@ -54,6 +54,7 @@ const BBToolbar = ({ setValue, children }: BBToolbarProps) => {
 					<BBToolbarButton tag="img" />
 					<BBToolbarButton tag="alt" />
 					<BBToolbarButton tag="spoiler" />
+					<BBToolbarButton tag="chat" />
 				</span>
 			</div>
 			{React.cloneElement(children, {

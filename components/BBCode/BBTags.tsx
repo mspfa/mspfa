@@ -199,7 +199,10 @@ const BBTags: Partial<Record<string, BBTag>> = {
 				</div>
 			</div>
 		);
-	})
+	}),
+	chat: withBlock(({ children }) => (
+		<div className="chat">{children}</div>
+	))
 	// flash,
 	// youtube,
 	// user

@@ -298,7 +298,8 @@ const tags: Record<string, {
 					: undefined
 			)
 		})
-	}
+	},
+	chat: { title: 'Chat' }
 };
 
 // The above `tags` must be in the same order as the BB toolbar icon sheet.
