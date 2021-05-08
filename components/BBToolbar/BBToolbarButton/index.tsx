@@ -10,6 +10,8 @@ import Label from 'components/Label';
 import { Field } from 'formik';
 import BoxRow from 'components/Box/BoxRow';
 
+const bbPreview = 'The quick brown fox jumps over the lazy dog.';
+
 const randomColorAttributes = () => ({
 	attributes: `#${`00000${Math.floor(Math.random() * 0x1000000).toString(16)}`.slice(-6)}`
 });
@@ -91,7 +93,8 @@ const tags: Record<string, {
 	},
 	size: {
 		title: 'Font Size',
-		content: (
+		initialValues: { bbPreview },
+		content: ({ values }) => (
 			<LabeledDialogBox>
 				<FieldBoxRow
 					type="number"
@@ -101,14 +104,28 @@ const tags: Record<string, {
 					autoFocus
 					min={0}
 				/>
+				<BoxRow>
+					<Label htmlFor="field-bb-preview">
+						Preview
+					</Label>
+					<Field
+						as="textarea"
+						id="field-bb-preview"
+						name="bbPreview"
+						rows={3}
+						style={(
+							typeof values.attributes === 'number'
+								? { fontSize: `${values.attributes}px` }
+								: undefined
+						)}
+					/>
+				</BoxRow>
 			</LabeledDialogBox>
 		)
 	},
 	font: {
 		title: 'Font Family',
-		initialValues: {
-			fontPreview: 'The quick brown fox jumps over the lazy dog.'
-		},
+		initialValues: { bbPreview },
 		content: ({ values }) => (
 			<>
 				<LabeledDialogBox>
@@ -140,13 +157,13 @@ const tags: Record<string, {
 						required
 					/>
 					<BoxRow>
-						<Label htmlFor="field-font-preview">
+						<Label htmlFor="field-bb-preview">
 							Preview
 						</Label>
 						<Field
 							as="textarea"
-							id="field-font-preview"
-							name="fontPreview"
+							id="field-bb-preview"
+							name="bbPreview"
 							rows={3}
 							style={{ fontFamily: values.attributes }}
 						/>
@@ -226,12 +243,14 @@ const tags: Record<string, {
 					name="width"
 					label="Width"
 					placeholder="Optional"
+					min={0}
 				/>
 				<FieldBoxRow
 					type="number"
 					name="height"
 					label="Height"
 					placeholder="Optional"
+					min={0}
 				/>
 			</LabeledDialogBox>
 		),
