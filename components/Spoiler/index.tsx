@@ -1,24 +1,25 @@
 import './styles.module.scss';
 import { defaultSettings, getUser, useUser } from 'modules/client/users';
 import { shouldIgnoreControl } from 'modules/client/utilities';
-import type { ReactNode } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
 import { useState, useCallback, useEffect } from 'react';
 
-export type SpoilerProps = {
+export type SpoilerProps = HTMLAttributes<HTMLDivElement> & {
 	/** The spoiler button's label when clicking it opens the spoiler. */
 	open?: ReactNode,
 	/** The spoiler button's label when clicking it closes the spoiler. */
 	close?: ReactNode,
 	/** Whether the spoiler is initially open. Defaults to the user's `autoOpenSpoilers` setting. */
-	initialOpen?: boolean,
-	children?: ReactNode
+	initialOpen?: boolean
 };
 
 const Spoiler = ({
 	open: openLabel = 'Show',
 	close: closeLabel = 'Hide',
 	initialOpen,
-	children
+	className,
+	children,
+	...props
 }: SpoilerProps) => {
 	const user = useUser();
 	const [open, setOpen] = useState(
@@ -49,7 +50,8 @@ const Spoiler = ({
 
 	return (
 		<div
-			className={`spoiler${open ? ' open' : ' closed'}`}
+			className={`spoiler${open ? ' open' : ' closed'}${className ? ` ${className}` : ''}`}
+			{...props}
 		>
 			<div className="spoiler-heading">
 				<button
