@@ -3,11 +3,10 @@
 
 import './styles.module.scss';
 import Link from 'components/Link';
-import { defaultSettings, useUser, getUser } from 'modules/client/users';
 import type { ReactNode } from 'react';
-import { useEffect, useCallback, useState } from 'react';
-import { sanitizeURL, shouldIgnoreControl } from 'modules/client/utilities';
+import { sanitizeURL } from 'modules/client/utilities';
 import withBlock from 'components/BBCode/withBlock';
+import Spoiler from 'components/Spoiler';
 
 export const hashlessColorCodeTest = /^([0-9a-f]{3}(?:[0-9a-f]{3}(?:[0-9a-f]{2})?)?)$/i;
 export const videoIDTest = /^(?:(?:https?:\/\/)?(?:www\.)?(?:youtu\.be|youtube\.com)\/(?:.+\/)?(?:(?:.*[?&])v=)?)?([\w-]+)(?:&.+)?$/i;
@@ -151,62 +150,14 @@ const BBTags: Partial<Record<string, BBTag>> = {
 			/>
 		);
 	},
-	spoiler: withBlock(({ attributes, children }) => {
-		const user = useUser();
-		const [open, setOpen] = useState(user?.settings.autoOpenSpoilers ?? defaultSettings.autoOpenSpoilers);
-		const [everOpened, setEverOpened] = useState(open);
-
-		useEffect(() => {
-			const onKeyDown = (event: KeyboardEvent) => {
-				if (shouldIgnoreControl()) {
-					return;
-				}
-
-				if (event.code === (getUser()?.settings.controls.toggleSpoilers ?? defaultSettings.controls.toggleSpoilers)) {
-					event.preventDefault();
-
-					setOpen(open => !open);
-				}
-			};
-
-			document.addEventListener('keydown', onKeyDown);
-
-			return () => {
-				document.removeEventListener('keydown', onKeyDown);
-			};
-		}, []);
-
-		if (open && !everOpened) {
-			setEverOpened(true);
-		}
-
-		return (
-			<div
-				className={`spoiler${open ? ' open' : ' closed'}`}
-			>
-				<div className="spoiler-heading">
-					<button
-						type="button"
-						onClick={
-							useCallback(() => {
-								setOpen(open => !open);
-							}, [])
-						}
-					>
-						{(open
-							? (attributes instanceof Object && attributes.close) || 'Hide'
-							: (attributes instanceof Object && attributes.open) || 'Show'
-						)}
-					</button>
-				</div>
-				{everOpened && (
-					<div className="spoiler-content">
-						{children}
-					</div>
-				)}
-			</div>
-		);
-	}),
+	spoiler: withBlock(({ attributes, children }) => (
+		<Spoiler
+			open={attributes instanceof Object ? attributes.open : undefined}
+			close={attributes instanceof Object ? attributes.close : undefined}
+		>
+			{children}
+		</Spoiler>
+	)),
 	chat: withBlock(({ children }) => (
 		<div className="chat">{children}</div>
 	)),

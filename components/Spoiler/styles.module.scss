@@ -1,0 +1,17 @@
+.spoiler {
+    border: 1px dashed #808080;
+    padding: 1px;
+
+	&-heading {
+		text-align: center;
+	}
+
+	&-content {
+		margin: 3px;
+		padding: 1em 5%;
+	}
+
+	&.closed &-content {
+		display: none;
+	}
+}
