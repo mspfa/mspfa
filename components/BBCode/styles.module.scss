@@ -28,5 +28,5 @@
 
 .chat {
     border: 1px dashed #808080;
-	padding: 15px 25px;
+	padding: #{(15 / 14)}em #{(25 / 14)}em;
 }
