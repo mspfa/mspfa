@@ -31,11 +31,6 @@ const getWidthAndHeight = (attributes: string) => {
 
 export type BBTagProps = {
 	/**
-	 * Example:
-	 * * The BBCode `[xyz=123]` would cause this to equal `"xyz"`.
-	 */
-	tagName: string,
-	/**
 	 * Examples:
 	 * * The BBCode `[xyz]` would cause this to equal `undefined`.
 	 * * The BBCode `[xyz=123]` would cause this to equal `"123"`.
@@ -205,9 +200,9 @@ const BBTags: Partial<Record<string, BBTag>> = {
 					</button>
 				</div>
 				{everOpened && (
-				<div className="spoiler-content">
-					{children}
-				</div>
+					<div className="spoiler-content">
+						{children}
+					</div>
 				)}
 			</div>
 		);

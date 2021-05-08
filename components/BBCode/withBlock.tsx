@@ -25,9 +25,7 @@ const trimLineBreaks = (node: ReactNode) => {
  *
  * If there is a line break immediately following the tag, removes it.
  */
-const withBlock = (
-	BBTag: BBTag
-) => {
+const withBlock = (BBTag: BBTag) => {
 	const BBTagWithBlock = ({ children, ...props }: BBTagProps) => (
 		<BBTag {...props}>
 			{trimLineBreaks(children)}

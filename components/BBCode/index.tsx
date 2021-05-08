@@ -27,6 +27,12 @@ const parseOptions: HTMLReactParserOptions = {
 				tagName = domNode.attributes[1].value;
 			}
 
+			const BBTag = BBTags[tagName];
+
+			if (!BBTag) {
+				return;
+			}
+
 			if (rawAttributes.length) {
 				if (rawAttributes[0] === '=') {
 					attributes = rawAttributes.slice(1);
@@ -49,13 +55,8 @@ const parseOptions: HTMLReactParserOptions = {
 				}
 			}
 
-			const BBTag = BBTags[tagName]!;
-
 			return (
-				<BBTag
-					tagName={tagName}
-					attributes={attributes}
-				>
+				<BBTag attributes={attributes}>
 					{domToReact(domNode.children, parseOptions)}
 				</BBTag>
 			);
