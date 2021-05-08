@@ -131,8 +131,8 @@ const BBTags: Partial<Record<string, BBTag>> = {
 			if (xIndex === -1) {
 				width = attributes;
 			} else {
-				width = attributes.slice(0, xIndex);
-				height = attributes.slice(xIndex + 1);
+				width = attributes.slice(0, xIndex) || undefined;
+				height = attributes.slice(xIndex + 1) || undefined;
 			}
 		} else if (attributes instanceof Object) {
 			width = attributes.width;

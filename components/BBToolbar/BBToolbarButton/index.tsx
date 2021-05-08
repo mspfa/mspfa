@@ -7,6 +7,10 @@ import type { BBTagProps } from 'components/BBCode/BBTags';
 import LabeledDialogBox from 'components/Box/LabeledDialogBox';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
 
+const randomColorAttributes = () => ({
+	attributes: `#${`00000${Math.floor(Math.random() * 0x1000000).toString(16)}`.slice(-6)}`
+});
+
 type NewBBTagProps = {
 	/** The content of the BB tag. */
 	children: string,
@@ -42,7 +46,9 @@ const tags: Record<string, {
 	 */
 	valuesToProps?: <Values extends Record<string, any>>(
 		values: Values
-	) => Partial<NewBBTagProps>
+	) => Partial<NewBBTagProps>,
+	/** After inserting the tag into the text area, whether to set the selection to after the tag rather than selecting its children. */
+	selectAfter?: boolean
 }> = {
 	b: { title: 'Bold' },
 	i: { title: 'Italic' },
@@ -50,6 +56,7 @@ const tags: Record<string, {
 	s: { title: 'Strikethrough' },
 	color: {
 		title: 'Text Color',
+		initialValues: randomColorAttributes,
 		content: (
 			<LabeledDialogBox>
 				<FieldBoxRow
@@ -65,6 +72,7 @@ const tags: Record<string, {
 	},
 	background: {
 		title: 'Text Background Color',
+		initialValues: randomColorAttributes,
 		content: (
 			<LabeledDialogBox>
 				<FieldBoxRow
@@ -148,7 +156,44 @@ const tags: Record<string, {
 		)
 	},
 	img: {
-		title: 'Image'
+		title: 'Image',
+		initialValues: {
+			width: '',
+			height: ''
+		},
+		content: (
+			<LabeledDialogBox>
+				<FieldBoxRow
+					type="url"
+					name="children"
+					label="URL"
+					required
+					autoFocus
+				/>
+				<FieldBoxRow
+					type="number"
+					name="width"
+					label="Width"
+					placeholder="Optional"
+					size={6}
+				/>
+				<FieldBoxRow
+					type="number"
+					name="height"
+					label="Height"
+					placeholder="Optional"
+					size={6}
+				/>
+			</LabeledDialogBox>
+		),
+		valuesToProps: ({ width, height, children }) => ({
+			children,
+			attributes: (
+				(width ? width : '')
+				+ (height ? `x${height}` : '')
+			)
+		}),
+		selectAfter: true
 	},
 	spoiler: {
 		title: 'Spoiler',
@@ -181,9 +226,6 @@ const tags: Record<string, {
 					: undefined
 			)
 		})
-	},
-	flash: {
-		title: 'Flash Embed'
 	}
 };
 
@@ -259,7 +301,7 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 						Object.assign(
 							tagProps,
 							dialog.form!.values,
-							// Spread the updated selection in the `children` value to overwrite the old value.
+							// Spread the updated selection in the `children` value to overwrite the outdated value in the dialog form's values.
 							{ children },
 							tag.valuesToProps && tag.valuesToProps(dialog.form!.values)
 						);
@@ -292,9 +334,20 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 					// This timeout is necessary so the selection of the new value occurs after the new value renders.
 					setTimeout(() => {
 						textAreaRef.current.focus();
-						// It is necessary to use `selectionStart` instead of `textAreaRef.current.selectionStart` here because the latter gets reset to 0 after the value changes.
-						textAreaRef.current.selectionStart = selectionStart + openTag.length;
-						textAreaRef.current.selectionEnd = textAreaRef.current.selectionStart + tagProps.children.length;
+
+						// It is necessary to use `selectionStart` below instead of `textAreaRef.current.selectionStart` because the latter resets to 0 after the value changes.
+
+						if (tag.selectAfter) {
+							textAreaRef.current.selectionStart = textAreaRef.current.selectionEnd = (
+								selectionStart
+								+ openTag.length
+								+ tagProps.children.length
+								+ closeTag.length
+							);
+						} else {
+							textAreaRef.current.selectionStart = selectionStart + openTag.length;
+							textAreaRef.current.selectionEnd = textAreaRef.current.selectionStart + tagProps.children.length;
+						}
 					});
 
 					// This ESLint comment is necessary because the rule incorrectly thinks `tagName` should be a dependency here, despite that it depends on `tag` which is already a dependency.
