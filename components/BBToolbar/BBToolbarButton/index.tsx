@@ -312,7 +312,7 @@ const tags: Record<string, {
 			loop: false,
 			modestbranding: false
 		},
-		content: ({ values }) => (
+		content: (
 			<LabeledDialogBox>
 				<FieldBoxRow
 					type="text"
