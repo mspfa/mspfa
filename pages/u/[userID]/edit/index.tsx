@@ -146,6 +146,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										Description
 									</Label>
 									<BBToolbar
+										value={values.description}
 										setValue={
 											useCallback((value: string) => {
 												setFieldValue('description', value);

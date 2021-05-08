@@ -11,11 +11,14 @@ export const TextAreaRefContext = React.createContext<{
 }>(undefined!);
 
 export type BBToolbarProps = {
+	/** The current value of the text area. */
+	value: string,
+	/** A function which sets the value of the text area. */
+	setValue: (value: string) => void,
 	/** The component to pass a `textarea` ref to. */
 	children: ReactElement<{
 		innerRef: TextAreaRef
-	}>,
-	setValue: (value: string) => void
+	}>
 };
 
 /** Gives the child text area a BBCode toolbar. */
@@ -25,7 +28,10 @@ const BBToolbar = ({ setValue, children }: BBToolbarProps) => {
 	return (
 		<TextAreaRefContext.Provider
 			value={
-				useMemo(() => ({ textAreaRef, setValue }), [textAreaRef, setValue])
+				useMemo(() => ({
+					textAreaRef,
+					setValue
+				}), [textAreaRef, setValue])
 			}
 		>
 			<div className="bb-toolbar">
