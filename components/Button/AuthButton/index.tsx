@@ -87,7 +87,12 @@ const promptAuthMethod = {
 		});
 	}),
 	discord: () => new Promise<AuthMethodOptions>(resolve => {
-		const win = window.open(`https://discord.com/api/oauth2/authorize?client_id=${env.DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(location.origin)}%2Fsign-in%2Fdiscord&response_type=code&scope=identify%20email`, 'SignInWithDiscord');
+		const win = window.open(`https://discord.com/api/oauth2/authorize?${new URLSearchParams({
+			client_id: env.DISCORD_CLIENT_ID,
+			redirect_uri: `${location.origin}/sign-in/discord`,
+			response_type: 'code',
+			scope: 'identify email'
+		})}`, 'SignInWithDiscord');
 
 		const winClosedPoll = setInterval(() => {
 			if (!win || win.closed) {
