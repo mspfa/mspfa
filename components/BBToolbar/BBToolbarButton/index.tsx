@@ -234,9 +234,10 @@ const tags: Record<string, {
 				<FieldBoxRow
 					type="url"
 					name="children"
-					label="URL"
+					label="Image URL"
 					required
 					autoFocus
+					help="TODO: Add info on getting image URLs."
 				/>
 				<FieldBoxRow
 					type="number"
