@@ -6,10 +6,15 @@ import { Dialog } from 'modules/client/dialogs';
 import type { BBTagProps } from 'components/BBCode/BBTags';
 import LabeledDialogBox from 'components/Box/LabeledDialogBox';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
+import Label from 'components/Label';
+import { Field } from 'formik';
+import BoxRow from 'components/Box/BoxRow';
 
 const randomColorAttributes = () => ({
 	attributes: `#${`00000${Math.floor(Math.random() * 0x1000000).toString(16)}`.slice(-6)}`
 });
+
+const presetFontFamilies = ['Arial', 'Bodoni MT', 'Book Antiqua', 'Calibri', 'Cambria', 'Candara', 'Century Gothic', 'Comic Sans MS', 'Consolas', 'Courier New', 'Garamond', 'Georgia', 'Goudy Old Style', 'Helvetica', 'Homestuck-Regular', 'Impact', 'Lucida Bright', 'Lucida Console', 'Lucida Sans Typewriter', 'Perpetua', 'Rockwell', 'Segoe UI', 'Tahoma', 'Times New Roman', 'Trebuchet MS', 'Verdana'];
 
 type NewBBTagProps = {
 	/** The content of the BB tag. */
@@ -102,7 +107,55 @@ const tags: Record<string, {
 		)
 	},
 	font: {
-		title: 'Font Family'
+		title: 'Font Family',
+		initialValues: {
+			fontPreview: 'The quick brown fox jumps over the lazy dog.'
+		},
+		content: ({ values }) => (
+			<>
+				<LabeledDialogBox>
+					<FieldBoxRow
+						as="select"
+						name="attributes"
+						label="Preset Font"
+						required
+						autoFocus
+					>
+						<option
+							value={presetFontFamilies.includes(values.attributes) ? '' : values.attributes}
+							disabled
+							hidden
+						/>
+						{presetFontFamilies.map(fontFamily => (
+							<option
+								key={fontFamily}
+								value={fontFamily}
+								style={{ fontFamily }}
+							>
+								{fontFamily}
+							</option>
+						))}
+					</FieldBoxRow>
+					<FieldBoxRow
+						name="attributes"
+						label="Alternate Font"
+						required
+					/>
+					<BoxRow>
+						<Label htmlFor="field-font-preview">
+							Preview
+						</Label>
+						<Field
+							as="textarea"
+							id="field-font-preview"
+							name="fontPreview"
+							rows={3}
+							style={{ fontFamily: values.attributes }}
+						/>
+					</BoxRow>
+				</LabeledDialogBox>
+			</>
+		)
 	},
 	left: { title: 'Align Left' },
 	center: { title: 'Align Center' },
