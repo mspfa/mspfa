@@ -1,5 +1,7 @@
-.bb-toolbar {
-	margin: 3px 0;
+.bb-tool {
+	&bar {
+		margin: 3px 0;
+	}
 
 	&-group {
 		white-space: nowrap;

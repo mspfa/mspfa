@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import { useContext, useCallback } from 'react';
-import { TextAreaRefContext } from 'components/BBToolbar';
+import { TextAreaRefContext } from 'components/BBCode/BBCodeField';
 import Button from 'components/Button';
 import { Dialog } from 'modules/client/dialogs';
 import type { BBTagProps } from 'components/BBCode/BBTags';
@@ -46,13 +46,13 @@ const tags: Record<string, {
 		) => Record<string, any>)
 	),
 	/**
-	 * The content of the BB tag dialog which opens when the tag's icon is clicked in the toolbar.
+	 * The content of the BB tool dialog that opens when the `BBTool` is clicked.
 	 *
-	 * If `undefined`, no dialog will open when this tag's icon is clicked.
+	 * If `undefined`, no dialog will open when the `BBTool` is clicked.
 	 */
 	content?: Dialog<Record<string, any>>['content'],
 	/**
-	 * A function called when the BB tag's dialog closes.
+	 * A function called when the BB tool dialog closes.
 	 *
 	 * The dialog form's values are passed in, and the return value is spread with the form's values and the current selected `children` to the BB tag's props.
 	 */
@@ -385,29 +385,29 @@ const tags: Record<string, {
 	}
 };
 
-// The above `tags` must be in the same order as the BB toolbar icon sheet.
+// The above `tags` must be in the same order as the BB tool icon sheet.
 
-/** The indexes of each tag within the BB toolbar icon sheet. */
+/** The indexes of each tag within the BB tool icon sheet. */
 const tagIndexes = Object.fromEntries(
 	Object.keys(tags).map(
 		(tagName, i) => [tagName, i]
 	)
 );
 
-export type BBToolbarButtonProps = {
-	/** The name of the BB tag which the BB toolbar button creates. */
+export type BBToolProps = {
+	/** The name of the BB tag which the BB tool creates. */
 	tag: string
 };
 
-/** Adds a BBCode toolbar to the child text area. */
-const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
+/** A button in a `BBToolbar` with a corresponding BB tag. */
+const BBTool = ({ tag: tagName }: BBToolProps) => {
 	const tag = tags[tagName];
 
 	const { textAreaRef, setValue } = useContext(TextAreaRefContext);
 
 	return (
 		<Button
-			className="icon"
+			className="icon bb-tool"
 			title={tag.title}
 			style={{
 				backgroundPositionX: `${-tagIndexes[tagName]}em`
@@ -426,13 +426,13 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 					};
 
 					if (tag.content) {
-						await Dialog.getByID('bb-toolbar')?.resolve();
+						await Dialog.getByID('bb-tool')?.resolve();
 
 						const dialog = new Dialog({
-							id: 'bb-toolbar',
+							id: 'bb-tool',
 							title: tag.title,
 							content: (
-								<IDPrefix.Provider value="bb-toolbar">
+								<IDPrefix.Provider value="bb-tool">
 									{tag.content}
 								</IDPrefix.Provider>
 							),
@@ -518,4 +518,4 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 	);
 };
 
-export default BBToolbarButton;
+export default BBTool;

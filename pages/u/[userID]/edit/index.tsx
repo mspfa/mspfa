@@ -24,7 +24,7 @@ import Label from 'components/Label';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import BoxRow from 'components/Box/BoxRow';
 import BirthdateField from 'components/DateField/BirthdateField';
-import BBToolbar from 'components/BBToolbar';
+import BBCodeField from 'components/BBCode/BBCodeField';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 
@@ -145,7 +145,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 									<Label htmlFor="field-description">
 										Description
 									</Label>
-									<BBToolbar
+									<BBCodeField
 										value={values.description}
 										setValue={
 											useCallback((value: string) => {
@@ -160,7 +160,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 											rows={8}
 											maxLength={2000}
 										/>
-									</BBToolbar>
+									</BBCodeField>
 								</BoxSection>
 								<BoxSection heading="Advanced" collapsible>
 									<Label htmlFor="field-style">

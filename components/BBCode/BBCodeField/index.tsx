@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import type { ReactElement } from 'react';
 import React, { useRef, useMemo } from 'react';
-import BBToolbarButton from 'components/BBToolbar/BBToolbarButton';
+import BBTool from 'components/BBCode/BBTool';
 import BBCode from 'components/BBCode';
 import Spoiler from 'components/Spoiler';
 
@@ -9,10 +9,10 @@ export type TextAreaRef = React.MutableRefObject<HTMLTextAreaElement>;
 
 export const TextAreaRefContext = React.createContext<{
 	textAreaRef: TextAreaRef,
-	setValue: BBToolbarProps['setValue']
+	setValue: BBCodeFieldProps['setValue']
 }>(undefined!);
 
-export type BBToolbarProps = {
+export type BBCodeFieldProps = {
 	/** The current value of the text area. */
 	value: string,
 	/** A function which sets the value of the text area. */
@@ -24,7 +24,7 @@ export type BBToolbarProps = {
 };
 
 /** Gives the child text area a BBCode toolbar. */
-const BBToolbar = ({ value, setValue, children }: BBToolbarProps) => {
+const BBCodeField = ({ value, setValue, children }: BBCodeFieldProps) => {
 	const textAreaRef = useRef<HTMLTextAreaElement>(null!);
 
 	return (
@@ -37,33 +37,33 @@ const BBToolbar = ({ value, setValue, children }: BBToolbarProps) => {
 			}
 		>
 			<div className="bb-toolbar">
-				<span className="bb-toolbar-group">
-					<BBToolbarButton tag="b" />
-					<BBToolbarButton tag="i" />
-					<BBToolbarButton tag="u" />
-					<BBToolbarButton tag="s" />
+				<span className="bb-tool-group">
+					<BBTool tag="b" />
+					<BBTool tag="i" />
+					<BBTool tag="u" />
+					<BBTool tag="s" />
 				</span>
-				<span className="bb-toolbar-group">
-					<BBToolbarButton tag="color" />
-					<BBToolbarButton tag="background" />
+				<span className="bb-tool-group">
+					<BBTool tag="color" />
+					<BBTool tag="background" />
 				</span>
-				<span className="bb-toolbar-group">
-					<BBToolbarButton tag="size" />
-					<BBToolbarButton tag="font" />
+				<span className="bb-tool-group">
+					<BBTool tag="size" />
+					<BBTool tag="font" />
 				</span>
-				<span className="bb-toolbar-group">
-					<BBToolbarButton tag="left" />
-					<BBToolbarButton tag="center" />
-					<BBToolbarButton tag="right" />
-					<BBToolbarButton tag="justify" />
+				<span className="bb-tool-group">
+					<BBTool tag="left" />
+					<BBTool tag="center" />
+					<BBTool tag="right" />
+					<BBTool tag="justify" />
 				</span>
-				<span className="bb-toolbar-group">
-					<BBToolbarButton tag="url" />
-					<BBToolbarButton tag="img" />
-					<BBToolbarButton tag="alt" />
-					<BBToolbarButton tag="spoiler" />
-					<BBToolbarButton tag="chat" />
-					<BBToolbarButton tag="youtube" />
+				<span className="bb-tool-group">
+					<BBTool tag="url" />
+					<BBTool tag="img" />
+					<BBTool tag="alt" />
+					<BBTool tag="spoiler" />
+					<BBTool tag="chat" />
+					<BBTool tag="youtube" />
 				</span>
 			</div>
 			{React.cloneElement(children, {
@@ -80,4 +80,4 @@ const BBToolbar = ({ value, setValue, children }: BBToolbarProps) => {
 	);
 };
 
-export default BBToolbar;
+export default BBCodeField;
