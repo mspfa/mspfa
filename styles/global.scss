@@ -49,6 +49,10 @@ body {
 	@include theme(background-color, $back);
 }
 
+iframe {
+	border: none;
+}
+
 .mid {
 	@include theme(background-color, $mid);
 }

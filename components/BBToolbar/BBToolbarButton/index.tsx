@@ -4,11 +4,15 @@ import { TextAreaRefContext } from 'components/BBToolbar';
 import Button from 'components/Button';
 import { Dialog } from 'modules/client/dialogs';
 import type { BBTagProps } from 'components/BBCode/BBTags';
+import { videoIDTest } from 'components/BBCode/BBTags';
 import LabeledDialogBox from 'components/Box/LabeledDialogBox';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
 import Label from 'components/Label';
+import type { FormikProps } from 'formik';
 import { Field } from 'formik';
 import BoxRow from 'components/Box/BoxRow';
+import Link from 'components/Link';
+import { getChangedValues } from 'modules/client/forms';
 
 const bbPreview = 'The quick brown fox jumps over the lazy dog.';
 
@@ -51,8 +55,8 @@ const tags: Record<string, {
 	 *
 	 * The dialog form's values are passed in, and the return value is spread with the form's values and the current selected `children` to the BB tag's props.
 	 */
-	valuesToProps?: <Values extends Record<string, any>>(
-		values: Values
+	getProps?: <Values extends Record<string, any>>(
+		values: FormikProps<Values>
 	) => Partial<NewBBTagProps>,
 	/** After inserting the tag into the text area, whether to set the selection to after the tag rather than selecting its children. */
 	selectAfter?: boolean
@@ -204,7 +208,7 @@ const tags: Record<string, {
 				/>
 			</LabeledDialogBox>
 		),
-		valuesToProps: ({ attributes, children }) => {
+		getProps: ({ values: { attributes, children } }) => {
 			const childrenIsURL = !children || attributes === children;
 
 			return {
@@ -258,7 +262,7 @@ const tags: Record<string, {
 				/>
 			</LabeledDialogBox>
 		),
-		valuesToProps: ({ width, height, children }) => ({
+		getProps: ({ values: { width, height, children } }) => ({
 			children,
 			attributes: (
 				(width ? width : '')
@@ -288,7 +292,7 @@ const tags: Record<string, {
 				/>
 			</LabeledDialogBox>
 		),
-		valuesToProps: ({ open, close }) => ({
+		getProps: ({ values: { open, close } }) => ({
 			attributes: (
 				open || close
 					? {
@@ -300,7 +304,103 @@ const tags: Record<string, {
 		})
 	},
 	chat: { title: 'Chat' },
-	youtube: { title: 'YouTube Embed' }
+	youtube: {
+		title: 'YouTube Embed',
+		initialValues: {
+			autoplay: false,
+			controls: true,
+			loop: false,
+			modestbranding: false
+		},
+		content: ({ values }) => (
+			<LabeledDialogBox>
+				<FieldBoxRow
+					type="text"
+					name="children"
+					label="YouTube Video URL/ID"
+					required
+					autoFocus
+					pattern={videoIDTest.source}
+					help={(
+						<>
+							Examples:
+							<ul>
+								<li>https://www.youtube.com/watch?v=7wiNUBaK-6M</li>
+								<li>https://youtu.be/7wiNUBaK-6M</li>
+								<li>7wiNUBaK-6M</li>
+							</ul>
+						</>
+					)}
+				/>
+				{/* YouTube requires embedded players to have a viewport that is at least 200x200. */}
+				{/* Source: https://developers.google.com/youtube/iframe_api_reference#Requirements */}
+				<FieldBoxRow
+					type="number"
+					name="width"
+					label="Width"
+					placeholder="Optional"
+					min={200}
+				/>
+				<FieldBoxRow
+					type="number"
+					name="height"
+					label="Height"
+					placeholder="Optional"
+					min={200}
+				/>
+				<FieldBoxRow
+					type="checkbox"
+					name="autoplay"
+					label="Autoplay"
+				/>
+				<FieldBoxRow
+					type="checkbox"
+					name="controls"
+					label="Show Player Controls"
+				/>
+				<FieldBoxRow
+					type="checkbox"
+					name="loop"
+					label="Loop"
+				/>
+				<FieldBoxRow
+					type="checkbox"
+					name="modestbranding"
+					label="Hide YT Branding"
+					help={"Prevents the YouTube logo from displaying in the control bar.\n\nNote that a small YouTube text label will still display in the upper-right corner of a paused video when the user's mouse pointer hovers over the player."}
+				/>
+				<BoxRow>
+					<Link
+						href="https://developers.google.com/youtube/player_parameters#Parameters"
+						target="_blank"
+					>
+						Advanced Attribute List
+					</Link>
+				</BoxRow>
+			</LabeledDialogBox>
+		),
+		getProps: ({
+			initialValues,
+			values: { children, ...values }
+		}) => {
+			const changedValues = getChangedValues(initialValues, values);
+
+			return {
+				attributes: changedValues && Object.fromEntries(
+					Object.entries(changedValues as typeof values).map(
+						([key, value]) => [
+							key,
+							typeof value === 'boolean'
+								? +value
+								: value
+						]
+					)
+				),
+				children
+			};
+		},
+		selectAfter: true
+	}
 };
 
 // The above `tags` must be in the same order as the BB toolbar icon sheet.
@@ -377,7 +477,7 @@ const BBToolbarButton = ({ tag: tagName }: BBToolbarButtonProps) => {
 							dialog.form!.values,
 							// Spread the updated selection in the `children` value to overwrite the outdated value in the dialog form's values.
 							{ children },
-							tag.valuesToProps && tag.valuesToProps(dialog.form!.values)
+							tag.getProps && tag.getProps(dialog.form!)
 						);
 					}
 

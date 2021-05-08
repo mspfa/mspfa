@@ -9,7 +9,25 @@ import { useEffect, useCallback, useState } from 'react';
 import { sanitizeURL, shouldIgnoreControl } from 'modules/client/utilities';
 import withBlock from 'components/BBCode/withBlock';
 
-const hashlessColorCodeTest = /^([0-9a-f]{3}(?:[0-9a-f]{3}(?:[0-9a-f]{2})?)?)$/i;
+export const hashlessColorCodeTest = /^([0-9a-f]{3}(?:[0-9a-f]{3}(?:[0-9a-f]{2})?)?)$/i;
+export const videoIDTest = /^(?:(?:https?:\/\/)?(?:www\.)?(?:youtu\.be|youtube\.com)\/(?:.+\/)?(?:(?:.*[?&])v=)?)?([\w-]+)(?:&.+)?$/i;
+
+/** Gets `width` and `height` attributes from a string that looks like `${width}x${height}`. */
+const getWidthAndHeight = (attributes: string) => {
+	const xIndex = attributes.indexOf('x');
+
+	if (xIndex === -1) {
+		return {
+			width: attributes,
+			height: undefined
+		};
+	}
+
+	return {
+		width: attributes.slice(0, xIndex) || undefined,
+		height: attributes.slice(xIndex + 1) || undefined
+	};
+};
 
 export type BBTagProps = {
 	/**
@@ -122,21 +140,8 @@ const BBTags: Partial<Record<string, BBTag>> = {
 		</span>
 	),
 	img: ({ attributes, children }) => {
-		let width: string | undefined;
-		let height: string | undefined;
-
 		if (typeof attributes === 'string') {
-			const xIndex = attributes.indexOf('x');
-
-			if (xIndex === -1) {
-				width = attributes;
-			} else {
-				width = attributes.slice(0, xIndex) || undefined;
-				height = attributes.slice(xIndex + 1) || undefined;
-			}
-		} else if (attributes instanceof Object) {
-			width = attributes.width;
-			height = attributes.height;
+			attributes = getWidthAndHeight(attributes);
 		}
 
 		return (
@@ -146,8 +151,8 @@ const BBTags: Partial<Record<string, BBTag>> = {
 						? sanitizeURL(children)
 						: undefined
 				}
-				width={width}
-				height={height}
+				width={attributes?.width}
+				height={attributes?.height}
 			/>
 		);
 	},
@@ -202,9 +207,52 @@ const BBTags: Partial<Record<string, BBTag>> = {
 	}),
 	chat: withBlock(({ children }) => (
 		<div className="chat">{children}</div>
-	))
+	)),
+	youtube: ({ attributes, children }) => {
+		if (typeof attributes === 'string') {
+			attributes = getWidthAndHeight(attributes);
+		}
+
+		let width: string | undefined;
+		let height: string | undefined;
+
+		if (attributes) {
+			({ width, height, ...attributes } = attributes);
+		}
+
+		let videoID: string | undefined;
+
+		if (typeof children === 'string') {
+			videoID = children.match(videoIDTest)?.[1];
+		}
+
+		return (
+			<iframe
+				src={
+					videoID
+						? `https://www.youtube.com/embed/${videoID}${
+							attributes
+								? `?${new URLSearchParams(attributes as Record<string, string>)}`
+								: ''
+						}`
+						: undefined
+				}
+				// YouTube requires embedded players to have a viewport that is at least 200x200.
+				// Source: https://developers.google.com/youtube/iframe_api_reference#Requirements
+				width={
+					width
+						? Math.max(200, +width || 0)
+						: 650
+				}
+				height={
+					height
+						? Math.max(200, +height || 0)
+						: 450
+				}
+			/>
+		);
+	}
 	// flash,
-	// youtube,
 	// user
 };
 
