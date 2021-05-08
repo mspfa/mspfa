@@ -159,6 +159,7 @@ const BBTags: Partial<Record<string, BBTag>> = {
 	spoiler: withBlock(({ attributes, children }) => {
 		const user = useUser();
 		const [open, setOpen] = useState(user?.settings.autoOpenSpoilers ?? defaultSettings.autoOpenSpoilers);
+		const [everOpened, setEverOpened] = useState(open);
 
 		useEffect(() => {
 			const onKeyDown = (event: KeyboardEvent) => {
@@ -180,6 +181,10 @@ const BBTags: Partial<Record<string, BBTag>> = {
 			};
 		}, []);
 
+		if (open && !everOpened) {
+			setEverOpened(true);
+		}
+
 		return (
 			<div
 				className={`spoiler${open ? ' open' : ' closed'}`}
@@ -199,9 +204,11 @@ const BBTags: Partial<Record<string, BBTag>> = {
 						)}
 					</button>
 				</div>
+				{everOpened && (
 				<div className="spoiler-content">
 					{children}
 				</div>
+				)}
 			</div>
 		);
 	}),
