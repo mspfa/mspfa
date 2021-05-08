@@ -310,8 +310,7 @@ const tags: Record<string, {
 		initialValues: {
 			autoplay: false,
 			controls: true,
-			loop: false,
-			modestbranding: false
+			loop: false
 		},
 		content: (
 			<LabeledDialogBox>
@@ -352,12 +351,6 @@ const tags: Record<string, {
 				<FieldBoxRow type="checkbox" name="autoplay" label="Autoplay" />
 				<FieldBoxRow type="checkbox" name="controls" label="Show Player Controls" />
 				<FieldBoxRow type="checkbox" name="loop" label="Loop" />
-				<FieldBoxRow
-					type="checkbox"
-					name="modestbranding"
-					label="Hide YT Branding"
-					help={"Prevents the YouTube logo from displaying in the control bar.\n\nNote that a small YouTube text label will still display in the upper-right corner of a paused video when the user's mouse pointer hovers over the player."}
-				/>
 				<BoxRow>
 					<Link
 						href="https://developers.google.com/youtube/player_parameters#Parameters"

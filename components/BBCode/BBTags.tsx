@@ -183,11 +183,13 @@ const BBTags: Partial<Record<string, BBTag>> = {
 			<iframe
 				src={
 					videoID
-						? `https://www.youtube.com/embed/${videoID}${
-							attributes
-								? `?${new URLSearchParams(attributes as Record<string, string>)}`
-								: ''
-						}`
+						? `https://www.youtube.com/embed/${videoID}?${new URLSearchParams({
+							// By default, disable showing related videos from channels other than the owner of the embedded video.
+							rel: '0',
+							...attributes instanceof Object && (
+								attributes as Record<string, string>
+							)
+						})}`
 						: undefined
 				}
 				// YouTube requires embedded players to have a viewport that is at least 200x200.
@@ -202,6 +204,7 @@ const BBTags: Partial<Record<string, BBTag>> = {
 						? Math.max(200, +height || 0)
 						: 450
 				}
+				allowFullScreen
 			/>
 		);
 	}
