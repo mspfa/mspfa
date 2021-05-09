@@ -43,9 +43,9 @@ const Nav = () => {
 								bubble={messagesBubble}
 							/>
 							<div className="divider" />
-							<NavItem id="stories" label="Adventures" href={`/u/${user.id}/stories`} />
+							<NavItem id="stories" label="Adventures" href={`/u/${user.id}/s`} />
 							<NavItem id="favorites" label="Favorites" href={`/u/${user.id}/favorites`} />
-							<NavItem id="story-saves" label="Game Saves" href={`/u/${user.id}/story-saves`} />
+							<NavItem id="saves" label="Game Saves" href={`/u/${user.id}/saves`} />
 							<div className="divider" />
 							<NavItem id="profile" label="Profile" href={`/u/${user.id}`} />
 							<NavItem id="settings" label="Settings" href={`/u/${user.id}/settings`} />

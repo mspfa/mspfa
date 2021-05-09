@@ -43,6 +43,10 @@ export type StoryDocument = {
 	_id: number,
 	created: Date,
 	updated: Date,
+	/**
+	 * @minLength 1
+	 * @maxLength 50
+	 */
 	title: string,
 	status: StoryStatus,
 	owner: string,
