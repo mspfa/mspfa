@@ -62,6 +62,7 @@ const BBCodeField = ({ name, ...props }: BBCodeFieldProps) => {
 					<BBTool tag="spoiler" />
 					<BBTool tag="chat" />
 					<BBTool tag="youtube" />
+					<BBTool tag="flash" />
 				</span>
 			</div>
 			<Field

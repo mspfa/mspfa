@@ -382,6 +382,49 @@ const tags: Record<string, {
 			};
 		},
 		selectAfter: true
+	},
+	flash: {
+		title: 'Flash Embed',
+		initialValues: {
+			width: 650,
+			height: 450
+		},
+		content: (
+			<LabeledDialogBox>
+				<BoxRow className="error">
+					It is highly recommended not to use Flash due to its loss of support. Consider using video or HTML5 instead.
+				</BoxRow>
+				<FieldBoxRow
+					type="url"
+					name="children"
+					label="SWF File URL"
+					required
+					autoFocus
+				/>
+				<FieldBoxRow
+					type="number"
+					name="width"
+					label="Width"
+					required
+					min={0}
+				/>
+				<FieldBoxRow
+					type="number"
+					name="height"
+					label="Height"
+					required
+					min={0}
+				/>
+			</LabeledDialogBox>
+		),
+		getProps: ({ values: { width, height, children } }) => ({
+			children,
+			attributes: (
+				(width ? width : '')
+				+ (height ? `x${height}` : '')
+			)
+		}),
+		selectAfter: true
 	}
 };
 
