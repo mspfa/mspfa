@@ -425,6 +425,53 @@ const tags: Record<string, {
 			)
 		}),
 		selectAfter: true
+	},
+	iframe: {
+		title: 'HTML5 Embed',
+		initialValues: {
+			width: 650,
+			height: 450
+		},
+		content: (
+			<LabeledDialogBox>
+				<FieldBoxRow
+					type="url"
+					name="children"
+					label="HTML File URL"
+					required
+					autoFocus
+					help={(
+						<>
+							A direct link to an HTML file (usually called "index.html"). You can upload HTML files to a file host that supports HTML5, such as <Link href="https://pipe.miroware.io" target="_blank">Miroware Pipe</Link>.<br />
+							<br />
+							If you need help extracting, uploading, and/or embedding HTML, feel free to ask in the #technical-help channel of <Link href="/discord" target="_blank">our Discord server</Link>.
+						</>
+					)}
+				/>
+				<FieldBoxRow
+					type="number"
+					name="width"
+					label="Width"
+					required
+					min={0}
+				/>
+				<FieldBoxRow
+					type="number"
+					name="height"
+					label="Height"
+					required
+					min={0}
+				/>
+			</LabeledDialogBox>
+		),
+		getProps: ({ values: { width, height, children } }) => ({
+			children,
+			attributes: (
+				(width ? width : '')
+				+ (height ? `x${height}` : '')
+			)
+		}),
+		selectAfter: true
 	}
 };
 

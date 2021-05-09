@@ -232,6 +232,26 @@ const BBTags: Partial<Record<string, BBTag>> = {
 				height={height ? +height : undefined}
 			/>
 		);
+	},
+	iframe: ({ attributes, children }) => {
+		let width: string | undefined;
+		let height: string | undefined;
+
+		if (typeof attributes === 'string') {
+			({ width, height } = getWidthAndHeight(attributes));
+		}
+
+		return (
+			<iframe
+				src={(
+					typeof children === 'string'
+						? children
+						: undefined
+				)}
+				width={width ? +width : undefined}
+				height={height ? +height : undefined}
+			/>
+		);
 	}
 	// user
 };
