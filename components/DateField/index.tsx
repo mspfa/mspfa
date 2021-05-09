@@ -63,7 +63,7 @@ const DateField = ({
 		id = `${idPrefix}field-${toKebabCase(name)}`;
 	}
 
-	const [{ value: fieldValue }, , { setValue: setFieldValue }] = useField<number | undefined>(name);
+	const [, { value: fieldValue }, { setValue: setFieldValue }] = useField<number | undefined>(name);
 
 	const date = (
 		propValue === undefined
