@@ -6,7 +6,7 @@
 @import 'styles/themes';
 
 // Offsets the RGB values by `$offset`.
-@function adjust-color($color, $offset: 16) {
+@function adjust-color($color, $offset) {
 	@return color.adjust(
 		$color,
 		$red: $offset, $green: $offset, $blue: $offset
