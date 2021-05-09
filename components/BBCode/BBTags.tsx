@@ -7,6 +7,11 @@ import type { ReactNode } from 'react';
 import { sanitizeURL } from 'modules/client/utilities';
 import withBlock from 'components/BBCode/withBlock';
 import Spoiler from 'components/Spoiler';
+import dynamic from 'next/dynamic';
+
+const Flash = dynamic(() => import('components/Flash'), {
+	ssr: false
+});
 
 export const hashlessColorCodeTest = /^([0-9a-f]{3}(?:[0-9a-f]{3}(?:[0-9a-f]{2})?)?)$/i;
 export const videoIDTest = /^(?:(?:https?:\/\/)?(?:www\.)?(?:youtu\.be|youtube\.com)\/(?:.+\/)?(?:(?:.*[?&])v=)?)?([\w-]+)(?:&.+)?$/i;
@@ -40,7 +45,7 @@ export type BBTagProps = {
 };
 
 export type BBTag = (
-	((props: BBTagProps) => JSX.Element)
+	((props: BBTagProps) => ReactNode)
 	& {
 		/** Whether the `BBTag` is wrapped by `withBlock`. */
 		readonly withBlock?: boolean
@@ -207,8 +212,23 @@ const BBTags: Partial<Record<string, BBTag>> = {
 				allowFullScreen
 			/>
 		);
+	},
+	flash: ({ attributes, children }) => {
+		let width: string | undefined;
+		let height: string | undefined;
+
+		if (typeof attributes === 'string') {
+			({ width, height } = getWidthAndHeight(attributes));
+		}
+
+		return typeof children === 'string' ? (
+			<Flash
+				src={children}
+				width={width ? +width : undefined}
+				height={height ? +height : undefined}
+			/>
+		) : null;
 	}
-	// flash,
 	// user
 };
 
