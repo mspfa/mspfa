@@ -40,7 +40,7 @@ const parseOptions: HTMLReactParserOptions = {
 					attributes = {};
 
 					// Even though we only use the first attribute's capture groups, it is necessary to match additional attributes to prevent the first attribute's capture group from ending early.
-					const attributeTest = /^(([\w-]+)=(["']?)(.*?)\3)(?: [\w-]+=(["']?).*?\5)*$/i;
+					const attributeTest = /^(([\w-]+)=(["']?)(.*?)\3)(?: [\w-]+=(["']?).*?\5)*$/;
 
 					let match: RegExpExecArray | null;
 
@@ -80,7 +80,7 @@ const BBCode = ({
 	let htmlString = '';
 
 	// Even though we don't use the contents of the second capturing group in this regular expression, it is necessary that it is so specific so a tag with "]" in its attributes does not end early.
-	const openTagTest = /\[([\w-]+)((?:=(["']?).*?\3)|(?: [\w-]+=(["']?).*?\4)+)?\]/i;
+	const openTagTest = /\[([\w-]+)((?:=(["']?).*?\3)|(?: [\w-]+=(["']?).*?\4)+)?\]/;
 
 	let match: RegExpExecArray | null;
 
