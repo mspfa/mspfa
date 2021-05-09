@@ -1,15 +1,15 @@
 @import 'styles/themes';
 
 .link {
+	text-decoration: underline;
 	@include theme(color, $link-color);
-	text-decoration: none;
-
-	&:focus, &:hover {
-		text-decoration: underline;
-	}
 
 	&:visited {
 		@include theme(color, $visited-link-color);
+	}
+
+	&:focus {
+		color: #ee0000;
 	}
 
 	@at-root button#{&} {
