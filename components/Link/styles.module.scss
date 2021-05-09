@@ -8,7 +8,7 @@
 		@include theme(color, $visited-link-color);
 	}
 
-	&:focus {
+	&:focus, &:active {
 		color: #ee0000;
 	}
 
