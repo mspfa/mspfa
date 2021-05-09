@@ -455,7 +455,7 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 							return;
 						}
 
-						// Update `children` in case the user changed their selection since closing the dialog.
+						// Update `children` in case the user changed their selection while the dialog was open.
 						children = textAreaRef.current.value.slice(
 							textAreaRef.current.selectionStart,
 							textAreaRef.current.selectionEnd
