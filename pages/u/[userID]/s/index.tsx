@@ -51,14 +51,14 @@ const Component = withErrorPage<ServerSideProps>(() => (
 								id: 'new-story',
 								title: 'New Adventure',
 								initialValues: {
-									name: ''
+									title: ''
 								},
 								content: (
 									<LabeledDialogBox>
-										<BoxRow>What will the name of this new adventure be?</BoxRow>
+										<BoxRow>What will the title of this new adventure be?</BoxRow>
 										<FieldBoxRow
-											name="name"
-											label="Enter Name"
+											name="title"
+											label="Enter Title"
 											required
 											autoFocus
 											minLength={1}
@@ -80,7 +80,7 @@ const Component = withErrorPage<ServerSideProps>(() => (
 							}
 
 							(api as StoriesAPI).post('/stories', {
-								name: dialog.form!.values.name
+								title: dialog.form!.values.title
 							});
 						}, [])
 					}

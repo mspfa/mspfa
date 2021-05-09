@@ -1,6 +1,7 @@
 import db from 'modules/server/db';
 import type { Quirk } from 'modules/client/quirks';
 import type { URLString } from 'modules/types';
+import type { StoryStatus } from 'modules/client/stories';
 
 export type StoryPage = {
 	published: Date,
@@ -9,24 +10,17 @@ export type StoryPage = {
 	nextPages: number[],
 	tags: string[],
 	hidden: boolean,
-	commentary?: string
+	commentary: string,
+	comments: StoryComment[]
 };
 
 export type StoryPageDraft = StoryPage & {
 	notify: boolean
 };
 
-export enum StoryStatus {
-	Inactive = 0,
-	Ongoing,
-	Complete,
-	Discontinued
-}
-
 export type StoryComment = {
 	posted: Date,
 	edited?: Date,
-	page: number,
 	author: number,
 	content: string,
 	likes: string[],
@@ -53,14 +47,14 @@ export type StoryDocument = {
 	editors: string[],
 	author?: {
 		name: string,
-		site?: URLString
+		site: '' | URLString
 	},
 	pages: StoryPage[],
 	drafts: StoryPageDraft[],
 	/** @maxLength 2000 */
 	description: string,
-	icon?: URLString,
-	banner?: URLString,
+	icon: '' | URLString,
+	banner: '' | URLString,
 	style: string,
 	/** Whether the story should ignore the reader's theme setting. */
 	disableUserTheme: boolean,
@@ -70,13 +64,12 @@ export type StoryDocument = {
 	},
 	tags: string[],
 	commentsEnabled: boolean,
-	comments: StoryComment[],
 	/** Properties of the story which are only used in the story editor. */
 	editorSettings: {
 		defaultPageTitle: StoryPage['title'],
 		defaultSpoiler: {
-			openLabel: string,
-			closeLabel: string
+			open: string,
+			close: string
 		},
 		colors: StoryColor[]
 	},
