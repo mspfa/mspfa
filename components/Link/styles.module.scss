@@ -8,6 +8,10 @@
 		text-decoration: underline;
 	}
 
+	&:visited {
+		@include theme(color, $visited-link-color);
+	}
+
 	@at-root button#{&} {
 		padding: 0;
 		background: none;
