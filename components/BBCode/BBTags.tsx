@@ -221,13 +221,17 @@ const BBTags: Partial<Record<string, BBTag>> = {
 			({ width, height } = getWidthAndHeight(attributes));
 		}
 
-		return typeof children === 'string' ? (
+		return (
 			<Flash
-				src={children}
+				src={(
+					typeof children === 'string'
+						? children
+						: undefined
+				)}
 				width={width ? +width : undefined}
 				height={height ? +height : undefined}
 			/>
-		) : null;
+		);
 	}
 	// user
 };
