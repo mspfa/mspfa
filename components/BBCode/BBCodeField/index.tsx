@@ -1,30 +1,28 @@
 import './styles.module.scss';
-import type { ReactElement } from 'react';
+import type { TextareaHTMLAttributes } from 'react';
 import React, { useRef, useMemo } from 'react';
 import BBTool from 'components/BBCode/BBTool';
 import BBCode from 'components/BBCode';
 import Spoiler from 'components/Spoiler';
+import { Field, useField } from 'formik';
+import { toKebabCase } from 'modules/client/utilities';
+import { usePrefixedID } from 'modules/client/IDPrefix';
 
 export type TextAreaRef = React.MutableRefObject<HTMLTextAreaElement>;
 
 export const TextAreaRefContext = React.createContext<{
 	textAreaRef: TextAreaRef,
-	setValue: BBCodeFieldProps['setValue']
+	/** A function which sets the value of the text area. */
+	setValue: (value: string) => void
 }>(undefined!);
 
-export type BBCodeFieldProps = {
-	/** The current value of the text area. */
-	value: string,
-	/** A function which sets the value of the text area. */
-	setValue: (value: string) => void,
-	/** The component to pass a `textarea` ref to. */
-	children: ReactElement<{
-		innerRef: TextAreaRef
-	}>
+export type BBCodeFieldProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'children' | 'value'> & {
+	name: string
 };
 
-/** Gives the child text area a BBCode toolbar. */
-const BBCodeField = ({ value, setValue, children }: BBCodeFieldProps) => {
+/** A text area field that accepts BBCode. */
+const BBCodeField = ({ name, ...props }: BBCodeFieldProps) => {
+	const [, { value }, { setValue }] = useField<string>(name);
 	const textAreaRef = useRef<HTMLTextAreaElement>(null!);
 
 	return (
@@ -66,9 +64,13 @@ const BBCodeField = ({ value, setValue, children }: BBCodeFieldProps) => {
 					<BBTool tag="youtube" />
 				</span>
 			</div>
-			{React.cloneElement(children, {
-				innerRef: textAreaRef
-			})}
+			<Field
+				as="textarea"
+				id={usePrefixedID(`field-${toKebabCase(name)}`)}
+				name={name}
+				innerRef={textAreaRef}
+				{...props}
+			/>
 			<Spoiler
 				open="Show Preview"
 				close="Hide Preview"

@@ -428,12 +428,15 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 					if (tag.content) {
 						await Dialog.getByID('bb-tool')?.resolve();
 
-						const dialog = new Dialog({
+						const dialog = new Dialog<Record<string, any>>({
 							id: 'bb-tool',
 							title: tag.title,
-							content: (
+							content: props => (
 								<IDPrefix.Provider value="bb-tool">
-									{tag.content}
+									{(tag.content instanceof Function
+										? tag.content(props)
+										: tag.content
+									)}
 								</IDPrefix.Provider>
 							),
 							initialValues: Object.assign(

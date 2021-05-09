@@ -83,7 +83,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 				}
 				enableReinitialize
 			>
-				{({ isSubmitting, dirty, values, setFieldValue }) => {
+				{({ isSubmitting, dirty, values }) => {
 					useLeaveConfirmation(dirty);
 
 					return (
@@ -146,21 +146,10 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										Description
 									</Label>
 									<BBCodeField
-										value={values.description}
-										setValue={
-											useCallback((value: string) => {
-												setFieldValue('description', value);
-											}, [setFieldValue])
-										}
-									>
-										<Field
-											as="textarea"
-											id="field-description"
-											name="description"
-											rows={8}
-											maxLength={2000}
-										/>
-									</BBCodeField>
+										name="description"
+										rows={8}
+										maxLength={2000}
+									/>
 								</BoxSection>
 								<BoxSection heading="Advanced" collapsible>
 									<Label htmlFor="field-style">
