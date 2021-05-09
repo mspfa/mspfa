@@ -55,6 +55,7 @@ const Component = withErrorPage<ServerSideProps>(() => (
 										<FieldBoxRow
 											name="name"
 											label="Enter Name"
+											required
 											autoFocus
 											minLength={1}
 											maxLength={50}
