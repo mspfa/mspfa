@@ -2,7 +2,7 @@ import '../modules/server/env';
 import { connection } from '../modules/server/db';
 import c from 'ansi-colors';
 
-console.log(c.blue('Creating database collections...'));
+console.info(c.blue('Creating database collections...'));
 
 connection.then(db => {
 	Promise.all([
@@ -10,7 +10,7 @@ connection.then(db => {
 		db.createCollection('stories'),
 		db.createCollection('messages')
 	]).catch(() => {}).finally(() => {
-		console.log(c.green('Done!'));
+		console.info(c.green('Done!'));
 		process.exit();
 	});
 });
