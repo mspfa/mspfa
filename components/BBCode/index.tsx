@@ -47,7 +47,7 @@ const parseOptions: HTMLReactParserOptions = {
 					while (match = attributeTest.exec(rawAttributes)) {
 						const [, rawAttribute, attributeName, , attributeValue] = match;
 
-						attributes[attributeName.toLowerCase()] = attributeValue;
+						attributes[attributeName] = attributeValue;
 
 						// Slice off this attribute from the original string, as well as the trailing space.
 						rawAttributes = rawAttributes.slice(rawAttribute.length + 1);
