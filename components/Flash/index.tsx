@@ -4,6 +4,7 @@ import { sanitizeURL } from 'modules/client/utilities';
 import Button from 'components/Button';
 import Link from 'components/Link';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import axios from 'axios';
 
 const [useFlashMode, setFlashMode] = createGlobalState<'ask' | 'native' | 'emulate'>('ask');
 
@@ -53,12 +54,21 @@ const Flash = ({
 	const [error, setError] = useState<Error | undefined>(undefined);
 	const emulationRef = useRef<HTMLDivElement>(null);
 
+	if (src) {
+		src = sanitizeURL(src);
+	}
+
 	const retry = useCallback(() => {
 		setError(undefined);
 	}, []);
 
 	useEffect(() => {
 		if (error) {
+			return;
+		}
+
+		if (!src) {
+			setError(new Error('This Flash embed has no valid source URL.'));
 			return;
 		}
 
@@ -71,17 +81,28 @@ const Flash = ({
 			let player: any;
 
 			emulatorLoaded!.then(() => {
-				if (!unmounted) {
+				if (unmounted) {
+					return;
+				}
+
+				axios.head(src!).then(response => {
+					if (unmounted) {
+						return;
+					}
+
+					if (response.headers['content-type'] !== 'application/x-shockwave-flash') {
+						setError(new Error('The requested file is not a Flash file.'));
+						return;
+					}
+
 					const ruffle = (window as any).RufflePlayer.newest();
 					player = ruffle.createPlayer();
 					player.style.width = `${width}px`;
 					player.style.height = `${height}px`;
 					emulation.appendChild(player);
 
-					player.load(src).catch((newError: Error) => {
-						setError(newError);
-					});
-				}
+					player.load(src).catch(setError);
+				}).catch(setError);
 			});
 
 			return () => {
@@ -94,13 +115,13 @@ const Flash = ({
 		}
 	}, [flashMode, error, src, width, height]);
 
-	const flashWarningFooter = (
+	const flashWarningFooter = src ? (
 		<p className="flash-warning-footer">
 			<Link href={src} download>
 				Download Original Flash File
 			</Link>
 		</p>
-	);
+	) : null;
 
 	return (
 		<div className="flash-container" style={{ width, height }}>
@@ -132,7 +153,7 @@ const Flash = ({
 					? (
 						<object
 							type="application/x-shockwave-flash"
-							data={src && sanitizeURL(src)}
+							data={src}
 							width={width}
 							height={height}
 						/>
@@ -145,7 +166,7 @@ const Flash = ({
 										An error occurred while trying to load the player:
 									</p>
 									<p className="error">
-										{error}
+										{error.toString()}
 									</p>
 									<p>
 										<Button onClick={retry}>
