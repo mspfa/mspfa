@@ -1,4 +1,13 @@
+@import 'styles/themes';
+
 .link {
+	@include theme(color, $link-color);
+	text-decoration: none;
+
+	&:focus, &:hover {
+		text-decoration: underline;
+	}
+
 	@at-root button#{&} {
 		padding: 0;
 		background: none;
@@ -6,11 +15,6 @@
 		font: inherit;
 		text-transform: inherit;
 		cursor: pointer;
-		text-decoration: underline;
 		text-align: left;
-	}
-
-	&:focus:not(:active) {
-		color: #ffffff;
 	}
 }

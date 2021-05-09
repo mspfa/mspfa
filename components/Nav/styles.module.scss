@@ -38,12 +38,8 @@ $nav-group-colors: (
 
 #nav-group {
 	@each $id, $color in $nav-group-colors {
-		&-#{$id} .link {
+		&-#{$id} .nav-item {
 			color: $color;
-
-			&:focus {
-				color: #ffffff;
-			}
 		}
 	}
 }
@@ -90,8 +86,18 @@ $nav-group-colors: (
 		&-container.force-open & {
 			display: flex;
 		}
+	}
 
-		.nav-item {
+	&-item {
+		display: inline-block;
+		position: relative;
+		text-decoration: underline;
+
+		&:focus {
+			color: #ffffff !important;
+		}
+
+		.nav-menu & {
 			display: flex;
 			padding: 0 10px 0 5px;
 
@@ -99,11 +105,6 @@ $nav-group-colors: (
 				background-color: rgba(255, 255, 255, 0.25);
 			}
 		}
-	}
-
-	&-item {
-		display: inline-block;
-		position: relative;
 	}
 }
 

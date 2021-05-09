@@ -70,6 +70,11 @@ $focused-border-color: (
 	dark: #b0b0b0
 );
 
+$link-color: (
+	standard: #0000ee,
+	dark: #3db8ff
+);
+
 $translucent-text-color: ();
 @each $theme, $color in $text-color {
 	$translucent-text-color: map.set($translucent-text-color, $theme, color.scale($color, $alpha: -30%));
