@@ -18,9 +18,11 @@ import randomStoryNames from 'modules/client/randomStoryNames.json';
 
 type StoriesAPI = APIClient<typeof import('pages/api/stories').default>;
 
-const getRandomStoryName = () => randomStoryNames[Math.floor(Math.random() * randomStoryNames.length)].map(
-	possibilities => possibilities[Math.floor(Math.random() * possibilities.length)]
-).join('');
+const getRandomStoryName = () => (
+	randomStoryNames[Math.floor(Math.random() * randomStoryNames.length)].map(
+		possibilities => possibilities[Math.floor(Math.random() * possibilities.length)]
+	).join('')
+);
 
 type ServerSideProps = {} | {
 	statusCode: number
