@@ -23,6 +23,7 @@
 body {
 	margin: 0;
 	overflow-y: scroll; // To make the scrollbar not change visibility and offset the page horizontally when changing the page height e.g. by toggling tall spoilers on a short page.
+	@include theme(background-color, $back);
 }
 
 body,
@@ -37,20 +38,12 @@ option {
 	@include theme(color, $text-color);
 }
 
-summary {
-	cursor: pointer;
-}
-
-.translucent-text {
-	@include theme(color, $translucent-text-color);
-}
-
-body {
-	@include theme(background-color, $back);
-}
-
 iframe {
 	border: none;
+}
+
+summary {
+	cursor: pointer;
 }
 
 .mid {
@@ -66,8 +59,16 @@ iframe {
 	@include theme(color, $text-color-alt);
 }
 
+.translucent-text {
+	@include theme(color, $translucent-text-color);
+}
+
 .spaced {
 	margin-left: 1ch;
+}
+
+.error {
+	color: #ff0000;
 }
 
 .bolder {
