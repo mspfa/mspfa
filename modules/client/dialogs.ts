@@ -90,7 +90,7 @@ export class Dialog<Values extends Record<string, any>> extends Promise<DialogRe
 	id: Key;
 	title: ReactNode;
 	content: ReactNode | ((props: FormikProps<Values>) => ReactNode);
-	initialValues: Partial<Values>;
+	initialValues: Values;
 	/** The dialog's `FormikProps`. */
 	form: FormikProps<Values> | undefined;
 	actions: DialogAction[];
@@ -109,7 +109,7 @@ export class Dialog<Values extends Record<string, any>> extends Promise<DialogRe
 		id = nextDialogID++,
 		index = -1,
 		title,
-		initialValues = {},
+		initialValues = {} as Values,
 		content,
 		actions: actionsOption = ['Okay']
 	}: DialogOptions<Values>) {
