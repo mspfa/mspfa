@@ -45,8 +45,8 @@ const Handler: APIHandler<{
 		created: now,
 		updated: now,
 		title: req.body.title,
-		owner: user._id.toString(),
-		editors: []
+		owner: user._id,
+		editors: [user._id]
 	};
 
 	await stories.insertOne(story);

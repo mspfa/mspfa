@@ -8,7 +8,7 @@ export enum StoryStatus {
 }
 
 /** All keys whose values have the same serializable type in both `StoryDocument` and `PrivateStory`. */
-type PrivateStoryDocumentKey = 'title' | 'status' | 'owner' | 'editors' | 'author' | 'description' | 'icon' | 'banner' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'commentsEnabled' | 'editorSettings' | 'colors' | 'quirks';
+type PrivateStoryDocumentKey = 'title' | 'status' | 'author' | 'description' | 'icon' | 'banner' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'commentsEnabled' | 'editorSettings' | 'colors' | 'quirks';
 
 /** A serializable version of `StoryDocument` which only has properties that can safely be exposed to any client. */
 export type PrivateStory = (
@@ -16,12 +16,14 @@ export type PrivateStory = (
 	& {
 		id: StoryDocument['_id'],
 		created: number,
-		updated: number
+		updated: number,
+		owner: string,
+		editors: string[]
 	}
 );
 
 /** All keys whose values have the same serializable type in both `StoryDocument` and `PublicStory`. */
-type PublicStoryDocumentKey = 'title' | 'status' | 'owner' | 'editors' | 'author' | 'description' | 'icon' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'commentsEnabled' | 'colors' | 'quirks';
+type PublicStoryDocumentKey = 'title' | 'status' | 'author' | 'description' | 'icon' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'commentsEnabled' | 'colors' | 'quirks';
 
 /** A serializable version of `StoryDocument` which only has properties that can safely be exposed to any client. */
 export type PublicStory = (
@@ -29,6 +31,8 @@ export type PublicStory = (
 	& {
 		id: StoryDocument['_id'],
 		created: number,
-		updated: number
+		updated: number,
+		owner: string,
+		editors: string[]
 	}
 );

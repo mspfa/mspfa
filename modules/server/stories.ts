@@ -3,6 +3,7 @@ import type { Quirk } from 'modules/client/quirks';
 import type { URLString } from 'modules/types';
 import type { PrivateStory, PublicStory } from 'modules/client/stories';
 import { StoryStatus } from 'modules/client/stories';
+import type { UserDocument } from 'modules/server/users';
 
 export type StoryPage = {
 	published: Date,
@@ -22,10 +23,10 @@ export type StoryPageDraft = StoryPage & {
 export type StoryComment = {
 	posted: Date,
 	edited?: Date,
-	author: number,
+	author: UserDocument['_id'],
 	content: string,
-	likes: string[],
-	dislikes: string[],
+	likes: Array<UserDocument['_id']>,
+	dislikes: Array<UserDocument['_id']>,
 	private: boolean
 };
 
@@ -45,8 +46,8 @@ export type StoryDocument = {
 	 */
 	title: string,
 	status: StoryStatus,
-	owner: string,
-	editors: string[],
+	owner: UserDocument['_id'],
+	editors: Array<UserDocument['_id']>,
 	author?: {
 		name: string,
 		site: '' | URLString
@@ -116,8 +117,8 @@ export const getPrivateStory = (story: StoryDocument): PrivateStory => ({
 	updated: +story.updated,
 	title: story.title,
 	status: story.status,
-	owner: story.owner,
-	editors: story.editors,
+	owner: story.owner.toString(),
+	editors: story.editors.map(String),
 	...story.author && {
 		author: story.author
 	},
@@ -141,8 +142,8 @@ export const getPublicStory = (story: StoryDocument): PublicStory => ({
 	updated: +story.updated,
 	title: story.title,
 	status: story.status,
-	owner: story.owner,
-	editors: story.editors,
+	owner: story.owner.toString(),
+	editors: story.editors.map(String),
 	...story.author && {
 		author: story.author
 	},
