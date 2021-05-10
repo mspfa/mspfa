@@ -8,13 +8,15 @@ import BoxRowSection from 'components/Box/BoxRowSection';
 import BoxRow from 'components/Box/BoxRow';
 import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
-import { useCallback } from 'react';
+import { Fragment, useCallback } from 'react';
 import type { APIClient } from 'modules/client/api';
 import api from 'modules/client/api';
 import { Dialog } from 'modules/client/dialogs';
 import LabeledDialogBox from 'components/Box/LabeledDialogBox';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
 import randomStoryNames from 'modules/client/randomStoryNames.json';
+import type { PrivateStory } from 'modules/client/stories';
+import stories, { getPrivateStory } from 'modules/server/stories';
 
 type StoriesAPI = APIClient<typeof import('pages/api/stories').default>;
 
@@ -28,16 +30,23 @@ const getRandomStoryName = () => (
 		)
 );
 
-type ServerSideProps = {} | {
+type ServerSideProps = {
+	/** The stories owned by the private user. */
+	privateStories: PrivateStory[]
+} | {
 	statusCode: number
 };
 
-const Component = withErrorPage<ServerSideProps>(() => (
+const Component = withErrorPage<ServerSideProps>(({ privateStories }) => (
 	<Page flashyTitle heading="Your Adventures">
 		<Box>
 			<BoxRowSection heading="Adventures">
 				<BoxRow>
-					TODO
+					{privateStories.map(privateStory => (
+						<Fragment key={privateStory.id}>
+							{privateStory.title}<br />
+						</Fragment>
+					))}
 				</BoxRow>
 			</BoxRowSection>
 			<BoxFooter>
@@ -97,13 +106,17 @@ const Component = withErrorPage<ServerSideProps>(() => (
 export default Component;
 
 export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, params }) => {
-	const { statusCode } = await permToGetUserInPage(req, params.userID, Perm.sudoRead);
+	const { user, statusCode } = await permToGetUserInPage(req, params.userID, Perm.sudoRead);
 
 	if (statusCode) {
 		return { props: { statusCode } };
 	}
 
 	return {
-		props: {}
+		props: {
+			privateStories: await stories.find!({
+				editors: user!._id
+			}).map(getPrivateStory).toArray()
+		}
 	};
 });
