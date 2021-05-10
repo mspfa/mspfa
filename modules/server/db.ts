@@ -24,9 +24,11 @@ const collectionKeys: Array<keyof Collection> = Object.keys((mongodb as any).Col
 
 /** A `Collection` with only its async function properties. */
 type PartialCollection<Document extends Record<string, any> = any> = {
-	[Key in keyof Collection<Document>]: Collection<Document>[Key] extends (...args: any) => Promise<any>
-		? Collection<Document>[Key]
-		: undefined
+	[Key in keyof Collection<Document>]: (
+		Collection<Document>[Key] extends (...args: any) => Promise<any>
+			? Collection<Document>[Key]
+			: undefined
+	)
 };
 
 const db = {
@@ -49,7 +51,11 @@ const db = {
 			// Now that the DB has connected, set all of the properties of the full collection.
 			for (const key of collectionKeys) {
 				const value = collection[key];
-				partialCollection[key] = typeof value === 'function' ? value.bind(collection) : value;
+				partialCollection[key] = (
+					typeof value === 'function'
+						? value.bind(collection)
+						: value
+				);
 			}
 		});
 

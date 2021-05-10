@@ -12,7 +12,7 @@ window.addEventListener('unhandledrejection', (
 		reason: { isAxiosError?: false } | AxiosError<unknown> | undefined
 	}
 ) => {
-	if (event.reason?.isAxiosError && event.reason.response!.status >= 400) {
+	if (event.reason?.isAxiosError) {
 		// Prevent all unhandled API promise rejection errors, because there is no reason for API errors to throw uncaught errors.
 		event.preventDefault();
 	}

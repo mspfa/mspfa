@@ -4,6 +4,7 @@ import type { StoryDocument } from 'modules/server/stories';
 import stories, { defaultStory, getPrivateStory } from 'modules/server/stories';
 import { authenticate } from 'modules/server/auth';
 import type { PrivateStory } from 'modules/client/stories';
+import { connection } from 'modules/server/db';
 
 const Handler: APIHandler<{
 	method: 'POST',
@@ -27,9 +28,20 @@ const Handler: APIHandler<{
 
 	const now = new Date();
 
+	await connection;
+
+	let storyID: StoryDocument['_id'] = 1;
+
+	await stories.aggregate!([
+		{ $sort: { _id: -1 } },
+		{ $limit: 1 }
+	]).forEach(story => {
+		storyID = story._id + 1;
+	});
+
 	const story: StoryDocument = {
 		...defaultStory,
-		_id: 0,
+		_id: storyID,
 		created: now,
 		updated: now,
 		title: req.body.title,
