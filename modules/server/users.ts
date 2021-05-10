@@ -153,68 +153,68 @@ const typeCheckedDefaultUser: Partial<UserDocument> = defaultUser;
 typeCheckedDefaultUser;
 
 /** Converts a `UserDocument` to a `PrivateUser`. */
-export const getPrivateUser = (user: UserDocument): PrivateUser => {
-	const privateUser = {
-		id: user._id.toString(),
-		email: user.email,
-		name: user.name,
-		created: +user.created,
-		lastSeen: +user.lastSeen,
-		birthdate: +user.birthdate,
-		unverifiedEmail: user.unverifiedEmail,
-		description: user.description,
-		icon: user.icon,
-		site: user.site,
-		storySaves: user.storySaves,
-		achievements: user.achievements,
-		favs: user.favs,
-		profileStyle: user.profileStyle,
-		settings: user.settings,
-		perms: user.perms,
-		dev: user.dev,
-		mod: user.mod,
+export const getPrivateUser = (user: UserDocument): PrivateUser => ({
+	id: user._id.toString(),
+	...user.email && {
+		email: user.email
+	},
+	...user.unverifiedEmail && {
+		unverifiedEmail: user.unverifiedEmail
+	},
+	name: user.name,
+	created: +user.created,
+	lastSeen: +user.lastSeen,
+	birthdate: +user.birthdate,
+	description: user.description,
+	icon: user.icon,
+	site: user.site,
+	storySaves: user.storySaves,
+	achievements: user.achievements,
+	favs: user.favs,
+	profileStyle: user.profileStyle,
+	settings: user.settings,
+	perms: user.perms,
+	...user.dev && {
+		dev: user.dev
+	},
+	...user.mod && {
+		mod: user.mod
+	},
+	...user.patron && {
 		patron: user.patron
-	};
-
-	// Remove any `undefined` properties from the object so it is serializable.
-	for (const key in privateUser) {
-		if (privateUser[key as keyof typeof privateUser] === undefined) {
-			delete privateUser[key as keyof typeof privateUser];
-		}
 	}
-
-	return privateUser;
-};
+});
 
 /** Converts a `UserDocument` to a `PublicUser`. */
-export const getPublicUser = (user: UserDocument): PublicUser => {
-	const publicUser = {
-		id: user._id.toString(),
-		email: user.settings.emailPublic ? user.email : undefined,
-		name: user.name,
-		created: +user.created,
-		lastSeen: +user.lastSeen,
-		birthdate: user.settings.birthdatePublic ? +user.birthdate : undefined,
-		description: user.description,
-		icon: user.icon,
-		site: user.site,
-		achievements: user.achievements,
-		favs: user.settings.favsPublic ? user.favs : undefined,
-		profileStyle: user.profileStyle,
-		dev: user.dev,
-		mod: user.mod,
+export const getPublicUser = (user: UserDocument): PublicUser => ({
+	id: user._id.toString(),
+	...user.email !== undefined && user.settings.emailPublic && {
+		email: user.email
+	},
+	name: user.name,
+	created: +user.created,
+	lastSeen: +user.lastSeen,
+	...user.settings.birthdatePublic && {
+		birthdate: +user.birthdate
+	},
+	description: user.description,
+	icon: user.icon,
+	site: user.site,
+	achievements: user.achievements,
+	...user.settings.favsPublic && {
+		favs: user.favs
+	},
+	profileStyle: user.profileStyle,
+	...user.dev && {
+		dev: user.dev
+	},
+	...user.mod && {
+		mod: user.mod
+	},
+	...user.patron && {
 		patron: user.patron
-	};
-
-	// Remove any `undefined` properties from the object so it is serializable.
-	for (const key in publicUser) {
-		if (publicUser[key as keyof typeof publicUser] === undefined) {
-			delete publicUser[key as keyof typeof publicUser];
-		}
 	}
-
-	return publicUser;
-};
+});
 
 const users = db.collection<UserDocument>('users');
 

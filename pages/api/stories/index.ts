@@ -1,9 +1,9 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
 import type { StoryDocument } from 'modules/server/stories';
-import stories from 'modules/server/stories';
+import stories, { defaultStory, getPrivateStory } from 'modules/server/stories';
 import { authenticate } from 'modules/server/auth';
-import { defaultStory } from 'modules/client/stories';
+import type { PrivateStory } from 'modules/client/stories';
 
 const Handler: APIHandler<{
 	method: 'POST',
@@ -12,7 +12,7 @@ const Handler: APIHandler<{
 	}
 }, {
 	method: 'POST',
-	body: ClientStory
+	body: PrivateStory
 }> = async (req, res) => {
 	await validate(req, res);
 
@@ -39,7 +39,7 @@ const Handler: APIHandler<{
 
 	await stories.insertOne(story);
 
-	res.status(201).send(getClientStory(story));
+	res.status(201).send(getPrivateStory(story));
 };
 
 export default Handler;

@@ -79,9 +79,11 @@ const Component = withErrorPage<ServerSideProps>(() => (
 								return;
 							}
 
-							(api as StoriesAPI).post('/stories', {
+							const privateStory = await (api as StoriesAPI).post('/stories', {
 								title: dialog.form!.values.title
 							});
+
+							console.log(privateStory);
 						}, [])
 					}
 				>

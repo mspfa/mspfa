@@ -7,7 +7,7 @@ import { Dialog } from 'modules/client/dialogs';
 import createGlobalState from 'global-react-state';
 import type { RecursivePartial } from 'modules/types';
 
-/** All keys whose values have the same serializable type in both `DocumentUser` and `PrivateUser`. */
+/** All keys whose values have the same serializable type in both `UserDocument` and `PrivateUser`. */
 type PrivateUserDocumentKey = 'email' | 'unverifiedEmail' | 'name' | 'description' | 'icon' | 'site' | 'storySaves' | 'achievements' | 'favs' | 'profileStyle' | 'settings' | 'perms' | 'dev' | 'mod' | 'patron';
 
 /** A serializable version of `UserDocument` which only has properties that can safely be exposed to the client that owns the user data. */
@@ -21,7 +21,7 @@ export type PrivateUser = (
 	}
 );
 
-/** All keys whose values have the same serializable type in both `DocumentUser` and `PublicUser`. */
+/** All keys whose values have the same serializable type in both `UserDocument` and `PublicUser`. */
 type PublicUserDocumentKey = 'name' | 'description' | 'icon' | 'site' | 'achievements' | 'profileStyle' | 'dev' | 'mod' | 'patron';
 
 /** A serializable version of `UserDocument` which only has properties that can safely be exposed to any client. */

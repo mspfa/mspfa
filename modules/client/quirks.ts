@@ -1,5 +1,6 @@
 export type QuirkReplacement = {
-	from: string | RegExp,
+	from: string,
+	fromFlags: string,
 	to: string
 };
 

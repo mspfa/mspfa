@@ -45,7 +45,7 @@ export type BBTagProps = {
 };
 
 export type BBTag = (
-	((props: BBTagProps) => ReactNode)
+	((props: BBTagProps) => JSX.Element)
 	& {
 		/** Whether the `BBTag` is wrapped by `withBlock`. */
 		readonly withBlock?: boolean
