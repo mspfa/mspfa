@@ -2,21 +2,36 @@
 	&-icon {
 		width: 4em !important;
 		height: 4em !important;
-		align-self: center;
 	}
 
 	&-content {
 		text-align: left;
+		padding-bottom: 4px;
 	}
 
 	&-title {
 		font-size: 1.5em;
+		font-family: Homestuck-Regular;
+		font-weight: normal;
+		margin-bottom: 4px;
+
+		.link {
+			text-decoration: none;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
 	}
 
 	&-pages {
 		background-repeat: no-repeat;
 		background-position: 1px 1px;
-		padding: 1px 3px 1px calc(1em + 3px);
+		padding-left: calc(1em + 3px);
 		background-image: url(/images/icons/pages.png);
+	}
+
+	&-status::before {
+		content: ' - ';
 	}
 }

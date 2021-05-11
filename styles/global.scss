@@ -64,7 +64,9 @@ summary {
 }
 
 .spaced {
-	margin-left: 1ch;
+	& + & {
+		margin-left: 1ch;
+	}
 }
 
 .error {

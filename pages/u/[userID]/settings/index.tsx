@@ -436,6 +436,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 																	<Field
 																		type="checkbox"
 																		id="delete-user-confirm"
+																		className="spaced"
 																		name="confirm"
 																		required
 																	/>

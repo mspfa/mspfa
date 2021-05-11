@@ -19,7 +19,7 @@ const Label = ({ htmlFor, help, className, children, ...props }: LabelProps) => 
 			className={`label-container${className ? ` ${className}` : ''}`}
 			{...props}
 		>
-			<LabelTag className="label" htmlFor={htmlFor}>
+			<LabelTag className="label spaced" htmlFor={htmlFor}>
 				{children}
 			</LabelTag>
 			{help && (

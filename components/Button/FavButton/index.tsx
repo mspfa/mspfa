@@ -3,9 +3,9 @@ import Button from 'components/Button';
 import type { ButtonProps } from 'components/Button';
 import { useCallback } from 'react';
 
-export type HeartButtonProps = Omit<ButtonProps, 'onClick' | 'title'>;
+export type FavButtonProps = Omit<ButtonProps, 'onClick' | 'title'>;
 
-const HeartButton = ({ className, ...props }: HeartButtonProps) => (
+const FavButton = ({ className, ...props }: FavButtonProps) => (
 	<Button
 		className={`icon labeled heart${className ? ` ${className}` : ''}`}
 		title="Favorite"
@@ -18,4 +18,4 @@ const HeartButton = ({ className, ...props }: HeartButtonProps) => (
 	/>
 );
 
-export default HeartButton;
+export default FavButton;

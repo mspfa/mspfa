@@ -23,7 +23,7 @@ const AuthMethod = ({ userID, authMethod, authMethods, setAuthMethods }: AuthMet
 
 	return (
 		<div className="auth-method" key={authMethod.id}>
-			<div className="auth-method-content">
+			<div className="auth-method-content spaced">
 				{authMethodTypeName + (authMethod.name ? ` (${authMethod.name})` : '')}
 			</div>
 			<Button
