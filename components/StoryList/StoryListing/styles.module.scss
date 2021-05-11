@@ -18,6 +18,7 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		text-decoration: none;
+		// This prevents the bounding box of the link from filling the entire width of the parent.
 		max-width: fit-content;
 
 		&:hover {
