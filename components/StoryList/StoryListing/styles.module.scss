@@ -18,7 +18,7 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		text-decoration: none;
-		width: fit-content;
+		max-width: fit-content;
 
 		&:hover {
 			text-decoration: underline;
