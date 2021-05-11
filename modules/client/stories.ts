@@ -7,8 +7,15 @@ export enum StoryStatus {
 	Discontinued
 }
 
+export const storyStatusNames = {
+	[StoryStatus.Inactive]: 'Inactive',
+	[StoryStatus.Ongoing]: 'Ongoing',
+	[StoryStatus.Complete]: 'Complete',
+	[StoryStatus.Discontinued]: 'Discontinued'
+};
+
 /** All keys whose values have the same serializable type in both `StoryDocument` and `PrivateStory`. */
-type PrivateStoryDocumentKey = 'title' | 'status' | 'author' | 'description' | 'icon' | 'banner' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'commentsEnabled' | 'editorSettings' | 'colors' | 'quirks';
+type PrivateStoryDocumentKey = 'title' | 'status' | 'author' | 'description' | 'icon' | 'favCount' | 'banner' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'commentsEnabled' | 'editorSettings' | 'colors' | 'quirks';
 
 /** A serializable version of `StoryDocument` which only has properties that can safely be exposed to any client. */
 export type PrivateStory = (
@@ -18,12 +25,13 @@ export type PrivateStory = (
 		created: number,
 		updated: number,
 		owner: string,
-		editors: string[]
+		editors: string[],
+		pageCount: number
 	}
 );
 
 /** All keys whose values have the same serializable type in both `StoryDocument` and `PublicStory`. */
-type PublicStoryDocumentKey = 'title' | 'status' | 'author' | 'description' | 'icon' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'commentsEnabled' | 'colors' | 'quirks';
+type PublicStoryDocumentKey = 'title' | 'status' | 'author' | 'description' | 'icon' | 'favCount' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'commentsEnabled' | 'colors' | 'quirks';
 
 /** A serializable version of `StoryDocument` which only has properties that can safely be exposed to any client. */
 export type PublicStory = (
@@ -33,6 +41,7 @@ export type PublicStory = (
 		created: number,
 		updated: number,
 		owner: string,
-		editors: string[]
+		editors: string[],
+		pageCount: number
 	}
 );

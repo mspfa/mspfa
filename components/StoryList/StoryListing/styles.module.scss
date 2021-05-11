@@ -1,0 +1,22 @@
+.story-listing {
+	&-icon {
+		width: 4em !important;
+		height: 4em !important;
+		align-self: center;
+	}
+
+	&-content {
+		text-align: left;
+	}
+
+	&-title {
+		font-size: 1.5em;
+	}
+
+	&-pages {
+		background-repeat: no-repeat;
+		background-position: 1px 1px;
+		padding: 1px 3px 1px calc(1em + 3px);
+		background-image: url(/images/icons/pages.png);
+	}
+}

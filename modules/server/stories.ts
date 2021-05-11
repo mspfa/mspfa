@@ -57,6 +57,7 @@ export type StoryDocument = {
 	/** @maxLength 2000 */
 	description: string,
 	icon: '' | URLString,
+	favCount: number,
 	banner: '' | URLString,
 	style: string,
 	/** Whether the story should ignore the reader's theme setting. */
@@ -86,6 +87,7 @@ export const defaultStory = {
 	drafts: [] as never[],
 	description: '',
 	icon: '',
+	favCount: 0,
 	banner: '',
 	style: '',
 	disableUserTheme: false,
@@ -124,6 +126,8 @@ export const getPrivateStory = (story: StoryDocument): PrivateStory => ({
 	},
 	description: story.description,
 	icon: story.icon,
+	favCount: story.favCount,
+	pageCount: story.pages.length,
 	banner: story.banner,
 	style: story.style,
 	disableUserTheme: story.disableUserTheme,
@@ -149,6 +153,8 @@ export const getPublicStory = (story: StoryDocument): PublicStory => ({
 	},
 	description: story.description,
 	icon: story.icon,
+	favCount: story.favCount,
+	pageCount: story.pages.length,
 	style: story.style,
 	disableUserTheme: story.disableUserTheme,
 	script: story.script,

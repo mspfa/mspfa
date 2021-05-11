@@ -1,3 +1,4 @@
+@import 'styles/general';
 @import 'styles/buttons';
 @import 'styles/themes';
 
@@ -41,19 +42,26 @@
 	}
 
 	&.icon {
-		width: 18px;
-		height: 18px;
+		width: 1em;
+		height: 1em;
 		// Setting `font-size` to `1em` is necessary so that `1ch` measures the current font size correctly.
 		font-size: 1em;
-		padding: 0;
+		padding: 1px;
 		background-repeat: no-repeat;
-		background-position: center;
+		background-position: 1px 1px;
 		@include styled-button(
 			$front,
 			$color-is-behind-button: true,
 			$scale: 1,
 			$border: true
 		);
+
+		&.labeled {
+			padding: 1px 3px 1px calc(1em + 3px);
+			font-family: $monospace;
+			font-weight: bold;
+			width: auto;
+		}
 	}
 
 	&.alt {

@@ -17,6 +17,7 @@ import FieldBoxRow from 'components/Box/FieldBoxRow';
 import randomStoryNames from 'modules/client/randomStoryNames.json';
 import type { PrivateStory } from 'modules/client/stories';
 import stories, { getPrivateStory } from 'modules/server/stories';
+import StoryList from 'components/StoryList';
 
 type StoriesAPI = APIClient<typeof import('pages/api/stories').default>;
 
@@ -42,11 +43,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStories }) => (
 		<Box>
 			<BoxRowSection heading="Adventures">
 				<BoxRow>
-					{privateStories.map(privateStory => (
-						<Fragment key={privateStory.id}>
-							{privateStory.title}<br />
-						</Fragment>
-					))}
+					<StoryList>{privateStories}</StoryList>
 				</BoxRow>
 			</BoxRowSection>
 			<BoxFooter>

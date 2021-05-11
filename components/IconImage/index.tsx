@@ -2,7 +2,7 @@ import './styles.module.scss';
 import React from 'react';
 import type { HTMLAttributes } from 'react';
 
-export type IconImageProps = HTMLAttributes<HTMLDivElement> & {
+export type IconImageProps = Omit<HTMLAttributes<HTMLDivElement>, 'children'> & {
 	src?: string
 };
 
