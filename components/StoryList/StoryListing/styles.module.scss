@@ -38,9 +38,25 @@
 	&-description {
 		overflow: hidden;
 		text-overflow: ellipsis;
+		margin: 4px 0;
 
 		.bbcode {
 			white-space: nowrap;
 		}
+	}
+
+	&-tags {
+		margin: 4px 0;
+	}
+}
+
+.story-tag.link {
+	font-size: 0.75em;
+	opacity: 0.6;
+	text-decoration: none;
+	color: inherit;
+
+	&:hover, &:focus, &:active {
+		text-decoration: underline;
 	}
 }

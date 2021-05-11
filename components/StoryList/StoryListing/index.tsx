@@ -9,6 +9,7 @@ import { useUser } from 'modules/client/users';
 import { Perm } from 'modules/client/perms';
 import PagesIcon from 'components/LabeledIcon/PagesIcon';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
+import { Fragment } from 'react';
 
 export type StoryListingProps = {
 	children: PublicStory
@@ -55,10 +56,22 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 						{storyStatusNames[publicStory.status]}
 					</span>
 				</div>
-				<div className="story-listing-description">
-					<BBCode raw>
-						{description}
-					</BBCode>
+				{description && (
+					<div className="story-listing-description">
+						<BBCode raw>
+							{description}
+						</BBCode>
+					</div>
+				)}
+				<div className="story-listing-tags">
+					{publicStory.tags.map((tag, i) => (
+						<Fragment key={tag}>
+							{i !== 0 && ' '}
+							<Link key={tag} className="story-tag">
+								#{tag}
+							</Link>
+						</Fragment>
+					))}
 				</div>
 			</div>
 		</>
