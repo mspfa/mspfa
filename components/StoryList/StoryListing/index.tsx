@@ -7,6 +7,7 @@ import FavButton from 'components/Button/FavButton';
 import EditButton from 'components/Button/EditButton';
 import { useUser } from 'modules/client/users';
 import { Perm } from 'modules/client/perms';
+import PagesIcon from 'components/LabeledIcon/PagesIcon';
 
 export type StoryListingProps = {
 	children: PublicStory
@@ -21,7 +22,10 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 				<IconImage className="story-listing-icon" src={publicStory.icon} />
 			</Link>
 			<div className="story-listing-content">
-				<div className="story-listing-title">
+				<div
+					className="story-listing-title"
+					title={publicStory.title}
+				>
 					<Link
 						className="translucent-text"
 						href={`/s/${publicStory.id}/p/1`}
@@ -37,14 +41,14 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 					) && (
 						<EditButton className="spaced" storyID={publicStory.id} />
 					)}
-					<FavButton className="story-listing-favs spaced">
-						{Math.floor(Math.random() * 1400) ?? publicStory.favCount}
+					<FavButton className="spaced" storyID={publicStory.id}>
+						{publicStory.favCount}
 					</FavButton>
-					<span className="story-listing-pages spaced">
-						{Math.floor(Math.random() * 2000) ?? publicStory.pageCount}
-					</span>
+					<PagesIcon className="spaced">
+						{publicStory.pageCount}
+					</PagesIcon>
 					<span className="story-listing-status">
-						{storyStatusNames[Math.floor(Math.random() * 4) as 0 | 1 | 2 | 3 ?? publicStory.status]}
+						{storyStatusNames[publicStory.status]}
 					</span>
 				</div>
 			</div>

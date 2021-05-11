@@ -7,6 +7,7 @@
 	&-content {
 		text-align: left;
 		padding-bottom: 4px;
+		overflow: hidden;
 	}
 
 	&-title {
@@ -14,6 +15,9 @@
 		font-family: Homestuck-Regular;
 		font-weight: normal;
 		margin-bottom: 4px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 
 		.link {
 			text-decoration: none;
@@ -22,13 +26,6 @@
 				text-decoration: underline;
 			}
 		}
-	}
-
-	&-pages {
-		background-repeat: no-repeat;
-		background-position: 1px 1px;
-		padding-left: calc(1em + 3px);
-		background-image: url(/images/icons/pages.png);
 	}
 
 	&-status::before {

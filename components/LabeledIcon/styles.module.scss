@@ -1,0 +1,13 @@
+.labeled-icon {
+	display: inline-flex;
+	vertical-align: middle;
+
+	&::before {
+		content: '';
+		width: 1em;
+		height: 1em;
+		background-repeat: no-repeat;
+		background-position: center;
+		margin-right: 2px;
+	}
+}

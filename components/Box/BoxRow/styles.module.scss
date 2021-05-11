@@ -1,6 +1,7 @@
 .box-row {
 	grid-column: 1 / -1;
 	text-align: center;
+	overflow: hidden;
 
 	&:not(:last-child) {
 		margin-bottom: 1em;

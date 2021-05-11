@@ -41,27 +41,30 @@
 		height: 100%;
 	}
 
-	&.icon {
-		width: 1em;
-		height: 1em;
-		// Setting `font-size` to `1em` is necessary so that `1ch` measures the current font size correctly.
+	&.icon, &.labeled-icon {
 		font-size: 1em;
-		padding: 1px;
-		background-repeat: no-repeat;
-		background-position: 1px 1px;
+
 		@include styled-button(
 			$front,
 			$color-is-behind-button: true,
 			$scale: 1,
 			$border: true
 		);
+	}
 
-		&.labeled {
-			padding: 1px 3px 1px calc(1em + 3px);
-			font-family: $monospace;
-			font-weight: bold;
-			width: auto;
-		}
+	&.icon {
+		width: 1em;
+		height: 1em;
+		// Setting `font-size` to `1em` is necessary so that `1ch` measures the current font size correctly.
+		padding: 1px;
+		background-repeat: no-repeat;
+		background-position: 1px;
+	}
+
+	&.labeled-icon {
+		font-family: $monospace;
+		font-weight: bold;
+		padding: 0 3px 0 1px;
 	}
 
 	&.alt {
