@@ -42,6 +42,7 @@
 	}
 
 	&.icon, &.labeled-icon {
+		// Setting `font-size` to `1em` is necessary so that `1ch` measures the current font size correctly.
 		font-size: 1em;
 
 		@include styled-button(
@@ -55,9 +56,9 @@
 	&.icon {
 		width: 1em;
 		height: 1em;
-		// Setting `font-size` to `1em` is necessary so that `1ch` measures the current font size correctly.
 		padding: 1px;
 		background-repeat: no-repeat;
+		background-size: 1em;
 		background-position: 1px;
 	}
 

@@ -64,18 +64,12 @@ const parseOptions: HTMLReactParserOptions = {
 	}
 };
 
-export type BBCodeProps = {
+export const sanitizeBBCode = (bbString = '', { html, noBB }: {
 	/** Whether HTML should be allowed and parsed. */
 	html?: boolean,
-	/** The original input BBCode string. */
-	children?: string
-};
-
-/** A component which parses its `children` string as BBCode. */
-const BBCode = ({
-	html,
-	children = ''
-}: BBCodeProps) => {
+	/** Whether to blacklist all BBCode from the sanitized HTML. */
+	noBB?: boolean
+} = {}) => {
 	/** The resulting HTML string to be sanitized and parsed. */
 	let htmlString = '';
 
@@ -84,16 +78,16 @@ const BBCode = ({
 
 	let match: RegExpExecArray | null;
 
-	while (match = openTagTest.exec(children)) {
+	while (match = openTagTest.exec(bbString)) {
 		const openTag = match[0];
 		const tagName = match[1].toLowerCase();
 		const rawAttributes = match[2];
 
 		// Append the slice of the original string from the end of the previous match to the start of this match.
-		htmlString += children.slice(0, match.index);
+		htmlString += bbString.slice(0, match.index);
 
 		// Remove everything up to the end of this match from the original string.
-		children = children.slice(match.index + openTag.length);
+		bbString = bbString.slice(match.index + openTag.length);
 
 		const BBTag = BBTags[tagName];
 
@@ -101,7 +95,7 @@ const BBCode = ({
 			htmlString += `<mspfa-bb data-name="${tagName}" data-attributes="${rawAttributes ? rawAttributes.trim().replace(/"/g, '&quot;') : ''}">`;
 
 			// Replace the next closing tag. It doesn't matter if it corresponds to the matched opening tag; valid BBCode will have the same number of opening tags as closing tags.
-			children = children.replace(
+			bbString = bbString.replace(
 				new RegExp(`\\[/${tagName}\\]${
 					// If `BBTag` is a block element, we also want to remove one line break after its closing tag to promote intuitive line breaking behavior for the user.
 					BBTag.withBlock ? '\\n?' : ''
@@ -115,24 +109,58 @@ const BBCode = ({
 	}
 
 	// Append the rest of the original string.
-	htmlString += children;
+	htmlString += bbString;
+
+	return DOMPurify.sanitize(
+		htmlString,
+		{
+			// Allow external protocol handlers in URL attributes.
+			ALLOW_UNKNOWN_PROTOCOLS: true,
+			// Prevent unintuitive browser behavior in several edge cases.
+			FORCE_BODY: true,
+			// Disable DOM clobbering protection on output.
+			SANITIZE_DOM: false,
+			[html ? 'ADD_TAGS' : 'ALLOWED_TAGS']: (
+				noBB ? [] : ['mspfa-bb']
+			)
+		}
+	);
+};
+
+export type BBCodeProps = {
+	/** Whether HTML should be allowed and parsed. */
+	html?: boolean,
+	/** Whether to blacklist all BBCode. */
+	noBB?: boolean,
+	/** Whether to insert a `.bbcode` element with the inputted children directly without any sanitization or parsing. */
+	raw?: boolean,
+	/** The original input BBCode string. */
+	children?: string
+};
+
+/** A component which parses its `children` string as BBCode. */
+const BBCode = ({
+	html,
+	noBB,
+	raw,
+	children = ''
+}: BBCodeProps) => {
+	if (raw) {
+		return (
+			<span className="bbcode">
+				{children}
+			</span>
+		);
+	}
+
+	const htmlString = sanitizeBBCode(children, { html, noBB });
 
 	return (
 		<span className="bbcode">
-			{parse(
-				DOMPurify.sanitize(
-					htmlString,
-					{
-						// Allow external protocol handlers in URL attributes.
-						ALLOW_UNKNOWN_PROTOCOLS: true,
-						// Prevent unintuitive browser behavior in several edge cases.
-						FORCE_BODY: true,
-						// Disable DOM clobbering protection on output.
-						SANITIZE_DOM: false,
-						[html ? 'ADD_TAGS' : 'ALLOWED_TAGS']: ['mspfa-bb']
-					}
-				),
-				parseOptions
+			{(noBB && !html
+				// If BBCode and HTML are both disabled, then the HTML is plain text, so it's more optimized not to call the HTML parser.
+				? htmlString
+				: parse(htmlString, parseOptions)
 			)}
 		</span>
 	);

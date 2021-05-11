@@ -6,29 +6,38 @@
 
 	&-content {
 		text-align: left;
-		padding-bottom: 4px;
 		overflow: hidden;
 	}
 
 	&-title {
+		display: block;
 		font-size: 1.5em;
 		font-family: Homestuck-Regular;
 		font-weight: normal;
-		margin-bottom: 4px;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		text-decoration: none;
 
-		.link {
-			text-decoration: none;
-
-			&:hover {
-				text-decoration: underline;
-			}
+		&:hover {
+			text-decoration: underline;
 		}
+	}
+
+	&-meta {
+		margin: 4px 0;
 	}
 
 	&-status::before {
 		content: ' - ';
+	}
+
+	&-description {
+		overflow: hidden;
+		text-overflow: ellipsis;
+
+		.bbcode {
+			white-space: nowrap;
+		}
 	}
 }
