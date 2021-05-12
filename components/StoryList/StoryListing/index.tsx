@@ -48,7 +48,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 					<PagesIcon className="spaced">
 						{publicStory.pageCount}
 					</PagesIcon>
-					<span className="story-listing-status">
+					<span className="story-listing-status spaced">
 						{storyStatusNames[publicStory.status]}
 					</span>
 				</div>
