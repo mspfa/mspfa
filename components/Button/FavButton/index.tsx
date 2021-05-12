@@ -19,6 +19,7 @@ export type FavButtonProps = Omit<ButtonProps, 'onClick' | 'title' | 'children'>
 
 const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) => {
 	const user = useUser();
+	const [loading, setLoading] = useState(false);
 	const [favCount, setFavCount] = useState(children);
 
 	const favIndex = user?.favs.indexOf(storyID);
@@ -32,6 +33,10 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 			title={`${favCount} Favorites`}
 			onClick={
 				useCallback(async () => {
+					if (loading) {
+						return;
+					}
+
 					if (!user) {
 						// If `user` is undefined, this component cannot posibly be `active`, which means the user is trying to add a favorite without being signed in.
 
@@ -46,6 +51,8 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 
 						return;
 					}
+
+					setLoading(true);
 
 					let newFavCount: number;
 
@@ -92,10 +99,11 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 					}
 
 					setFavCount(newFavCount);
+					setLoading(false);
 
 					// This ESLint comment is necessary because the rule incorrectly thinks `active` and `favIndex` should be dependencies here, despite that they depend on `user` which is already a dependency.
 					// eslint-disable-next-line react-hooks/exhaustive-deps
-				}, [user, storyID])
+				}, [user, storyID, loading])
 			}
 			{...props}
 		>
