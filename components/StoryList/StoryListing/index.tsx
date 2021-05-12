@@ -20,12 +20,17 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 	return (
 		<>
 			<Link href={`/s/${publicStory.id}/p/1`}>
-				<IconImage className="story-listing-icon" src={publicStory.icon} />
+				<IconImage
+					className="story-listing-icon"
+					src={publicStory.icon}
+					title={publicStory.title}
+				/>
 			</Link>
 			<div className="story-listing-content">
 				<Link
 					className="story-listing-title translucent-text"
 					href={`/s/${publicStory.id}/p/1`}
+					title={publicStory.title}
 				>
 					{publicStory.title}
 				</Link>
