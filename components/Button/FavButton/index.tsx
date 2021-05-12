@@ -2,7 +2,7 @@ import './styles.module.scss';
 import 'components/LabeledIcon/styles.module.scss';
 import Button from 'components/Button';
 import type { ButtonProps } from 'components/Button';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { setUser, signIn, useUser } from 'modules/client/users';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
@@ -12,12 +12,14 @@ import type { StoryID } from 'modules/server/stories';
 type FavsAPI = APIClient<typeof import('pages/api/users/[userID]/favs').default>;
 type FavAPI = APIClient<typeof import('pages/api/users/[userID]/favs/[storyID]').default>;
 
-export type FavButtonProps = Omit<ButtonProps, 'onClick' | 'title'> & {
-	storyID: StoryID
+export type FavButtonProps = Omit<ButtonProps, 'onClick' | 'title' | 'children'> & {
+	storyID: StoryID,
+	children: number
 };
 
-const FavButton = ({ storyID, className, ...props }: FavButtonProps) => {
+const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) => {
 	const user = useUser();
+	const [favCount, setFavCount] = useState(children);
 
 	const favIndex = user?.favs.indexOf(storyID);
 
@@ -27,7 +29,7 @@ const FavButton = ({ storyID, className, ...props }: FavButtonProps) => {
 	return (
 		<Button
 			className={`labeled-icon heart${active ? ' active' : ''}${className ? ` ${className}` : ''}`}
-			title={`${active ? 'Remove from' : 'Add to'} Favorites`}
+			title={`${favCount} Favorites`}
 			onClick={
 				useCallback(async () => {
 					if (!user) {
@@ -45,21 +47,26 @@ const FavButton = ({ storyID, className, ...props }: FavButtonProps) => {
 						return;
 					}
 
+					let newFavCount: number;
+
 					if (active) {
 						const setInactive = () => {
 							user.favs.splice(favIndex!, 1);
 							setUser({ ...user });
 						};
 
-						await (api as FavAPI).delete(`/users/${user.id}/favs/${storyID}`, {
+						({ data: { favCount: newFavCount } } = await (api as FavAPI).delete(`/users/${user.id}/favs/${storyID}`, {
 							beforeInterceptError: error => {
 								if (error.response?.status === 404) {
 									// The favorite was not found, so cancel the error and remove the favorite on the client.
+
 									error.preventDefault();
+
 									setInactive();
+									setFavCount(favCount => favCount - 1);
 								}
 							}
-						});
+						}));
 
 						setInactive();
 					} else {
@@ -68,25 +75,32 @@ const FavButton = ({ storyID, className, ...props }: FavButtonProps) => {
 							setUser({ ...user });
 						};
 
-						await (api as FavsAPI).post(`/users/${user.id}/favs`, { storyID }, {
+						({ data: { favCount: newFavCount } } = await (api as FavsAPI).post(`/users/${user.id}/favs`, { storyID }, {
 							beforeInterceptError: error => {
 								if (error.response?.data.error === 'ALREADY_EXISTS') {
 									// The favorite was not found, so cancel the error and remove the favorite on the client.
+
 									error.preventDefault();
+
 									setActive();
+									setFavCount(favCount => favCount + 1);
 								}
 							}
-						});
+						}));
 
 						setActive();
 					}
+
+					setFavCount(newFavCount);
 
 					// This ESLint comment is necessary because the rule incorrectly thinks `active` and `favIndex` should be dependencies here, despite that they depend on `user` which is already a dependency.
 					// eslint-disable-next-line react-hooks/exhaustive-deps
 				}, [user, storyID])
 			}
 			{...props}
-		/>
+		>
+			{favCount}
+		</Button>
 	);
 };
 

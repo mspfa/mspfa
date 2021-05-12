@@ -2,9 +2,9 @@ import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
 import { Perm } from 'modules/client/perms';
 import { permToGetUserInAPI } from 'modules/server/perms';
-import type { UserDocument } from 'modules/server/users';
 import users from 'modules/server/users';
-import type { StoryID } from 'modules/server/stories';
+import type { StoryDocument, StoryID } from 'modules/server/stories';
+import { updateAndSendFavCount } from 'modules/server/stories';
 
 const Handler: APIHandler<{
 	query: {
@@ -15,8 +15,9 @@ const Handler: APIHandler<{
 		storyID: StoryID
 	}
 }, {
-	method: 'POST',
-	body: UserDocument['favs']
+	body: {
+		favCount: StoryDocument['favCount']
+	}
 }> = async (req, res) => {
 	await validate(req, res);
 
@@ -38,7 +39,7 @@ const Handler: APIHandler<{
 		}
 	});
 
-	res.send([...user.favs, req.body.storyID]);
+	await updateAndSendFavCount(res, req.body.storyID);
 };
 
 export default Handler;

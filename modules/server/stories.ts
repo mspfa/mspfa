@@ -4,6 +4,8 @@ import type { URLString } from 'modules/types';
 import type { PrivateStory, PublicStory } from 'modules/client/stories';
 import { StoryStatus } from 'modules/client/stories';
 import type { UserDocument } from 'modules/server/users';
+import users from 'modules/server/users';
+import type { APIResponse } from 'modules/server/api';
 
 // This must be referenced as `StoryID` and not `StoryDocument['_id']` or else the schema generator trips up in many cases.
 /** @minimum 1 */
@@ -175,3 +177,27 @@ export const getPublicStory = (story: StoryDocument): PublicStory => ({
 const stories = db.collection<StoryDocument>('stories');
 
 export default stories;
+
+export const updateAndSendFavCount = async (
+	res: APIResponse<{
+		body: {
+			favCount: StoryDocument['favCount']
+		}
+	}>,
+	storyID: StoryID
+) => {
+	const favCount = (
+		await users.aggregate!([
+			{ $match: { favs: storyID } },
+			{ $count: 'favCount' }
+		]).next() as { favCount: number } | null
+	)?.favCount || 0;
+
+	stories.updateOne({
+		_id: storyID
+	}, {
+		$set: { favCount }
+	});
+
+	res.send({ favCount });
+};

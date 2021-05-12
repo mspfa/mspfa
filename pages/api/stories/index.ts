@@ -30,15 +30,14 @@ const Handler: APIHandler<{
 
 	await connection;
 
-	let storyID: StoryID = 1;
-
-	await stories.aggregate!([
-		{ $sort: { _id: -1 } },
-		{ $limit: 1 }
-	]).forEach(story => {
-		storyID = story._id + 1;
-	});
-
+	const storyID = 1 + (
+		(
+			await stories.aggregate!([
+				{ $sort: { _id: -1 } },
+				{ $limit: 1 }
+			]).next()
+		)?._id || 0
+	);
 	const story: StoryDocument = {
 		...defaultStory,
 		_id: storyID,
