@@ -39,7 +39,8 @@ const getValuesFromUser = (privateUser: PrivateUser) => ({
 	profileStyle: privateUser.profileStyle,
 	settings: {
 		emailPublic: privateUser.settings.emailPublic,
-		birthdatePublic: privateUser.settings.birthdatePublic
+		birthdatePublic: privateUser.settings.birthdatePublic,
+		favsPublic: privateUser.settings.favsPublic
 	}
 });
 
@@ -105,6 +106,12 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 											name="icon"
 											label="Icon URL"
 										/>
+										<FieldBoxRow
+											type="checkbox"
+											name="settings.favsPublic"
+											label="Public Favorites"
+											help="Allows others to publicly view your favorite adventures."
+										/>
 										<BoxRow>
 											<IconImage id="profile-icon" src={values.icon} />
 										</BoxRow>
@@ -117,7 +124,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 											<FieldBoxRow
 												type="checkbox"
 												name="settings.birthdatePublic"
-												label="Birthdate Public"
+												label="Public Birthdate"
 												help="Shows your birthdate publicly on your profile."
 											/>
 										</BoxRowSection>
@@ -131,7 +138,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 											<FieldBoxRow
 												type="checkbox"
 												name="settings.emailPublic"
-												label="Email Public"
+												label="Public Email"
 												help="Shows your email publicly on your profile."
 											/>
 											<FieldBoxRow
