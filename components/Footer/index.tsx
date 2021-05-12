@@ -28,7 +28,7 @@ const Footer = () => {
 			</footer>
 			<div id="legal">
 				<div id="copyright">
-					© MS Paint Fan Adventures 2010-{new Date().getFullYear()}
+					{`© MS Paint Fan Adventures 2010-${new Date().getFullYear()}`}
 				</div>
 				<div id="boring-important-stuff">
 					<Link href="/privacy" target="_blank">Privacy Policy</Link>

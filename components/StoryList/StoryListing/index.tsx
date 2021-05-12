@@ -75,11 +75,11 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 						</Link>
 					)}
 					{blurb && !!publicStory.tags.length && ' - '}
-					{publicStory.tags.map(tag => (
+					{publicStory.tags.map((tag, i) => (
 						<Fragment key={tag}>
-							{' '}
+							{i !== 0 && ' '}
 							<Link key={tag} className="story-tag">
-								#{tag}
+								{`#${tag}`}
 							</Link>
 						</Fragment>
 					))}
