@@ -1,9 +1,10 @@
 import './styles.module.scss';
 import Link from 'components/Link';
 import type { LinkProps } from 'components/Link';
+import type { StoryID } from 'modules/server/stories';
 
 export type EditButtonProps = Omit<LinkProps, 'title' | 'href'> & {
-	storyID: number
+	storyID: StoryID
 };
 
 const EditButton = ({ storyID, className, ...props }: EditButtonProps) => (

@@ -6,6 +6,7 @@ import type { PrivateUser, PublicUser } from 'modules/client/users';
 import { defaultSettings } from 'modules/client/users';
 import type { UnsafeObjectID } from 'modules/server/db';
 import type { Theme } from 'modules/client/themes';
+import type { StoryID } from 'modules/server/stories';
 
 type AuthMethodProperties = {
 	id: string,
@@ -84,9 +85,9 @@ export type UserDocument = {
 	icon: '' | URLString,
 	site: '' | URLString,
 	/** An object where each key is a story ID, and its value is a page number of that story. */
-	storySaves: Record<number, number>,
+	storySaves: Record<StoryID, number>,
 	achievements: Partial<Record<keyof typeof achievements, true>>,
-	favs: number[],
+	favs: StoryID[],
 	profileStyle: string,
 	settings: {
 		emailPublic: boolean,
@@ -116,7 +117,7 @@ export type UserDocument = {
 			commentReplies: NotificationSetting,
 			/** These are the story notification settings set by default when the user first enables notifications for a story. */
 			storyDefaults: StoryEditorNotificationSettings,
-			stories: Record<number, StoryNotificationSettings>
+			stories: Record<StoryID, StoryNotificationSettings>
 		}
 	},
 	/**

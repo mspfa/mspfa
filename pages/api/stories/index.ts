@@ -1,6 +1,6 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
-import type { StoryDocument } from 'modules/server/stories';
+import type { StoryDocument, StoryID } from 'modules/server/stories';
 import stories, { defaultStory, getPrivateStory } from 'modules/server/stories';
 import { authenticate } from 'modules/server/auth';
 import type { PrivateStory } from 'modules/client/stories';
@@ -30,7 +30,7 @@ const Handler: APIHandler<{
 
 	await connection;
 
-	let storyID: StoryDocument['_id'] = 1;
+	let storyID: StoryID = 1;
 
 	await stories.aggregate!([
 		{ $sort: { _id: -1 } },

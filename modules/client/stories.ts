@@ -1,4 +1,4 @@
-import type { StoryDocument } from 'modules/server/stories';
+import type { StoryDocument, StoryID } from 'modules/server/stories';
 
 export enum StoryStatus {
 	Inactive = 0,
@@ -21,7 +21,7 @@ type PrivateStoryDocumentKey = 'title' | 'status' | 'author' | 'description' | '
 export type PrivateStory = (
 	Pick<StoryDocument, PrivateStoryDocumentKey>
 	& {
-		id: StoryDocument['_id'],
+		id: StoryID,
 		created: number,
 		updated: number,
 		owner: string,
@@ -37,7 +37,7 @@ type PublicStoryDocumentKey = 'title' | 'status' | 'author' | 'description' | 'b
 export type PublicStory = (
 	Pick<StoryDocument, PublicStoryDocumentKey>
 	& {
-		id: StoryDocument['_id'],
+		id: StoryID,
 		created: number,
 		updated: number,
 		owner: string,

@@ -89,7 +89,10 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories })
 					</BoxSection>
 				)}
 				{publicStories.length && (
-					<BoxSection id="profile-stories" heading="Adventures">
+					<BoxSection
+						id="profile-stories"
+						heading={`${publicUser.name}'s Adventures`}
+					>
 						<StoryList>{publicStories}</StoryList>
 					</BoxSection>
 				)}

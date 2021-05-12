@@ -5,6 +5,10 @@ import type { PrivateStory, PublicStory } from 'modules/client/stories';
 import { StoryStatus } from 'modules/client/stories';
 import type { UserDocument } from 'modules/server/users';
 
+// This must be referenced as `StoryID` and not `StoryDocument['_id']` or else the schema generator trips up in many cases.
+/** @minimum 1 */
+export type StoryID = number;
+
 export type StoryPage = {
 	published: Date,
 	title: string,
@@ -36,8 +40,7 @@ export type StoryColor = {
 };
 
 export type StoryDocument = {
-	/** @minimum 1 */
-	_id: number,
+	_id: StoryID,
 	created: Date,
 	updated: Date,
 	/**
