@@ -59,7 +59,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 					</PagesIcon>
 				</div>
 				{open && (
-					<div className="story-listing-blurb translucent-text">
+					<div className="story-listing-blurb">
 						<BBCode>{publicStory.blurb}</BBCode>
 					</div>
 				)}
