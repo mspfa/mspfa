@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import Page from 'components/Page';
 import { getUser, setUser } from 'modules/client/users';
 import type { PrivateUser } from 'modules/client/users';
@@ -105,7 +106,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 											label="Icon URL"
 										/>
 										<BoxRow>
-											<IconImage src={values.icon} />
+											<IconImage id="profile-icon" src={values.icon} />
 										</BoxRow>
 									</BoxRowSection>
 									<Box>

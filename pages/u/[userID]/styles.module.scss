@@ -22,10 +22,15 @@
 		}
 	}
 
+	&-icon {
+		width: 150px;
+		height: 150px;
+	}
+
 	&-actions {
 		font-size: 0.875em;
 
-		& > div:not(:first-child) {
+		& > :not(:first-child) {
 			margin-top: 0.25em;
 		}
 	}
