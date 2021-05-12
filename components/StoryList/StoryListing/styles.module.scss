@@ -22,21 +22,17 @@
 		// This prevents the bounding box of the link from filling the entire width of the parent.
 		max-width: fit-content;
 
-		&:hover {
+		&:hover, &:focus, &:active {
 			text-decoration: underline;
 		}
 	}
 
-	&-meta {
+	&-meta, &-tags {
 		margin: 4px 0;
 	}
 
 	&-status::before {
 		content: ' - ';
-	}
-
-	&-tags {
-		margin: 4px 0;
 	}
 }
 
