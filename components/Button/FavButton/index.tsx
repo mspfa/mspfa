@@ -10,6 +10,7 @@ import { Dialog } from 'modules/client/dialogs';
 import type { StoryID } from 'modules/server/stories';
 
 type FavsAPI = APIClient<typeof import('pages/api/users/[userID]/favs').default>;
+type FavAPI = APIClient<typeof import('pages/api/users/[userID]/favs/[storyID]').default>;
 
 export type FavButtonProps = Omit<ButtonProps, 'onClick' | 'title'> & {
 	storyID: StoryID
@@ -29,25 +30,43 @@ const FavButton = ({ storyID, className, ...props }: FavButtonProps) => {
 			title={`${active ? 'Remove from' : 'Add to'} Favorites`}
 			onClick={
 				useCallback(async () => {
-					if (user) {
-						if (active) {
-							await (api as FavsAPI).delete(`/users/${user.id}/favs/${storyID}`);
+					if (!user) {
+						// If `user` is undefined, this component cannot posibly be `active`, which means the user is trying to add a favorite without being signed in.
 
+						if (await Dialog.confirm({
+							id: 'fav',
+							title: 'Add to Favorites',
+							content: 'Sign in to save your favorites!',
+							actions: ['Sign In', 'Cancel']
+						})) {
+							signIn();
+						}
+
+						return;
+					}
+
+					if (active) {
+						const setInactive = () => {
 							user.favs.splice(favIndex!, 1);
 							setUser({ ...user });
-						} else {
-							(api as FavsAPI).post(`/users/${user.id}/favs`, { storyID });
+						};
 
-							user.favs.push(storyID);
-							setUser({ ...user });
-						}
-					} else if (await Dialog.confirm({
-						id: 'fav',
-						title: 'Add to Favorites',
-						content: 'Sign in to save your favorites!',
-						actions: ['Sign In', 'Cancel']
-					})) {
-						signIn();
+						await (api as FavAPI).delete(`/users/${user.id}/favs/${storyID}`, {
+							beforeInterceptError: error => {
+								if (error.response?.status === 404) {
+									// The favorite was not found, so cancel the error and remove the favorite on the client.
+									error.preventDefault();
+									setInactive();
+								}
+							}
+						});
+
+						setInactive();
+					} else {
+						(api as FavsAPI).post(`/users/${user.id}/favs`, { storyID });
+
+						user.favs.push(storyID);
+						setUser({ ...user });
 					}
 
 					// This ESLint comment is necessary because the rule incorrectly thinks `active` and `favIndex` should be dependencies here, despite that they depend on `user` which is already a dependency.

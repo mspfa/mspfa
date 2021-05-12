@@ -49,7 +49,7 @@ export const createValidator = (methodSchema: Record<string, unknown>, schema: R
 	const validateMethod = ajv.compile(methodSchema);
 	const validate = ajv.compile(schema);
 
-	return (req: APIRequest, res: APIResponse) => (
+	return (req: APIRequest<any>, res: APIResponse<any>) => (
 		new Promise<void>(resolve => {
 			if (!validateMethod(req.method)) {
 				res.status(405).end();

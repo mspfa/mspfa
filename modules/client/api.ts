@@ -26,7 +26,11 @@ export type APIError<
 	RequestQuery extends AnyAPIQuery = {}
 > = Record<string, unknown> & Omit<AxiosError<ResponseBody>, 'config'> & {
 	config?: APIConfig<ResponseBody, RequestQuery>,
-	/** If called before the error is intercepted, prevents the error's default interception functionality (which is to display an error dialog). */
+	/**
+	 * If called before the error is intercepted, prevents the error's default interception functionality (which is to display an error dialog).
+	 *
+	 * The request's promise will still be rejected.
+	 */
 	preventDefault: () => void
 };
 
@@ -71,6 +75,7 @@ const api: (
 
 const onReject = async (error: APIError) => {
 	let defaultPrevented = false;
+
 	error.preventDefault = () => {
 		defaultPrevented = true;
 	};
