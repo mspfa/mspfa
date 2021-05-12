@@ -1,19 +1,16 @@
 import './styles.module.scss';
 import React from 'react';
-import type { HTMLAttributes } from 'react';
+import type { ImgHTMLAttributes } from 'react';
 
-export type IconImageProps = Omit<HTMLAttributes<HTMLDivElement>, 'children'> & {
+export type IconImageProps = ImgHTMLAttributes<HTMLImageElement> & {
 	src?: string
 };
 
 /** Displays a user-submitted icon image (or a wat face if undefined). Default size is 150x150. */
-const IconImage = React.memo(({ src, className, style, ...props }: IconImageProps) => (
-	<div
+const IconImage = React.memo(({ src, className, ...props }: IconImageProps) => (
+	<img
 		className={`icon-image${className ? ` ${className}` : ''}`}
-		style={{
-			backgroundImage: `url(${src ? src.replace(/\)/g, '\\)') : `/images/wat/${Math.floor(Math.random() * 4)}.png`})`,
-			...style
-		}}
+		src={src || `/images/wat/${Math.floor(Math.random() * 4)}.png`}
 		{...props}
 		suppressHydrationWarning
 	/>

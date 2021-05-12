@@ -1,9 +1,6 @@
 .icon-image {
-	display: inline-block;
 	width: 150px;
 	height: 150px;
-	background-repeat: no-repeat;
-	background-position: center;
-	background-size: cover;
+	object-fit: cover;
 	vertical-align: bottom;
 }
