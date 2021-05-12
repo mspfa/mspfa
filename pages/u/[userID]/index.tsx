@@ -17,14 +17,18 @@ import IconImage from 'components/IconImage';
 import { Perm } from 'modules/client/perms';
 import BoxRow from 'components/Box/BoxRow';
 import BBCode from 'components/BBCode';
+import stories, { getPublicStory } from 'modules/server/stories';
+import type { PublicStory } from 'modules/client/stories';
+import StoryList from 'components/StoryList';
 
 type ServerSideProps = {
-	publicUser: PublicUser
+	publicUser: PublicUser,
+	publicStories: PublicStory[]
 } | {
 	statusCode: number
 };
 
-const Component = withErrorPage<ServerSideProps>(({ publicUser }) => {
+const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories }) => {
 	const user = useUser();
 
 	return (
@@ -84,6 +88,11 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser }) => {
 						<BBCode html>{publicUser.description}</BBCode>
 					</BoxSection>
 				)}
+				{publicStories.length && (
+					<BoxSection id="profile-stories" heading="Adventures">
+						<StoryList>{publicStories}</StoryList>
+					</BoxSection>
+				)}
 				{user && (
 					user.id === publicUser.id
 					|| user.perms & Perm.sudoRead
@@ -110,7 +119,10 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ param
 	if (userFromParams) {
 		return {
 			props: {
-				publicUser: getPublicUser(userFromParams)
+				publicUser: getPublicUser(userFromParams),
+				publicStories: await stories.find!({
+					editors: userFromParams._id
+				}).map(getPublicStory).toArray()
 			}
 		};
 	}
