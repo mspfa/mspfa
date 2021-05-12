@@ -35,16 +35,6 @@
 		content: ' - ';
 	}
 
-	&-description {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		margin: 4px 0;
-
-		.bbcode {
-			white-space: nowrap;
-		}
-	}
-
 	&-tags {
 		margin: 4px 0;
 	}

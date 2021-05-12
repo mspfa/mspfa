@@ -8,7 +8,6 @@ import EditButton from 'components/Button/EditButton';
 import { useUser } from 'modules/client/users';
 import { Perm } from 'modules/client/perms';
 import PagesIcon from 'components/LabeledIcon/PagesIcon';
-import BBCode, { sanitizeBBCode } from 'components/BBCode';
 import { Fragment } from 'react';
 
 export type StoryListingProps = {
@@ -17,14 +16,6 @@ export type StoryListingProps = {
 
 const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 	const user = useUser();
-
-	let description = sanitizeBBCode(publicStory.description, { noBB: true });
-	const descriptionLineBreakIndex = description.indexOf('\n');
-	description = (
-		descriptionLineBreakIndex === -1
-			? description
-			: description.slice(0, descriptionLineBreakIndex)
-	);
 
 	return (
 		<>
@@ -56,13 +47,6 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 						{storyStatusNames[publicStory.status]}
 					</span>
 				</div>
-				{description && (
-					<div className="story-listing-description">
-						<BBCode raw>
-							{description}
-						</BBCode>
-					</div>
-				)}
 				<div className="story-listing-tags">
 					{publicStory.tags.map((tag, i) => (
 						<Fragment key={tag}>
