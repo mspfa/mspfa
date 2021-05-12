@@ -8,7 +8,8 @@ import EditButton from 'components/Button/EditButton';
 import { useUser } from 'modules/client/users';
 import { Perm } from 'modules/client/perms';
 import PagesIcon from 'components/LabeledIcon/PagesIcon';
-import { Fragment } from 'react';
+import { Fragment, useCallback, useState } from 'react';
+import BBCode from 'components/BBCode';
 
 export type StoryListingProps = {
 	children: PublicStory
@@ -16,6 +17,11 @@ export type StoryListingProps = {
 
 const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 	const user = useUser();
+	const [open, setOpen] = useState(false);
+
+	const toggleOpen = useCallback(() => {
+		setOpen(open => !open);
+	}, []);
 
 	return (
 		<>
@@ -52,10 +58,24 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 						{publicStory.pageCount}
 					</PagesIcon>
 				</div>
+				{open && (
+					<div className="story-listing-description translucent-text">
+						<BBCode>{publicStory.description}</BBCode>
+					</div>
+				)}
 				<div className="story-listing-tags">
-					{publicStory.tags.map((tag, i) => (
+					{publicStory.description && (
+						<Link
+							className="story-listing-more-link"
+							onClick={toggleOpen}
+						>
+							{open ? 'Show Less' : 'Show More'}
+						</Link>
+					)}
+					{publicStory.description && !!publicStory.tags.length && ' - '}
+					{publicStory.tags.map(tag => (
 						<Fragment key={tag}>
-							{i !== 0 && ' '}
+							{' '}
 							<Link key={tag} className="story-tag">
 								#{tag}
 							</Link>

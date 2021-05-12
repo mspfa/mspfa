@@ -27,16 +27,22 @@
 		}
 	}
 
-	&-meta, &-tags {
+	&-meta, &-description, &-tags {
 		margin: 4px 0;
+	}
+
+	&-tags {
+		font-size: 0.75em;
+		opacity: 0.6;
+
+		.link:not(:focus, :active) {
+			color: inherit;
+		}
 	}
 }
 
 .story-tag.link {
-	font-size: 0.75em;
-	opacity: 0.6;
 	text-decoration: none;
-	color: inherit;
 
 	&:hover, &:focus, &:active {
 		text-decoration: underline;
