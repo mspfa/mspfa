@@ -56,6 +56,8 @@ export type StoryDocument = {
 	drafts: StoryPageDraft[],
 	/** @maxLength 2000 */
 	description: string,
+	/** @maxLength 500 */
+	blurb: string,
 	icon: '' | URLString,
 	favCount: number,
 	banner: '' | URLString,
@@ -125,6 +127,11 @@ export const getPrivateStory = (story: StoryDocument): PrivateStory => ({
 		author: story.author
 	},
 	description: story.description,
+	blurb: story.blurb || (
+		story.description.length >= 500
+			? `${story.description.slice(0, 499)}…`
+			: story.description
+	),
 	icon: story.icon,
 	favCount: story.favCount,
 	pageCount: story.pages.length,
@@ -152,6 +159,11 @@ export const getPublicStory = (story: StoryDocument): PublicStory => ({
 		author: story.author
 	},
 	description: story.description,
+	blurb: story.blurb || (
+		story.description.length >= 500
+			? `${story.description.slice(0, 499)}…`
+			: story.description
+	),
 	icon: story.icon,
 	favCount: story.favCount,
 	pageCount: story.pages.length,

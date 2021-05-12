@@ -59,12 +59,12 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 					</PagesIcon>
 				</div>
 				{open && (
-					<div className="story-listing-description translucent-text">
-						<BBCode>{publicStory.description}</BBCode>
+					<div className="story-listing-blurb translucent-text">
+						<BBCode>{publicStory.blurb}</BBCode>
 					</div>
 				)}
 				<div className="story-listing-tags">
-					{publicStory.description && (
+					{publicStory.blurb && (
 						<Link
 							className="story-listing-more-link"
 							onClick={toggleOpen}
@@ -72,7 +72,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 							{open ? 'Show Less' : 'Show More'}
 						</Link>
 					)}
-					{publicStory.description && !!publicStory.tags.length && ' - '}
+					{publicStory.blurb && !!publicStory.tags.length && ' - '}
 					{publicStory.tags.map(tag => (
 						<Fragment key={tag}>
 							{' '}
