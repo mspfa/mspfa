@@ -23,28 +23,54 @@ import StoryList from 'components/StoryList';
 
 type ServerSideProps = {
 	publicUser: PublicUser,
-	publicStories: PublicStory[]
+	publicStories: PublicStory[],
+	favsPublic: boolean
 } | {
 	statusCode: number
 };
 
-const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories }) => {
+const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, favsPublic }) => {
 	const user = useUser();
+
+	const notOwnProfile = user?.id !== publicUser.id;
 
 	return (
 		<Page flashyTitle heading="Profile">
 			<Box id="profile-box">
 				<BoxColumns>
-					<BoxSection heading="Meta">
+					<BoxSection id="profile-meta" heading="Meta">
 						<BoxRow id="profile-name">
 							{publicUser.name}
 						</BoxRow>
 						<BoxRow id="profile-icon">
 							<IconImage src={publicUser.icon} />
 						</BoxRow>
+						<BoxRow id="profile-actions">
+							{notOwnProfile && (
+								<div>
+									<Link href="/TODO">
+										Send Message
+									</Link>
+								</div>
+							)}
+							{favsPublic && (
+								<div>
+									<Link href={`/u/${publicUser.id}/favs`}>
+										View Favorites
+									</Link>
+								</div>
+							)}
+							{notOwnProfile && (
+								<div>
+									<Link href="/TODO">
+										Report
+									</Link>
+								</div>
+							)}
+						</BoxRow>
 					</BoxSection>
 					<Box>
-						<BoxRowSection heading="Stats">
+						<BoxRowSection id="profile-stats" heading="Stats">
 							<LabeledBoxRow label="Last Connection">
 								<Timestamp relative withTime>{publicUser.lastSeen}</Timestamp>
 							</LabeledBoxRow>
@@ -58,7 +84,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories })
 							)}
 						</BoxRowSection>
 						{(publicUser.email || publicUser.site) && (
-							<BoxRowSection heading="Contact">
+							<BoxRowSection id="profile-contact" heading="Contact">
 								{publicUser.email && (
 									<LabeledBoxRow label="Email">
 										<Link
@@ -92,13 +118,15 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories })
 					<BoxSection
 						id="profile-stories"
 						heading={`${publicUser.name}'s Adventures`}
+						collapsible
+						open
 					>
 						<StoryList>{publicStories}</StoryList>
 					</BoxSection>
 				)}
 				{user && (
 					user.id === publicUser.id
-					|| user.perms & Perm.sudoRead
+					|| !!(user.perms & Perm.sudoRead)
 				) && (
 					<BoxFooter>
 						<Link
@@ -125,7 +153,8 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ param
 				publicUser: getPublicUser(userFromParams),
 				publicStories: await stories.find!({
 					editors: userFromParams._id
-				}).map(getPublicStory).toArray()
+				}).map(getPublicStory).toArray(),
+				favsPublic: userFromParams.settings.favsPublic
 			}
 		};
 	}

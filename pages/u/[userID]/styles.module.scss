@@ -21,4 +21,12 @@
 			}
 		}
 	}
+
+	&-actions {
+		font-size: 0.875em;
+
+		& > div:not(:first-child) {
+			margin-top: 0.25em;
+		}
+	}
 }
