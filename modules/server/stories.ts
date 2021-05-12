@@ -88,6 +88,7 @@ export const defaultStory = {
 	pages: [] as never[],
 	drafts: [] as never[],
 	description: '',
+	blurb: '',
 	icon: '',
 	favCount: 0,
 	banner: '',
