@@ -60,7 +60,10 @@ summary {
 }
 
 .translucent-text {
-	@include theme(color, $translucent-text-color);
+	// This is necessary so `.translucent-text` has priority over `.link` regardless of load order.
+	&, &.link {
+		@include theme(color, $translucent-text-color);
+	}
 }
 
 .spaced {
