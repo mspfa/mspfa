@@ -35,6 +35,9 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 					{publicStory.title}
 				</Link>
 				<div className="story-listing-meta">
+					<span className="story-listing-status spaced">
+						{storyStatusNames[publicStory.status]}
+					</span>
 					{user && (
 						// Check if the user has permission to edit this adventure.
 						publicStory.editors.includes(user.id)
@@ -48,9 +51,6 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 					<PagesIcon className="spaced">
 						{publicStory.pageCount}
 					</PagesIcon>
-					<span className="story-listing-status spaced">
-						{storyStatusNames[publicStory.status]}
-					</span>
 				</div>
 				<div className="story-listing-tags">
 					{publicStory.tags.map((tag, i) => (
