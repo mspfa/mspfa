@@ -130,7 +130,7 @@ export const getPrivateStory = (story: StoryDocument): PrivateStory => ({
 	description: story.description,
 	blurb: story.blurb || (
 		story.description.length >= 500
-			? `${story.description.slice(0, 499)}…`
+			? `${story.description.slice(0, 500)}...`
 			: story.description
 	),
 	icon: story.icon,
@@ -162,7 +162,7 @@ export const getPublicStory = (story: StoryDocument): PublicStory => ({
 	description: story.description,
 	blurb: story.blurb || (
 		story.description.length >= 500
-			? `${story.description.slice(0, 499)}…`
+			? `${story.description.slice(0, 500)}...`
 			: story.description
 	),
 	icon: story.icon,
