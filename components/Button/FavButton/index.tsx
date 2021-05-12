@@ -63,10 +63,22 @@ const FavButton = ({ storyID, className, ...props }: FavButtonProps) => {
 
 						setInactive();
 					} else {
-						(api as FavsAPI).post(`/users/${user.id}/favs`, { storyID });
+						const setActive = () => {
+							user.favs.push(storyID);
+							setUser({ ...user });
+						};
 
-						user.favs.push(storyID);
-						setUser({ ...user });
+						await (api as FavsAPI).post(`/users/${user.id}/favs`, { storyID }, {
+							beforeInterceptError: error => {
+								if (error.response?.data.error === 'ALREADY_EXISTS') {
+									// The favorite was not found, so cancel the error and remove the favorite on the client.
+									error.preventDefault();
+									setActive();
+								}
+							}
+						});
+
+						setActive();
 					}
 
 					// This ESLint comment is necessary because the rule incorrectly thinks `active` and `favIndex` should be dependencies here, despite that they depend on `user` which is already a dependency.

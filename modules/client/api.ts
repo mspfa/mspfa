@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { APIHandler } from 'modules/server/api';
+import type { APIHandler, ErrorResponseBody } from 'modules/server/api';
 import type { AxiosRequestConfig, AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 import type { Method, MethodWithData } from 'modules/types';
 import { Dialog } from 'modules/client/dialogs';
@@ -24,7 +24,12 @@ export type AnyAPIQuery = Partial<Record<string, string | string[]>>;
 export type APIError<
 	ResponseBody = Record<string, unknown>,
 	RequestQuery extends AnyAPIQuery = {}
-> = Record<string, unknown> & Omit<AxiosError<ResponseBody>, 'config'> & {
+> = Record<string, unknown> & Omit<(
+	AxiosError<(
+		Record<string, unknown>
+		& (ErrorResponseBody | ResponseBody)
+	)>
+), 'config'> & {
 	config?: APIConfig<ResponseBody, RequestQuery>,
 	/**
 	 * If called before the error is intercepted, prevents the error's default interception functionality (which is to display an error dialog).
