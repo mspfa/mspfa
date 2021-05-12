@@ -45,3 +45,9 @@ export type PublicStory = (
 		pageCount: number
 	}
 );
+
+export const getBlurb = (story: PublicStory) => story.blurb || (
+	story.description.length > 500
+		? `${story.description.slice(0, 500)}...`
+		: story.description
+);

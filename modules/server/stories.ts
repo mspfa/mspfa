@@ -128,11 +128,7 @@ export const getPrivateStory = (story: StoryDocument): PrivateStory => ({
 		author: story.author
 	},
 	description: story.description,
-	blurb: story.blurb || (
-		story.description.length > 500
-			? `${story.description.slice(0, 500)}...`
-			: story.description
-	),
+	blurb: story.blurb,
 	icon: story.icon,
 	favCount: story.favCount,
 	pageCount: story.pages.length,
@@ -160,11 +156,7 @@ export const getPublicStory = (story: StoryDocument): PublicStory => ({
 		author: story.author
 	},
 	description: story.description,
-	blurb: story.blurb || (
-		story.description.length > 500
-			? `${story.description.slice(0, 500)}...`
-			: story.description
-	),
+	blurb: story.blurb,
 	icon: story.icon,
 	favCount: story.favCount,
 	pageCount: story.pages.length,
