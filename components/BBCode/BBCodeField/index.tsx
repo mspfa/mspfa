@@ -74,6 +74,7 @@ const BBCodeField = ({ name, ...props }: BBCodeFieldProps) => {
 				{...props}
 			/>
 			<Spoiler
+				className="bb-preview"
 				open="Show Preview"
 				close="Hide Preview"
 				initialOpen={false}
