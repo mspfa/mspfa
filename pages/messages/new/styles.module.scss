@@ -1,0 +1,9 @@
+.field-container {
+	& + & {
+		margin-top: 1em;
+	}
+}
+
+#field-subject {
+	width: 100%;
+}

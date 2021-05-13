@@ -12,7 +12,9 @@ export type MessageDocument = {
 	replyTo?: MessageDocument['_id'],
 	notDeletedBy: Array<UserDocument['_id']>,
 	notReadBy: Array<UserDocument['_id']>,
+	/** @maxLength 50 */
 	subject: string,
+	/** @maxLength 20000 */
 	content: string
 };
 
