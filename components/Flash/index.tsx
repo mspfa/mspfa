@@ -12,13 +12,10 @@ const setFlashModeToNative = () => {
 	setFlashMode('native');
 };
 
-let appendedEmulator = false;
 let emulatorLoaded: Promise<void> | undefined;
 
 const setFlashModeToEmulate = async () => {
-	if (!appendedEmulator) {
-		appendedEmulator = true;
-
+	if (emulatorLoaded === undefined) {
 		(window as any).RufflePlayer = {
 			config: {
 				polyfills: false
@@ -29,9 +26,15 @@ const setFlashModeToEmulate = async () => {
 		emulator.src = '/ruffle/ruffle.js';
 		document.head.appendChild(emulator);
 
-		emulatorLoaded = new Promise(resolve => {
-			emulator.addEventListener('load', () => {
-				resolve();
+		emulatorLoaded = new Promise<any>((resolve, reject) => {
+			emulator.addEventListener('load', resolve);
+
+			emulator.addEventListener('error', error => {
+				reject(error);
+
+				// Set `emulatorLoaded` to `undefined` to retry loading the script if the user calls this again.
+				emulatorLoaded = undefined;
+				document.head.removeChild(emulator);
 			});
 		});
 	}
@@ -60,6 +63,9 @@ const Flash = ({
 
 	const retry = useCallback(() => {
 		setError(undefined);
+
+		// Attempt setting the Flash mode to `emulate` again in case the error was in loading the player script.
+		setFlashModeToEmulate();
 	}, []);
 
 	useEffect(() => {
@@ -103,6 +109,8 @@ const Flash = ({
 
 					player.load(src).catch(setError);
 				}).catch(setError);
+			}).catch(() => {
+				setError(new Error('The emulator script failed to load.'));
 			});
 
 			return () => {
