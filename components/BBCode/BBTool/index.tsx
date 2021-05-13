@@ -391,7 +391,7 @@ const tags: Record<string, {
 		},
 		content: (
 			<LabeledDialogBox>
-				<BoxRow className="error">
+				<BoxRow className="red">
 					It is highly recommended not to use Flash due to its loss of support. Consider using video or HTML5 instead.
 				</BoxRow>
 				<FieldBoxRow

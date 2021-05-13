@@ -165,7 +165,7 @@ const Flash = ({
 									<p>
 										An error occurred while trying to load the player:
 									</p>
-									<p className="error">
+									<p className="red">
 										{error.toString()}
 									</p>
 									<p>

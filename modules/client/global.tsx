@@ -16,7 +16,7 @@ window.addEventListener('error', event => {
 			title: 'Uncaught Error',
 			content: (
 				<>
-					<div className="error">
+					<div className="red">
 						{event.message}
 					</div>
 					<br />
