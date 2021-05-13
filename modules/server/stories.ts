@@ -11,12 +11,19 @@ import type { APIResponse } from 'modules/server/api';
 /** @minimum 1 */
 export type StoryID = number;
 
+/**
+ * @minLength 1
+ * @pattern ^[a-z0-9-]+$
+ */
+export type TagString = string;
+
 export type StoryPage = {
 	published: Date,
 	title: string,
 	content: string,
 	nextPages: number[],
-	tags: string[],
+	/** @uniqueItems */
+	tags: TagString[],
 	hidden: boolean,
 	commentary: string,
 	comments: StoryComment[]
@@ -26,18 +33,15 @@ export type StoryPageDraft = StoryPage & {
 	notify: boolean
 };
 
-/**
- * @minLength 1
- * @pattern ^[a-z0-9-]+$
- */
-export type TagString = string;
-
 export type StoryComment = {
 	posted: Date,
 	edited?: Date,
 	author: UserID,
+	/** @minLength 1 */
 	content: string,
+	/** @uniqueItems */
 	likes: UserID[],
+	/** @uniqueItems */
 	dislikes: UserID[],
 	private: boolean
 };
