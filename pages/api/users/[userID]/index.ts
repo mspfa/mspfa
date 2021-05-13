@@ -9,6 +9,7 @@ import users, { getPrivateUser } from 'modules/server/users';
 import type { UserDocument } from 'modules/server/users';
 import { flatten } from 'modules/server/db';
 import _ from 'lodash';
+import stories from 'modules/server/stories';
 
 /** The keys of all `PrivateUser` properties which the client should be able to `PUT` into their `UserDocument`. */
 type PuttableUserKeys = 'birthdate' | 'name' | 'email' | 'description' | 'icon' | 'site' | 'profileStyle' | 'settings';
@@ -61,6 +62,15 @@ const Handler: APIHandler<{
 	// If this point is reached, `req.method === 'DELETE'`.
 
 	const user = await permToGetUserInAPI(req, res, Perm.sudoDelete);
+
+	if (await stories.findOne({
+		editors: user._id
+	})) {
+		res.status(422).send({
+			message: 'Users with adventures cannot be deleted.'
+		});
+		return;
+	}
 
 	await users.updateOne({
 		_id: user._id

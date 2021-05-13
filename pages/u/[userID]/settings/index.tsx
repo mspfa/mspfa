@@ -37,6 +37,7 @@ import BirthdateField from 'components/DateField/BirthdateField';
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 type AuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;
 type PasswordAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods/password').default>;
+type DoesOwnStoriesAPI = APIClient<typeof import('pages/api/users/[userID]/doesOwnStories').default>;
 
 const getValuesFromUser = (privateUser: Pick<PrivateUser, 'settings'> & Partial<Omit<PrivateUser, 'settings'>>) => ({
 	email: privateUser.email,
@@ -414,49 +415,64 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										<Button
 											disabled={isSubmitting}
 											onClick={
-												useCallback(async () => {
-													if (!await Dialog.confirm({
-														id: 'delete-user',
-														title: 'Delete Account',
-														content: (
-															<>
-																Are you sure you want to delete your account?<br />
-																<br />
-																Your account will be restored if you log into it within 30 days after deletion.<br />
-																<br />
-																If you do not log into your account within 30 days, <span className="bolder red">the deletion will be irreversible.</span><br />
-																<br />
-																<Field
-																	type="checkbox"
-																	id="delete-user-confirm"
-																	className="spaced"
-																	name="confirm"
-																	required
-																/>
-																<label className="spaced bolder" htmlFor="delete-user-confirm">
-																	I am sure I want to delete my account: {privateUser.name}
-																</label>
-															</>
-														),
-														actions: [
-															'Yes',
-															{ label: 'No', autoFocus: true }
-														]
-													})
-													) {
-														return;
-													}
+												useCallback(() => {
+													// It is necessary to use `then` here instead of `await` because `await` will return even if the promise rejects, since we have a `catch` handler.
+													(api as DoesOwnStoriesAPI).get(`users/${privateUser.id}/doesOwnStories`).then(async ({ data: doesOwnStories }) => {
+														if (doesOwnStories) {
+															new Dialog({
+																id: 'delete-user',
+																title: 'Delete Account',
+																content: 'If you want to delete your account, first delete or transfer ownership of each of your adventures.'
+															});
 
-													setSubmitting(true);
-
-													(api as UserAPI).delete(`users/${privateUser.id}`).then(() => {
-														if (getUser()!.id === privateUser.id) {
-															preventReloads();
-															setUser(undefined);
+															return;
 														}
 
-														preventLeaveConfirmations();
-														Router.push('/');
+														if (!await Dialog.confirm({
+															id: 'delete-user',
+															title: 'Delete Account',
+															content: (
+																<>
+																	Are you sure you want to delete your account?<br />
+																	<br />
+																	Your account will be restored if you log into it within 30 days after deletion.<br />
+																	<br />
+																	If you do not log into your account within 30 days, <span className="bolder red">the deletion will be irreversible.</span><br />
+																	<br />
+																	<Field
+																		type="checkbox"
+																		id="delete-user-confirm"
+																		className="spaced"
+																		name="confirm"
+																		required
+																	/>
+																	<label className="spaced bolder" htmlFor="delete-user-confirm">
+																		I am sure I want to delete my account: {privateUser.name}
+																	</label>
+																</>
+															),
+															actions: [
+																'Yes',
+																{ label: 'No', autoFocus: true }
+															]
+														})) {
+															return;
+														}
+
+														setSubmitting(true);
+
+														// It is necessary to use `then` here instead of `await` for the same reason as last time.
+														(api as UserAPI).delete(`users/${privateUser.id}`).then(() => {
+															if (getUser()!.id === privateUser.id) {
+																preventReloads();
+																setUser(undefined);
+															}
+
+															preventLeaveConfirmations();
+															Router.push('/');
+														}).catch(() => {
+															setSubmitting(false);
+														});
 													}).catch(() => {
 														setSubmitting(false);
 													});
