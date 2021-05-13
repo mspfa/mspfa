@@ -484,6 +484,35 @@ const tagIndexes = Object.fromEntries(
 	)
 );
 
+/** Escapes a user-inputted attribute value for use in BBCode. */
+const escapeAttribute = (value: string, handleEqualSigns?: boolean) => {
+	if (value.includes(']') || (handleEqualSigns && value.includes('='))) {
+		if (value.includes('"') && !value.includes("'")) {
+			return `'${value}'`;
+		}
+
+		return `"${value.replace(/"/g, '&quot;')}"`;
+	}
+
+	if (value[0] === '"') {
+		if (value.includes("'")) {
+			return `&quot;${value.slice(1)}`;
+		}
+
+		return `'${value}'`;
+	}
+
+	if (value[0] === "'") {
+		if (value.includes('"')) {
+			return `&apos;${value.slice(1)}`;
+		}
+
+		return `"${value}"`;
+	}
+
+	return value;
+};
+
 export type BBToolProps = {
 	/** The name of the BB tag which the BB tool creates. */
 	tag: string
@@ -566,10 +595,10 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 							? tagProps.attributes instanceof Object
 								? (
 									Object.entries(tagProps.attributes).map(
-										([name, value]) => ` ${name}=${value}`
+										([name, value]) => ` ${name}=${escapeAttribute(value!, true)}`
 									).join('')
 								)
-								: `=${tagProps.attributes}`
+								: `=${escapeAttribute(tagProps.attributes)}`
 							: ''
 					}]`;
 					const closeTag = `[/${tagName}]`;

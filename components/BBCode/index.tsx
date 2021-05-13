@@ -12,47 +12,36 @@ const parseOptions: HTMLReactParserOptions = {
 			domNode instanceof Element
 			&& domNode.type === 'tag'
 			&& domNode.name === 'mspfa-bb'
-			// `domNode.attributes` should be an array with the `data-name` and `data-attributes` HTML attribute objects (in no particular order), but we can't trust client data, so we must check.
-			&& domNode.attributes.length === 2
 		) {
-			let tagName: string;
-			let rawAttributes: string;
+			let tagName: string | undefined;
 			let attributes: BBTagProps['attributes'];
 
-			if (domNode.attributes[0].name === 'data-name') {
-				tagName = domNode.attributes[0].value;
-				rawAttributes = domNode.attributes[1].value;
-			} else {
-				rawAttributes = domNode.attributes[0].value;
-				tagName = domNode.attributes[1].value;
+			// Note that, because the client can input a string with `mspfa-bb` HTML tags already in it, the attributes of the `mspfa-bb` tag cannot be trusted.
+
+			for (let i = 0; i < domNode.attributes.length; i++) {
+				const { name, value } = domNode.attributes[i];
+
+				if (name === 'data-name') {
+					tagName = value;
+				} else if (name === 'data-attr') {
+					attributes = value;
+				} else {
+					if (!(attributes instanceof Object)) {
+						attributes = {};
+					}
+
+					attributes[name.slice('data-attr-'.length)] = value;
+				}
+			}
+
+			if (!tagName) {
+				return;
 			}
 
 			const BBTag = BBTags[tagName];
 
 			if (!BBTag) {
 				return;
-			}
-
-			if (rawAttributes.length) {
-				if (rawAttributes[0] === '=') {
-					attributes = rawAttributes.slice(1);
-				} else {
-					attributes = {};
-
-					// Even though we only use the first attribute's capture groups, it is necessary to match additional attributes to prevent the first attribute's capture group from ending early.
-					const attributeTest = /^(([\w-]+)=(["']?)(.*?)\3)(?: [\w-]+=(["']?).*?\5)*$/;
-
-					let match: RegExpExecArray | null;
-
-					while (match = attributeTest.exec(rawAttributes)) {
-						const [, rawAttribute, attributeName, , attributeValue] = match;
-
-						attributes[attributeName] = attributeValue;
-
-						// Slice off this attribute from the original string, as well as the trailing space.
-						rawAttributes = rawAttributes.slice(rawAttribute.length + 1);
-					}
-				}
 			}
 
 			return (
@@ -74,14 +63,13 @@ export const sanitizeBBCode = (bbString = '', { html, noBB }: {
 	let htmlString = '';
 
 	// Even though we don't use the contents of the second capturing group in this regular expression, it is necessary that it is so specific so a tag with "]" in its attributes does not end early.
-	const openTagTest = /\[([\w-]+)((?:=(["']?).*?\3)|(?: [\w-]+=(["']?).*?\4)+)?\]/;
+	const openTagTest = /\[([\w-]+)((?:=(["']?)(.*?)\3)|(?: [\w-]+=(["']?).*?\5)+)?\]/;
 
 	let match: RegExpExecArray | null;
 
 	while (match = openTagTest.exec(bbString)) {
 		const openTag = match[0];
 		const tagName = match[1].toLowerCase();
-		const rawAttributes = match[2];
 
 		// Append the slice of the original string from the end of the previous match to the start of this match.
 		htmlString += bbString.slice(0, match.index);
@@ -92,7 +80,32 @@ export const sanitizeBBCode = (bbString = '', { html, noBB }: {
 		const BBTag = BBTags[tagName];
 
 		if (BBTag) {
-			htmlString += `<mspfa-bb data-name="${tagName}" data-attributes="${rawAttributes ? rawAttributes.trim().replace(/"/g, '&quot;') : ''}">`;
+			htmlString += `<mspfa-bb data-name="${tagName}"`;
+
+			const rawAttributesAfterEqualSign: string | undefined = match[4];
+
+			if (rawAttributesAfterEqualSign) {
+				htmlString += ` data-attr="${rawAttributesAfterEqualSign.replace(/"/g, '&quot;')}"`;
+			} else {
+				let rawAttributes: string | undefined = match[2];
+
+				// Even though we only use the first attribute's capture groups, it is necessary to match additional attributes to prevent the first attribute's capture group from ending early.
+				const attributeTest = /^( ([\w-]+)=(["']?)(.*?)\3)(?: [\w-]+=(["']?).*?\5)*$/;
+
+				let attributeMatch: RegExpExecArray | null;
+
+				while (attributeMatch = attributeTest.exec(rawAttributes)) {
+					const [, rawAttribute, attributeName, , attributeValue] = attributeMatch;
+
+					htmlString += ` data-attr-${attributeName}="${attributeValue.replace(/"/g, '&quot;')}"`;
+
+					// Slice off this attribute from the original string.
+					rawAttributes = rawAttributes.slice(rawAttribute.length);
+					// Slicing off processed portions of the original string is necessary because, otherwise, adding the `g` flag to `attributeTest` would set `attributeTest.lastIndex` to the end of the string after the first iteration, since `attributeTest`'s match includes the end of the string.
+				}
+			}
+
+			htmlString += '>';
 
 			// Replace the next closing tag. It doesn't matter if it corresponds to the matched opening tag; valid BBCode will have the same number of opening tags as closing tags.
 			bbString = bbString.replace(
