@@ -107,15 +107,6 @@ const generateValidator = async (
 	console.info(`${c.gray(sourcePathModule)} ${c.green('Success!')}`);
 };
 
-const finishValidator = async (
-	/** The TS file to generate a validator for. */
-	sourcePath: string
-) => {
-	const { outputPath } = getMetadata(sourcePath);
-
-	await run(`npx eslint --fix ${outputPath}`);
-};
-
 (async () => {
 	// Initialize validators in parallel.
 	console.info(c.blue('Initializing...'));
@@ -138,14 +129,18 @@ const finishValidator = async (
 	} catch (error) {
 		for (const diagnostic of error.diagnostics) {
 			let lineIndex = 0;
-			for (let i = diagnostic.file.lineMap.length - 1; i >= 0; i--) {
-				if (diagnostic.start >= diagnostic.file.lineMap[i]) {
-					lineIndex = i;
-					break;
-				}
-			}
+			let charIndex = 0;
 
-			const charIndex = diagnostic.start - diagnostic.file.lineMap[lineIndex];
+			if (diagnostic.file.lineMap) {
+				for (let i = diagnostic.file.lineMap.length - 1; i >= 0; i--) {
+					if (diagnostic.start >= diagnostic.file.lineMap[i]) {
+						lineIndex = i;
+						break;
+					}
+				}
+
+				charIndex = diagnostic.start - diagnostic.file.lineMap[lineIndex];
+			}
 
 			console.info(`${c.gray(`${diagnostic.file.fileName}:${lineIndex + 1}:${charIndex + 1}`)} ${c.red('Error:')}`);
 			console.info(diagnostic.messageText);
@@ -160,9 +155,13 @@ const finishValidator = async (
 		await generateValidator(sourcePaths[i], i);
 	}
 
-	// Finish validators in parallel.
+	// Finish validators.
 	console.info(c.blue('Finishing...'));
-	await Promise.all(sourcePaths.map(finishValidator));
+	await run(`npx eslint --fix ${
+		sourcePaths.map(
+			sourcePath => getMetadata(sourcePath).outputPath
+		).join(' ')
+	}`);
 	await fs.unlink(inputPath);
 
 	console.info(c.green('Done!'));
