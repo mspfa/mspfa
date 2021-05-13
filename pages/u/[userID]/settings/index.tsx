@@ -415,42 +415,35 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 											disabled={isSubmitting}
 											onClick={
 												useCallback(async () => {
-													if (!(
-														await Dialog.confirm({
-															id: 'delete-user',
-															title: 'Delete Account',
-															content: 'Are you sure you want to delete your account?\n\nThis action is irreversible.',
-															actions: [
-																'Yes',
-																{ label: 'No', autoFocus: true }
-															]
-														}) && await Dialog.confirm({
-															id: 'delete-user',
-															title: 'Delete Account',
-															content: (
-																<>
-																	Are you REALLY sure you want to delete your account?<br />
-																	<br />
-																	TODO: Make not irreversible.<br />
-																	<br />
-																	<Field
-																		type="checkbox"
-																		id="delete-user-confirm"
-																		className="spaced"
-																		name="confirm"
-																		required
-																	/>
-																	<label className="spaced bolder" htmlFor="delete-user-confirm">
-																		I am sure I want to delete my account: {privateUser.name}
-																	</label>
-																</>
-															),
-															actions: [
-																'Yes',
-																{ label: 'No', autoFocus: true }
-															]
-														})
-													)) {
+													if (!await Dialog.confirm({
+														id: 'delete-user',
+														title: 'Delete Account',
+														content: (
+															<>
+																Are you sure you want to delete your account?<br />
+																<br />
+																Your account will be restored if you log into it within 30 days after deletion.<br />
+																<br />
+																If you do not log into your account within 30 days, <span className="bolder red">the deletion will be irreversible.</span><br />
+																<br />
+																<Field
+																	type="checkbox"
+																	id="delete-user-confirm"
+																	className="spaced"
+																	name="confirm"
+																	required
+																/>
+																<label className="spaced bolder" htmlFor="delete-user-confirm">
+																	I am sure I want to delete my account: {privateUser.name}
+																</label>
+															</>
+														),
+														actions: [
+															'Yes',
+															{ label: 'No', autoFocus: true }
+														]
+													})
+													) {
 														return;
 													}
 

@@ -75,6 +75,8 @@ export type UserDocument = {
 	 */
 	name: string,
 	created: Date,
+	/** The date this user will be deleted from the database, or undefined if the user is not scheduled for deletion. */
+	willDelete?: Date,
 	/** The date of the last authenticated request the user sent to the site. */
 	lastSeen: Date,
 	birthdate: Date,
@@ -239,3 +241,18 @@ export const getUserByUnsafeID = async (id: UnsafeObjectID) => {
 		}
 	}
 };
+
+const everyFifteenMinutes = () => {
+	users.deleteMany({
+		willDelete: {
+			$lte: new Date()
+		}
+	});
+};
+
+everyFifteenMinutes();
+
+if (process.env.NODE_ENV !== 'development') {
+	// Don't run this interval on dev, because dev would run this interval many times and require a restart to stop any of them.
+	setInterval(everyFifteenMinutes, 1000 * 60 * 15);
+}

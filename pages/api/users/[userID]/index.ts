@@ -62,10 +62,13 @@ const Handler: APIHandler<{
 
 	const user = await permToGetUserInAPI(req, res, Perm.sudoDelete);
 
-	// TODO: Delete other things as well.
-
-	await users.deleteOne({
+	await users.updateOne({
 		_id: user._id
+	}, {
+		$set: {
+			willDelete: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+			sessions: []
+		}
 	});
 
 	res.end();

@@ -153,6 +153,9 @@ export const createSession = async (
 	}, {
 		$push: {
 			sessions: session
+		},
+		$unset: {
+			willDelete: true
 		}
 	});
 
