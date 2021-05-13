@@ -591,7 +591,6 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 
 					const openTag = `[${tagName}${
 						tagProps.attributes
-							// TODO: This should be escaped to prevent "]" in `attributes` from closing the tag, and to prevent "=" from creating new attributes.
 							? tagProps.attributes instanceof Object
 								? (
 									Object.entries(tagProps.attributes).map(
