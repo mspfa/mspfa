@@ -8,6 +8,8 @@ import type { UnsafeObjectID } from 'modules/server/db';
 import type { Theme } from 'modules/client/themes';
 import type { StoryID } from 'modules/server/stories';
 
+export type UserID = ObjectId;
+
 type AuthMethodProperties = {
 	id: string,
 	/** A display name to represent this auth method. */
@@ -65,7 +67,7 @@ export type StoryEditorNotificationSettings = (
 export type StoryNotificationSettings = true | StoryReaderNotificationSettings | StoryEditorNotificationSettings;
 
 export type UserDocument = {
-	_id: ObjectId,
+	_id: UserID,
 	/** The user's verified email address. */
 	email?: EmailString,
 	unverifiedEmail?: EmailString,
@@ -89,6 +91,7 @@ export type UserDocument = {
 	/** An object where each key is a story ID, and its value is a page number of that story. */
 	storySaves: Record<StoryID, number>,
 	achievements: Partial<Record<keyof typeof achievements, true>>,
+	/** @uniqueItems true */
 	favs: StoryID[],
 	profileStyle: string,
 	settings: {

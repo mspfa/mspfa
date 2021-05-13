@@ -1,18 +1,23 @@
 import type { ObjectId } from 'mongodb';
 import db from 'modules/server/db';
-import type { UserDocument } from 'modules/server/users';
+import type { UserID } from 'modules/server/users';
+
+export type MessageID = ObjectId;
 
 export type MessageDocument = {
-	_id: ObjectId,
+	_id: MessageID,
 	sent: Date,
 	edited?: Date,
-	from: UserDocument['_id'],
-	/** @minItems 1 */
-	to: Array<UserDocument['_id']>,
+	from: UserID,
+	/**
+	 * @minItems 1
+	 * @uniqueItems true
+	 */
+	to: UserID[],
 	/** The message ID which this is a reply to, or undefined if it is not a reply. */
-	replyTo?: MessageDocument['_id'],
-	notDeletedBy: Array<UserDocument['_id']>,
-	notReadBy: Array<UserDocument['_id']>,
+	replyTo?: MessageID,
+	notDeletedBy: UserID[],
+	notReadBy: UserID[],
 	/**
 	 * @minLength 1
 	 * @maxLength 50

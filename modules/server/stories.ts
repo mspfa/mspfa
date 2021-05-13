@@ -3,7 +3,7 @@ import type { Quirk } from 'modules/client/quirks';
 import type { URLString } from 'modules/types';
 import type { PrivateStory, PublicStory } from 'modules/client/stories';
 import { StoryStatus } from 'modules/client/stories';
-import type { UserDocument } from 'modules/server/users';
+import type { UserDocument, UserID } from 'modules/server/users';
 import users from 'modules/server/users';
 import type { APIResponse } from 'modules/server/api';
 
@@ -26,13 +26,19 @@ export type StoryPageDraft = StoryPage & {
 	notify: boolean
 };
 
+/**
+ * @minLength 1
+ * @pattern ^[a-z0-9-]+$
+ */
+export type TagString = string;
+
 export type StoryComment = {
 	posted: Date,
 	edited?: Date,
-	author: UserDocument['_id'],
+	author: UserID,
 	content: string,
-	likes: Array<UserDocument['_id']>,
-	dislikes: Array<UserDocument['_id']>,
+	likes: UserID[],
+	dislikes: UserID[],
 	private: boolean
 };
 
@@ -51,8 +57,9 @@ export type StoryDocument = {
 	 */
 	title: string,
 	status: StoryStatus,
-	owner: UserDocument['_id'],
-	editors: Array<UserDocument['_id']>,
+	owner: UserID,
+	/** @uniqueItems true */
+	editors: UserID[],
 	author?: {
 		name: string,
 		site: '' | URLString
@@ -73,7 +80,8 @@ export type StoryDocument = {
 		unverified: string,
 		verified: string
 	},
-	tags: string[],
+	/** @uniqueItems true */
+	tags: TagString[],
 	commentsEnabled: boolean,
 	/** Properties of the story which are only used in the story editor. */
 	editorSettings: {
