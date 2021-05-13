@@ -11,11 +11,10 @@ import type { ButtonProps } from 'components/Button';
 import type { AuthMethodOptions } from 'modules/client/auth';
 import { authMethodTypeNames } from 'modules/client/auth';
 import { startLoading, stopLoading } from 'components/LoadingIndicator';
+import loadScript from 'modules/client/loadScript';
 
 /** The global Google API object. */
 declare const gapi: any;
-
-let googleAPILoaded: Promise<void> | undefined;
 
 const resolveAddAuthMethodDialog = () => Dialog.getByID('add-auth-method')?.resolve();
 
@@ -84,44 +83,30 @@ const promptAuthMethod = {
 			}
 		};
 
-		startLoading();
+		loadScript('https://apis.google.com/js/platform.js', () => {
+			const googleClientIDMeta = document.createElement('meta');
+			googleClientIDMeta.name = 'google-signin-client_id';
+			googleClientIDMeta.content = env.GOOGLE_CLIENT_ID;
+			document.head.appendChild(googleClientIDMeta);
+		}).then(() => {
+			gapi.load('auth2', () => {
+				startLoading();
 
-		if (googleAPILoaded === undefined) {
-			const googleAPIScript = document.createElement('script');
-			googleAPIScript.src = 'https://apis.google.com/js/platform.js';
-			document.head.appendChild(googleAPIScript);
-
-			googleAPILoaded = new Promise<any>((resolve, reject) => {
-				googleAPIScript.addEventListener('load', resolve);
-
-				googleAPIScript.addEventListener('error', error => {
-					reject(error);
+				gapi.auth2.init().then((auth2: any) => {
 					stopLoading();
 
-					// Set `googleAPILoaded` to `undefined` to retry loading the Google API if the user tries to authenticate with Google again.
-					googleAPILoaded = undefined;
-					document.head.removeChild(googleAPIScript);
+					auth2.signIn().then((user: any) => {
+						resolve({
+							type: 'google',
+							value: user.getAuthResponse().id_token
+						});
+					}).catch(onError);
+				}).catch((error: any) => {
+					onError(error);
+					stopLoading();
 				});
 			});
-		}
-
-		await googleAPILoaded;
-
-		gapi.load('auth2', () => {
-			gapi.auth2.init().then((auth2: any) => {
-				stopLoading();
-
-				auth2.signIn().then((user: any) => {
-					resolve({
-						type: 'google',
-						value: user.getAuthResponse().id_token
-					});
-				}).catch(onError);
-			}).catch((error: any) => {
-				onError(error);
-				stopLoading();
-			});
-		});
+		}).catch(onError);
 	}),
 	discord: () => new Promise<AuthMethodOptions>(resolve => {
 		const win = window.open(`https://discord.com/api/oauth2/authorize?${new URLSearchParams({
@@ -172,26 +157,19 @@ export type AuthButtonProps = Omit<ButtonProps, 'type' | 'className' | 'onClick'
 };
 
 const AuthButton = ({ type, onResolve, ...props }: AuthButtonProps) => (
-	<>
-		{type === 'google' && (
-			<Head>
-				<meta name="google-signin-client_id" content={env.GOOGLE_CLIENT_ID} />
-			</Head>
-		)}
-		<Button
-			className={`auth-button-${toKebabCase(type)}`}
-			onClick={
-				useCallback(async () => {
-					onResolve(await promptAuthMethod[type]());
+	<Button
+		className={`auth-button-${toKebabCase(type)}`}
+		onClick={
+			useCallback(async () => {
+				onResolve(await promptAuthMethod[type]());
 
-					await resolveAddAuthMethodDialog();
-				}, [type, onResolve])
-			}
-			{...props}
-		>
-			{authMethodTypeNames[type]}
-		</Button>
-	</>
+				await resolveAddAuthMethodDialog();
+			}, [type, onResolve])
+		}
+		{...props}
+	>
+		{authMethodTypeNames[type]}
+	</Button>
 );
 
 export default AuthButton;

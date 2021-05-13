@@ -5,6 +5,7 @@ import Button from 'components/Button';
 import Link from 'components/Link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
+import loadScript from 'modules/client/loadScript';
 
 const [useFlashMode, setFlashMode] = createGlobalState<'ask' | 'native' | 'emulate'>('ask');
 
@@ -12,33 +13,7 @@ const setFlashModeToNative = () => {
 	setFlashMode('native');
 };
 
-let emulatorLoaded: Promise<void> | undefined;
-
 const setFlashModeToEmulate = async () => {
-	if (emulatorLoaded === undefined) {
-		(window as any).RufflePlayer = {
-			config: {
-				polyfills: false
-			}
-		};
-
-		const emulator = document.createElement('script');
-		emulator.src = '/ruffle/ruffle.js';
-		document.head.appendChild(emulator);
-
-		emulatorLoaded = new Promise<any>((resolve, reject) => {
-			emulator.addEventListener('load', resolve);
-
-			emulator.addEventListener('error', error => {
-				reject(error);
-
-				// Set `emulatorLoaded` to `undefined` to retry loading the script if the user calls this again.
-				emulatorLoaded = undefined;
-				document.head.removeChild(emulator);
-			});
-		});
-	}
-
 	setFlashMode('emulate');
 };
 
@@ -63,9 +38,6 @@ const Flash = ({
 
 	const retry = useCallback(() => {
 		setError(undefined);
-
-		// Attempt setting the Flash mode to `emulate` again in case the error was in loading the player script.
-		setFlashModeToEmulate();
 	}, []);
 
 	useEffect(() => {
@@ -86,7 +58,13 @@ const Flash = ({
 			let unmounted = false;
 			let player: any;
 
-			emulatorLoaded!.then(() => {
+			loadScript('/ruffle/ruffle.js', () => {
+				(window as any).RufflePlayer = {
+					config: {
+						polyfills: false
+					}
+				};
+			}).then(() => {
 				if (unmounted) {
 					return;
 				}
