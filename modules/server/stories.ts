@@ -7,7 +7,6 @@ import type { UserDocument, UserID } from 'modules/server/users';
 import users from 'modules/server/users';
 import type { APIResponse } from 'modules/server/api';
 
-// This must be referenced as `StoryID` and not `StoryDocument['_id']` or else the schema generator trips up in many cases.
 /** @minimum 1 */
 export type StoryID = number;
 
