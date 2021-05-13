@@ -30,7 +30,7 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 	return (
 		<Button
 			className={`labeled-icon heart${active ? ' active' : ''}${className ? ` ${className}` : ''}`}
-			title={`${favCount} Favorites`}
+			title={`${favCount} Favorite${favCount === 1 ? '' : 's'}`}
 			onClick={
 				useCallback(async () => {
 					if (loading) {
