@@ -23,7 +23,7 @@ const Handler: APIHandler<{
 	}
 
 	res.send(
-		!!stories.findOne({
+		!!await stories.findOne({
 			owner: user._id
 		})
 	);
