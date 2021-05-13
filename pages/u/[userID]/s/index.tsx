@@ -8,7 +8,7 @@ import BoxRowSection from 'components/Box/BoxRowSection';
 import BoxRow from 'components/Box/BoxRow';
 import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
-import { Fragment, useCallback } from 'react';
+import { useCallback } from 'react';
 import type { APIClient } from 'modules/client/api';
 import api from 'modules/client/api';
 import { Dialog } from 'modules/client/dialogs';

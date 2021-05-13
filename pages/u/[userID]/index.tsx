@@ -17,7 +17,7 @@ import IconImage from 'components/IconImage';
 import { Perm } from 'modules/client/perms';
 import BoxRow from 'components/Box/BoxRow';
 import BBCode from 'components/BBCode';
-import stories, { getPublicStory } from 'modules/server/stories';
+import { getPublicStoriesByEditor } from 'modules/server/stories';
 import type { PublicStory } from 'modules/client/stories';
 import StoryList from 'components/StoryList';
 
@@ -151,9 +151,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ param
 		return {
 			props: {
 				publicUser: getPublicUser(userFromParams),
-				publicStories: await stories.find!({
-					editors: userFromParams._id
-				}).map(getPublicStory).toArray(),
+				publicStories: await getPublicStoriesByEditor(userFromParams),
 				favsPublic: userFromParams.settings.favsPublic
 			}
 		};

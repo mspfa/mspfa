@@ -7,6 +7,7 @@ import Box from 'components/Box';
 import BoxSection from 'components/Box/BoxSection';
 import Link from 'components/Link';
 import BoxRow from 'components/Box/BoxRow';
+import type { StoryDocument } from 'modules/server/stories';
 import stories, { getPublicStory } from 'modules/server/stories';
 import type { PublicStory } from 'modules/client/stories';
 import StoryList from 'components/StoryList';
@@ -63,11 +64,13 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 					)
 				) && {
 					publicStories: (
-						(await Promise.all(
-							userFromParams.favs.map(
-								fav => stories.findOne({ _id: fav })
-							)
-						)).filter(Boolean).map(story => getPublicStory(story!))
+						(
+							(await Promise.all(
+								userFromParams.favs.map(
+									fav => stories.findOne({ _id: fav })
+								)
+							)).filter(Boolean) as StoryDocument[]
+						).map(getPublicStory)
 					)
 				}
 			}

@@ -178,6 +178,12 @@ const stories = db.collection<StoryDocument>('stories');
 
 export default stories;
 
+export const getPublicStoriesByEditor = async (editor: UserDocument) => (
+	stories.find!({
+		editors: editor._id
+	}).map(getPublicStory).toArray()
+);
+
 export const updateAndSendFavCount = async (
 	res: APIResponse<{
 		body: {
