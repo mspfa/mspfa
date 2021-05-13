@@ -226,14 +226,17 @@ export default users;
 /**
  * Finds and returns a `UserDocument` by a possibly unsafe ID.
  *
- * Returns `undefined` if the ID is invalid or the user is not found.
+ * Returns `undefined` if the ID is invalid, the user is not found, or the user is scheduled for deletion.
  */
 export const getUserByUnsafeID = async (id: UnsafeObjectID) => {
 	const userID = safeObjectID(id);
 
 	if (userID) {
 		const user = await users.findOne({
-			_id: userID
+			_id: userID,
+			willDelete: {
+				$exists: false
+			}
 		});
 
 		if (user) {
