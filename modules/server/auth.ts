@@ -183,10 +183,8 @@ export const authenticate = async (
 	/** The auth credentials in the format `${userID}:${token}`, decoded from either the `Authorization` header or the `auth` cookie. */
 	let credentials: string | undefined;
 
-	/** The client's [HTTP `Authorization` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization). */
-	const authorization = req.headers.authorization;
-	if (authorization && authorization.startsWith('Basic ')) {
-		credentials = Buffer.from(authorization.slice(6), 'base64').toString();
+	if (req.headers.authorization && req.headers.authorization.startsWith('Basic ')) {
+		credentials = Buffer.from(req.headers.authorization.slice(6), 'base64').toString();
 	} else {
 		cookies = new Cookies(req, res);
 		credentials = cookies.get('auth');
@@ -194,11 +192,14 @@ export const authenticate = async (
 
 	if (credentials) {
 		const match = /^([^:]+):([^:]+)$/.exec(credentials);
+
 		if (match) {
 			const [, userID, token] = match;
+
 			const user = await users.findOne({
 				_id: new ObjectId(userID)
 			});
+
 			if (user) {
 				for (const session of user.sessions) {
 					if (await argon2.verify(session.token, token)) {
