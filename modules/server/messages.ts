@@ -1,16 +1,17 @@
 import type { ObjectId } from 'mongodb';
 import db from 'modules/server/db';
+import type { UserDocument } from 'modules/server/users';
 
 export type MessageDocument = {
 	_id: ObjectId,
-	/** The message ID which this is a reply to. */
-	replyTo: string,
 	sent: Date,
 	edited?: Date,
-	from: string,
-	to: string[],
-	notDeletedBy: string[],
-	notReadBy: string[],
+	from: UserDocument['_id'],
+	to: Array<UserDocument['_id']>,
+	/** The message ID which this is a reply to, or undefined if it is not a reply. */
+	replyTo?: MessageDocument['_id'],
+	notDeletedBy: Array<UserDocument['_id']>,
+	notReadBy: Array<UserDocument['_id']>,
 	subject: string,
 	content: string
 };
