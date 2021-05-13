@@ -54,6 +54,8 @@ const Component = () => (
 			}
 		>
 			{({ isSubmitting, dirty }) => {
+				// This ESLint comment is necessary because ESLint is empirically wrong here.
+				// eslint-disable-next-line react-hooks/rules-of-hooks
 				useLeaveConfirmation(dirty);
 
 				return (
@@ -72,6 +74,7 @@ const Component = () => (
 									<Field
 										id="field-subject"
 										name="subject"
+										required
 										autoFocus
 										maxLength={50}
 										autoComplete="off"
@@ -83,6 +86,7 @@ const Component = () => (
 									</Label>
 									<BBCodeField
 										name="content"
+										required
 										rows={16}
 										maxLength={20000}
 									/>
@@ -92,7 +96,7 @@ const Component = () => (
 								<Button
 									type="submit"
 									className="alt"
-									disabled={isSubmitting || !dirty}
+									disabled={isSubmitting}
 								>
 									Send
 								</Button>
