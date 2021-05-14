@@ -1,15 +1,20 @@
 .user-field {
 	position: relative;
 
+	&-input {
+		position: relative;
+	}
+
 	&-auto-complete {
 		display: none;
-		width: 100%;
+		min-width: 100%;
 		position: absolute;
 		left: 0;
-		border-top: none;
+		margin-top: -2px;
 		height: auto;
 		padding: 0;
 		white-space: nowrap;
+		z-index: 1;
 
 		.user-field.open-auto-complete > & {
 			display: block;
@@ -17,12 +22,13 @@
 	}
 
 	&-option {
-		display: block;
+		display: flex;
 		width: 100%;
-		padding: 0.15em 0.45em;
+		padding: 2px 4px 2px 2px;
 		cursor: pointer;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		align-items: center;
 
 		// Undo the `button` styles.
 		text-align: left;
@@ -30,9 +36,23 @@
 		border: none;
 		font: inherit;
 		color: inherit;
+		user-select: text;
 
 		&:hover, &:focus, &:active {
-			text-decoration: underline;
+			.user-field-option-name {
+				text-decoration: underline;
+			}
+		}
+
+		.icon-image {
+			width: 2.5em;
+			height: 2.5em;
+			vertical-align: middle;
+			margin-right: 1ch;
+		}
+
+		&-id {
+			opacity: 0.5;
 		}
 	}
 }

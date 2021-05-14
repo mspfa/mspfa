@@ -8,7 +8,10 @@ export default createValidator({
 	definitions: {
 		RequestMethod: {
 			type: 'string',
-			const: 'POST'
+			enum: [
+				'POST',
+				'GET'
+			]
 		}
 	}
 }, {
@@ -16,80 +19,114 @@ export default createValidator({
 	$ref: '#/definitions/Request',
 	definitions: {
 		Request: {
-			type: 'object',
-			additionalProperties: false,
-			properties: {
-				body: {
-					anyOf: [
-						{
-							type: 'object',
-							additionalProperties: false,
-							properties: {
-								captchaToken: {
-									type: 'string',
-									minLength: 1
+			anyOf: [
+				{
+					type: 'object',
+					additionalProperties: false,
+					properties: {
+						body: {
+							anyOf: [
+								{
+									type: 'object',
+									additionalProperties: false,
+									properties: {
+										captchaToken: {
+											type: 'string',
+											minLength: 1
+										},
+										name: {
+											type: 'string',
+											minLength: 1,
+											maxLength: 32
+										},
+										birthdate: {
+											type: 'number'
+										},
+										authMethod: {
+											$ref: '#/definitions/ExternalAuthMethodOptions'
+										}
+									},
+									required: [
+										'authMethod',
+										'birthdate',
+										'captchaToken',
+										'name'
+									]
 								},
-								name: {
-									type: 'string',
-									minLength: 1,
-									maxLength: 32
-								},
-								birthdate: {
-									type: 'number'
-								},
-								authMethod: {
-									$ref: '#/definitions/ExternalAuthMethodOptions'
+								{
+									type: 'object',
+									additionalProperties: false,
+									properties: {
+										captchaToken: {
+											type: 'string',
+											minLength: 1
+										},
+										name: {
+											type: 'string',
+											minLength: 1,
+											maxLength: 32
+										},
+										birthdate: {
+											type: 'number'
+										},
+										authMethod: {
+											$ref: '#/definitions/InternalAuthMethodOptions'
+										},
+										email: {
+											$ref: '#/definitions/EmailString'
+										}
+									},
+									required: [
+										'authMethod',
+										'birthdate',
+										'captchaToken',
+										'email',
+										'name'
+									]
 								}
-							},
-							required: [
-								'authMethod',
-								'birthdate',
-								'captchaToken',
-								'name'
 							]
 						},
-						{
+						query: {},
+						method: {
+							type: 'string',
+							const: 'POST'
+						}
+					},
+					required: [
+						'body',
+						'method'
+					]
+				},
+				{
+					type: 'object',
+					additionalProperties: false,
+					properties: {
+						body: {},
+						query: {
 							type: 'object',
-							additionalProperties: false,
 							properties: {
-								captchaToken: {
-									type: 'string',
-									minLength: 1
-								},
-								name: {
+								search: {
 									type: 'string',
 									minLength: 1,
-									maxLength: 32
-								},
-								birthdate: {
-									type: 'number'
-								},
-								authMethod: {
-									$ref: '#/definitions/InternalAuthMethodOptions'
-								},
-								email: {
-									$ref: '#/definitions/EmailString'
+									maxLength: 32,
+									description: 'A case-insensitive username search or exact user ID match.'
 								}
 							},
 							required: [
-								'authMethod',
-								'birthdate',
-								'captchaToken',
-								'email',
-								'name'
-							]
+								'search'
+							],
+							additionalProperties: false
+						},
+						method: {
+							type: 'string',
+							const: 'GET'
 						}
+					},
+					required: [
+						'method',
+						'query'
 					]
-				},
-				query: {},
-				method: {
-					type: 'string',
-					const: 'POST'
 				}
-			},
-			required: [
-				'body',
-				'method'
 			]
 		},
 		ExternalAuthMethodOptions: {

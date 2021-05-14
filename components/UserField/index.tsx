@@ -4,6 +4,12 @@ import { toKebabCase } from 'modules/client/utilities';
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
 import { useCallback, useState, useRef } from 'react';
 import { usePrefixedID } from 'modules/client/IDPrefix';
+import api from 'modules/client/api';
+import type { APIClient } from 'modules/client/api';
+import type { PublicUser } from 'modules/client/users';
+import IconImage from 'components/IconImage';
+
+type UsersAPI = APIClient<typeof import('pages/api/users').default>;
 
 // @client-only {
 const nativeInput = document.createElement('input');
@@ -38,22 +44,34 @@ const UserField = ({
 
 	const [, { value: fieldValue }, { setValue: setFieldValue }] = useField<string | undefined>(name);
 	const [inputValue, setInputValue] = useState('');
-	const [autoComplete] = useState({
-		timeout: undefined as NodeJS.Timeout | undefined
-	});
 
 	// This state is whether the user field should have the `open-auto-complete` class, which causes its auto-complete menu to be visible.
 	const [openAutoComplete, setOpenAutoComplete] = useState(false);
 	const userFieldRef = useRef<HTMLSpanElement>(null!);
+	const [autoCompleteUsers, setAutoCompleteUsers] = useState<PublicUser[]>([]);
+	const [autoComplete] = useState({
+		timeout: undefined as NodeJS.Timeout | undefined,
+		update: undefined as unknown as (() => Promise<void>)
+	});
 
-	const updateAutoComplete = useCallback(() => {
+	autoComplete.update = async () => {
+		if (inputValue) {
+			const { data: newAutoCompleteUsers } = await (api as UsersAPI).get('/users', {
+				params: {
+					search: inputValue
+				}
+			});
 
-	}, []);
+			setAutoCompleteUsers(newAutoCompleteUsers);
+		} else {
+			setAutoCompleteUsers([]);
+		}
+	};
 
 	const onChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
 		setInputValue(event.target.value);
 
-		// Only `updateAutoComplete` at most once per 500 ms.
+		// Only `autoComplete.update` at most once per 500 ms.
 
 		if (autoComplete.timeout) {
 			clearTimeout(autoComplete.timeout);
@@ -62,12 +80,12 @@ const UserField = ({
 		autoComplete.timeout = setTimeout(() => {
 			autoComplete.timeout = undefined;
 
-			updateAutoComplete();
+			autoComplete.update();
 		}, 500);
 
 		// This ESLint comment is necessary because the rule thinks `autoComplete` can change.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [updateAutoComplete]);
+	}, []);
 
 	const onFocus = useCallback(() => {
 		setOpenAutoComplete(true);
@@ -92,17 +110,31 @@ const UserField = ({
 			<input
 				id={id}
 				className="user-field-input"
-				placeholder="Enter a Username"
+				placeholder="Enter Username or ID"
+				autoComplete="off"
+				maxLength={32}
+				size={20}
 				value={inputValue}
 				onChange={onChange}
-				autoComplete="off"
 				{...props}
 			/>
-			<div className="user-field-auto-complete input-like">
-				<button type="button" className="user-field-option">person 1</button>
-				<button type="button" className="user-field-option">other person</button>
-				<button type="button" className="user-field-option">person with long username</button>
-			</div>
+			{!!autoCompleteUsers.length && (
+				<div className="user-field-auto-complete input-like">
+					{autoCompleteUsers.map(publicUser => (
+						<button
+							key={publicUser.id}
+							type="button"
+							className="user-field-option"
+						>
+							<IconImage src={publicUser.icon} />
+							<div className="user-field-option-label">
+								<span className="user-field-option-name">{publicUser.name}</span><br />
+								<span className="user-field-option-id">{publicUser.id}</span>
+							</div>
+						</button>
+					))}
+				</div>
+			)}
 		</span>
 	);
 };
