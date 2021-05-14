@@ -1,12 +1,12 @@
 @import 'styles/general';
 @import 'styles/themes';
 
-input, textarea, select, option {
+.input-like, input, textarea, select, option {
 	font-size: 0.8333rem;
 	@include theme(background-color, $frontest);
 }
 
-input, textarea, select {
+.input-like, input, textarea, select {
 	box-sizing: border-box;
 	border-radius: 0;
 	border: 2px solid;
@@ -17,7 +17,7 @@ input, textarea, select {
 	}
 }
 
-input, textarea {
+.input-like, input, textarea {
 	padding: 0.15em;
 }
 

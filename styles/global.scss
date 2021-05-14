@@ -59,6 +59,10 @@ summary {
 	@include theme(color, $text-color-alt);
 }
 
+.frontest, input, textarea, select, option {
+	@include theme(background-color, $frontest);
+}
+
 .translucent-text {
 	// This is necessary so `.translucent-text` has priority over `.link` regardless of load order.
 	&, &.link:not(:focus, :active) {

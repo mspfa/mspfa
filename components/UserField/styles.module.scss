@@ -1,0 +1,38 @@
+.user-field {
+	position: relative;
+
+	&-auto-complete {
+		display: none;
+		width: 100%;
+		position: absolute;
+		left: 0;
+		border-top: none;
+		height: auto;
+		padding: 0;
+		white-space: nowrap;
+
+		.user-field.open-auto-complete > & {
+			display: block;
+		}
+	}
+
+	&-option {
+		display: block;
+		width: 100%;
+		padding: 0.15em 0.45em;
+		cursor: pointer;
+		overflow: hidden;
+		text-overflow: ellipsis;
+
+		// Undo the `button` styles.
+		text-align: left;
+		background: none;
+		border: none;
+		font: inherit;
+		color: inherit;
+
+		&:hover, &:focus, &:active {
+			text-decoration: underline;
+		}
+	}
+}

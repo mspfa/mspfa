@@ -14,6 +14,7 @@ import Label from 'components/Label';
 import BBCodeField from 'components/BBCode/BBCodeField';
 import BoxSection from 'components/Box/BoxSection';
 import { Dialog } from 'modules/client/dialogs';
+import UserField from 'components/UserField';
 
 type MessagesAPI = APIClient<typeof import('pages/api/messages').default>;
 
@@ -66,6 +67,11 @@ const Component = () => (
 									<Label htmlFor="field-to">
 										To
 									</Label>
+									<UserField
+										name="to"
+										required
+										autoFocus
+									/>
 								</div>
 								<div className="field-container">
 									<Label htmlFor="field-subject">
