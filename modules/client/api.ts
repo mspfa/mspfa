@@ -24,12 +24,7 @@ export type AnyAPIQuery = Partial<Record<string, string | string[]>>;
 export type APIError<
 	ResponseBody = Record<string, unknown>,
 	RequestQuery extends AnyAPIQuery = {}
-> = Record<string, unknown> & Omit<(
-	AxiosError<(
-		Record<string, unknown>
-		& (ErrorResponseBody | ResponseBody)
-	)>
-), 'config'> & {
+> = Record<string, unknown> & Omit<AxiosError<Record<string, unknown>>, 'config'> & {
 	config?: APIConfig<ResponseBody, RequestQuery>,
 	/**
 	 * If called before the error is intercepted, prevents the error's default interception functionality (which is to display an error dialog).
