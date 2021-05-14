@@ -1,17 +1,12 @@
 import './styles.module.scss';
-import Link from 'components/Link';
-import type { LinkProps } from 'components/Link';
-import type { StoryID } from 'modules/server/stories';
+import type { ButtonProps } from 'components/Button';
+import Button from 'components/Button';
 
-export type EditButtonProps = Omit<LinkProps, 'title' | 'href'> & {
-	storyID: StoryID
-};
+export type EditButtonProps = Omit<ButtonProps, 'children'>;
 
-const EditButton = ({ storyID, className, ...props }: EditButtonProps) => (
-	<Link
-		className={`button icon edit${className ? ` ${className}` : ''}`}
-		title="Edit"
-		href={`/s/${storyID}/edit/pages`}
+const EditButton = ({ className, ...props }: EditButtonProps) => (
+	<Button
+		className={`icon edit${className ? ` ${className}` : ''}`}
 		{...props}
 	/>
 );

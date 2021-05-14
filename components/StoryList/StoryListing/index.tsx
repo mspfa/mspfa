@@ -51,7 +51,10 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 						publicStory.editors.includes(user.id)
 						|| user.perms & Perm.sudoRead
 					) && (
-						<EditButton className="spaced" storyID={publicStory.id} />
+						<EditButton
+							className="spaced"
+							href={`/s/${publicStory.id}/edit/pages`}
+						/>
 					)}
 					<FavButton className="spaced" storyID={publicStory.id}>
 						{publicStory.favCount}

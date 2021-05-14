@@ -48,7 +48,6 @@ const Component = withErrorPage<ServerSideProps>(({ privateStories }) => (
 			</BoxRowSection>
 			<BoxFooter>
 				<Button
-					className="button"
 					onClick={
 						useCallback(async () => {
 							const randomStoryName = getRandomStoryName();

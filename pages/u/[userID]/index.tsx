@@ -20,6 +20,7 @@ import BBCode from 'components/BBCode';
 import { getPublicStoriesByEditor } from 'modules/server/stories';
 import type { PublicStory } from 'modules/client/stories';
 import StoryList from 'components/StoryList';
+import Button from 'components/Button';
 
 type ServerSideProps = {
 	publicUser: PublicUser,
@@ -129,12 +130,9 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 					|| !!(user.perms & Perm.sudoRead)
 				) && (
 					<BoxFooter>
-						<Link
-							className="button"
-							href={`/u/${publicUser.id}/edit`}
-						>
+						<Button href={`/u/${publicUser.id}/edit`}>
 							Edit
-						</Link>
+						</Button>
 					</BoxFooter>
 				)}
 			</Box>

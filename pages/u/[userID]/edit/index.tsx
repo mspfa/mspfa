@@ -19,7 +19,6 @@ import Button from 'components/Button';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
-import Link from 'components/Link';
 import IconImage from 'components/IconImage';
 import Label from 'components/Label';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
@@ -179,12 +178,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 									>
 										Save
 									</Button>
-									<Link
-										className="button"
-										href={`/u/${privateUser.id}`}
-									>
+									<Button href={`/u/${privateUser.id}`}>
 										Back to Profile
-									</Link>
+									</Button>
 								</BoxFooter>
 							</Box>
 						</Form>

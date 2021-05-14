@@ -1,25 +1,32 @@
 import './styles.module.scss';
 import React from 'react';
 import type { ButtonHTMLAttributes } from 'react';
+import type { LinkProps } from 'components/Link';
+import Link from 'components/Link';
 
-export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
+export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & LinkProps & {
+	href?: LinkProps['href']
+};
 
-/**
- * A styled `button` element. Accepts any props which `button` accepts, except `type` which is replaced with the `submit?: boolean` prop.
- *
- * If you want a styled button to function as a `Link`, use `<Link className="button">` instead.
- */
+/** A styled `button` element. Accepts any props which `button` or `Link` accepts. */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((
 	{
 		type = 'button',
 		className,
+		href,
 		...props
 	},
 	ref
 ) => {
 	const buttonClassName = `button${className ? ` ${className}` : ''}`;
 
-	return (
+	return href ? (
+		<Link
+			className={buttonClassName}
+			href={href}
+			{...props}
+		/>
+	) : (
 		<button
 			type={type}
 			className={buttonClassName}
