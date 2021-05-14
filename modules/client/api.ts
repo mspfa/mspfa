@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { APIHandler, ErrorResponseBody } from 'modules/server/api';
+import type { APIHandler } from 'modules/server/api';
 import type { AxiosRequestConfig, AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 import type { Method, MethodWithData } from 'modules/types';
 import { Dialog } from 'modules/client/dialogs';
@@ -9,10 +9,10 @@ import { startLoading, stopLoading } from 'components/LoadingIndicator';
 window.addEventListener('unhandledrejection', (
 	event: Omit<PromiseRejectionEvent, 'reason'> & {
 		// In reality, `reason` is `unknown`, but using `reason: unknown` here would necessitate ruining the JS logic.
-		reason: { isAxiosError?: false } | AxiosError<unknown> | undefined
+		reason: ({ apiError?: boolean } & AxiosError<unknown>) | undefined
 	}
 ) => {
-	if (event.reason?.isAxiosError) {
+	if (event.reason?.apiError) {
 		// Prevent all unhandled API promise rejection errors, because there is no reason for API errors to throw uncaught errors.
 		event.preventDefault();
 	}
@@ -74,6 +74,9 @@ const api: (
 );
 
 const onReject = async (error: APIError) => {
+	// This is set so the error can be ignored when it is later identified as an API error.
+	error.apiError = true;
+
 	let defaultPrevented = false;
 
 	error.preventDefault = () => {
@@ -82,7 +85,7 @@ const onReject = async (error: APIError) => {
 
 	await error.config?.beforeInterceptError?.(error);
 
-	if (!defaultPrevented as boolean) {
+	if (!(defaultPrevented as boolean || error instanceof axios.Cancel)) {
 		new Dialog({
 			title: 'Error',
 			content: error.response?.data.message as string || error.message
