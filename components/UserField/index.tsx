@@ -10,6 +10,7 @@ import type { PublicUser } from 'modules/client/users';
 import UserFieldOption from './UserFieldOption';
 import Link from 'components/Link';
 import EditButton from 'components/Button/EditButton';
+import axios from 'axios';
 
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
 
@@ -50,7 +51,8 @@ const UserField = ({
 	const [autoComplete] = useState({
 		timeout: undefined as NodeJS.Timeout | undefined,
 		update: undefined as unknown as ((overrideSearch?: string) => Promise<void>),
-		mounted: false
+		mounted: false,
+		cancelTokenSource: undefined as ReturnType<typeof axios.CancelToken.source> | undefined
 	});
 
 	useEffect(() => {
@@ -66,11 +68,17 @@ const UserField = ({
 
 	autoComplete.update = async (search: string = inputValue) => {
 		if (search) {
+			autoComplete.cancelTokenSource?.cancel();
+			autoComplete.cancelTokenSource = axios.CancelToken.source();
+
 			const { data: newAutoCompleteUsers } = await (api as UsersAPI).get('/users', {
 				params: {
 					search
-				}
+				},
+				cancelToken: autoComplete.cancelTokenSource.token
 			});
+
+			autoComplete.cancelTokenSource = undefined;
 
 			if (autoComplete.mounted) {
 				setAutoCompleteUsers(newAutoCompleteUsers);
@@ -93,7 +101,7 @@ const UserField = ({
 			autoComplete.timeout = undefined;
 
 			autoComplete.update();
-		}, 500);
+		}, 0);
 
 		// This ESLint comment is necessary because the rule incorrectly thinks `autoComplete` can change.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -125,8 +133,31 @@ const UserField = ({
 
 	useEffect(() => {
 		if (isEditing) {
-			(userFieldRef.current!.getElementsByClassName('user-field-input')[0] as HTMLInputElement).select();
+			// The user started editing.
+
+			// We only want to select the input field if there is anything to select. If there isn't, that means this component mounted without a value, and the user didn't activate the edit button.
+			if (inputValue) {
+				(userFieldRef.current!.getElementsByClassName('user-field-input')[0] as HTMLInputElement).select();
+			}
+		} else {
+			// The user stopped editing.
+
+			if (autoComplete.timeout) {
+				clearTimeout(autoComplete.timeout);
+				autoComplete.timeout = undefined;
+			}
+
+			if (autoComplete.cancelTokenSource) {
+				autoComplete.cancelTokenSource.cancel();
+				autoComplete.cancelTokenSource = undefined;
+			}
+
+			// Reset the auto-complete users so starting editing does not display an outdated auto-complete list for an instant.
+			setAutoCompleteUsers([]);
 		}
+
+		// This ESLint comment is necessary because the rule incorrectly thinks `autoComplete` can change.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isEditing]);
 
 	return value ? (
