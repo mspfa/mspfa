@@ -43,12 +43,6 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 		});
 	}, []);
 
-	const addMenuChildKey = (child: JSX.Element, index: number) => (
-		React.cloneElement(child, {
-			key: child.props.id || index
-		})
-	);
-
 	return (
 		<div
 			id={`nav-menu-container-${id}`}
@@ -86,7 +80,7 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 				id={`nav-menu-${id}`}
 				className="nav-menu"
 			>
-				{Array.isArray(children) ? children.map(addMenuChildKey) : addMenuChildKey(children, 0)}
+				{children}
 			</div>
 		</div>
 	);
