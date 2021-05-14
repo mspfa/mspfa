@@ -14,7 +14,7 @@ import axios from 'axios';
 
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
 
-export type UserFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 'required' | 'autoFocus' | 'onChange'> & {
+export type UserFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 'required' | 'readOnly' | 'autoFocus' | 'onChange'> & {
 	name: string,
 	/**
 	 * The controlled value of the user field.
@@ -32,6 +32,7 @@ const UserField = ({
 	formikField,
 	value: propValue,
 	required,
+	readOnly,
 	...props
 }: UserFieldProps) => {
 	const idPrefix = usePrefixedID();
@@ -40,7 +41,7 @@ const UserField = ({
 		id = `${idPrefix}field-${toKebabCase(name)}`;
 	}
 
-	const [, , { setValue: setFieldValue }] = useField<string | undefined>(name);
+	const [, { value: fieldValue }, { setValue: setFieldValue }] = useField<string | undefined>(name);
 	const [value, setValue] = useState<PublicUser | undefined>(propValue);
 	const [inputValue, setInputValue] = useState('');
 
@@ -122,8 +123,12 @@ const UserField = ({
 
 	const editValue = useCallback(() => {
 		setInputValue(value!.name);
-		setValue(undefined);
 		autoComplete.update(value!.name);
+
+		setValue(undefined);
+		if (formikField) {
+			setFieldValue(undefined);
+		}
 
 		// This ESLint comment is necessary because the rule incorrectly thinks `autoComplete` can change.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -174,10 +179,12 @@ const UserField = ({
 			>
 				{value.name}
 			</Link>
-			<EditButton
-				className="spaced"
-				onClick={editValue}
-			/>
+			{!readOnly && (
+				<EditButton
+					className="spaced"
+					onClick={editValue}
+				/>
+			)}
 		</span>
 	) : (
 		<span
@@ -197,6 +204,7 @@ const UserField = ({
 				onChange={onChange}
 				// If `required`, this pattern will never match any string, invalidating the form for browsers that don't support `setCustomValidity`.
 				pattern={required ? '^\\b$' : undefined}
+				readOnly={readOnly}
 				{...props}
 			/>
 			{!!autoCompleteUsers.length && (
