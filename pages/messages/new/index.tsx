@@ -70,7 +70,7 @@ const Component = () => (
 									<UserField
 										name="to"
 										required
-										autoFocus
+										formikField
 									/>
 								</div>
 								<div className="field-container">

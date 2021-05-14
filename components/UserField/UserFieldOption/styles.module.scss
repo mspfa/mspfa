@@ -1,0 +1,33 @@
+.user-field-option {
+	display: flex;
+	width: 100%;
+	padding: 2px 4px 2px 2px;
+	cursor: pointer;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	align-items: center;
+
+	// Undo the `button` styles.
+	text-align: left;
+	background: none;
+	border: none;
+	font: inherit;
+	color: inherit;
+
+	&:hover, &:focus, &:active {
+		.user-field-option-name {
+			text-decoration: underline;
+		}
+	}
+
+	.icon-image {
+		width: 2.5em;
+		height: 2.5em;
+		vertical-align: middle;
+		margin-right: 1ch;
+	}
+
+	&-id {
+		opacity: 0.5;
+	}
+}

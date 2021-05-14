@@ -2,18 +2,16 @@ import './styles.module.scss';
 import { useField } from 'formik';
 import { toKebabCase } from 'modules/client/utilities';
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
-import { useCallback, useState, useRef } from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
 import { usePrefixedID } from 'modules/client/IDPrefix';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
 import type { PublicUser } from 'modules/client/users';
-import IconImage from 'components/IconImage';
+import UserFieldOption from './UserFieldOption';
+import Link from 'components/Link';
+import EditButton from 'components/Button/EditButton';
 
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
-
-// @client-only {
-const nativeInput = document.createElement('input');
-// @client-only }
 
 export type UserFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 'required' | 'autoFocus' | 'onChange'> & {
 	name: string,
@@ -22,7 +20,7 @@ export type UserFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 
 	 *
 	 * If this is undefined, the value will be controlled internally.
 	 */
-	value?: string,
+	value?: PublicUser,
 	/** Whether the value of the user field should be controlled by Formik. */
 	formikField?: boolean
 };
@@ -32,7 +30,6 @@ const UserField = ({
 	id,
 	formikField,
 	value: propValue,
-	onChange: onChangeProp,
 	required,
 	...props
 }: UserFieldProps) => {
@@ -42,27 +39,42 @@ const UserField = ({
 		id = `${idPrefix}field-${toKebabCase(name)}`;
 	}
 
-	const [, { value: fieldValue }, { setValue: setFieldValue }] = useField<string | undefined>(name);
+	const [, , { setValue: setFieldValue }] = useField<string | undefined>(name);
+	const [value, setValue] = useState<PublicUser | undefined>(propValue);
 	const [inputValue, setInputValue] = useState('');
 
 	// This state is whether the user field should have the `open-auto-complete` class, which causes its auto-complete menu to be visible.
 	const [openAutoComplete, setOpenAutoComplete] = useState(false);
-	const userFieldRef = useRef<HTMLSpanElement>(null!);
+	const userFieldRef = useRef<HTMLSpanElement>(null);
 	const [autoCompleteUsers, setAutoCompleteUsers] = useState<PublicUser[]>([]);
 	const [autoComplete] = useState({
 		timeout: undefined as NodeJS.Timeout | undefined,
-		update: undefined as unknown as (() => Promise<void>)
+		update: undefined as unknown as ((overrideSearch?: string) => Promise<void>),
+		mounted: false
 	});
 
-	autoComplete.update = async () => {
-		if (inputValue) {
+	useEffect(() => {
+		autoComplete.mounted = true;
+
+		return () => {
+			autoComplete.mounted = false;
+		};
+
+		// This ESLint comment is necessary because the rule incorrectly thinks `autoComplete` can change.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	autoComplete.update = async (search: string = inputValue) => {
+		if (search) {
 			const { data: newAutoCompleteUsers } = await (api as UsersAPI).get('/users', {
 				params: {
-					search: inputValue
+					search
 				}
 			});
 
-			setAutoCompleteUsers(newAutoCompleteUsers);
+			if (autoComplete.mounted) {
+				setAutoCompleteUsers(newAutoCompleteUsers);
+			}
 		} else {
 			setAutoCompleteUsers([]);
 		}
@@ -83,7 +95,7 @@ const UserField = ({
 			autoComplete.update();
 		}, 500);
 
-		// This ESLint comment is necessary because the rule thinks `autoComplete` can change.
+		// This ESLint comment is necessary because the rule incorrectly thinks `autoComplete` can change.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -94,13 +106,45 @@ const UserField = ({
 	const onBlur = useCallback(() => {
 		// `setTimeout` is necessary here because otherwise, for example when tabbing through auto-complete options, this will run before the next auto-complete option focuses, so the `if` statement would not detect that any option is in focus.
 		setTimeout(() => {
-			if (!userFieldRef.current.contains(document.activeElement)) {
+			if (!userFieldRef.current!.contains(document.activeElement)) {
 				setOpenAutoComplete(false);
 			}
 		});
 	}, []);
 
-	return (
+	const editValue = useCallback(() => {
+		setInputValue(value!.name);
+		setValue(undefined);
+		autoComplete.update(value!.name);
+
+		// This ESLint comment is necessary because the rule incorrectly thinks `autoComplete` can change.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [value]);
+
+	const isEditing = !value;
+
+	useEffect(() => {
+		if (isEditing) {
+			(userFieldRef.current!.getElementsByClassName('user-field-input')[0] as HTMLInputElement).select();
+		}
+	}, [isEditing]);
+
+	return value ? (
+		<span
+			className="user-field"
+		>
+			<Link
+				className="spaced"
+				href={`/u/${value.id}`}
+			>
+				{value.name}
+			</Link>
+			<EditButton
+				className="spaced"
+				onClick={editValue}
+			/>
+		</span>
+	) : (
 		<span
 			className={`user-field${openAutoComplete ? ' open-auto-complete' : ''}`}
 			onFocus={onFocus}
@@ -121,17 +165,12 @@ const UserField = ({
 			{!!autoCompleteUsers.length && (
 				<div className="user-field-auto-complete input-like">
 					{autoCompleteUsers.map(publicUser => (
-						<button
+						<UserFieldOption
 							key={publicUser.id}
-							type="button"
-							className="user-field-option"
-						>
-							<IconImage src={publicUser.icon} />
-							<div className="user-field-option-label">
-								<span className="user-field-option-name">{publicUser.name}</span><br />
-								<span className="user-field-option-id">{publicUser.id}</span>
-							</div>
-						</button>
+							publicUser={publicUser}
+							setValue={setValue}
+							setFieldValue={formikField ? setFieldValue : undefined}
+						/>
 					))}
 				</div>
 			)}
