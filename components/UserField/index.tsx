@@ -115,7 +115,7 @@ const UserField = ({
 	const onBlur = useCallback(() => {
 		// `setTimeout` is necessary here because otherwise, for example when tabbing through auto-complete options, this will run before the next auto-complete option focuses, so the `if` statement would not detect that any option is in focus.
 		setTimeout(() => {
-			if (!userFieldRef.current!.contains(document.activeElement)) {
+			if (userFieldRef.current && !userFieldRef.current.contains(document.activeElement)) {
 				setOpenAutoComplete(false);
 			}
 		});
