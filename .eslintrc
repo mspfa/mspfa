@@ -365,7 +365,7 @@
 				"forbid": [
 					{
 						"element": "a",
-						"message": "use <Link> from '/components/Link' instead."
+						"message": "use <Link> from 'components/Link' instead."
 					}
 				]
 			}
