@@ -5,11 +5,11 @@ import createUpdater from 'react-component-updater';
 import type { ChangeEvent } from 'react';
 import Captcha from 'components/SignIn/Captcha';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
-import { toPattern } from 'modules/client/utilities';
 import LabeledDialogBox from 'components/Box/LabeledDialogBox';
 import ForgotPassword from 'components/ForgotPassword';
 import AuthButton from 'components/Button/AuthButton';
 import BirthdateField from 'components/DateField/BirthdateField';
+import { escapeRegExp } from 'lodash';
 
 const startSigningUp = () => {
 	setSignInPage(1);
@@ -136,7 +136,7 @@ const SignIn = ({ page }: SignInProps) => {
 									autoComplete="new-password"
 									required
 									placeholder="Re-Type Password"
-									pattern={toPattern(signInValues.password)}
+									pattern={escapeRegExp(signInValues.password)}
 									value={signInValues.confirmPassword}
 									onChange={onChange}
 								/>

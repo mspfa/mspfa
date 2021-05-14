@@ -11,7 +11,7 @@ import type { PrivateUser } from 'modules/client/users';
 import type { PageRequest } from 'modules/server/pages';
 import { useEffect } from 'react';
 import { setTheme } from 'modules/client/themes';
-import _ from 'lodash';
+import { merge } from 'lodash';
 import 'modules/client/global'; // @client-only
 import 'styles/global.scss';
 
@@ -44,7 +44,7 @@ const MyApp = ({
 	const [userMerge] = useUserMerge();
 	const mergedUser = (
 		userMerge
-			? user && _.merge({}, user, userMerge)
+			? user && merge({}, user, userMerge)
 			: user
 	);
 

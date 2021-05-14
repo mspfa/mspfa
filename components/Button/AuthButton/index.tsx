@@ -1,17 +1,17 @@
 import './styles.module.scss';
 import Button from 'components/Button';
 import { useCallback } from 'react';
-import Head from 'next/head';
 import env from 'modules/client/env';
 import { Dialog } from 'modules/client/dialogs';
 import LabeledDialogBox from 'components/Box/LabeledDialogBox';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
-import { toKebabCase, toPattern } from 'modules/client/utilities';
+import { toKebabCase } from 'modules/client/utilities';
 import type { ButtonProps } from 'components/Button';
 import type { AuthMethodOptions } from 'modules/client/auth';
 import { authMethodTypeNames } from 'modules/client/auth';
 import { startLoading, stopLoading } from 'components/LoadingIndicator';
 import loadScript from 'modules/client/loadScript';
+import { escapeRegExp } from 'lodash';
 
 /** The global Google API object. */
 declare const gapi: any;
@@ -47,7 +47,7 @@ const promptAuthMethod = {
 						autoComplete="new-password"
 						required
 						placeholder="Re-Type Password"
-						pattern={toPattern(values.password)}
+						pattern={escapeRegExp(values.password)}
 					/>
 				</LabeledDialogBox>
 			),

@@ -22,12 +22,11 @@ import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
-import _ from 'lodash';
+import { escapeRegExp, isEqual } from 'lodash';
 import { Dialog } from 'modules/client/dialogs';
 import Label from 'components/Label';
 import Router from 'next/router';
 import BoxRow from 'components/Box/BoxRow';
-import { toPattern } from 'modules/client/utilities';
 import LabeledDialogBox from 'components/Box/LabeledDialogBox';
 import ForgotPassword from 'components/ForgotPassword';
 import AuthMethods from 'components/AuthMethod/AuthMethods';
@@ -142,7 +141,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 						autoComplete="new-password"
 						required
 						placeholder="Re-Type Password"
-						pattern={toPattern(values.password)}
+						pattern={escapeRegExp(values.password)}
 					/>
 				</LabeledDialogBox>
 			),
@@ -394,7 +393,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										</Button>
 										<Button
 											title="Reset settings to default"
-											disabled={_.isEqual(values.settings, defaultValues!.settings)}
+											disabled={isEqual(values.settings, defaultValues!.settings)}
 											onClick={
 												useCallback(async () => {
 													if (await Dialog.confirm({

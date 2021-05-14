@@ -8,7 +8,7 @@ import { permToGetUserInAPI } from 'modules/server/perms';
 import users, { getPrivateUser } from 'modules/server/users';
 import type { UserDocument } from 'modules/server/users';
 import { flatten } from 'modules/server/db';
-import _ from 'lodash';
+import { merge } from 'lodash';
 import stories from 'modules/server/stories';
 
 /** The keys of all `PrivateUser` properties which the client should be able to `PUT` into their `UserDocument`. */
@@ -52,7 +52,7 @@ const Handler: APIHandler<{
 				$set: flatten(userChanges)
 			});
 
-			_.merge(user, userChanges);
+			merge(user, userChanges);
 		}
 
 		res.send(getPrivateUser(user));

@@ -15,9 +15,6 @@ export const toKebabCase = (string: string) => (
 		.toLowerCase()
 );
 
-/** Converts any string to a regular expression string which matches exactly that string. */
-export const toPattern = (string: string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
 /** Returns a boolean for whether a keyboard control should be ignored. */
 export const shouldIgnoreControl = () => (
 	// Check if the element currenly in focus has a `select` method i.e. if it is a text input.
