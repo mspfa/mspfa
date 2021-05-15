@@ -2,7 +2,7 @@ import './styles.module.scss';
 import type { HTMLAttributes, ReactNode } from 'react';
 
 export type BoxSectionProps = HTMLAttributes<HTMLDivElement> & {
-	heading: ReactNode,
+	heading?: ReactNode,
 	collapsible?: boolean,
 	open?: boolean
 };
@@ -20,9 +20,11 @@ const BoxSection = ({
 
 	return (
 		<SectionTag className="box-section" open={open}>
-			<HeadingTag className="box-heading front-alt">
-				{heading}
-			</HeadingTag>
+			{heading && (
+				<HeadingTag className="box-heading front-alt">
+					{heading}
+				</HeadingTag>
+			)}
 			<div
 				className={`box-content front${className ? ` ${className}` : ''}`}
 				{...props}
