@@ -1,5 +1,6 @@
 import './styles.module.scss';
 import Page from 'components/Page';
+import type { PublicUser } from 'modules/client/users';
 import { getUser, signIn } from 'modules/client/users';
 import type { FormikHelpers } from 'formik';
 import { Field, Form, Formik } from 'formik';
@@ -15,21 +16,31 @@ import BBCodeField from 'components/BBCode/BBCodeField';
 import BoxSection from 'components/Box/BoxSection';
 import { Dialog } from 'modules/client/dialogs';
 import UserField from 'components/UserField';
+import type { MyGetServerSideProps } from 'modules/server/pages';
+import type { UserDocument } from 'modules/server/users';
+import { getPublicUser, getUserByUnsafeID } from 'modules/server/users';
 
 type MessagesAPI = APIClient<typeof import('pages/api/messages').default>;
 
 const initialValues = {
-	to: [],
+	to: [] as PublicUser[] as unknown as PublicUser,
 	subject: '',
 	content: ''
 };
 
 type Values = typeof initialValues;
 
-const Component = () => (
+type ServerSideProps = {
+	initialTo?: PublicUser[]
+};
+
+const Component = ({ initialTo = [] }: ServerSideProps) => (
 	<Page flashyTitle heading="Messages">
 		<Formik
-			initialValues={initialValues}
+			initialValues={{
+				...initialValues,
+				to: initialTo[0]
+			}}
 			onSubmit={
 				useCallback(async (
 					values: Values,
@@ -116,3 +127,19 @@ const Component = () => (
 );
 
 export default Component;
+
+export const getServerSideProps: MyGetServerSideProps<ServerSideProps> = async ({ query }) => {
+	const to = typeof query.to === 'string' ? [query.to] : query.to || [];
+
+	return {
+		props: {
+			initialTo: (
+				(
+					(await Promise.all(
+						to.map(getUserByUnsafeID)
+					)).filter(Boolean) as UserDocument[]
+				).map(getPublicUser)
+			)
+		}
+	};
+};

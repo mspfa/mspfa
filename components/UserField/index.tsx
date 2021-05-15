@@ -41,8 +41,8 @@ const UserField = ({
 		id = `${idPrefix}field-${toKebabCase(name)}`;
 	}
 
-	const [, { value: fieldValue }, { setValue: setFieldValue }] = useField<string | undefined>(name);
-	const [value, setValue] = useState<PublicUser | undefined>(propValue);
+	const [, { value: fieldValue }, { setValue: setFieldValue }] = useField<PublicUser | undefined>(name);
+	const [value, setValue] = useState<PublicUser | undefined>(propValue || fieldValue);
 	const [inputValue, setInputValue] = useState('');
 
 	// This state is whether the user field should have the `open-auto-complete` class, which causes its auto-complete menu to be visible.

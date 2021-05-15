@@ -49,7 +49,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 						<BoxRow id="profile-actions">
 							{notOwnProfile && (
 								<div>
-									<Link href="/TODO">
+									<Link href={`/messages/new?to=${publicUser.id}`}>
 										Send Message
 									</Link>
 								</div>
