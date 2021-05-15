@@ -43,7 +43,10 @@ const Component = withErrorPage<ServerSideProps>(({ privateStories }) => (
 		<Box>
 			<BoxRowSection heading="Adventures">
 				<BoxRow>
-					<StoryList>{privateStories}</StoryList>
+					{(privateStories.length
+						? <StoryList>{privateStories}</StoryList>
+						: "You haven't started any adventures yet! Click the button below to begin."
+					)}
 				</BoxRow>
 			</BoxRowSection>
 			<BoxFooter>

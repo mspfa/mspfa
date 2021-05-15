@@ -36,9 +36,12 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publ
 					</BoxRow>
 				)}
 				<BoxRow>
-					{publicStories ? (
-						<StoryList>{publicStories}</StoryList>
-					) : "This user's favorite adventures are private."}
+					{(publicStories
+						? publicStories.length
+							? <StoryList>{publicStories}</StoryList>
+							: 'This user has no favorite adventures.'
+						: "This user's favorite adventures are private."
+					)}
 				</BoxRow>
 			</BoxSection>
 		</Box>
