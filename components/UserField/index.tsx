@@ -142,7 +142,10 @@ const UserField = ({
 
 			const userFieldInput = userFieldRef.current!.getElementsByClassName('user-field-input')[0] as HTMLInputElement;
 
-			userFieldInput.setCustomValidity(required ? 'Please enter a username or ID and select a user.' : '');
+			// This type assertion is necessary because this method may not exist on all browsers.
+			if (userFieldInput.setCustomValidity as typeof userFieldInput.setCustomValidity | undefined) {
+				userFieldInput.setCustomValidity(required ? 'Please enter a username or ID and select a user.' : '');
+			}
 
 			// We only want to select the input field if there is anything to select. If there isn't, that means this component mounted without a value, and the user didn't activate the edit button.
 			if (inputValue) {
@@ -202,8 +205,9 @@ const UserField = ({
 				size={20}
 				value={inputValue}
 				onChange={onChange}
-				// If `required`, this pattern will never match any string, invalidating the form for browsers that don't support `setCustomValidity`.
-				pattern={required ? '^\\b$' : undefined}
+				required={required}
+				// If `required === true`, the below `pattern` will never allow the input to be valid due to the above `required` prop, invalidating the form for browsers that don't support `setCustomValidity`.
+				pattern={required ? '^$' : undefined}
 				readOnly={readOnly}
 				{...props}
 			/>
