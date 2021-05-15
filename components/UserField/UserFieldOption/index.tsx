@@ -7,7 +7,7 @@ import IconImage from 'components/IconImage';
 export type UserFieldOptionProps = {
 	publicUser: PublicUser,
 	setValue: Dispatch<SetStateAction<PublicUser | undefined>>,
-	setFieldValue?: (value: string | undefined) => void
+	setFieldValue?: (value: PublicUser | undefined) => void
 };
 
 const UserFieldOption = ({ publicUser, setValue, setFieldValue }: UserFieldOptionProps) => (
@@ -17,7 +17,7 @@ const UserFieldOption = ({ publicUser, setValue, setFieldValue }: UserFieldOptio
 		onClick={
 			useCallback(() => {
 				setValue(publicUser);
-				setFieldValue?.(publicUser.id);
+				setFieldValue?.(publicUser);
 			}, [publicUser, setValue, setFieldValue])
 		}
 	>
