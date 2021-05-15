@@ -50,7 +50,7 @@ export type DateFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 
 const DateField = ({
 	name,
 	id,
-	value: propValue,
+	value: valueProp,
 	onChange: onChangeProp,
 	required,
 	min = 0,
@@ -66,16 +66,16 @@ const DateField = ({
 	const [, { value: fieldValue }, { setValue: setFieldValue }] = useField<number | undefined>(name);
 
 	const date = (
-		propValue === undefined
+		valueProp === undefined
 			? typeof fieldValue === 'number'
 				? new Date(fieldValue)
 				: undefined
 			: new Date(
-				typeof propValue === 'string'
-					? propValue
-						? +propValue
+				typeof valueProp === 'string'
+					? valueProp
+						? +valueProp
 						: NaN
-					: propValue
+					: valueProp
 			)
 	);
 
@@ -150,7 +150,7 @@ const DateField = ({
 				: NaN
 		);
 
-		if (propValue === undefined) {
+		if (valueProp === undefined) {
 			// If this component's value is not controlled externally, update the Formik value.
 			setFieldValue(Number.isNaN(newValue) ? undefined : newValue);
 		}
@@ -165,7 +165,7 @@ const DateField = ({
 
 		// This ESLint comment is necessary because the rule incorrectly thinks `minYear` and `maxYear` should be dependencies here, despite that they depend on `min` and `max` which are already dependencies.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [year, month, day, name, propValue, setFieldValue, onChangeProp, min, max]);
+	}, [year, month, day, name, valueProp, setFieldValue, onChangeProp, min, max]);
 
 	return (
 		<>

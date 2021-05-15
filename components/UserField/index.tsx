@@ -16,12 +16,8 @@ type UsersAPI = APIClient<typeof import('pages/api/users').default>;
 
 export type UserFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 'required' | 'readOnly' | 'autoFocus' | 'onChange'> & {
 	name: string,
-	/**
-	 * The controlled value of the user field.
-	 *
-	 * If this is undefined, the value will be controlled internally.
-	 */
-	value?: PublicUser,
+	/** The initial value of the user field. If undefined, defaults to any initial value set by Formik. */
+	initialValue?: PublicUser,
 	/** Whether the value of the user field should be controlled by Formik. */
 	formikField?: boolean
 };
@@ -30,7 +26,7 @@ const UserField = ({
 	name,
 	id,
 	formikField,
-	value: propValue,
+	initialValue: initialValueProp,
 	required,
 	readOnly,
 	...props
@@ -42,7 +38,7 @@ const UserField = ({
 	}
 
 	const [, { value: fieldValue }, { setValue: setFieldValue }] = useField<PublicUser | undefined>(name);
-	const [value, setValue] = useState<PublicUser | undefined>(propValue || fieldValue);
+	const [value, setValue] = useState<PublicUser | undefined>(initialValueProp || fieldValue);
 	const [inputValue, setInputValue] = useState('');
 
 	// This state is whether the user field should have the `open-auto-complete` class, which causes its auto-complete menu to be visible.
