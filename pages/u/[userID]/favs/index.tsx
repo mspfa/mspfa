@@ -16,7 +16,7 @@ import { Perm } from 'modules/client/perms';
 type ServerSideProps = {
 	publicUser: PublicUser,
 	favsPublic: boolean,
-	publicStories?: PublicStory[]
+	publicStories: PublicStory[]
 } | {
 	statusCode: number
 };
@@ -30,17 +30,15 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publ
 						Back to Profile
 					</Link>
 				</BoxRow>
-				{!favsPublic && publicStories && (
+				{!favsPublic && (
 					<BoxRow className="translucent-text">
 						Only you can see your favorites. If you want others to be able to see, enable public favorites in <Link href={`/u/${publicUser.id}/edit`}>your profile settings</Link>.
 					</BoxRow>
 				)}
 				<BoxRow>
-					{(publicStories
-						? publicStories.length
-							? <StoryList>{publicStories}</StoryList>
-							: 'This user has no favorite adventures.'
-						: "This user's favorite adventures are private."
+					{(publicStories.length
+						? <StoryList>{publicStories}</StoryList>
+						: 'This user has no favorite adventures.'
 					)}
 				</BoxRow>
 			</BoxSection>
@@ -54,28 +52,30 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 	const userFromParams = await getUserByUnsafeID(params.userID);
 
 	if (userFromParams) {
+		if (!(
+			userFromParams.settings.favsPublic || (
+				req.user && (
+					req.user._id.equals(userFromParams._id)
+					|| req.user.perms & Perm.sudoRead
+				)
+			)
+		)) {
+			return { props: { statusCode: 403 } };
+		}
+
 		return {
 			props: {
 				publicUser: getPublicUser(userFromParams),
 				favsPublic: userFromParams.settings.favsPublic,
-				...(
-					userFromParams.settings.favsPublic || (
-						req.user && (
-							req.user._id.equals(userFromParams._id)
-							|| req.user.perms & Perm.sudoRead
-						)
-					)
-				) && {
-					publicStories: (
-						(
-							(await Promise.all(
-								userFromParams.favs.map(
-									fav => stories.findOne({ _id: fav })
-								)
-							)).filter(Boolean) as StoryDocument[]
-						).map(getPublicStory)
-					)
-				}
+				publicStories: (
+					(
+						(await Promise.all(
+							userFromParams.favs.map(
+								fav => stories.findOne({ _id: fav })
+							)
+						)).filter(Boolean) as StoryDocument[]
+					).map(getPublicStory)
+				)
 			}
 		};
 	}
