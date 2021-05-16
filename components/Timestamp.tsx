@@ -87,7 +87,7 @@ const getRelativeTimestamp = (dateThen: Date) => {
 	return `${yearsAgo} year${yearsAgo === 1 ? '' : 's'}${moreMonthsAgo ? `, ${moreMonthsAgo} month${moreMonthsAgo === 1 ? '' : 's'}` : ''} ago`;
 };
 
-type TimestampProps = Omit<HTMLAttributes<HTMLSpanElement>, 'children'> & {
+export type TimestampProps = Omit<HTMLAttributes<HTMLSpanElement>, 'children'> & {
 	children: Date | number,
 	/** Whether the timestamp should only display a numeric date. */
 	short?: boolean,

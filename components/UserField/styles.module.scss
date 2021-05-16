@@ -1,5 +1,7 @@
 .user-field {
 	position: relative;
+	// This ensures the auto-complete menu is not excessively wide.
+	max-width: fit-content;
 
 	&-input {
 		position: relative;

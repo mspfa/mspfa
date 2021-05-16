@@ -3,14 +3,16 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useCallback } from 'react';
 import type { PublicUser } from 'modules/client/users';
 import IconImage from 'components/IconImage';
+import type { UserFieldProps } from 'components/UserField';
 
 export type UserFieldOptionProps = {
 	publicUser: PublicUser,
 	setValue: Dispatch<SetStateAction<PublicUser | undefined>>,
-	setFieldValue?: (value: PublicUser | undefined) => void
+	setFieldValue?: (value: PublicUser | undefined) => void,
+	onChange?: UserFieldProps['onChange']
 };
 
-const UserFieldOption = ({ publicUser, setValue, setFieldValue }: UserFieldOptionProps) => (
+const UserFieldOption = ({ publicUser, setValue, setFieldValue, onChange }: UserFieldOptionProps) => (
 	<button
 		type="button"
 		className="user-field-option"
@@ -18,7 +20,8 @@ const UserFieldOption = ({ publicUser, setValue, setFieldValue }: UserFieldOptio
 			useCallback(() => {
 				setValue(publicUser);
 				setFieldValue?.(publicUser);
-			}, [publicUser, setValue, setFieldValue])
+				onChange?.({ value: publicUser });
+			}, [publicUser, setValue, setFieldValue, onChange])
 		}
 	>
 		<IconImage src={publicUser.icon} />

@@ -15,15 +15,15 @@ import Label from 'components/Label';
 import BBCodeField from 'components/BBCode/BBCodeField';
 import BoxSection from 'components/Box/BoxSection';
 import { Dialog } from 'modules/client/dialogs';
-import UserField from 'components/UserField';
 import type { MyGetServerSideProps } from 'modules/server/pages';
 import type { UserDocument } from 'modules/server/users';
 import { getPublicUser, getUserByUnsafeID } from 'modules/server/users';
+import UserArrayField from 'components/UserField/UserArrayField';
 
 type MessagesAPI = APIClient<typeof import('pages/api/messages').default>;
 
 const initialValues = {
-	to: [] as PublicUser[] as unknown as PublicUser,
+	to: [] as PublicUser[],
 	subject: '',
 	content: ''
 };
@@ -39,7 +39,7 @@ const Component = ({ initialTo = [] }: ServerSideProps) => (
 		<Formik
 			initialValues={{
 				...initialValues,
-				to: initialTo[0]
+				to: initialTo
 			}}
 			onSubmit={
 				useCallback(async (
@@ -78,7 +78,7 @@ const Component = ({ initialTo = [] }: ServerSideProps) => (
 									<Label htmlFor="field-to">
 										To
 									</Label>
-									<UserField
+									<UserArrayField
 										name="to"
 										required
 										formikField

@@ -14,12 +14,15 @@ import axios from 'axios';
 
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
 
-export type UserFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 'required' | 'readOnly' | 'autoFocus' | 'onChange'> & {
+export type UserFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 'required' | 'readOnly' | 'autoFocus'> & {
 	name: string,
 	/** The initial value of the user field. If undefined, defaults to any initial value set by Formik. */
 	initialValue?: PublicUser,
 	/** Whether the value of the user field should be controlled by Formik. */
-	formikField?: boolean
+	formikField?: boolean,
+	onChange?: (event: {
+		value: PublicUser | undefined
+	}) => void
 };
 
 const UserField = ({
@@ -29,6 +32,7 @@ const UserField = ({
 	initialValue: initialValueProp,
 	required,
 	readOnly,
+	onChange: onChangeProp,
 	...props
 }: UserFieldProps) => {
 	const idPrefix = usePrefixedID();
@@ -43,7 +47,7 @@ const UserField = ({
 
 	// This state is whether the user field should have the `open-auto-complete` class, which causes its auto-complete menu to be visible.
 	const [openAutoComplete, setOpenAutoComplete] = useState(false);
-	const userFieldRef = useRef<HTMLSpanElement>(null);
+	const userFieldRef = useRef<HTMLDivElement>(null);
 	const [autoCompleteUsers, setAutoCompleteUsers] = useState<PublicUser[]>([]);
 	const [autoComplete] = useState({
 		timeout: undefined as NodeJS.Timeout | undefined,
@@ -122,6 +126,7 @@ const UserField = ({
 		autoComplete.update(value!.name);
 
 		setValue(undefined);
+		onChangeProp?.({ value: undefined });
 		if (formikField) {
 			setFieldValue(undefined);
 		}
@@ -169,9 +174,7 @@ const UserField = ({
 	}, [isEditing]);
 
 	return value ? (
-		<span
-			className="user-field"
-		>
+		<div className="user-field">
 			<Link
 				className="spaced"
 				href={`/u/${value.id}`}
@@ -184,9 +187,9 @@ const UserField = ({
 					onClick={editValue}
 				/>
 			)}
-		</span>
+		</div>
 	) : (
-		<span
+		<div
 			className={`user-field${openAutoComplete ? ' open-auto-complete' : ''}`}
 			onFocus={onFocus}
 			onBlur={onBlur}
@@ -215,11 +218,12 @@ const UserField = ({
 							publicUser={publicUser}
 							setValue={setValue}
 							setFieldValue={formikField ? setFieldValue : undefined}
+							onChange={onChangeProp}
 						/>
 					))}
 				</div>
 			)}
-		</span>
+		</div>
 	);
 };
 
