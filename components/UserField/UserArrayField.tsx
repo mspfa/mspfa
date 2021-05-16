@@ -4,7 +4,7 @@ import type { InputHTMLAttributes } from 'react';
 import { useCallback, useMemo } from 'react';
 import type { PublicUser } from 'modules/client/users';
 import UserField from 'components/UserField';
-import AddUserButton from './AddUserButton';
+import AddUserButton from 'components/UserField/AddUserButton';
 
 export type UserArrayFieldItemProps = {
 	name: string,

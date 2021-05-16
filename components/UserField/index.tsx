@@ -7,7 +7,7 @@ import { usePrefixedID } from 'modules/client/IDPrefix';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
 import type { PublicUser } from 'modules/client/users';
-import UserFieldOption from './UserFieldOption';
+import UserFieldOption from 'components/UserField/UserFieldOption';
 import Link from 'components/Link';
 import EditButton from 'components/Button/EditButton';
 import axios from 'axios';
