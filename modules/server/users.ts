@@ -239,6 +239,7 @@ export const getUserByUnsafeID = <Res extends APIResponse<any> | undefined>(...[
 	res: Res
 ] | [
 	id: UnsafeObjectID
+	// It is necessary to use tuple types instead of simply having `res` be an optional parameter, because otherwise `Res` will not always be inferred correctly.
 ]) => new Promise<UserDocument | (undefined extends Res ? undefined : never)>(async resolve => {
 	const userID = safeObjectID(id);
 
