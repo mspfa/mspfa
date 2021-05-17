@@ -71,7 +71,7 @@ const MyApp = ({
 				<UserContext.Provider value={mergedUser}>
 					<Component
 						{
-							// It is necessary that the props object passed here is the original `pageProps` object and not a shallow clone thereof, because props from a page's `getServerSideProps` are assigned to the original `pageProps` object and would otherwise not be passed into the page component.
+							// It is necessary that the props object passed here is the original `pageProps` object and not a clone, because after this point is reached, props from a page's `getServerSideProps` are assigned to the original `pageProps` object and would otherwise not be passed into the page component.
 							...pageProps as any
 						}
 					/>
