@@ -87,7 +87,7 @@ const Component = ({ toUsers = [] }: ServerSideProps) => {
 										<UserArrayField
 											name="to"
 											required
-											formikField
+											autoFocus
 										/>
 									</div>
 									<div className="field-container">

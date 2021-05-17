@@ -6,17 +6,11 @@ import UserField from 'components/UserField';
 import AddUserButton from 'components/UserField/AddUserButton';
 
 export type UserArrayFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'required' | 'readOnly' | 'autoFocus' | 'className'> & {
-	name: string,
-	/** The initial value of the user field. If undefined, defaults to any initial value set by Formik. */
-	initialValue?: Array<string | undefined>,
-	/** Whether the value of the user field should be controlled by Formik. */
-	formikField?: boolean
+	name: string
 };
 
 const UserArrayField = ({
 	name,
-	formikField,
-	initialValue: initialValueProp,
 	required,
 	readOnly,
 	className,
@@ -37,10 +31,13 @@ const UserArrayField = ({
 				<UserField
 					key={index}
 					name={`${name}.${index}`}
+					required={value.length === 1 && required}
+					readOnly={readOnly}
 					formikField
+					{...props}
 				/>
 			))}
-			{value[value.length - 1] !== undefined && (
+			{!readOnly && (
 				<AddUserButton value={value} setValue={setValue} />
 			)}
 		</div>
