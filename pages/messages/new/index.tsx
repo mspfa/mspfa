@@ -19,8 +19,7 @@ import type { MyGetServerSideProps } from 'modules/server/pages';
 import type { UserDocument } from 'modules/server/users';
 import { getPublicUser, getUserByUnsafeID } from 'modules/server/users';
 import UserArrayField from 'components/UserField/UserArrayField';
-import { useUserCache } from 'modules/client/userCache';
-import UserField from 'components/UserField';
+import { useUserCache } from 'modules/client/UserCache';
 
 type MessagesAPI = APIClient<typeof import('pages/api/messages').default>;
 
@@ -85,8 +84,8 @@ const Component = ({ toUsers = [] }: ServerSideProps) => {
 										<Label htmlFor="field-to">
 											To
 										</Label>
-										<UserField
-											name="to.0"
+										<UserArrayField
+											name="to"
 											required
 											formikField
 										/>

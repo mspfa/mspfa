@@ -15,15 +15,15 @@ export type UserArrayFieldItemProps = {
 const UserArrayFieldItem = ({ name, index, value, setValue }: UserArrayFieldItemProps) => (
 	<UserField
 		name={`${name}.${index}`}
-		// onChange={
-		// 	useCallback(({ target }: { target: HTMLInputElement }) => {
-		// 		setValue([
-		// 			...value.slice(0, index),
-		// 			target.value,
-		// 			...value.slice(index + 1, value.length)
-		// 		]);
-		// 	}, [index, value, setValue])
-		// }
+		onChange={
+			useCallback(({ target }: { target: HTMLInputElement }) => {
+				setValue([
+					...value.slice(0, index),
+					target.value,
+					...value.slice(index + 1, value.length)
+				]);
+			}, [index, value, setValue])
+		}
 		formikField
 	/>
 );
