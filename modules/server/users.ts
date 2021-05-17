@@ -7,6 +7,7 @@ import { defaultSettings } from 'modules/client/users';
 import type { UnsafeObjectID } from 'modules/server/db';
 import type { Theme } from 'modules/client/themes';
 import type { StoryID } from 'modules/server/stories';
+import type { APIResponse } from 'modules/server/api';
 
 export type UserID = ObjectId;
 
@@ -230,8 +231,15 @@ export default users;
  * Finds and returns a `UserDocument` by a possibly unsafe ID.
  *
  * Returns `undefined` if the ID is invalid, the user is not found, or the user is scheduled for deletion.
+ *
+ * If the `res` parameter is specified, failing to find a valid user will result in an error response, and this function will never resolve.
  */
-export const getUserByUnsafeID = async (id: UnsafeObjectID) => {
+export const getUserByUnsafeID = <Res extends APIResponse<any> | undefined>(...[id, res]: [
+	id: UnsafeObjectID,
+	res: Res
+] | [
+	id: UnsafeObjectID
+]) => new Promise<UserDocument | (undefined extends Res ? undefined : never)>(async resolve => {
 	const userID = safeObjectID(id);
 
 	if (userID) {
@@ -242,11 +250,21 @@ export const getUserByUnsafeID = async (id: UnsafeObjectID) => {
 			}
 		});
 
-		if (user) {
-			return user;
+		if (!user) {
+			if (res) {
+				res.status(404).send({
+					message: 'No user was found with the specified ID.'
+				});
+			} else {
+				resolve(undefined as any);
+			}
+
+			return;
 		}
+
+		resolve(user);
 	}
-};
+});
 
 const everyFifteenMinutes = () => {
 	users.deleteMany({

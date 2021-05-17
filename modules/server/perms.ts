@@ -16,11 +16,11 @@ import { authenticate } from 'modules/server/auth';
  * Examples:
  * ```
  * const { user } = await permToGetUser(res, authenticatedUser, req.query.userID, Perm.sudoRead);
- * const { user, statusCode } = await permToGetUser(false, req.user, params.userID, Perm.sudoWrite | Perm.sudoDelete);
+ * const { user, statusCode } = await permToGetUser(undefined, req.user, params.userID, Perm.sudoWrite | Perm.sudoDelete);
  * ```
  */
 function permToGetUser(
-	/** This request's `APIResponse` object, or `false` if no response should be sent on error (i.e. if this is a page and not an API). */
+	/** This request's `APIResponse` object, or `undefined` if no response should be sent on error (i.e. if this is a page and not an API). */
 	res: APIResponse,
 	/** The user to check the perms of. */
 	user: UserDocument | undefined,
@@ -38,8 +38,8 @@ function permToGetUser(
 }>;
 
 function permToGetUser(
-	/** This request's `APIResponse` object, or `false` if no response should be sent on error (e.g. if this is a page and not an API). */
-	res: APIResponse | false,
+	/** This request's `APIResponse` object, or `undefined` if no response should be sent on error (e.g. if this is a page and not an API). */
+	res: APIResponse | undefined,
 	/** The user to check the perms of. */
 	user: UserDocument | undefined,
 	/** The potentially unsafe user ID of the user to get. */
@@ -61,8 +61,8 @@ function permToGetUser(
 // This ESLint comment is necessary because the rule wants me to use an arrow function, which does not allow for the overloading used here.
 // eslint-disable-next-line func-style
 function permToGetUser(
-	/** This request's `APIResponse` object, or `false` if no response should be sent on error (i.e. if this is a page and not an API). */
-	res: APIResponse | false,
+	/** This request's `APIResponse` object, or `undefined` if no response should be sent on error (i.e. if this is a page and not an API). */
+	res: APIResponse | undefined,
 	/** The user to check the perms of. */
 	user: UserDocument | undefined,
 	/** The potentially unsafe user ID of the user to get. */
@@ -127,16 +127,12 @@ function permToGetUser(
 			return;
 		}
 
-		const requestedUser = await getUserByUnsafeID(id);
+		const requestedUser = await getUserByUnsafeID(id, res);
 
 		if (!requestedUser) {
-			if (res) {
-				res.status(404).send({
-					message: 'No user was found with the specified ID.'
-				});
-			} else {
-				resolve({ statusCode: 404 });
-			}
+			// If `res` is defined, `getUserByUnsafeID` will send an error response and never resolve, so this point would never be reached.
+
+			resolve({ statusCode: 404 });
 			return;
 		}
 
@@ -207,4 +203,4 @@ export const permToGetUserInPage = async (
 	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
 	 */
 	perms: number
-) => permToGetUser(false, req.user, id, perms);
+) => permToGetUser(undefined, req.user, id, perms);

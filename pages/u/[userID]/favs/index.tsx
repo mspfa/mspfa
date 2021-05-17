@@ -51,34 +51,34 @@ export default Component;
 export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, params }) => {
 	const userFromParams = await getUserByUnsafeID(params.userID);
 
-	if (userFromParams) {
-		if (!(
-			userFromParams.settings.favsPublic || (
-				req.user && (
-					req.user._id.equals(userFromParams._id)
-					|| req.user.perms & Perm.sudoRead
-				)
-			)
-		)) {
-			return { props: { statusCode: 403 } };
-		}
-
-		return {
-			props: {
-				publicUser: getPublicUser(userFromParams),
-				favsPublic: userFromParams.settings.favsPublic,
-				publicStories: (
-					(
-						(await Promise.all(
-							userFromParams.favs.map(
-								fav => stories.findOne({ _id: fav })
-							)
-						)).filter(Boolean) as StoryDocument[]
-					).map(getPublicStory)
-				)
-			}
-		};
+	if (!userFromParams) {
+		return { props: { statusCode: 404 } };
 	}
 
-	return { props: { statusCode: 404 } };
+	if (!(
+		userFromParams.settings.favsPublic || (
+			req.user && (
+				req.user._id.equals(userFromParams._id)
+				|| req.user.perms & Perm.sudoRead
+			)
+		)
+	)) {
+		return { props: { statusCode: 403 } };
+	}
+
+	return {
+		props: {
+			publicUser: getPublicUser(userFromParams),
+			favsPublic: userFromParams.settings.favsPublic,
+			publicStories: (
+				(
+					(await Promise.all(
+						userFromParams.favs.map(
+							fav => stories.findOne({ _id: fav })
+						)
+					)).filter(Boolean) as StoryDocument[]
+				).map(getPublicStory)
+			)
+		}
+	};
 });
