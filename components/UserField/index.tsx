@@ -15,9 +15,7 @@ import { useUserCache } from 'modules/client/UserCache';
 
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
 
-// @client-only {
-const nativeInput = document.createElement('input');
-// @client-only }
+const nativeInput = document.createElement('input'); // @client-only
 
 export type UserFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 'required' | 'readOnly' | 'autoFocus'> & {
 	name: string,
@@ -49,8 +47,13 @@ const UserField = ({
 	const { userCache, cacheUser, getCachedUser } = useUserCache();
 
 	const [, { value: fieldValue }, { setValue: setFieldValue }] = useField<string | undefined>(name);
-	const [value, setValue] = useState<string | undefined>(initialValueProp || fieldValue);
+	const [valueState, setValueState] = useState<string | undefined>(initialValueProp || fieldValue);
+
+	const value = fieldValue || valueState;
+
 	const [inputValue, setInputValue] = useState('');
+
+	console.log('value', value);
 	console.log('inputValue', inputValue);
 
 	// This state is whether the user field should have the `open-auto-complete` class, which causes its auto-complete menu to be visible.
@@ -139,10 +142,10 @@ const UserField = ({
 	}, []);
 
 	const changeValue = useCallback(async (newValue: string | undefined) => {
-		setValue(newValue);
+		setValueState(newValue);
 
 		if (formikField) {
-			setFieldValue(newValue);
+			setFieldValue(newValue || '');
 		}
 
 		nativeInput.name = name;
