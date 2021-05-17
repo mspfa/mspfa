@@ -1,11 +1,11 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
 import { validateBirthdate } from 'modules/server/api';
-import type { PrivateUser } from 'modules/client/users';
+import type { PrivateUser, PublicUser } from 'modules/client/users';
 import type { RecursivePartial } from 'modules/types';
 import { Perm } from 'modules/client/perms';
 import { permToGetUserInAPI } from 'modules/server/perms';
-import users, { getPrivateUser } from 'modules/server/users';
+import users, { getPrivateUser, getPublicUser, getUserByUnsafeID } from 'modules/server/users';
 import type { UserDocument } from 'modules/server/users';
 import { flatten } from 'modules/server/db';
 import { merge } from 'lodash';
@@ -20,16 +20,30 @@ const Handler: APIHandler<{
 	}
 } & (
 	{
+		method: 'GET'
+	} | {
 		method: 'DELETE'
 	} | {
 		method: 'PUT',
 		body: RecursivePartial<Pick<PrivateUser, PuttableUserKeys>>
 	}
-), {
-	method: 'PUT',
-	body: PrivateUser
-}> = async (req, res) => {
+), (
+	{
+		method: 'GET',
+		body: PublicUser
+	} | {
+		method: 'PUT',
+		body: PrivateUser
+	}
+)> = async (req, res) => {
 	await validate(req, res);
+
+	if (req.method === 'GET') {
+		const user = await getUserByUnsafeID(req.query.userID, res);
+
+		res.send(getPublicUser(user));
+		return;
+	}
 
 	if (req.method === 'PUT') {
 		const user = await permToGetUserInAPI(req, res, Perm.sudoWrite);
