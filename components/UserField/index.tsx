@@ -11,7 +11,7 @@ import UserFieldOption from 'components/UserField/UserFieldOption';
 import Link from 'components/Link';
 import EditButton from 'components/Button/EditButton';
 import axios from 'axios';
-import { useUserCache } from 'modules/client/userCache';
+import { useUserCache } from 'modules/client/UserCache';
 
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
 

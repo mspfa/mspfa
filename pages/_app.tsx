@@ -14,7 +14,7 @@ import { setTheme } from 'modules/client/themes';
 import { merge } from 'lodash';
 import 'modules/client/global'; // @client-only
 import 'styles/global.scss';
-import UserCache from 'modules/client/userCache';
+import UserCache from 'modules/client/UserCache';
 
 const swrConfig = {
 	revalidateOnMount: true,
