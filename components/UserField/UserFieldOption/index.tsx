@@ -1,27 +1,21 @@
 import './styles.module.scss';
-import type { Dispatch, SetStateAction } from 'react';
 import { useCallback } from 'react';
 import type { PublicUser } from 'modules/client/users';
 import IconImage from 'components/IconImage';
-import type { UserFieldProps } from 'components/UserField';
 
 export type UserFieldOptionProps = {
 	publicUser: PublicUser,
-	setValue: Dispatch<SetStateAction<PublicUser | undefined>>,
-	setFieldValue?: (value: PublicUser | undefined) => void,
-	onChange?: UserFieldProps['onChange']
+	setValue: (newValue: string | undefined) => void
 };
 
-const UserFieldOption = ({ publicUser, setValue, setFieldValue, onChange }: UserFieldOptionProps) => (
+const UserFieldOption = ({ publicUser, setValue }: UserFieldOptionProps) => (
 	<button
 		type="button"
 		className="user-field-option"
 		onClick={
 			useCallback(() => {
-				setValue(publicUser);
-				setFieldValue?.(publicUser);
-				onChange?.({ value: publicUser });
-			}, [publicUser, setValue, setFieldValue, onChange])
+				setValue(publicUser.id);
+			}, [publicUser, setValue])
 		}
 	>
 		<IconImage src={publicUser.icon} />

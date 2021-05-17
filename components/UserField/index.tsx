@@ -11,17 +11,22 @@ import UserFieldOption from 'components/UserField/UserFieldOption';
 import Link from 'components/Link';
 import EditButton from 'components/Button/EditButton';
 import axios from 'axios';
+import { useUserCache } from 'modules/client/userCache';
 
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
+
+// @client-only {
+const nativeInput = document.createElement('input');
+// @client-only }
 
 export type UserFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 'required' | 'readOnly' | 'autoFocus'> & {
 	name: string,
 	/** The initial value of the user field. If undefined, defaults to any initial value set by Formik. */
-	initialValue?: PublicUser,
+	initialValue?: string,
 	/** Whether the value of the user field should be controlled by Formik. */
 	formikField?: boolean,
 	onChange?: (event: {
-		value: PublicUser | undefined
+		target: HTMLInputElement
 	}) => void
 };
 
@@ -41,20 +46,54 @@ const UserField = ({
 		id = `${idPrefix}field-${toKebabCase(name)}`;
 	}
 
-	const [, { value: fieldValue }, { setValue: setFieldValue }] = useField<PublicUser | undefined>(name);
-	const [value, setValue] = useState<PublicUser | undefined>(initialValueProp || fieldValue);
+	const { userCache, cacheUser, getCachedUser } = useUserCache();
+
+	const [, { value: fieldValue }, { setValue: setFieldValue }] = useField<string | undefined>(name);
+	const [value, setValue] = useState<string | undefined>(initialValueProp || fieldValue);
 	const [inputValue, setInputValue] = useState('');
+	console.log('inputValue', inputValue);
 
 	// This state is whether the user field should have the `open-auto-complete` class, which causes its auto-complete menu to be visible.
 	const [openAutoComplete, setOpenAutoComplete] = useState(false);
 	const userFieldRef = useRef<HTMLDivElement>(null);
 	const [autoCompleteUsers, setAutoCompleteUsers] = useState<PublicUser[]>([]);
+
+	/** ⚠️ Do not call this directly. Call `autoComplete.update` instead, as it is always kept updated with the value from the latest render. */
+	const updateAutoComplete = async (search: string = inputValue) => {
+		if (search) {
+			// Cancel any previous request.
+			autoComplete.cancelTokenSource?.cancel();
+			// Allow the next request to be cancelled.
+			autoComplete.cancelTokenSource = axios.CancelToken.source();
+
+			const { data: newAutoCompleteUsers } = await (api as UsersAPI).get('/users', {
+				params: {
+					search
+				},
+				cancelToken: autoComplete.cancelTokenSource.token
+			});
+
+			// Now that the request is complete, do not allow it to be cancelled.
+			autoComplete.cancelTokenSource = undefined;
+
+			newAutoCompleteUsers.forEach(cacheUser);
+
+			if (autoComplete.mounted) {
+				setAutoCompleteUsers(newAutoCompleteUsers);
+			}
+		} else {
+			setAutoCompleteUsers([]);
+		}
+	};
+
 	const [autoComplete] = useState({
 		timeout: undefined as NodeJS.Timeout | undefined,
-		update: undefined as unknown as ((overrideSearch?: string) => Promise<void>),
+		update: updateAutoComplete,
 		mounted: false,
 		cancelTokenSource: undefined as ReturnType<typeof axios.CancelToken.source> | undefined
 	});
+
+	autoComplete.update = updateAutoComplete;
 
 	useEffect(() => {
 		autoComplete.mounted = true;
@@ -66,28 +105,6 @@ const UserField = ({
 		// This ESLint comment is necessary because the rule incorrectly thinks `autoComplete` can change.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
-	autoComplete.update = async (search: string = inputValue) => {
-		if (search) {
-			autoComplete.cancelTokenSource?.cancel();
-			autoComplete.cancelTokenSource = axios.CancelToken.source();
-
-			const { data: newAutoCompleteUsers } = await (api as UsersAPI).get('/users', {
-				params: {
-					search
-				},
-				cancelToken: autoComplete.cancelTokenSource.token
-			});
-
-			autoComplete.cancelTokenSource = undefined;
-
-			if (autoComplete.mounted) {
-				setAutoCompleteUsers(newAutoCompleteUsers);
-			}
-		} else {
-			setAutoCompleteUsers([]);
-		}
-	};
 
 	const onChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
 		setInputValue(event.target.value);
@@ -121,18 +138,31 @@ const UserField = ({
 		});
 	}, []);
 
-	const editValue = useCallback(() => {
-		if (!inputValue) {
-			setInputValue(value!.name);
-		}
+	const changeValue = useCallback(async (newValue: string | undefined) => {
+		setValue(newValue);
 
-		autoComplete.update(inputValue || value!.name);
-
-		setValue(undefined);
-		onChangeProp?.({ value: undefined });
 		if (formikField) {
-			setFieldValue(undefined);
+			setFieldValue(newValue);
 		}
+
+		nativeInput.name = name;
+		nativeInput.value = newValue || '';
+
+		onChangeProp?.({ target: nativeInput });
+	}, [name, formikField, setFieldValue, onChangeProp]);
+
+	const startEditing = useCallback(async () => {
+		// We can assert `value!` because `value` must already be set for the edit button to be visible.
+		const newInputValue = inputValue || (await getCachedUser(value!)).name;
+
+		// If the value has never been edited before, auto-fill the user search input with the username from before editing started. But if it has been edited before, then leave it be what it was when it was last edited.
+		if (!inputValue) {
+			setInputValue(newInputValue);
+		}
+
+		autoComplete.update(newInputValue);
+
+		changeValue(undefined);
 
 		// This ESLint comment is necessary because the rule incorrectly thinks `autoComplete` can change.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -180,14 +210,17 @@ const UserField = ({
 		<div className="user-field">
 			<Link
 				className="spaced"
-				href={`/u/${value.id}`}
+				href={`/u/${value}`}
 			>
-				{value.name}
+				{/* Non-nullability of the cached user can be asserted here because there are two possible cases: */}
+				{/* In the case that the value was set by the user selecting an auto-complete option, the value will already be cached because fetching auto-complete entries caches the users in those entries. */}
+				{/* In the case that the value was passed in from outside rather than by the user selecting an auto-complete option, the outside source of this user ID should cache the user it represents. If it does not, it should be changed to, or else this will throw an error. */}
+				{userCache[value]!.name}
 			</Link>
 			{!readOnly && (
 				<EditButton
 					className="spaced"
-					onClick={editValue}
+					onClick={startEditing}
 				/>
 			)}
 		</div>
@@ -219,9 +252,7 @@ const UserField = ({
 						<UserFieldOption
 							key={publicUser.id}
 							publicUser={publicUser}
-							setValue={setValue}
-							setFieldValue={formikField ? setFieldValue : undefined}
-							onChange={onChangeProp}
+							setValue={changeValue}
 						/>
 					))}
 				</div>

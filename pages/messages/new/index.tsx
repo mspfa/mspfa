@@ -19,11 +19,13 @@ import type { MyGetServerSideProps } from 'modules/server/pages';
 import type { UserDocument } from 'modules/server/users';
 import { getPublicUser, getUserByUnsafeID } from 'modules/server/users';
 import UserArrayField from 'components/UserField/UserArrayField';
+import { useUserCache } from 'modules/client/userCache';
+import UserField from 'components/UserField';
 
 type MessagesAPI = APIClient<typeof import('pages/api/messages').default>;
 
 const initialValues = {
-	to: [] as PublicUser[],
+	to: [] as string[],
 	subject: '',
 	content: ''
 };
@@ -31,112 +33,118 @@ const initialValues = {
 type Values = typeof initialValues;
 
 type ServerSideProps = {
-	initialTo?: PublicUser[]
+	toUsers?: PublicUser[]
 };
 
-const Component = ({ initialTo = [] }: ServerSideProps) => (
-	<Page flashyTitle heading="Messages">
-		<Formik
-			initialValues={{
-				...initialValues,
-				to: initialTo
-			}}
-			onSubmit={
-				useCallback(async (
-					values: Values,
-					{ setSubmitting }: FormikHelpers<Values>
-				) => {
-					if (!getUser()) {
-						setSubmitting(false);
+const Component = ({ toUsers = [] }: ServerSideProps) => {
+	const { cacheUser } = useUserCache();
 
-						if (await Dialog.confirm({
-							id: 'send-message',
-							title: 'Send Message',
-							content: "Sign in to send your message!\n\n(Don't worry, your message won't be lost if you don't leave the page.)",
-							actions: ['Sign In', 'Cancel']
-						})) {
-							signIn();
+	toUsers.forEach(cacheUser);
+
+	return (
+		<Page flashyTitle heading="Messages">
+			<Formik
+				initialValues={{
+					...initialValues,
+					to: toUsers.map(({ id }) => id)
+				}}
+				onSubmit={
+					useCallback(async (
+						values: Values,
+						{ setSubmitting }: FormikHelpers<Values>
+					) => {
+						if (!getUser()) {
+							setSubmitting(false);
+
+							if (await Dialog.confirm({
+								id: 'send-message',
+								title: 'Send Message',
+								content: "Sign in to send your message!\n\n(Don't worry, your message won't be lost if you don't leave the page.)",
+								actions: ['Sign In', 'Cancel']
+							})) {
+								signIn();
+							}
+
+							return;
 						}
 
-						return;
-					}
+						(api as MessagesAPI).post('/messages', values);
+					}, [])
+				}
+			>
+				{({ isSubmitting, dirty }) => {
+					// This ESLint comment is necessary because ESLint is empirically wrong here.
+					// eslint-disable-next-line react-hooks/rules-of-hooks
+					useLeaveConfirmation(dirty);
 
-					(api as MessagesAPI).post('/messages', values);
-				}, [])
-			}
-		>
-			{({ isSubmitting, dirty }) => {
-				// This ESLint comment is necessary because ESLint is empirically wrong here.
-				// eslint-disable-next-line react-hooks/rules-of-hooks
-				useLeaveConfirmation(dirty);
-
-				return (
-					<Form>
-						<Box>
-							<BoxSection heading="New Message">
-								<div className="field-container">
-									<Label htmlFor="field-to">
-										To
-									</Label>
-									<UserArrayField
-										name="to"
-										required
-										formikField
-									/>
-								</div>
-								<div className="field-container">
-									<Label htmlFor="field-subject">
-										Subject
-									</Label>
-									<Field
-										id="field-subject"
-										name="subject"
-										required
-										autoFocus
-										maxLength={50}
-										autoComplete="off"
-									/>
-								</div>
-								<div className="field-container">
-									<Label htmlFor="field-description">
-										Content
-									</Label>
-									<BBCodeField
-										name="content"
-										required
-										rows={16}
-										maxLength={20000}
-									/>
-								</div>
-							</BoxSection>
-							<BoxFooter>
-								<Button
-									type="submit"
-									className="alt"
-									disabled={isSubmitting}
-								>
-									Send
-								</Button>
-							</BoxFooter>
-						</Box>
-					</Form>
-				);
-			}}
-		</Formik>
-	</Page>
-);
+					return (
+						<Form>
+							<Box>
+								<BoxSection heading="New Message">
+									<div className="field-container">
+										<Label htmlFor="field-to">
+											To
+										</Label>
+										<UserField
+											name="to.0"
+											required
+											formikField
+										/>
+									</div>
+									<div className="field-container">
+										<Label htmlFor="field-subject">
+											Subject
+										</Label>
+										<Field
+											id="field-subject"
+											name="subject"
+											required
+											autoFocus
+											maxLength={50}
+											autoComplete="off"
+										/>
+									</div>
+									<div className="field-container">
+										<Label htmlFor="field-description">
+											Content
+										</Label>
+										<BBCodeField
+											name="content"
+											required
+											rows={16}
+											maxLength={20000}
+										/>
+									</div>
+								</BoxSection>
+								<BoxFooter>
+									<Button
+										type="submit"
+										className="alt"
+										disabled={isSubmitting}
+									>
+										Send
+									</Button>
+								</BoxFooter>
+							</Box>
+						</Form>
+					);
+				}}
+			</Formik>
+		</Page>
+	);
+};
 
 export default Component;
 
 export const getServerSideProps: MyGetServerSideProps<ServerSideProps> = async ({ query }) => {
-	const to = typeof query.to === 'string' ? [query.to] : query.to || [];
+	const toUserIDs = typeof query.to === 'string' ? [query.to] : query.to || [];
 
 	return {
 		props: {
-			initialTo: (
+			toUsers: (
 				(
 					(await Promise.all(
-						to.map(getUserByUnsafeID)
+						toUserIDs.map(userID => getUserByUnsafeID(userID))
 					)).filter(Boolean) as UserDocument[]
 				).map(getPublicUser)
 			)
