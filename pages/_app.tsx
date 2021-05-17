@@ -1,3 +1,5 @@
+import 'styles/global.scss';
+import 'modules/client/global'; // @client-only
 import App from 'next/app'; // @server-only
 import type { AppProps, AppContext } from 'next/app';
 import type { NextPageContext } from 'next';
@@ -12,8 +14,6 @@ import type { PageRequest } from 'modules/server/pages';
 import { useEffect, useMemo } from 'react';
 import { setTheme } from 'modules/client/themes';
 import { merge } from 'lodash';
-import 'modules/client/global'; // @client-only
-import 'styles/global.scss';
 import UserCache from 'modules/client/UserCache';
 
 const swrConfig = {
