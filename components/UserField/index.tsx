@@ -122,8 +122,11 @@ const UserField = ({
 	}, []);
 
 	const editValue = useCallback(() => {
-		setInputValue(value!.name);
-		autoComplete.update(value!.name);
+		if (!inputValue) {
+			setInputValue(value!.name);
+		}
+
+		autoComplete.update(inputValue || value!.name);
 
 		setValue(undefined);
 		onChangeProp?.({ value: undefined });
