@@ -203,15 +203,9 @@ const UserField = ({
 		if (isEditing) {
 			// The user started editing.
 
-			const userFieldInput = userFieldRef.current!.getElementsByClassName('user-field-input')[0] as HTMLInputElement;
-
-			// This type assertion is necessary because this method may not exist on all browsers.
-			if (userFieldInput.setCustomValidity as typeof userFieldInput.setCustomValidity | undefined) {
-				userFieldInput.setCustomValidity(required ? 'Please enter a username or ID and select a user.' : '');
-			}
-
 			// We only want to select the input field if there is anything to select. If there isn't, that means this component mounted without a value, and the user didn't activate the edit button.
 			if (inputValue) {
+				const userFieldInput = userFieldRef.current!.getElementsByClassName('user-field-input')[0] as HTMLInputElement;
 				userFieldInput.select();
 			}
 		} else {
@@ -231,9 +225,22 @@ const UserField = ({
 			setAutoCompleteUsers([]);
 		}
 
-		// This ESLint comment is necessary because the rule incorrectly thinks `autoComplete` can change.
+		// This ESLint comment is necessary because the purpose of this effect hook is to do things after mount when the user initially starts or stops editing, so `isEditing` is the only value I want to listen to changes in. Do not add anything to this hook which does not fit that purpose.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isEditing]);
+
+	useEffect(() => {
+		if (isEditing) {
+			// The component rendered while the user is editing.
+
+			const userFieldInput = userFieldRef.current!.getElementsByClassName('user-field-input')[0] as HTMLInputElement;
+
+			// This type assertion is necessary because this method may not exist on all browsers.
+			(userFieldInput.setCustomValidity as typeof userFieldInput.setCustomValidity | undefined)?.(
+				required ? 'Please enter a username or ID and select a user.' : ''
+			);
+		}
+	}, [isEditing, required]);
 
 	const deleteFromArray = useCallback(() => {
 		const [, arrayFieldName, indexString] = name.match(/(.+)\.(\d+)/)!;
