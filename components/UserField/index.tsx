@@ -1,5 +1,5 @@
 import './styles.module.scss';
-import { useField, useFormikContext } from 'formik';
+import { useFormikContext } from 'formik';
 import { toKebabCase } from 'modules/client/utilities';
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
 import { useCallback, useState, useRef, useEffect } from 'react';
@@ -26,6 +26,12 @@ export type UserFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 
 	formikField?: boolean,
 	/** Whether to show an option to remove this user field from a parent user array field. */
 	deletable?: boolean,
+	/**
+	 * The React keys of the user field array's children which include this component.
+	 *
+	 * Only used if `deletable` is `true`.
+	 */
+	userFieldKeys?: number[],
 	onChange?: (event: {
 		target: HTMLInputElement
 	}) => void
@@ -39,6 +45,7 @@ const UserField = ({
 	required,
 	readOnly,
 	deletable,
+	userFieldKeys,
 	onChange: onChangeProp,
 	...props
 }: UserFieldProps) => {
@@ -218,11 +225,13 @@ const UserField = ({
 		const index = +indexString;
 		const arrayFieldValue = fieldValues[arrayFieldName]!;
 
+		userFieldKeys?.splice(index, 1);
+
 		setFieldValue(arrayFieldName, [
 			...arrayFieldValue.slice(0, index),
 			...arrayFieldValue.slice(index + 1, arrayFieldValue.length)
 		]);
-	}, [name, fieldValues, setFieldValue]);
+	}, [name, fieldValues, setFieldValue, userFieldKeys]);
 
 	return (
 		<div
