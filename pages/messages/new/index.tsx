@@ -5,7 +5,7 @@ import { getUser, signIn } from 'modules/client/users';
 import type { FormikHelpers } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import { useCallback } from 'react';
-import { preventLeaveConfirmations, useLeaveConfirmation } from 'modules/client/forms';
+import { useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
 import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
