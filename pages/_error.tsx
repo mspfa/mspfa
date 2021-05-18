@@ -11,19 +11,22 @@ import Router from 'next/router';
 
 export type ErrorPageProps = {
 	statusCode: number,
-	imageSource?: never
+	imageFilename?: never
 } | {
 	statusCode: 403,
-	imageSource: string
+	imageFilename: string
 };
 
-const ErrorPage = ({ statusCode, imageSource }: ErrorPageProps) => (
+const ErrorPage = ({ statusCode, imageFilename }: ErrorPageProps) => (
 	<Page flashyTitle heading={`Error ${statusCode}`}>
 		<Box>
 			{statusCode === 403 && (
 				<>
 					<BoxRow>
-						<img src={`/images/403/${imageSource}`} />
+						<img
+							src={`/images/403/${imageFilename!}`}
+							title={`Artist: ${imageFilename!.slice(0, imageFilename!.indexOf('.'))}`}
+						/>
 					</BoxRow>
 					<BoxRow>
 						<p>
@@ -69,7 +72,7 @@ ErrorPage.getInitialProps = ({ res, error }: {
 
 	return statusCode === 403 ? {
 		statusCode: 403,
-		imageSource: error403Images[Math.floor(Math.random() * error403Images.length)]
+		imageFilename: error403Images[Math.floor(Math.random() * error403Images.length)]
 	} : {
 		statusCode
 	};
