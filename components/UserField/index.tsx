@@ -63,9 +63,10 @@ const UserField = ({
 
 	const { userCache, cacheUser, getCachedUser } = useUserCache();
 
-	const { values: fieldValues, setFieldValue } = useFormikContext<Record<string, string | undefined>>();
-	const [valueState, setValueState] = useState(initialValueProp || fieldValues[name]);
-	const value = fieldValues[name] || valueState;
+	const { getFieldMeta, setFieldValue } = useFormikContext();
+	const fieldValue = getFieldMeta<string | undefined>(name).value;
+	const [valueState, setValueState] = useState(initialValueProp || fieldValue);
+	const value = fieldValue || valueState;
 
 	const [inputValue, setInputValue] = useState('');
 
@@ -74,7 +75,7 @@ const UserField = ({
 	const userFieldRef = useRef<HTMLDivElement>(null);
 	const [autoCompleteUsers, setAutoCompleteUsers] = useState<PublicUser[]>([]);
 
-	/** ⚠️ Do not call this directly. Call `autoComplete.update` instead, as it is always kept updated with the value from the latest render. */
+	/** ⚠️ Do not call `updateAutoComplete` directly. Call `autoComplete.update` instead, as it is always kept updated with the value from the latest render. */
 	const updateAutoComplete = async (search: string = inputValue) => {
 		if (search) {
 			// Cancel any previous request.
@@ -158,7 +159,7 @@ const UserField = ({
 		// We can assert `value!` because `value` must already be set for the edit button to be visible.
 		const newInputValue = inputValue || (await getCachedUser(value!)).name;
 
-		// If the value has never been edited before, auto-fill the user search input with the username from before editing started. But if it has been edited before, then leave it be what it was when it was last edited.
+		// If the value has never been edited before (and is therefore empty), auto-fill the user search input with the username from before editing started. But if it has been edited before, then leave it be what it was when it was last edited.
 		if (!inputValue) {
 			setInputValue(newInputValue);
 		}
@@ -169,7 +170,7 @@ const UserField = ({
 
 		// This ESLint comment is necessary because the rule incorrectly thinks `autoComplete` can change.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [value]);
+	}, [value, changeValue, getCachedUser, inputValue]);
 
 	const isEditing = !value;
 
@@ -245,7 +246,7 @@ const UserField = ({
 	const deleteFromArray = useCallback(() => {
 		const [, arrayFieldName, indexString] = name.match(/(.+)\.(\d+)/)!;
 		const index = +indexString;
-		const arrayFieldValue = fieldValues[arrayFieldName]!;
+		const arrayFieldValue = getFieldMeta<string[]>(arrayFieldName).value;
 
 		userFieldKeys?.splice(index, 1);
 
@@ -253,7 +254,7 @@ const UserField = ({
 			...arrayFieldValue.slice(0, index),
 			...arrayFieldValue.slice(index + 1, arrayFieldValue.length)
 		]);
-	}, [name, fieldValues, setFieldValue, userFieldKeys]);
+	}, [name, getFieldMeta, setFieldValue, userFieldKeys]);
 
 	return (
 		<div
