@@ -1,4 +1,5 @@
 import type { MyGetServerSideProps } from 'modules/server/pages';
+import ErrorPage from 'pages/_error';
 
 /** Sets `res.statusCode` based on the returned `statusCode` prop. */
 export const withStatusCode = <
@@ -10,6 +11,8 @@ export const withStatusCode = <
 		if (serverSideProps.props.statusCode) {
 			props.res.statusCode = serverSideProps.props.statusCode;
 		}
+
+		Object.assign(serverSideProps.props, ErrorPage.getInitialProps(props));
 
 		return serverSideProps;
 	}

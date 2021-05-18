@@ -6,7 +6,7 @@ import path from 'path';
 /** The array of footer image filenames. */
 const footers = (fs.readdirSync(
 	path.join(process.cwd(), 'public/images/footers')
-)).filter(footer => /\.(?:png|gif)$/i.test(footer));
+)).filter(filename => /\.(?:png|gif)$/i.test(filename));
 
 const Handler: APIHandler<{
 	method: 'GET'

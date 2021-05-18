@@ -39,7 +39,7 @@ export const withErrorPage = <
 		return (
 			statusCode === undefined
 				? <Component {...props as any} />
-				: <ErrorPage statusCode={statusCode} />
+				: <ErrorPage statusCode={statusCode} {...props} />
 		);
 	}
 );
