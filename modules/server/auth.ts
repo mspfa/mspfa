@@ -2,7 +2,7 @@ import axios from 'axios';
 import crypto from 'crypto';
 import argon2 from 'argon2';
 import Cookies from 'cookies';
-import { ObjectId } from 'bson';
+import { ObjectId } from 'mongodb';
 import type { APIRequest, APIResponse } from 'modules/server/api';
 import type { IncomingMessage, ServerResponse } from 'http';
 import users from 'modules/server/users';

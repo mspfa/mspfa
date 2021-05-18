@@ -5,7 +5,7 @@ import { getUser, signIn } from 'modules/client/users';
 import type { FormikHelpers } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import { useCallback } from 'react';
-import { useLeaveConfirmation } from 'modules/client/forms';
+import { preventLeaveConfirmations, useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
 import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
@@ -20,6 +20,7 @@ import type { UserDocument } from 'modules/server/users';
 import { getPublicUser, getUserByUnsafeID } from 'modules/server/users';
 import UserArrayField from 'components/UserField/UserArrayField';
 import { useUserCache } from 'modules/client/UserCache';
+import Router from 'next/router';
 
 type MessagesAPI = APIClient<typeof import('pages/api/messages').default>;
 
@@ -67,7 +68,10 @@ const Component = ({ toUsers = [] }: ServerSideProps) => {
 							return;
 						}
 
-						(api as MessagesAPI).post('/messages', values);
+						const { data: clientMessage } = await (api as MessagesAPI).post('/messages', values);
+
+						preventLeaveConfirmations();
+						Router.push(`/messages/${clientMessage.id}`);
 					}, [])
 				}
 			>

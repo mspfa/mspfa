@@ -44,20 +44,20 @@ export type NotificationSetting = {
 	site: boolean
 };
 
-export type StoryReaderNotificationSettingKeys = 'updates' | 'news';
+export type StoryReaderNotificationSettingKey = 'updates' | 'news';
 
-export type StoryEditorNotificationSettingKeys = 'comments';
+export type StoryEditorNotificationSettingKey = 'comments';
 
 export type StoryReaderNotificationSettings = (
 	// Include the reader keys.
-	Record<StoryReaderNotificationSettingKeys, NotificationSetting>
+	Record<StoryReaderNotificationSettingKey, NotificationSetting>
 	// Include the editor keys as optional `undefined`s.
-	& Partial<Record<StoryEditorNotificationSettingKeys, undefined>>
+	& Partial<Record<StoryEditorNotificationSettingKey, undefined>>
 );
 
 export type StoryEditorNotificationSettings = (
 	// Include the reader and editor keys.
-	Record<StoryReaderNotificationSettingKeys | StoryEditorNotificationSettingKeys, NotificationSetting>
+	Record<StoryReaderNotificationSettingKey | StoryEditorNotificationSettingKey, NotificationSetting>
 );
 
 /**
@@ -234,37 +234,41 @@ export default users;
  *
  * If the `res` parameter is specified, failing to find a valid user will result in an error response, and this function will never resolve.
  */
-export const getUserByUnsafeID = <Res extends APIResponse<any> | undefined>(...[id, res]: [
-	id: UnsafeObjectID,
-	res: Res
-] | [
-	id: UnsafeObjectID
-	// It is necessary to use tuple types instead of simply having `res` be an optional parameter, because otherwise `Res` will not always be inferred correctly.
-]) => new Promise<UserDocument | (undefined extends Res ? undefined : never)>(async resolve => {
+export const getUserByUnsafeID = <Res extends APIResponse<any> | undefined>(
+	...[id, res]: [
+		id: UnsafeObjectID,
+		res: Res
+	] | [
+		id: UnsafeObjectID
+		// It is necessary to use tuple types instead of simply having `res` be an optional parameter, because otherwise `Res` will not always be inferred correctly.
+	]
+) => new Promise<UserDocument | (undefined extends Res ? undefined : never)>(async resolve => {
 	const userID = safeObjectID(id);
 
+	let user: UserDocument | null | undefined;
+
 	if (userID) {
-		const user = await users.findOne({
+		user = await users.findOne({
 			_id: userID,
 			willDelete: {
 				$exists: false
 			}
 		});
+	}
 
-		if (!user) {
-			if (res) {
-				res.status(404).send({
-					message: 'No user was found with the specified ID.'
-				});
-			} else {
-				resolve(undefined as any);
-			}
-
-			return;
+	if (!user) {
+		if (res) {
+			res.status(404).send({
+				message: 'No user was found with the specified ID.'
+			});
+		} else {
+			resolve(undefined as any);
 		}
 
-		resolve(user);
+		return;
 	}
+
+	resolve(user);
 });
 
 const everyFifteenMinutes = () => {

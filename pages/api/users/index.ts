@@ -5,7 +5,7 @@ import type { SessionBody } from 'pages/api/session';
 import { getAuthMethodInfo, createSession } from 'modules/server/auth';
 import users, { defaultUser, getPrivateUser, getPublicUser } from 'modules/server/users';
 import type { UserDocument } from 'modules/server/users';
-import { ObjectId } from 'bson';
+import { ObjectId } from 'mongodb';
 import type { PrivateUser, PublicUser } from 'modules/client/users';
 import axios from 'axios';
 import { connection, safeObjectID } from 'modules/server/db';

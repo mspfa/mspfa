@@ -12,7 +12,7 @@ import { merge } from 'lodash';
 import stories from 'modules/server/stories';
 
 /** The keys of all `PrivateUser` properties which the client should be able to `PUT` into their `UserDocument`. */
-type PuttableUserKeys = 'birthdate' | 'name' | 'email' | 'description' | 'icon' | 'site' | 'profileStyle' | 'settings';
+type PuttableUserKey = 'birthdate' | 'name' | 'email' | 'description' | 'icon' | 'site' | 'profileStyle' | 'settings';
 
 const Handler: APIHandler<{
 	query: {
@@ -25,7 +25,7 @@ const Handler: APIHandler<{
 		method: 'DELETE'
 	} | {
 		method: 'PUT',
-		body: RecursivePartial<Pick<PrivateUser, PuttableUserKeys>>
+		body: RecursivePartial<Pick<PrivateUser, PuttableUserKey>>
 	}
 ), (
 	{

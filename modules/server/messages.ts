@@ -1,6 +1,7 @@
 import type { ObjectId } from 'mongodb';
 import db from 'modules/server/db';
 import type { UserID } from 'modules/server/users';
+import type { ClientMessage } from 'modules/client/messages';
 
 export type MessageID = ObjectId;
 
@@ -29,6 +30,22 @@ export type MessageDocument = {
 	 */
 	content: string
 };
+
+/** Converts a `MessageDocument` to a `ClientMessage`. */
+export const getClientMessage = (message: MessageDocument): ClientMessage => ({
+	id: message._id.toString(),
+	sent: +message.sent,
+	...message.edited !== undefined && {
+		edited: +message.edited
+	},
+	from: message.from.toString(),
+	to: message.to.map(String),
+	...message.replyTo !== undefined && {
+		replyTo: message.replyTo.toString()
+	},
+	subject: message.subject,
+	content: message.content
+});
 
 const messages = db.collection<MessageDocument>('messages');
 
