@@ -70,15 +70,15 @@ const Component = ({ toUsers = [] }: ServerSideProps) => {
 
 						const { data: clientMessage } = await (api as MessagesAPI).post('/messages', values);
 
-						preventLeaveConfirmations();
-						Router.push(`/messages/${clientMessage.id}`);
+						// This needs to be `await`ed so `isSubmitting` remains `true` while the router loads, ensuring `useLeaveConfirmation`'s argument is `false`.
+						await Router.push(`/messages/${clientMessage.id}`);
 					}, [])
 				}
 			>
 				{({ isSubmitting, dirty }) => {
 					// This ESLint comment is necessary because ESLint is empirically wrong here.
 					// eslint-disable-next-line react-hooks/rules-of-hooks
-					useLeaveConfirmation(dirty);
+					useLeaveConfirmation(dirty && !isSubmitting);
 
 					return (
 						<Form>
