@@ -20,6 +20,11 @@
 		}
 	}
 
+	&:disabled {
+		opacity: 0.5;
+		pointer-events: none;
+	}
+
 	.icon-image {
 		width: 2.5em;
 		height: 2.5em;

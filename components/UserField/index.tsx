@@ -32,6 +32,10 @@ export type UserFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 
 	 * Only used if `deletable` is `true`.
 	 */
 	userFieldKeys?: number[],
+	/** Whether the value of this field must be unique from other user fields in the parent user field array. */
+	unique?: boolean,
+	/** The value of the parent `UserFieldArray`. */
+	userFieldArrayValue?: Array<string | undefined>,
 	onChange?: (event: {
 		target: HTMLInputElement
 	}) => void
@@ -46,6 +50,8 @@ const UserField = ({
 	readOnly,
 	deletable,
 	userFieldKeys,
+	unique,
+	userFieldArrayValue,
 	onChange: onChangeProp,
 	...props
 }: UserFieldProps) => {
@@ -276,6 +282,7 @@ const UserField = ({
 									key={publicUser.id}
 									publicUser={publicUser}
 									setValue={changeValue}
+									disabled={unique && userFieldArrayValue?.includes(publicUser.id)}
 								/>
 							))}
 						</div>

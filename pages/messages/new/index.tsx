@@ -88,6 +88,7 @@ const Component = ({ toUsers = [] }: ServerSideProps) => {
 											name="to"
 											required
 											autoFocus
+											unique
 										/>
 									</div>
 									<div className="field-container">

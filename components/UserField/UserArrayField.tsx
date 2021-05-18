@@ -6,7 +6,9 @@ import UserField from 'components/UserField';
 import AddUserButton from 'components/UserField/AddUserButton';
 
 export type UserArrayFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'required' | 'readOnly' | 'autoFocus' | 'className'> & {
-	name: string
+	name: string,
+	/** Whether the users in this field must be unique. */
+	unique?: boolean
 };
 
 const UserArrayField = ({
@@ -47,6 +49,7 @@ const UserArrayField = ({
 					formikField
 					deletable={!(required && value.length === 1)}
 					userFieldKeys={userFieldKeys}
+					userFieldArrayValue={value}
 					{...props}
 				/>
 			))}

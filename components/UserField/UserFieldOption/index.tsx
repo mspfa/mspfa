@@ -5,13 +5,15 @@ import IconImage from 'components/IconImage';
 
 export type UserFieldOptionProps = {
 	publicUser: PublicUser,
-	setValue: (newValue: string | undefined) => void
+	setValue: (newValue: string | undefined) => void,
+	disabled?: boolean
 };
 
-const UserFieldOption = ({ publicUser, setValue }: UserFieldOptionProps) => (
+const UserFieldOption = ({ publicUser, setValue, disabled }: UserFieldOptionProps) => (
 	<button
 		type="button"
 		className="user-field-option"
+		disabled={disabled}
 		onClick={
 			useCallback(() => {
 				setValue(publicUser.id);
