@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import { useField } from 'formik';
-import type { InputHTMLAttributes } from 'react';
+import { InputHTMLAttributes, useCallback } from 'react';
 import { useMemo } from 'react';
 import UserField from 'components/UserField';
 import AddUserButton from 'components/UserField/AddUserButton';
@@ -31,9 +31,10 @@ const UserArrayField = ({
 				<UserField
 					key={index}
 					name={`${name}.${index}`}
-					required={value.length === 1 && required}
+					required={required && value.length === 1}
 					readOnly={readOnly}
 					formikField
+					deletable={!(required && value.length === 1)}
 					{...props}
 				/>
 			))}

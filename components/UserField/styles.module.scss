@@ -2,6 +2,7 @@
 	position: relative;
 	// This ensures the auto-complete menu is not excessively wide.
 	max-width: fit-content;
+	margin: 2px 0;
 
 	&-input {
 		position: relative;
@@ -21,5 +22,9 @@
 		.user-field.open-auto-complete > & {
 			display: block;
 		}
+	}
+
+	.button {
+		margin-left: 4px;
 	}
 }

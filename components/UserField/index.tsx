@@ -1,5 +1,5 @@
 import './styles.module.scss';
-import { useField } from 'formik';
+import { useField, useFormikContext } from 'formik';
 import { toKebabCase } from 'modules/client/utilities';
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
 import { useCallback, useState, useRef, useEffect } from 'react';
@@ -12,6 +12,7 @@ import Link from 'components/Link';
 import EditButton from 'components/Button/EditButton';
 import axios from 'axios';
 import { useUserCache } from 'modules/client/UserCache';
+import RemoveButton from 'components/Button/RemoveButton';
 
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
 
@@ -23,6 +24,8 @@ export type UserFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 
 	initialValue?: string,
 	/** Whether the value of the user field should be controlled by Formik. */
 	formikField?: boolean,
+	/** Whether to show an option to remove this user field from a parent user array field. */
+	deletable?: boolean,
 	onChange?: (event: {
 		target: HTMLInputElement
 	}) => void
@@ -35,6 +38,7 @@ const UserField = ({
 	initialValue: initialValueProp,
 	required,
 	readOnly,
+	deletable,
 	onChange: onChangeProp,
 	...props
 }: UserFieldProps) => {
@@ -46,15 +50,11 @@ const UserField = ({
 
 	const { userCache, cacheUser, getCachedUser } = useUserCache();
 
-	const [, { value: fieldValue }, { setValue: setFieldValue }] = useField<string | undefined>(name);
-	const [valueState, setValueState] = useState<string | undefined>(initialValueProp || fieldValue);
-
-	const value = fieldValue || valueState;
+	const { values: fieldValues, setFieldValue } = useFormikContext<Record<string, string | undefined>>();
+	const [valueState, setValueState] = useState(initialValueProp || fieldValues[name]);
+	const value = fieldValues[name] || valueState;
 
 	const [inputValue, setInputValue] = useState('');
-
-	console.log('value', value);
-	console.log('inputValue', inputValue);
 
 	// This state is whether the user field should have the `open-auto-complete` class, which causes its auto-complete menu to be visible.
 	const [openAutoComplete, setOpenAutoComplete] = useState(false);
@@ -128,24 +128,11 @@ const UserField = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const onFocus = useCallback(() => {
-		setOpenAutoComplete(true);
-	}, []);
-
-	const onBlur = useCallback(() => {
-		// `setTimeout` is necessary here because otherwise, for example when tabbing through auto-complete options, this will run before the next auto-complete option focuses, so the `if` statement would not detect that any option is in focus.
-		setTimeout(() => {
-			if (userFieldRef.current && !userFieldRef.current.contains(document.activeElement)) {
-				setOpenAutoComplete(false);
-			}
-		});
-	}, []);
-
 	const changeValue = useCallback(async (newValue: string | undefined) => {
 		setValueState(newValue);
 
 		if (formikField) {
-			setFieldValue(newValue || '');
+			setFieldValue(name, newValue || '');
 		}
 
 		nativeInput.name = name;
@@ -172,6 +159,23 @@ const UserField = ({
 	}, [value]);
 
 	const isEditing = !value;
+
+	const onFocus = useCallback(() => {
+		if (isEditing) {
+			setOpenAutoComplete(true);
+		}
+	}, [isEditing]);
+
+	const onBlur = useCallback(() => {
+		if (isEditing) {
+			// `setTimeout` is necessary here because otherwise, for example when tabbing through auto-complete options, this will run before the next auto-complete option focuses, so the `if` statement would not detect that any option is in focus.
+			setTimeout(() => {
+				if (userFieldRef.current && !userFieldRef.current.contains(document.activeElement)) {
+					setOpenAutoComplete(false);
+				}
+			});
+		}
+	}, [isEditing]);
 
 	useEffect(() => {
 		if (isEditing) {
@@ -209,56 +213,68 @@ const UserField = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isEditing]);
 
-	return value ? (
-		<div className="user-field">
-			<Link
-				className="spaced"
-				href={`/u/${value}`}
-			>
-				{/* Non-nullability of the cached user can be asserted here because there are two possible cases: */}
-				{/* In the case that the value was set by the user selecting an auto-complete option, the value will already be cached because fetching auto-complete entries caches the users in those entries. */}
-				{/* In the case that the value was passed in from outside rather than by the user selecting an auto-complete option, the outside source of this user ID should cache the user it represents. If it does not, it should be changed to, or else this will throw an error. */}
-				{userCache[value]!.name}
-			</Link>
-			{!readOnly && (
-				<EditButton
-					className="spaced"
-					onClick={startEditing}
-				/>
-			)}
-		</div>
-	) : (
+	const deleteFromArray = useCallback(() => {
+		const [, arrayFieldName, indexString] = name.match(/(.+)\.(\d+)/)!;
+		const index = +indexString;
+		const arrayFieldValue = fieldValues[arrayFieldName]!;
+
+		setFieldValue(arrayFieldName, [
+			...arrayFieldValue.slice(0, index),
+			...arrayFieldValue.slice(index + 1, arrayFieldValue.length)
+		]);
+	}, [name, fieldValues, setFieldValue]);
+
+	return (
 		<div
-			className={`user-field${openAutoComplete ? ' open-auto-complete' : ''}`}
+			className={`user-field${isEditing && openAutoComplete ? ' open-auto-complete' : ''}`}
 			onFocus={onFocus}
 			onBlur={onBlur}
 			ref={userFieldRef}
 		>
-			<input
-				id={id}
-				className="user-field-input"
-				placeholder="Enter Username or ID"
-				autoComplete="off"
-				maxLength={32}
-				size={20}
-				value={inputValue}
-				onChange={onChange}
-				required={required}
-				// If `required === true`, the below `pattern` will never allow the input to be valid due to the above `required` prop, invalidating the form for browsers that don't support `setCustomValidity`.
-				pattern={required ? '^$' : undefined}
-				readOnly={readOnly}
-				{...props}
-			/>
-			{!!autoCompleteUsers.length && (
-				<div className="user-field-auto-complete input-like">
-					{autoCompleteUsers.map(publicUser => (
-						<UserFieldOption
-							key={publicUser.id}
-							publicUser={publicUser}
-							setValue={changeValue}
-						/>
-					))}
-				</div>
+			{value ? (
+				<>
+					<Link href={`/u/${value}`}>
+						{/* Non-nullability of the cached user can be asserted here because there are two possible cases: */}
+						{/* In the case that the value was set by the user selecting an auto-complete option, the value will already be cached because fetching auto-complete entries caches the users in those entries. */}
+						{/* In the case that the value was passed in from outside rather than by the user selecting an auto-complete option, the outside source of this user ID should cache the user it represents. If it does not, it should be changed to, or else this will throw an error. */}
+						{userCache[value]!.name}
+					</Link>
+					{!readOnly && (
+						<EditButton onClick={startEditing} />
+					)}
+				</>
+			) : (
+				<>
+					<input
+						id={id}
+						className="user-field-input"
+						placeholder="Enter Username or ID"
+						autoComplete="off"
+						maxLength={32}
+						size={20}
+						value={inputValue}
+						onChange={onChange}
+						required={required}
+						// If `required === true`, the below `pattern` will never allow the input to be valid due to the above `required` prop, invalidating the form for browsers that don't support `setCustomValidity`.
+						pattern={required ? '^$' : undefined}
+						readOnly={readOnly}
+						{...props}
+					/>
+					{!!autoCompleteUsers.length && (
+						<div className="user-field-auto-complete input-like">
+							{autoCompleteUsers.map(publicUser => (
+								<UserFieldOption
+									key={publicUser.id}
+									publicUser={publicUser}
+									setValue={changeValue}
+								/>
+							))}
+						</div>
+					)}
+				</>
+			)}
+			{deletable && (
+				<RemoveButton onClick={deleteFromArray} />
 			)}
 		</div>
 	);
