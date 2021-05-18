@@ -2,6 +2,7 @@ import type { ObjectId } from 'mongodb';
 import db from 'modules/server/db';
 import type { UserID } from 'modules/server/users';
 import type { ClientMessage } from 'modules/client/messages';
+import users from 'modules/server/users';
 
 export type MessageID = ObjectId;
 
@@ -50,3 +51,18 @@ export const getClientMessage = (message: MessageDocument): ClientMessage => ({
 const messages = db.collection<MessageDocument>('messages');
 
 export default messages;
+
+export const updateUnreadMessages = async (userID: UserID) => {
+	const unreadMessageCount = (
+		await messages.aggregate!([
+			{ $match: { notReadBy: userID } },
+			{ $count: 'unreadMessageCount' }
+		]).next() as { unreadMessageCount: number } | null
+	)?.unreadMessageCount || 0;
+
+	await users.updateOne({
+		_id: userID
+	}, {
+		$set: { unreadMessageCount }
+	});
+};

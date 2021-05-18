@@ -210,7 +210,7 @@ export const updateAndSendFavCount = async (
 		]).next() as { favCount: number } | null
 	)?.favCount || 0;
 
-	stories.updateOne({
+	await stories.updateOne({
 		_id: storyID
 	}, {
 		$set: { favCount }

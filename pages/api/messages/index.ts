@@ -3,7 +3,7 @@ import type { APIHandler } from 'modules/server/api';
 import { authenticate } from 'modules/server/auth';
 import type { ClientMessage } from 'modules/client/messages';
 import type { MessageDocument } from 'modules/server/messages';
-import messages, { getClientMessage } from 'modules/server/messages';
+import messages, { updateUnreadMessages, getClientMessage } from 'modules/server/messages';
 import { ObjectId } from 'mongodb';
 import { getUserByUnsafeID } from 'modules/server/users';
 
@@ -43,6 +43,8 @@ const Handler: APIHandler<{
 	};
 
 	await messages.insertOne(message);
+
+	await Promise.all(recipientIDs.map(updateUnreadMessages));
 
 	res.status(201).send(getClientMessage(message));
 };

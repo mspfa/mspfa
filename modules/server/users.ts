@@ -138,7 +138,8 @@ export type UserDocument = {
 	perms: number,
 	dev?: true,
 	mod?: true,
-	patron?: true
+	patron?: true,
+	unreadMessageCount: number
 };
 
 /** A `Partial<UserDocument>` used to spread some general properties on newly inserted `UserDocument`s. */
@@ -152,7 +153,8 @@ export const defaultUser = {
 	favs: [] as never[],
 	profileStyle: '',
 	settings: defaultSettings,
-	perms: 0
+	perms: 0,
+	unreadMessageCount: 0
 } as const;
 
 // This is just for type safety on `defaultUser`.
@@ -189,7 +191,8 @@ export const getPrivateUser = (user: UserDocument): PrivateUser => ({
 	},
 	...user.patron && {
 		patron: user.patron
-	}
+	},
+	unreadMessageCount: user.unreadMessageCount
 });
 
 /** Converts a `UserDocument` to a `PublicUser`. */

@@ -15,7 +15,6 @@ const Nav = () => {
 	const user = useUser();
 
 	const notificationsBubble = 0;
-	const messagesBubble = 0;
 
 	return (
 		<nav
@@ -28,7 +27,7 @@ const Nav = () => {
 						<NavMenu
 							id="signed-in"
 							label="My MSPFA"
-							bubble={!!(notificationsBubble + messagesBubble)}
+							bubble={!!(notificationsBubble + user.unreadMessageCount)}
 						>
 							<NavItem
 								id="notifications"
@@ -40,7 +39,7 @@ const Nav = () => {
 								id="messages"
 								label="Messages"
 								href={`/u/${user.id}/messages`}
-								bubble={messagesBubble}
+								bubble={user.unreadMessageCount}
 							/>
 							<div className="divider" />
 							<NavItem id="stories" label="Adventures" href={`/u/${user.id}/s`} />
