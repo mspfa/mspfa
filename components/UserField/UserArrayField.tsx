@@ -26,7 +26,6 @@ const UserArrayField = ({
 			userFieldKeys[index] = i;
 		}
 
-		console.log(index, userFieldKeys[index]);
 		return userFieldKeys[index];
 	};
 
