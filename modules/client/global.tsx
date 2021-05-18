@@ -2,13 +2,12 @@
 
 import * as MSPFA from 'modules/client/MSPFA';
 import { Dialog } from 'modules/client/dialogs';
-import env from 'modules/client/env';
 
 (global as any).MSPFA = MSPFA;
 
 window.addEventListener('error', event => {
-	if (env.NODE_ENV === 'development' || /bot/i.test(navigator.userAgent)) {
-		// return;
+	if (/bot/i.test(navigator.userAgent)) {
+		return;
 	}
 
 	if (event.filename.startsWith(`${location.origin}/`)) {

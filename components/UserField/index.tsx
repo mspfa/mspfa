@@ -183,7 +183,16 @@ const UserField = ({
 		if (isEditing) {
 			// `setTimeout` is necessary here because otherwise, for example when tabbing through auto-complete options, this will run before the next auto-complete option focuses, so the `if` statement would not detect that any option is in focus.
 			setTimeout(() => {
-				if (userFieldRef.current && !userFieldRef.current.contains(document.activeElement)) {
+				if (!(
+					// An element is focused,
+					document.activeElement
+					// the user field is mounted,
+					&& userFieldRef.current
+					// the focused element is in the user field,
+					&& userFieldRef.current.contains(document.activeElement)
+					// and the focused element is the user field input or an auto-complete option.
+					&& /(?:^| )user-field-(?:input|option)(?: |$)/.test(document.activeElement.className)
+				)) {
 					setOpenAutoComplete(false);
 				}
 			});

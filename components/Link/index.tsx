@@ -41,7 +41,7 @@ const Link = React.forwardRef<HTMLAnchorElement & HTMLButtonElement, LinkProps>(
 ) => {
 	const linkClassName = (
 		className
-			? /(^| )button( |$)/.test(className)
+			? /(?:^| )button(?: |$)/.test(className)
 				? className
 				: `link ${className}`
 			: 'link'
