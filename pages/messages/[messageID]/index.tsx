@@ -50,8 +50,12 @@ const Component = withErrorPage<ServerSideProps>(({ message, userCache: initialU
 							</Link>
 						</Fragment>
 					))}<br />
-					{'Date Sent: '}
-					<Timestamp withTime>
+					<Timestamp
+						id="message-timestamp"
+						relative
+						withTime
+						prefix="Sent "
+					>
 						{message.sent}
 					</Timestamp>
 				</BoxSection>

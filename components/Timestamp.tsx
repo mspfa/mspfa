@@ -1,5 +1,5 @@
 import { monthNames } from 'modules/client/dates';
-import type { HTMLAttributes } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
 
 /** Outputs a string which is exactly two digits of the input. */
 const twoDigits = (value: any) => `0${value}`.slice(-2);
@@ -96,10 +96,12 @@ export type TimestampProps = Omit<HTMLAttributes<HTMLSpanElement>, 'children'> &
 	/**
 	 * Whether the timestamp should display the time of day (or have it in the `title` attribute if the timestamp is `short` or `relative` (but not both)).
 	 */
-	withTime?: boolean
+	withTime?: boolean,
+	prefix?: ReactNode,
+	suffix?: ReactNode
 };
 
-const Timestamp = ({ short, relative, withTime, className, children, ...props }: TimestampProps) => {
+const Timestamp = ({ short, relative, withTime, className, prefix, suffix, children, ...props }: TimestampProps) => {
 	const date = children instanceof Date ? children : new Date(children);
 
 	return (
@@ -117,6 +119,7 @@ const Timestamp = ({ short, relative, withTime, className, children, ...props }:
 			{...props}
 			suppressHydrationWarning
 		>
+			{prefix}
 			{(
 				short
 					? getShortTimestamp(date)
@@ -124,6 +127,7 @@ const Timestamp = ({ short, relative, withTime, className, children, ...props }:
 						? getRelativeTimestamp(date)
 						: getAbsoluteTimestamp(date, withTime)
 			)}
+			{suffix}
 		</span>
 	);
 };
