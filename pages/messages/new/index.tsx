@@ -25,7 +25,7 @@ import Router from 'next/router';
 type MessagesAPI = APIClient<typeof import('pages/api/messages').default>;
 
 const initialValues = {
-	to: [] as string[],
+	to: [undefined] as Array<string | undefined>,
 	subject: '',
 	content: ''
 };
@@ -43,15 +43,19 @@ const Component = ({ toUsers = [] }: ServerSideProps) => {
 
 	return (
 		<Page flashyTitle heading="Messages">
-			<Formik
+			<Formik<Values>
 				initialValues={{
 					...initialValues,
-					to: toUsers.map(({ id }) => id)
+					to: (
+						toUsers.length
+							? toUsers.map(({ id }) => id)
+							: [undefined]
+					)
 				}}
 				onSubmit={
 					useCallback(async (
 						values: Values,
-						{ setSubmitting }: FormikHelpers<Values>
+						{ setSubmitting, resetForm }: FormikHelpers<Values>
 					) => {
 						if (!getUser()) {
 							setSubmitting(false);
@@ -68,7 +72,13 @@ const Component = ({ toUsers = [] }: ServerSideProps) => {
 							return;
 						}
 
-						const { data: clientMessage } = await (api as MessagesAPI).post('/messages', values);
+						const { data: clientMessage } = await (api as MessagesAPI).post('/messages', {
+							...values,
+							to: values.to.filter(Boolean) as string[]
+						});
+
+						// After the message is sent, reset the form so its state doesn't get messed up if the user comes back to the page through their tab's history.
+						resetForm();
 
 						// This needs to be `await`ed so `isSubmitting` remains `true` while the router loads, ensuring `useLeaveConfirmation`'s argument is `false`.
 						await Router.push(`/messages/${clientMessage.id}`);
