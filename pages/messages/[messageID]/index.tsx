@@ -17,6 +17,7 @@ import Link from 'components/Link';
 import { Fragment } from 'react';
 import Timestamp from 'components/Timestamp';
 import Button from 'components/Button';
+import BoxFooter from 'components/Box/BoxFooter';
 
 type ServerSideProps = {
 	message: ClientMessage,
@@ -70,15 +71,15 @@ const Component = withErrorPage<ServerSideProps>(({ message, userCache: initialU
 							</>
 						)}
 					</div>
-					<div id="message-actions">
-						<Button className="small">All Messages</Button>
-						<Button className="small">Reply</Button>
-						<Button className="small">Delete</Button>
-					</div>
 				</BoxSection>
 				<BoxSection id="message-content">
 					<BBCode>{message.content}</BBCode>
 				</BoxSection>
+				<BoxFooter>
+					<Button>All Messages</Button>
+					<Button>Reply</Button>
+					<Button>Delete</Button>
+				</BoxFooter>
 			</Box>
 		</Page>
 	);
