@@ -8,6 +8,7 @@ import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
 import { useCallback } from 'react';
 import Router from 'next/router';
+import BoxSection from 'components/Box/BoxSection';
 
 export type ErrorPageProps = {
 	statusCode: number,
@@ -21,7 +22,7 @@ const ErrorPage = ({ statusCode, imageFilename }: ErrorPageProps) => (
 	<Page flashyTitle heading={`Error ${statusCode}`}>
 		<Box>
 			{statusCode === 403 && (
-				<>
+				<BoxSection>
 					<BoxRow>
 						<img
 							src={`/images/403/${imageFilename!}`}
@@ -33,7 +34,7 @@ const ErrorPage = ({ statusCode, imageFilename }: ErrorPageProps) => (
 							You don't have permission to access this page.
 						</p>
 					</BoxRow>
-				</>
+				</BoxSection>
 			)}
 			<BoxFooter>
 				<Button
