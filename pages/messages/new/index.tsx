@@ -127,7 +127,6 @@ const Component = ({ toUsers = [] }: ServerSideProps) => {
 											required
 											rows={16}
 											maxLength={20000}
-											html
 										/>
 									</div>
 								</BoxSection>

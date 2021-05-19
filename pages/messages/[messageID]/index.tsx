@@ -77,9 +77,7 @@ const Component = withErrorPage<ServerSideProps>(({ message, userCache: initialU
 					</div>
 				</BoxSection>
 				<BoxSection id="message-content">
-					<BBCode html>
-						{message.content}
-					</BBCode>
+					<BBCode>{message.content}</BBCode>
 				</BoxSection>
 			</Box>
 		</Page>
