@@ -101,8 +101,8 @@ const Component = ({ toUsers = [] }: ServerSideProps) => {
 										<UserArrayField
 											name="to"
 											required
-											autoFocus
 											unique
+											autoFocus={!toUsers.length}
 										/>
 									</div>
 									<div className="field-container">
@@ -113,9 +113,9 @@ const Component = ({ toUsers = [] }: ServerSideProps) => {
 											id="field-subject"
 											name="subject"
 											required
-											autoFocus
 											maxLength={50}
 											autoComplete="off"
+											autoFocus={!!toUsers.length}
 										/>
 									</div>
 									<div className="field-container">
