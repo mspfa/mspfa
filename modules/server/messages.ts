@@ -1,8 +1,10 @@
 import type { ObjectId } from 'mongodb';
-import db from 'modules/server/db';
+import type { UnsafeObjectID } from 'modules/server/db';
+import db, { safeObjectID } from 'modules/server/db';
 import type { UserID } from 'modules/server/users';
 import type { ClientMessage } from 'modules/client/messages';
 import users from 'modules/server/users';
+import type { APIResponse } from 'modules/server/api';
 
 export type MessageID = ObjectId;
 
@@ -51,6 +53,47 @@ export const getClientMessage = (message: MessageDocument): ClientMessage => ({
 const messages = db.collection<MessageDocument>('messages');
 
 export default messages;
+
+/**
+ * Finds and returns a `MessageDocument` by a possibly unsafe ID.
+ *
+ * Returns `undefined` if the ID is invalid, the user is not found, or the user is scheduled for deletion.
+ *
+ * If the `res` parameter is specified, failing to find a valid user will result in an error response, and this function will never resolve.
+ */
+export const getMessageByUnsafeID = <Res extends APIResponse<any> | undefined>(
+	...[id, res]: [
+		id: UnsafeObjectID,
+		res: Res
+	] | [
+		id: UnsafeObjectID
+		// It is necessary to use tuple types instead of simply having `res` be an optional parameter, because otherwise `Res` will not always be inferred correctly.
+	]
+) => new Promise<MessageDocument | (undefined extends Res ? undefined : never)>(async resolve => {
+	const messageID = safeObjectID(id);
+
+	let message: MessageDocument | null | undefined;
+
+	if (messageID) {
+		message = await messages.findOne({
+			_id: messageID
+		});
+	}
+
+	if (!message) {
+		if (res) {
+			res.status(404).send({
+				message: 'No message was found with the specified ID.'
+			});
+		} else {
+			resolve(undefined as any);
+		}
+
+		return;
+	}
+
+	resolve(message);
+});
 
 export const updateUnreadMessages = async (userID: UserID) => {
 	const unreadMessageCount = (

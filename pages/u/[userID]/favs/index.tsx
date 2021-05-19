@@ -23,7 +23,7 @@ type ServerSideProps = {
 
 const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publicStories }) => (
 	<Page flashyTitle heading="Favorite Adventures">
-		<Box id="profile-box">
+		<Box>
 			<BoxSection heading={`${publicUser.name}'s Favorites`}>
 				<BoxRow>
 					<Link href={`/u/${publicUser.id}`}>
