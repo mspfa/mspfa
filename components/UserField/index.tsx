@@ -53,7 +53,7 @@ const UserField = ({
 	unique,
 	userFieldArrayValue,
 	onChange: onChangeProp,
-	...props
+	autoFocus
 }: UserFieldProps) => {
 	const idPrefix = usePrefixedID();
 
@@ -204,10 +204,14 @@ const UserField = ({
 		if (isEditing) {
 			// The user started editing.
 
+			const userFieldInput = userFieldRef.current!.getElementsByClassName('user-field-input')[0] as HTMLInputElement;
+
 			// We only want to select the input field if there is anything to select. If there isn't, that means this component mounted without a value, and the user didn't activate the edit button.
 			if (inputValue) {
-				const userFieldInput = userFieldRef.current!.getElementsByClassName('user-field-input')[0] as HTMLInputElement;
 				userFieldInput.select();
+			} else if (autoFocus) {
+				// This is necessary because adding `autoFocus={autoFocus}` to the `input` element didn't work.
+				userFieldInput.focus();
 			}
 		} else {
 			// The user stopped editing.
@@ -290,7 +294,6 @@ const UserField = ({
 						// If `required === true`, the below `pattern` will never allow the input to be valid due to the above `required` prop, invalidating the form for browsers that don't support `setCustomValidity`.
 						pattern={required ? '^$' : undefined}
 						readOnly={readOnly}
-						{...props}
 					/>
 					{!!autoCompleteUsers.length && (
 						<div className="user-field-auto-complete input-like">
