@@ -16,6 +16,7 @@ import { useUserCache } from 'modules/client/UserCache';
 import Link from 'components/Link';
 import { Fragment } from 'react';
 import Timestamp from 'components/Timestamp';
+import Button from 'components/Button';
 
 type ServerSideProps = {
 	message: ClientMessage,
@@ -38,29 +39,44 @@ const Component = withErrorPage<ServerSideProps>(({ message, userCache: initialU
 					id="message-meta"
 					heading={message.subject}
 				>
-					{'From: '}
-					<Link href={`/u/${fromUser.id}`}>
-						{fromUser.name}
-					</Link><br />
-					{'To: '}
-					{toUsers.map((toUser, index) => (
-						<Fragment key={toUser.id}>
-							{index !== 0 && ', '}
-							<Link href={`/u/${toUser.id}`}>
-								{toUser.name}
-							</Link>
-						</Fragment>
-					))}<br />
-					<Timestamp
-						id="message-timestamp"
-						relative
-						withTime
-						prefix="Sent "
-					>
-						{message.sent}
-					</Timestamp>
+					<div id="message-from">
+						{'From: '}
+						<Link href={`/u/${fromUser.id}`}>
+							{fromUser.name}
+						</Link>
+					</div>
+					<div id="message-to">
+						{'To: '}
+						{toUsers.map((toUser, index) => (
+							<Fragment key={toUser.id}>
+								{index !== 0 && ', '}
+								<Link href={`/u/${toUser.id}`}>
+									{toUser.name}
+								</Link>
+							</Fragment>
+						))}
+					</div>
+					<div id="message-sent">
+						<Timestamp relative withTime prefix="Sent ">
+							{message.sent}
+						</Timestamp>
+						{message.edited && (
+							<>
+								{' ('}
+								<Timestamp relative withTime prefix="Edited ">
+									{message.edited}
+								</Timestamp>
+								)
+							</>
+						)}
+					</div>
+					<div id="message-actions">
+						<Button className="small">All Messages</Button>
+						<Button className="small">Reply</Button>
+						<Button className="small">Delete</Button>
+					</div>
 				</BoxSection>
-				<BoxSection>
+				<BoxSection id="message-content">
 					<BBCode html>
 						{message.content}
 					</BBCode>

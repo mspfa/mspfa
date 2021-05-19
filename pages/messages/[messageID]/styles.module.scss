@@ -1,3 +1,9 @@
-#message-meta > .box-content {
-	font-size: 0.875em;
+#message {
+	&-meta > .box-content {
+		font-size: 0.875em;
+	}
+
+	&-actions {
+		margin-top: 1em;
+	}
 }
