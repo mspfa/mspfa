@@ -102,7 +102,7 @@ const Component = ({ toUsers = [] }: ServerSideProps) => {
 											name="to"
 											required
 											unique
-											autoFocus={!toUsers.length}
+											autoFocus={toUsers.length === 0}
 										/>
 									</div>
 									<div className="field-container">
@@ -115,7 +115,7 @@ const Component = ({ toUsers = [] }: ServerSideProps) => {
 											required
 											maxLength={50}
 											autoComplete="off"
-											autoFocus={!!toUsers.length}
+											autoFocus={toUsers.length !== 0}
 										/>
 									</div>
 									<div className="field-container">
