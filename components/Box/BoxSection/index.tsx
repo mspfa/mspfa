@@ -12,23 +12,25 @@ const BoxSection = ({
 	heading,
 	className,
 	collapsible,
-	open,
+	children,
 	...props
 }: BoxSectionProps) => {
 	const SectionTag = collapsible ? 'details' : 'div';
 	const HeadingTag = collapsible ? 'summary' : 'div';
 
 	return (
-		<SectionTag className="box-section" open={open}>
+		<SectionTag
+			className={`box-section${className ? ` ${className}` : ''}`}
+			{...props}
+		>
 			{heading && (
 				<HeadingTag className="box-heading front-alt">
 					{heading}
 				</HeadingTag>
 			)}
-			<div
-				className={`box-content front${className ? ` ${className}` : ''}`}
-				{...props}
-			/>
+			<div className="box-content front">
+				{children}
+			</div>
 		</SectionTag>
 	);
 };

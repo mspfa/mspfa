@@ -1,5 +1,5 @@
 .notification-setting {
-	&-group {
+	&-group > .box-content {
 		grid-template-columns: auto 0fr 0fr;
 		justify-content: center;
 		align-items: center;
