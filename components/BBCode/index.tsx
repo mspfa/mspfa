@@ -171,7 +171,7 @@ const BBCode = ({
 	return (
 		<span className="bbcode">
 			{(noBB && !html
-				// If BBCode and HTML are both disabled, then the HTML is plain text, so it's more optimized not to call the HTML parser.
+				// If BBCode and HTML are both disabled, then the HTML is plain text, so it's more optimized to insert the string as a text node rather than parsing it as HTML.
 				? htmlString
 				: parse(htmlString, parseOptions)
 			)}

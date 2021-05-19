@@ -156,6 +156,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										name="description"
 										rows={8}
 										maxLength={2000}
+										html
 									/>
 								</BoxSection>
 								<BoxSection heading="Advanced" collapsible>

@@ -72,7 +72,7 @@ const Component = ({ toUsers = [] }: ServerSideProps) => {
 							return;
 						}
 
-						const { data: clientMessage } = await (api as MessagesAPI).post('/messages', {
+						const { data: message } = await (api as MessagesAPI).post('/messages', {
 							...values,
 							to: values.to.filter(Boolean) as string[]
 						});
@@ -81,7 +81,7 @@ const Component = ({ toUsers = [] }: ServerSideProps) => {
 						resetForm();
 
 						// This needs to be `await`ed so `isSubmitting` remains `true` while the router loads, ensuring `useLeaveConfirmation`'s argument is `false`.
-						await Router.push(`/messages/${clientMessage.id}`);
+						await Router.push(`/messages/${message.id}`);
 					}, [])
 				}
 			>
@@ -127,6 +127,7 @@ const Component = ({ toUsers = [] }: ServerSideProps) => {
 											required
 											rows={16}
 											maxLength={20000}
+											html
 										/>
 									</div>
 								</BoxSection>

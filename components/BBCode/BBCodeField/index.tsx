@@ -2,6 +2,7 @@ import './styles.module.scss';
 import type { TextareaHTMLAttributes } from 'react';
 import React, { useRef, useMemo } from 'react';
 import BBTool from 'components/BBCode/BBTool';
+import type { BBCodeProps } from 'components/BBCode';
 import BBCode from 'components/BBCode';
 import Spoiler from 'components/Spoiler';
 import { Field, useField } from 'formik';
@@ -18,10 +19,10 @@ export const TextAreaRefContext = React.createContext<{
 
 export type BBCodeFieldProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'children' | 'value'> & {
 	name: string
-};
+} & Omit<BBCodeProps, 'children'>;
 
 /** A text area field that accepts BBCode. */
-const BBCodeField = ({ name, ...props }: BBCodeFieldProps) => {
+const BBCodeField = ({ name, html, noBB, raw, ...props }: BBCodeFieldProps) => {
 	const [, { value }, { setValue }] = useField<string>(name);
 	const textAreaRef = useRef<HTMLTextAreaElement>(null!);
 
@@ -79,7 +80,9 @@ const BBCodeField = ({ name, ...props }: BBCodeFieldProps) => {
 				close="Hide Preview"
 				initialOpen={false}
 			>
-				<BBCode html>{value}</BBCode>
+				<BBCode html={html} noBB={noBB} raw={raw}>
+					{value}
+				</BBCode>
 			</Spoiler>
 		</TextAreaRefContext.Provider>
 	);
