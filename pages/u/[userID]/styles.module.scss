@@ -11,7 +11,7 @@
 		}
 
 		.box-row {
-			&-section {
+			&-section > .box-content {
 				justify-content: center;
 				column-gap: 2em;
 			}
