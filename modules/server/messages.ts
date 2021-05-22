@@ -109,4 +109,6 @@ export const updateUnreadMessages = async (userID: UserID) => {
 	}, {
 		$set: { unreadMessageCount }
 	});
+
+	return unreadMessageCount;
 };

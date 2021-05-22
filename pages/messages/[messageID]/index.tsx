@@ -5,7 +5,7 @@ import { withStatusCode } from 'modules/server/errors';
 import Box from 'components/Box';
 import BoxSection from 'components/Box/BoxSection';
 import { Perm } from 'modules/client/perms';
-import { getClientMessage, getMessageByUnsafeID } from 'modules/server/messages';
+import messages, { getClientMessage, getMessageByUnsafeID, updateUnreadMessages } from 'modules/server/messages';
 import type { ClientMessage } from 'modules/client/messages';
 import BBCode from 'components/BBCode';
 import type { UserDocument } from 'modules/server/users';
@@ -61,7 +61,7 @@ const Component = withErrorPage<ServerSideProps>(({ message, userCache: initialU
 						<Timestamp relative withTime prefix="Sent ">
 							{message.sent}
 						</Timestamp>
-						{message.edited && (
+						{message.edited !== undefined && (
 							<>
 								{' ('}
 								<Timestamp relative withTime prefix="Edited ">
@@ -102,6 +102,20 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		)
 	)) {
 		return { props: { statusCode: 403 } };
+	}
+
+	// If the message is unread, mark it as read.
+	if (messageFromParams.notReadBy.some(userID => userID.equals(req.user!._id))) {
+		messages.updateOne({
+			_id: messageFromParams._id
+		}, {
+			$pull: {
+				notReadBy: req.user._id
+			}
+		});
+
+		// Update the unread message count being sent to the client.
+		req.initialProps.user!.unreadMessageCount = await updateUnreadMessages(req.user._id);
 	}
 
 	const userCacheIDs = uniqBy([messageFromParams.from, ...messageFromParams.to], String);
