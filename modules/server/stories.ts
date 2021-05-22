@@ -195,6 +195,7 @@ export const getPublicStoriesByEditor = async (editor: UserDocument) => (
 	}).map(getPublicStory).toArray()
 );
 
+/** Updates the specified story's `favCount`. Sends the new `{ favCount }` as an API response. */
 export const updateAndSendFavCount = async (
 	res: APIResponse<{
 		body: {

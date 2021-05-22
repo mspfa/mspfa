@@ -95,6 +95,7 @@ export const getMessageByUnsafeID = <Res extends APIResponse<any> | undefined>(
 	resolve(message);
 });
 
+/** Updates the specified user's `unreadMessageCount`. Returns the new `unreadMessageCount` value. */
 export const updateUnreadMessages = async (userID: UserID) => {
 	const unreadMessageCount = (
 		await messages.aggregate!([

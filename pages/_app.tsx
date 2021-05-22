@@ -72,6 +72,7 @@ const MyApp = ({
 				<UserContext.Provider value={mergedUser}>
 					<UserCache.Provider
 						value={
+							// Set the initial user cache to a memoized empty object.
 							useMemo(() => ({}), [])
 						}
 					>
