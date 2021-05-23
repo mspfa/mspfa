@@ -154,7 +154,7 @@ function permToGetUser(
 }
 
 /**
- * Authenticates the request and requires the authenticated user to have permission to get the user of ID `req.query.userID`.
+ * Authenticates the request and requires the authenticated user to have permission to get the user of ID `req.query.userID`, or by the `userID` argument if `req.query.userID` does not exist.
  *
  * Returns the other user if successful.
  *
@@ -162,25 +162,33 @@ function permToGetUser(
  * ```
  * const user = await permToGetUserInAPI(req, res, Perm.sudoWrite);
  * const user = await permToGetUserInAPI(req, res, Perm.sudoWrite | Perm.sudoDelete);
+ * const user = await permToGetUserInAPI(req, res, Perm.sudoWrite, req.body.user);
  * ```
  */
-export const permToGetUserInAPI = async (
-	req: APIRequest<{ query: { userID: string } }>,
+export const permToGetUserInAPI = async <UserID extends string | undefined = undefined>(
+	req: APIRequest<{ query: { userID: UserID } } | {}>,
 	res: APIResponse,
 	/**
 	 * The perm or binary OR of perms to require.
 	 *
 	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
 	 */
-	perms: number
+	perms: number,
+	...[
+		userID = (req.query as any).userID
+	]: (UserID extends string ? [
+		userID?: string
+	] : [
+		userID: string
+	])
 ) => (
-	await permToGetUser(
+	(await permToGetUser(
 		res,
 		(await authenticate(req, res)).user,
-		req.query.userID,
+		userID,
 		perms
-	)
-).user;
+	)).user
+);
 
 /**
  * Requires a user to have permission to get another user by potentially unsafe ID.

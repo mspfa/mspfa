@@ -6,6 +6,7 @@ import type { MessageDocument } from 'modules/server/messages';
 import messages, { updateUnreadMessages, getClientMessage } from 'modules/server/messages';
 import { ObjectId } from 'mongodb';
 import { getUserByUnsafeID } from 'modules/server/users';
+import { uniqBy } from 'lodash';
 
 const Handler: APIHandler<{
 	method: 'POST',
@@ -36,7 +37,7 @@ const Handler: APIHandler<{
 		sent: now,
 		from: user._id,
 		to: recipientIDs,
-		notDeletedBy: recipientIDs,
+		notDeletedBy: uniqBy([user._id, ...recipientIDs], String),
 		notReadBy: recipientIDs,
 		subject: req.body.subject,
 		content: req.body.content

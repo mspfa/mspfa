@@ -20,6 +20,7 @@ export type MessageDocument = {
 	to: UserID[],
 	/** The message ID which this is a reply to, or undefined if it is not a reply. */
 	replyTo?: MessageID,
+	/** The IDs of users who have access to this message. */
 	notDeletedBy: UserID[],
 	notReadBy: UserID[],
 	/**

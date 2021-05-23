@@ -11,13 +11,21 @@ import BBCode from 'components/BBCode';
 import type { UserDocument } from 'modules/server/users';
 import users, { getPublicUser } from 'modules/server/users';
 import type { PublicUser } from 'modules/client/users';
+import { useUser } from 'modules/client/users';
 import { uniqBy } from 'lodash';
 import { useUserCache } from 'modules/client/UserCache';
 import Link from 'components/Link';
-import { Fragment } from 'react';
+import { Fragment, useCallback } from 'react';
 import Timestamp from 'components/Timestamp';
 import Button from 'components/Button';
 import BoxFooter from 'components/Box/BoxFooter';
+import type { APIClient } from 'modules/client/api';
+import api from 'modules/client/api';
+import Router from 'next/router';
+import { Dialog } from 'modules/client/dialogs';
+
+type MessageAPI = APIClient<typeof import('pages/api/messages/[messageID]').default>;
+type MessageDeletedByAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy').default>;
 
 type ServerSideProps = {
 	message: ClientMessage,
@@ -27,6 +35,8 @@ type ServerSideProps = {
 };
 
 const Component = withErrorPage<ServerSideProps>(({ message, userCache: initialUserCache }) => {
+	const user = useUser()!;
+
 	const { cacheUser, userCache } = useUserCache();
 	initialUserCache.forEach(cacheUser);
 
@@ -76,9 +86,32 @@ const Component = withErrorPage<ServerSideProps>(({ message, userCache: initialU
 					<BBCode>{message.content}</BBCode>
 				</BoxSection>
 				<BoxFooter>
-					<Button>All Messages</Button>
-					<Button>Reply</Button>
-					<Button>Delete</Button>
+					<Button href={`/u/${user.id}/messages`}>
+						All Messages
+					</Button>
+					<Button href={`/messages/new?replyTo=${message.id}`}>
+						Reply
+					</Button>
+					<Button
+						onClick={
+							useCallback(async () => {
+								if (!await Dialog.confirm({
+									title: 'Delete Message',
+									content: 'Are you sure you want to delete this message?\n\nThe message will only be deleted for you.'
+								})) {
+									return;
+								}
+
+								await (api as MessageDeletedByAPI).post(`/messages/${message.id}/deletedBy`, {
+									user: user.id
+								});
+
+								Router.push(`/u/${user.id}/messages`);
+							}, [message.id, user.id])
+						}
+					>
+						Delete
+					</Button>
 				</BoxFooter>
 			</Box>
 		</Page>
@@ -88,16 +121,11 @@ const Component = withErrorPage<ServerSideProps>(({ message, userCache: initialU
 export default Component;
 
 export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, params }) => {
-	const messageFromParams = await getMessageByUnsafeID(params.messageID);
-
-	if (!messageFromParams) {
-		return { props: { statusCode: 404 } };
-	}
+	const message = await getMessageByUnsafeID(params.messageID);
 
 	if (!(
-		req.user && (
-			messageFromParams.from.equals(req.user._id)
-			|| messageFromParams.to.some(userID => userID.equals(req.user!._id))
+		message && req.user && (
+			message.notDeletedBy.some(userID => userID.equals(req.user!._id))
 			|| req.user.perms & Perm.sudoRead
 		)
 	)) {
@@ -105,9 +133,9 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 	}
 
 	// If the message is unread, mark it as read.
-	if (messageFromParams.notReadBy.some(userID => userID.equals(req.user!._id))) {
+	if (message.notReadBy.some(userID => userID.equals(req.user!._id))) {
 		messages.updateOne({
-			_id: messageFromParams._id
+			_id: message._id
 		}, {
 			$pull: {
 				notReadBy: req.user._id
@@ -118,11 +146,11 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		req.initialProps.user!.unreadMessageCount = await updateUnreadMessages(req.user._id);
 	}
 
-	const userCacheIDs = uniqBy([messageFromParams.from, ...messageFromParams.to], String);
+	const userCacheIDs = uniqBy([message.from, ...message.to], String);
 
 	return {
 		props: {
-			message: getClientMessage(messageFromParams),
+			message: getClientMessage(message),
 			userCache: (
 				(
 					(
