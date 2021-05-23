@@ -81,7 +81,7 @@ const Component = ({ toUsers = [] }: ServerSideProps) => {
 						resetForm();
 
 						// This needs to be `await`ed so `isSubmitting` remains `true` while the router loads, ensuring `useLeaveConfirmation`'s argument is `false`.
-						await Router.push(`/messages/${message.id}`);
+						await Router.push(`/message/${message.id}`);
 					}, [])
 				}
 			>

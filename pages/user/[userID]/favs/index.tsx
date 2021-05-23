@@ -26,13 +26,13 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publ
 		<Box>
 			<BoxSection heading={`${publicUser.name}'s Favorites`}>
 				<BoxRow>
-					<Link href={`/u/${publicUser.id}`}>
+					<Link href={`/user/${publicUser.id}`}>
 						Back to Profile
 					</Link>
 				</BoxRow>
 				{!favsPublic && (
 					<BoxRow className="translucent-text">
-						Only you can see your favorites. If you want others to be able to see, enable public favorites in <Link href={`/u/${publicUser.id}/edit`}>your profile settings</Link>.
+						Only you can see your favorites. If you want others to be able to see, enable public favorites in <Link href={`/user/${publicUser.id}/edit`}>your profile settings</Link>.
 					</BoxRow>
 				)}
 				<BoxRow>

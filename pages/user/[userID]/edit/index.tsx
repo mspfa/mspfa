@@ -179,7 +179,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 									>
 										Save
 									</Button>
-									<Button href={`/u/${privateUser.id}`}>
+									<Button href={`/user/${privateUser.id}`}>
 										Back to Profile
 									</Button>
 								</BoxFooter>

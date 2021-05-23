@@ -53,7 +53,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 					) && (
 						<EditButton
 							className="spaced"
-							href={`/s/${publicStory.id}/edit/pages`}
+							href={`/s/${publicStory.id}/edit/p`}
 						/>
 					)}
 					<FavButton className="spaced" storyID={publicStory.id}>

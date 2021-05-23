@@ -52,7 +52,7 @@ const Component = withErrorPage<ServerSideProps>(({ message, userCache: initialU
 				>
 					<div id="message-from">
 						{'From: '}
-						<Link href={`/u/${fromUser.id}`}>
+						<Link href={`/user/${fromUser.id}`}>
 							{fromUser.name}
 						</Link>
 					</div>
@@ -61,7 +61,7 @@ const Component = withErrorPage<ServerSideProps>(({ message, userCache: initialU
 						{toUsers.map((toUser, index) => (
 							<Fragment key={toUser.id}>
 								{index !== 0 && ', '}
-								<Link href={`/u/${toUser.id}`}>
+								<Link href={`/user/${toUser.id}`}>
 									{toUser.name}
 								</Link>
 							</Fragment>
@@ -82,10 +82,10 @@ const Component = withErrorPage<ServerSideProps>(({ message, userCache: initialU
 					<BBCode>{message.content}</BBCode>
 				</BoxSection>
 				<BoxFooter>
-					<Button href={`/u/${user.id}/messages`}>
+					<Button href={`/user/${user.id}/messages`}>
 						All Messages
 					</Button>
-					<Button href={`/messages/new?replyTo=${message.id}`}>
+					<Button href={`/message/new?replyTo=${message.id}`}>
 						Reply
 					</Button>
 					<Button
@@ -98,11 +98,11 @@ const Component = withErrorPage<ServerSideProps>(({ message, userCache: initialU
 									return;
 								}
 
-								await (api as MessageDeletedByAPI).post(`/messages/${message.id}/deletedBy`, {
+								await (api as MessageDeletedByAPI).post(`/message/${message.id}/deletedBy`, {
 									user: user.id
 								});
 
-								Router.push(`/u/${user.id}/messages`);
+								Router.push(`/user/${user.id}/messages`);
 							}, [message.id, user.id])
 						}
 					>

@@ -32,22 +32,22 @@ const Nav = () => {
 							<NavItem
 								id="notifications"
 								label="Notifications"
-								href={`/u/${user.id}/notifications`}
+								href={`/user/${user.id}/notifications`}
 								bubble={notificationsBubble}
 							/>
 							<NavItem
 								id="messages"
 								label="Messages"
-								href={`/u/${user.id}/messages`}
+								href={`/user/${user.id}/messages`}
 								bubble={user.unreadMessageCount}
 							/>
 							<div className="divider" />
-							<NavItem id="stories" label="Adventures" href={`/u/${user.id}/s`} />
-							<NavItem id="favs" label="Favorites" href={`/u/${user.id}/favs`} />
-							<NavItem id="saves" label="Game Saves" href={`/u/${user.id}/saves`} />
+							<NavItem id="stories" label="Adventures" href={`/user/${user.id}/s`} />
+							<NavItem id="favs" label="Favorites" href={`/user/${user.id}/favs`} />
+							<NavItem id="saves" label="Game Saves" href={`/user/${user.id}/saves`} />
 							<div className="divider" />
-							<NavItem id="profile" label="Profile" href={`/u/${user.id}`} />
-							<NavItem id="settings" label="Settings" href={`/u/${user.id}/settings`} />
+							<NavItem id="profile" label="Profile" href={`/user/${user.id}`} />
+							<NavItem id="settings" label="Settings" href={`/user/${user.id}/settings`} />
 							<div className="divider" />
 							<NavItem id="sign-out" label="Sign Out" onClick={signOut} />
 						</NavMenu>
