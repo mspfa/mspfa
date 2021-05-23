@@ -210,7 +210,7 @@ const UserField = ({
 			if (inputValue) {
 				userFieldInput.select();
 			} else if (autoFocus) {
-				// This is necessary because adding `autoFocus={autoFocus}` to the `input` element didn't work.
+				// This is necessary because `autoFocus={autoFocus}` on the `input` element only seems to work with SSR.
 				userFieldInput.focus();
 			}
 		} else {
@@ -288,12 +288,13 @@ const UserField = ({
 						autoComplete="off"
 						maxLength={32}
 						size={20}
-						value={inputValue}
-						onChange={onChange}
 						required={required}
 						// If `required === true`, the below `pattern` will never allow the input to be valid due to the above `required` prop, invalidating the form for browsers that don't support `setCustomValidity`.
 						pattern={required ? '^$' : undefined}
 						readOnly={readOnly}
+						autoFocus={autoFocus}
+						value={inputValue}
+						onChange={onChange}
 					/>
 					{!!autoCompleteUsers.length && (
 						<div className="user-field-auto-complete input-like">

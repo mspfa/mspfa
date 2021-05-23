@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import { useField } from 'formik';
 import type { InputHTMLAttributes } from 'react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import UserField from 'components/UserField';
 import AddUserButton from 'components/UserField/AddUserButton';
 
@@ -18,6 +18,8 @@ const UserArrayField = ({
 	className,
 	...props
 }: UserArrayFieldProps) => {
+	const userArrayFieldRef = useRef<HTMLDivElement>(null!);
+
 	const [, { value: fieldValue }, { setValue }] = useField<Array<string | undefined>>(name);
 	const [userFieldKeys] = useState<number[]>([]);
 
@@ -39,6 +41,7 @@ const UserArrayField = ({
 	return (
 		<div
 			className={`user-array-field${className ? ` ${className}` : ''}`}
+			ref={userArrayFieldRef}
 		>
 			{value.map((userID, index) => (
 				<UserField
@@ -54,7 +57,11 @@ const UserArrayField = ({
 				/>
 			))}
 			{!readOnly && (
-				<AddUserButton value={value} setValue={setValue} />
+				<AddUserButton
+					value={value}
+					setValue={setValue}
+					userArrayFieldRef={userArrayFieldRef}
+				/>
 			)}
 		</div>
 	);
