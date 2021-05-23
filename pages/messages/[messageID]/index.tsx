@@ -68,18 +68,14 @@ const Component = withErrorPage<ServerSideProps>(({ message, userCache: initialU
 						))}
 					</div>
 					<div id="message-sent">
-						<Timestamp relative withTime prefix="Sent ">
+						{'Sent: '}
+						<Timestamp
+							relative
+							withTime
+							edited={message.edited}
+						>
 							{message.sent}
 						</Timestamp>
-						{message.edited !== undefined && (
-							<>
-								{' ('}
-								<Timestamp relative withTime prefix="Edited ">
-									{message.edited}
-								</Timestamp>
-								)
-							</>
-						)}
 					</div>
 				</BoxSection>
 				<BoxSection id="message-content">
