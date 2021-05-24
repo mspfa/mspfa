@@ -46,9 +46,11 @@ const Handler: APIHandler<{
 
 	const recipientIDs = (
 		req.body.to
+			// All specified recipients from `req.body.to`.
 			? await Promise.all(req.body.to.map(
 				async unsafeUserID => (await getUserByUnsafeID(unsafeUserID, res))._id
 			))
+			// The sender and recipients of the message being replied to, excluding the sender of the reply.
 			: uniqBy([replyTo!.from, ...replyTo!.to], String).filter(
 				userID => !userID.equals(user._id)
 			)

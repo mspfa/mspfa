@@ -118,7 +118,7 @@ const Component = withErrorPage<ServerSideProps>(({
 									return;
 								}
 
-								await (api as MessageDeletedByAPI).post(`/message/${message.id}/deletedBy`, {
+								await (api as MessageDeletedByAPI).post(`/messages/${message.id}/deletedBy`, {
 									user: user.id
 								});
 
@@ -170,7 +170,10 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 	return {
 		props: {
 			message: getClientMessage(message),
-			...replyTo && {
+			...replyTo && (
+				replyTo.notDeletedBy.some(userID => userID.equals(req.user!._id))
+				|| req.user.perms & Perm.sudoRead
+			) && {
 				replyTo: getClientMessage(replyTo)
 			},
 			userCache: (
