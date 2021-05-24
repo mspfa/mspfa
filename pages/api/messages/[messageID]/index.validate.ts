@@ -8,7 +8,10 @@ export default createValidator({
 	definitions: {
 		RequestMethod: {
 			type: 'string',
-			const: 'DELETE'
+			enum: [
+				'DELETE',
+				'PUT'
+			]
 		}
 	}
 }, {
@@ -16,30 +19,72 @@ export default createValidator({
 	$ref: '#/definitions/Request',
 	definitions: {
 		Request: {
-			type: 'object',
-			additionalProperties: false,
-			properties: {
-				body: {},
-				query: {
+			anyOf: [
+				{
 					type: 'object',
+					additionalProperties: false,
 					properties: {
-						messageID: {
-							type: 'string'
+						body: {},
+						query: {
+							type: 'object',
+							properties: {
+								messageID: {
+									type: 'string'
+								}
+							},
+							required: [
+								'messageID'
+							],
+							additionalProperties: false
+						},
+						method: {
+							type: 'string',
+							const: 'DELETE'
 						}
 					},
 					required: [
-						'messageID'
-					],
-					additionalProperties: false
+						'method',
+						'query'
+					]
 				},
-				method: {
-					type: 'string',
-					const: 'DELETE'
+				{
+					type: 'object',
+					additionalProperties: false,
+					properties: {
+						body: {
+							type: 'object',
+							properties: {
+								content: {
+									type: 'string',
+									minLength: 1,
+									maxLength: 20000
+								}
+							},
+							additionalProperties: false
+						},
+						query: {
+							type: 'object',
+							properties: {
+								messageID: {
+									type: 'string'
+								}
+							},
+							required: [
+								'messageID'
+							],
+							additionalProperties: false
+						},
+						method: {
+							type: 'string',
+							const: 'PUT'
+						}
+					},
+					required: [
+						'body',
+						'method',
+						'query'
+					]
 				}
-			},
-			required: [
-				'method',
-				'query'
 			]
 		}
 	}

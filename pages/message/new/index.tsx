@@ -154,7 +154,7 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 										</div>
 									)}
 									<div className="field-container">
-										<Label htmlFor="field-description">
+										<Label htmlFor="field-content">
 											Content
 										</Label>
 										<BBCodeField

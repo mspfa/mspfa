@@ -387,7 +387,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										<Button
 											type="submit"
 											className="alt"
-											disabled={isSubmitting || !dirty}
+											disabled={!dirty || isSubmitting}
 										>
 											Save
 										</Button>

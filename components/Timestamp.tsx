@@ -29,7 +29,6 @@ const Timestamp = ({ short, relative, withTime, edited, className, children, ...
 		<>
 			<span
 				className={`timestamp${className ? ` ${className}` : ''}`}
-				suppressHydrationWarning
 				{...props}
 			>
 				<span
@@ -43,6 +42,7 @@ const Timestamp = ({ short, relative, withTime, edited, className, children, ...
 								? getAbsoluteTimestamp(date, withTime)
 								: getRelativeTimestamp(date)
 					)}
+					suppressHydrationWarning
 				>
 					{(
 						short
@@ -64,6 +64,7 @@ const Timestamp = ({ short, relative, withTime, edited, className, children, ...
 								: getRelativeTimestamp(dateEdited)
 							})`
 						}
+						suppressHydrationWarning
 					>
 						*
 					</span>

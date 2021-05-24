@@ -15,7 +15,7 @@ import { useUser } from 'modules/client/users';
 import { uniqBy } from 'lodash';
 import { useUserCache } from 'modules/client/UserCache';
 import Link from 'components/Link';
-import { Fragment, useCallback } from 'react';
+import { Fragment, useCallback, useState } from 'react';
 import Timestamp from 'components/Timestamp';
 import Button from 'components/Button';
 import BoxFooter from 'components/Box/BoxFooter';
@@ -23,6 +23,9 @@ import type { APIClient } from 'modules/client/api';
 import api from 'modules/client/api';
 import Router from 'next/router';
 import { Dialog } from 'modules/client/dialogs';
+import Label from 'components/Label';
+import BBCodeField from 'components/BBCode/BBCodeField';
+import { Form, Formik } from 'formik';
 
 type MessageAPI = APIClient<typeof import('pages/api/messages/[messageID]').default>;
 type MessageDeletedByAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy').default>;
@@ -36,11 +39,13 @@ type ServerSideProps = {
 };
 
 const Component = withErrorPage<ServerSideProps>(({
-	message,
+	message: messageProp,
 	replyTo,
 	userCache: initialUserCache
 }) => {
 	const user = useUser()!;
+	const [message, setMessage] = useState(messageProp);
+	const [editing, setEditing] = useState(false);
 
 	const { cacheUser, userCache } = useUserCache();
 	initialUserCache.forEach(cacheUser);
@@ -48,88 +53,157 @@ const Component = withErrorPage<ServerSideProps>(({
 	const fromUser = userCache[message.from]!;
 	const toUsers = message.to.map(userID => userCache[userID]!);
 
+	const onClickDelete	= useCallback(async () => {
+		if (!await Dialog.confirm({
+			title: 'Delete Message',
+			content: 'Are you sure you want to delete this message?\n\nThe message will only be deleted for you.'
+		})) {
+			return;
+		}
+
+		await (api as MessageDeletedByAPI).post(`/messages/${message.id}/deletedBy`, {
+			user: user.id
+		});
+
+		Router.push(`/user/${user.id}/messages`);
+	}, [message.id, user.id]);
+
+	const edit = useCallback(() => {
+		setEditing(true);
+	}, []);
+
 	return (
 		<Page flashyTitle heading="Messages">
-			<Box>
-				<BoxSection
-					id="message-meta"
-					heading={message.subject}
-				>
-					{message.replyTo && (
-						<div id="message-reply-to">
-							{'Reply To: '}
-							{replyTo ? (
-								<Link href={`/message/${replyTo.id}`}>
-									{replyTo.subject}
-								</Link>
-							) : (
-								// This shouldn't be possible unless something extraordinary occurs.
-								<span title={`ID: ${message.replyTo}`}>
-									[Deleted Message]
-								</span>
-							)}
-						</div>
-					)}
-					<div id="message-from">
-						{'From: '}
-						<Link href={`/user/${fromUser.id}`}>
-							{fromUser.name}
-						</Link>
-					</div>
-					<div id="message-to">
-						{'To: '}
-						{toUsers.map((toUser, index) => (
-							<Fragment key={toUser.id}>
-								{index !== 0 && ', '}
-								<Link href={`/user/${toUser.id}`}>
-									{toUser.name}
-								</Link>
-							</Fragment>
-						))}
-					</div>
-					<div id="message-sent">
-						{'Sent: '}
-						<Timestamp
-							relative
-							withTime
-							edited={message.edited}
-						>
-							{message.sent}
-						</Timestamp>
-					</div>
-				</BoxSection>
-				<BoxSection id="message-content">
-					<BBCode>{message.content}</BBCode>
-				</BoxSection>
-				<BoxFooter>
-					<Button href={`/user/${user.id}/messages`}>
-						All Messages
-					</Button>
-					<Button href={`/message/new?replyTo=${message.id}`}>
-						Reply
-					</Button>
-					<Button
-						onClick={
-							useCallback(async () => {
-								if (!await Dialog.confirm({
-									title: 'Delete Message',
-									content: 'Are you sure you want to delete this message?\n\nThe message will only be deleted for you.'
-								})) {
-									return;
-								}
+			<Formik
+				initialValues={{ content: message.content }}
+				onSubmit={
+					useCallback(async (values: { content: string }) => {
+						const { data: newMessage } = await (api as MessageAPI).put(`/messages/${message.id}`, values);
 
-								await (api as MessageDeletedByAPI).post(`/messages/${message.id}/deletedBy`, {
-									user: user.id
-								});
+						setMessage(newMessage);
+						setEditing(false);
+					}, [message])
+				}
+				enableReinitialize
+			>
+				{({ dirty, isSubmitting, resetForm }) => {
+					const cancel = useCallback(() => {
+						// In case the user decides to start editing again, reset the dirty values.
+						resetForm();
 
-								Router.push(`/user/${user.id}/messages`);
-							}, [message.id, user.id])
-						}
-					>
-						Delete
-					</Button>
-				</BoxFooter>
-			</Box>
+						setEditing(false);
+					}, [resetForm]);
+
+					return (
+						<Form>
+							<Box>
+								<BoxSection
+									id="message-meta"
+									heading={message.subject}
+								>
+									{message.replyTo && (
+										<div id="message-reply-to">
+											{'Reply To: '}
+											{replyTo ? (
+												<Link href={`/message/${replyTo.id}`}>
+													{replyTo.subject}
+												</Link>
+											) : (
+												// This shouldn't be possible unless something extraordinary occurs.
+												<span title={`ID: ${message.replyTo}`}>
+													[Deleted Message]
+												</span>
+											)}
+										</div>
+									)}
+									<div id="message-from">
+										{'From: '}
+										<Link href={`/user/${fromUser.id}`}>
+											{fromUser.name}
+										</Link>
+									</div>
+									<div id="message-to">
+										{'To: '}
+										{toUsers.map((toUser, index) => (
+											<Fragment key={toUser.id}>
+												{index !== 0 && ', '}
+												<Link href={`/user/${toUser.id}`}>
+													{toUser.name}
+												</Link>
+											</Fragment>
+										))}
+									</div>
+									<div id="message-sent">
+										{'Sent: '}
+										<Timestamp
+											relative
+											withTime
+											edited={message.edited}
+										>
+											{message.sent}
+										</Timestamp>
+									</div>
+								</BoxSection>
+								<BoxSection id="message-content">
+									{editing ? (
+										<>
+											<Label htmlFor="field-description">
+												Content
+											</Label>
+											<BBCodeField
+												name="content"
+												required
+												rows={16}
+												maxLength={20000}
+											/>
+										</>
+									) : (
+										<BBCode>{message.content}</BBCode>
+									)}
+								</BoxSection>
+								{editing ? (
+									<BoxFooter>
+										<Button
+											type="submit"
+											className="alt"
+											disabled={!dirty || isSubmitting}
+										>
+											Save
+										</Button>
+										<Button
+											type="reset"
+											disabled={isSubmitting}
+											onClick={cancel}
+										>
+											Cancel
+										</Button>
+									</BoxFooter>
+								) : (
+									<BoxFooter>
+										<Button href={`/user/${user.id}/messages`}>
+											All Messages
+										</Button>
+										<Button href={`/message/new?replyTo=${message.id}`}>
+											Reply
+										</Button>
+										{(
+											message.from === user.id
+											|| !!(user.perms & Perm.sudoWrite)
+										) && (
+											<Button onClick={edit}>
+												Edit
+											</Button>
+										)}
+										<Button onClick={onClickDelete}>
+											Delete
+										</Button>
+									</BoxFooter>
+								)}
+							</Box>
+						</Form>
+					);
+				}}
+			</Formik>
 		</Page>
 	);
 });
@@ -164,7 +238,6 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 
 	const userCacheIDs = uniqBy([message.from, ...message.to], String);
 
-	// Note that it is possible for no message to be found despite `message.replyTo` being set.
 	const replyTo = message.replyTo && await messages.findOne({ _id: message.replyTo });
 
 	return {
