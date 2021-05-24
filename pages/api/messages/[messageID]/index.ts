@@ -49,7 +49,7 @@ const Handler: APIHandler<{
 
 	if (!(
 		user && (
-			user._id.equals(message.from)
+			message.from.equals(user._id)
 			|| user.perms & Perm.sudoWrite
 		)
 	)) {
