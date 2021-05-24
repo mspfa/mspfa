@@ -152,7 +152,7 @@ const Component = withErrorPage<ServerSideProps>(({
 								<BoxSection id="message-content">
 									{editing ? (
 										<>
-											<Label htmlFor="field-description">
+											<Label htmlFor="field-content">
 												Content
 											</Label>
 											<BBCodeField
@@ -160,6 +160,7 @@ const Component = withErrorPage<ServerSideProps>(({
 												required
 												rows={16}
 												maxLength={20000}
+												autoFocus
 											/>
 										</>
 									) : (
