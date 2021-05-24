@@ -3,14 +3,24 @@ import type { APIHandler } from 'modules/server/api';
 import { authenticate } from 'modules/server/auth';
 import type { ClientMessage } from 'modules/client/messages';
 import type { MessageDocument } from 'modules/server/messages';
-import messages, { updateUnreadMessages, getClientMessage } from 'modules/server/messages';
+import messages, { updateUnreadMessages, getClientMessage, getMessageByUnsafeID } from 'modules/server/messages';
 import { ObjectId } from 'mongodb';
 import { getUserByUnsafeID } from 'modules/server/users';
 import { uniqBy } from 'lodash';
 
 const Handler: APIHandler<{
 	method: 'POST',
-	body: Pick<ClientMessage, 'to' | 'subject' | 'content'>
+	body: Pick<ClientMessage, 'content'> & (
+		{
+			to: ClientMessage['to'],
+			replyTo?: never,
+			subject: ClientMessage['subject']
+		} | {
+			to?: never,
+			replyTo: NonNullable<ClientMessage['replyTo']>,
+			subject?: never
+		}
+	)
 }, {
 	method: 'POST',
 	body: ClientMessage
@@ -28,18 +38,36 @@ const Handler: APIHandler<{
 
 	const now = new Date();
 
-	const recipientIDs = await Promise.all(req.body.to.map(
-		async unsafeUserID => (await getUserByUnsafeID(unsafeUserID, res))._id
-	));
+	const replyTo = (
+		req.body.replyTo === undefined
+			? undefined
+			: await getMessageByUnsafeID(req.body.replyTo, res)
+	);
+
+	const recipientIDs = (
+		req.body.to
+			? await Promise.all(req.body.to.map(
+				async unsafeUserID => (await getUserByUnsafeID(unsafeUserID, res))._id
+			))
+			: uniqBy([replyTo!.from, ...replyTo!.to], String).filter(
+				userID => !userID.equals(user._id)
+			)
+	);
 
 	const message: MessageDocument = {
 		_id: new ObjectId(),
 		sent: now,
 		from: user._id,
 		to: recipientIDs,
+		...replyTo ? {
+			replyTo: replyTo._id,
+			// Prepend "Re: " if it isn't already there, and replace anything overflowing the character limit of 50 with an ellipsis.
+			subject: replyTo.subject.replace(/^(Re: )?/, 'Re: ').replace(/^(.{49}).{2,}$/, '$1…')
+		} : {
+			subject: req.body.subject!
+		},
 		notDeletedBy: uniqBy([user._id, ...recipientIDs], String),
 		notReadBy: recipientIDs,
-		subject: req.body.subject,
 		content: req.body.content
 	};
 

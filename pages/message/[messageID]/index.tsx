@@ -29,12 +29,17 @@ type MessageDeletedByAPI = APIClient<typeof import('pages/api/messages/[messageI
 
 type ServerSideProps = {
 	message: ClientMessage,
+	replyTo?: ClientMessage,
 	userCache: PublicUser[]
 } | {
 	statusCode: number
 };
 
-const Component = withErrorPage<ServerSideProps>(({ message, userCache: initialUserCache }) => {
+const Component = withErrorPage<ServerSideProps>(({
+	message,
+	replyTo,
+	userCache: initialUserCache
+}) => {
 	const user = useUser()!;
 
 	const { cacheUser, userCache } = useUserCache();
@@ -44,12 +49,27 @@ const Component = withErrorPage<ServerSideProps>(({ message, userCache: initialU
 	const toUsers = message.to.map(userID => userCache[userID]!);
 
 	return (
-		<Page flashyTitle heading="Message">
+		<Page flashyTitle heading="Messages">
 			<Box>
 				<BoxSection
 					id="message-meta"
 					heading={message.subject}
 				>
+					{message.replyTo && (
+						<div id="message-reply-to">
+							{'Reply To: '}
+							{replyTo ? (
+								<Link href={`/message/${replyTo.id}`}>
+									{replyTo.subject}
+								</Link>
+							) : (
+								// This shouldn't be possible unless something extraordinary occurs.
+								<span title={`ID: ${message.replyTo}`}>
+									[Deleted Message]
+								</span>
+							)}
+						</div>
+					)}
 					<div id="message-from">
 						{'From: '}
 						<Link href={`/user/${fromUser.id}`}>
@@ -144,9 +164,15 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 
 	const userCacheIDs = uniqBy([message.from, ...message.to], String);
 
+	// Note that it is possible for no message to be found despite `message.replyTo` being set.
+	const replyTo = message.replyTo && await messages.findOne({ _id: message.replyTo });
+
 	return {
 		props: {
 			message: getClientMessage(message),
+			...replyTo && {
+				replyTo: getClientMessage(replyTo)
+			},
 			userCache: (
 				(
 					(
