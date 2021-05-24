@@ -161,44 +161,46 @@ const Component = withErrorPage<ServerSideProps>(({
 										<BBCode>{message.content}</BBCode>
 									)}
 								</BoxSection>
-								{editing ? (
-									<BoxFooter>
-										<Button
-											type="submit"
-											className="alt"
-											disabled={!dirty || isSubmitting}
-										>
-											Save
-										</Button>
-										<Button
-											type="reset"
-											disabled={isSubmitting}
-											onClick={cancel}
-										>
-											Cancel
-										</Button>
-									</BoxFooter>
-								) : (
-									<BoxFooter>
-										<Button href={`/user/${user.id}/messages`}>
-											All Messages
-										</Button>
-										<Button href={`/message/new?replyTo=${message.id}`}>
-											Reply
-										</Button>
-										{(
-											message.from === user.id
-											|| !!(user.perms & Perm.sudoWrite)
-										) && (
-											<Button onClick={edit}>
-												Edit
+								<BoxFooter>
+									{editing ? (
+										<>
+											<Button
+												type="submit"
+												className="alt"
+												disabled={!dirty || isSubmitting}
+											>
+												Save
 											</Button>
-										)}
-										<Button onClick={onClickDelete}>
-											Delete
-										</Button>
-									</BoxFooter>
-								)}
+											<Button
+												type="reset"
+												disabled={isSubmitting}
+												onClick={cancel}
+											>
+												Cancel
+											</Button>
+										</>
+									) : (
+										<>
+											<Button href={`/user/${user.id}/messages`}>
+												All Messages
+											</Button>
+											<Button href={`/message/new?replyTo=${message.id}`}>
+												Reply
+											</Button>
+											{(
+												message.from === user.id
+												|| !!(user.perms & Perm.sudoWrite)
+											) && (
+												<Button onClick={edit}>
+													Edit
+												</Button>
+											)}
+											<Button onClick={onClickDelete}>
+												Delete
+											</Button>
+										</>
+									)}
+								</BoxFooter>
 							</Box>
 						</Form>
 					);
