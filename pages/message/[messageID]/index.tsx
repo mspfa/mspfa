@@ -26,6 +26,7 @@ import { Dialog } from 'modules/client/dialogs';
 import Label from 'components/Label';
 import BBCodeField from 'components/BBCode/BBCodeField';
 import { Form, Formik } from 'formik';
+import { useLeaveConfirmation } from 'modules/client/forms';
 
 type MessageAPI = APIClient<typeof import('pages/api/messages/[messageID]').default>;
 type MessageDeletedByAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy').default>;
@@ -87,12 +88,16 @@ const Component = withErrorPage<ServerSideProps>(({
 				enableReinitialize
 			>
 				{({ dirty, isSubmitting, resetForm }) => {
-					const cancel = useCallback(() => {
-						// In case the user decides to start editing again, reset the dirty values.
-						resetForm();
+					const shouldLeave = useLeaveConfirmation(dirty);
 
-						setEditing(false);
-					}, [resetForm]);
+					const cancel = useCallback(() => {
+						if (shouldLeave()) {
+							// In case the user decides to start editing again, reset the dirty values.
+							resetForm();
+
+							setEditing(false);
+						}
+					}, [resetForm, shouldLeave]);
 
 					return (
 						<Form>
@@ -172,7 +177,6 @@ const Component = withErrorPage<ServerSideProps>(({
 												Save
 											</Button>
 											<Button
-												type="reset"
 												disabled={isSubmitting}
 												onClick={cancel}
 											>

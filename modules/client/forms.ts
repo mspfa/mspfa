@@ -45,7 +45,11 @@ export const preventLeaveConfirmations = (
 	return leaveConfirmationsToPrevent;
 };
 
-/** A React hook which asks the user for confirmation to leave the page if there are unsaved changes. */
+/**
+ * A React hook which asks the user for confirmation to leave the page if there are unsaved changes.
+ *
+ * Returns a function `shouldLeave` which checks for unsaved changes, prompts the user with a leave confirmation if there are any, and returns a boolean for whether it is safe to leave.
+ */
 export const useLeaveConfirmation = (
 	/** Whether there are currently unsaved changes which should prompt confirmation. */
 	unsavedChanges: boolean | (() => boolean)
@@ -63,6 +67,11 @@ export const useLeaveConfirmation = (
 		);
 	}, [unsavedChanges]);
 
+	const shouldLeave = useCallback(() => (
+		!shouldConfirmLeave()
+		|| confirm(message)
+	), [shouldConfirmLeave]);
+
 	useEffect(() => {
 		const onBeforeUnload = (event: BeforeUnloadEvent) => {
 			if (shouldConfirmLeave()) {
@@ -74,9 +83,8 @@ export const useLeaveConfirmation = (
 
 		const onRouteChangeStart = (path: string) => {
 			if (
-				shouldConfirmLeave()
-				&& Router.asPath !== path
-				&& !confirm(message)
+				Router.asPath !== path
+				&& !shouldLeave()
 			) {
 				Router.events.emit('routeChangeError');
 				Router.replace(Router, Router.asPath);
@@ -94,5 +102,7 @@ export const useLeaveConfirmation = (
 			window.removeEventListener('beforeunload', onBeforeUnload);
 			Router.events.off('routeChangeStart', onRouteChangeStart);
 		};
-	}, [shouldConfirmLeave]);
+	}, [shouldConfirmLeave, shouldLeave]);
+
+	return shouldLeave;
 };
