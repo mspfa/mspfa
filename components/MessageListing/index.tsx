@@ -22,7 +22,7 @@ const MessageListing = ({ children: message }: MessageListingProps) => {
 	const fromUser = userCache[message.from]!;
 
 	const className = (
-		(message.read ? ' read' : '')
+		(message.read ? ' read-message' : '')
 		+ (open ? ' open' : '')
 	);
 
