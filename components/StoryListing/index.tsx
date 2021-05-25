@@ -92,4 +92,6 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 	);
 };
 
+StoryListing.listClassName = 'story-list';
+
 export default StoryListing;

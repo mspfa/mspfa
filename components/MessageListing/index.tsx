@@ -69,4 +69,6 @@ const MessageListing = ({ children: message }: MessageListingProps) => {
 	);
 };
 
+MessageListing.listClassName = 'message-list';
+
 export default MessageListing;
