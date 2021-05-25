@@ -2,7 +2,7 @@ import './styles.module.scss';
 import IconImage from 'components/IconImage';
 import type { ClientMessage } from 'modules/client/messages';
 import Link from 'components/Link';
-import { Fragment, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import BBCode from 'components/BBCode';
 import { useUserCache } from 'modules/client/UserCache';
 import Timestamp from 'components/Timestamp';
@@ -65,7 +65,7 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 	const fromUser = userCache[message.from]!;
 
 	const className = (
-		(message.read ? ' read-message' : '')
+		(message.read ? ' read' : '')
 		+ (open ? ' open' : '')
 	);
 

@@ -1,6 +1,6 @@
-.listing {
+.message-list .listing {
 	&-icon, &-info {
-		&.read-message:not(.open) {
+		&.read:not(.open) {
 			opacity: 0.5;
 		}
 	}
