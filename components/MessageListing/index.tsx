@@ -20,11 +20,11 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 	const [message, setMessage] = useState(messageProp);
 	const [open, setOpen] = useState(false);
 
-	const toggleOpen = useCallback(async () => {
-		setOpen(!open);
+	const showPreview = useCallback(async () => {
+		setOpen(true);
 
-		if (!(open || message.read)) {
-			// The user is toggling the unread message open.
+		if (!message.read) {
+			// The user is opening the unread message.
 
 			const user = getUser();
 
@@ -55,7 +55,11 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 				markMessageAsRead();
 			}
 		}
-	}, [open, message.id, message.to, message.read]);
+	}, [message.id, message.to, message.read]);
+
+	const hidePreview = useCallback(async () => {
+		setOpen(false);
+	}, []);
 
 	const { userCache } = useUserCache();
 	const fromUser = userCache[message.from]!;
@@ -98,7 +102,7 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 				<div className="listing-section listing-footer">
 					<Link
 						className="listing-preview-link"
-						onClick={toggleOpen}
+						onClick={open ? hidePreview : showPreview}
 					>
 						{open ? 'Hide Preview' : 'Show Preview'}
 					</Link>
