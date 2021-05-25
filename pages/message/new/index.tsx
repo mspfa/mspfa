@@ -15,8 +15,7 @@ import Label from 'components/Label';
 import BBCodeField from 'components/BBCode/BBCodeField';
 import BoxSection from 'components/Box/BoxSection';
 import { Dialog } from 'modules/client/dialogs';
-import type { UserDocument } from 'modules/server/users';
-import { getPublicUser, getUserByUnsafeID } from 'modules/server/users';
+import users, { getPublicUser } from 'modules/server/users';
 import UserArrayField from 'components/UserField/UserArrayField';
 import { useUserCache } from 'modules/client/UserCache';
 import Router from 'next/router';
@@ -27,6 +26,8 @@ import { getClientMessage, getMessageByUnsafeID } from 'modules/server/messages'
 import { Perm } from 'modules/client/perms';
 import { withStatusCode } from 'modules/server/errors';
 import Link from 'components/Link';
+import { safeObjectID } from 'modules/server/db';
+import type { ObjectId } from 'mongodb';
 
 type MessagesAPI = APIClient<typeof import('pages/api/messages').default>;
 
@@ -212,16 +213,16 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 			: query.to
 				? uniq(query.to)
 				: []
-	);
+	).map(safeObjectID).filter(Boolean) as ObjectId[];
 
 	return {
 		props: {
 			toUsers: (
-				(
-					(await Promise.all(
-						toUserIDs.map(userID => getUserByUnsafeID(userID))
-					)).filter(Boolean) as UserDocument[]
-				).map(getPublicUser)
+				await users.find!({
+					_id: {
+						$in: toUserIDs
+					}
+				}).map(getPublicUser).toArray()
 			)
 		}
 	};

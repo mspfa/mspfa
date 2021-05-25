@@ -7,7 +7,6 @@ import Box from 'components/Box';
 import BoxSection from 'components/Box/BoxSection';
 import Link from 'components/Link';
 import BoxRow from 'components/Box/BoxRow';
-import type { StoryDocument } from 'modules/server/stories';
 import stories, { getPublicStory } from 'modules/server/stories';
 import type { PublicStory } from 'modules/client/stories';
 import List from 'components/List';
@@ -76,13 +75,11 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 			publicUser: getPublicUser(userFromParams),
 			favsPublic: userFromParams.settings.favsPublic,
 			publicStories: (
-				(
-					(await Promise.all(
-						userFromParams.favs.map(
-							fav => stories.findOne({ _id: fav })
-						)
-					)).filter(Boolean) as StoryDocument[]
-				).map(getPublicStory)
+				await stories.find!({
+					_id: {
+						$in: userFromParams.favs
+					}
+				}).map(getPublicStory).toArray()
 			)
 		}
 	};

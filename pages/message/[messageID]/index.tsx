@@ -8,7 +8,6 @@ import { Perm } from 'modules/client/perms';
 import messages, { getClientMessage, getMessageByUnsafeID, updateUnreadMessages } from 'modules/server/messages';
 import type { ClientMessage } from 'modules/client/messages';
 import BBCode from 'components/BBCode';
-import type { UserDocument } from 'modules/server/users';
 import users, { getPublicUser } from 'modules/server/users';
 import type { PublicUser } from 'modules/client/users';
 import { useUser } from 'modules/client/users';
@@ -257,13 +256,11 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 				replyTo: getClientMessage(replyTo, req.user)
 			},
 			userCache: (
-				(
-					(
-						await Promise.all(userCacheIDs.map(
-							userID => users.findOne({ _id: userID })
-						))
-					).filter(Boolean) as UserDocument[]
-				).map(getPublicUser)
+				await users.find!({
+					_id: {
+						$in: userCacheIDs
+					}
+				}).map(getPublicUser).toArray()
 			)
 		}
 	};

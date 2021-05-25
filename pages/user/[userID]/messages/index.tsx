@@ -11,7 +11,6 @@ import type { PublicUser } from 'modules/client/users';
 import { useUserCache } from 'modules/client/UserCache';
 import List from 'components/List';
 import { uniqBy } from 'lodash';
-import type { UserDocument } from 'modules/server/users';
 import users, { getPublicUser } from 'modules/server/users';
 import MessageListing from 'components/MessageListing';
 
@@ -48,9 +47,12 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		return { props: { statusCode } };
 	}
 
-	const serverMessages = await messages.find!({
-		notDeletedBy: user!._id
-	}).toArray();
+	const serverMessages = await messages.aggregate!([
+		// Find messages sent to this user.
+		{ $match: { notDeletedBy: user!._id } },
+		// Sort by newest first.
+		{ $sort: { sent: -1 } }
+	]).toArray();
 
 	const clientMessages = serverMessages.map(message => getClientMessage(message, user!));
 
@@ -58,14 +60,11 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		props: {
 			clientMessages,
 			userCache: (
-				// All of the `PublicUser`s from the user IDs in each message's `from` property.
-				(
-					(await Promise.all(
-						uniqBy(serverMessages.map(message => message.from), String).map(
-							userID => users.findOne({ _id: userID })
-						)
-					)).filter(Boolean) as UserDocument[]
-				).map(getPublicUser)
+				await users.find!({
+					_id: {
+						$in: uniqBy(serverMessages.map(message => message.from), String)
+					}
+				}).map(getPublicUser).toArray()
 			)
 		}
 	};
