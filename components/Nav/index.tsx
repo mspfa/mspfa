@@ -2,7 +2,7 @@ import './styles.module.scss';
 import NavGroup from 'components/Nav/NavGroup';
 import NavItem from 'components/Nav/NavItem';
 import NavMenu from 'components/Nav/NavMenu';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { signIn, signOut, useUser } from 'modules/client/users';
 
 const visitRandomStory = () => {
@@ -12,9 +12,19 @@ const visitRandomStory = () => {
 };
 
 const Nav = () => {
+	const router = useRouter();
 	const user = useUser();
 
 	const notificationsBubble = 0;
+	let messagesBubble = 0;
+
+	if (user) {
+		messagesBubble = (
+			router.pathname === '/user/[userID]/messages'
+				? 0
+				: user.unreadMessageCount
+		);
+	}
 
 	return (
 		<nav
@@ -27,7 +37,7 @@ const Nav = () => {
 						<NavMenu
 							id="signed-in"
 							label="My MSPFA"
-							bubble={!!(notificationsBubble + user.unreadMessageCount)}
+							bubble={!!(notificationsBubble + messagesBubble)}
 						>
 							<NavItem
 								id="notifications"
@@ -39,7 +49,7 @@ const Nav = () => {
 								id="messages"
 								label="Messages"
 								href={`/user/${user.id}/messages`}
-								bubble={user.unreadMessageCount}
+								bubble={messagesBubble}
 							/>
 							<div className="divider" />
 							<NavItem id="stories" label="Adventures" href={`/user/${user.id}/s`} />
