@@ -63,7 +63,7 @@ const Component = withErrorPage<ServerSideProps>(({
 		}
 
 		await (api as MessageDeletedByAPI).post(`/messages/${message.id}/deletedBy`, {
-			user: user.id
+			userID: user.id
 		});
 
 		Router.push(`/user/${user.id}/messages`);

@@ -30,40 +30,32 @@ const Handler: APIHandler<{
 }> = async (req, res) => {
 	await validate(req, res);
 
-	const user = await permToGetUserInAPI(req, res, Perm.sudoDelete, req.body.userID);
+	const user = await permToGetUserInAPI(req, res, Perm.sudoWrite, req.body.userID);
 
 	const message = await getMessageByUnsafeID(req.query.messageID, res);
 
 	if (!message.notDeletedBy.some(userID => userID.equals(user._id))) {
 		res.status(422).send({
-			message: 'The specified user cannot delete the specified message.'
+			message: 'The specified user does not have permission to mark the specified message as read.'
 		});
 		return;
 	}
 
-	if (
-		// Check if this user is the only one who hasn't deleted it yet.
-		message.notDeletedBy.length === 1
-		// Check if it has no replies.
-		&& !(await messages.findOne({ replyTo: message._id }))
-	) {
-		// It can safely be fully deleted from the database.
-
-		await messages.deleteOne({
-			_id: message._id
+	if (!message.notReadBy.some(userID => userID.equals(user._id))) {
+		res.status(422).send({
+			error: 'ALREADY_EXISTS',
+			message: 'The specified user has already read the specified message.'
 		});
-
-		await deleteUnnecessaryParentMessages(message);
-	} else {
-		await messages.updateOne({
-			_id: message._id
-		}, {
-			$pull: {
-				notDeletedBy: user._id,
-				notReadBy: user._id
-			}
-		});
+		return;
 	}
+
+	await messages.updateOne({
+		_id: message._id
+	}, {
+		$pull: {
+			notReadBy: user._id
+		}
+	});
 
 	res.end();
 };

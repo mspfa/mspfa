@@ -6,17 +6,56 @@ import { Fragment, useCallback, useState } from 'react';
 import BBCode from 'components/BBCode';
 import { useUserCache } from 'modules/client/UserCache';
 import Timestamp from 'components/Timestamp';
+import { getUser } from 'modules/client/users';
+import api from 'modules/client/api';
+import type { APIClient } from 'modules/client/api';
+
+type MessageReadByAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy').default>;
 
 export type MessageListingProps = {
 	children: ClientMessage
 };
 
-const MessageListing = ({ children: message }: MessageListingProps) => {
+const MessageListing = ({ children: messageProp }: MessageListingProps) => {
+	const [message, setMessage] = useState(messageProp);
 	const [open, setOpen] = useState(false);
 
-	const toggleOpen = useCallback(() => {
-		setOpen(open => !open);
-	}, []);
+	const toggleOpen = useCallback(async () => {
+		setOpen(!open);
+
+		if (!(open || message.read)) {
+			// The user is toggling the unread message open.
+
+			const user = getUser();
+
+			if (user && message.to.includes(user.id)) {
+				// The user is a recipient of this message.
+
+				const markMessageAsRead = () => {
+					setMessage(message => ({
+						...message,
+						read: true
+					}));
+				};
+
+				await (api as MessageReadByAPI).post(`/messages/${message.id}/readBy`, {
+					userID: user.id
+				}, {
+					beforeInterceptError: error => {
+						if (error.response?.data.error === 'ALREADY_EXISTS') {
+							// The user already has the message marked as read.
+
+							error.preventDefault();
+
+							markMessageAsRead();
+						}
+					}
+				});
+
+				markMessageAsRead();
+			}
+		}
+	}, [open, message.id, message.to, message.read]);
 
 	const { userCache } = useUserCache();
 	const fromUser = userCache[message.from]!;

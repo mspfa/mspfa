@@ -11,6 +11,6 @@ export type ClientMessage = Pick<MessageDocument, 'subject' | 'content'> & {
 	 */
 	to: string[],
 	replyTo?: string,
-	/** Whether the user has read this message. */
+	/** Whether the user has marked this message as read. */
 	read: boolean
 };
