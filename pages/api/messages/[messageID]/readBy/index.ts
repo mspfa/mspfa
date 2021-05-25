@@ -1,6 +1,6 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
-import messages, { getMessageByUnsafeID } from 'modules/server/messages';
+import messages, { getMessageByUnsafeID, updateUnreadMessages } from 'modules/server/messages';
 import { Perm } from 'modules/client/perms';
 import { permToGetUserInAPI } from 'modules/server/perms';
 
@@ -8,10 +8,15 @@ const Handler: APIHandler<{
 	query: {
 		messageID: string
 	},
+	method: 'POST',
 	body: {
 		userID: string
-	},
-	method: 'POST'
+	}
+}, {
+	method: 'POST',
+	body: {
+		unreadMessageCount: number
+	}
 }> = async (req, res) => {
 	await validate(req, res);
 
@@ -42,7 +47,9 @@ const Handler: APIHandler<{
 		}
 	});
 
-	res.end();
+	res.send({
+		unreadMessageCount: await updateUnreadMessages(user._id)
+	});
 };
 
 export default Handler;

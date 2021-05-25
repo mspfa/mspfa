@@ -6,7 +6,7 @@ import { useCallback, useState } from 'react';
 import BBCode from 'components/BBCode';
 import { useUserCache } from 'modules/client/UserCache';
 import Timestamp from 'components/Timestamp';
-import { getUser } from 'modules/client/users';
+import { getUser, setUser } from 'modules/client/users';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
 
@@ -38,7 +38,7 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 					}));
 				};
 
-				await (api as MessageReadByAPI).post(`/messages/${message.id}/readBy`, {
+				const { data: { unreadMessageCount } } = await (api as MessageReadByAPI).post(`/messages/${message.id}/readBy`, {
 					userID: user.id
 				}, {
 					beforeInterceptError: error => {
@@ -48,11 +48,21 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 							error.preventDefault();
 
 							markMessageAsRead();
+
+							setUser({
+								...user,
+								unreadMessageCount: user.unreadMessageCount - 1
+							});
 						}
 					}
 				});
 
 				markMessageAsRead();
+
+				setUser({
+					...user,
+					unreadMessageCount
+				});
 			}
 		}
 	}, [message.id, message.to, message.read]);
