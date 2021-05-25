@@ -1,11 +1,7 @@
 .listing {
 	&-icon, &-info {
-		&.read {
+		&.read:not(.open) {
 			opacity: 0.5;
-
-			&.open {
-				opacity: 1;
-			}
 		}
 	}
 }
