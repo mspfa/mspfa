@@ -57,7 +57,7 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 		}
 	}, [message.id, message.to, message.read]);
 
-	const hidePreview = useCallback(async () => {
+	const hidePreview = useCallback(() => {
 		setOpen(false);
 	}, []);
 
