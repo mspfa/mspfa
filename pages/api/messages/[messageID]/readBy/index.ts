@@ -1,23 +1,8 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
-import type { MessageDocument } from 'modules/server/messages';
 import messages, { getMessageByUnsafeID } from 'modules/server/messages';
 import { Perm } from 'modules/client/perms';
 import { permToGetUserInAPI } from 'modules/server/perms';
-
-/** If the inputted message was a reply to another parent message which has been deleted by everyone, fully deletes the parent message as well. */
-const deleteUnnecessaryParentMessages = async (message: MessageDocument) => {
-	if (message.replyTo) {
-		const { value: parentMessage } = await messages.findOneAndDelete({
-			_id: message.replyTo,
-			notDeletedBy: { $size: 0 }
-		});
-
-		if (parentMessage) {
-			await deleteUnnecessaryParentMessages(parentMessage);
-		}
-	}
-};
 
 const Handler: APIHandler<{
 	query: {
