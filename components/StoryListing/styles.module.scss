@@ -1,0 +1,16 @@
+.listing-tags {
+	font-size: 0.75em;
+	opacity: 0.6;
+
+	.link:not(:focus, :active) {
+		color: inherit;
+	}
+}
+
+.tag.link {
+	text-decoration: none;
+
+	&:hover, &:focus, &:active {
+		text-decoration: underline;
+	}
+}

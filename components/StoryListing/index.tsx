@@ -29,21 +29,21 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 		<>
 			<Link href={`/s/${publicStory.id}/p/1`}>
 				<IconImage
-					className="story-listing-icon"
+					className="listing-icon"
 					src={publicStory.icon}
 					title={publicStory.title}
 				/>
 			</Link>
-			<div className="story-listing-content">
+			<div className="listing-content">
 				<Link
-					className="story-listing-title translucent-text"
+					className="listing-title translucent-text"
 					href={`/s/${publicStory.id}/p/1`}
 					title={publicStory.title}
 				>
 					{publicStory.title}
 				</Link>
-				<div className="story-listing-meta">
-					<span className="story-listing-status spaced">
+				<div className="listing-section listing-meta">
+					<span className="listing-status spaced">
 						{storyStatusNames[publicStory.status]}
 					</span>
 					{user && (
@@ -64,14 +64,14 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 					</PagesIcon>
 				</div>
 				{open && (
-					<div className="story-listing-blurb">
+					<div className="listing-section listing-blurb">
 						<BBCode>{blurb}</BBCode>
 					</div>
 				)}
-				<div className="story-listing-tags">
+				<div className="listing-section listing-tags">
 					{blurb && (
 						<Link
-							className="story-listing-more-link"
+							className="listing-more-link"
 							onClick={toggleOpen}
 						>
 							{open ? 'Show Less' : 'Show More'}
@@ -81,7 +81,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 					{publicStory.tags.map((tag, i) => (
 						<Fragment key={tag}>
 							{i !== 0 && ' '}
-							<Link key={tag} className="story-tag">
+							<Link key={tag} className="tag">
 								{`#${tag}`}
 							</Link>
 						</Fragment>

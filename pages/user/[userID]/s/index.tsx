@@ -17,7 +17,8 @@ import FieldBoxRow from 'components/Box/FieldBoxRow';
 import randomStoryNames from 'modules/client/randomStoryNames.json';
 import type { PrivateStory } from 'modules/client/stories';
 import stories, { getPrivateStory } from 'modules/server/stories';
-import StoryList from 'components/StoryList';
+import List from 'components/List';
+import StoryListing from 'components/StoryListing';
 
 type StoriesAPI = APIClient<typeof import('pages/api/stories').default>;
 
@@ -44,7 +45,11 @@ const Component = withErrorPage<ServerSideProps>(({ privateStories }) => (
 			<BoxRowSection heading="Adventures">
 				<BoxRow>
 					{(privateStories.length
-						? <StoryList>{privateStories}</StoryList>
+						? (
+							<List listing={StoryListing}>
+								{privateStories}
+							</List>
+						)
 						: "You haven't started any adventures yet! Click the button below to begin."
 					)}
 				</BoxRow>

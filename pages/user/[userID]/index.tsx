@@ -19,7 +19,8 @@ import BoxRow from 'components/Box/BoxRow';
 import BBCode from 'components/BBCode';
 import { getPublicStoriesByEditor } from 'modules/server/stories';
 import type { PublicStory } from 'modules/client/stories';
-import StoryList from 'components/StoryList';
+import List from 'components/List';
+import StoryListing from 'components/StoryListing';
 import Button from 'components/Button';
 
 type ServerSideProps = {
@@ -122,7 +123,9 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 						collapsible
 						open
 					>
-						<StoryList>{publicStories}</StoryList>
+						<List listing={StoryListing}>
+							{publicStories}
+						</List>
 					</BoxSection>
 				)}
 				{user && (

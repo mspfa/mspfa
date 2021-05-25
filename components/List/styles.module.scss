@@ -1,4 +1,10 @@
-.story-listing {
+.list {
+	display: grid;
+	grid-template-columns: 0fr 1fr;
+	gap: 1em;
+}
+
+.listing {
 	&-icon {
 		width: 4em;
 		height: 4em;
@@ -27,24 +33,7 @@
 		}
 	}
 
-	&-meta, &-blurb, &-tags {
+	&-section {
 		margin: 4px 0;
-	}
-
-	&-tags {
-		font-size: 0.75em;
-		opacity: 0.6;
-
-		.link:not(:focus, :active) {
-			color: inherit;
-		}
-	}
-}
-
-.story-tag.link {
-	text-decoration: none;
-
-	&:hover, &:focus, &:active {
-		text-decoration: underline;
 	}
 }

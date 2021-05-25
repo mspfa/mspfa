@@ -10,7 +10,8 @@ import BoxRow from 'components/Box/BoxRow';
 import type { StoryDocument } from 'modules/server/stories';
 import stories, { getPublicStory } from 'modules/server/stories';
 import type { PublicStory } from 'modules/client/stories';
-import StoryList from 'components/StoryList';
+import List from 'components/List';
+import StoryListing from 'components/StoryListing';
 import { Perm } from 'modules/client/perms';
 
 type ServerSideProps = {
@@ -37,7 +38,11 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publ
 				)}
 				<BoxRow>
 					{(publicStories.length
-						? <StoryList>{publicStories}</StoryList>
+						? (
+							<List listing={StoryListing}>
+								{publicStories}
+							</List>
+						)
 						: 'This user has no favorite adventures.'
 					)}
 				</BoxRow>
