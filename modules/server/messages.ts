@@ -1,7 +1,7 @@
 import type { ObjectId } from 'mongodb';
 import type { UnsafeObjectID } from 'modules/server/db';
 import db, { safeObjectID } from 'modules/server/db';
-import type { UserID } from 'modules/server/users';
+import type { UserDocument, UserID } from 'modules/server/users';
 import type { ClientMessage } from 'modules/client/messages';
 import users from 'modules/server/users';
 import type { APIResponse } from 'modules/server/api';
@@ -36,7 +36,11 @@ export type MessageDocument = {
 };
 
 /** Converts a `MessageDocument` to a `ClientMessage`. */
-export const getClientMessage = (message: MessageDocument): ClientMessage => ({
+export const getClientMessage = (
+	message: MessageDocument,
+	/** The user accessing this message, or the user whose list this message is being rendered to. */
+	user: UserDocument
+): ClientMessage => ({
 	id: message._id.toString(),
 	sent: +message.sent,
 	...message.edited !== undefined && {
@@ -48,7 +52,8 @@ export const getClientMessage = (message: MessageDocument): ClientMessage => ({
 		replyTo: message.replyTo.toString()
 	},
 	subject: message.subject,
-	content: message.content
+	content: message.content,
+	read: !message.notReadBy.some(userID => userID.equals(user._id))
 });
 
 const messages = db.collection<MessageDocument>('messages');

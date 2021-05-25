@@ -1,0 +1,11 @@
+.listing {
+	&-icon, &-info {
+		&.read {
+			opacity: 0.5;
+
+			&.open {
+				opacity: 1;
+			}
+		}
+	}
+}

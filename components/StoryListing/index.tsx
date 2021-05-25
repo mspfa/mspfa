@@ -34,7 +34,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 					title={publicStory.title}
 				/>
 			</Link>
-			<div className="listing-content">
+			<div className="listing-info">
 				<Link
 					className="listing-title translucent-text"
 					href={`/s/${publicStory.id}/p/1`}
@@ -68,7 +68,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 						<BBCode>{blurb}</BBCode>
 					</div>
 				)}
-				<div className="listing-section listing-tags">
+				<div className="listing-section listing-footer">
 					{blurb && (
 						<Link
 							className="listing-more-link"

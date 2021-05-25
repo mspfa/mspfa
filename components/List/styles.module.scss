@@ -11,7 +11,7 @@
 		margin-top: 0.5em;
 	}
 
-	&-content {
+	&-info {
 		text-align: left;
 		overflow: hidden;
 	}
@@ -35,5 +35,14 @@
 
 	&-section {
 		margin: 4px 0;
+	}
+
+	&-footer {
+		font-size: 0.75em;
+		opacity: 0.6;
+
+		.link:not(:focus, :active) {
+			color: inherit;
+		}
 	}
 }

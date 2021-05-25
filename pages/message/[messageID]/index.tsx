@@ -249,12 +249,12 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 
 	return {
 		props: {
-			message: getClientMessage(message),
+			message: getClientMessage(message, req.user),
 			...replyTo && (
 				replyTo.notDeletedBy.some(userID => userID.equals(req.user!._id))
 				|| req.user.perms & Perm.sudoRead
 			) && {
-				replyTo: getClientMessage(replyTo)
+				replyTo: getClientMessage(replyTo, req.user)
 			},
 			userCache: (
 				(

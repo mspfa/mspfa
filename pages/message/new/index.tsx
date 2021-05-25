@@ -201,7 +201,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 
 		return {
 			props: {
-				replyTo: getClientMessage(message)
+				replyTo: getClientMessage(message, req.user)
 			}
 		};
 	}

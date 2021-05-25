@@ -72,7 +72,7 @@ const Handler: APIHandler<{
 		$set: messageMerge
 	});
 
-	res.send(getClientMessage(message));
+	res.send(getClientMessage(message, user));
 };
 
 export default Handler;

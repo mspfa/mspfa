@@ -10,5 +10,7 @@ export type ClientMessage = Pick<MessageDocument, 'subject' | 'content'> & {
 	 * @uniqueItems true
 	 */
 	to: string[],
-	replyTo?: string
+	replyTo?: string,
+	/** Whether the user has read this message. */
+	read: boolean
 };

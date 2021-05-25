@@ -77,7 +77,7 @@ const Handler: APIHandler<{
 
 	await Promise.all(recipientIDs.map(updateUnreadMessages));
 
-	res.status(201).send(getClientMessage(message));
+	res.status(201).send(getClientMessage(message, user));
 };
 
 export default Handler;
