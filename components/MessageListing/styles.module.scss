@@ -1,3 +1,26 @@
-.message-list .listing.read:not(.open) {
-	opacity: 0.5;
+@import 'styles/themes';
+
+.message-list .listing {
+	&:not(:last-child) {
+		padding-bottom: 1em;
+		border-bottom: 1px solid rgba(128, 128, 128, 0.5);
+	}
+
+	&:not(:first-child) {
+		padding-top: 1em;
+	}
+
+	&:not(.read) .listing-icon {
+		position: relative;
+
+		&::before {
+			content: '';
+			display: inline-block;
+			position: absolute;
+			left: -12px;
+			width: 4px;
+			height: 100%;
+			background-color: #f48e11;
+		}
+	}
 }
