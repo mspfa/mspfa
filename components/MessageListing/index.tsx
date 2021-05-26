@@ -78,9 +78,9 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 	const [plainContent] = useState(() => sanitizeBBCode(message.content, { noBB: true }));
 	const [richContent, setRichContent] = useState(plainContent);
 
-	const contentRef = useRef<HTMLDivElement>(null!);
 	// This state is whether the message's content is rich, or whether it not completely visible due to overflowing its container.
 	const [moreLinkVisible, setMoreLinkVisible] = useState(false);
+	const contentRef = useRef<HTMLDivElement>(null!);
 
 	useEffect(() => {
 		if (!moreLinkVisible) {
@@ -125,7 +125,10 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 						{fromUser.name}
 					</Link>
 					{' - '}
-					<Timestamp relative>
+					<Timestamp
+						relative
+						edited={message.edited}
+					>
 						{message.sent}
 					</Timestamp>
 				</div>
