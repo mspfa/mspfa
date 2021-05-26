@@ -5,6 +5,7 @@ import type { HTMLReactParserOptions } from 'html-react-parser';
 import { Element } from 'domhandler';
 import BBTags from 'components/BBCode/BBTags';
 import type { BBTagProps } from 'components/BBCode/BBTags';
+import React from 'react';
 
 const parseOptions: HTMLReactParserOptions = {
 	replace: domNode => {
@@ -152,12 +153,15 @@ export type BBCodeProps = {
 };
 
 /** A component which parses its `children` string as BBCode. */
-const BBCode = ({
-	html,
-	noBB,
-	raw,
-	children = ''
-}: BBCodeProps) => {
+const BBCode = React.forwardRef<HTMLSpanElement, BBCodeProps>((
+	{
+		html,
+		noBB,
+		raw,
+		children = ''
+	},
+	ref
+) => {
 	if (raw) {
 		return (
 			<span className="bbcode">
@@ -169,7 +173,10 @@ const BBCode = ({
 	const htmlString = sanitizeBBCode(children, { html, noBB });
 
 	return (
-		<span className="bbcode">
+		<span
+			className="bbcode"
+			ref={ref}
+		>
 			{(noBB && !html
 				// If BBCode and HTML are both disabled, then the HTML is plain text, so it's more optimized to insert the string as a text node rather than parsing it as HTML.
 				? htmlString
@@ -177,6 +184,6 @@ const BBCode = ({
 			)}
 		</span>
 	);
-};
+});
 
 export default BBCode;
