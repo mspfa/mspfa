@@ -75,7 +75,7 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 	const fromUser = userCache[message.from]!;
 
 	return (
-		<div className={`listing${message.read ? ' read' : ''}${open ? ' open' : ''}`}>
+		<div className={`listing${message.read ? ' read' : ''}`}>
 			<Link
 				className="listing-icon"
 				href={`/message/${message.id}`}

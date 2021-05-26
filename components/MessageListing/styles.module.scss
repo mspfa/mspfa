@@ -1,6 +1,8 @@
 @import 'styles/themes';
 
 .message-list .listing {
+	position: relative;
+
 	&:not(:last-child) {
 		padding-bottom: 1em;
 		border-bottom: 1px solid rgba(128, 128, 128, 0.5);
@@ -10,17 +12,14 @@
 		padding-top: 1em;
 	}
 
-	&:not(.read) .listing-icon {
-		position: relative;
-
-		&::before {
-			content: '';
-			display: inline-block;
-			position: absolute;
-			left: -12px;
-			width: 4px;
-			height: 100%;
-			background-color: #f48e11;
-		}
+	&:not(.read)::before {
+		content: '';
+		display: inline-block;
+		position: absolute;
+		left: -24px;
+		top: 0.5em;
+		width: 6px;
+		height: 4em;
+		background-color: #f48e11;
 	}
 }
