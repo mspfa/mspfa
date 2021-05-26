@@ -26,10 +26,12 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 	const blurb = getBlurb(publicStory);
 
 	return (
-		<>
-			<Link href={`/s/${publicStory.id}/p/1`}>
+		<div className="listing">
+			<Link
+				className="listing-icon"
+				href={`/s/${publicStory.id}/p/1`}
+			>
 				<IconImage
-					className="listing-icon"
 					src={publicStory.icon}
 					alt={publicStory.title}
 					title={publicStory.title}
@@ -89,7 +91,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 					))}
 				</div>
 			</div>
-		</>
+		</div>
 	);
 };
 

@@ -1,7 +1,3 @@
-.message-list .listing {
-	&-icon, &-info {
-		&.read:not(.open) {
-			opacity: 0.5;
-		}
-	}
+.message-list .listing.read:not(.open) {
+	opacity: 0.5;
 }

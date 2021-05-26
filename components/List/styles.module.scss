@@ -1,17 +1,21 @@
-.list {
-	display: grid;
-	grid-template-columns: 0fr 1fr;
-	gap: 1em;
-}
-
 .listing {
+	display: flex;
+
+	&:not(:first-child) {
+		margin-top: 1em;
+	}
+
 	&-icon {
-		width: 4em;
-		height: 4em;
-		margin-top: 0.5em;
+		margin: 0.5em 1em 0 0;
+
+		.icon-image {
+			width: 4em;
+			height: 4em;
+		}
 	}
 
 	&-info {
+		flex-grow: 1;
 		text-align: left;
 		overflow: hidden;
 	}

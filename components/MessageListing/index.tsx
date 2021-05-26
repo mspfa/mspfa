@@ -74,22 +74,19 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 	const { userCache } = useUserCache();
 	const fromUser = userCache[message.from]!;
 
-	const className = (
-		(message.read ? ' read' : '')
-		+ (open ? ' open' : '')
-	);
-
 	return (
-		<>
-			<Link href={`/message/${message.id}`}>
+		<div className={`listing${message.read ? ' read' : ''}${open ? ' open' : ''}`}>
+			<Link
+				className="listing-icon"
+				href={`/message/${message.id}`}
+			>
 				<IconImage
-					className={`listing-icon${className}`}
 					src={fromUser.icon}
 					alt={`${fromUser.name}'s Icon`}
 					title={`${fromUser.name}'s Icon`}
 				/>
 			</Link>
-			<div className={`listing-info${className}`}>
+			<div className="listing-info">
 				<Link
 					className="listing-title translucent-text"
 					href={`/message/${message.id}`}
@@ -119,7 +116,7 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 					</Link>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 };
 
