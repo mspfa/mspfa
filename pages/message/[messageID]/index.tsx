@@ -39,12 +39,11 @@ type ServerSideProps = {
 };
 
 const Component = withErrorPage<ServerSideProps>(({
-	message: messageProp,
+	message,
 	replyTo,
 	userCache: initialUserCache
 }) => {
 	const user = useUser()!;
-	const [message, setMessage] = useState(messageProp);
 	const [editing, setEditing] = useState(false);
 
 	const { cacheUser, userCache } = useUserCache();
@@ -80,7 +79,15 @@ const Component = withErrorPage<ServerSideProps>(({
 					useCallback(async (values: { content: string }) => {
 						const { data: newMessage } = await (api as MessageAPI).put(`/messages/${message.id}`, values);
 
-						setMessage(newMessage);
+						// Clear the `message` object and assign new properties to it from `newMessage`.
+						for (const key in message) {
+							delete message[key as keyof ClientMessage];
+						}
+						Object.assign(message, newMessage);
+
+						// Because the above assignment mutates the original `message` object without using a state setter, a state change such as the one below is necessary to re-render the component with the new version of `message`.
+						// It is necessary to mutate the original `message` object instead of using a state because a state would not update when a new `message` prop is passed into the page.
+
 						setEditing(false);
 					}, [message])
 				}
