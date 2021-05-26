@@ -76,28 +76,38 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 	}, []);
 
 	const [plainContent] = useState(() => sanitizeBBCode(message.content, { noBB: true }));
-	const [richContent, setRichContent] = useState(plainContent);
+	const [richContent, setRichContent] = useState<string>(plainContent);
 
-	// This state is whether the message's content is rich, or whether it not completely visible due to overflowing its container.
+	// This state is whether the message's content is rich, or whether it is not completely visible due to overflowing its container.
 	const [moreLinkVisible, setMoreLinkVisible] = useState(false);
 	const contentRef = useRef<HTMLDivElement>(null!);
 
 	useEffect(() => {
-		if (!moreLinkVisible) {
-			// Whether the message's content overflows its container.
-			let newMoreLinkVisible = contentRef.current.scrollWidth > contentRef.current.offsetWidth;
+		const newRichContent = sanitizeBBCode(message.content);
+		setRichContent(newRichContent);
 
-			if (!newMoreLinkVisible) {
-				const richContent = sanitizeBBCode(message.content);
-				setRichContent(richContent);
+		const contentIsRich = plainContent !== newRichContent;
+		setMoreLinkVisible(contentIsRich);
 
-				// Whether the message's content is rich.
-				newMoreLinkVisible = plainContent !== richContent;
-			}
-
-			setMoreLinkVisible(newMoreLinkVisible);
+		if (contentIsRich) {
+			return;
 		}
-	}, [moreLinkVisible, message.content, plainContent]);
+
+		const onResize = () => {
+			// Whether the message's content overflows its container.
+			setMoreLinkVisible(contentRef.current.scrollWidth > contentRef.current.offsetWidth);
+		};
+
+		onResize();
+		window.addEventListener('resize', onResize);
+
+		return () => {
+			window.removeEventListener('resize', onResize);
+		};
+
+		// This ESLint comment is necessary because the rule incorrectly thinks `plainContent` should be a dependency here, despite that it depends on `message.content` which is already a dependency.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [message.content]);
 
 	return (
 		<div className={`listing${message.read ? ' read' : ''}${open ? ' open' : ''}`}>
