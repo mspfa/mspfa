@@ -3,7 +3,6 @@ import { useContext, useCallback } from 'react';
 import { TextAreaRefContext } from 'components/BBCode/BBCodeField';
 import Button from 'components/Button';
 import { Dialog } from 'modules/client/dialogs';
-import type { BBTagProps } from 'components/BBCode/BBTags';
 import { videoIDTest } from 'components/BBCode/BBTags';
 import LabeledDialogBox from 'components/Box/LabeledDialogBox';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
@@ -26,7 +25,7 @@ const presetFontFamilies = ['Arial', 'Bodoni MT', 'Book Antiqua', 'Calibri', 'Ca
 type NewBBTagProps = {
 	/** The content of the BB tag. */
 	children: string,
-	attributes: BBTagProps['attributes']
+	attributes: string | number | Partial<Record<string, string | number>>
 };
 
 const tags: Record<string, {
@@ -594,10 +593,10 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 							? tagProps.attributes instanceof Object
 								? (
 									Object.entries(tagProps.attributes).map(
-										([name, value]) => ` ${name}=${escapeAttribute(value!, true)}`
+										([name, value]) => ` ${name}=${escapeAttribute(value!.toString(), true)}`
 									).join('')
 								)
-								: `=${escapeAttribute(tagProps.attributes)}`
+								: `=${escapeAttribute(tagProps.attributes.toString())}`
 							: ''
 					}]`;
 					const closeTag = `[/${tagName}]`;
