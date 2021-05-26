@@ -6,20 +6,23 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
 import { useUserCache } from 'modules/client/UserCache';
 import Timestamp from 'components/Timestamp';
-import { getUser, setUser } from 'modules/client/users';
+import { getUser, setUser, useUser } from 'modules/client/users';
 import api from 'modules/client/api';
 import type { APIClient, APIError } from 'modules/client/api';
 import Button from 'components/Button';
 import RemoveButton from 'components/Button/RemoveButton';
+import { Dialog } from 'modules/client/dialogs';
 
 type MessageReadByAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy').default>;
 type MessageReadByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy/[userID]').default>;
+type MessageDeletedByAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy').default>;
 
 export type MessageListingProps = {
 	children: ClientMessage
 };
 
 const MessageListing = ({ children: messageProp }: MessageListingProps) => {
+	const user = useUser();
 	const [message, setMessage] = useState(messageProp);
 
 	const { userCache } = useUserCache();
@@ -93,74 +96,77 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [richContent, message.content, open]);
 
-	// This state is whether marking as read or unread is currently loading.
+	/** Whether the user is a recipient of this message. */
+	const userIsRecipient = user && message.to.includes(user.id);
+
+	// This state is whether marking the message as read or unread is currently loading.
 	const [markLoading, setMarkLoading] = useState(false);
+	// This state is whether deleting the message is currently loading.
+	const [deleteLoading, setDeleteLoading] = useState(false);
 
 	const markRead = useCallback(async (
 		/** `true` if should mark as read. `false` if should mark as unread. */
 		read: boolean
 	) => {
-		if (markLoading) {
+		if (markLoading || !userIsRecipient) {
 			return;
 		}
 
-		const user = getUser();
-
-		if (user && message.to.includes(user.id)) {
-			// The user is a recipient of this message.
-
-			const setReadState = () => {
-				setMessage(message => ({
-					...message,
-					read
-				}));
-			};
-
-			setMarkLoading(true);
-
-			const beforeInterceptError = (error: APIError) => {
-				if (
-					error.response && (
-						(read && error.response.data.error === 'ALREADY_EXISTS')
-						|| (!read && error.response.status === 404)
-					)
-				) {
-					// The user already has the message marked as read or unread.
-
-					error.preventDefault();
-
-					setReadState();
-
-					setUser({
-						...user,
-						unreadMessageCount: user.unreadMessageCount + (read ? -1 : 1)
-					});
-				}
-			};
-
-			const { data: { unreadMessageCount } } = await (
+		const setReadState = () => {
+			setMessage(message => ({
+				...message,
 				read
-					? (api as MessageReadByAPI).post(
-						`/messages/${message.id}/readBy`,
-						{ userID: user.id },
-						{ beforeInterceptError }
-					)
-					: (api as MessageReadByUserAPI).delete(
-						`/messages/${message.id}/readBy/${user.id}`,
-						{ beforeInterceptError }
-					)
-			).finally(() => {
-				setMarkLoading(false);
-			});
+			}));
+		};
 
-			setReadState();
+		setMarkLoading(true);
 
-			setUser({
-				...user,
-				unreadMessageCount
-			});
-		}
-	}, [markLoading, message.id, message.to]);
+		const beforeInterceptError = (error: APIError) => {
+			if (
+				error.response && (
+					(read && error.response.data.error === 'ALREADY_EXISTS')
+					|| (!read && error.response.status === 404)
+				)
+			) {
+				// The user already has the message marked as read or unread.
+
+				error.preventDefault();
+
+				setReadState();
+
+				setUser({
+					...user!,
+					unreadMessageCount: user!.unreadMessageCount + (read ? -1 : 1)
+				});
+			}
+		};
+
+		const { data: { unreadMessageCount } } = await (
+			read
+				? (api as MessageReadByAPI).post(
+					`/messages/${message.id}/readBy`,
+					{ userID: user!.id },
+					{ beforeInterceptError }
+				)
+				: (api as MessageReadByUserAPI).delete(
+					`/messages/${message.id}/readBy/${user!.id}`,
+					{ beforeInterceptError }
+				)
+		).finally(() => {
+			setMarkLoading(false);
+		});
+
+		setReadState();
+
+		setUser({
+			...user!,
+			unreadMessageCount
+		});
+	}, [user, userIsRecipient, markLoading, message.id]);
+
+	const toggleRead = useCallback(() => {
+		markRead(!message.read);
+	}, [markRead, message.read]);
 
 	const showMore = useCallback(() => {
 		setOpen(true);
@@ -173,6 +179,27 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 	const showLess = useCallback(() => {
 		setOpen(false);
 	}, []);
+
+	const deleteMessage = useCallback(async () => {
+		if (!(
+			userIsRecipient
+			&& await Dialog.confirm({
+				id: 'delete-message',
+				title: 'Delete Message',
+				content: 'Are you sure you want to delete that message?'
+			})
+		)) {
+			return;
+		}
+
+		setDeleteLoading(true);
+
+		await (api as MessageDeletedByAPI).post(`/messages/${message.id}/deletedBy`, {
+			userID: user!.id
+		}).finally(() => {
+			setDeleteLoading(false);
+		});
+	}, [user, userIsRecipient, message.id]);
 
 	return (
 		<div
@@ -232,26 +259,21 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 					</div>
 				)}
 			</div>
-			<div className="listing-actions">
-				<Button
-					className={`icon${message.read ? ' mark-unread' : ' mark-read'}`}
-					title={message.read ? 'Mark as Unread' : 'Mark as Read'}
-					disabled={markLoading}
-					onClick={
-						useCallback(() => {
-							markRead(!message.read);
-						}, [markRead, message.read])
-					}
-				/>
-				<RemoveButton
-					title="Delete"
-					onClick={
-						useCallback(() => {
-
-						}, [])
-					}
-				/>
-			</div>
+			{userIsRecipient && (
+				<div className="listing-actions">
+					<Button
+						className={`icon${message.read ? ' mark-unread' : ' mark-read'}`}
+						title={message.read ? 'Mark as Unread' : 'Mark as Read'}
+						disabled={markLoading}
+						onClick={toggleRead}
+					/>
+					<RemoveButton
+						title="Delete"
+						disabled={deleteLoading}
+						onClick={deleteMessage}
+					/>
+				</div>
+			)}
 		</div>
 	);
 };
