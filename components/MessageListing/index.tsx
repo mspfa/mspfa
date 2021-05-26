@@ -3,7 +3,7 @@ import IconImage from 'components/IconImage';
 import type { ClientMessage } from 'modules/client/messages';
 import Link from 'components/Link';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import BBCode from 'components/BBCode';
+import BBCode, { sanitizeBBCode } from 'components/BBCode';
 import { useUserCache } from 'modules/client/UserCache';
 import Timestamp from 'components/Timestamp';
 import { getUser, setUser } from 'modules/client/users';
@@ -24,7 +24,7 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 
 	const [open, setOpen] = useState(false);
 
-	const openPreview = useCallback(async () => {
+	const showMore = useCallback(async () => {
 		setOpen(true);
 
 		if (!message.read) {
@@ -71,22 +71,27 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 		}
 	}, [message.id, message.to, message.read]);
 
-	const closePreview = useCallback(() => {
+	const showLess = useCallback(() => {
 		setOpen(false);
 	}, []);
 
+	const [plainContent] = useState(() => sanitizeBBCode(message.content, { noBB: true }));
+	const [richContent] = useState(
+		process.browser
+			? () => sanitizeBBCode(message.content)
+			// It would be unnecessary/unoptimized to call the sanitizer for rich content server-side, since this component's SSR never contains the rich content.
+			: ''
+	);
+
 	const contentRef = useRef<HTMLDivElement>(null!);
-	const [overflow, setOverflow] = useState(false);
-	const [overflowHeight, setOverflowHeight] = useState(false);
+	// This state is whether the message's content is rich, or whether it not completely visible due to overflowing its container.
+	const [moreLinkVisible, setMoreLinkVisible] = useState(plainContent !== richContent);
 
 	useEffect(() => {
-		const overflowHeight = contentRef.current.scrollHeight > contentRef.current.offsetHeight;
-		setOverflowHeight(overflowHeight);
-		setOverflow(
-			contentRef.current.scrollWidth > contentRef.current.offsetWidth
-			|| overflowHeight
-		);
-	}, []);
+		if (!moreLinkVisible) {
+			setMoreLinkVisible(contentRef.current.scrollWidth > contentRef.current.offsetWidth);
+		}
+	}, [moreLinkVisible]);
 
 	return (
 		<div className={`listing${message.read ? ' read' : ''}${open ? ' open' : ''}`}>
@@ -119,16 +124,18 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 					</Timestamp>
 				</div>
 				<div
-					className={`listing-section listing-content${overflowHeight ? ' overflow-height' : ''}`}
+					className="listing-section listing-content"
 					ref={contentRef}
 				>
-					<BBCode>{message.content}</BBCode>
+					<BBCode>
+						{open ? richContent : plainContent}
+					</BBCode>
 				</div>
-				{overflow && (
+				{moreLinkVisible && (
 					<div className="listing-section listing-footer">
 						<Link
-							className="listing-preview-link"
-							onClick={open ? closePreview : openPreview}
+							className="listing-more-link"
+							onClick={open ? showLess : showMore}
 						>
 							{open ? 'Show Less' : 'Show More'}
 						</Link>
