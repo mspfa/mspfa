@@ -45,7 +45,12 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 							{publicUser.name}
 						</BoxRow>
 						<BoxRow id="profile-icon-container">
-							<IconImage id="profile-icon" src={publicUser.icon} />
+							<IconImage
+								id="profile-icon"
+								src={publicUser.icon}
+								alt={`${publicUser.name}'s Icon`}
+								title={`${publicUser.name}'s Icon`}
+							/>
 						</BoxRow>
 						<BoxRow id="profile-actions">
 							{notOwnProfile && (

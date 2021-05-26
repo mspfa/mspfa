@@ -112,7 +112,12 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 											help="Allows others to publicly view your favorite adventures."
 										/>
 										<BoxRow>
-											<IconImage id="profile-icon" src={values.icon} />
+											<IconImage
+												id="profile-icon"
+												src={values.icon}
+												alt="Your Profile Icon"
+												title="Your Profile Icon"
+											/>
 										</BoxRow>
 									</BoxRowSection>
 									<Box>

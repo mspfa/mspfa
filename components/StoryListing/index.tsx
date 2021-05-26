@@ -31,6 +31,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 				<IconImage
 					className="listing-icon"
 					src={publicStory.icon}
+					alt={publicStory.title}
 					title={publicStory.title}
 				/>
 			</Link>
