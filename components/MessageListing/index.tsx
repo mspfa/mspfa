@@ -76,22 +76,27 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 	}, []);
 
 	const [plainContent] = useState(() => sanitizeBBCode(message.content, { noBB: true }));
-	const [richContent] = useState(
-		process.browser
-			? () => sanitizeBBCode(message.content)
-			// It would be unnecessary/unoptimized to call the sanitizer for rich content server-side, since this component's SSR never contains the rich content.
-			: ''
-	);
+	const [richContent] = useState(plainContent);
 
 	const contentRef = useRef<HTMLDivElement>(null!);
 	// This state is whether the message's content is rich, or whether it not completely visible due to overflowing its container.
-	const [moreLinkVisible, setMoreLinkVisible] = useState(plainContent !== richContent);
+	const [moreLinkVisible, setMoreLinkVisible] = useState(false);
 
 	useEffect(() => {
 		if (!moreLinkVisible) {
-			setMoreLinkVisible(contentRef.current.scrollWidth > contentRef.current.offsetWidth);
+			// Whether the message's content overflows its container.
+			let newMoreLinkVisible = contentRef.current.scrollWidth > contentRef.current.offsetWidth;
+
+			if (!newMoreLinkVisible) {
+				const richContent = sanitizeBBCode(message.content);
+
+				// Whether the message's content is rich.
+				newMoreLinkVisible = plainContent !== richContent;
+			}
+
+			setMoreLinkVisible(newMoreLinkVisible);
 		}
-	}, [moreLinkVisible]);
+	}, [moreLinkVisible, message.content, plainContent]);
 
 	return (
 		<div className={`listing${message.read ? ' read' : ''}${open ? ' open' : ''}`}>
