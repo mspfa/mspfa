@@ -100,7 +100,9 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 						{fromUser.name}
 					</Link>
 					{' - '}
-					<Timestamp relative>{message.sent}</Timestamp>
+					<Timestamp relative>
+						{message.sent}
+					</Timestamp>
 				</div>
 				{open && (
 					<div className="listing-section listing-content">

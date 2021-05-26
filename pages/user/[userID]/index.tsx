@@ -79,7 +79,9 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 					<Box>
 						<BoxRowSection id="profile-stats" heading="Stats">
 							<LabeledBoxRow label="Last Connection">
-								<Timestamp relative withTime>{publicUser.lastSeen}</Timestamp>
+								<Timestamp relative withTime>
+									{publicUser.lastSeen}
+								</Timestamp>
 							</LabeledBoxRow>
 							<LabeledBoxRow label="Joined MSPFA">
 								<Timestamp>{publicUser.created}</Timestamp>
