@@ -22,4 +22,27 @@
 		height: 4em;
 		background-color: #f48e11;
 	}
+
+	&:not(.open) .listing-content {
+		position: relative;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-height: 2em;
+
+		&.overflow-height::after {
+			content: '';
+			position: absolute;
+			display: block;
+			pointer-events: none;
+			bottom: 0;
+			width: 100%;
+			height: 1em;
+			@include theme(color, $front);
+			background-image: linear-gradient(transparent, currentColor);
+		}
+
+		.bbcode {
+			white-space: nowrap;
+		}
+	}
 }

@@ -2,7 +2,7 @@ import './styles.module.scss';
 import IconImage from 'components/IconImage';
 import type { ClientMessage } from 'modules/client/messages';
 import Link from 'components/Link';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import BBCode from 'components/BBCode';
 import { useUserCache } from 'modules/client/UserCache';
 import Timestamp from 'components/Timestamp';
@@ -18,9 +18,13 @@ export type MessageListingProps = {
 
 const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 	const [message, setMessage] = useState(messageProp);
+
+	const { userCache } = useUserCache();
+	const fromUser = userCache[message.from]!;
+
 	const [open, setOpen] = useState(false);
 
-	const showPreview = useCallback(async () => {
+	const openPreview = useCallback(async () => {
 		setOpen(true);
 
 		if (!message.read) {
@@ -67,15 +71,25 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 		}
 	}, [message.id, message.to, message.read]);
 
-	const hidePreview = useCallback(() => {
+	const closePreview = useCallback(() => {
 		setOpen(false);
 	}, []);
 
-	const { userCache } = useUserCache();
-	const fromUser = userCache[message.from]!;
+	const contentRef = useRef<HTMLDivElement>(null!);
+	const [overflow, setOverflow] = useState(false);
+	const [overflowHeight, setOverflowHeight] = useState(false);
+
+	useEffect(() => {
+		const overflowHeight = contentRef.current.scrollHeight > contentRef.current.offsetHeight;
+		setOverflowHeight(overflowHeight);
+		setOverflow(
+			contentRef.current.scrollWidth > contentRef.current.offsetWidth
+			|| overflowHeight
+		);
+	}, []);
 
 	return (
-		<div className={`listing${message.read ? ' read' : ''}`}>
+		<div className={`listing${message.read ? ' read' : ''}${open ? ' open' : ''}`}>
 			<Link
 				className="listing-icon"
 				href={`/message/${message.id}`}
@@ -104,19 +118,22 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 						{message.sent}
 					</Timestamp>
 				</div>
-				{open && (
-					<div className="listing-section listing-content">
-						<BBCode>{message.content}</BBCode>
+				<div
+					className={`listing-section listing-content${overflowHeight ? ' overflow-height' : ''}`}
+					ref={contentRef}
+				>
+					<BBCode>{message.content}</BBCode>
+				</div>
+				{overflow && (
+					<div className="listing-section listing-footer">
+						<Link
+							className="listing-preview-link"
+							onClick={open ? closePreview : openPreview}
+						>
+							{open ? 'Show Less' : 'Show More'}
+						</Link>
 					</div>
 				)}
-				<div className="listing-section listing-footer">
-					<Link
-						className="listing-preview-link"
-						onClick={open ? hidePreview : showPreview}
-					>
-						{open ? 'Hide Preview' : 'Show Preview'}
-					</Link>
-				</div>
 			</div>
 		</div>
 	);
