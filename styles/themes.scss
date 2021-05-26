@@ -80,6 +80,11 @@ $visited-link-color: (
 	dark: #bf7cff
 );
 
+$active-link-color: (
+	standard: #ee0000,
+	dark: #ee3333
+);
+
 $translucent-text-color: ();
 @each $theme, $color in $text-color {
 	$translucent-text-color: map.set($translucent-text-color, $theme, color.scale($color, $alpha: -30%));
