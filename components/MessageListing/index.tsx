@@ -75,9 +75,17 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 		setOpen(false);
 	}, []);
 
-	const plainContent = useMemo(() => (
-		sanitizeBBCode(message.content, { noBB: true })
-	), [message.content]);
+	const plainContent = useMemo(() => {
+		const fullPlainContent = sanitizeBBCode(message.content, { noBB: true });
+
+		const lineBreakIndex = fullPlainContent.indexOf('\n');
+		return (
+			lineBreakIndex === -1
+				? fullPlainContent
+				// Slice off everything after the first line.
+				: fullPlainContent.slice(0, lineBreakIndex)
+		);
+	}, [message.content]);
 	const [richContent, setRichContent] = useState<string | undefined>(undefined);
 
 	// This state is whether the message's content is rich, or whether it is not completely visible due to overflowing its container.
