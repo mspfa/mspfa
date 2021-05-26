@@ -667,6 +667,10 @@
 					"error",
 					"never"
 				],
+				"react/jsx-first-prop-new-line": [
+					"error",
+					"multiline"
+				],
 				"react/jsx-fragments": [
 					"error",
 					"syntax"
