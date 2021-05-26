@@ -2,6 +2,7 @@
 
 .message-list .listing {
 	position: relative;
+	box-sizing: content-box;
 
 	&:not(:last-child) {
 		padding-bottom: 1em;
@@ -10,17 +11,6 @@
 
 	&:not(:first-child) {
 		padding-top: 1em;
-	}
-
-	&:not(.read)::before {
-		content: '';
-		display: inline-block;
-		position: absolute;
-		left: -24px;
-		top: 0.5em;
-		width: 6px;
-		height: 4em;
-		background-color: #f48e11;
 	}
 
 	&-selected-label {
@@ -32,6 +22,17 @@
 		padding: 0 0.75em;
 	}
 
+	&:not(.read) .listing-selected-label::before {
+		content: '';
+		display: inline-block;
+		position: absolute;
+		pointer-events: none;
+		left: -24px;
+		width: 6px;
+		height: 4em;
+		background-color: #f48e11;
+	}
+
 	&:not(.open) .listing-content {
 		position: relative;
 		overflow: hidden;
@@ -40,5 +41,34 @@
 		.bbcode {
 			white-space: nowrap;
 		}
+	}
+
+	&-actions {
+		display: none;
+		position: absolute;
+		right: 0;
+		align-items: center;
+		margin-top: 0.5em;
+		image-rendering: pixelated;
+		transform-origin: top right;
+		transform: scale(2);
+
+		.button {
+			margin-right: 0.25em;
+		}
+	}
+
+	&:hover .listing-actions {
+		display: flex;
+	}
+}
+
+.button.mark {
+	&-read {
+		background-image: url(/images/icons/envelope-open.png);
+	}
+
+	&-unread {
+		background-image: url(/images/icons/envelope-closed.png);
 	}
 }

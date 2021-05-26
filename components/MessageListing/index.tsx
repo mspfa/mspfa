@@ -8,9 +8,12 @@ import { useUserCache } from 'modules/client/UserCache';
 import Timestamp from 'components/Timestamp';
 import { getUser, setUser } from 'modules/client/users';
 import api from 'modules/client/api';
-import type { APIClient } from 'modules/client/api';
+import type { APIClient, APIError } from 'modules/client/api';
+import Button from 'components/Button';
+import RemoveButton from 'components/Button/RemoveButton';
 
 type MessageReadByAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy').default>;
+type MessageReadByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy/[userID]').default>;
 
 export type MessageListingProps = {
 	children: ClientMessage
@@ -23,57 +26,6 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 	const fromUser = userCache[message.from]!;
 
 	const [open, setOpen] = useState(false);
-
-	const showMore = useCallback(async () => {
-		setOpen(true);
-
-		if (!message.read) {
-			// The user is opening the unread message.
-
-			const user = getUser();
-
-			if (user && message.to.includes(user.id)) {
-				// The user is a recipient of this message.
-
-				const markMessageAsRead = () => {
-					setMessage(message => ({
-						...message,
-						read: true
-					}));
-				};
-
-				const { data: { unreadMessageCount } } = await (api as MessageReadByAPI).post(`/messages/${message.id}/readBy`, {
-					userID: user.id
-				}, {
-					beforeInterceptError: error => {
-						if (error.response?.data.error === 'ALREADY_EXISTS') {
-							// The user already has the message marked as read.
-
-							error.preventDefault();
-
-							markMessageAsRead();
-
-							setUser({
-								...user,
-								unreadMessageCount: user.unreadMessageCount - 1
-							});
-						}
-					}
-				});
-
-				markMessageAsRead();
-
-				setUser({
-					...user,
-					unreadMessageCount
-				});
-			}
-		}
-	}, [message.id, message.to, message.read]);
-
-	const showLess = useCallback(() => {
-		setOpen(false);
-	}, []);
 
 	const plainContent = useMemo(() => {
 		const fullPlainContent = sanitizeBBCode(message.content, { noBB: true });
@@ -141,6 +93,87 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [richContent, message.content, open]);
 
+	// This state is whether marking as read or unread is currently loading.
+	const [markLoading, setMarkLoading] = useState(false);
+
+	const markRead = useCallback(async (
+		/** `true` if should mark as read. `false` if should mark as unread. */
+		read: boolean
+	) => {
+		if (markLoading) {
+			return;
+		}
+
+		const user = getUser();
+
+		if (user && message.to.includes(user.id)) {
+			// The user is a recipient of this message.
+
+			const setReadState = () => {
+				setMessage(message => ({
+					...message,
+					read
+				}));
+			};
+
+			setMarkLoading(true);
+
+			const beforeInterceptError = (error: APIError) => {
+				if (
+					error.response && (
+						(read && error.response.data.error === 'ALREADY_EXISTS')
+						|| (!read && error.response.status === 404)
+					)
+				) {
+					// The user already has the message marked as read or unread.
+
+					error.preventDefault();
+
+					setReadState();
+
+					setUser({
+						...user,
+						unreadMessageCount: user.unreadMessageCount + (read ? -1 : 1)
+					});
+				}
+			};
+
+			const { data: { unreadMessageCount } } = await (
+				read
+					? (api as MessageReadByAPI).post(
+						`/messages/${message.id}/readBy`,
+						{ userID: user.id },
+						{ beforeInterceptError }
+					)
+					: (api as MessageReadByUserAPI).delete(
+						`/messages/${message.id}/readBy/${user.id}`,
+						{ beforeInterceptError }
+					)
+			).finally(() => {
+				setMarkLoading(false);
+			});
+
+			setReadState();
+
+			setUser({
+				...user,
+				unreadMessageCount
+			});
+		}
+	}, [markLoading, message.id, message.to]);
+
+	const showMore = useCallback(() => {
+		setOpen(true);
+
+		if (!message.read) {
+			markRead(true);
+		}
+	}, [message.read, markRead]);
+
+	const showLess = useCallback(() => {
+		setOpen(false);
+	}, []);
+
 	return (
 		<div
 			className={`listing${message.read ? ' read' : ''}${open ? ' open' : ''}`}
@@ -198,6 +231,26 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 						</Link>
 					</div>
 				)}
+			</div>
+			<div className="listing-actions">
+				<Button
+					className={`icon${message.read ? ' mark-unread' : ' mark-read'}`}
+					title={message.read ? 'Mark as Unread' : 'Mark as Read'}
+					disabled={markLoading}
+					onClick={
+						useCallback(() => {
+							markRead(!message.read);
+						}, [markRead, message.read])
+					}
+				/>
+				<RemoveButton
+					title="Delete"
+					onClick={
+						useCallback(() => {
+
+						}, [])
+					}
+				/>
 			</div>
 		</div>
 	);
