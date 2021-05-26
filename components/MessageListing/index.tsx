@@ -83,7 +83,7 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 				<IconImage
 					src={fromUser.icon}
 					alt={`${fromUser.name}'s Icon`}
-					title={`${fromUser.name}'s Icon`}
+					title={message.subject}
 				/>
 			</Link>
 			<div className="listing-info">
