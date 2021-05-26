@@ -14,7 +14,7 @@ import { useUser } from 'modules/client/users';
 import { uniqBy } from 'lodash';
 import { useUserCache } from 'modules/client/UserCache';
 import Link from 'components/Link';
-import { Fragment, useCallback, useState } from 'react';
+import { Fragment, useCallback, useMemo, useState } from 'react';
 import Timestamp from 'components/Timestamp';
 import Button from 'components/Button';
 import BoxFooter from 'components/Box/BoxFooter';
@@ -44,7 +44,13 @@ const Component = withErrorPage<ServerSideProps>(({
 	userCache: initialUserCache
 }) => {
 	const user = useUser()!;
-	const [editing, setEditing] = useState(false);
+	const state = useMemo(() => ({
+		editing: false
+
+		// This ESLint comment is necessary because the purpose of this memo is to only reset this mutable object when a new `message` prop is passed in, and the rule thinks the `message` dependency is unnecessary.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}), [message]);
+	const [, updateState] = useState(false);
 
 	const { cacheUser, userCache } = useUserCache();
 	initialUserCache.forEach(cacheUser);
@@ -68,7 +74,11 @@ const Component = withErrorPage<ServerSideProps>(({
 	}, [message.id, user.id]);
 
 	const edit = useCallback(() => {
-		setEditing(true);
+		state.editing = true;
+		updateState(value => !value);
+
+		// This ESLint comment is necessary because the rule incorrectly thinks `state` can change.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
@@ -88,7 +98,11 @@ const Component = withErrorPage<ServerSideProps>(({
 						// Because the above assignment mutates the original `message` object without using a state setter, a state change such as the one below is necessary to re-render the component with the new version of `message`.
 						// It is necessary to mutate the original `message` object instead of using a state because a state would not update when a new `message` prop is passed into the page.
 
-						setEditing(false);
+						state.editing = false;
+						updateState(value => !value);
+
+						// This ESLint comment is necessary because the rule incorrectly thinks `state` can change.
+						// eslint-disable-next-line react-hooks/exhaustive-deps
 					}, [message])
 				}
 				enableReinitialize
@@ -101,7 +115,8 @@ const Component = withErrorPage<ServerSideProps>(({
 							// In case the user decides to start editing again, reset the dirty values.
 							resetForm();
 
-							setEditing(false);
+							state.editing = false;
+							updateState(value => !value);
 						}
 					}, [resetForm, shouldLeave]);
 
@@ -156,7 +171,7 @@ const Component = withErrorPage<ServerSideProps>(({
 									</div>
 								</BoxSection>
 								<BoxSection id="message-content">
-									{editing ? (
+									{state.editing ? (
 										<>
 											<Label htmlFor="field-content">
 												Content
@@ -174,7 +189,7 @@ const Component = withErrorPage<ServerSideProps>(({
 									)}
 								</BoxSection>
 								<BoxFooter>
-									{editing ? (
+									{state.editing ? (
 										<>
 											<Button
 												type="submit"
