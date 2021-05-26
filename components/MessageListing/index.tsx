@@ -146,6 +146,9 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 			className={`listing${message.read ? ' read' : ''}${open ? ' open' : ''}`}
 			ref={listingRef}
 		>
+			<label className="listing-selected-label" title="Select Message">
+				<input type="checkbox" />
+			</label>
 			<Link
 				className="listing-icon"
 				href={`/message/${message.id}`}

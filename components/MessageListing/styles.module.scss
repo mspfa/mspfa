@@ -23,6 +23,15 @@
 		background-color: #f48e11;
 	}
 
+	&-selected-label {
+		display: flex;
+		flex-shrink: 0;
+		align-items: center;
+		height: 4em;
+		margin: 0.5em 0.25em 0 -0.75em;
+		padding: 0 0.75em;
+	}
+
 	&:not(.open) .listing-content {
 		position: relative;
 		overflow: hidden;
