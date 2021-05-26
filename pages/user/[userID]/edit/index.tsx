@@ -46,12 +46,12 @@ const getValuesFromUser = (privateUser: PrivateUser) => ({
 type Values = ReturnType<typeof getValuesFromUser>;
 
 type ServerSideProps = {
-	initialPrivateUser: PrivateUser
+	privateUser: PrivateUser
 } | {
 	statusCode: number
 };
 
-const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
+const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateUser }) => {
 	const [privateUser, setPrivateUser] = useState(initialPrivateUser);
 
 	const initialValues = getValuesFromUser(privateUser);
@@ -208,7 +208,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 
 	return {
 		props: {
-			initialPrivateUser: getPrivateUser(user!)
+			privateUser: getPrivateUser(user!)
 		}
 	};
 });
