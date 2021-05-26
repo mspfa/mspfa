@@ -28,12 +28,16 @@ const NavItem = React.forwardRef<HTMLAnchorElement & HTMLButtonElement, NavItemP
 		{...props}
 		ref={ref}
 	>
-		<span className="nav-label">{label}</span>
-		{bubble ? (
-			<div className="bubble">
-				{bubble === true ? '!' : bubble}
-			</div>
-		) : undefined}
+		<span className="nav-label">
+			{label}
+		</span>
+		{
+			bubble ? (
+				<div className="bubble">
+					{bubble === true ? '!' : bubble}
+				</div>
+			) : undefined
+		}
 	</Link>
 ));
 

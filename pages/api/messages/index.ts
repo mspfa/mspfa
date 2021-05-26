@@ -61,13 +61,15 @@ const Handler: APIHandler<{
 		sent: now,
 		from: user._id,
 		to: recipientIDs,
-		...replyTo ? {
-			replyTo: replyTo._id,
-			// Prepend "Re: " if it isn't already there, and replace anything overflowing the character limit of 50 with an ellipsis.
-			subject: replyTo.subject.replace(/^(Re: )?/, 'Re: ').replace(/^(.{49}).{2,}$/, '$1…')
-		} : {
-			subject: req.body.subject!
-		},
+		...replyTo
+			? {
+				replyTo: replyTo._id,
+				// Prepend "Re: " if it isn't already there, and replace anything overflowing the character limit of 50 with an ellipsis.
+				subject: replyTo.subject.replace(/^(Re: )?/, 'Re: ').replace(/^(.{49}).{2,}$/, '$1…')
+			}
+			: {
+				subject: req.body.subject!
+			},
 		notDeletedBy: uniqBy([user._id, ...recipientIDs], String),
 		notReadBy: recipientIDs,
 		content: req.body.content

@@ -266,7 +266,7 @@ const tags: Record<string, {
 		getProps: ({ values: { width, height, children } }) => ({
 			children,
 			attributes: (
-				(width ? width : '')
+				(width || '')
 				+ (height ? `x${height}` : '')
 			)
 		}),
@@ -420,7 +420,7 @@ const tags: Record<string, {
 		getProps: ({ values: { width, height, children } }) => ({
 			children,
 			attributes: (
-				(width ? width : '')
+				(width || '')
 				+ (height ? `x${height}` : '')
 			)
 		}),
@@ -467,7 +467,7 @@ const tags: Record<string, {
 		getProps: ({ values: { width, height, children } }) => ({
 			children,
 			attributes: (
-				(width ? width : '')
+				(width || '')
 				+ (height ? `x${height}` : '')
 			)
 		}),

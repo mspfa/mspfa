@@ -93,12 +93,14 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 						}
 
 						const { data: message } = await (api as MessagesAPI).post('/messages', {
-							...replyTo ? {
-								replyTo: replyTo.id
-							} : {
-								to: values.to!.filter(Boolean) as string[],
-								subject: values.subject!
-							},
+							...replyTo
+								? {
+									replyTo: replyTo.id
+								}
+								: {
+									to: values.to!.filter(Boolean) as string[],
+									subject: values.subject!
+								},
 							content: values.content
 						});
 
