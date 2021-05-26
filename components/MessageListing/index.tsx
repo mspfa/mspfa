@@ -2,7 +2,7 @@ import './styles.module.scss';
 import IconImage from 'components/IconImage';
 import type { ClientMessage } from 'modules/client/messages';
 import Link from 'components/Link';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
 import { useUserCache } from 'modules/client/UserCache';
 import Timestamp from 'components/Timestamp';
@@ -75,42 +75,65 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 		setOpen(false);
 	}, []);
 
-	const [plainContent] = useState(() => sanitizeBBCode(message.content, { noBB: true }));
-	const [richContent, setRichContent] = useState<string>(plainContent);
+	const plainContent = useMemo(() => (
+		sanitizeBBCode(message.content, { noBB: true })
+	), [message.content]);
+	const [richContent, setRichContent] = useState<string | undefined>(undefined);
 
 	// This state is whether the message's content is rich, or whether it is not completely visible due to overflowing its container.
 	const [moreLinkVisible, setMoreLinkVisible] = useState(false);
+	const listingRef = useRef<HTMLDivElement>(null!);
 	const contentRef = useRef<HTMLDivElement>(null!);
 
 	useEffect(() => {
 		const newRichContent = sanitizeBBCode(message.content);
 		setRichContent(newRichContent);
 
-		const contentIsRich = plainContent !== newRichContent;
-		setMoreLinkVisible(contentIsRich);
-
-		if (contentIsRich) {
-			return;
+		if (plainContent !== newRichContent) {
+			setMoreLinkVisible(true);
 		}
-
-		const onResize = () => {
-			// Whether the message's content overflows its container.
-			setMoreLinkVisible(contentRef.current.scrollWidth > contentRef.current.offsetWidth);
-		};
-
-		onResize();
-		window.addEventListener('resize', onResize);
-
-		return () => {
-			window.removeEventListener('resize', onResize);
-		};
 
 		// This ESLint comment is necessary because the rule incorrectly thinks `plainContent` should be a dependency here, despite that it depends on `message.content` which is already a dependency.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [message.content]);
 
+	useEffect(() => {
+		// Check that this message's rich content has loaded via the previous effect hook, and that it is plain text.
+		if (richContent && plainContent === richContent) {
+			const onResize = () => {
+				if (open) {
+					// Temporarily show less so the overflow detection can be accurate.
+					listingRef.current.className = listingRef.current.className.replace(/(?:^| )open( |$)/, '$1');
+				}
+
+				setMoreLinkVisible(
+					// Whether the message's content overflows its container.
+					contentRef.current.scrollWidth > contentRef.current.offsetWidth
+				);
+
+				if (open) {
+					listingRef.current.className += ' open';
+				}
+			};
+
+			onResize();
+			window.addEventListener('resize', onResize);
+
+			return () => {
+				window.removeEventListener('resize', onResize);
+			};
+		}
+
+		// `message.content` should be a dependency here because the widths of `contentRef.current` depend on it and are referenced in this hook.
+		// This ESLint comment is necessary because the rule incorrectly thinks `plainContent` should be a dependency here, despite that it depends on `message.content` which is already a dependency.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [richContent, message.content, open]);
+
 	return (
-		<div className={`listing${message.read ? ' read' : ''}${open ? ' open' : ''}`}>
+		<div
+			className={`listing${message.read ? ' read' : ''}${open ? ' open' : ''}`}
+			ref={listingRef}
+		>
 			<Link
 				className="listing-icon"
 				href={`/message/${message.id}`}
