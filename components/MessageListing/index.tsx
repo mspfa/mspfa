@@ -98,8 +98,12 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 	}, [message.content]);
 
 	useEffect(() => {
-		// Check that this message's rich content has loaded via the previous effect hook, and that it is plain text.
-		if (richContent && plainContent === richContent) {
+		if (
+			// Check that this message's rich content has loaded via the previous effect hook.
+			richContent !== undefined
+			// Check that this message's content is plain text.
+			&& plainContent === richContent
+		) {
 			const onResize = () => {
 				if (open) {
 					// Temporarily show less so the overflow detection can be accurate.
