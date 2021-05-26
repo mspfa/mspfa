@@ -76,7 +76,7 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 	}, []);
 
 	const [plainContent] = useState(() => sanitizeBBCode(message.content, { noBB: true }));
-	const [richContent] = useState(plainContent);
+	const [richContent, setRichContent] = useState(plainContent);
 
 	const contentRef = useRef<HTMLDivElement>(null!);
 	// This state is whether the message's content is rich, or whether it not completely visible due to overflowing its container.
@@ -89,6 +89,7 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 
 			if (!newMoreLinkVisible) {
 				const richContent = sanitizeBBCode(message.content);
+				setRichContent(richContent);
 
 				// Whether the message's content is rich.
 				newMoreLinkVisible = plainContent !== richContent;
