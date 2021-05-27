@@ -47,7 +47,6 @@
 		display: none;
 		position: absolute;
 		right: 0;
-		align-items: center;
 		margin-top: 0.5em;
 		image-rendering: pixelated;
 		transform-origin: top right;
@@ -59,7 +58,7 @@
 	}
 
 	&:hover .listing-actions {
-		display: flex;
+		display: block;
 	}
 }
 
