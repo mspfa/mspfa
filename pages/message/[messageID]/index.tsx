@@ -77,10 +77,7 @@ const Component = withErrorPage<ServerSideProps>(({
 	const edit = useCallback(() => {
 		state.editing = true;
 		updateState(value => !value);
-
-		// This ESLint comment is necessary because the rule incorrectly thinks `state` can change.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [state]);
 
 	return (
 		<Page flashyTitle heading="Messages">
@@ -101,10 +98,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 						state.editing = false;
 						updateState(value => !value);
-
-						// This ESLint comment is necessary because the rule incorrectly thinks `state` can change.
-						// eslint-disable-next-line react-hooks/exhaustive-deps
-					}, [message])
+					}, [message, state])
 				}
 				enableReinitialize
 			>

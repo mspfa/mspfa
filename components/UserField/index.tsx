@@ -2,7 +2,7 @@ import './styles.module.scss';
 import { useFormikContext } from 'formik';
 import { toKebabCase } from 'modules/client/utilities';
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
-import { useCallback, useState, useRef, useEffect } from 'react';
+import { useCallback, useState, useRef, useEffect, useMemo } from 'react';
 import { usePrefixedID } from 'modules/client/IDPrefix';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
@@ -103,12 +103,15 @@ const UserField = ({
 		}
 	};
 
-	const [autoComplete] = useState({
+	const autoComplete = useMemo(() => ({
 		timeout: undefined as NodeJS.Timeout | undefined,
 		update: updateAutoComplete,
 		mounted: false,
 		cancelTokenSource: undefined as ReturnType<typeof axios.CancelToken.source> | undefined
-	});
+
+		// This ESLint comment is necessary because the purpose of this memo is to persist these values between re-renders and never change the identity of this object. The rule does not recognize that this memo should thus have no dependencies.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}), []);
 
 	autoComplete.update = updateAutoComplete;
 
