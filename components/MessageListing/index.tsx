@@ -23,7 +23,7 @@ export type MessageListingProps = {
 
 const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 	const user = useUser();
-	const [message, setMessage] = useState(messageProp);
+	const message = useMemo(() => messageProp, [messageProp]);
 
 	const { userCache } = useUserCache();
 	const fromUser = userCache[message.from]!;
@@ -112,13 +112,6 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 			return;
 		}
 
-		const setReadState = () => {
-			setMessage(message => ({
-				...message,
-				read
-			}));
-		};
-
 		setMarkLoading(true);
 
 		const beforeInterceptError = (error: APIError) => {
@@ -132,7 +125,7 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 
 				error.preventDefault();
 
-				setReadState();
+				message.read = read;
 
 				setUser({
 					...user!,
@@ -156,13 +149,13 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 			setMarkLoading(false);
 		});
 
-		setReadState();
+		message.read = read;
 
 		setUser({
 			...user!,
 			unreadMessageCount
 		});
-	}, [user, userIsRecipient, markLoading, message.id]);
+	}, [user, userIsRecipient, markLoading, message]);
 
 	const toggleRead = useCallback(() => {
 		markRead(!message.read);
@@ -181,7 +174,7 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 	}, []);
 
 	const deleteMessage = useCallback(async () => {
-		if (!(
+		if (deleteLoading || !(
 			userIsRecipient
 			&& await Dialog.confirm({
 				id: 'delete-message',
@@ -204,10 +197,15 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 
 		await (api as MessageDeletedByAPI).post(`/messages/${message.id}/deletedBy`, {
 			userID: user!.id
-		}).finally(() => {
-			setDeleteLoading(false);
 		});
-	}, [user, userIsRecipient, message.id, message.subject]);
+
+		if (message.read) {
+			setUser({
+				...user!,
+				unreadMessageCount: user!.unreadMessageCount - 1
+			});
+		}
+	}, [user, userIsRecipient, deleteLoading, message.id, message.subject, message.read]);
 
 	return (
 		<div
@@ -272,12 +270,10 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 					<Button
 						className={`icon${message.read ? ' mark-unread' : ' mark-read'}`}
 						title={message.read ? 'Mark as Unread' : 'Mark as Read'}
-						disabled={markLoading}
 						onClick={toggleRead}
 					/>
 					<RemoveButton
 						title="Delete"
-						disabled={deleteLoading}
 						onClick={deleteMessage}
 					/>
 				</div>
