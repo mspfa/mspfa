@@ -453,7 +453,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 																	required
 																/>
 																<label className="spaced bolder" htmlFor="delete-user-confirm">
-																	I am sure I want to delete my account: {privateUser.name}
+																	I am sure I want to delete my account: <i>{privateUser.name}</i>
 																</label>
 															</>
 														),

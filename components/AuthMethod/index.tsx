@@ -34,7 +34,18 @@ const AuthMethod = ({ userID, authMethod, authMethods, setAuthMethods }: AuthMet
 						if (!await Dialog.confirm({
 							id: `confirm-remove-auth-method-${authMethod.id}`,
 							title: 'Remove Sign-In Method',
-							content: `Are you sure you want to remove this ${authMethodTypeName} sign-in method?${authMethod.name ? `\n\n${authMethod.name}` : ''}`
+							content: (
+								<>
+									Are you sure you want to remove this {authMethodTypeName} sign-in method?
+									{authMethod.name ? (
+										<>
+											<br />
+											<br />
+											<i>{authMethod.name}</i>
+										</>
+									) : null}
+								</>
+							)
 						})) {
 							return;
 						}

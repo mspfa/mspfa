@@ -186,7 +186,15 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 			&& await Dialog.confirm({
 				id: 'delete-message',
 				title: 'Delete Message',
-				content: 'Are you sure you want to delete that message?'
+				content: (
+					<>
+						Are you sure you want to delete this message?<br />
+						<br />
+						<i>{message.subject}</i><br />
+						<br />
+						The message will only be deleted for you.
+					</>
+				)
 			})
 		)) {
 			return;
@@ -199,7 +207,7 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 		}).finally(() => {
 			setDeleteLoading(false);
 		});
-	}, [user, userIsRecipient, message.id]);
+	}, [user, userIsRecipient, message.id, message.subject]);
 
 	return (
 		<div

@@ -60,6 +60,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 	const onClickDelete	= useCallback(async () => {
 		if (!await Dialog.confirm({
+			id: 'delete-message',
 			title: 'Delete Message',
 			content: 'Are you sure you want to delete this message?\n\nThe message will only be deleted for you.'
 		})) {
