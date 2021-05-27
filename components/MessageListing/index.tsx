@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
 import { useUserCache } from 'modules/client/UserCache';
 import Timestamp from 'components/Timestamp';
-import { getUser, setUser, useUser } from 'modules/client/users';
+import { setUser, useUser } from 'modules/client/users';
 import api from 'modules/client/api';
 import type { APIClient, APIError } from 'modules/client/api';
 import Button from 'components/Button';
