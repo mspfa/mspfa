@@ -87,7 +87,7 @@ export const useLeaveConfirmation = (
 				&& !shouldLeave()
 			) {
 				Router.events.emit('routeChangeError');
-				Router.replace(Router, Router.asPath);
+				Router.replace(Router.asPath, Router.asPath, { shallow: true });
 
 				// Next being opinionated can be bullshit. To see why throwing a string is necessary, see the issue linked in said string.
 				// eslint-disable-next-line @typescript-eslint/no-throw-literal
