@@ -2,7 +2,7 @@ import './styles.module.scss';
 import IconImage from 'components/IconImage';
 import type { ClientMessage } from 'modules/client/messages';
 import Link from 'components/Link';
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
 import { useUserCache } from 'modules/client/UserCache';
 import Timestamp from 'components/Timestamp';
@@ -12,7 +12,7 @@ import type { APIClient, APIError } from 'modules/client/api';
 import Button from 'components/Button';
 import RemoveButton from 'components/Button/RemoveButton';
 import { Dialog } from 'modules/client/dialogs';
-import { useLatest } from 'react-use';
+import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 
 type MessageReadByAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy').default>;
 type MessageReadByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy/[userID]').default>;
@@ -66,7 +66,7 @@ const MessageListing = ({
 	const listingRef = useRef<HTMLDivElement>(null!);
 	const contentRef = useRef<HTMLDivElement>(null!);
 
-	useLayoutEffect(() => {
+	useIsomorphicLayoutEffect(() => {
 		const newRichContent = sanitizeBBCode(message.content);
 		setRichContent(newRichContent);
 
@@ -78,7 +78,7 @@ const MessageListing = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [message.content]);
 
-	useLayoutEffect(() => {
+	useIsomorphicLayoutEffect(() => {
 		if (
 			// Check that this message's rich content has loaded via the previous effect hook.
 			richContent !== undefined

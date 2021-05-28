@@ -2,7 +2,7 @@ import './styles.module.scss';
 import { useFormikContext } from 'formik';
 import { toKebabCase } from 'modules/client/utilities';
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
-import { useCallback, useState, useRef, useEffect, useLayoutEffect } from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
 import { usePrefixedID } from 'modules/client/IDPrefix';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
@@ -13,6 +13,7 @@ import EditButton from 'components/Button/EditButton';
 import axios from 'axios';
 import { useUserCache } from 'modules/client/UserCache';
 import RemoveButton from 'components/Button/RemoveButton';
+import { useIsomorphicLayoutEffect } from 'react-use';
 
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
 
@@ -231,7 +232,7 @@ const UserField = ({
 		setWasEditing(isEditing);
 	}, [isEditing, wasEditing, inputValue, autoFocus, autoComplete]);
 
-	useLayoutEffect(() => {
+	useIsomorphicLayoutEffect(() => {
 		if (isEditing) {
 			// The component rendered while the user is editing.
 

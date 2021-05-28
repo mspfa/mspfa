@@ -1,10 +1,10 @@
 import { useRouter } from 'next/router';
-import { useLayoutEffect } from 'react';
+import { useIsomorphicLayoutEffect } from 'react-use';
 
 const Component = () => {
 	const router = useRouter();
 
-	useLayoutEffect(() => {
+	useIsomorphicLayoutEffect(() => {
 		if (Object.keys(router.query).length) {
 			window.opener.postMessage(router.query, location.origin);
 			window.close();
