@@ -30,7 +30,7 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 
 	/** Handles the blur event bubbled from any element in the menu. */
 	const onBlur = useCallback(() => {
-		// `setTimeout` is necessary here because otherwise, for example when tabbing through links in the menu, this will run before the next link in the menu focuses, so the `if` statement would not detect that the menu is in focus.
+		// This timeout is necessary because otherwise, for example when tabbing through links in the menu, this will run before the next link in the menu focuses, so the `if` statement would not detect that the menu is in focus.
 		setTimeout(() => {
 			if (!menuContainerRef.current.contains(document.activeElement)) {
 				setForceOpen(false);

@@ -70,7 +70,7 @@ Router.events.on('routeChangeStart', () => {
 });
 
 const stopLoadingPage = () => {
-	// This `setTimeout` is necessary so the loading state of the `LoadingIndicator` component is not set during a route change, causing it to update incorrectly.
+	// This timeout is necessary so the loading state of the `LoadingIndicator` component is not set during a route change, causing it to update incorrectly.
 	setTimeout(() => {
 		stopLoading();
 	});

@@ -14,7 +14,7 @@ const AddUserButton = ({ value, setValue, userArrayFieldRef }: AddUserButtonProp
 			useCallback(() => {
 				setValue([...value, undefined]);
 
-				// This `setTimeout` is necessary to wait for the newly added user field to render.
+				// This timeout is necessary to wait for the newly added user field to render.
 				setTimeout(() => {
 					const userFieldInputs = userArrayFieldRef.current.getElementsByClassName('user-field-input') as HTMLCollectionOf<HTMLInputElement>;
 
