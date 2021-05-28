@@ -401,7 +401,13 @@
 			"static public field"
 		],
 		"react/style-prop-object": "error",
-		"react/void-dom-elements-no-children": "error"
+		"react/void-dom-elements-no-children": "error",
+		"react-hooks/exhaustive-deps": [
+			"warn",
+			{
+				"additionalHooks": "useIsomorphicLayoutEffect|useDeepCompareEffect"
+			}
+		]
 	},
 	"overrides": [
 		{
