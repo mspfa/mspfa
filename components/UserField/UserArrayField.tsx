@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import { useField } from 'formik';
 import type { InputHTMLAttributes } from 'react';
-import { useState, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import UserField from 'components/UserField';
 import AddUserButton from 'components/UserField/AddUserButton';
 
