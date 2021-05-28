@@ -14,7 +14,7 @@ import { useUser } from 'modules/client/users';
 import { uniqBy } from 'lodash';
 import { useUserCache } from 'modules/client/UserCache';
 import Link from 'components/Link';
-import { Fragment, useCallback, useMemo, useState } from 'react';
+import { Fragment, useCallback, useState } from 'react';
 import Timestamp from 'components/Timestamp';
 import Button from 'components/Button';
 import BoxFooter from 'components/Box/BoxFooter';
@@ -44,13 +44,14 @@ const Component = withErrorPage<ServerSideProps>(({
 	userCache: initialUserCache
 }) => {
 	const user = useUser()!;
-	const state = useMemo(() => ({
-		editing: false
+	const [editing, setEditing] = useState(false);
+	const [previousMessage, setPreviousMessage] = useState(message);
 
-		// This ESLint comment is necessary because the purpose of this memo is to only reset this mutable object when a new `message` prop is passed in, and the rule thinks the `message` dependency is unnecessary.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}), [message]); // TODO: Don't `useMemo`.
-	const [, updateState] = useState(false);
+	if (message !== previousMessage) {
+		setEditing(false);
+
+		setPreviousMessage(message);
+	}
 
 	const { cacheUser, userCache } = useUserCache();
 	initialUserCache.forEach(cacheUser);
@@ -75,9 +76,8 @@ const Component = withErrorPage<ServerSideProps>(({
 	}, [message.id, user.id]);
 
 	const edit = useCallback(() => {
-		state.editing = true;
-		updateState(value => !value);
-	}, [state]);
+		setEditing(true);
+	}, []);
 
 	return (
 		<Page flashyTitle heading="Messages">
@@ -96,9 +96,8 @@ const Component = withErrorPage<ServerSideProps>(({
 						// Because the above assignment mutates the original `message` object without using a state setter, a state change such as the one below is necessary to re-render the component with the new version of `message`.
 						// It is necessary to mutate the original `message` object instead of using a state because a state would not update when a new `message` prop is passed into the page.
 
-						state.editing = false;
-						updateState(value => !value);
-					}, [message, state])
+						setEditing(false);
+					}, [message])
 				}
 				enableReinitialize
 			>
@@ -110,8 +109,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							// In case the user decides to start editing again, reset the dirty values.
 							resetForm();
 
-							state.editing = false;
-							updateState(value => !value);
+							setEditing(false);
 						}
 					}, [resetForm, shouldLeave]);
 
@@ -166,7 +164,7 @@ const Component = withErrorPage<ServerSideProps>(({
 									</div>
 								</BoxSection>
 								<BoxSection id="message-content">
-									{state.editing ? (
+									{editing ? (
 										<>
 											<Label htmlFor="field-content">
 												Content
@@ -184,7 +182,7 @@ const Component = withErrorPage<ServerSideProps>(({
 									)}
 								</BoxSection>
 								<BoxFooter>
-									{state.editing ? (
+									{editing ? (
 										<>
 											<Button
 												type="submit"

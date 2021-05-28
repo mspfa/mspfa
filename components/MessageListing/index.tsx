@@ -22,9 +22,16 @@ export type MessageListingProps = {
 };
 
 const MessageListing = ({ children: messageProp }: MessageListingProps) => {
-	const user = useUser();
-	const message = useMemo(() => messageProp, [messageProp]); // TODO: Don't `useMemo`.
+	const [previousMessageProp, setPreviousMessageProp] = useState(messageProp);
+	const [message, setMessage] = useState(messageProp);
 
+	if (previousMessageProp !== messageProp) {
+		setMessage(messageProp);
+
+		setPreviousMessageProp(messageProp);
+	}
+
+	const user = useUser();
 	const { userCache } = useUserCache();
 	const fromUser = userCache[message.from]!;
 
@@ -112,6 +119,13 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 			return;
 		}
 
+		const setReadState = () => {
+			setMessage(message => ({
+				...message,
+				read
+			}));
+		};
+
 		setMarkLoading(true);
 
 		const beforeInterceptError = (error: APIError) => {
@@ -125,7 +139,7 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 
 				error.preventDefault();
 
-				message.read = read;
+				setReadState();
 
 				setUser({
 					...user!,
@@ -149,13 +163,13 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 			setMarkLoading(false);
 		});
 
-		message.read = read;
+		setReadState();
 
 		setUser({
 			...user!,
 			unreadMessageCount
 		});
-	}, [user, userIsRecipient, markLoading, message]);
+	}, [user, userIsRecipient, markLoading, message.id]);
 
 	const toggleRead = useCallback(() => {
 		markRead(!message.read);
