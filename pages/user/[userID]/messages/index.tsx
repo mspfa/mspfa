@@ -7,15 +7,17 @@ import { Perm } from 'modules/client/perms';
 import { permToGetUserInPage } from 'modules/server/perms';
 import messages, { getClientMessage } from 'modules/server/messages';
 import type { ClientMessage } from 'modules/client/messages';
-import type { PublicUser } from 'modules/client/users';
+import type { PublicUser, PrivateUser } from 'modules/client/users';
+import { getUser, setUser } from 'modules/client/users';
 import { useUserCache } from 'modules/client/UserCache';
 import List from 'components/List';
 import { uniqBy } from 'lodash';
-import users, { getPublicUser } from 'modules/server/users';
+import users, { getPrivateUser, getPublicUser } from 'modules/server/users';
 import MessageListing from 'components/MessageListing';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 type ServerSideProps = {
+	privateUser: PrivateUser,
 	clientMessages: ClientMessage[],
 	userCache: PublicUser[]
 } | {
@@ -23,11 +25,24 @@ type ServerSideProps = {
 };
 
 const Component = withErrorPage<ServerSideProps>(({
+	privateUser,
 	clientMessages: clientMessagesProp,
 	userCache: initialUserCache
 }) => {
 	const [previousClientMessagesProp, setPreviousClientMessagesProp] = useState(clientMessagesProp);
 	const [clientMessages, setClientMessages] = useState(clientMessagesProp);
+
+	useEffect(() => {
+		const user = getUser();
+
+		if (user?.id === privateUser.id) {
+			// Update the user's unread message count in case it is outdated.
+			setUser({
+				...user,
+				unreadMessageCount: clientMessages.filter(message => !message.read).length
+			});
+		}
+	}, [clientMessages, privateUser.id]);
 
 	if (previousClientMessagesProp !== clientMessagesProp) {
 		setClientMessages(clientMessagesProp);
@@ -83,6 +98,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 
 	return {
 		props: {
+			privateUser: getPrivateUser(user!),
 			clientMessages,
 			userCache: (
 				await users.find!({

@@ -6,7 +6,7 @@ import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
 import { useUserCache } from 'modules/client/UserCache';
 import Timestamp from 'components/Timestamp';
-import { setUser, useUser } from 'modules/client/users';
+import { getUser, setUser, useUser } from 'modules/client/users';
 import api from 'modules/client/api';
 import type { APIClient, APIError } from 'modules/client/api';
 import Button from 'components/Button';
@@ -35,7 +35,23 @@ const MessageListing = ({
 		setPreviousMessageProp(messageProp);
 	}
 
-	const user = useUser();
+	let user = useUser();
+
+	/** Whether the user is a recipient of this message. */
+	let userIsRecipient = user && message.to.includes(user.id);
+
+	/** Reassigns `user` and `userIsRecipient` to accommodate race conditions. */
+	const updateUser = useCallback(() => {
+		// The below ESLint comments are necessary because the rule doesn't recognize that it doesn't matter if these assignments are lost after a re-render.
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		user = getUser();
+
+		/** Whether the user is a recipient of this message. */
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		userIsRecipient = user && message.to.includes(user.id);
+	}, []);
+
 	const { userCache } = useUserCache();
 	const fromUser = userCache[message.from]!;
 
@@ -107,9 +123,6 @@ const MessageListing = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [richContent, message.content, open]);
 
-	/** Whether the user is a recipient of this message. */
-	const userIsRecipient = user && message.to.includes(user.id);
-
 	// This state is whether marking the message as read or unread is currently loading.
 	const [markLoading, setMarkLoading] = useState(false);
 	// This state is whether deleting the message is currently loading.
@@ -123,13 +136,6 @@ const MessageListing = ({
 			return;
 		}
 
-		const setReadState = () => {
-			setMessage(message => ({
-				...message,
-				read
-			}));
-		};
-
 		setMarkLoading(true);
 
 		const beforeInterceptError = (error: APIError) => {
@@ -142,13 +148,6 @@ const MessageListing = ({
 				// The user already has the message marked as read or unread.
 
 				error.preventDefault();
-
-				setReadState();
-
-				setUser({
-					...user!,
-					unreadMessageCount: user!.unreadMessageCount + (read ? -1 : 1)
-				});
 			}
 		};
 
@@ -163,17 +162,41 @@ const MessageListing = ({
 					`/messages/${message.id}/readBy/${user!.id}`,
 					{ beforeInterceptError }
 				)
-		).finally(() => {
+		).catch((error: APIError) => {
+			if (error.defaultPrevented) {
+				// `user` needs to be updated here because it could have changed while this request was loading.
+				updateUser();
+
+				return {
+					data: {
+						unreadMessageCount: (
+							user
+								? user.unreadMessageCount + (read ? -1 : 1)
+								// If `!user`, this value should be completely unused. So I might as well set the `unreadMessageCount` to -1 so that a bug in which it isn't unused is more obvious to the user.
+								: -1
+						)
+					}
+				};
+			}
+
+			return Promise.reject(error);
+		}).finally(() => {
 			setMarkLoading(false);
 		});
 
-		setReadState();
+		setMessage(message => ({
+			...message,
+			read
+		}));
 
-		setUser({
-			...user!,
-			unreadMessageCount
-		});
-	}, [user, userIsRecipient, deleteLoading, markLoading, message.id]);
+		// Check `userIsRecipient` again because it could have been changed by the `updateUser` call in the above request's rejection handler.
+		if (userIsRecipient as boolean) {
+			setUser({
+				...user!,
+				unreadMessageCount
+			});
+		}
+	}, [user, userIsRecipient, deleteLoading, markLoading, message.id, updateUser]);
 
 	const toggleRead = useCallback(() => {
 		markRead(!message.read);
@@ -213,6 +236,13 @@ const MessageListing = ({
 
 		setDeleteLoading(true);
 
+		// `user` needs to be updated here because it could have changed while the above confirmation dialog was open.
+		updateUser();
+
+		if (!userIsRecipient as boolean) {
+			return;
+		}
+
 		await (api as MessageDeletedByAPI).post(`/messages/${message.id}/deletedBy`, {
 			userID: user!.id
 		}, {
@@ -231,7 +261,10 @@ const MessageListing = ({
 			}
 		});
 
-		if (!message.read) {
+		// `user` needs to be updated here because it could have changed while the above request was loading.
+		updateUser();
+
+		if (userIsRecipient as boolean && !message.read) {
 			setUser({
 				...user!,
 				unreadMessageCount: user!.unreadMessageCount - 1
@@ -239,7 +272,7 @@ const MessageListing = ({
 		}
 
 		removeListing(message);
-	}, [user, userIsRecipient, deleteLoading, message, removeListing]);
+	}, [user, userIsRecipient, deleteLoading, message, removeListing, updateUser]);
 
 	return (
 		<div
