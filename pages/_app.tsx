@@ -11,7 +11,7 @@ import env from 'modules/client/env';
 import { UserContext, useUserMerge, useUserInApp } from 'modules/client/users';
 import type { PrivateUser } from 'modules/client/users';
 import type { PageRequest } from 'modules/server/pages';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { setTheme } from 'modules/client/themes';
 import { merge } from 'lodash';
 import UserCache from 'modules/client/UserCache';
@@ -41,7 +41,7 @@ const MyApp = ({
 }: MyAppProps) => {
 	Object.assign(env, pageProps.initialProps?.env);
 
-	const [userCache] = useState({});
+	const { current: userCache } = useRef({});
 
 	const user = useUserInApp(pageProps.initialProps?.user);
 	const [userMerge] = useUserMerge();

@@ -103,7 +103,7 @@ const UserField = ({
 		}
 	};
 
-	const [autoComplete] = useState({
+	const { current: autoComplete } = useRef({
 		timeout: undefined as NodeJS.Timeout | undefined,
 		update: updateAutoComplete,
 		mounted: false,
@@ -123,7 +123,7 @@ const UserField = ({
 	const onChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
 		setInputValue(event.target.value);
 
-		// Only `autoComplete.update` at most once per 500 ms.
+		// Only update the auto-complete at most once per 500 ms.
 
 		if (autoComplete.timeout) {
 			clearTimeout(autoComplete.timeout);

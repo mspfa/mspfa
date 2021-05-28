@@ -21,12 +21,13 @@ const UserArrayField = ({
 	const userArrayFieldRef = useRef<HTMLDivElement>(null!);
 
 	const [, { value: fieldValue }, { setValue: setFieldValue }] = useField<Array<string | undefined>>(name);
-	const [userFieldKeys] = useState<number[]>([]);
+
+	const { current: userFieldKeys } = useRef<number[]>([]);
 
 	const getUserFieldKey = (index: number) => {
 		if (index >= userFieldKeys.length) {
-			let i = 0;
-			for (; userFieldKeys.includes(i); i++) {}
+			let i;
+			for (i = 0; userFieldKeys.includes(i); i++) {}
 			userFieldKeys[index] = i;
 		}
 
