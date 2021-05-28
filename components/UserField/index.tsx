@@ -2,7 +2,7 @@ import './styles.module.scss';
 import { useFormikContext } from 'formik';
 import { toKebabCase } from 'modules/client/utilities';
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
-import { useCallback, useState, useRef, useEffect, useMemo } from 'react';
+import { useCallback, useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { usePrefixedID } from 'modules/client/IDPrefix';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
@@ -103,15 +103,12 @@ const UserField = ({
 		}
 	};
 
-	const autoComplete = useMemo(() => ({
+	const [autoComplete] = useState({
 		timeout: undefined as NodeJS.Timeout | undefined,
 		update: updateAutoComplete,
 		mounted: false,
 		cancelTokenSource: undefined as ReturnType<typeof axios.CancelToken.source> | undefined
-
-		// This ESLint comment is necessary because the purpose of this memo is to persist these values between re-renders and never change the identity of this object. The rule does not recognize that this memo should thus have no dependencies.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}), []);
+	});
 
 	autoComplete.update = updateAutoComplete;
 
@@ -121,10 +118,7 @@ const UserField = ({
 		return () => {
 			autoComplete.mounted = false;
 		};
-
-		// This ESLint comment is necessary because the rule incorrectly thinks `autoComplete` can change.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [autoComplete]);
 
 	const onChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
 		setInputValue(event.target.value);
@@ -140,10 +134,7 @@ const UserField = ({
 
 			autoComplete.update();
 		}, 500);
-
-		// This ESLint comment is necessary because the rule incorrectly thinks `autoComplete` can change.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [autoComplete]);
 
 	const changeValue = useCallback(async (newValue: string | undefined) => {
 		setValueState(newValue);
@@ -170,12 +161,10 @@ const UserField = ({
 		autoComplete.update(newInputValue);
 
 		changeValue(undefined);
-
-		// This ESLint comment is necessary because the rule incorrectly thinks `autoComplete` can change.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [value, changeValue, getCachedUser, inputValue]);
+	}, [value, changeValue, getCachedUser, inputValue, autoComplete]);
 
 	const isEditing = !value;
+	const [wasEditing, setWasEditing] = useState(isEditing);
 
 	const onFocus = useCallback(() => {
 		if (isEditing) {
@@ -204,6 +193,12 @@ const UserField = ({
 	}, [isEditing]);
 
 	useEffect(() => {
+		if (isEditing === wasEditing) {
+			return;
+		}
+
+		// If this point is reached, the user just started or stopped editing.
+
 		if (isEditing) {
 			// The user started editing.
 
@@ -233,11 +228,10 @@ const UserField = ({
 			setAutoCompleteUsers([]);
 		}
 
-		// This ESLint comment is necessary because the purpose of this effect hook is to do things after mount when the user initially starts or stops editing, so `isEditing` is the only value I want to listen to changes in. Do not add anything to this hook which does not fit that purpose.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isEditing]);
+		setWasEditing(isEditing);
+	}, [isEditing, wasEditing, inputValue, autoFocus, autoComplete]);
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		if (isEditing) {
 			// The component rendered while the user is editing.
 

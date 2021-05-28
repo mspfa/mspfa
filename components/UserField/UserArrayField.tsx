@@ -20,7 +20,7 @@ const UserArrayField = ({
 }: UserArrayFieldProps) => {
 	const userArrayFieldRef = useRef<HTMLDivElement>(null!);
 
-	const [, { value: fieldValue }, { setValue }] = useField<Array<string | undefined>>(name);
+	const [, { value: fieldValue }, { setValue: setFieldValue }] = useField<Array<string | undefined>>(name);
 	const [userFieldKeys] = useState<number[]>([]);
 
 	const getUserFieldKey = (index: number) => {
@@ -59,7 +59,7 @@ const UserArrayField = ({
 			{!readOnly && (
 				<AddUserButton
 					value={value}
-					setValue={setValue}
+					setValue={setFieldValue}
 					userArrayFieldRef={userArrayFieldRef}
 				/>
 			)}

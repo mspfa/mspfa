@@ -441,9 +441,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 															<>
 																Are you sure you want to delete your account?<br />
 																<br />
-																Your account will be restored if you log into it within 30 days after deletion.<br />
+																Your account will be restored if you sign into it within 30 days after deletion.<br />
 																<br />
-																If you do not log into your account within 30 days, <span className="bolder red">the deletion will be irreversible.</span><br />
+																If you do not sign into your account within 30 days, <span className="bolder red">the deletion will be irreversible.</span><br />
 																<br />
 																<Field
 																	type="checkbox"
@@ -473,6 +473,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 													});
 
 													if (getUser()!.id === privateUser.id) {
+														// We don't want it to reload when they sign out. We want it to go to the homepage.
 														preventReloads();
 														setUser(undefined);
 													}

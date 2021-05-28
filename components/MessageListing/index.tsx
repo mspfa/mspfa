@@ -2,7 +2,7 @@ import './styles.module.scss';
 import IconImage from 'components/IconImage';
 import type { ClientMessage } from 'modules/client/messages';
 import Link from 'components/Link';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
 import { useUserCache } from 'modules/client/UserCache';
 import Timestamp from 'components/Timestamp';
@@ -23,7 +23,7 @@ export type MessageListingProps = {
 
 const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 	const user = useUser();
-	const message = useMemo(() => messageProp, [messageProp]);
+	const message = useMemo(() => messageProp, [messageProp]); // TODO: Don't `useMemo`.
 
 	const { userCache } = useUserCache();
 	const fromUser = userCache[message.from]!;
@@ -48,7 +48,7 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 	const listingRef = useRef<HTMLDivElement>(null!);
 	const contentRef = useRef<HTMLDivElement>(null!);
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		const newRichContent = sanitizeBBCode(message.content);
 		setRichContent(newRichContent);
 
@@ -60,7 +60,7 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [message.content]);
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		if (
 			// Check that this message's rich content has loaded via the previous effect hook.
 			richContent !== undefined

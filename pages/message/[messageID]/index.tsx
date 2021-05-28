@@ -49,7 +49,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 		// This ESLint comment is necessary because the purpose of this memo is to only reset this mutable object when a new `message` prop is passed in, and the rule thinks the `message` dependency is unnecessary.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}), [message]);
+	}), [message]); // TODO: Don't `useMemo`.
 	const [, updateState] = useState(false);
 
 	const { cacheUser, userCache } = useUserCache();

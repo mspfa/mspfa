@@ -19,11 +19,9 @@ const FlashyTitle = () => {
 	const router = useRouter();
 	const [color, setColor] = useState(getFlashyTitleColor);
 
-	useEffect(() => (
-		() => {
-			setColor(getFlashyTitleColor());
-		}
-	), [router.asPath]);
+	useEffect(() => () => {
+		setColor(getFlashyTitleColor());
+	}, [router.asPath]);
 
 	return (
 		<div id="flashy-title-container" className="front">

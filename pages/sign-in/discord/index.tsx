@@ -1,10 +1,10 @@
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 
 const Component = () => {
 	const router = useRouter();
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		if (Object.keys(router.query).length) {
 			window.opener.postMessage(router.query, location.origin);
 			window.close();
