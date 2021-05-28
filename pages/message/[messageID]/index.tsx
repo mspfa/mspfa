@@ -142,7 +142,6 @@ const Component = withErrorPage<ServerSideProps>(({
 													{replyTo.subject}
 												</Link>
 											) : (
-												// This shouldn't be possible unless something extraordinary occurs.
 												<span title={`ID: ${message.replyTo}`}>
 													[Deleted Message]
 												</span>
