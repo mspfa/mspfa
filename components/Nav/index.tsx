@@ -6,7 +6,7 @@ import Router, { useRouter } from 'next/router';
 import { signIn, signOut, useUser } from 'modules/client/users';
 
 const visitRandomStory = () => {
-	// TODO
+	// TODO: Visit random story.
 
 	Router.push(`/s/${Math.random()}/p/1`);
 };

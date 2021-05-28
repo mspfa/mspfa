@@ -237,7 +237,7 @@ const UserField = ({
 
 			const userFieldInput = userFieldRef.current!.getElementsByClassName('user-field-input')[0] as HTMLInputElement;
 
-			// This type assertion is necessary because this method may not exist on all browsers.
+			// This type assertion is necessary because the `setCustomValidity` method may not exist on all browsers.
 			(userFieldInput.setCustomValidity as typeof userFieldInput.setCustomValidity | undefined)?.(
 				required ? 'Please enter a username or ID and select a user.' : ''
 			);
