@@ -13,6 +13,7 @@ import List from 'components/List';
 import { uniqBy } from 'lodash';
 import users, { getPublicUser } from 'modules/server/users';
 import MessageListing from 'components/MessageListing';
+import { useCallback, useState } from 'react';
 
 type ServerSideProps = {
 	clientMessages: ClientMessage[],
@@ -21,7 +22,19 @@ type ServerSideProps = {
 	statusCode: number
 };
 
-const Component = withErrorPage<ServerSideProps>(({ clientMessages, userCache: initialUserCache }) => {
+const Component = withErrorPage<ServerSideProps>(({
+	clientMessages: clientMessagesProp,
+	userCache: initialUserCache
+}) => {
+	const [previousClientMessagesProp, setPreviousClientMessagesProp] = useState(clientMessagesProp);
+	const [clientMessages, setClientMessages] = useState(clientMessagesProp);
+
+	if (previousClientMessagesProp !== clientMessagesProp) {
+		setClientMessages(clientMessagesProp);
+
+		setPreviousClientMessagesProp(clientMessagesProp);
+	}
+
 	const { cacheUser } = useUserCache();
 	initialUserCache.forEach(cacheUser);
 
@@ -31,7 +44,16 @@ const Component = withErrorPage<ServerSideProps>(({ clientMessages, userCache: i
 				<BoxSection heading="Your Messages">
 					<List
 						listing={MessageListing}
-						removeListing={console.log}
+						removeListing={
+							useCallback((message: ClientMessage) => {
+								const messageIndex = clientMessages.findIndex(({ id }) => id === message.id);
+
+								setClientMessages([
+									...clientMessages.slice(0, messageIndex),
+									...clientMessages.slice(messageIndex + 1, clientMessages.length)
+								]);
+							}, [clientMessages])
+						}
 					>
 						{clientMessages}
 					</List>

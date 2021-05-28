@@ -1,7 +1,7 @@
 import { Dialog } from 'modules/client/dialogs';
 import SignIn, { signInValues, resetSignInValues } from 'components/SignIn';
 import api from 'modules/client/api';
-import type { APIClient } from 'modules/client/api';
+import type { APIClient, APIError } from 'modules/client/api';
 import { setUser } from 'modules/client/users';
 import type { AuthMethodOptions } from 'modules/client/auth';
 
@@ -110,9 +110,6 @@ export const setSignInPage = (
 								// Check if the response has a user in it but not a verified email.
 								if (error.response?.data.id && !error.response.data.email) {
 									error.preventDefault();
-
-									// Set a property on `error` to be read in the `catch` block afterward.
-									error.unverifiedEmail = true;
 								}
 							}
 						}
@@ -121,11 +118,11 @@ export const setSignInPage = (
 						signInLoading = false;
 						resetSignInValues();
 						setUser(data);
-					}).catch(({ unverifiedEmail }) => {
+					}).catch((error: APIError) => {
 						// If sign-in or sign-up fails, go back to sign-in screen.
 						signInLoading = false;
 
-						if (unverifiedEmail) {
+						if (error.defaultPrevented) {
 							resetSignInValues();
 
 							new Dialog({

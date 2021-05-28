@@ -119,7 +119,7 @@ const MessageListing = ({
 		/** `true` if should mark as read. `false` if should mark as unread. */
 		read: boolean
 	) => {
-		if (markLoading || !userIsRecipient) {
+		if (deleteLoading || markLoading || !userIsRecipient) {
 			return;
 		}
 
@@ -173,7 +173,7 @@ const MessageListing = ({
 			...user!,
 			unreadMessageCount
 		});
-	}, [user, userIsRecipient, markLoading, message.id]);
+	}, [user, userIsRecipient, deleteLoading, markLoading, message.id]);
 
 	const toggleRead = useCallback(() => {
 		markRead(!message.read);
@@ -215,9 +215,23 @@ const MessageListing = ({
 
 		await (api as MessageDeletedByAPI).post(`/messages/${message.id}/deletedBy`, {
 			userID: user!.id
+		}, {
+			beforeInterceptError: error => {
+				if (error.response?.status === 422) {
+					// The user isn't able to delete the message, so the message might as well be deleted.
+
+					error.preventDefault();
+				}
+			}
+		}).catch((error: APIError) => {
+			if (!error.defaultPrevented) {
+				setDeleteLoading(false);
+
+				return Promise.reject(error);
+			}
 		});
 
-		if (message.read) {
+		if (!message.read) {
 			setUser({
 				...user!,
 				unreadMessageCount: user!.unreadMessageCount - 1

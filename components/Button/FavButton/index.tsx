@@ -4,7 +4,7 @@ import Button from 'components/Button';
 import type { ButtonProps } from 'components/Button';
 import { useCallback, useState } from 'react';
 import { setUser, signIn, useUser } from 'modules/client/users';
-import api from 'modules/client/api';
+import api, { APIError } from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
 import { Dialog } from 'modules/client/dialogs';
 import type { StoryID } from 'modules/server/stories';
@@ -57,45 +57,43 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 					let newFavCount: number;
 
 					if (active) {
-						const setInactive = () => {
-							user.favs.splice(favIndex!, 1);
-							setUser({ ...user });
-						};
-
 						({ data: { favCount: newFavCount } } = await (api as FavAPI).delete(`/users/${user.id}/favs/${storyID}`, {
 							beforeInterceptError: error => {
 								if (error.response?.status === 404) {
 									// The favorite was not found, so cancel the error and remove the favorite on the client.
 
 									error.preventDefault();
-
-									setInactive();
-									setFavCount(favCount => favCount - 1);
 								}
 							}
+						}).catch((error: APIError) => {
+							if (error.defaultPrevented) {
+								return { data: { favCount: favCount - 1 } };
+							}
+
+							return Promise.reject(error);
 						}));
 
-						setInactive();
+						user.favs.splice(favIndex!, 1);
+						setUser({ ...user });
 					} else {
-						const setActive = () => {
-							user.favs.push(storyID);
-							setUser({ ...user });
-						};
-
 						({ data: { favCount: newFavCount } } = await (api as FavsAPI).post(`/users/${user.id}/favs`, { storyID }, {
 							beforeInterceptError: error => {
 								if (error.response?.data.error === 'ALREADY_EXISTS') {
 									// The favorite was not found, so cancel the error and remove the favorite on the client.
 
 									error.preventDefault();
-
-									setActive();
-									setFavCount(favCount => favCount + 1);
 								}
 							}
+						}).catch((error: APIError) => {
+							if (error.defaultPrevented) {
+								return { data: { favCount: favCount + 1 } };
+							}
+
+							return Promise.reject(error);
 						}));
 
-						setActive();
+						user.favs.push(storyID);
+						setUser({ ...user });
 					}
 
 					setFavCount(newFavCount);

@@ -31,7 +31,9 @@ export type APIError<
 	 *
 	 * The request's promise will still be rejected.
 	 */
-	preventDefault: () => void
+	preventDefault: () => void,
+	/** Whether the error's `preventDefault` method has been called in the request's `beforeInterceptError` option. */
+	readonly defaultPrevented: boolean
 };
 
 export type APIConfig<
@@ -77,15 +79,16 @@ const onReject = async (error: APIError) => {
 	// This is set so the error can be ignored when it is later identified as an API error.
 	error.apiError = true;
 
-	let defaultPrevented = false;
+	// This is set as a property of `error` so it can be read in the request's rejection handler after `preventDefault` is called.
+	(error as any).defaultPrevented = false;
 
 	error.preventDefault = () => {
-		defaultPrevented = true;
+		(error as any).defaultPrevented = true;
 	};
 
 	await error.config?.beforeInterceptError?.(error);
 
-	if (!(defaultPrevented as boolean || error instanceof axios.Cancel)) {
+	if (!(error.defaultPrevented || error instanceof axios.Cancel)) {
 		new Dialog({
 			title: 'Error',
 			content: error.response?.data.message as string || error.message
