@@ -6,12 +6,13 @@ import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
 import { useUserCache } from 'modules/client/UserCache';
 import Timestamp from 'components/Timestamp';
-import { getUser, setUser, useUser } from 'modules/client/users';
+import { setUser, useUser } from 'modules/client/users';
 import api from 'modules/client/api';
 import type { APIClient, APIError } from 'modules/client/api';
 import Button from 'components/Button';
 import RemoveButton from 'components/Button/RemoveButton';
 import { Dialog } from 'modules/client/dialogs';
+import { useLatest } from 'react-use';
 
 type MessageReadByAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy').default>;
 type MessageReadByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy/[userID]').default>;
@@ -35,22 +36,12 @@ const MessageListing = ({
 		setPreviousMessageProp(messageProp);
 	}
 
-	let user = useUser();
+	const user = useUser();
+	const userRef = useLatest(user);
 
 	/** Whether the user is a recipient of this message. */
-	let userIsRecipient = user && message.to.includes(user.id);
-
-	/** Reassigns `user` and `userIsRecipient` to accommodate race conditions. */
-	const updateUser = useCallback(() => {
-		// The below ESLint comments are necessary because the rule doesn't recognize that it doesn't matter if these assignments are lost after a re-render.
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		user = getUser();
-
-		/** Whether the user is a recipient of this message. */
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		userIsRecipient = user && message.to.includes(user.id);
-	}, []);
+	const userIsRecipient = user && message.to.includes(user.id);
+	const userIsRecipientRef = useLatest(userIsRecipient);
 
 	const { userCache } = useUserCache();
 	const fromUser = userCache[message.from]!;
@@ -164,15 +155,12 @@ const MessageListing = ({
 				)
 		).catch((error: APIError) => {
 			if (error.defaultPrevented) {
-				// `user` needs to be updated here because it could have changed while this request was loading.
-				updateUser();
-
 				return {
 					data: {
 						unreadMessageCount: (
-							user
-								? user.unreadMessageCount + (read ? -1 : 1)
-								// If `!user`, this value should be completely unused. So I might as well set the `unreadMessageCount` to -1 so that a bug in which it isn't unused is more obvious to the user.
+							userRef.current
+								? userRef.current.unreadMessageCount + (read ? -1 : 1)
+								// If `!userRef.current`, this value should be completely unused. So I might as well set the `unreadMessageCount` to -1 so that a bug in which it isn't unused is more obvious to the user.
 								: -1
 						)
 					}
@@ -189,14 +177,13 @@ const MessageListing = ({
 			read
 		}));
 
-		// Check `userIsRecipient` again because it could have been changed by the `updateUser` call in the above request's rejection handler.
-		if (userIsRecipient as boolean) {
+		if (userIsRecipientRef.current) {
 			setUser({
-				...user!,
+				...userRef.current!,
 				unreadMessageCount
 			});
 		}
-	}, [user, userIsRecipient, deleteLoading, markLoading, message.id, updateUser]);
+	}, [deleteLoading, markLoading, userIsRecipient, message.id, user, userIsRecipientRef, userRef]);
 
 	const toggleRead = useCallback(() => {
 		markRead(!message.read);
@@ -236,15 +223,12 @@ const MessageListing = ({
 
 		setDeleteLoading(true);
 
-		// `user` needs to be updated here because it could have changed while the above confirmation dialog was open.
-		updateUser();
-
-		if (!userIsRecipient as boolean) {
+		if (!userIsRecipientRef.current) {
 			return;
 		}
 
 		await (api as MessageDeletedByAPI).post(`/messages/${message.id}/deletedBy`, {
-			userID: user!.id
+			userID: userRef.current!.id
 		}, {
 			beforeInterceptError: error => {
 				if (error.response?.status === 422) {
@@ -261,18 +245,15 @@ const MessageListing = ({
 			}
 		});
 
-		// `user` needs to be updated here because it could have changed while the above request was loading.
-		updateUser();
-
-		if (userIsRecipient as boolean && !message.read) {
+		if (userIsRecipientRef.current as boolean && !message.read) {
 			setUser({
-				...user!,
-				unreadMessageCount: user!.unreadMessageCount - 1
+				...userRef.current!,
+				unreadMessageCount: userRef.current!.unreadMessageCount - 1
 			});
 		}
 
 		removeListing(message);
-	}, [user, userIsRecipient, deleteLoading, message, removeListing, updateUser]);
+	}, [deleteLoading, userIsRecipient, message, userIsRecipientRef, userRef, removeListing]);
 
 	return (
 		<div

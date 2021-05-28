@@ -32,6 +32,7 @@ import ForgotPassword from 'components/ForgotPassword';
 import AuthMethods from 'components/AuthMethod/AuthMethods';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import BirthdateField from 'components/DateField/BirthdateField';
+import { useDeepCompareEffect } from 'react-use';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 type AuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;
@@ -85,10 +86,10 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 
 	const initialValues = getValuesFromUser(privateUser);
 
-	useEffect(() => () => {
-		// The page unmounted, so reset the previewed unsaved settings.
+	useDeepCompareEffect(() => () => {
+		// The page unmounted (or saved settings due to a change in `initialValues`), so reset the previewed unsaved settings.
 		setUserMerge(undefined);
-	}, []);
+	}, [initialValues]);
 
 	const onClickChangePassword = useCallback(async () => {
 		const { data: authMethods } = await (api as AuthMethodsAPI).get(`users/${privateUser.id}/authMethods`, {

@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import Link from 'components/Link';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 
 const flashyTitleColors = [
 	'#de3535',
@@ -19,7 +19,7 @@ const FlashyTitle = () => {
 	const router = useRouter();
 	const [color, setColor] = useState(getFlashyTitleColor);
 
-	useEffect(() => () => {
+	useLayoutEffect(() => () => {
 		setColor(getFlashyTitleColor());
 	}, [router.asPath]);
 
