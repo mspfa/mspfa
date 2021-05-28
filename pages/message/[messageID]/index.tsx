@@ -10,7 +10,7 @@ import type { ClientMessage } from 'modules/client/messages';
 import BBCode from 'components/BBCode';
 import users, { getPublicUser } from 'modules/server/users';
 import type { PublicUser } from 'modules/client/users';
-import { useUser } from 'modules/client/users';
+import { useUser, setUser } from 'modules/client/users';
 import { uniqBy } from 'lodash';
 import { useUserCache } from 'modules/client/UserCache';
 import Link from 'components/Link';
@@ -31,6 +31,7 @@ type MessageAPI = APIClient<typeof import('pages/api/messages/[messageID]').defa
 type MessageDeletedByAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy').default>;
 
 type ServerSideProps = {
+	unreadMessageCount?: number,
 	message: ClientMessage,
 	replyTo?: ClientMessage,
 	userCache: PublicUser[]
@@ -39,16 +40,29 @@ type ServerSideProps = {
 };
 
 const Component = withErrorPage<ServerSideProps>(({
+	unreadMessageCount,
 	message,
 	replyTo,
 	userCache: initialUserCache
 }) => {
 	const user = useUser()!;
 	const [editing, setEditing] = useState(false);
-	const [previousMessage, setPreviousMessage] = useState(message);
+
+	const [previousMessage, setPreviousMessage] = useState<ClientMessage | undefined>(undefined);
+	// The above state must be initialized to `undefined` so the below `if` statement succeeds on the initial render.
 
 	if (message !== previousMessage) {
 		setEditing(false);
+
+		// This timeout is necessary so the state change that it invokes doesn't occur while this component is rendering and cause an error.
+		setTimeout(() => {
+			if (unreadMessageCount !== undefined) {
+				setUser({
+					...user,
+					unreadMessageCount
+				});
+			}
+		});
 
 		setPreviousMessage(message);
 	}
@@ -243,6 +257,8 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		return { props: { statusCode: 403 } };
 	}
 
+	let unreadMessageCount: number | undefined;
+
 	// If the message is unread, mark it as read.
 	if (message.notReadBy.some(userID => userID.equals(req.user!._id))) {
 		messages.updateOne({
@@ -254,7 +270,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		});
 
 		// Update the unread message count being sent to the client.
-		req.initialProps.user!.unreadMessageCount = await updateUnreadMessages(req.user._id);
+		unreadMessageCount = await updateUnreadMessages(req.user._id);
 	}
 
 	const userCacheIDs = uniqBy([message.from, ...message.to], String);
@@ -263,6 +279,9 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 
 	return {
 		props: {
+			...unreadMessageCount !== undefined && {
+				unreadMessageCount
+			},
 			message: getClientMessage(message, req.user),
 			...replyTo && (
 				replyTo.notDeletedBy.some(userID => userID.equals(req.user!._id))
