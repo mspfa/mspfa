@@ -1,7 +1,7 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
 import type { MessageDocument } from 'modules/server/messages';
-import messages, { getMessageByUnsafeID } from 'modules/server/messages';
+import messages, { getMessageByUnsafeID, updateUnreadMessages } from 'modules/server/messages';
 import { Perm } from 'modules/client/perms';
 import { permToGetUserInAPI } from 'modules/server/perms';
 
@@ -64,6 +64,8 @@ const Handler: APIHandler<{
 			}
 		});
 	}
+
+	await updateUnreadMessages(user._id);
 
 	res.end();
 };

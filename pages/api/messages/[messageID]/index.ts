@@ -2,7 +2,7 @@ import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
 import { authenticate } from 'modules/server/auth';
 import type { MessageDocument } from 'modules/server/messages';
-import messages, { getMessageByUnsafeID, getClientMessage } from 'modules/server/messages';
+import messages, { getMessageByUnsafeID, getClientMessage, updateUnreadMessages } from 'modules/server/messages';
 import { Perm } from 'modules/client/perms';
 import type { ClientMessage } from 'modules/client/messages';
 
@@ -38,6 +38,8 @@ const Handler: APIHandler<{
 		await messages.deleteOne({
 			_id: message._id
 		});
+
+		await Promise.all(message.notReadBy.map(updateUnreadMessages));
 
 		res.end();
 		return;

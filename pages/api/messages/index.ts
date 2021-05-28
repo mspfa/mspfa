@@ -79,7 +79,7 @@ const Handler: APIHandler<{
 
 	await messages.insertOne(message);
 
-	await Promise.all(recipientIDs.map(updateUnreadMessages));
+	await Promise.all(message.notReadBy.map(updateUnreadMessages));
 
 	res.status(201).send(getClientMessage(message, user));
 };
