@@ -29,7 +29,10 @@ const Component = withErrorPage<ServerSideProps>(({ clientMessages, userCache: i
 		<Page flashyTitle heading="Messages">
 			<Box>
 				<BoxSection heading="Your Messages">
-					<List listing={MessageListing}>
+					<List
+						listing={MessageListing}
+						removeListing={console.log}
+					>
 						{clientMessages}
 					</List>
 				</BoxSection>

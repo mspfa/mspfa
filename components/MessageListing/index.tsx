@@ -18,10 +18,14 @@ type MessageReadByUserAPI = APIClient<typeof import('pages/api/messages/[message
 type MessageDeletedByAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy').default>;
 
 export type MessageListingProps = {
+	removeListing: (message: ClientMessage) => void,
 	children: ClientMessage
 };
 
-const MessageListing = ({ children: messageProp }: MessageListingProps) => {
+const MessageListing = ({
+	removeListing,
+	children: messageProp
+}: MessageListingProps) => {
 	const [previousMessageProp, setPreviousMessageProp] = useState(messageProp);
 	const [message, setMessage] = useState(messageProp);
 
@@ -219,7 +223,9 @@ const MessageListing = ({ children: messageProp }: MessageListingProps) => {
 				unreadMessageCount: user!.unreadMessageCount - 1
 			});
 		}
-	}, [user, userIsRecipient, deleteLoading, message.id, message.subject, message.read]);
+
+		removeListing(message);
+	}, [user, userIsRecipient, deleteLoading, message, removeListing]);
 
 	return (
 		<div

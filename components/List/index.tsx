@@ -1,25 +1,34 @@
 import './styles.module.scss';
 import type { Key } from 'react';
 
-export type ListProps<ListingData extends { id: Key }> = {
-	children: ListingData[],
-	listing: (
-		(
-			(props: { children: ListingData }) => JSX.Element
-		) & {
-			/** The `className` of the `List`. */
-			listClassName: string
-		}
-	)
-};
+export type ListProps<
+	ListingProps extends {
+		children: { id: Key, listing?: never }
+	}
+> = {
+	children: Array<ListingProps['children']>,
+	listing: ((props: ListingProps) => JSX.Element) & {
+		/** The `className` of the `List`. */
+		listClassName: string
+	}
+} & Omit<ListingProps, 'children' | 'listing'>;
 
-const List = <Child extends { id: Key }>({
+const List = <
+	ListingProps extends {
+		children: { id: Key, listing?: never }
+	}
+>({
 	children,
-	listing: Listing
-}: ListProps<Child>) => (
+	listing: Listing,
+	...props
+}: ListProps<ListingProps>) => (
 	<div className={`list ${Listing.listClassName}`}>
 		{children.map(child => (
-			<Listing key={child.id}>
+			<Listing
+				key={child.id}
+				// Remove the `as any` if you dare. I cannot figure out a fix for this TS error.
+				{...props as any}
+			>
 				{child}
 			</Listing>
 		))}
