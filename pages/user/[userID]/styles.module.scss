@@ -18,6 +18,10 @@
 		@include desktop {
 			width: 200px;
 		}
+
+		& > .box-content {
+			padding: 24px 10px;
+		}
 	}
 
 	&-icon {
