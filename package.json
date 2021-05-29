@@ -12,7 +12,7 @@
 	},
 	"homepage": "https://mspfa.com",
 	"scripts": {
-		"dev": "sh scripts/dev.sh",
+		"dev": "cross-env NODE_OPTIONS='--inspect' next dev",
 		"generate-validators": "ts-node scripts/generate-validators",
 		"build-start": "npm run build && npm start",
 		"build": "next build",
@@ -54,6 +54,7 @@
 		"@typescript-eslint/eslint-plugin": "^4.25.0",
 		"@typescript-eslint/parser": "^4.25.0",
 		"ansi-colors": "^4.1.1",
+		"cross-env": "^7.0.3",
 		"dotenv": "^8.6.0",
 		"eslint": "^7.27.0",
 		"eslint-plugin-react": "^7.23.2",
