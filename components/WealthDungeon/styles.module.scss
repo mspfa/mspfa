@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 .wealth {
 	&-dungeon {
 		flex-grow: 1;
@@ -8,6 +10,6 @@
 		$height: 102;
 
 		position: relative;
-		padding-bottom: #{100% * $height / $width}
+		padding-bottom: #{100% * math.div($height, $width)}
 	}
 }

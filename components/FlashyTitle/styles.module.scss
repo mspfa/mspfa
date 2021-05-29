@@ -1,10 +1,12 @@
+@use 'sass:math';
+
 #flashy-title {
 	&-container {
 		$width: 940;
 		$height: 68;
 
 		position: relative;
-		padding-bottom: #{100% * $height / $width}
+		padding-bottom: #{100% * math.div($height, $width)}
 	}
 
 	display: block;
