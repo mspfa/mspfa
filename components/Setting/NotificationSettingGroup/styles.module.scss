@@ -1,16 +1,27 @@
-.notification-setting {
-	&-group > .box-content {
-		grid-template-columns: auto 0fr 0fr;
-		justify-content: center;
-		align-items: center;
+@import 'styles/general';
 
-		.box-row-content {
+.notification-setting {
+	&-group {
+		width: 50%;
+
+		@include mobile {
+			width: auto;
+		}
+
+		& > .box-content {
+			grid-template-columns: auto 0fr 0fr;
 			justify-content: center;
+			align-items: center;
+
+			.box-row-content {
+				justify-content: center;
+			}
 		}
 	}
 
 	&-column-heading {
 		text-align: center;
+		word-break: normal;
 
 		&:first-child {
 			grid-column: 2;

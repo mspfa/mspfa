@@ -25,7 +25,7 @@ class MyDocument extends Document {
 				className={`theme-${req.user?.settings.theme || 'standard'}`}
 			>
 				<Head />
-				<body className="back">
+				<body>
 					<Main />
 					<NextScript />
 				</body>

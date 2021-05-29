@@ -4,15 +4,13 @@
 @import 'styles/themes';
 
 #auth-methods {
-	word-break: break-word;
-
 	& > :not(:first-child) {
 		border-top: 1px solid;
 		@include theme(border-top-color, $back, meta.get-function('half-opacity'));
 	}
-}
 
-#auth-methods-footer {
-	padding-top: 1em;
-	text-align: center;
+	&-footer {
+		padding-top: 1em;
+		text-align: center;
+	}
 }
