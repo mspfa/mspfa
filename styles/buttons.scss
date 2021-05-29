@@ -1,5 +1,6 @@
 @use 'sass:meta';
 @use 'sass:map';
+@use 'sass:math';
 @use 'sass:color';
 @use 'sass:list';
 
@@ -34,7 +35,7 @@
 	$colors,
 	$scale: 2,
 	$depth: 2,
-	$depth-active: $depth / 2,
+	$depth-active: math.div($depth, 2),
 	$border: false
 ) {
 	$margin: $scale * $depth;
@@ -86,7 +87,7 @@
 	$color-is-behind-button: false,
 	$scale: 2,
 	$depth: 2,
-	$depth-active: $depth / 2,
+	$depth-active: math.div($depth, 2),
 	$border: false
 ) {
 	@if type-of($colors) != 'map' {
