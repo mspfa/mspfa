@@ -59,7 +59,7 @@ $nav-group-colors: (
 			background-image: url(/images/candy-heart.png);
 		}
 
-		& + &::before {
+		&:not(:first-child)::before {
 			content: '';
 		}
 	}

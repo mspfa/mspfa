@@ -1,7 +1,5 @@
-.field-container {
-	& + & {
-		margin-top: 1em;
-	}
+.field-container:not(:first-child) {
+	margin-top: 1em;
 }
 
 #field-subject {
