@@ -38,9 +38,9 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 
 	return (
 		<Page flashyTitle heading="Profile">
-			<Box id="profile-box">
+			<Box id="profile">
 				<BoxColumns>
-					<BoxSection id="profile-meta" heading="Meta">
+					<BoxSection id="profile-info" heading="Info">
 						<BoxRow id="profile-name">
 							{publicUser.name}
 						</BoxRow>
@@ -76,7 +76,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 							)}
 						</BoxRow>
 					</BoxSection>
-					<Box>
+					<Box id="profile-misc">
 						<BoxRowSection id="profile-stats" heading="Stats">
 							<LabeledBoxRow label="Last Connection">
 								<Timestamp relative withTime>

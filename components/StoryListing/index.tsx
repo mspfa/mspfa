@@ -28,11 +28,12 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 	return (
 		<div className="listing">
 			<Link
-				className="listing-icon"
+				className="listing-icon-container"
 				href={`/s/${publicStory.id}/p/1`}
 				title={publicStory.title}
 			>
 				<IconImage
+					className="listing-icon"
 					src={publicStory.icon}
 					alt={publicStory.title}
 				/>
@@ -45,7 +46,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 				>
 					{publicStory.title}
 				</Link>
-				<div className="listing-section listing-meta">
+				<div className="listing-section listing-info">
 					<span className="listing-status spaced">
 						{storyStatusNames[publicStory.status]}
 					</span>

@@ -2,10 +2,8 @@
 
 .notification-setting {
 	&-group {
-		width: 50%;
-
-		@include mobile {
-			width: auto;
+		@include desktop {
+			width: 50%;
 		}
 
 		& > .box-content {

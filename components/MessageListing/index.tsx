@@ -264,11 +264,12 @@ const MessageListing = ({
 				<input type="checkbox" />
 			</label>
 			<Link
-				className="listing-icon"
+				className="listing-icon-container"
 				href={`/message/${message.id}`}
 				title={message.subject}
 			>
 				<IconImage
+					className="listing-icon"
 					src={fromUser.icon}
 					alt={`${fromUser.name}'s Icon`}
 				/>
@@ -281,7 +282,7 @@ const MessageListing = ({
 				>
 					{message.subject}
 				</Link>
-				<div className="listing-section listing-meta">
+				<div className="listing-section listing-info">
 					{'From '}
 					<Link href={`/user/${fromUser.id}`}>
 						{fromUser.name}

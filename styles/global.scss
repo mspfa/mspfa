@@ -22,7 +22,8 @@
 
 body {
 	margin: 0;
-	overflow-y: scroll; // To make the scrollbar not change visibility and offset the page horizontally when changing the page height e.g. by toggling tall spoilers on a short page.
+	// This makes the scrollbar not change visibility and offset the page horizontally when changing the page height, for example by toggling tall spoilers on a short page.
+	overflow-y: scroll;
 	@include theme(background-color, $back);
 	word-break: break-word;
 }

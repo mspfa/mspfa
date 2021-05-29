@@ -131,7 +131,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						<Form>
 							<Box>
 								<BoxSection
-									id="message-meta"
+									id="message-info"
 									heading={message.subject}
 								>
 									{message.replyTo && (

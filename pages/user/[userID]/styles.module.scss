@@ -1,24 +1,22 @@
 @import 'styles/general';
 
 #profile {
-	&-box {
-		.box-columns {
-			grid-template-columns: auto 1fr;
-
-			@include mobile {
-				grid-template-columns: auto;
-			}
+	.box-row {
+		&-section > .box-content {
+			justify-content: center;
+			column-gap: 2em;
 		}
 
-		.box-row {
-			&-section > .box-content {
-				justify-content: center;
-				column-gap: 2em;
-			}
+		&-label {
+			text-align: left;
+		}
+	}
 
-			&-label {
-				text-align: left;
-			}
+	&-info {
+		flex-grow: 0;
+
+		@include desktop {
+			width: 200px;
 		}
 	}
 
