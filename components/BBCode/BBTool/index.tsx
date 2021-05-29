@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import { useContext, useCallback } from 'react';
-import { TextAreaRefContext } from 'components/BBCode/BBCodeField';
+import { TextAreaRefContext } from 'components/BBCode/BBField';
 import Button from 'components/Button';
 import { Dialog } from 'modules/client/dialogs';
 import { videoIDTest } from 'components/BBCode/BBTags';

@@ -12,7 +12,7 @@ import Button from 'components/Button';
 import type { APIClient } from 'modules/client/api';
 import api from 'modules/client/api';
 import Label from 'components/Label';
-import BBCodeField from 'components/BBCode/BBCodeField';
+import BBField from 'components/BBCode/BBField';
 import BoxSection from 'components/Box/BoxSection';
 import { Dialog } from 'modules/client/dialogs';
 import users, { getPublicUser } from 'modules/server/users';
@@ -160,7 +160,7 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 										<Label htmlFor="field-content">
 											Content
 										</Label>
-										<BBCodeField
+										<BBField
 											name="content"
 											required
 											rows={16}

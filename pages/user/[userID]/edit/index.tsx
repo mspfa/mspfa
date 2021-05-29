@@ -24,7 +24,7 @@ import Label from 'components/Label';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import BoxRow from 'components/Box/BoxRow';
 import BirthdateField from 'components/DateField/BirthdateField';
-import BBCodeField from 'components/BBCode/BBCodeField';
+import BBField from 'components/BBCode/BBField';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 
@@ -157,7 +157,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 									<Label htmlFor="field-description">
 										Description
 									</Label>
-									<BBCodeField
+									<BBField
 										name="description"
 										rows={8}
 										maxLength={2000}

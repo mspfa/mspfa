@@ -23,7 +23,7 @@ import api from 'modules/client/api';
 import Router from 'next/router';
 import { Dialog } from 'modules/client/dialogs';
 import Label from 'components/Label';
-import BBCodeField from 'components/BBCode/BBCodeField';
+import BBField from 'components/BBCode/BBField';
 import { Form, Formik } from 'formik';
 import { useLeaveConfirmation } from 'modules/client/forms';
 
@@ -182,7 +182,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											<Label htmlFor="field-content">
 												Content
 											</Label>
-											<BBCodeField
+											<BBField
 												name="content"
 												required
 												rows={16}

@@ -17,12 +17,12 @@ export const TextAreaRefContext = React.createContext<{
 	setValue: (value: string) => void
 }>(undefined!);
 
-export type BBCodeFieldProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'children' | 'value'> & {
+export type BBFieldProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'children' | 'value'> & {
 	name: string
 } & Omit<BBCodeProps, 'children'>;
 
 /** A text area field that accepts BBCode. */
-const BBCodeField = ({ name, html, noBB, raw, ...props }: BBCodeFieldProps) => {
+const BBField = ({ name, html, noBB, raw, ...props }: BBFieldProps) => {
 	const [, { value }, { setValue }] = useField<string>(name);
 	const textAreaRef = useRef<HTMLTextAreaElement>(null!);
 
@@ -88,4 +88,4 @@ const BBCodeField = ({ name, html, noBB, raw, ...props }: BBCodeFieldProps) => {
 	);
 };
 
-export default BBCodeField;
+export default BBField;
