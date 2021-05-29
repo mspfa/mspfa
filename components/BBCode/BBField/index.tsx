@@ -45,8 +45,6 @@ const BBField = ({ name, html, noBB, raw, ...props }: BBFieldProps) => {
 				<span className="bb-tool-group">
 					<BBTool tag="color" />
 					<BBTool tag="background" />
-				</span>
-				<span className="bb-tool-group">
 					<BBTool tag="size" />
 					<BBTool tag="font" />
 				</span>
@@ -58,10 +56,12 @@ const BBField = ({ name, html, noBB, raw, ...props }: BBFieldProps) => {
 				</span>
 				<span className="bb-tool-group">
 					<BBTool tag="url" />
-					<BBTool tag="img" />
-					<BBTool tag="alt" />
 					<BBTool tag="spoiler" />
 					<BBTool tag="chat" />
+					<BBTool tag="alt" />
+				</span>
+				<span className="bb-tool-group">
+					<BBTool tag="img" />
 					<BBTool tag="youtube" />
 					<BBTool tag="iframe" />
 					<BBTool tag="flash" />
