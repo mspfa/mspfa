@@ -13,8 +13,9 @@ import { useUserCache } from 'modules/client/UserCache';
 import List from 'components/List';
 import { uniqBy } from 'lodash';
 import users, { getPrivateUser, getPublicUser } from 'modules/server/users';
+import type { ListedMessage } from 'components/MessageListing';
 import MessageListing from 'components/MessageListing';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 type ServerSideProps = {
 	privateUser: PrivateUser,
@@ -26,11 +27,26 @@ type ServerSideProps = {
 
 const Component = withErrorPage<ServerSideProps>(({
 	privateUser,
-	clientMessages: clientMessagesProp,
+	clientMessages,
 	userCache: initialUserCache
 }) => {
-	const [previousClientMessagesProp, setPreviousClientMessagesProp] = useState(clientMessagesProp);
-	const [clientMessages, setClientMessages] = useState(clientMessagesProp);
+	const [previousClientMessages, setPreviousClientMessages] = useState(clientMessages);
+	const listedMessagesFromProps = useMemo(() => (
+		clientMessages.map<ListedMessage>(message => ({
+			...message,
+			selected: false
+		}))
+	), [clientMessages]);
+	const [listedMessages, setListedMessages] = useState(listedMessagesFromProps);
+
+	if (previousClientMessages !== clientMessages) {
+		setListedMessages(listedMessagesFromProps);
+
+		setPreviousClientMessages(clientMessages);
+	}
+
+	const { cacheUser } = useUserCache();
+	initialUserCache.forEach(cacheUser);
 
 	useEffect(() => {
 		const user = getUser();
@@ -39,19 +55,10 @@ const Component = withErrorPage<ServerSideProps>(({
 			// Update the user's unread message count in case it is outdated.
 			setUser({
 				...user,
-				unreadMessageCount: clientMessages.filter(message => !message.read).length
+				unreadMessageCount: listedMessages.filter(message => !message.read).length
 			});
 		}
-	}, [clientMessages, privateUser.id]);
-
-	if (previousClientMessagesProp !== clientMessagesProp) {
-		setClientMessages(clientMessagesProp);
-
-		setPreviousClientMessagesProp(clientMessagesProp);
-	}
-
-	const { cacheUser } = useUserCache();
-	initialUserCache.forEach(cacheUser);
+	}, [listedMessages, privateUser.id]);
 
 	return (
 		<Page flashyTitle heading="Messages">
@@ -59,18 +66,29 @@ const Component = withErrorPage<ServerSideProps>(({
 				<BoxSection heading="Your Messages">
 					<List
 						listing={MessageListing}
-						removeListing={
-							useCallback((message: ClientMessage) => {
-								const messageIndex = clientMessages.findIndex(({ id }) => id === message.id);
+						setMessage={
+							useCallback((message: ListedMessage) => {
+								const messageIndex = listedMessages.findIndex(({ id }) => id === message.id);
 
-								setClientMessages([
-									...clientMessages.slice(0, messageIndex),
-									...clientMessages.slice(messageIndex + 1, clientMessages.length)
+								setListedMessages([
+									...listedMessages.slice(0, messageIndex),
+									message,
+									...listedMessages.slice(messageIndex + 1, listedMessages.length)
 								]);
-							}, [clientMessages])
+							}, [listedMessages])
+						}
+						removeListing={
+							useCallback((message: ListedMessage) => {
+								const messageIndex = listedMessages.findIndex(({ id }) => id === message.id);
+
+								setListedMessages([
+									...listedMessages.slice(0, messageIndex),
+									...listedMessages.slice(messageIndex + 1, listedMessages.length)
+								]);
+							}, [listedMessages])
 						}
 					>
-						{clientMessages}
+						{listedMessages}
 					</List>
 				</BoxSection>
 			</Box>

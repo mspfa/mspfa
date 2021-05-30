@@ -2,6 +2,7 @@ import './styles.module.scss';
 import IconImage from 'components/IconImage';
 import type { ClientMessage } from 'modules/client/messages';
 import Link from 'components/Link';
+import type { ChangeEvent } from 'react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
 import { useUserCache } from 'modules/client/UserCache';
@@ -18,24 +19,19 @@ type MessageReadByAPI = APIClient<typeof import('pages/api/messages/[messageID]/
 type MessageReadByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy/[userID]').default>;
 type MessageDeletedByAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy').default>;
 
+export type ListedMessage = ClientMessage & { selected: boolean };
+
 export type MessageListingProps = {
-	removeListing: (message: ClientMessage) => void,
-	children: ClientMessage
+	setMessage: (message: ListedMessage) => void,
+	removeListing: (message: ListedMessage) => void,
+	children: ListedMessage
 };
 
 const MessageListing = ({
+	setMessage,
 	removeListing,
-	children: messageProp
+	children: message
 }: MessageListingProps) => {
-	const [previousMessageProp, setPreviousMessageProp] = useState(messageProp);
-	const [message, setMessage] = useState(messageProp);
-
-	if (previousMessageProp !== messageProp) {
-		setMessage(messageProp);
-
-		setPreviousMessageProp(messageProp);
-	}
-
 	const user = useUser();
 	const userRef = useLatest(user);
 
@@ -172,10 +168,10 @@ const MessageListing = ({
 			setMarkLoading(false);
 		});
 
-		setMessage(message => ({
+		setMessage({
 			...message,
 			read
-		}));
+		});
 
 		if (userIsRecipientRef.current) {
 			setUser({
@@ -183,7 +179,7 @@ const MessageListing = ({
 				unreadMessageCount
 			});
 		}
-	}, [deleteLoading, markLoading, userIsRecipient, message.id, user, userIsRecipientRef, userRef]);
+	}, [deleteLoading, markLoading, userIsRecipient, message, setMessage, user, userIsRecipientRef, userRef]);
 
 	const toggleRead = useCallback(() => {
 		markRead(!message.read);
@@ -261,7 +257,18 @@ const MessageListing = ({
 			ref={listingRef}
 		>
 			<label className="listing-selected-label" title="Select Message">
-				<input type="checkbox" />
+				<input
+					type="checkbox"
+					checked={message.selected}
+					onChange={
+						useCallback((event: ChangeEvent<HTMLInputElement>) => {
+							setMessage({
+								...message,
+								selected: event.target.checked
+							});
+						}, [setMessage, message])
+					}
+				/>
 			</label>
 			<Link
 				className="listing-icon-container"
