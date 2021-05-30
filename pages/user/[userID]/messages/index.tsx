@@ -16,6 +16,8 @@ import users, { getPrivateUser, getPublicUser } from 'modules/server/users';
 import type { ListedMessage } from 'components/MessageListing';
 import MessageListing from 'components/MessageListing';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import BoxRow from 'components/Box/BoxRow';
+import Button from 'components/Button';
 
 type ServerSideProps = {
 	privateUser: PrivateUser,
@@ -60,10 +62,59 @@ const Component = withErrorPage<ServerSideProps>(({
 		}
 	}, [listedMessages, privateUser.id]);
 
+	const deselectAll = useCallback(() => {
+		setListedMessages(listedMessages.map(message => ({
+			...message,
+			selected: false
+		})));
+	}, [listedMessages]);
+
+	const selectAll = useCallback(() => {
+		setListedMessages(listedMessages.map(message => ({
+			...message,
+			selected: true
+		})));
+	}, [listedMessages]);
+
+	const markRead = useCallback(() => {
+		for (const message of listedMessages) {
+			if (message.selected) {
+				message.ref!.current.markRead(true);
+			}
+		}
+	}, [listedMessages]);
+
+	const markUnread = useCallback(() => {
+		for (const message of listedMessages) {
+			if (message.selected) {
+				message.ref!.current.markRead(false);
+			}
+		}
+	}, [listedMessages]);
+
 	return (
 		<Page flashyTitle heading="Messages">
 			<Box>
 				<BoxSection heading="Your Messages">
+					<BoxRow>
+						{listedMessages.some(message => message.selected) ? (
+							<>
+								<Button onClick={deselectAll}>
+									Deselect All
+								</Button>
+								<Button onClick={markRead}>
+									Mark as Read
+								</Button>
+								<Button onClick={markUnread}>
+									Mark as Unread
+								</Button>
+							</>
+						) : (
+							<Button onClick={selectAll}>
+								Select All
+							</Button>
+						)}
+					</BoxRow>
 					<List
 						listing={MessageListing}
 						setMessage={
