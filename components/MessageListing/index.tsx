@@ -28,7 +28,8 @@ export type ListedMessage = ClientMessage & {
 				/** `true` if should mark as read. `false` if should mark as unread. */
 				read: boolean
 			) => Promise<void>
-		)
+		),
+		deleteMessage: () => Promise<void>
 	}>
 };
 
@@ -43,8 +44,9 @@ const MessageListing = ({
 	removeListing,
 	children: message
 }: MessageListingProps) => {
-	// This is necessary to fix some race conditions when performing actions on multiple selected messages simultaneously.
+	// These refs are necessary to fix some race conditions when performing actions on multiple selected messages simultaneously.
 	const setMessageRef = useLatest(setMessage);
+	const removeListingRef = useLatest(removeListing);
 
 	const user = useUser();
 	const userRef = useLatest(user);
@@ -124,10 +126,8 @@ const MessageListing = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [richContent, message.content, open]);
 
-	// This state is whether marking the message as read or unread is currently loading.
-	const [markLoading, setMarkLoading] = useState(false);
-	// This state is whether deleting the message is currently loading.
-	const [deleteLoading, setDeleteLoading] = useState(false);
+	// This state is whether no actions should be performed on the message due to it currently loading.
+	const [loading, setLoading] = useState(false);
 
 	message.ref = useRef({} as any);
 
@@ -135,11 +135,11 @@ const MessageListing = ({
 
 	const { markRead } = message.ref.current = {
 		markRead: useCallback(async read => {
-			if (message.read === read || deleteLoading || markLoading || !userIsRecipient) {
+			if (loading || !userIsRecipient || message.read === read) {
 				return;
 			}
 
-			setMarkLoading(true);
+			setLoading(true);
 
 			const beforeInterceptError = (error: APIError) => {
 				if (
@@ -181,7 +181,7 @@ const MessageListing = ({
 
 				return Promise.reject(error);
 			}).finally(() => {
-				setMarkLoading(false);
+				setLoading(false);
 			});
 
 			setMessageRef.current({
@@ -195,7 +195,41 @@ const MessageListing = ({
 					unreadMessageCount
 				});
 			}
-		}, [message, deleteLoading, markLoading, userIsRecipient, setMessageRef, user, userIsRecipientRef, userRef])
+		}, [message, loading, userIsRecipient, setMessageRef, user, userIsRecipientRef, userRef]),
+		deleteMessage: useCallback(async () => {
+			if (loading || !userIsRecipient) {
+				return;
+			}
+
+			setLoading(true);
+
+			await (api as MessageDeletedByAPI).post(`/messages/${message.id}/deletedBy`, {
+				userID: user!.id
+			}, {
+				beforeInterceptError: error => {
+					if (error.response?.status === 422) {
+						// The user isn't able to delete the message, so the message might as well be deleted.
+
+						error.preventDefault();
+					}
+				}
+			}).catch((error: APIError) => {
+				if (!error.defaultPrevented) {
+					setLoading(false);
+
+					return Promise.reject(error);
+				}
+			});
+
+			if (userIsRecipientRef.current && !message.read) {
+				setUser({
+					...userRef.current!,
+					unreadMessageCount: userRef.current!.unreadMessageCount - 1
+				});
+			}
+
+			removeListingRef.current(message);
+		}, [loading, message, user, userRef, userIsRecipientRef, userIsRecipient, removeListingRef])
 	};
 
 	const toggleRead = useCallback(() => {
@@ -211,8 +245,8 @@ const MessageListing = ({
 		setOpen(false);
 	}, []);
 
-	const deleteMessage = useCallback(async () => {
-		if (deleteLoading || !(
+	const confirmDeleteMessage = useCallback(async () => {
+		if (loading || !(
 			userIsRecipient
 			&& await Dialog.confirm({
 				id: 'delete-message',
@@ -231,39 +265,8 @@ const MessageListing = ({
 			return;
 		}
 
-		setDeleteLoading(true);
-
-		if (!userIsRecipientRef.current) {
-			return;
-		}
-
-		await (api as MessageDeletedByAPI).post(`/messages/${message.id}/deletedBy`, {
-			userID: userRef.current!.id
-		}, {
-			beforeInterceptError: error => {
-				if (error.response?.status === 422) {
-					// The user isn't able to delete the message, so the message might as well be deleted.
-
-					error.preventDefault();
-				}
-			}
-		}).catch((error: APIError) => {
-			if (!error.defaultPrevented) {
-				setDeleteLoading(false);
-
-				return Promise.reject(error);
-			}
-		});
-
-		if (userIsRecipientRef.current as boolean && !message.read) {
-			setUser({
-				...userRef.current!,
-				unreadMessageCount: userRef.current!.unreadMessageCount - 1
-			});
-		}
-
-		removeListing(message);
-	}, [deleteLoading, userIsRecipient, message, userIsRecipientRef, userRef, removeListing]);
+		message.ref!.current.deleteMessage();
+	}, [loading, message.subject, userIsRecipient, message.ref]);
 
 	return (
 		<div
@@ -344,7 +347,7 @@ const MessageListing = ({
 					/>
 					<RemoveButton
 						title="Delete"
-						onClick={deleteMessage}
+						onClick={confirmDeleteMessage}
 					/>
 				</div>
 			)}

@@ -51,6 +51,19 @@ const Component = withErrorPage<ServerSideProps>(({
 	const { cacheUser } = useUserCache();
 	initialUserCache.forEach(cacheUser);
 
+	let selectedCount = 0;
+	let unreadCount = 0;
+
+	for (const message of listedMessages) {
+		if (message.selected) {
+			selectedCount++;
+		}
+
+		if (!message.read) {
+			unreadCount++;
+		}
+	}
+
 	useEffect(() => {
 		const user = getUser();
 
@@ -58,10 +71,10 @@ const Component = withErrorPage<ServerSideProps>(({
 			// Update the user's unread message count in case it is outdated.
 			setUser({
 				...user,
-				unreadMessageCount: listedMessages.filter(message => !message.read).length
+				unreadMessageCount: unreadCount
 			});
 		}
-	}, [listedMessages, privateUser.id]);
+	}, [unreadCount, privateUser.id]);
 
 	const deselectAll = useCallback(() => {
 		setListedMessages(listedMessages.map(message => ({
@@ -93,18 +106,13 @@ const Component = withErrorPage<ServerSideProps>(({
 		}
 	}, [listedMessages]);
 
-	let selectedCount = 0;
-	let unreadCount = 0;
-
-	for (const message of listedMessages) {
-		if (message.selected) {
-			selectedCount++;
+	const deleteMessages = useCallback(() => {
+		for (const message of listedMessages) {
+			if (message.selected) {
+				message.ref!.current.deleteMessage();
+			}
 		}
-
-		if (!message.read) {
-			unreadCount++;
-		}
-	}
+	}, [listedMessages]);
 
 	return (
 		<Page flashyTitle heading="Messages">
@@ -150,7 +158,7 @@ const Component = withErrorPage<ServerSideProps>(({
 								<Button
 									className="small"
 									title={`Delete Selected Messages (${selectedCount})`}
-									onClick={markUnread}
+									onClick={deleteMessages}
 								>
 									Delete
 								</Button>
