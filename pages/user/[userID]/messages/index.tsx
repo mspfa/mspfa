@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import Page from 'components/Page';
 import { withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
@@ -111,16 +112,27 @@ const Component = withErrorPage<ServerSideProps>(({
 				<BoxSection
 					heading={`Your Messages (${listedMessages.length} total, ${unreadCount} unread)`}
 				>
-					<BoxRow>
-						{selectedCount ? (
+					<BoxRow id="messages-actions">
+						<Button
+							className="small"
+							href="/message/new"
+							title="New Message"
+						>
+							New Message
+						</Button>
+						<Button
+							className="small"
+							title={
+								selectedCount
+									? `Deselect Selected Messages (${selectedCount})`
+									: `Select All Messages (${listedMessages.length})`
+							}
+							onClick={selectedCount ? deselectAll : selectAll}
+						>
+							{selectedCount ? 'Deselect All' : 'Select All'}
+						</Button>
+						{selectedCount !== 0 && (
 							<>
-								<Button
-									className="small"
-									title={`Deselect Selected Messages (${selectedCount})`}
-									onClick={deselectAll}
-								>
-									Deselect All
-								</Button>
 								<Button
 									className="small"
 									title={`Mark Selected Messages as Read (${selectedCount})`}
@@ -143,14 +155,6 @@ const Component = withErrorPage<ServerSideProps>(({
 									Delete
 								</Button>
 							</>
-						) : (
-							<Button
-								className="small"
-								title={`Select All Messages (${listedMessages.length})`}
-								onClick={selectAll}
-							>
-								Select All
-							</Button>
 						)}
 					</BoxRow>
 					<List
