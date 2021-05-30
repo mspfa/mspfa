@@ -34,20 +34,16 @@ export type ListedMessage = ClientMessage & {
 };
 
 export type MessageListingProps = {
-	setMessage: (message: ListedMessage) => void,
-	removeListing: (message: ListedMessage) => void,
+	setMessageRef: MutableRefObject<(message: ListedMessage) => void>,
+	removeListingRef: MutableRefObject<(message: ListedMessage) => void>,
 	children: ListedMessage
 };
 
 const MessageListing = ({
-	setMessage,
-	removeListing,
+	setMessageRef,
+	removeListingRef,
 	children: message
 }: MessageListingProps) => {
-	// These refs are necessary to fix some race conditions when performing actions on multiple selected messages simultaneously.
-	const setMessageRef = useLatest(setMessage);
-	const removeListingRef = useLatest(removeListing);
-
 	const user = useUser();
 	const userRef = useLatest(user);
 
@@ -257,7 +253,7 @@ const MessageListing = ({
 						<br />
 						<i>{message.subject}</i><br />
 						<br />
-						The message will only be deleted for you.
+						The message will only be deleted for you. This cannot be undone.
 					</>
 				)
 			})

@@ -19,6 +19,8 @@ import MessageListing from 'components/MessageListing';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import BoxRow from 'components/Box/BoxRow';
 import Button from 'components/Button';
+import { useLatest } from 'react-use';
+import { Dialog } from 'modules/client/dialogs';
 
 type ServerSideProps = {
 	privateUser: PrivateUser,
@@ -106,13 +108,45 @@ const Component = withErrorPage<ServerSideProps>(({
 		}
 	}, [listedMessages]);
 
-	const deleteMessages = useCallback(() => {
+	const deleteMessages = useCallback(async () => {
+		if (!await Dialog.confirm({
+			id: 'delete-messages',
+			title: 'Delete Messages',
+			content: `Are you sure you want to delete all selected messages (${selectedCount})?\n\nThe messages will only be deleted for you. This cannot be undone.`
+		})) {
+			return;
+		}
+
 		for (const message of listedMessages) {
 			if (message.selected) {
 				message.ref!.current.deleteMessage();
 			}
 		}
-	}, [listedMessages]);
+	}, [listedMessages, selectedCount]);
+
+	// It is necessary that `setMessage` and `removeListing` are refs to fix race conditions due to running them on multiple selected messages simultaneously.
+	const setMessageRef = useLatest(
+		useCallback((message: ListedMessage) => {
+			const messageIndex = listedMessages.findIndex(({ id }) => id === message.id);
+
+			setListedMessages([
+				...listedMessages.slice(0, messageIndex),
+				message,
+				...listedMessages.slice(messageIndex + 1, listedMessages.length)
+			]);
+		}, [listedMessages])
+	);
+
+	const removeListingRef = useLatest(
+		useCallback((message: ListedMessage) => {
+			const messageIndex = listedMessages.findIndex(({ id }) => id === message.id);
+
+			setListedMessages([
+				...listedMessages.slice(0, messageIndex),
+				...listedMessages.slice(messageIndex + 1, listedMessages.length)
+			]);
+		}, [listedMessages])
+	);
 
 	return (
 		<Page flashyTitle heading="Messages">
@@ -167,27 +201,8 @@ const Component = withErrorPage<ServerSideProps>(({
 					</BoxRow>
 					<List
 						listing={MessageListing}
-						setMessage={
-							useCallback((message: ListedMessage) => {
-								const messageIndex = listedMessages.findIndex(({ id }) => id === message.id);
-
-								setListedMessages([
-									...listedMessages.slice(0, messageIndex),
-									message,
-									...listedMessages.slice(messageIndex + 1, listedMessages.length)
-								]);
-							}, [listedMessages])
-						}
-						removeListing={
-							useCallback((message: ListedMessage) => {
-								const messageIndex = listedMessages.findIndex(({ id }) => id === message.id);
-
-								setListedMessages([
-									...listedMessages.slice(0, messageIndex),
-									...listedMessages.slice(messageIndex + 1, listedMessages.length)
-								]);
-							}, [listedMessages])
-						}
+						setMessageRef={setMessageRef}
+						removeListingRef={removeListingRef}
 					>
 						{listedMessages}
 					</List>
