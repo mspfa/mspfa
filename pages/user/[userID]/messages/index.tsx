@@ -92,12 +92,23 @@ const Component = withErrorPage<ServerSideProps>(({
 		}
 	}, [listedMessages]);
 
-	const selectedCount = listedMessages.filter(message => message.selected).length;
+	let selectedCount = 0;
+	let unreadCount = 0;
+
+	for (const message of listedMessages) {
+		if (message.selected) {
+			selectedCount++;
+		}
+
+		if (!message.read) {
+			unreadCount++;
+		}
+	}
 
 	return (
 		<Page flashyTitle heading="Messages">
 			<Box>
-				<BoxSection heading="Your Messages">
+				<BoxSection heading={`Your Messages (${listedMessages.length} total, ${unreadCount} unread)`}>
 					<BoxRow>
 						{selectedCount ? (
 							<>
