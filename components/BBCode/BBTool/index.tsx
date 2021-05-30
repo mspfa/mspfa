@@ -217,6 +217,39 @@ const tags: Record<string, {
 			};
 		}
 	},
+	spoiler: {
+		title: 'Spoiler',
+		initialValues: {
+			open: '',
+			close: ''
+		},
+		content: (
+			<LabeledDialogBox>
+				<FieldBoxRow
+					name="open"
+					label={'"Show" Button Text'}
+					autoFocus
+					placeholder="Optional"
+				/>
+				<FieldBoxRow
+					name="close"
+					label={'"Hide" Button Text'}
+					placeholder="Optional"
+				/>
+			</LabeledDialogBox>
+		),
+		getProps: ({ values: { open, close } }) => ({
+			attributes: (
+				open || close
+					? {
+						...!!open && { open },
+						...!!close && { close }
+					}
+					: undefined
+			)
+		})
+	},
+	chat: { title: 'Chat' },
 	alt: {
 		title: 'Hover Text',
 		content: (
@@ -271,39 +304,6 @@ const tags: Record<string, {
 		}),
 		selectAfter: true
 	},
-	spoiler: {
-		title: 'Spoiler',
-		initialValues: {
-			open: '',
-			close: ''
-		},
-		content: (
-			<LabeledDialogBox>
-				<FieldBoxRow
-					name="open"
-					label={'"Show" Button Text'}
-					autoFocus
-					placeholder="Optional"
-				/>
-				<FieldBoxRow
-					name="close"
-					label={'"Hide" Button Text'}
-					placeholder="Optional"
-				/>
-			</LabeledDialogBox>
-		),
-		getProps: ({ values: { open, close } }) => ({
-			attributes: (
-				open || close
-					? {
-						...!!open && { open },
-						...!!close && { close }
-					}
-					: undefined
-			)
-		})
-	},
-	chat: { title: 'Chat' },
 	youtube: {
 		title: 'YouTube Embed',
 		initialValues: {
@@ -382,23 +382,27 @@ const tags: Record<string, {
 		},
 		selectAfter: true
 	},
-	flash: {
-		title: 'Flash Embed',
+	iframe: {
+		title: 'HTML5 Embed',
 		initialValues: {
 			width: 650,
 			height: 450
 		},
 		content: (
 			<LabeledDialogBox>
-				<BoxRow className="red">
-					It is highly recommended not to use Flash due to its loss of support. Consider using video or HTML5 instead.
-				</BoxRow>
 				<FieldBoxRow
 					type="url"
 					name="children"
-					label="SWF File URL"
+					label="HTML File URL"
 					required
 					autoFocus
+					help={(
+						<>
+							A direct link to an HTML file (usually called "index.html"). You can upload HTML files to a file host that supports HTML5, such as <Link href="https://pipe.miroware.io" target="_blank">Miroware Pipe</Link>.<br />
+							<br />
+							If you need help extracting, uploading, and/or embedding HTML, feel free to ask in the #technical-help channel of <Link href="/discord" target="_blank">our Discord server</Link>.
+						</>
+					)}
 				/>
 				<FieldBoxRow
 					type="number"
@@ -425,27 +429,23 @@ const tags: Record<string, {
 		}),
 		selectAfter: true
 	},
-	iframe: {
-		title: 'HTML5 Embed',
+	flash: {
+		title: 'Flash Embed',
 		initialValues: {
 			width: 650,
 			height: 450
 		},
 		content: (
 			<LabeledDialogBox>
+				<BoxRow className="red">
+					It is highly recommended not to use Flash due to its loss of support. Consider using video or HTML5 instead.
+				</BoxRow>
 				<FieldBoxRow
 					type="url"
 					name="children"
-					label="HTML File URL"
+					label="SWF File URL"
 					required
 					autoFocus
-					help={(
-						<>
-							A direct link to an HTML file (usually called "index.html"). You can upload HTML files to a file host that supports HTML5, such as <Link href="https://pipe.miroware.io" target="_blank">Miroware Pipe</Link>.<br />
-							<br />
-							If you need help extracting, uploading, and/or embedding HTML, feel free to ask in the #technical-help channel of <Link href="/discord" target="_blank">our Discord server</Link>.
-						</>
-					)}
 				/>
 				<FieldBoxRow
 					type="number"

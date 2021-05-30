@@ -58,17 +58,6 @@ const BBTags: Partial<Record<string, BBTag>> = {
 	i: ({ children }) => <i>{children}</i>,
 	u: ({ children }) => <u>{children}</u>,
 	s: ({ children }) => <s>{children}</s>,
-	size: ({ attributes, children }) => (
-		<span
-			style={
-				typeof attributes === 'string'
-					? { fontSize: +attributes ? `${attributes}%` : attributes }
-					: undefined
-			}
-		>
-			{children}
-		</span>
-	),
 	color: ({ attributes, children }) => (
 		<span
 			style={
@@ -91,6 +80,17 @@ const BBTags: Partial<Record<string, BBTag>> = {
 			{children}
 		</span>
 	),
+	size: ({ attributes, children }) => (
+		<span
+			style={
+				typeof attributes === 'string'
+					? { fontSize: +attributes ? `${attributes}%` : attributes }
+					: undefined
+			}
+		>
+			{children}
+		</span>
+	),
 	font: ({ attributes, children }) => (
 		<span
 			style={
@@ -102,11 +102,11 @@ const BBTags: Partial<Record<string, BBTag>> = {
 			{children}
 		</span>
 	),
-	center: withBlock(({ children }) => (
-		<div className="center">{children}</div>
-	)),
 	left: withBlock(({ children }) => (
 		<div className="left">{children}</div>
+	)),
+	center: withBlock(({ children }) => (
+		<div className="center">{children}</div>
 	)),
 	right: withBlock(({ children }) => (
 		<div className="right">{children}</div>
@@ -127,6 +127,17 @@ const BBTags: Partial<Record<string, BBTag>> = {
 			{children}
 		</Link>
 	),
+	spoiler: withBlock(({ attributes, children }) => (
+		<Spoiler
+			open={attributes instanceof Object ? attributes.open : undefined}
+			close={attributes instanceof Object ? attributes.close : undefined}
+		>
+			{children}
+		</Spoiler>
+	)),
+	chat: withBlock(({ children }) => (
+		<div className="chat">{children}</div>
+	)),
 	alt: ({ attributes, children }) => (
 		<span
 			title={
@@ -155,17 +166,6 @@ const BBTags: Partial<Record<string, BBTag>> = {
 			/>
 		);
 	},
-	spoiler: withBlock(({ attributes, children }) => (
-		<Spoiler
-			open={attributes instanceof Object ? attributes.open : undefined}
-			close={attributes instanceof Object ? attributes.close : undefined}
-		>
-			{children}
-		</Spoiler>
-	)),
-	chat: withBlock(({ children }) => (
-		<div className="chat">{children}</div>
-	)),
 	youtube: ({ attributes, children }) => {
 		if (typeof attributes === 'string') {
 			attributes = getWidthAndHeight(attributes);
@@ -213,26 +213,6 @@ const BBTags: Partial<Record<string, BBTag>> = {
 			/>
 		);
 	},
-	flash: ({ attributes, children }) => {
-		let width: string | undefined;
-		let height: string | undefined;
-
-		if (typeof attributes === 'string') {
-			({ width, height } = getWidthAndHeight(attributes));
-		}
-
-		return (
-			<Flash
-				src={(
-					typeof children === 'string'
-						? children
-						: undefined
-				)}
-				width={width ? +width : undefined}
-				height={height ? +height : undefined}
-			/>
-		);
-	},
 	iframe: ({ attributes, children }) => {
 		let width: string | undefined;
 		let height: string | undefined;
@@ -252,8 +232,28 @@ const BBTags: Partial<Record<string, BBTag>> = {
 				height={height ? +height : undefined}
 			/>
 		);
+	},
+	flash: ({ attributes, children }) => {
+		let width: string | undefined;
+		let height: string | undefined;
+
+		if (typeof attributes === 'string') {
+			({ width, height } = getWidthAndHeight(attributes));
+		}
+
+		return (
+			<Flash
+				src={(
+					typeof children === 'string'
+						? children
+						: undefined
+				)}
+				width={width ? +width : undefined}
+				height={height ? +height : undefined}
+			/>
+		);
 	}
-	// user
+	// TODO: user
 };
 
 export default BBTags;
