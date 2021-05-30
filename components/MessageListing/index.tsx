@@ -14,6 +14,7 @@ import Button from 'components/Button';
 import RemoveButton from 'components/Button/RemoveButton';
 import { Dialog } from 'modules/client/dialogs';
 import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
+import ReplyButton from 'components/Button/ReplyButton';
 
 type MessageReadByAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy').default>;
 type MessageReadByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy/[userID]').default>;
@@ -336,6 +337,9 @@ const MessageListing = ({
 			</div>
 			{userIsRecipient && (
 				<div className="listing-actions">
+					<ReplyButton
+						href={`/message/new?replyTo=${message.id}`}
+					/>
 					<Button
 						className={`icon${message.read ? ' mark-unread' : ' mark-read'}`}
 						title={message.read ? 'Mark as Unread' : 'Mark as Read'}
