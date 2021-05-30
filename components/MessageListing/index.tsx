@@ -43,6 +43,7 @@ const MessageListing = ({
 	removeListing,
 	children: message
 }: MessageListingProps) => {
+	// This is necessary to fix some race conditions when performing actions on multiple selected messages simultaneously.
 	const setMessageRef = useLatest(setMessage);
 
 	const user = useUser();
