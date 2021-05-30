@@ -92,25 +92,50 @@ const Component = withErrorPage<ServerSideProps>(({
 		}
 	}, [listedMessages]);
 
+	const selectedCount = listedMessages.filter(message => message.selected).length;
+
 	return (
 		<Page flashyTitle heading="Messages">
 			<Box>
 				<BoxSection heading="Your Messages">
 					<BoxRow>
-						{listedMessages.some(message => message.selected) ? (
+						{selectedCount ? (
 							<>
-								<Button onClick={deselectAll}>
+								<Button
+									className="small"
+									title={`Deselect Selected Messages (${selectedCount})`}
+									onClick={deselectAll}
+								>
 									Deselect All
 								</Button>
-								<Button onClick={markRead}>
+								<Button
+									className="small"
+									title={`Mark Selected Messages as Read (${selectedCount})`}
+									onClick={markRead}
+								>
 									Mark as Read
 								</Button>
-								<Button onClick={markUnread}>
+								<Button
+									className="small"
+									title={`Mark Selected Messages as Unread (${selectedCount})`}
+									onClick={markUnread}
+								>
 									Mark as Unread
+								</Button>
+								<Button
+									className="small"
+									title={`Delete Selected Messages (${selectedCount})`}
+									onClick={markUnread}
+								>
+									Delete
 								</Button>
 							</>
 						) : (
-							<Button onClick={selectAll}>
+							<Button
+								className="small"
+								title={`Select All Messages (${listedMessages.length})`}
+								onClick={selectAll}
+							>
 								Select All
 							</Button>
 						)}
