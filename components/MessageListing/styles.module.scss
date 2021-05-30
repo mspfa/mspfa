@@ -1,3 +1,4 @@
+@import 'styles/general';
 @import 'styles/themes';
 
 .message-list .listing {
@@ -57,8 +58,10 @@
 		}
 	}
 
-	&:hover .listing-actions {
-		display: block;
+	@include desktop {
+		&:hover .listing-actions {
+			display: block;
+		}
 	}
 }
 
