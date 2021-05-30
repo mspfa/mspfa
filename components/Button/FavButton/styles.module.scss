@@ -1,9 +1,9 @@
 .button.heart {
-	&::before {
-		background-image: url(/images/icons/heart-inactive.png);
-	}
-
 	&.active::before {
 		background-image: url(/images/icons/heart.png);
+	}
+
+	&:not(.active)::before {
+		background-image: url(/images/icons/heart-inactive.png);
 	}
 }

@@ -68,7 +68,7 @@ const MyApp = ({
 				<meta property="og:description" content="Hello, welcome to the bath house" />
 				<meta property="og:title" content="MS Paint Fan Adventures" />
 				<meta property="og:image" content="/images/icon.png" />
-				<link rel="icon" href="/images/icon.png" /* Perfectly generic icon by heyitskane */ />
+				<link rel="icon" href="/images/icon.png" /* Image credit: heyitskane */ />
 			</Head>
 			<SWRConfig value={swrConfig}>
 				<UserContext.Provider value={mergedUser}>
