@@ -23,18 +23,20 @@ export type UserFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 
 	name: string,
 	/** The initial value of the user field. If undefined, defaults to any initial value set by Formik. */
 	initialValue?: string,
-	/** Whether to show an option to remove this user field from a parent user array field. */
+	/** Whether to show an option to remove this user field from a parent `UserArrayField`. */
 	deletable?: boolean,
+	/** Whether this field is a child of a `UserArrayField`. */
+	inUserArrayField?: boolean,
 	/**
-	 * The React keys of the user field array's children which include this component.
+	 * The React keys of the user array field's children which include this component.
 	 *
 	 * Only used if `deletable` is `true`.
 	 */
-	userFieldKeys?: number[],
-	/** Whether the value of this field must be unique from other user fields in the parent user field array. */
+	userArrayFieldKeys?: number[],
+	/** Whether the value of this field must be unique from other user fields in the parent `UserArrayField`. */
 	unique?: boolean,
-	/** The value of the parent `UserFieldArray`. */
-	userFieldArrayValue?: Array<string | undefined>,
+	/** The value of the parent `UserArrayField`. */
+	userArrayFieldValue?: Array<string | undefined>,
 	onChange?: (event: {
 		target: HTMLInputElement
 	}) => void
@@ -47,9 +49,10 @@ const UserField = ({
 	required,
 	readOnly,
 	deletable,
-	userFieldKeys,
+	inUserArrayField,
+	userArrayFieldKeys,
 	unique,
-	userFieldArrayValue,
+	userArrayFieldValue,
 	onChange: onChangeProp,
 	autoFocus
 }: UserFieldProps) => {
@@ -241,17 +244,25 @@ const UserField = ({
 	}, [isEditing, required]);
 
 	const deleteFromArray = useCallback(() => {
+		if (required && userArrayFieldValue!.length === 1) {
+			// If the user tries to delete this user from the parent `UserArrayField` while it's `required`, replace it with an empty user field instead.
+			setInputValue('');
+			changeValue(undefined);
+
+			return;
+		}
+
 		const [, arrayFieldName, indexString] = name.match(/(.+)\.(\d+)/)!;
 		const index = +indexString;
 		const arrayFieldValue = getFieldMeta<string[]>(arrayFieldName).value;
 
-		userFieldKeys?.splice(index, 1);
+		userArrayFieldKeys?.splice(index, 1);
 
 		setFieldValue(arrayFieldName, [
 			...arrayFieldValue.slice(0, index),
 			...arrayFieldValue.slice(index + 1, arrayFieldValue.length)
 		]);
-	}, [name, getFieldMeta, setFieldValue, userFieldKeys]);
+	}, [required, userArrayFieldValue, name, getFieldMeta, userArrayFieldKeys, setFieldValue, changeValue]);
 
 	return (
 		<div
@@ -268,7 +279,7 @@ const UserField = ({
 						{/* In the case that the value was passed in from outside rather than by the user selecting an auto-complete option, the outside source of this user ID should cache the user it represents. If it does not, it should be changed to, or else this will throw an error. */}
 						{userCache[value]!.name}
 					</Link>
-					{!readOnly && (
+					{!readOnly && !inUserArrayField && (
 						<EditButton onClick={startEditing} />
 					)}
 				</>
@@ -296,14 +307,14 @@ const UserField = ({
 									key={publicUser.id}
 									publicUser={publicUser}
 									setValue={changeValue}
-									disabled={unique && userFieldArrayValue?.includes(publicUser.id)}
+									disabled={unique && userArrayFieldValue?.includes(publicUser.id)}
 								/>
 							))}
 						</div>
 					)}
 				</>
 			)}
-			{deletable && (
+			{deletable && !(required && isEditing) && (
 				<RemoveButton onClick={deleteFromArray} />
 			)}
 		</div>
