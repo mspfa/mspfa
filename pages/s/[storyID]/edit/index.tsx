@@ -29,6 +29,7 @@ import BoxSection from 'components/Box/BoxSection';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
 import Row from 'components/Row';
+import Timestamp from 'components/Timestamp';
 
 const getValuesFromStory = (privateStory: PrivateStory) => ({
 	created: privateStory.created,
@@ -123,6 +124,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											type="url"
 											name="icon"
 											label="Icon URL"
+											help="A direct URL to an image of your adventure's icon. The recommended image size is 150x150."
 										/>
 										<BoxRow>
 											<IconImage
@@ -133,7 +135,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											/>
 										</BoxRow>
 									</BoxRowSection>
-									<BoxRowSection heading="Authorship">
+									<BoxRowSection id="story-misc" heading="Misc">
 										<LabeledBoxRow label="Owner">
 											<UserField
 												name="owner"
@@ -153,11 +155,30 @@ const Component = withErrorPage<ServerSideProps>(({
 												readOnly={!ownerWritePerm}
 											/>
 										</LabeledBoxRow>
+										<FieldBoxRow
+											type="checkbox"
+											name="commentsEnabled"
+											label="Allow Comments"
+										/>
+										<FieldBoxRow
+											type="url"
+											name="banner"
+											label="Banner URL"
+											help={(
+												<>
+													A direct URL to an image of your adventure's anniversary banner. The recommended image size is 940x90.<br />
+													<br />
+													If your adventure is ongoing or complete and has at least 300 favorites, this image will be displayed on the homepage for one week starting on the adventure's anniversary.<br />
+													<br />
+													This adventure's creation date is set to <Timestamp>{values.created}</Timestamp> and will be used as its anniversary.
+												</>
+											)}
+										/>
 									</BoxRowSection>
 								</BoxColumns>
 								<BoxSection heading="Details">
 									<Row>
-										<Label htmlFor="field-description">
+										<Label htmlFor="field-tags">
 											Tags
 										</Label>
 										(Not Implemented Yet)
@@ -168,15 +189,15 @@ const Component = withErrorPage<ServerSideProps>(({
 										</Label>
 										<BBField
 											name="description"
-											rows={8}
+											rows={6}
 											maxLength={2000}
 											html
 										/>
 									</Row>
 								</BoxSection>
-								<BoxSection heading="Advanced" collapsible customContent>
-									<BoxColumns>
-										<BoxSection>
+								<BoxSection heading="Advanced" collapsible>
+									<Row id="code-fields">
+										<div>
 											<Label htmlFor="field-style">
 												Custom Style
 											</Label>
@@ -187,8 +208,8 @@ const Component = withErrorPage<ServerSideProps>(({
 												rows={8}
 												placeholder={"Paste SCSS here.\nIf you don't know what this is, don't worry about it."}
 											/>
-										</BoxSection>
-										<BoxSection>
+										</div>
+										<div>
 											<Label htmlFor="field-style">
 												Custom Script
 											</Label>
@@ -199,8 +220,22 @@ const Component = withErrorPage<ServerSideProps>(({
 												rows={8}
 												placeholder={"Paste JSX here.\nIf you don't know what this is, don't worry about it."}
 											/>
-										</BoxSection>
-									</BoxColumns>
+										</div>
+									</Row>
+									<Row>
+										<Label
+											htmlFor="field-blurb"
+											help={'This text appears when you click "Show More" under an adventure\'s listing, and the first line of this will be used in external embeds of this adventure.'}
+										>
+											Blurb
+										</Label>
+										<BBField
+											name="blurb"
+											rows={6}
+											maxLength={2000}
+											placeholder="It is usually recommended that you leave this empty to default to the adventure's description."
+										/>
+									</Row>
 								</BoxSection>
 								<BoxFooter>
 									<Button

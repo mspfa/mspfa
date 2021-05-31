@@ -6,11 +6,29 @@
 	}
 }
 
-#story-icon {
-	width: 150px;
-	height: 150px;
+#story {
+	&-icon {
+		width: 150px;
+		height: 150px;
+	}
+
+	&-misc > .box-content {
+		row-gap: 1em;
+	}
 }
 
 .label-container.user-array-field-label {
 	align-self: start;
+}
+
+#code-fields {
+	display: flex;
+
+	& > * {
+		width: 50%;
+	}
+
+	& > :not(:first-child) {
+		margin-left: 24px;
+	}
 }
