@@ -50,7 +50,6 @@ const UserArrayField = ({
 					name={`${name}.${index}`}
 					required={required && value.length === 1}
 					readOnly={readOnly}
-					formikField
 					deletable={!(required && value.length === 1)}
 					userFieldKeys={userFieldKeys}
 					userFieldArrayValue={value}
