@@ -1,4 +1,3 @@
-import './styles.module.scss';
 import Page from 'components/Page';
 import { withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
@@ -17,7 +16,7 @@ import users, { getPrivateUser, getPublicUser } from 'modules/server/users';
 import type { ListedMessage } from 'components/MessageListing';
 import MessageListing from 'components/MessageListing';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import BoxRow from 'components/Box/BoxRow';
+import Row from 'components/Row';
 import Button from 'components/Button';
 import { useLatest } from 'react-use';
 import { Dialog } from 'modules/client/dialogs';
@@ -154,7 +153,7 @@ const Component = withErrorPage<ServerSideProps>(({
 				<BoxSection
 					heading={`Your Messages (${listedMessages.length} total, ${unreadCount} unread)`}
 				>
-					<BoxRow id="messages-actions">
+					<Row id="messages-actions">
 						<Button
 							className="small"
 							href="/message/new"
@@ -198,7 +197,7 @@ const Component = withErrorPage<ServerSideProps>(({
 								</Button>
 							</>
 						)}
-					</BoxRow>
+					</Row>
 					<List
 						listing={MessageListing}
 						setMessageRef={setMessageRef}

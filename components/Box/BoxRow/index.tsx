@@ -1,11 +1,12 @@
 import './styles.module.scss';
-import type { HTMLAttributes } from 'react';
+import type { RowProps } from 'components/Row';
+import Row from 'components/Row';
 
-export type BoxRowProps = HTMLAttributes<HTMLDivElement>;
+export type BoxRowProps = RowProps;
 
 /** A centered row with one column that spans the full width of the box. */
 const BoxRow = ({ className, ...props }: BoxRowProps) => (
-	<div
+	<Row
 		className={`box-row${className ? ` ${className}` : ''}`}
 		{...props}
 	/>
