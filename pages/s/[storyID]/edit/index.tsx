@@ -30,6 +30,7 @@ import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
 import Row from 'components/Row';
 import Timestamp from 'components/Timestamp';
+import HelpButton from 'components/Button/HelpButton';
 
 const getValuesFromStory = (privateStory: PrivateStory) => ({
 	created: privateStory.created,
@@ -168,7 +169,11 @@ const Component = withErrorPage<ServerSideProps>(({
 												<>
 													A direct URL to an image of your adventure's anniversary banner. The recommended image size is 940x90.<br />
 													<br />
-													If your adventure is ongoing or complete and has at least 300 favorites, this image will be displayed on the homepage for one week starting on the adventure's anniversary.<br />
+													{`If your adventure is ongoing or complete and has at least ${200} favorites `}
+													<HelpButton>
+														TODO
+													</HelpButton>
+													, this image will be displayed on the homepage for one week starting on the adventure's anniversary.<br />
 													<br />
 													This adventure's creation date is set to <Timestamp>{values.created}</Timestamp> and will be used as its anniversary.
 												</>
