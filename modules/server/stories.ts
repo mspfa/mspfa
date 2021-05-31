@@ -194,6 +194,47 @@ const stories = db.collection<StoryDocument>('stories');
 
 export default stories;
 
+/**
+ * Finds and returns a `StoryDocument` by a possibly unsafe ID.
+ *
+ * Returns `undefined` if the ID is invalid or the story is not found.
+ *
+ * If the `res` parameter is specified, failing to find a valid story will result in an error response, and this function will never resolve.
+ */
+export const getStoryByUnsafeID = <Res extends APIResponse<any> | undefined>(
+	...[id, res]: [
+		id: string | number | undefined,
+		res: Res
+	] | [
+		id: string | number | undefined
+		// It is necessary to use tuple types instead of simply having `res` be an optional parameter, because otherwise `Res` will not always be inferred correctly.
+	]
+) => new Promise<StoryDocument | (undefined extends Res ? undefined : never)>(async resolve => {
+	const storyID: StoryID = id !== undefined && id !== '' ? +id : NaN;
+
+	let story: StoryDocument | null | undefined;
+
+	if (!Number.isNaN(storyID)) {
+		story = await stories.findOne({
+			_id: storyID
+		});
+	}
+
+	if (!story) {
+		if (res) {
+			res.status(404).send({
+				message: 'No story was found with the specified ID.'
+			});
+		} else {
+			resolve(undefined as any);
+		}
+
+		return;
+	}
+
+	resolve(story);
+});
+
 export const getPublicStoriesByEditor = async (editor: UserDocument) => (
 	stories.find!({
 		editors: editor._id
