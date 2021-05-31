@@ -23,15 +23,9 @@ export type UserFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 
 	name: string,
 	/** The initial value of the user field. If undefined, defaults to any initial value set by Formik. */
 	initialValue?: string,
-	/** Whether to show an option to remove this user field from a parent `UserArrayField`. */
-	deletable?: boolean,
 	/** Whether this field is a child of a `UserArrayField`. */
 	inUserArrayField?: boolean,
-	/**
-	 * The React keys of the user array field's children which include this component.
-	 *
-	 * Only used if `deletable` is `true`.
-	 */
+	/** The React keys of the user array field's children which include this component. */
 	userArrayFieldKeys?: number[],
 	/** Whether the value of this field must be unique from other user fields in the parent `UserArrayField`. */
 	unique?: boolean,
@@ -48,7 +42,6 @@ const UserField = ({
 	initialValue: initialValueProp,
 	required,
 	readOnly,
-	deletable,
 	inUserArrayField,
 	userArrayFieldKeys,
 	unique,
@@ -314,7 +307,7 @@ const UserField = ({
 					)}
 				</>
 			)}
-			{deletable && !(required && isEditing) && (
+			{inUserArrayField && !(required && isEditing) && (
 				<RemoveButton onClick={deleteFromArray} />
 			)}
 		</div>
