@@ -2,7 +2,7 @@ import './styles.module.scss';
 import { useField } from 'formik';
 import { toKebabCase } from 'modules/client/utilities';
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { monthNames } from 'modules/client/dates';
 import { usePrefixedID } from 'modules/client/IDPrefix';
 
@@ -165,6 +165,12 @@ const DateField = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [year, month, day, name, valueProp, setFieldValue, onChangeProp, min, max]);
 
+	const [renderYearOptions, setRenderYearOptions] = useState(false);
+
+	useEffect(() => {
+		setRenderYearOptions(true);
+	}, []);
+
 	return (
 		<>
 			<input
@@ -208,15 +214,18 @@ const DateField = ({
 				onChange={onChange}
 			>
 				<option value="" disabled hidden>YYYY</option>
-				{Array.from({ length: maxYear - minYear + 1 }).map((uselessValue, i) => {
-					const value = maxYear - i;
+				{renderYearOptions && (
+					// The `option`s are only rendered client-side because of how large they can be as an HTML string.
+					Array.from({ length: maxYear - minYear + 1 }).map((uselessValue, i) => {
+						const value = maxYear - i;
 
-					return (
-						<option key={value} value={value}>
-							{value}
-						</option>
-					);
-				})}
+						return (
+							<option key={value} value={value}>
+								{value}
+							</option>
+						);
+					})
+				)}
 			</select>
 		</>
 	);
