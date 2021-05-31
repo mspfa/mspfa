@@ -10,6 +10,7 @@ export type AddUserButtonProps = {
 
 const AddUserButton = ({ value, setValue, userArrayFieldRef }: AddUserButtonProps) => (
 	<AddButton
+		title="Add User"
 		onClick={
 			useCallback(() => {
 				setValue([...value, undefined]);
