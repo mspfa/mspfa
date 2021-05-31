@@ -51,8 +51,8 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 						{storyStatusNames[publicStory.status]}
 					</span>
 					{user && (
-						// Check if the user has permission to edit this adventure.
-						publicStory.editors.includes(user.id)
+						publicStory.owner === user.id
+						|| publicStory.editors.includes(user.id)
 						|| user.perms & Perm.sudoRead
 					) && (
 						<EditButton

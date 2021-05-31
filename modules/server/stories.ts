@@ -61,7 +61,11 @@ export type StoryDocument = {
 	title: string,
 	status: StoryStatus,
 	owner: UserID,
-	/** @uniqueItems true */
+	/**
+	 * Users with permission to edit this adventure, not necessarily including the adventure's owner.
+	 *
+	 * @uniqueItems true
+	 */
 	editors: UserID[],
 	author?: {
 		name: string,
@@ -101,6 +105,7 @@ export type StoryDocument = {
 /** A `Partial<StoryDocument>` used to spread some general properties on newly inserted `StoryDocument`s. */
 export const defaultStory = {
 	status: StoryStatus.Ongoing,
+	editors: [] as never[],
 	pages: [] as never[],
 	drafts: [] as never[],
 	description: '',
