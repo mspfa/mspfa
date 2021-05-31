@@ -4,7 +4,9 @@ import type { HTMLAttributes, ReactNode } from 'react';
 export type BoxSectionProps = HTMLAttributes<HTMLDivElement> & {
 	heading?: ReactNode,
 	collapsible?: boolean,
-	open?: boolean
+	open?: boolean,
+	/** Whether this component's children should be inserted directly instead of inside a content element. */
+	customContent?: boolean
 };
 
 /** A `Box` section with a heading and content below it.  */
@@ -12,6 +14,7 @@ const BoxSection = ({
 	heading,
 	className,
 	collapsible,
+	customContent,
 	children,
 	...props
 }: BoxSectionProps) => {
@@ -28,9 +31,13 @@ const BoxSection = ({
 					{heading}
 				</HeadingTag>
 			)}
-			<div className="box-content front">
-				{children}
-			</div>
+			{customContent ? (
+				children
+			) : (
+				<div className="box-content front">
+					{children}
+				</div>
+			)}
 		</SectionTag>
 	);
 };

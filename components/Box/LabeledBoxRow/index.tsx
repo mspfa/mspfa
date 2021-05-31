@@ -40,16 +40,15 @@ const LabeledBoxRow = ({
 		>
 			{label}
 		</Label>
-		{(customContent
-			? children
-			: (
-				<div
-					className={`box-row-content${contentClassName ? ` ${contentClassName}` : ''}`}
-					{...contentProps}
-				>
-					{children}
-				</div>
-			)
+		{customContent ? (
+			children
+		) : (
+			<div
+				className={`box-row-content${contentClassName ? ` ${contentClassName}` : ''}`}
+				{...contentProps}
+			>
+				{children}
+			</div>
 		)}
 	</>
 );
