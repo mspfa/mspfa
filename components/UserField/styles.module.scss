@@ -1,6 +1,9 @@
 .user-field {
 	position: relative;
-	margin: 2px 0;
+
+	&:not(:last-child) {
+		margin-bottom: 2px;
+	}
 
 	&-input {
 		position: relative;
