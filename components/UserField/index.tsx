@@ -23,8 +23,6 @@ export type UserFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 
 	name: string,
 	/** The initial value of the user field. If undefined, defaults to any initial value set by Formik. */
 	initialValue?: string,
-	/** Whether the value of the user field should be controlled by Formik. Defaults to `true`. */
-	formikField?: boolean,
 	/** Whether to show an option to remove this user field from a parent user array field. */
 	deletable?: boolean,
 	/**
@@ -45,7 +43,6 @@ export type UserFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 
 const UserField = ({
 	name,
 	id,
-	formikField = true,
 	initialValue: initialValueProp,
 	required,
 	readOnly,
@@ -140,15 +137,13 @@ const UserField = ({
 	const changeValue = useCallback(async (newValue: string | undefined) => {
 		setValueState(newValue);
 
-		if (formikField) {
-			setFieldValue(name, newValue || '');
-		}
+		setFieldValue(name, newValue || '');
 
 		nativeInput.name = name;
 		nativeInput.value = newValue || '';
 
 		onChangeProp?.({ target: nativeInput });
-	}, [name, formikField, setFieldValue, onChangeProp]);
+	}, [name, setFieldValue, onChangeProp]);
 
 	const startEditing = useCallback(async () => {
 		// We can assert `value!` because `value` must already be set for the edit button to be visible.
