@@ -1,3 +1,11 @@
+@import 'styles/general';
+
+@include desktop {
+	.box-columns > * {
+		width: 50%;
+	}
+}
+
 #story-icon {
 	width: 150px;
 	height: 150px;

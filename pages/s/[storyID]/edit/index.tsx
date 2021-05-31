@@ -3,7 +3,7 @@ import Page from 'components/Page';
 import { Perm } from 'modules/client/perms';
 import { withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
-import { Form, Formik } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import { useCallback, useState } from 'react';
 import { useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
@@ -24,6 +24,11 @@ import { useUserCache } from 'modules/client/UserCache';
 import { uniqBy } from 'lodash';
 import users, { getPublicUser } from 'modules/server/users';
 import UserArrayField from 'components/UserField/UserArrayField';
+import BoxColumns from 'components/Box/BoxColumns';
+import BoxSection from 'components/Box/BoxSection';
+import Label from 'components/Label';
+import BBField from 'components/BBCode/BBField';
+import Row from 'components/Row';
 
 const getValuesFromStory = (privateStory: PrivateStory) => ({
 	created: privateStory.created,
@@ -68,7 +73,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 	const initialValues = getValuesFromStory(privateStory);
 
-	const ownerPerm = (
+	const ownerWritePerm = (
 		user.id === privateStory.owner
 		|| user.perms & Perm.sudoWrite
 	);
@@ -90,62 +95,113 @@ const Component = withErrorPage<ServerSideProps>(({
 					return (
 						<Form>
 							<Box>
-								<BoxRowSection heading="Info">
-									<FieldBoxRow
-										name="title"
-										label="Title"
-										autoComplete="off"
-										required
-										maxLength={50}
-									/>
-									<FieldBoxRow
-										as="select"
-										name="status"
-										label="Status"
-										required
-									>
-										{Object.keys(storyStatusNames).map(status => (
-											<option
-												key={status}
-												value={status}
-											>
-												{(storyStatusNames as any)[status]}
-											</option>
-										))}
-									</FieldBoxRow>
-									<LabeledBoxRow label="Owner">
-										<UserField
-											name="owner"
+								<BoxColumns>
+									<BoxRowSection heading="Info">
+										<FieldBoxRow
+											name="title"
+											label="Title"
+											autoComplete="off"
 											required
-											readOnly={!ownerPerm}
+											maxLength={50}
 										/>
-									</LabeledBoxRow>
-									<LabeledBoxRow
-										labelProps={{
-											className: 'user-array-field-label'
-										}}
-										label="Editors"
-										help={'The users with permission to edit this adventure.\n\nOnly the owner is allowed to delete the adventure, change its owner, or change its editors.'}
-									>
-										<UserArrayField
-											name="editors"
-											readOnly={!ownerPerm}
+										<FieldBoxRow
+											as="select"
+											name="status"
+											label="Status"
+											required
+										>
+											{Object.keys(storyStatusNames).map(status => (
+												<option
+													key={status}
+													value={status}
+												>
+													{(storyStatusNames as any)[status]}
+												</option>
+											))}
+										</FieldBoxRow>
+										<FieldBoxRow
+											type="url"
+											name="icon"
+											label="Icon URL"
 										/>
-									</LabeledBoxRow>
-									<FieldBoxRow
-										type="url"
-										name="icon"
-										label="Icon URL"
-									/>
-									<BoxRow>
-										<IconImage
-											id="story-icon"
-											src={values.icon}
-											alt="Your Adventure's Icon"
-											title="Your Adventure's Icon"
+										<BoxRow>
+											<IconImage
+												id="story-icon"
+												src={values.icon}
+												alt="Your Adventure's Icon"
+												title="Your Adventure's Icon"
+											/>
+										</BoxRow>
+									</BoxRowSection>
+									<BoxRowSection heading="Authorship">
+										<LabeledBoxRow label="Owner">
+											<UserField
+												name="owner"
+												required
+												readOnly={!ownerWritePerm}
+											/>
+										</LabeledBoxRow>
+										<LabeledBoxRow
+											labelProps={{
+												className: 'user-array-field-label'
+											}}
+											label="Editors"
+											help={'The users with permission to edit this adventure.\n\nOnly the owner is allowed to delete the adventure, change its owner, or change its editors. The owner has all permissions and will be publicly listed as an editor regardless of whether they are in the editor list.'}
+										>
+											<UserArrayField
+												name="editors"
+												readOnly={!ownerWritePerm}
+											/>
+										</LabeledBoxRow>
+									</BoxRowSection>
+								</BoxColumns>
+								<BoxSection heading="Details">
+									<Row>
+										<Label htmlFor="field-description">
+											Tags
+										</Label>
+										(Not Implemented Yet)
+									</Row>
+									<Row>
+										<Label htmlFor="field-description">
+											Description
+										</Label>
+										<BBField
+											name="description"
+											rows={8}
+											maxLength={2000}
+											html
 										/>
-									</BoxRow>
-								</BoxRowSection>
+									</Row>
+								</BoxSection>
+								<BoxSection heading="Advanced" collapsible customContent>
+									<BoxColumns>
+										<BoxSection>
+											<Label htmlFor="field-style">
+												Custom Style
+											</Label>
+											<Field
+												as="textarea"
+												id="field-style"
+												name="style"
+												rows={8}
+												placeholder={"Paste SCSS here.\nIf you don't know what this is, don't worry about it."}
+											/>
+										</BoxSection>
+										<BoxSection>
+											<Label htmlFor="field-style">
+												Custom Script
+											</Label>
+											<Field
+												as="textarea"
+												id="field-script"
+												name="script.unverified"
+												rows={8}
+												placeholder={"Paste JSX here.\nIf you don't know what this is, don't worry about it."}
+											/>
+										</BoxSection>
+									</BoxColumns>
+								</BoxSection>
 								<BoxFooter>
 									<Button
 										type="submit"
