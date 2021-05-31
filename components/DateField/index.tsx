@@ -210,7 +210,7 @@ const DateField = ({
 				className="date-field-year"
 				autoComplete={autoComplete ? `${autoComplete}-year` : undefined}
 				required={required}
-				value={Number.isNaN(year) ? '' : year}
+				value={!renderYearOptions || Number.isNaN(year) ? '' : year}
 				onChange={onChange}
 			>
 				<option value="" disabled hidden>YYYY</option>
