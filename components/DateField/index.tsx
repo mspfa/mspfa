@@ -11,8 +11,6 @@ const nativeInput = document.createElement('input');
 nativeInput.type = 'number';
 // @client-only }
 
-const yearSize = new Date().getFullYear().toString().length + 2;
-
 /** Gets the maximum possible day of the month based on a full year number (e.g. 2001) and a month number (0 to 11). */
 const getMaxDay = (year: number, month: number) => {
 	const lastDayOfTheMonth = new Date(0);
@@ -201,19 +199,25 @@ const DateField = ({
 					</option>
 				))}
 			</select>
-			<input
-				type="number"
+			<select
 				id={`${id}-year`}
 				className="date-field-year"
 				autoComplete={autoComplete ? `${autoComplete}-year` : undefined}
 				required={required}
-				placeholder="YYYY"
-				min={minYear}
-				max={maxYear}
-				size={yearSize}
 				value={Number.isNaN(year) ? '' : year}
 				onChange={onChange}
-			/>
+			>
+				<option value="" disabled hidden>YYYY</option>
+				{Array.from({ length: maxYear - minYear + 1 }).map((uselessValue, i) => {
+					const value = maxYear - i;
+
+					return (
+						<option key={value} value={value}>
+							{value}
+						</option>
+					);
+				})}
+			</select>
 		</>
 	);
 };
