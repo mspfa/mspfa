@@ -81,7 +81,6 @@ const SignIn = ({ page }: SignInProps) => {
 								name="name"
 								autoComplete="username"
 								required
-								minLength={1}
 								maxLength={32}
 								autoFocus={!signInValues.name}
 								value={signInValues.name}

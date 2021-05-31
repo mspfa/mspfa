@@ -74,7 +74,6 @@ const Component = withErrorPage<ServerSideProps>(({ privateStories }) => (
 											label="Enter Title"
 											required
 											autoFocus
-											minLength={1}
 											maxLength={50}
 											placeholder={randomStoryName}
 											size={Math.max(20, randomStoryName.length)}

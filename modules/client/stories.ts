@@ -7,7 +7,7 @@ export enum StoryStatus {
 	Discontinued
 }
 
-export const storyStatusNames = {
+export const storyStatusNames: Record<StoryStatus, string> = {
 	[StoryStatus.Inactive]: 'Inactive',
 	[StoryStatus.Ongoing]: 'Ongoing',
 	[StoryStatus.Complete]: 'Complete',

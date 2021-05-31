@@ -63,9 +63,9 @@ export default messages;
 /**
  * Finds and returns a `MessageDocument` by a possibly unsafe ID.
  *
- * Returns `undefined` if the ID is invalid, the user is not found, or the user is scheduled for deletion.
+ * Returns `undefined` if the ID is invalid or the message is not found.
  *
- * If the `res` parameter is specified, failing to find a valid user will result in an error response, and this function will never resolve.
+ * If the `res` parameter is specified, failing to find a valid message will result in an error response, and this function will never resolve.
  */
 export const getMessageByUnsafeID = <Res extends APIResponse<any> | undefined>(
 	...[id, res]: [

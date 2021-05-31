@@ -91,13 +91,12 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 						<Form>
 							<Box>
 								<BoxColumns>
-									<BoxRowSection heading="Meta">
+									<BoxRowSection heading="Info">
 										<FieldBoxRow
 											name="name"
 											label="Username"
 											autoComplete="username"
 											required
-											minLength={1}
 											maxLength={32}
 										/>
 										<FieldBoxRow
