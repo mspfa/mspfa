@@ -203,6 +203,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										</Label>
 										<Field
 											as="textarea"
+											id="field-blurb"
 											name="blurb"
 											rows={4}
 											maxLength={2000}
