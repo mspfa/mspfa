@@ -194,6 +194,21 @@ const Component = withErrorPage<ServerSideProps>(({
 											html
 										/>
 									</Row>
+									<Row>
+										<Label
+											htmlFor="field-blurb"
+											help={'This text appears when you click "Show More" under an adventure\'s listing, and the first line of it is used in external embeds of this adventure.\n\nThis is useful if you have content in the description that is excessive for or doesn\'t need to be in the blurb.\n\nThis can usually be left empty to default to the adventure\'s description.'}
+										>
+											Blurb
+										</Label>
+										<Field
+											as="textarea"
+											name="blurb"
+											rows={4}
+											maxLength={2000}
+											placeholder="This can usually be left empty to default to the adventure's description."
+										/>
+									</Row>
 								</BoxSection>
 								<BoxSection heading="Advanced" collapsible>
 									<Row id="code-fields">
@@ -236,20 +251,6 @@ const Component = withErrorPage<ServerSideProps>(({
 												placeholder={"Paste JSX here.\nIf you don't know what this is, don't worry about it."}
 											/>
 										</div>
-									</Row>
-									<Row>
-										<Label
-											htmlFor="field-blurb"
-											help={'This text appears when you click "Show More" under an adventure\'s listing, and the first line of this will be used in external embeds of this adventure.\n\nIt is usually recommended that you leave this empty to default to the adventure\'s description.'}
-										>
-											Blurb
-										</Label>
-										<BBField
-											name="blurb"
-											rows={6}
-											maxLength={2000}
-											placeholder="It is usually recommended that you leave this empty to default to the adventure's description."
-										/>
 									</Row>
 								</BoxSection>
 								<BoxFooter>
