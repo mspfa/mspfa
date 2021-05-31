@@ -30,7 +30,6 @@ import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
 import Row from 'components/Row';
 import Timestamp from 'components/Timestamp';
-import HelpButton from 'components/Button/HelpButton';
 
 const getValuesFromStory = (privateStory: PrivateStory) => ({
 	created: privateStory.created,
@@ -136,7 +135,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											/>
 										</BoxRow>
 									</BoxRowSection>
-									<BoxRowSection id="story-misc" heading="Misc">
+									<BoxRowSection heading="Misc">
 										<LabeledBoxRow label="Owner">
 											<UserField
 												name="owner"
@@ -199,16 +198,31 @@ const Component = withErrorPage<ServerSideProps>(({
 								<BoxSection heading="Advanced" collapsible>
 									<Row id="code-fields">
 										<div>
-											<Label htmlFor="field-style">
-												Custom Style
-											</Label>
-											<Field
-												as="textarea"
-												id="field-style"
-												name="style"
-												rows={8}
-												placeholder={"Paste SCSS here.\nIf you don't know what this is, don't worry about it."}
-											/>
+											<Row>
+												<Label htmlFor="field-style">
+													Custom Style
+												</Label>
+												<Field
+													as="textarea"
+													id="field-style"
+													name="style"
+													rows={8}
+													placeholder={"Paste SCSS here.\nIf you don't know what this is, don't worry about it."}
+												/>
+											</Row>
+											<Row>
+												<Label
+													htmlFor="field-disable-user-theme"
+													help="When enabled, disables the user's theme and forces them to use only the standard theme with your custom stylesheet, so if you have heavy custom styling, you don't have to deal with overwriting different themes."
+												>
+													Disable User's Theme
+												</Label>
+												<Field
+													type="checkbox"
+													id="field-disable-user-theme"
+													name="disableUserTheme"
+												/>
+											</Row>
 										</div>
 										<div>
 											<Label htmlFor="field-style">

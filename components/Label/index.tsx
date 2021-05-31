@@ -15,7 +15,7 @@ const Label = ({ htmlFor, help, className, children, ...props }: LabelProps) => 
 	const LabelTag = htmlFor ? 'label' : 'span';
 
 	return (
-		<div
+		<span
 			className={`label-container${className ? ` ${className}` : ''}`}
 			{...props}
 		>
@@ -29,7 +29,7 @@ const Label = ({ htmlFor, help, className, children, ...props }: LabelProps) => 
 					{help}
 				</HelpButton>
 			)}
-		</div>
+		</span>
 	);
 };
 
