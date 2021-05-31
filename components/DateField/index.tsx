@@ -2,9 +2,10 @@ import './styles.module.scss';
 import { useField } from 'formik';
 import { toKebabCase } from 'modules/client/utilities';
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState } from 'react';
 import { monthNames } from 'modules/client/dates';
 import { usePrefixedID } from 'modules/client/IDPrefix';
+import { useIsomorphicLayoutEffect } from 'react-use';
 
 // @client-only {
 const nativeInput = document.createElement('input');
@@ -167,7 +168,7 @@ const DateField = ({
 
 	const [renderYearOptions, setRenderYearOptions] = useState(false);
 
-	useEffect(() => {
+	useIsomorphicLayoutEffect(() => {
 		setRenderYearOptions(true);
 	}, []);
 
