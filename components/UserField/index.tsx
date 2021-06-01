@@ -259,6 +259,7 @@ const UserField = ({
 
 	return (
 		<div
+			id={id}
 			className={`user-field${isEditing && openAutoComplete ? ' open-auto-complete' : ''}`}
 			onFocus={onFocus}
 			onBlur={onBlur}
@@ -279,7 +280,6 @@ const UserField = ({
 			) : (
 				<>
 					<input
-						id={id}
 						className="user-field-input"
 						placeholder="Enter Username or ID"
 						autoComplete="off"
