@@ -95,7 +95,6 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 						const sibling = child.nextSibling;
 
 						// Take the children out of the invalid sibling.
-						// This is necessary because, for example, when you press enter in most browsers, it creates a `div` that wraps everything after where the enter occurred, including valid elements which should not be wrapped.
 						while (sibling.firstChild) {
 							ref.current.insertBefore(sibling.firstChild, sibling);
 						}
@@ -162,13 +161,16 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 	}, []);
 
 	const onKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
-		if (event.key.length === 1 && !(
-			event.ctrlKey
-			|| event.metaKey
-			|| event.altKey
-			|| /^[a-z0-9-,\s]$/i.test(event.key)
+		// Don't let the user press `Enter`, because `Enter` has annoying functionality with `contentEditable`, and it is buggy in Firefox.
+		if (event.key === 'Enter' || (
+			event.key.length === 1 && !(
+				event.ctrlKey
+				|| event.metaKey
+				|| event.altKey
+				// Don't let the user enter invalid characters for tags.
+				|| /^[a-z0-9-,\s]$/i.test(event.key)
+			)
 		)) {
-			// Don't let the user enter invalid characters for tags.
 			event.preventDefault();
 		}
 
