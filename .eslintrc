@@ -63,6 +63,7 @@
 		"no-octal-escape": "error",
 		"no-proto": "error",
 		"no-return-await": "error",
+		"no-self-assign": "off",
 		"no-self-compare": "error",
 		"no-sequences": "error",
 		"no-throw-literal": "error",

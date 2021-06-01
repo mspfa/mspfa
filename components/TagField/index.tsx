@@ -27,6 +27,13 @@ type TagFieldChild<NodeType extends ChildNode = ChildNode> = NodeType & (
 			/** Whether this element is an editable. */
 			_tagFieldEditable?: boolean
 		}
+	) | (
+		Element & {
+			/** Whether this element is a tag. */
+			_tagFieldTag?: boolean,
+			/** Whether this element is an editable. */
+			_tagFieldEditable: true
+		}
 	)
 ) & {
 	textContent: string,
@@ -68,7 +75,13 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 					const newChild = createTagFieldEditable();
 					ref.current.insertBefore(newChild, child);
 					child = newChild;
-				} else if (!child._tagFieldTag) {
+				} else if (child._tagFieldTag) {
+					if (child.nextSibling?._tagFieldTag) {
+						// If there are two adjacent tag elements, separate them with an editable.
+
+						ref.current.insertBefore(createTagFieldEditable(), child.nextSibling);
+					}
+				} else {
 					// If this child is not an editable or a tag, convert it to an editable.
 
 					const newChild = createTagFieldEditable();
@@ -81,7 +94,13 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 			if (child._tagFieldEditable) {
 				// Merge all non-tags immediately following this editable into this editable.
 				while (child.nextSibling && !child.nextSibling._tagFieldTag) {
+					if (!child.nextSibling._tagFieldEditable) {
+						// Add a space so newly added non-editable elements are delimited as tags.
+						child.textContent += ' ';
+					}
+
 					child.textContent += child.nextSibling.textContent;
+
 					ref.current.removeChild(child.nextSibling);
 				}
 
@@ -130,6 +149,14 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 						ref.current.insertBefore(tagContainer, child);
 					}
 				}
+
+				// Ensure this editable has either no child or a single text node child.
+				if (child.childNodes.length && (
+					child.childNodes.length > 1
+					|| !(child.childNodes[0] instanceof Text)
+				)) {
+					child.textContent = child.textContent;
+				}
 			}
 		}
 	}, []);
@@ -172,7 +199,6 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 			}}
 			onKeyDown={onKeyDown}
 			onInput={onChange}
-			onBlur={onChange}
 			ref={ref}
 			suppressContentEditableWarning
 		/>
