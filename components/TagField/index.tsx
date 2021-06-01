@@ -11,7 +11,7 @@ import { uniq } from 'lodash';
 const heightTextArea = document.createElement('textarea'); // @client-only
 
 /** Characters that should be replaced from the tag field before delimiters are processed. */
-const invalidCharacters = /[^a-z0-9-,\s\n]/g;
+const invalidCharacters = /[^a-z0-9-,]/g;
 const tagDelimiters = /[,\s\n]/g;
 
 /** A child node of a tag field element. */
@@ -119,7 +119,7 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 					tagValues = uniq(tagValues);
 
 					for (let j = 0; j < tagValues.length; j++) {
-						const tagValue = tagValues[j];
+						const tagValue = tagValues[j].slice(0, 50);
 
 						if (!tagValue) {
 							continue;
@@ -133,26 +133,29 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 
 						// Create and insert the tag element before this editable.
 
-						const tagContainer = document.createElement('div') as TagFieldChild<HTMLDivElement>;
-						tagContainer.className = 'tag-field-tag';
-						tagContainer.contentEditable = 'false';
+						const tag = document.createElement('div') as TagFieldChild<HTMLDivElement>;
+						tag.className = 'tag-field-tag';
+						tag.contentEditable = 'false';
 
-						// When the cursor is immediately before a tag at the start of the tag field, this magically makes it so the cursor doesn't appear inside the tag.
-						tagContainer.appendChild(document.createTextNode('\u200c'));
+						const zwnj = document.createElement('span');
+						zwnj.className = 'tag-field-zwnj';
+						// When the cursor is immediately before a tag at the start of the tag field, this character (the zero-width non-joiner) magically makes it so the cursor doesn't appear inside the tag.
+						zwnj.textContent = '\u200c';
+						tag.appendChild(zwnj);
 
-						const tag = document.createElement('div');
-						tag.className = 'tag-field-tag-content';
-						tag.textContent = tagValue;
-						tagContainer.appendChild(tag);
+						const tagContent = document.createElement('div');
+						tagContent.className = 'tag-field-tag-content';
+						tagContent.textContent = tagValue;
+						tag.appendChild(tagContent);
 
-						ref.current.insertBefore(tagContainer, child);
+						ref.current.insertBefore(tag, child);
 					}
 				}
 
-				// Ensure this editable either has no children or has a single text node child.
+				// Ensure this editable has valid children.
 				if (child.childNodes.length && (
 					child.childNodes.length > 1
-					|| !(child.childNodes[0] instanceof Text)
+					|| !(child.firstChild instanceof Text)
 				)) {
 					child.textContent = child.textContent;
 				}
@@ -167,8 +170,8 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 				event.ctrlKey
 				|| event.metaKey
 				|| event.altKey
-				// Don't let the user enter invalid characters for tags.
-				|| /^[a-z0-9-,\s]$/i.test(event.key)
+				// Only let the user enter valid characters for tags.
+				|| /^[a-z0-9-,]$/i.test(event.key)
 			)
 		)) {
 			event.preventDefault();
@@ -177,8 +180,6 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 		setTimeout(onChange);
 	}, [onChange]);
 
-	const [height, setHeight] = useState(0);
-
 	useIsomorphicLayoutEffect(() => {
 		// Determine the element's height based on the `rows` prop.
 
@@ -186,7 +187,8 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 			heightTextArea.rows = rows;
 		}
 		ref.current.appendChild(heightTextArea);
-		setHeight(heightTextArea.offsetHeight);
+		// This height should not be managed via React state because the element is `resizable`, and any changed height could be reset by a re-render.
+		ref.current.style.height = `${heightTextArea.offsetHeight}px`;
 		ref.current.removeChild(heightTextArea);
 	}, [rows]);
 
@@ -196,9 +198,6 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 			className="tag-field input-like"
 			contentEditable
 			spellCheck={false}
-			style={{
-				height: `${height}px`
-			}}
 			onKeyDown={onKeyDown}
 			onInput={onChange}
 			ref={ref}

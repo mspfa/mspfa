@@ -12,6 +12,7 @@ export type StoryID = number;
 
 /**
  * @minLength 1
+ * @maxLength 50
  * @pattern ^[a-z0-9-]+$
  */
 export type TagString = string;
@@ -87,7 +88,10 @@ export type StoryDocument = {
 		unverified: string,
 		verified: string
 	},
-	/** @uniqueItems true */
+	/**
+	 * @uniqueItems true
+	 * @maxItems 50
+	 */
 	tags: TagString[],
 	commentsEnabled: boolean,
 	/** Properties of the story which are only used in the story editor. */
