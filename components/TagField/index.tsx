@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import { useFormikContext } from 'formik';
 import { toKebabCase } from 'modules/client/utilities';
-import type { TextareaHTMLAttributes, KeyboardEvent } from 'react';
+import type { TextareaHTMLAttributes, KeyboardEvent, MouseEvent } from 'react';
 import React, { useCallback, useRef, useState } from 'react';
 import { usePrefixedID } from 'modules/client/IDPrefix';
 import { useIsomorphicLayoutEffect } from 'react-use';
@@ -72,6 +72,13 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 		tag.className = 'tag-field-tag';
 		tag.contentEditable = 'false';
 
+		const tagDelimiter = document.createElement('span');
+		tagDelimiter.className = 'tag-field-tag-delimiter';
+		// This is necessary to add commas to tags when copying or dragging tags from a selection in the tag field.
+		// `\u00a0` is a non-breaking space and is necessary to prevent HTML omitting spaces from the selection.
+		tagDelimiter.textContent = ',\u00a0';
+		tag.appendChild(tagDelimiter);
+
 		const zwnj = document.createElement('span');
 		zwnj.className = 'tag-field-zwnj';
 		// When the cursor is immediately before a tag at the start of the tag field, this character (the zero-width non-joiner) magically makes it so the cursor doesn't appear inside the tag.
@@ -83,10 +90,16 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 		tagContent.textContent = tagValue;
 		tag.appendChild(tagContent);
 
+		const tagRemove = document.createElement('div');
+		tagRemove.className = 'tag-field-tag-remove';
+		tag.appendChild(tagRemove);
+
+		tag.appendChild(tagDelimiter.cloneNode(true));
+
 		ref.current.insertBefore(tag, child);
 	};
 
-	const onChange = useCallback(() => {
+	const updateTagField = useCallback(() => {
 		const allTagValues: TagString[] = [];
 
 		for (let i = 0; i < ref.current.childNodes.length; i++) {
@@ -190,27 +203,24 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 			ref.current.appendChild(createTagFieldEditable());
 		}
 
+		const lastTag = ref.current.lastChild!.previousSibling as (
+			(TagFieldChild & { className: 'tag-field-tag' })
+			| null
+		);
+
+		if (lastTag) {
+			(lastTag.lastChild as Element).classList[
+				ref.current.lastChild!.textContent
+					? 'remove'
+					// Hide the comma if there's nothing after it.
+					: 'add'
+			]('force-hidden');
+		}
+
 		if (!isEqual(fieldValue, allTagValues)) {
 			setFieldValue(name, allTagValues);
 		}
 	}, [name, fieldValue, setFieldValue]);
-
-	const onKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
-		// Don't let the user press `Enter`, because `Enter` has annoying functionality with `contentEditable`, and it is buggy in Firefox.
-		if (event.key === 'Enter' || (
-			event.key.length === 1 && !(
-				event.ctrlKey
-				|| event.metaKey
-				|| event.altKey
-				// Only let the user enter valid characters for tags.
-				|| /^[a-z0-9-,]$/i.test(event.key)
-			)
-		)) {
-			event.preventDefault();
-		}
-
-		setTimeout(onChange);
-	}, [onChange]);
 
 	useIsomorphicLayoutEffect(() => {
 		// Determine the element's height based on the `rows` prop.
@@ -249,8 +259,35 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 			className="tag-field input-like"
 			contentEditable
 			spellCheck={false}
-			onKeyDown={onKeyDown}
-			onInput={onChange}
+			onInput={updateTagField}
+			onKeyDown={
+				useCallback((event: KeyboardEvent<HTMLDivElement>) => {
+					// Don't let the user press `Enter`, because `Enter` has annoying functionality with `contentEditable`, and it is buggy in Firefox.
+					if (event.key === 'Enter' || (
+						event.key.length === 1 && !(
+							event.ctrlKey
+							|| event.metaKey
+							|| event.altKey
+							// Only let the user enter valid characters for tags.
+							|| /^[a-z0-9-,]$/i.test(event.key)
+						)
+					)) {
+						event.preventDefault();
+					}
+
+					setTimeout(updateTagField);
+				}, [updateTagField])
+			}
+			onClick={
+				useCallback((event: MouseEvent<HTMLDivElement> & { target: Element }) => {
+					console.log(event);
+					if (event.target.className === 'tag-field-tag-remove') {
+						ref.current.removeChild(event.target.parentNode!);
+
+						updateTagField();
+					}
+				}, [updateTagField])
+			}
 			ref={ref}
 			suppressContentEditableWarning
 		/>

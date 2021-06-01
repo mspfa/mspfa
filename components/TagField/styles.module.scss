@@ -23,11 +23,30 @@
 		margin: 2px;
 		user-select: all;
 		cursor: pointer;
+		border: 1px solid #808080;
 
 		&-content {
 			display: inline-block;
 			padding: $padding;
-			border: 1px solid #808080;
+		}
+
+		&-remove {
+			display: inline-block;
+			width: 16px;
+			height: 16px;
+			background-image: url(/images/icons/remove.png);
+			vertical-align: middle;
+			opacity: 0.5;
+		}
+
+		&-delimiter {
+			// These should be invisible but selectable.
+			font-size: 0;
+
+			.tag-field-editable:empty + .tag-field-tag &:first-child,
+			&.force-hidden {
+				display: none;
+			}
 		}
 	}
 
