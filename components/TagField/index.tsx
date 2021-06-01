@@ -189,7 +189,7 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 								.replace(startAndEndHyphens, '')
 						);
 
-						if (tagValue && !allTagValues.includes(tagValue)) {
+						if (tagValue && !fieldValue.includes(tagValue) && !allTagValues.includes(tagValue)) {
 							createAndInsertTag(tagValue, child);
 
 							allTagValues.push(tagValue);
