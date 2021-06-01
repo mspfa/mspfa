@@ -4,8 +4,9 @@
 	&-tag {
 		&-container {
 			display: inline-block;
-			padding: 1px 2px;
+			margin: 2px 2px;
 			user-select: all;
+			cursor: pointer;
 		}
 
 		display: inline-block;
