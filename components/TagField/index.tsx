@@ -280,7 +280,6 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 			}
 			onClick={
 				useCallback((event: MouseEvent<HTMLDivElement> & { target: Element }) => {
-					console.log(event);
 					if (event.target.className === 'tag-field-tag-remove') {
 						ref.current.removeChild(event.target.parentNode!);
 
