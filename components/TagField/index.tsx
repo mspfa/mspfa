@@ -36,7 +36,6 @@ type TagFieldChild<NodeType extends ChildNode = ChildNode> = NodeType & (
 
 const createTagFieldEditable = () => {
 	const element = document.createElement('span') as TagFieldChild<HTMLSpanElement>;
-	element._tagFieldTag = true;
 	element._tagFieldEditable = true;
 	element.className = 'tag-field-editable';
 	return element;
