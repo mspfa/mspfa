@@ -13,7 +13,7 @@ export type StoryID = number;
 /**
  * @minLength 1
  * @maxLength 50
- * @pattern ^[a-z0-9-]+$
+ * @pattern ^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$
  */
 export type TagString = string;
 

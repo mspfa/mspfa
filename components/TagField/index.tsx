@@ -14,6 +14,7 @@ const heightTextArea = document.createElement('textarea'); // @client-only
 /** Characters that should be replaced from the tag field before delimiters are processed. */
 const invalidCharacters = /[^a-z0-9-,]/g;
 const tagDelimiters = /[,\s\n]/g;
+const startAndEndHyphens = /^-+|-+$/g;
 
 /** A child node of a tag field element. */
 type TagFieldChild<NodeType extends ChildNode = ChildNode> = NodeType & (
@@ -168,7 +169,12 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 					tagValues = uniq(tagValues);
 
 					for (let j = 0; j < tagValues.length; j++) {
-						const tagValue = tagValues[j].slice(0, 50);
+						const tagValue = (
+							tagValues[j]
+								.replace(startAndEndHyphens, '')
+								.slice(0, 50)
+								.replace(startAndEndHyphens, '')
+						);
 
 						if (tagValue && !allTagValues.includes(tagValue)) {
 							createAndInsertTag(tagValue, child);
