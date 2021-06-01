@@ -6,6 +6,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { usePrefixedID } from 'modules/client/IDPrefix';
 import { useIsomorphicLayoutEffect } from 'react-use';
 import { uniq } from 'lodash';
+import type { TagString } from 'modules/server/stories';
 
 /** A `textarea` used solely to calculate the `style.height` of a `TagField` based on its `rows` prop. */
 const heightTextArea = document.createElement('textarea'); // @client-only
@@ -48,9 +49,41 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 	}
 
 	const { getFieldMeta, setFieldValue } = useFormikContext();
-	const fieldValue = getFieldMeta<string | undefined>(name).value;
+	const fieldValue = getFieldMeta<TagString[] | undefined>(name).value;
+	const [initialValue] = useState(fieldValue);
 
-	const ref = useRef<HTMLDivElement & { childNodes: NodeListOf<TagFieldChild> }>(null!);
+	const ref = useRef<HTMLDivElement & {
+		childNodes: NodeListOf<TagFieldChild>,
+		firstChild: TagFieldChild | null,
+		lastChild: TagFieldChild | null
+	}>(null!);
+
+	const createAndInsertTag = (tagValue: string, child: TagFieldChild) => {
+		if (child.previousSibling?.className !== 'tag-field-editable') {
+			// Ensure newly inserted tags have an editable before them.
+
+			ref.current.insertBefore(createTagFieldEditable(), child);
+		}
+
+		// Create and insert the tag element before this editable.
+
+		const tag = document.createElement('div') as TagFieldChild<HTMLDivElement>;
+		tag.className = 'tag-field-tag';
+		tag.contentEditable = 'false';
+
+		const zwnj = document.createElement('span');
+		zwnj.className = 'tag-field-zwnj';
+		// When the cursor is immediately before a tag at the start of the tag field, this character (the zero-width non-joiner) magically makes it so the cursor doesn't appear inside the tag.
+		zwnj.textContent = '\u200c';
+		tag.appendChild(zwnj);
+
+		const tagContent = document.createElement('div');
+		tagContent.className = 'tag-field-tag-content';
+		tagContent.textContent = tagValue;
+		tag.appendChild(tagContent);
+
+		ref.current.insertBefore(tag, child);
+	};
 
 	const onChange = useCallback(() => {
 		for (let i = 0; i < ref.current.childNodes.length; i++) {
@@ -104,6 +137,14 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 					}
 				}
 
+				// Ensure this editable has valid children.
+				if (child.childNodes.length && (
+					child.childNodes.length > 1
+					|| !(child.firstChild instanceof Text)
+				)) {
+					child.textContent = child.textContent;
+				}
+
 				// Remove all invalid characters from this editable before delimiters are processed.
 				if (invalidCharacters.test(child.textContent)) {
 					child.textContent = child.textContent.toLowerCase().replace(invalidCharacters, '');
@@ -121,43 +162,10 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 					for (let j = 0; j < tagValues.length; j++) {
 						const tagValue = tagValues[j].slice(0, 50);
 
-						if (!tagValue) {
-							continue;
+						if (tagValue) {
+							createAndInsertTag(tagValue, child);
 						}
-
-						if (child.previousSibling?.className !== 'tag-field-editable') {
-							// Ensure newly inserted tags have an editable before them.
-
-							ref.current.insertBefore(createTagFieldEditable(), child);
-						}
-
-						// Create and insert the tag element before this editable.
-
-						const tag = document.createElement('div') as TagFieldChild<HTMLDivElement>;
-						tag.className = 'tag-field-tag';
-						tag.contentEditable = 'false';
-
-						const zwnj = document.createElement('span');
-						zwnj.className = 'tag-field-zwnj';
-						// When the cursor is immediately before a tag at the start of the tag field, this character (the zero-width non-joiner) magically makes it so the cursor doesn't appear inside the tag.
-						zwnj.textContent = '\u200c';
-						tag.appendChild(zwnj);
-
-						const tagContent = document.createElement('div');
-						tagContent.className = 'tag-field-tag-content';
-						tagContent.textContent = tagValue;
-						tag.appendChild(tagContent);
-
-						ref.current.insertBefore(tag, child);
 					}
-				}
-
-				// Ensure this editable has valid children.
-				if (child.childNodes.length && (
-					child.childNodes.length > 1
-					|| !(child.firstChild instanceof Text)
-				)) {
-					child.textContent = child.textContent;
 				}
 			}
 		}
@@ -187,10 +195,31 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 			heightTextArea.rows = rows;
 		}
 		ref.current.appendChild(heightTextArea);
+
 		// This height should not be managed via React state because the element is `resizable`, and any changed height could be reset by a re-render.
 		ref.current.style.height = `${heightTextArea.offsetHeight}px`;
+
 		ref.current.removeChild(heightTextArea);
 	}, [rows]);
+
+	useIsomorphicLayoutEffect(() => {
+		// Add the tags from `initialValue`.
+
+		// Reset the tag field, just in case.
+		while (ref.current.firstChild) {
+			ref.current.removeChild(ref.current.firstChild);
+		}
+
+		// Append an editable to insert the tags before.
+		const child = createTagFieldEditable();
+		ref.current.appendChild(child);
+
+		if (initialValue) {
+			for (const tagValue of initialValue) {
+				createAndInsertTag(tagValue, child);
+			}
+		}
+	}, [initialValue]);
 
 	return (
 		<div

@@ -179,9 +179,7 @@ const Component = withErrorPage<ServerSideProps>(({
 								</BoxColumns>
 								<BoxSection heading="Details">
 									<Row>
-										<Label htmlFor="field-tags">
-											Tags
-										</Label>
+										<Label>Tags</Label>
 										<TagField name="tags" rows={4} />
 									</Row>
 									<Row>
