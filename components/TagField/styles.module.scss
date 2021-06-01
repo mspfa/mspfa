@@ -1,0 +1,15 @@
+.tag-field {
+	overflow: hidden auto;
+
+	&-tag {
+		&-container {
+			display: inline-block;
+			padding: 1px 2px;
+		}
+
+		display: inline-block;
+		user-select: all;
+		padding: 1px 3px;
+		border: 1px solid #808080;
+	}
+}

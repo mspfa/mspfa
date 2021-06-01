@@ -30,6 +30,7 @@ import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
 import Row from 'components/Row';
 import Timestamp from 'components/Timestamp';
+import TagField from 'components/TagField';
 
 const getValuesFromStory = (privateStory: PrivateStory) => ({
 	created: privateStory.created,
@@ -181,7 +182,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										<Label htmlFor="field-tags">
 											Tags
 										</Label>
-										(Not Implemented Yet)
+										<TagField name="tags" rows={4} />
 									</Row>
 									<Row>
 										<Label htmlFor="field-description">
