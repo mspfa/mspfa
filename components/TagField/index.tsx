@@ -5,7 +5,7 @@ import type { TextareaHTMLAttributes, KeyboardEvent } from 'react';
 import React, { useCallback, useRef, useState } from 'react';
 import { usePrefixedID } from 'modules/client/IDPrefix';
 import { useIsomorphicLayoutEffect } from 'react-use';
-import { uniq } from 'lodash';
+import { isEqual, uniq } from 'lodash';
 import type { TagString } from 'modules/server/stories';
 
 /** A `textarea` used solely to calculate the `style.height` of a `TagField` based on its `rows` prop. */
@@ -49,7 +49,7 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 	}
 
 	const { getFieldMeta, setFieldValue } = useFormikContext();
-	const fieldValue = getFieldMeta<TagString[] | undefined>(name).value;
+	const fieldValue = getFieldMeta<TagString[]>(name).value;
 	const [initialValue] = useState(fieldValue);
 
 	const ref = useRef<HTMLDivElement & {
@@ -86,6 +86,8 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 	};
 
 	const onChange = useCallback(() => {
+		const allTagValues: TagString[] = [];
+
 		for (let i = 0; i < ref.current.childNodes.length; i++) {
 			let child = ref.current.childNodes[i];
 
@@ -101,6 +103,12 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 						// If there are two adjacent tag elements, separate them with an editable.
 
 						ref.current.insertBefore(createTagFieldEditable(), child.nextSibling);
+					}
+
+					const tagValue = child.getElementsByClassName('tag-field-tag-content')[0];
+
+					if (!allTagValues.includes(tagValue.textContent!)) {
+						allTagValues.push(tagValue.textContent!);
 					}
 				} else {
 					// If this child is not an editable or a tag, insert an editable before it so the child can be merged into it later.
@@ -162,14 +170,24 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 					for (let j = 0; j < tagValues.length; j++) {
 						const tagValue = tagValues[j].slice(0, 50);
 
-						if (tagValue) {
+						if (tagValue && !allTagValues.includes(tagValue)) {
 							createAndInsertTag(tagValue, child);
+
+							allTagValues.push(tagValue);
 						}
 					}
 				}
 			}
 		}
-	}, []);
+
+		if (ref.current.lastChild?.className !== 'tag-field-editable') {
+			ref.current.appendChild(createTagFieldEditable());
+		}
+
+		if (!isEqual(fieldValue, allTagValues)) {
+			setFieldValue(name, allTagValues);
+		}
+	}, [name, fieldValue, setFieldValue]);
 
 	const onKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
 		// Don't let the user press `Enter`, because `Enter` has annoying functionality with `contentEditable`, and it is buggy in Firefox.
@@ -214,10 +232,8 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 		const child = createTagFieldEditable();
 		ref.current.appendChild(child);
 
-		if (initialValue) {
-			for (const tagValue of initialValue) {
-				createAndInsertTag(tagValue, child);
-			}
+		for (const tagValue of initialValue) {
+			createAndInsertTag(tagValue, child);
 		}
 	}, [initialValue]);
 
