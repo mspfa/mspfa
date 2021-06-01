@@ -10,29 +10,18 @@ import { uniq } from 'lodash';
 /** A `textarea` used solely to calculate the `style.height` of a `TagField` based on its `rows` prop. */
 const heightTextArea = document.createElement('textarea'); // @client-only
 
-const invalidTagCharacters = /[^a-z0-9-,\s\n\u200c]/g;
+/** Characters that should be replaced from the tag field before delimiters are processed. */
+const invalidCharacters = /[^a-z0-9-,\s\n]/g;
 const tagDelimiters = /[,\s\n]/g;
 
 /** A child node of a tag field element. */
 type TagFieldChild<NodeType extends ChildNode = ChildNode> = NodeType & (
 	{
-		/** Whether this element is a tag. */
-		_tagFieldTag?: false,
-		/** Whether this element is an editable. */
-		_tagFieldEditable?: false
+		// It's not really `undefined`, but `undefined` is the next best thing to `undefined | Exclude<string, 'tag-field-tag' | 'tag-field-editable'>`.
+		className?: undefined
 	} | (
 		Element & {
-			/** Whether this element is a tag. */
-			_tagFieldTag: true,
-			/** Whether this element is an editable. */
-			_tagFieldEditable?: boolean
-		}
-	) | (
-		Element & {
-			/** Whether this element is a tag. */
-			_tagFieldTag?: boolean,
-			/** Whether this element is an editable. */
-			_tagFieldEditable: true
+			className: 'tag-field-tag' | 'tag-field-editable'
 		}
 	)
 ) & {
@@ -43,7 +32,6 @@ type TagFieldChild<NodeType extends ChildNode = ChildNode> = NodeType & (
 
 const createTagFieldEditable = () => {
 	const element = document.createElement('span') as TagFieldChild<HTMLSpanElement>;
-	element._tagFieldEditable = true;
 	element.className = 'tag-field-editable';
 	return element;
 };
@@ -68,45 +56,58 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 		for (let i = 0; i < ref.current.childNodes.length; i++) {
 			let child = ref.current.childNodes[i];
 
-			if (!child._tagFieldEditable) {
+			if (child.className !== 'tag-field-editable') {
 				if (i === 0) {
 					// If the first child is not an editable, insert an editable as the first child.
 
 					const newChild = createTagFieldEditable();
 					ref.current.insertBefore(newChild, child);
 					child = newChild;
-				} else if (child._tagFieldTag) {
-					if (child.nextSibling?._tagFieldTag) {
+				} else if (child.className === 'tag-field-tag') {
+					if (child.nextSibling?.className === 'tag-field-tag') {
 						// If there are two adjacent tag elements, separate them with an editable.
 
 						ref.current.insertBefore(createTagFieldEditable(), child.nextSibling);
 					}
 				} else {
-					// If this child is not an editable or a tag, convert it to an editable.
+					// If this child is not an editable or a tag, insert an editable before it so the child can be merged into it later.
 
 					const newChild = createTagFieldEditable();
-					newChild.textContent = child.textContent;
-					ref.current.replaceChild(newChild, child);
+					ref.current.insertBefore(newChild, child);
 					child = newChild;
 				}
 			}
 
-			if (child._tagFieldEditable) {
+			if (child.className === 'tag-field-editable') {
 				// Merge all non-tags immediately following this editable into this editable.
-				while (child.nextSibling && !child.nextSibling._tagFieldTag) {
-					if (!child.nextSibling._tagFieldEditable) {
-						// Add a space so newly added non-editable elements are delimited as tags.
-						child.textContent += ' ';
+				while (child.nextSibling && child.nextSibling.className !== 'tag-field-tag') {
+					if (child.nextSibling.className === 'tag-field-editable' || child.nextSibling instanceof Text) {
+						// Merge the following editable or text node into this editable.
+
+						child.textContent += child.nextSibling.textContent;
+
+						ref.current.removeChild(child.nextSibling);
+					} else {
+						// Add a comma so newly added non-editable elements are delimited as tags.
+						child.textContent += ',';
+
+						// `child.nextSibling` must be stored into `sibling` because `child.nextSibling` updates for each iteration of the below loop.
+						const sibling = child.nextSibling;
+
+						// Take the children out of the invalid sibling.
+						// This is necessary because, for example, when you press enter in most browsers, it creates a `div` that wraps everything after where the enter occurred, including valid elements which should not be wrapped.
+						while (sibling.firstChild) {
+							ref.current.insertBefore(sibling.firstChild, sibling);
+						}
+
+						// Remove the emptied invalid sibling.
+						ref.current.removeChild(sibling);
 					}
-
-					child.textContent += child.nextSibling.textContent;
-
-					ref.current.removeChild(child.nextSibling);
 				}
 
-				// Remove all invalid tag characters from this editable.
-				if (invalidTagCharacters.test(child.textContent)) {
-					child.textContent = child.textContent.toLowerCase().replace(invalidTagCharacters, '');
+				// Remove all invalid characters from this editable before delimiters are processed.
+				if (invalidCharacters.test(child.textContent)) {
+					child.textContent = child.textContent.toLowerCase().replace(invalidCharacters, '');
 				}
 
 				if (tagDelimiters.test(child.textContent)) {
@@ -125,7 +126,7 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 							continue;
 						}
 
-						if (!child.previousSibling?._tagFieldEditable) {
+						if (child.previousSibling?.className !== 'tag-field-editable') {
 							// Ensure newly inserted tags have an editable before them.
 
 							ref.current.insertBefore(createTagFieldEditable(), child);
@@ -134,15 +135,14 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 						// Create and insert the tag element before this editable.
 
 						const tagContainer = document.createElement('div') as TagFieldChild<HTMLDivElement>;
-						tagContainer._tagFieldTag = true;
-						tagContainer.className = 'tag-field-tag-container';
+						tagContainer.className = 'tag-field-tag';
 						tagContainer.contentEditable = 'false';
 
 						// When the cursor is immediately before a tag at the start of the tag field, this magically makes it so the cursor doesn't appear inside the tag.
 						tagContainer.appendChild(document.createTextNode('\u200c'));
 
 						const tag = document.createElement('div');
-						tag.className = 'tag-field-tag';
+						tag.className = 'tag-field-tag-content';
 						tag.textContent = tagValue;
 						tagContainer.appendChild(tag);
 
@@ -150,7 +150,7 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 					}
 				}
 
-				// Ensure this editable has either no child or a single text node child.
+				// Ensure this editable either has no children or has a single text node child.
 				if (child.childNodes.length && (
 					child.childNodes.length > 1
 					|| !(child.childNodes[0] instanceof Text)
@@ -170,9 +170,9 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 		)) {
 			// Don't let the user enter invalid characters for tags.
 			event.preventDefault();
-		} else {
-			setTimeout(onChange);
 		}
+
+		setTimeout(onChange);
 	}, [onChange]);
 
 	const [height, setHeight] = useState(0);

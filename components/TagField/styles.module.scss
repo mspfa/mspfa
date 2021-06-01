@@ -1,16 +1,29 @@
 .tag-field {
 	overflow: hidden auto;
 
-	&-tag {
-		&-container {
-			display: inline-block;
-			margin: 2px 2px;
-			user-select: all;
-			cursor: pointer;
-		}
+	& > * {
+		vertical-align: middle;
+	}
 
+	&-editable {
+		min-height: 1em;
+
+		&:only-child {
+			// This fixes a bug in Firefox where the cursor appears partially outside the tag field.
+			display: inline-block;
+		}
+	}
+
+	&-tag {
 		display: inline-block;
-		padding: 1px 3px;
-		border: 1px solid #808080;
+		margin: 2px 2px;
+		user-select: all;
+		cursor: pointer;
+
+		&-content {
+			display: inline-block;
+			padding: 1px 3px;
+			border: 1px solid #808080;
+		}
 	}
 }
