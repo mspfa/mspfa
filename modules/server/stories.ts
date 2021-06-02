@@ -2,7 +2,7 @@ import db from 'modules/server/db';
 import type { Quirk } from 'modules/client/quirks';
 import type { URLString } from 'modules/types';
 import type { PrivateStory, PublicStory } from 'modules/client/stories';
-import { StoryStatus } from 'modules/client/stories';
+import { StoryStatus, StoryPrivacy } from 'modules/client/stories';
 import type { UserDocument, UserID } from 'modules/server/users';
 import users from 'modules/server/users';
 import type { APIResponse } from 'modules/server/api';
@@ -61,6 +61,7 @@ export type StoryDocument = {
 	 */
 	title: string,
 	status: StoryStatus,
+	privacy: StoryPrivacy,
 	owner: UserID,
 	/**
 	 * Users with permission to edit this adventure, not necessarily including the adventure's owner.
@@ -109,6 +110,7 @@ export type StoryDocument = {
 /** A `Partial<StoryDocument>` used to spread some general properties on newly inserted `StoryDocument`s. */
 export const defaultStory = {
 	status: StoryStatus.Ongoing,
+	privacy: StoryPrivacy.Public,
 	editors: [] as never[],
 	pages: [] as never[],
 	drafts: [] as never[],
@@ -147,6 +149,7 @@ export const getPrivateStory = (story: StoryDocument): PrivateStory => ({
 	updated: +story.updated,
 	title: story.title,
 	status: story.status,
+	privacy: story.privacy,
 	owner: story.owner.toString(),
 	editors: story.editors.map(String),
 	...story.author && {
@@ -175,6 +178,7 @@ export const getPublicStory = (story: StoryDocument): PublicStory => ({
 	updated: +story.updated,
 	title: story.title,
 	status: story.status,
+	privacy: story.privacy,
 	owner: story.owner.toString(),
 	editors: story.editors.map(String),
 	...story.author && {

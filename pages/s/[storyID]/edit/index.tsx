@@ -10,7 +10,7 @@ import Box from 'components/Box';
 import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
 import { getPrivateStory, getStoryByUnsafeID } from 'modules/server/stories';
-import type { PrivateStory } from 'modules/client/stories';
+import { PrivateStory, StoryPrivacy, storyPrivacyNames } from 'modules/client/stories';
 import { storyStatusNames } from 'modules/client/stories';
 import BoxRowSection from 'components/Box/BoxRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
@@ -36,6 +36,7 @@ const getValuesFromStory = (privateStory: PrivateStory) => ({
 	created: privateStory.created,
 	title: privateStory.title,
 	status: privateStory.status.toString(),
+	privacy: privateStory.privacy.toString(),
 	owner: privateStory.owner,
 	editors: privateStory.editors,
 	author: privateStory.author || {
@@ -118,6 +119,22 @@ const Component = withErrorPage<ServerSideProps>(({
 													value={status}
 												>
 													{(storyStatusNames as any)[status]}
+												</option>
+											))}
+										</FieldBoxRow>
+										<FieldBoxRow
+											as="select"
+											name="privacy"
+											label="Privacy"
+											help={`${storyPrivacyNames[StoryPrivacy.Public]}: Anyone can see this adventure.\n${storyPrivacyNames[StoryPrivacy.Unlisted]}: Only users with this adventure's URL can see this adventure.\n${storyPrivacyNames[StoryPrivacy.Private]}: Only this adventure's owner and editors can see this adventure.`}
+											required
+										>
+											{Object.keys(storyPrivacyNames).map(privacy => (
+												<option
+													key={privacy}
+													value={privacy}
+												>
+													{(storyPrivacyNames as any)[privacy]}
 												</option>
 											))}
 										</FieldBoxRow>

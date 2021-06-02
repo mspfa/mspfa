@@ -14,8 +14,20 @@ export const storyStatusNames: Record<StoryStatus, string> = {
 	[StoryStatus.Discontinued]: 'Discontinued'
 };
 
+export enum StoryPrivacy {
+	Public = 0,
+	Unlisted,
+	Private
+}
+
+export const storyPrivacyNames: Record<StoryPrivacy, string> = {
+	[StoryPrivacy.Public]: 'Public',
+	[StoryPrivacy.Unlisted]: 'Unlisted',
+	[StoryPrivacy.Private]: 'Private'
+};
+
 /** All keys whose values have the same serializable type in both `StoryDocument` and `PrivateStory`. */
-type PrivateStoryDocumentKey = 'title' | 'status' | 'author' | 'description' | 'blurb' | 'icon' | 'favCount' | 'banner' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'commentsEnabled' | 'editorSettings' | 'colors' | 'quirks';
+type PrivateStoryDocumentKey = 'title' | 'status' | 'privacy' | 'author' | 'description' | 'blurb' | 'icon' | 'favCount' | 'banner' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'commentsEnabled' | 'editorSettings' | 'colors' | 'quirks';
 
 /** A serializable version of `StoryDocument` which only has properties that can safely be exposed to any client. */
 export type PrivateStory = (
@@ -31,7 +43,7 @@ export type PrivateStory = (
 );
 
 /** All keys whose values have the same serializable type in both `StoryDocument` and `PublicStory`. */
-type PublicStoryDocumentKey = 'title' | 'status' | 'author' | 'description' | 'blurb' | 'icon' | 'favCount' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'commentsEnabled' | 'colors' | 'quirks';
+type PublicStoryDocumentKey = 'title' | 'status' | 'privacy' | 'author' | 'description' | 'blurb' | 'icon' | 'favCount' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'commentsEnabled' | 'colors' | 'quirks';
 
 /** A serializable version of `StoryDocument` which only has properties that can safely be exposed to any client. */
 export type PublicStory = (
