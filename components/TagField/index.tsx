@@ -8,19 +8,21 @@ import { useIsomorphicLayoutEffect } from 'react-use';
 import { isEqual, uniq } from 'lodash';
 import type { TagString } from 'modules/server/stories';
 import Label from 'components/Label';
+import { Dialog } from 'modules/client/dialogs';
+import Link from 'components/Link';
 
-const tagInfo = {
+const tagInfo: Partial<Record<TagString, string>> = {
+	nonmspa: 'This adventure is unrelated to MSPA.',
 	test: 'This adventure was only made to test something.',
-	mirror: 'This adventure is authored by someone else and was not intended for MSPFA.',
-	translation: 'This adventure only is a translation of something else.',
-	suggestion: 'This adventure depends mainly on suggestions from readers.',
+	translation: 'This adventure only serves as a translation of something else.',
 	sburb: 'This adventure focuses on Sburb.',
 	puzzle: 'This adventure focuses on problems and puzzles.',
-	nonmspa: 'This adventure is unrelated to MSPA.',
+	suggestion: 'This adventure depends mainly on suggestions from readers.',
+	mirror: 'This adventure is authored by someone else and was not intended for MSPFA.',
 	alternate: 'This adventure is an alternate version of a different story.',
 	shitpost: 'This adventure is intended to look like a low-quality joke.',
 	nsfw: 'This adventure is for 18+ readers only and should be blocked from underage readers.'
-} as const;
+};
 
 /** A `textarea` used solely to calculate the `style.height` of a `TagField` based on its `rows` prop. */
 const heightTextArea = document.createElement('textarea'); // @client-only
@@ -104,9 +106,9 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 		tagContent.textContent = tagValue;
 		tag.appendChild(tagContent);
 
-		const tagRemove = document.createElement('div');
-		tagRemove.className = 'tag-field-tag-remove';
-		tag.appendChild(tagRemove);
+		const tagAction = document.createElement('button');
+		tagAction.className = 'link tag-field-tag-action tag-field-tag-remove';
+		tag.appendChild(tagAction);
 
 		tag.appendChild(tagDelimiter.cloneNode(true));
 
@@ -267,6 +269,59 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 		}
 	}, [initialValue]);
 
+	const presets = Object.keys(tagInfo).filter(
+		tagValue => !fieldValue.includes(tagValue)
+	).map(tagValue => (
+		<div
+			key={tagValue}
+			className="tag-field-tag-preset"
+			data-value={tagValue}
+		>
+			<div className="tag-field-tag-content">
+				{tagValue}
+			</div>
+			<Link className="tag-field-tag-action tag-field-tag-help" />
+			<span className="tag-field-tag-delimiter">
+				&nbsp;
+			</span>
+		</div>
+	));
+
+	const onClickPresets = useCallback((
+		event: MouseEvent<HTMLDivElement> & {
+			target: Element & { parentNode: Element }
+		}
+	) => {
+		const tag = (
+			event.target.className === 'tag-field-tag-preset'
+				? event.target
+				: event.target.parentNode.className === 'tag-field-tag-preset'
+					? event.target.parentNode
+					: undefined
+		);
+
+		if (!tag) {
+			return;
+		}
+
+		const tagValue = tag.getAttribute('data-value');
+
+		if (!(tagValue && tagInfo[tagValue])) {
+			return;
+		}
+
+		if (event.target.classList.contains('tag-field-tag-help')) {
+			new Dialog({
+				id: 'help',
+				title: 'Help',
+				content: `Tag: ${tagValue}\n\n${tagInfo[tagValue]}`
+			});
+		} else if (!fieldValue.includes(tagValue)) {
+			createAndInsertTag(tagValue, inputRef.current.lastChild!);
+			setFieldValue(name, [...fieldValue, tagValue]);
+		}
+	}, [name, fieldValue, setFieldValue]);
+
 	return (
 		<div className="tag-field">
 			<div
@@ -295,7 +350,7 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 				}
 				onClick={
 					useCallback((event: MouseEvent<HTMLDivElement> & { target: Element }) => {
-						if (event.target.className === 'tag-field-tag-remove') {
+						if (event.target.classList.contains('tag-field-tag-remove')) {
 							inputRef.current.removeChild(event.target.parentNode!);
 
 							updateTagField();
@@ -304,33 +359,17 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 				}
 				ref={inputRef}
 			/>
-			<div className="tag-field-presets-container">
-				<Label>Preset Tags (click a tag to add it)</Label>
-				<div
-					className="tag-field-presets input-like"
-					onClick={
-						useCallback((event: MouseEvent<HTMLDivElement> & { target: Element }) => {
-							event
-						}, [])
-					}
-				>
-					{Object.entries(tagInfo).map(([tagValue, description]) => (
-						<div
-							key={tagValue}
-							className="tag-field-tag-preset"
-							title={description}
-						>
-							<div className="tag-field-tag-content">
-								{tagValue}
-							</div>
-							<div className="tag-field-tag-help" />
-							<span className="tag-field-tag-delimiter">
-								,&nbsp;
-							</span>
-						</div>
-					))}
+			{presets.length !== 0 && (
+				<div className="tag-field-presets-container">
+					<Label>Preset Tags (click a tag to add it)</Label>
+					<div
+						className="tag-field-presets input-like"
+						onClick={onClickPresets}
+					>
+						{presets}
+					</div>
 				</div>
-			</div>
+			)}
 		</div>
 	);
 };

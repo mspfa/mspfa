@@ -42,21 +42,24 @@
 			}
 		}
 
-		&-remove, &-help {
+		&-action {
 			display: inline-block;
-			width: 16px;
-			height: 16px;
 			vertical-align: middle;
-		}
-
-		&-remove {
 			opacity: 0.5;
-			background-image: url(/images/icons/remove.png);
+			color: inherit;
+			text-decoration: none;
+
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 
-		&-help {
-			opacity: 0.75;
-			background-image: url(/images/icons/help.png);
+		&-remove::after {
+			content: '[x]';
+		}
+
+		&-help::after {
+			content: '[?]';
 		}
 	}
 
