@@ -179,7 +179,11 @@ const Component = withErrorPage<ServerSideProps>(({
 								</BoxColumns>
 								<BoxSection heading="Details">
 									<Row>
-										<Label>Tags</Label>
+										<Label
+											help={'Tags are keywords that help both identify and describe your adventure.\n\nUsers can search for adventures with certain tags, and they can read an adventure\'s tags to get an idea of what\'s in the adventure before opening it.'}
+										>
+											Tags
+										</Label>
 										<TagField name="tags" rows={4} />
 									</Row>
 									<Row>
