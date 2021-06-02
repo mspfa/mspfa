@@ -15,6 +15,10 @@
 	&-misc > .box-content {
 		row-gap: 1em;
 	}
+
+	&-details .row:not(:last-child) {
+		margin-bottom: 2em;
+	}
 }
 
 .label-container.user-array-field-label {

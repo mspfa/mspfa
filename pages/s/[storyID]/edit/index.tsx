@@ -98,7 +98,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						<Form>
 							<Box>
 								<BoxColumns>
-									<BoxRowSection heading="Info">
+									<BoxRowSection id="story-info" heading="Info">
 										<FieldBoxRow
 											name="title"
 											label="Title"
@@ -136,7 +136,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											/>
 										</BoxRow>
 									</BoxRowSection>
-									<BoxRowSection heading="Misc">
+									<BoxRowSection id="story-misc" heading="Misc">
 										<LabeledBoxRow label="Owner">
 											<UserField
 												name="owner"
@@ -177,7 +177,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										/>
 									</BoxRowSection>
 								</BoxColumns>
-								<BoxSection heading="Details">
+								<BoxSection id="story-details" heading="Details">
 									<Row>
 										<Label
 											help={'Tags are keywords that help both identify and describe your adventure.\n\nUsers can search for adventures with certain tags, and they can read an adventure\'s tags to get an idea of what\'s in the adventure before opening it.'}
@@ -214,7 +214,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										/>
 									</Row>
 								</BoxSection>
-								<BoxSection heading="Advanced" collapsible>
+								<BoxSection id="story-advanced" heading="Advanced" collapsible>
 									<Row id="code-fields">
 										<div>
 											<Row>
