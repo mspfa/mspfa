@@ -269,59 +269,6 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 		}
 	}, [initialValue]);
 
-	const presets = Object.keys(tagInfo).filter(
-		tagValue => !fieldValue.includes(tagValue)
-	).map(tagValue => (
-		<div
-			key={tagValue}
-			className="tag-field-tag-preset"
-			data-value={tagValue}
-		>
-			<div className="tag-field-tag-content">
-				{tagValue}
-			</div>
-			<Link className="tag-field-tag-action tag-field-tag-help" />
-			<span className="tag-field-tag-delimiter">
-				&nbsp;
-			</span>
-		</div>
-	));
-
-	const onClickPresets = useCallback((
-		event: MouseEvent<HTMLDivElement> & {
-			target: Element & { parentNode: Element }
-		}
-	) => {
-		const tag = (
-			event.target.className === 'tag-field-tag-preset'
-				? event.target
-				: event.target.parentNode.className === 'tag-field-tag-preset'
-					? event.target.parentNode
-					: undefined
-		);
-
-		if (!tag) {
-			return;
-		}
-
-		const tagValue = tag.getAttribute('data-value');
-
-		if (!(tagValue && tagInfo[tagValue])) {
-			return;
-		}
-
-		if (event.target.classList.contains('tag-field-tag-help')) {
-			new Dialog({
-				id: 'help',
-				title: 'Help',
-				content: `Tag: ${tagValue}\n\n${tagInfo[tagValue]}`
-			});
-		} else if (!fieldValue.includes(tagValue)) {
-			createAndInsertTag(tagValue, inputRef.current.lastChild!);
-			setFieldValue(name, [...fieldValue, tagValue]);
-		}
-	}, [name, fieldValue, setFieldValue]);
-
 	return (
 		<div className="tag-field">
 			<div
@@ -359,17 +306,64 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 				}
 				ref={inputRef}
 			/>
-			{presets.length !== 0 && (
-				<div className="tag-field-presets-container">
-					<Label>Preset Tags (click a tag to add it)</Label>
-					<div
-						className="tag-field-presets input-like"
-						onClick={onClickPresets}
-					>
-						{presets}
-					</div>
+			<div className="tag-field-presets-container">
+				<Label>Preset Tags (click a tag to add it)</Label>
+				<div
+					className="tag-field-presets input-like"
+					onClick={
+						useCallback((
+							event: MouseEvent<HTMLDivElement> & {
+								target: Element & { parentNode: Element }
+							}
+						) => {
+							const tag = (
+								event.target.classList.contains('tag-field-tag-preset')
+									? event.target
+									: event.target.parentNode.classList.contains('tag-field-tag-preset')
+										? event.target.parentNode
+										: undefined
+							);
+
+							if (!tag) {
+								return;
+							}
+
+							const tagValue = tag.getAttribute('data-value');
+
+							if (!(tagValue && tagInfo[tagValue])) {
+								return;
+							}
+
+							if (event.target.classList.contains('tag-field-tag-help')) {
+								new Dialog({
+									id: 'help',
+									title: 'Help',
+									content: `Tag: ${tagValue}\n\n${tagInfo[tagValue]}`
+								});
+							} else if (!fieldValue.includes(tagValue)) {
+								createAndInsertTag(tagValue, inputRef.current.lastChild!);
+								setFieldValue(name, [...fieldValue, tagValue]);
+							}
+						}, [name, fieldValue, setFieldValue])
+					}
+				>
+					{Object.keys(tagInfo).map(tagValue => (
+						<div
+							key={tagValue}
+							className={`tag-field-tag-preset${fieldValue.includes(tagValue) ? ' added' : ''}`}
+							data-value={tagValue}
+						>
+							<div className="tag-field-tag-content">
+								{tagValue}
+							</div>
+							<Link className="tag-field-tag-action tag-field-tag-help" />
+							<span className="tag-field-tag-delimiter">
+								&nbsp;
+							</span>
+						</div>
+					))}
 				</div>
-			)}
+			</div>
 		</div>
 	);
 };
