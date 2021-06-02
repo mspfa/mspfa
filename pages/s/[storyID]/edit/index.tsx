@@ -10,8 +10,8 @@ import Box from 'components/Box';
 import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
 import { getPrivateStory, getStoryByUnsafeID } from 'modules/server/stories';
-import { PrivateStory, StoryPrivacy, storyPrivacyNames } from 'modules/client/stories';
-import { storyStatusNames } from 'modules/client/stories';
+import type { PrivateStory } from 'modules/client/stories';
+import { StoryPrivacy, storyPrivacyNames, storyStatusNames } from 'modules/client/stories';
 import BoxRowSection from 'components/Box/BoxRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
 import BoxRow from 'components/Box/BoxRow';
@@ -178,20 +178,22 @@ const Component = withErrorPage<ServerSideProps>(({
 											name="commentsEnabled"
 											label="Allow Comments"
 										/>
-										<FieldBoxRow
-											type="url"
-											name="banner"
-											label="Banner URL"
-											help={(
-												<>
-													A direct URL to an image of your adventure's anniversary banner. The recommended image size is 940x90.<br />
-													<br />
-													If your adventure is ongoing or complete and has at least 200 favorites, this image will be displayed on the homepage for one week starting on the adventure's anniversary.<br />
-													<br />
-													This adventure's creation date is set to <Timestamp>{values.created}</Timestamp> and will be used as its anniversary.
-												</>
-											)}
-										/>
+										{+values.privacy === StoryPrivacy.Public && (
+											<FieldBoxRow
+												type="url"
+												name="banner"
+												label="Banner URL"
+												help={(
+													<>
+														A direct URL to an image of your adventure's anniversary banner. The recommended image size is 940x90.<br />
+														<br />
+														If your adventure is ongoing or complete and has at least 200 favorites, this image will be displayed on the homepage for one week starting on the adventure's anniversary.<br />
+														<br />
+														This adventure's creation date is set to <Timestamp>{values.created}</Timestamp> and will be used as its anniversary.
+													</>
+												)}
+											/>
+										)}
 									</BoxRowSection>
 								</BoxColumns>
 								<BoxSection id="story-details" heading="Details">
