@@ -54,11 +54,13 @@ const createTagFieldEditable = () => {
 	return element;
 };
 
-export type TagFieldProps = Pick<TextareaHTMLAttributes<HTMLTextAreaElement>, 'id' | 'rows'> & {
-	name: string
-};
+export type TagFieldProps = Pick<TextareaHTMLAttributes<HTMLTextAreaElement>, 'name' | 'id' | 'rows'>;
 
-const TagField = ({ name, id, rows }: TagFieldProps) => {
+const TagField = ({
+	name = 'tags',
+	id,
+	rows
+}: TagFieldProps) => {
 	const idPrefix = usePrefixedID();
 
 	if (id === undefined) {
