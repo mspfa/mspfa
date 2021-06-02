@@ -4,8 +4,6 @@
 		resize: vertical;
 	}
 
-	$padding: 1px 3px;
-
 	&-editable {
 		min-height: 1em;
 		vertical-align: middle;
@@ -13,7 +11,7 @@
 		// This fixes some display inconsistencies when an editable is an `:only-child`.
 		&:only-child:empty {
 			display: inline-block;
-			padding: $padding;
+			vertical-align: baseline;
 		}
 	}
 
@@ -35,7 +33,7 @@
 
 		&-content {
 			display: inline-block;
-			padding: $padding;
+			padding: 1px 3px;
 		}
 
 		&-delimiter {
