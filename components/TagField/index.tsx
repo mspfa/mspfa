@@ -108,6 +108,7 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 
 		const tagAction = document.createElement('button');
 		tagAction.className = 'link tag-field-tag-action tag-field-tag-remove';
+		tagAction.title = 'Remove';
 		tag.appendChild(tagAction);
 
 		tag.appendChild(tagDelimiter.cloneNode(true));
@@ -356,7 +357,10 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 							<div className="tag-field-tag-content">
 								{tagValue}
 							</div>
-							<Link className="tag-field-tag-action tag-field-tag-help" />
+							<Link
+								className="tag-field-tag-action tag-field-tag-help"
+								title="Help"
+							/>
 							<span className="tag-field-tag-delimiter">
 								&nbsp;
 							</span>
