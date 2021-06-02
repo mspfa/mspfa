@@ -29,6 +29,11 @@
 			cursor: default;
 			user-select: none;
 			opacity: 0.5;
+
+			.tag-field-tag-action {
+				// Increase opacity for accessibility, since the parent has decreased accessibility.
+				opacity: 1;
+			}
 		}
 
 		&-content {
