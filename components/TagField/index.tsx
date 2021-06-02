@@ -7,6 +7,20 @@ import { usePrefixedID } from 'modules/client/IDPrefix';
 import { useIsomorphicLayoutEffect } from 'react-use';
 import { isEqual, uniq } from 'lodash';
 import type { TagString } from 'modules/server/stories';
+import Label from 'components/Label';
+
+const tagInfo = {
+	test: 'This adventure was only made to test something.',
+	mirror: 'This adventure is authored by someone else and was not intended for MSPFA.',
+	translation: 'This adventure only is a translation of something else.',
+	suggestion: 'This adventure depends mainly on suggestions from readers.',
+	sburb: 'This adventure focuses on Sburb.',
+	puzzle: 'This adventure focuses on problems and puzzles.',
+	nonmspa: 'This adventure is unrelated to MSPA.',
+	alternate: 'This adventure is an alternate version of a different story.',
+	shitpost: 'This adventure is intended to look like a low-quality joke.',
+	nsfw: 'This adventure is for 18+ readers only and should be blocked from underage readers.'
+} as const;
 
 /** A `textarea` used solely to calculate the `style.height` of a `TagField` based on its `rows` prop. */
 const heightTextArea = document.createElement('textarea'); // @client-only
@@ -53,7 +67,7 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 	const fieldValue = getFieldMeta<TagString[]>(name).value;
 	const [initialValue] = useState(fieldValue);
 
-	const ref = useRef<HTMLDivElement & {
+	const inputRef = useRef<HTMLDivElement & {
 		childNodes: NodeListOf<TagFieldChild>,
 		firstChild: TagFieldChild | null,
 		lastChild: TagFieldChild | null
@@ -63,7 +77,7 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 		if (child.previousSibling?.className !== 'tag-field-editable') {
 			// Ensure newly inserted tags have an editable before them.
 
-			ref.current.insertBefore(createTagFieldEditable(), child);
+			inputRef.current.insertBefore(createTagFieldEditable(), child);
 		}
 
 		// Create and insert the tag element before this editable.
@@ -96,27 +110,27 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 
 		tag.appendChild(tagDelimiter.cloneNode(true));
 
-		ref.current.insertBefore(tag, child);
+		inputRef.current.insertBefore(tag, child);
 	};
 
 	const updateTagField = useCallback(() => {
 		const allTagValues: TagString[] = [];
 
-		for (let i = 0; i < ref.current.childNodes.length; i++) {
-			let child = ref.current.childNodes[i];
+		for (let i = 0; i < inputRef.current.childNodes.length; i++) {
+			let child = inputRef.current.childNodes[i];
 
 			if (child.className !== 'tag-field-editable') {
 				if (i === 0) {
 					// If the first child is not an editable, insert an editable as the first child.
 
 					const newChild = createTagFieldEditable();
-					ref.current.insertBefore(newChild, child);
+					inputRef.current.insertBefore(newChild, child);
 					child = newChild;
 				} else if (child.className === 'tag-field-tag') {
 					if (child.nextSibling?.className === 'tag-field-tag') {
 						// If there are two adjacent tag elements, separate them with an editable.
 
-						ref.current.insertBefore(createTagFieldEditable(), child.nextSibling);
+						inputRef.current.insertBefore(createTagFieldEditable(), child.nextSibling);
 					}
 
 					const tagValue = child.getElementsByClassName('tag-field-tag-content')[0];
@@ -128,7 +142,7 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 					// If this child is not an editable or a tag, insert an editable before it so the child can be merged into it later.
 
 					const newChild = createTagFieldEditable();
-					ref.current.insertBefore(newChild, child);
+					inputRef.current.insertBefore(newChild, child);
 					child = newChild;
 				}
 			}
@@ -141,7 +155,7 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 
 						child.textContent += child.nextSibling.textContent;
 
-						ref.current.removeChild(child.nextSibling);
+						inputRef.current.removeChild(child.nextSibling);
 					} else {
 						// Add a comma so newly added non-editable elements are delimited as tags.
 						child.textContent += ',';
@@ -151,11 +165,11 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 
 						// Take the children out of the invalid sibling.
 						while (sibling.firstChild) {
-							ref.current.insertBefore(sibling.firstChild, sibling);
+							inputRef.current.insertBefore(sibling.firstChild, sibling);
 						}
 
 						// Remove the emptied invalid sibling.
-						ref.current.removeChild(sibling);
+						inputRef.current.removeChild(sibling);
 					}
 				}
 
@@ -199,18 +213,18 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 			}
 		}
 
-		if (ref.current.lastChild?.className !== 'tag-field-editable') {
-			ref.current.appendChild(createTagFieldEditable());
+		if (inputRef.current.lastChild?.className !== 'tag-field-editable') {
+			inputRef.current.appendChild(createTagFieldEditable());
 		}
 
-		const lastTag = ref.current.lastChild!.previousSibling as (
+		const lastTag = inputRef.current.lastChild!.previousSibling as (
 			(TagFieldChild & { className: 'tag-field-tag' })
 			| null
 		);
 
 		if (lastTag) {
 			(lastTag.lastChild as Element).classList[
-				ref.current.lastChild!.textContent
+				inputRef.current.lastChild!.textContent
 					? 'remove'
 					// Hide the comma if there's nothing after it.
 					: 'add'
@@ -228,25 +242,25 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 		if (rows !== undefined) {
 			heightTextArea.rows = rows;
 		}
-		ref.current.appendChild(heightTextArea);
+		inputRef.current.appendChild(heightTextArea);
 
 		// This height should not be managed via React state because the element is `resizable`, and any changed height could be reset by a re-render.
-		ref.current.style.height = `${heightTextArea.offsetHeight}px`;
+		inputRef.current.style.height = `${heightTextArea.offsetHeight}px`;
 
-		ref.current.removeChild(heightTextArea);
+		inputRef.current.removeChild(heightTextArea);
 	}, [rows]);
 
 	useIsomorphicLayoutEffect(() => {
 		// Add the tags from `initialValue`.
 
 		// Reset the tag field, just in case.
-		while (ref.current.firstChild) {
-			ref.current.removeChild(ref.current.firstChild);
+		while (inputRef.current.firstChild) {
+			inputRef.current.removeChild(inputRef.current.firstChild);
 		}
 
 		// Append an editable to insert the tags before.
 		const child = createTagFieldEditable();
-		ref.current.appendChild(child);
+		inputRef.current.appendChild(child);
 
 		for (const tagValue of initialValue) {
 			createAndInsertTag(tagValue, child);
@@ -254,42 +268,70 @@ const TagField = ({ name, id, rows }: TagFieldProps) => {
 	}, [initialValue]);
 
 	return (
-		<div
-			id={id}
-			className="tag-field input-like"
-			contentEditable
-			spellCheck={false}
-			onInput={updateTagField}
-			onKeyDown={
-				useCallback((event: KeyboardEvent<HTMLDivElement>) => {
-					// Don't let the user press `Enter`, because `Enter` has annoying functionality with `contentEditable`, and it is buggy in Firefox.
-					if (event.key === 'Enter' || (
-						event.key.length === 1 && !(
-							event.ctrlKey
-							|| event.metaKey
-							|| event.altKey
-							// Only let the user enter valid characters for tags.
-							|| /^[a-z0-9-,]$/i.test(event.key)
-						)
-					)) {
-						event.preventDefault();
-					}
+		<div className="tag-field">
+			<div
+				id={id}
+				className="tag-field-input input-like"
+				contentEditable
+				spellCheck={false}
+				onInput={updateTagField}
+				onKeyDown={
+					useCallback((event: KeyboardEvent<HTMLDivElement>) => {
+						// Don't let the user press `Enter`, because `Enter` has annoying functionality with `contentEditable`, and it is buggy in Firefox.
+						if (event.key === 'Enter' || (
+							event.key.length === 1 && !(
+								event.ctrlKey
+								|| event.metaKey
+								|| event.altKey
+								// Only let the user enter valid characters for tags.
+								|| /^[a-z0-9-,]$/i.test(event.key)
+							)
+						)) {
+							event.preventDefault();
+						}
 
-					setTimeout(updateTagField);
-				}, [updateTagField])
-			}
-			onClick={
-				useCallback((event: MouseEvent<HTMLDivElement> & { target: Element }) => {
-					if (event.target.className === 'tag-field-tag-remove') {
-						ref.current.removeChild(event.target.parentNode!);
+						setTimeout(updateTagField);
+					}, [updateTagField])
+				}
+				onClick={
+					useCallback((event: MouseEvent<HTMLDivElement> & { target: Element }) => {
+						if (event.target.className === 'tag-field-tag-remove') {
+							inputRef.current.removeChild(event.target.parentNode!);
 
-						updateTagField();
+							updateTagField();
+						}
+					}, [updateTagField])
+				}
+				ref={inputRef}
+			/>
+			<div className="tag-field-presets-container">
+				<Label>Preset Tags (click a tag to add it)</Label>
+				<div
+					className="tag-field-presets input-like"
+					onClick={
+						useCallback((event: MouseEvent<HTMLDivElement> & { target: Element }) => {
+							event
+						}, [])
 					}
-				}, [updateTagField])
-			}
-			ref={ref}
-			suppressContentEditableWarning
-		/>
+				>
+					{Object.entries(tagInfo).map(([tagValue, description]) => (
+						<div
+							key={tagValue}
+							className="tag-field-tag-preset"
+							title={description}
+						>
+							<div className="tag-field-tag-content">
+								{tagValue}
+							</div>
+							<div className="tag-field-tag-help" />
+							<span className="tag-field-tag-delimiter">
+								,&nbsp;
+							</span>
+						</div>
+					))}
+				</div>
+			</div>
+		</div>
 	);
 };
 

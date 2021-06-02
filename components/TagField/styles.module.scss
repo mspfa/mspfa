@@ -1,42 +1,35 @@
 .tag-field {
-	overflow: hidden auto;
-	resize: vertical;
-
-	& > * {
-		vertical-align: middle;
+	&-input {
+		overflow: hidden auto;
+		resize: vertical;
 	}
 
 	$padding: 1px 3px;
 
 	&-editable {
 		min-height: 1em;
+		vertical-align: middle;
 
 		// This fixes some display inconsistencies when an editable is an `:only-child`.
-		&:only-child {
+		&:only-child:empty {
 			display: inline-block;
 			padding: $padding;
 		}
 	}
 
 	&-tag {
-		display: inline-block;
-		margin: 2px;
-		user-select: all;
-		cursor: pointer;
-		border: 1px solid #808080;
+		&, &-preset {
+			display: inline-block;
+			margin: 2px;
+			user-select: all;
+			cursor: pointer;
+			border: 1px solid #808080;
+			vertical-align: middle;
+		}
 
 		&-content {
 			display: inline-block;
 			padding: $padding;
-		}
-
-		&-remove {
-			display: inline-block;
-			width: 16px;
-			height: 16px;
-			background-image: url(/images/icons/remove.png);
-			vertical-align: middle;
-			opacity: 0.5;
 		}
 
 		&-delimiter {
@@ -48,10 +41,38 @@
 				display: none;
 			}
 		}
+
+		&-remove, &-help {
+			display: inline-block;
+			width: 16px;
+			height: 16px;
+			vertical-align: middle;
+		}
+
+		&-remove {
+			opacity: 0.5;
+			background-image: url(/images/icons/remove.png);
+		}
+
+		&-help {
+			opacity: 0.75;
+			background-image: url(/images/icons/help.png);
+		}
 	}
 
 	&-zwnj {
 		// Prevent people from unwittingly selecting ZWNJ characters.
 		user-select: none;
+	}
+
+	&-presets {
+		&-container {
+			margin-top: 0.5em;
+			font-size: 0.875em;
+		}
+
+		border: none;
+		background: none;
+		padding: 0;
 	}
 }
