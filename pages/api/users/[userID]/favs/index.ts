@@ -4,7 +4,7 @@ import { Perm } from 'modules/client/perms';
 import { permToGetUserInAPI } from 'modules/server/perms';
 import users from 'modules/server/users';
 import type { StoryDocument, StoryID } from 'modules/server/stories';
-import { updateAndSendFavCount } from 'modules/server/stories';
+import { getStoryByUnsafeID, updateAndSendFavCount } from 'modules/server/stories';
 
 const Handler: APIHandler<{
 	query: {
@@ -22,6 +22,9 @@ const Handler: APIHandler<{
 	await validate(req, res);
 
 	const user = await permToGetUserInAPI(req, res, Perm.sudoWrite);
+
+	// Ensure the story exists before favoriting it.
+	await getStoryByUnsafeID(req.body.storyID, res);
 
 	if (user.favs.some(fav => fav === req.body.storyID)) {
 		res.status(422).send({
