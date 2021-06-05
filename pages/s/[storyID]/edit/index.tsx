@@ -4,6 +4,7 @@ import { Perm } from 'modules/client/perms';
 import { withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
 import { Field, Form, Formik } from 'formik';
+import type { ChangeEvent } from 'react';
 import { useCallback, useState } from 'react';
 import { useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
@@ -92,7 +93,7 @@ const Component = withErrorPage<ServerSideProps>(({
 				}
 				enableReinitialize
 			>
-				{({ isSubmitting, dirty, values }) => {
+				{({ isSubmitting, dirty, values, handleChange, setFieldValue }) => {
 					useLeaveConfirmation(dirty);
 
 					return (
@@ -128,6 +129,16 @@ const Component = withErrorPage<ServerSideProps>(({
 											label="Privacy"
 											help={`${storyPrivacyNames[StoryPrivacy.Public]}: Anyone can see this adventure.\n${storyPrivacyNames[StoryPrivacy.Unlisted]}: Only users with this adventure's URL can see this adventure.\n${storyPrivacyNames[StoryPrivacy.Private]}: Only this adventure's owner and editors can see this adventure.`}
 											required
+											onChange={
+												useCallback((event: ChangeEvent<HTMLSelectElement>) => {
+													handleChange(event);
+
+													if (+event.target.value !== StoryPrivacy.Public) {
+														// If the story is not public, reset the banner URL field so it can be safely hidden without unsaved changes.
+														setFieldValue('banner', initialValues.banner);
+													}
+												}, [handleChange, setFieldValue])
+											}
 										>
 											{Object.keys(storyPrivacyNames).map(privacy => (
 												<option
