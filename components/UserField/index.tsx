@@ -307,7 +307,7 @@ const UserField = ({
 					)}
 				</>
 			)}
-			{inUserArrayField && !(required && isEditing) && (
+			{inUserArrayField && !readOnly && !(required && isEditing) && (
 				<RemoveButton onClick={deleteFromArray} />
 			)}
 		</div>

@@ -85,9 +85,9 @@ const Component = withErrorPage<ServerSideProps>(({
 
 	const initialValues = getValuesFromStory(privateStory);
 
-	const ownerWritePerm = (
+	const ownerPerms = (
 		user.id === privateStory.owner
-		|| user.perms & Perm.sudoWrite
+		|| !!(user.perms & Perm.sudoWrite)
 	);
 
 	return (
@@ -206,7 +206,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											<UserField
 												name="owner"
 												required
-												readOnly={!ownerWritePerm}
+												readOnly={!ownerPerms}
 											/>
 										</LabeledBoxRow>
 										<LabeledBoxRow
@@ -218,7 +218,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										>
 											<UserArrayField
 												name="editors"
-												readOnly={!ownerWritePerm}
+												readOnly={!ownerPerms}
 											/>
 										</LabeledBoxRow>
 										<FieldBoxRow
@@ -234,10 +234,7 @@ const Component = withErrorPage<ServerSideProps>(({
 														required
 														disabled={
 															privateStory.anniversary.changed
-															|| !(
-																user.id === privateStory.owner
-																|| user.perms & Perm.sudoWrite
-															)
+															|| !ownerPerms
 														}
 														max={privateStory.created}
 													/>
