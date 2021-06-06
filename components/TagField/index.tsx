@@ -116,6 +116,8 @@ const TagField = ({
 		tag.appendChild(tagDelimiter.cloneNode(true));
 
 		inputRef.current.insertBefore(tag, child);
+
+		return tag;
 	};
 
 	const updateTagField = useCallback(() => {
@@ -132,16 +134,22 @@ const TagField = ({
 					inputRef.current.insertBefore(newChild, child);
 					child = newChild;
 				} else if (child.className === 'tag-field-tag') {
+					const tagValue = child.getElementsByClassName('tag-field-tag-content')[0].textContent!;
+
+					if (!allTagValues.includes(tagValue)) {
+						allTagValues.push(tagValue);
+					}
+
+					// Replace the tag with a newly created copy in case the old one got messed up.
+
+					const newChild = createAndInsertTag(tagValue, child);
+					inputRef.current.removeChild(child);
+					child = newChild;
+
 					if (child.nextSibling?.className === 'tag-field-tag') {
 						// If there are two adjacent tag elements, separate them with an editable.
 
 						inputRef.current.insertBefore(createTagFieldEditable(), child.nextSibling);
-					}
-
-					const tagValue = child.getElementsByClassName('tag-field-tag-content')[0];
-
-					if (!allTagValues.includes(tagValue.textContent!)) {
-						allTagValues.push(tagValue.textContent!);
 					}
 				} else {
 					// If this child is not an editable or a tag, insert an editable before it so the child can be merged into it later.
