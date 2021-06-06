@@ -8,9 +8,7 @@ import { connection } from 'modules/server/db';
 
 const Handler: APIHandler<{
 	method: 'POST',
-	body: {
-		title: StoryDocument['title']
-	}
+	body: Pick<StoryDocument, 'title'>
 }, {
 	method: 'POST',
 	body: PrivateStory
@@ -32,6 +30,7 @@ const Handler: APIHandler<{
 
 	const storyID = 1 + (
 		(
+			// The story with the largest ID.
 			await stories.aggregate!([
 				{ $sort: { _id: -1 } },
 				{ $limit: 1 }
@@ -42,6 +41,11 @@ const Handler: APIHandler<{
 		...defaultStory,
 		_id: storyID,
 		created: now,
+		anniversary: {
+			month: now.getMonth(),
+			day: now.getDate(),
+			changed: false
+		},
 		updated: now,
 		title: req.body.title,
 		owner: user._id,

@@ -54,6 +54,21 @@ export type StoryColor = {
 export type StoryDocument = {
 	_id: StoryID,
 	created: Date,
+	anniversary: {
+		/**
+		 * @minimum 0
+		 * @maximum 11
+		 */
+		month: number,
+		/**
+		 * The anniversary's day of the month.
+		 *
+		 * @minimum 1
+		 */
+		day: number,
+		/** Whether a user has ever changed the anniversary. */
+		changed: boolean
+	},
 	updated: Date,
 	/**
 	 * @minLength 1
@@ -139,13 +154,14 @@ export const defaultStory = {
 } as const;
 
 // This is just for type safety on `defaultStory`.
-const typeCheckedDefaultUser: Partial<StoryDocument> = defaultStory;
-typeCheckedDefaultUser;
+const typeCheckedDefaultStory: Partial<StoryDocument> = defaultStory;
+typeCheckedDefaultStory;
 
 /** Converts a `StoryDocument` to a `PrivateStory`. */
 export const getPrivateStory = (story: StoryDocument): PrivateStory => ({
 	id: story._id,
 	created: +story.created,
+	anniversary: story.anniversary,
 	updated: +story.updated,
 	title: story.title,
 	status: story.status,
@@ -175,6 +191,7 @@ export const getPrivateStory = (story: StoryDocument): PrivateStory => ({
 export const getPublicStory = (story: StoryDocument): PublicStory => ({
 	id: story._id,
 	created: +story.created,
+	anniversary: story.anniversary,
 	updated: +story.updated,
 	title: story.title,
 	status: story.status,
