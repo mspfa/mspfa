@@ -2,8 +2,8 @@ import Box from 'components/Box';
 import BoxRow from 'components/Box/BoxRow';
 import Page from 'components/Page';
 import type { ServerResponse } from 'http';
-import fs from 'fs-extra'; // @server-only
-import path from 'path'; // @server-only
+import fs from 'fs-extra';
+import path from 'path';
 import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
 import { useCallback } from 'react';
@@ -59,10 +59,11 @@ const ErrorPage = ({ statusCode, imageFilename }: ErrorPageProps) => (
 );
 
 // @server-only {
-/** The array of 403 image filenames. */
-const error403Images = (fs.readdirSync(
-	path.join(process.cwd(), 'public/images/403')
-)).filter(filename => /\.(?:png|gif)$/i.test(filename));
+const imageFilenames = (
+	fs.readdirSync(
+		path.join(process.cwd(), 'public/images/403')
+	)
+).filter(filename => /\.(?:png|gif)$/i.test(filename));
 // @server-only }
 
 // Pass the status code from Next to `ErrorPage`'s props.
@@ -74,7 +75,7 @@ ErrorPage.getInitialProps = ({ res, error }: {
 
 	return statusCode === 403 ? {
 		statusCode: 403,
-		imageFilename: error403Images[Math.floor(Math.random() * error403Images.length)]
+		imageFilename: imageFilenames[Math.floor(Math.random() * imageFilenames.length)]
 	} : {
 		statusCode
 	};
