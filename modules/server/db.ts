@@ -87,7 +87,7 @@ export const safeObjectID = (id: UnsafeObjectID) => {
 /**
  * Flattens an object so it can be used in `$set` operations with deep merging instead of the default shallow merging.
  *
- * Ingores `undefined`.
+ * Ignores `undefined`.
  *
  * Example:
  * ```
