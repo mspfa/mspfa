@@ -27,6 +27,8 @@ export const withErrorPage = <
 		if (userID !== previousUserID) {
 			// The client switched users.
 
+			setPreviousUserID(userID);
+
 			if (reloadsToPrevent) {
 				reloadsToPrevent--;
 			} else {
@@ -37,8 +39,6 @@ export const withErrorPage = <
 
 				// Do NOT prevent leave confirmations here. The user should be allowed to sign in or sign out without losing unsaved changes.
 			}
-
-			setPreviousUserID(userID);
 		}
 
 		return (
