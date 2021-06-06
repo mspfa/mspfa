@@ -87,49 +87,42 @@ export const safeObjectID = (id: UnsafeObjectID) => {
 /**
  * Flattens an object so it can be used in `$set` operations with deep merging instead of the default shallow merging.
  *
- * Ignores `undefined`.
+ * Intentionally does not flatten arrays or items in arrays so that item removal is possible with only `$set`.
+ *
+ * Excludes any `undefined` properties.
  *
  * Example:
  * ```
  * flatten({
  * 	a: {
  * 		b: 1,
- * 		c: [2, 3],
- * 		d: undefined
+ * 		c: [2, { d: 3 }],
+ * 		e: undefined
  * 	},
- * 	e: 4
+ * 	f: 4
  * }) === {
  * 	'a.b': 1,
- * 	'a.c.0': 2,
- * 	'a.c.1': 3,
- * 	'e': 4
+ * 	'a.c': [2, { d: 3 }],
+ * 	'f': 4
  * }
  * ```
  */
 export const flatten = (
-	object: Record<any, unknown> | unknown[],
+	object: Record<any, unknown>,
 	prefix = '',
 	flatObject: Record<string, any> = {}
 ) => {
-	if (Array.isArray(object)) {
-		for (let i = 0; i < object.length; i++) {
-			const item = object[i];
+	for (const key in object) {
+		const value = object[key];
 
-			if (item instanceof Object && !(item instanceof Date)) {
-				flatten(item as any, `${prefix + i}.`, flatObject);
-			} else if (item !== undefined) {
-				flatObject[prefix + i] = item;
-			}
-		}
-	} else {
-		for (const key in object) {
-			const value = object[key];
-
-			if (value instanceof Object && !(value instanceof Date)) {
-				flatten(value as any, `${prefix + key}.`, flatObject);
-			} else if (value !== undefined) {
-				flatObject[prefix + key] = value;
-			}
+		if (value instanceof Object && !(value instanceof Array) && !(value instanceof Date)) {
+			flatten(
+				value as Record<any, unknown>,
+				`${prefix + key}.`,
+				flatObject
+			);
+		} else if (value !== undefined) {
+			flatObject[prefix + key] = value;
 		}
 	}
 
