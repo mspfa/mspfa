@@ -223,7 +223,8 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 				await users.find!({
 					_id: {
 						$in: toUserIDs
-					}
+					},
+					willDelete: { $exists: false }
 				}).map(getPublicUser).toArray()
 			)
 		}

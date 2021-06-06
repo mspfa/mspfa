@@ -321,7 +321,8 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 			userCache: await users.find!({
 				_id: {
 					$in: uniqBy([story.owner, ...story.editors], String)
-				}
+				},
+				willDelete: { $exists: false } // TODO: Handle deleted users missing from user cache on client.
 			}).map(getPublicUser).toArray()
 		}
 	};

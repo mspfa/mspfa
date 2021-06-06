@@ -237,7 +237,8 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 				await users.find!({
 					_id: {
 						$in: uniqBy(serverMessages.map(message => message.from), String)
-					}
+					},
+					willDelete: { $exists: false } // TODO: Handle deleted users missing from user cache on client.
 				}).map(getPublicUser).toArray()
 			)
 		}

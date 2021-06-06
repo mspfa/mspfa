@@ -253,9 +253,7 @@ export const getUserByUnsafeID = <Res extends APIResponse<any> | undefined>(
 	if (userID) {
 		user = await users.findOne({
 			_id: userID,
-			willDelete: {
-				$exists: false
-			}
+			willDelete: { $exists: false }
 		});
 	}
 

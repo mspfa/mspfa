@@ -116,7 +116,8 @@ const Handler: APIHandler<(
 	let filterQuery: FilterQuery<UserDocument> = {
 		name: {
 			$regex: new RegExp(escapeRegExp(req.query.search), 'i')
-		}
+		},
+		willDelete: { $exists: false }
 	};
 
 	const userID = safeObjectID(req.query.search);
