@@ -217,6 +217,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										>
 											<UserArrayField
 												name="editors"
+												unique
 												readOnly={!ownerPerms}
 											/>
 										</LabeledBoxRow>
