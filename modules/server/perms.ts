@@ -165,7 +165,7 @@ function permToGetUser(
  * const user = await permToGetUserInAPI(req, res, Perm.sudoWrite, req.body.user);
  * ```
  */
-export const permToGetUserInAPI = async <UserID extends string | undefined = undefined>(
+export const permToGetUserInAPI = async <UserID extends UnsafeObjectID = undefined>(
 	req: APIRequest<{ query: { userID: UserID } } | {}>,
 	res: APIResponse,
 	/**
@@ -176,10 +176,10 @@ export const permToGetUserInAPI = async <UserID extends string | undefined = und
 	perms: number,
 	...[
 		userID = (req.query as any).userID
-	]: (UserID extends string ? [
-		userID?: string
+	]: (UserID extends undefined ? [
+		userID: UnsafeObjectID
 	] : [
-		userID: string
+		userID?: UnsafeObjectID
 	])
 ) => (
 	(await permToGetUser(
