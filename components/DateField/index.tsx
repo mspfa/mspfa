@@ -32,7 +32,7 @@ const getMaxDay = (year: number, month: number) => {
 	return Number.isNaN(maxDay) ? 31 : maxDay;
 };
 
-export type DateFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 'required' | 'min' | 'max' | 'onChange' | 'autoComplete'> & {
+export type DateFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 'required' | 'min' | 'max' | 'onChange' | 'autoComplete' | 'disabled'> & {
 	name: string,
 	/**
 	 * The controlled value of the date field.
@@ -51,10 +51,10 @@ const DateField = ({
 	id,
 	value: valueProp,
 	onChange: onChangeProp,
-	required,
 	min = 0,
 	max = Date.now() + 1000 * 60 * 60 * 24 * 365 * 100,
-	autoComplete
+	autoComplete,
+	...props
 }: DateFieldProps) => {
 	const idPrefix = usePrefixedID();
 
@@ -179,21 +179,21 @@ const DateField = ({
 				id={`${id}-day`}
 				className="date-field-day"
 				autoComplete={autoComplete ? `${autoComplete}-day` : undefined}
-				required={required}
 				placeholder="DD"
 				min={minDay}
 				max={maxDay}
 				size={4}
 				value={Number.isNaN(day) ? '' : day}
 				onChange={onChange}
+				{...props}
 			/>
 			<select
 				id={`${id}-month`}
 				className="date-field-month"
 				autoComplete={autoComplete ? `${autoComplete}-month` : undefined}
-				required={required}
 				value={Number.isNaN(month) ? '' : month}
 				onChange={onChange}
+				{...props}
 			>
 				<option value="" disabled hidden>Month</option>
 				{monthNames.map((monthName, i) => (
@@ -210,9 +210,9 @@ const DateField = ({
 				id={`${id}-year`}
 				className="date-field-year"
 				autoComplete={autoComplete ? `${autoComplete}-year` : undefined}
-				required={required}
 				value={!renderYearOptions || Number.isNaN(year) ? '' : year}
 				onChange={onChange}
+				{...props}
 			>
 				<option value="" disabled hidden>YYYY</option>
 				{renderYearOptions && (
