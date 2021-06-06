@@ -42,6 +42,7 @@ const Handler: APIHandler<{
 		_id: storyID,
 		created: now,
 		anniversary: {
+			year: now.getFullYear(),
 			month: now.getMonth(),
 			day: now.getDate(),
 			changed: false

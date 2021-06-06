@@ -54,7 +54,10 @@ export type StoryColor = {
 export type StoryDocument = {
 	_id: StoryID,
 	created: Date,
+	// Anniversary dates are stored as an object of `number`s instead of as a `Date` so that they are more efficient to query.
 	anniversary: {
+		// The `year` is only necessary because whether a day is valid depends on the year it's in.
+		year: number,
 		/**
 		 * @minimum 0
 		 * @maximum 11
