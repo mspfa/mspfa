@@ -21,6 +21,13 @@
 	padding: 0.15em;
 }
 
+input, textarea, select {
+	&:disabled {
+		opacity: 0.7;
+		cursor: default;
+	}
+}
+
 input, select {
 	height: calc(1.425em + 4px);
 	vertical-align: middle;
