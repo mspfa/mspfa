@@ -107,7 +107,6 @@ const Component = withErrorPage<ServerSideProps>(({
 								? undefined
 								: new Date(changedValues.anniversary)
 						);
-						console.log(changedValues);
 
 						const { data } = await (api as StoryAPI).put(`/stories/${privateStory.id}`, {
 							...changedValues,
