@@ -6,7 +6,7 @@ import { withStatusCode } from 'modules/server/errors';
 import { Field, Form, Formik } from 'formik';
 import type { ChangeEvent } from 'react';
 import { useCallback, useState } from 'react';
-import { useLeaveConfirmation } from 'modules/client/forms';
+import { getChangedValues, useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
 import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
@@ -30,11 +30,19 @@ import BoxSection from 'components/Box/BoxSection';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
 import Row from 'components/Row';
-import Timestamp from 'components/Timestamp';
 import TagField from 'components/TagField';
+import type { APIClient } from 'modules/client/api';
+import api from 'modules/client/api';
+import DateField from 'components/DateField';
+
+type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 
 const getValuesFromStory = (privateStory: PrivateStory) => ({
-	created: privateStory.created,
+	anniversary: new Date(0).setFullYear(
+		privateStory.anniversary.year,
+		privateStory.anniversary.month,
+		privateStory.anniversary.day
+	),
 	title: privateStory.title,
 	status: privateStory.status.toString(),
 	privacy: privateStory.privacy.toString(),
@@ -88,8 +96,35 @@ const Component = withErrorPage<ServerSideProps>(({
 				initialValues={initialValues}
 				onSubmit={
 					useCallback(async (values: Values) => {
+						const changedValues = getChangedValues(initialValues, values);
 
-					}, [])
+						if (!changedValues) {
+							return;
+						}
+
+						const anniversaryDate = (
+							changedValues.anniversary === undefined
+								? undefined
+								: new Date(changedValues.anniversary)
+						);
+						console.log(changedValues);
+
+						const { data } = await (api as StoryAPI).put(`/stories/${privateStory.id}`, {
+							...changedValues,
+							anniversary: anniversaryDate && {
+								year: anniversaryDate.getFullYear(),
+								month: anniversaryDate.getMonth(),
+								day: anniversaryDate.getDate()
+							},
+							status: changedValues.status ? +changedValues.status : undefined,
+							privacy: changedValues.privacy ? +changedValues.privacy : undefined
+						});
+
+						setPrivateStory(data);
+
+						// This ESLint comment is necessary because the rule incorrectly thinks `initialValues` should be a dependency here, despite that it depends on `privateStory` which is already a dependency.
+						// eslint-disable-next-line react-hooks/exhaustive-deps
+					}, [privateStory, initialValues])
 				}
 				enableReinitialize
 			>
@@ -134,7 +169,9 @@ const Component = withErrorPage<ServerSideProps>(({
 													handleChange(event);
 
 													if (+event.target.value !== StoryPrivacy.Public) {
-														// If the story is not public, reset the banner URL field so it can be safely hidden without unsaved changes.
+														// If the story is not public, reset the anniversary date and banner URL fields so they can be safely hidden without unsaved changes.
+
+														setFieldValue('anniversary', initialValues.anniversary);
 														setFieldValue('banner', initialValues.banner);
 													}
 												}, [handleChange, setFieldValue])
@@ -190,20 +227,28 @@ const Component = withErrorPage<ServerSideProps>(({
 											label="Allow Comments"
 										/>
 										{+values.privacy === StoryPrivacy.Public && (
-											<FieldBoxRow
-												type="url"
-												name="banner"
-												label="Banner URL"
-												help={(
-													<>
-														A direct URL to an image of your adventure's anniversary banner. The recommended image size is 940x90.<br />
-														<br />
-														If your adventure is ongoing or complete and has at least 200 favorites, this image will be displayed on the homepage for one week starting on the adventure's anniversary.<br />
-														<br />
-														This adventure's creation date is set to <Timestamp>{values.created}</Timestamp> and will be used as its anniversary.
-													</>
-												)}
-											/>
+											<>
+												<LabeledBoxRow htmlFor="field-anniversary" label="Anniversary Date">
+													<DateField
+														name="anniversary"
+														required
+														disabled={
+															privateStory.anniversary.changed
+															|| !(
+																user.id === privateStory.owner
+																|| user.perms & Perm.sudoWrite
+															)
+														}
+														max={privateStory.created}
+													/>
+												</LabeledBoxRow>
+												<FieldBoxRow
+													type="url"
+													name="banner"
+													label="Banner URL"
+													help={'A direct URL to an image of your adventure\'s anniversary banner. The recommended image size is 940x90.\n\nIf your adventure is ongoing or complete and has at least 200 favorites, this image will be displayed on the homepage for one week starting on the adventure\'s anniversary date.'}
+												/>
+											</>
 										)}
 									</BoxRowSection>
 								</BoxColumns>
