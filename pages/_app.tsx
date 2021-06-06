@@ -13,8 +13,9 @@ import type { PrivateUser } from 'modules/client/users';
 import type { PageRequest } from 'modules/server/pages';
 import React, { useEffect, useRef } from 'react';
 import { setTheme } from 'modules/client/themes';
-import { merge } from 'lodash';
+import { mergeWith } from 'lodash';
 import UserCache from 'modules/client/UserCache';
+import { overwriteArrays } from 'modules/client/utilities';
 
 const swrConfig = {
 	revalidateOnMount: true,
@@ -47,7 +48,7 @@ const MyApp = ({
 	const [userMerge] = useUserMerge();
 	const mergedUser = (
 		userMerge
-			? user && merge({}, user, userMerge)
+			? user && mergeWith({}, user, userMerge, overwriteArrays)
 			: user
 	);
 

@@ -1,6 +1,7 @@
 import type { RecursivePartial } from 'modules/types';
 import { useCallback, useEffect } from 'react';
 import Router from 'next/router';
+import { isEqual } from 'lodash';
 
 const message = 'Are you sure you want to leave? Changes you made may not be saved.';
 
@@ -14,6 +15,14 @@ export const getChangedValues = <
 >(initialValues: Values, values: Values) => {
 	let changed = false;
 	const changedValues: RecursivePartial<Values> = {};
+
+	if (values instanceof Array) {
+		return (
+			isEqual(initialValues, values)
+				? undefined
+				: values
+		);
+	}
 
 	for (const key in values) {
 		if (values[key] instanceof Object) {

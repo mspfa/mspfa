@@ -31,3 +31,10 @@ export const sanitizeURL = (url: string) => {
 
 	return unsafeURLTest.test(url) ? undefined : url;
 };
+
+/** A customizer for Lodash's `mergeWith` which merges normally except overwrites arrays. */
+export const overwriteArrays = (objectValue: any, sourceValue: any) => {
+	if (Array.isArray(objectValue)) {
+		return sourceValue;
+	}
+};
