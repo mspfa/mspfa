@@ -127,12 +127,14 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 												<Label htmlFor="field-to">
 													To
 												</Label>
-												<UserArrayField
-													name="to"
-													required
-													unique
-													autoFocus={!toUsers.length}
-												/>
+												<div>
+													<UserArrayField
+														name="to"
+														required
+														unique
+														autoFocus={!toUsers.length}
+													/>
+												</div>
 											</div>
 											<div className="field-container">
 												<Label htmlFor="field-subject">
