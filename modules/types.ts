@@ -1,8 +1,10 @@
 // This file is for general types that don't really fit under a single scope.
 
+import type { ObjectId } from 'mongodb';
+
 export type RecursivePartial<Type> = Partial<{
 	[Key in keyof Type]?: (
-		Type[Key] extends string | number | boolean | undefined | null | Date
+		Type[Key] extends string | number | boolean | undefined | null | Date | ObjectId
 			? Type[Key]
 			: RecursivePartial<Type[Key]>
 	)
