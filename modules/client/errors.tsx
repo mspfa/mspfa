@@ -17,7 +17,9 @@ export const preventReloads = (
 export const withErrorPage = <
 	/** The props of the page's component. */
 	Props extends Record<string, any> = Record<string, unknown>
->(Component: (props: Props & { statusCode?: undefined }) => JSX.Element) => (
+>(
+	Component: (props: Props & { statusCode?: undefined }) => JSX.Element
+) => (
 	({ statusCode, ...props }: Props) => {
 		const user = useUser();
 		const userID = user?.id;
