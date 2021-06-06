@@ -161,40 +161,44 @@ const Component = withErrorPage<ServerSideProps>(({
 						>
 							New Message
 						</Button>
-						<Button
-							className="small"
-							title={
-								selectedCount
-									? `Deselect Selected Messages (${selectedCount})`
-									: `Select All Messages (${listedMessages.length})`
-							}
-							onClick={selectedCount ? deselectAll : selectAll}
-						>
-							{selectedCount ? 'Deselect All' : 'Select All'}
-						</Button>
-						{selectedCount !== 0 && (
+						{listedMessages.length !== 0 && (
 							<>
 								<Button
 									className="small"
-									title={`Mark Selected Messages as Read (${selectedCount})`}
-									onClick={markRead}
+									title={
+										selectedCount
+											? `Deselect Selected Messages (${selectedCount})`
+											: `Select All Messages (${listedMessages.length})`
+									}
+									onClick={selectedCount ? deselectAll : selectAll}
 								>
-									Mark as Read
+									{selectedCount ? 'Deselect All' : 'Select All'}
 								</Button>
-								<Button
-									className="small"
-									title={`Mark Selected Messages as Unread (${selectedCount})`}
-									onClick={markUnread}
-								>
-									Mark as Unread
-								</Button>
-								<Button
-									className="small"
-									title={`Delete Selected Messages (${selectedCount})`}
-									onClick={deleteMessages}
-								>
-									Delete
-								</Button>
+								{selectedCount !== 0 && (
+									<>
+										<Button
+											className="small"
+											title={`Mark Selected Messages as Read (${selectedCount})`}
+											onClick={markRead}
+										>
+											Mark as Read
+										</Button>
+										<Button
+											className="small"
+											title={`Mark Selected Messages as Unread (${selectedCount})`}
+											onClick={markUnread}
+										>
+											Mark as Unread
+										</Button>
+										<Button
+											className="small"
+											title={`Delete Selected Messages (${selectedCount})`}
+											onClick={deleteMessages}
+										>
+											Delete
+										</Button>
+									</>
+								)}
 							</>
 						)}
 					</Row>
