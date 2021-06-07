@@ -115,7 +115,11 @@ export const flatten = (
 	for (const key in object) {
 		const value = object[key];
 
-		if (value instanceof Object && !(value instanceof Array) && !(value instanceof Date)) {
+		if (value instanceof Object && !(
+			value instanceof Array
+			|| value instanceof Date
+			|| value instanceof ObjectId
+		)) {
 			flatten(
 				value as Record<any, unknown>,
 				`${prefix + key}.`,
