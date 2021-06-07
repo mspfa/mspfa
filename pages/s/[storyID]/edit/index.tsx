@@ -22,7 +22,7 @@ import UserField from 'components/UserField';
 import type { PublicUser } from 'modules/client/users';
 import { useUser } from 'modules/client/users';
 import { useUserCache } from 'modules/client/UserCache';
-import { uniqBy } from 'lodash';
+import { uniq, uniqBy } from 'lodash';
 import users, { getPublicUser } from 'modules/server/users';
 import UserArrayField from 'components/UserField/UserArrayField';
 import BoxColumns from 'components/Box/BoxColumns';
@@ -130,6 +130,8 @@ const Component = withErrorPage<ServerSideProps>(({
 				{({ isSubmitting, dirty, values, handleChange, setFieldValue }) => {
 					useLeaveConfirmation(dirty);
 
+					const [ownerBeforeEdit, setOwnerBeforeEdit] = useState<string | undefined>(values.owner || privateStory.owner);
+
 					return (
 						<Form>
 							<Box>
@@ -211,6 +213,27 @@ const Component = withErrorPage<ServerSideProps>(({
 													values.owner === user.id
 														? 'Are you sure you want to transfer this adventure\'s ownership to someone else?\n\nYou will remain an editor of this adventure, but your ownership can only be restored by the new owner. The new owner will also be allowed to revoke your editing permissions.'
 														: undefined
+												}
+												onChange={
+													useCallback((event: { target: HTMLInputElement }) => {
+														if (
+															// The user finished editing the owner.
+															event.target.value
+															// They are transferring ownership from themself.
+															&& ownerBeforeEdit === user.id
+															// They are transferring ownership to someone else.
+															&& event.target.value !== user.id
+														) {
+															setFieldValue('editors', uniq([
+																...values.editors,
+																// Add the user they are transferring ownership from to the editors.
+																ownerBeforeEdit
+																// Don't add the user they are transferring ownership to, because the user may edit the owner again, in which case the owner that was set temporarily would still be added as an editor. If the user did not intend to add them as an editor, that would be problematic, especially since the user would not even necessarily be aware the owner they set temporarily is still an editor.
+															]));
+
+															setOwnerBeforeEdit(event.target.value);
+														}
+													}, [ownerBeforeEdit, values.editors, setFieldValue])
 												}
 											/>
 										</LabeledBoxRow>
