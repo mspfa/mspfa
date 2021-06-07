@@ -206,6 +206,12 @@ const Component = withErrorPage<ServerSideProps>(({
 												name="owner"
 												required
 												readOnly={!ownerPerms}
+												editTitle="Edit Owner"
+												confirmEdit={
+													values.owner === user.id
+														? 'Are you sure you want to transfer this adventure\'s ownership to someone else?\n\nYou will remain an editor of this adventure, but your ownership can only be restored by the new owner. The new owner will also be allowed to revoke your editing permissions.'
+														: undefined
+												}
 											/>
 										</LabeledBoxRow>
 										<LabeledBoxRow

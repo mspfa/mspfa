@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import { useFormikContext } from 'formik';
 import { toKebabCase } from 'modules/client/utilities';
-import type { ChangeEvent, InputHTMLAttributes } from 'react';
+import type { ChangeEvent, InputHTMLAttributes, ReactNode } from 'react';
 import { useCallback, useState, useRef, useEffect } from 'react';
 import { usePrefixedID } from 'modules/client/IDPrefix';
 import api from 'modules/client/api';
@@ -14,6 +14,7 @@ import axios from 'axios';
 import { useUserCache } from 'modules/client/UserCache';
 import RemoveButton from 'components/Button/RemoveButton';
 import { useIsomorphicLayoutEffect } from 'react-use';
+import { Dialog } from 'modules/client/dialogs';
 
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
 
@@ -33,7 +34,11 @@ export type UserFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 
 	userArrayFieldValue?: Array<string | undefined>,
 	onChange?: (event: {
 		target: HTMLInputElement
-	}) => void
+	}) => void,
+	/** The title of the edit button and, if there is one, the edit confirmation dialog. */
+	editTitle?: string,
+	/** The content of the edit confirmation dialog. */
+	confirmEdit?: ReactNode
 };
 
 const UserField = ({
@@ -47,7 +52,9 @@ const UserField = ({
 	unique,
 	userArrayFieldValue,
 	onChange: onChangeProp,
-	autoFocus
+	autoFocus,
+	editTitle = 'Edit',
+	confirmEdit
 }: UserFieldProps) => {
 	const idPrefix = usePrefixedID();
 
@@ -142,6 +149,14 @@ const UserField = ({
 	}, [name, setFieldValue, onChangeProp]);
 
 	const startEditing = useCallback(async () => {
+		if (confirmEdit && !await Dialog.confirm({
+			id: 'user-field-edit',
+			title: editTitle,
+			content: confirmEdit
+		})) {
+			return;
+		}
+
 		// We can assert `value!` because `value` must already be set for the edit button to be visible.
 		const newInputValue = inputValue || (await getCachedUser(value!)).name;
 
@@ -153,7 +168,7 @@ const UserField = ({
 		autoComplete.update(newInputValue);
 
 		changeValue(undefined);
-	}, [value, changeValue, getCachedUser, inputValue, autoComplete]);
+	}, [value, changeValue, getCachedUser, inputValue, autoComplete, editTitle, confirmEdit]);
 
 	const isEditing = !value;
 	const [wasEditing, setWasEditing] = useState(isEditing);
@@ -274,7 +289,10 @@ const UserField = ({
 						{userCache[value]!.name}
 					</Link>
 					{!readOnly && !inUserArrayField && (
-						<EditButton onClick={startEditing} />
+						<EditButton
+							title={editTitle}
+							onClick={startEditing}
+						/>
 					)}
 				</>
 			) : (
