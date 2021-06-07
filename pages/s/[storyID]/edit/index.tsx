@@ -257,7 +257,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										/>
 										{+values.privacy === StoryPrivacy.Public && (
 											<>
-												<LabeledBoxRow htmlFor="field-anniversary" label="Anniversary Date">
+												<LabeledBoxRow htmlFor="field-anniversary-day" label="Anniversary Date">
 													<DateField
 														name="anniversary"
 														required
