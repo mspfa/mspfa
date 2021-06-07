@@ -250,7 +250,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										<BirthdateField required />
 									</LabeledBoxRow>
 									<BoxRow>
-										{/* It is better if this button remains visible even for those who do not have a password sign-in method, because those people may think they do regardless, and they should be informed that they don't upon clicking this button, to minimize confusion. */}
+										{/* This button should remain visible even for those who do not have a password sign-in method, because those users may think they do regardless, and they should be informed that they don't upon clicking this button, to minimize confusion to those users. */}
 										<Button
 											className="small"
 											onClick={onClickChangePassword}
@@ -288,7 +288,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 									<FieldBoxRow
 										type="checkbox"
 										name="settings.imageAliasing"
-										// This setting's label should not use terminology less obscure than "Aliasing", because if its phrasing is less obscure (for example if it were called "Crisp Images" or "Image Sharpening"), it would be easily misinterpretable and lead to misunderstandings about what the setting does, even among users who know what aliasing is, since it wouldn't be called that. With this more obscure but more accurate name, it is much less likely that inaccurate assumptions would be made about the meaning, and people would be more inclined to click the help button for clarity.
+										// This setting's label should not use terminology less obscure than "Aliasing", because if its phrasing is less obscure (for example if it were called "Crisp Images" or "Image Sharpening"), it would be easily misinterpretable and lead to misunderstandings about what the setting does, even among users who know what aliasing is, since it wouldn't be called that. With this more obscure but more accurate name, it is much less likely that inaccurate assumptions would be made about the meaning, and users would be more inclined to click the help button for clarity.
 										label="Image Aliasing"
 										help={'Disables anti-aliasing in images on adventure pages (by using nearest-neighbor scaling).\n\nWhat this means is images, when scaled, will tend to have more crisp edges rather than becoming blurry. It disables the browser\'s smooth scaling effect that causes scaled images to blur.'}
 									/>
