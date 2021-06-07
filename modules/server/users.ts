@@ -109,7 +109,7 @@ export type UserDocument = {
 		/** This makes the nav bar always stay at the top of the screen when scrolling below it. */
 		stickyNav: boolean,
 		/** This sets the image rendering style to nearest-neighbor on images which the user might want that on (such as story panels). */
-		imageSharpening: boolean,
+		imageAliasing: boolean,
 		theme: Theme,
 		style: string,
 		controls: {

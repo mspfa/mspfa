@@ -47,7 +47,7 @@ const getValuesFromUser = (privateUser: Pick<PrivateUser, 'settings'> & Partial<
 		autoOpenSpoilers: privateUser.settings.autoOpenSpoilers,
 		preloadImages: privateUser.settings.preloadImages,
 		stickyNav: privateUser.settings.stickyNav,
-		imageSharpening: privateUser.settings.imageSharpening,
+		imageAliasing: privateUser.settings.imageAliasing,
 		theme: privateUser.settings.theme,
 		style: privateUser.settings.style,
 		controls: privateUser.settings.controls,
@@ -287,9 +287,10 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 									/>
 									<FieldBoxRow
 										type="checkbox"
-										name="settings.imageSharpening"
-										label="Image Sharpening"
-										help={'Disables anti-aliasing in images from adventure pages (using nearest-neighbor scaling).\n\nWhat this means is images, when scaled, will tend to have more crisp edges rather than becoming blurry.'}
+										name="settings.imageAliasing"
+										// This setting's label should not use terminology less obscure than "Aliasing", because if its phrasing is less obscure (for example if it were called "Crisp Images" or "Image Sharpening"), it would be easily misinterpretable and lead to misunderstandings about what the setting does, even among users who know what aliasing is, since it wouldn't be called that. With this more obscure but more accurate name, it is much less likely that inaccurate assumptions would be made about the meaning, and people would be more inclined to click the help button for clarity.
+										label="Image Aliasing"
+										help={'Disables anti-aliasing in images on adventure pages (by using nearest-neighbor scaling).\n\nWhat this means is images, when scaled, will tend to have more crisp edges rather than becoming blurry. It disables the browser\'s smooth scaling effect that causes scaled images to blur.'}
 									/>
 									<FieldBoxRow
 										type="checkbox"
