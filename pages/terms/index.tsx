@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import Box from 'components/Box';
 import BoxRow from 'components/Box/BoxRow';
 import Page from 'components/Page';
@@ -20,6 +21,9 @@ const Component = ({ imageFilename }: ServerSideProps) => (
 						alt="Artwork for Terms of Service"
 						title={`Artist: ${imageFilename.slice(0, imageFilename.indexOf('.'))}`}
 					/>
+					<div id="art-disclaimer">
+						Disclaimer: This image is not part of and has no effect related to the terms of service.
+					</div>
 				</BoxRow>
 				<BoxRow>
 					<p>
