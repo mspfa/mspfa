@@ -1,5 +1,5 @@
 import './styles.module.scss';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import type { Dialog as DialogClass } from 'modules/client/dialogs';
 import { Form, Formik } from 'formik';
 import Button from 'components/Button';
@@ -17,14 +17,26 @@ export type DialogProps = {
 const Dialog = React.memo(({ dialog }: DialogProps) => {
 	const idKebab = toKebabCase(dialog.id.toString());
 
+	const dialogRef = useRef<HTMLDialogElement>(null!);
+
 	useEffect(() => {
 		dialog.open = true;
+
 		if (dialog.onMount) {
 			dialog.onMount(dialog);
 		}
 
+		const dialogElement = dialogRef.current;
+
 		return () => {
 			dialog.open = false;
+
+			const { parentNode } = dialogElement;
+			if (parentNode) {
+				// Replay the dialog pop animation.
+				parentNode.removeChild(dialogElement);
+				parentNode.appendChild(dialogElement);
+			}
 		};
 	}, [dialog]);
 
@@ -46,7 +58,11 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 
 				return (
 					<Form id={`dialog-container-${idKebab}`} className="dialog-container">
-						<dialog id={`dialog-${idKebab}`} open>
+						<dialog
+							id={`dialog-${idKebab}`}
+							open
+							ref={dialogRef}
+						>
 							<div className="dialog-title mid translucent-text">
 								{dialog.title}
 							</div>
