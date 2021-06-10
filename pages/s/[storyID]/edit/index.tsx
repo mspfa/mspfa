@@ -93,6 +93,20 @@ const Component = withErrorPage<ServerSideProps>(({
 		|| !!(user.perms & Perm.sudoWrite)
 	);
 
+	const [editingAnniversary, setEditingAnniversary] = useState(false);
+
+	const editAnniversary = useCallback(async () => {
+		if (!await Dialog.confirm({
+			id: 'edit-anniversary',
+			title: 'Edit Anniversary',
+			content: 'You can only change this adventure\'s anniversary date once. Once changed, it cannot be undone.\n\nAre you sure you want to edit the annivesary date?'
+		})) {
+			return;
+		}
+
+		setEditingAnniversary(true);
+	}, []);
+
 	return (
 		<Page flashyTitle heading="Edit Adventure">
 			<Formik
@@ -124,6 +138,8 @@ const Component = withErrorPage<ServerSideProps>(({
 
 						setPrivateStory(data);
 
+						setEditingAnniversary(false);
+
 						// This ESLint comment is necessary because the rule incorrectly thinks `initialValues` should be a dependency here, despite that it depends on `privateStory` which is already a dependency.
 						// eslint-disable-next-line react-hooks/exhaustive-deps
 					}, [privateStory, initialValues])
@@ -134,20 +150,6 @@ const Component = withErrorPage<ServerSideProps>(({
 					useLeaveConfirmation(dirty);
 
 					const [ownerBeforeEdit, setOwnerBeforeEdit] = useState<string | undefined>(values.owner || privateStory.owner);
-
-					const [editingAnniversary, setEditingAnniversary] = useState(false);
-
-					const editAnniversary = useCallback(async () => {
-						if (!await Dialog.confirm({
-							id: 'edit-anniversary',
-							title: 'Edit Anniversary',
-							content: 'You can only change this adventure\'s anniversary date once. Once changed, it cannot be undone.\n\nAre you sure you want to edit the annivesary date?'
-						})) {
-							return;
-						}
-
-						setEditingAnniversary(true);
-					}, []);
 
 					return (
 						<Form>
@@ -279,10 +281,6 @@ const Component = withErrorPage<ServerSideProps>(({
 														<DateField
 															name="anniversary"
 															required
-															disabled={
-																privateStory.anniversary.changed
-																|| !ownerPerms
-															}
 															max={Date.now()}
 														/>
 													) : (
@@ -290,11 +288,13 @@ const Component = withErrorPage<ServerSideProps>(({
 															<Timestamp className="spaced">
 																{values.anniversary}
 															</Timestamp>
-															<EditButton
-																className="spaced"
-																title="Edit Anniversary"
-																onClick={editAnniversary}
-															/>
+															{ownerPerms && !privateStory.anniversary.changed && (
+																<EditButton
+																	className="spaced"
+																	title="Edit Anniversary"
+																	onClick={editAnniversary}
+																/>
+															)}
 														</>
 													)}
 												</LabeledBoxRow>
