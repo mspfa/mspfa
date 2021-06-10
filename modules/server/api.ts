@@ -48,7 +48,12 @@ export type ErrorResponseBody = {
 	message: string
 };
 
-const ajv = new Ajv({ allErrors: true });
+const ajv = new Ajv({
+	// This is necessary to respond to invalid API requests with comprehensive information about the errors in the request.
+	allErrors: true,
+	// I don't know why this is necessary, but the console kept telling me `strict mode: use allowUnionTypes to allow union type keyword at "..." (strictTypes)`.
+	allowUnionTypes: true
+});
 
 export const createValidator = (methodSchema: Record<string, unknown>, schema: Record<string, unknown>) => {
 	const validateMethod = ajv.compile(methodSchema);
