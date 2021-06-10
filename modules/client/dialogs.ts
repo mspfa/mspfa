@@ -174,10 +174,7 @@ export class Dialog<Values extends Record<string, any>> extends Promise<DialogRe
 		}
 
 		// Remove any other dialog with the same `id`.
-		const duplicateDialog = dialogs.find(dialog => dialog.id === this.id);
-		if (duplicateDialog) {
-			duplicateDialog.resolve(undefined, false);
-		}
+		Dialog.getByID(this.id)?.resolve(undefined, false);
 
 		// Render the dialog's component.
 		if (index === -1) {
