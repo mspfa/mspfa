@@ -265,7 +265,7 @@ const Component = withErrorPage<ServerSideProps>(({
 															privateStory.anniversary.changed
 															|| !ownerPerms
 														}
-														max={privateStory.created}
+														max={Date.now()}
 													/>
 												</LabeledBoxRow>
 												<FieldBoxRow
