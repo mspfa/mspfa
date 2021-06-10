@@ -105,6 +105,13 @@ export default createValidator({
 						query: {
 							type: 'object',
 							properties: {
+								limit: {
+									type: [
+										'number',
+										'string'
+									],
+									description: 'How many results to respond with.'
+								},
 								search: {
 									type: 'string',
 									minLength: 1,

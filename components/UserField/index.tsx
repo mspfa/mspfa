@@ -86,6 +86,7 @@ const UserField = ({
 
 			const { data: newAutoCompleteUsers } = await (api as UsersAPI).get('/users', {
 				params: {
+					limit: 8,
 					search
 				},
 				cancelToken: autoComplete.cancelTokenSource.token

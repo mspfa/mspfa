@@ -24,6 +24,8 @@ const Handler: APIHandler<(
 	} | {
 		method: 'GET',
 		query: {
+			/** How many results to respond with. */
+			limit?: number | string,
 			/** A case-insensitive username search or exact user ID match. */
 			search: UserDocument['name']
 		}
@@ -131,9 +133,24 @@ const Handler: APIHandler<(
 		};
 	}
 
-	res.send((
+	let results = (
 		await users.find!(filterQuery).map(getPublicUser).toArray()
-	).sort((a, b) => a.name.indexOf(req.query.search) - b.name.indexOf(req.query.search)));
+	).sort((a, b) => (
+		// Sort by lowest search index first.
+		a.name.indexOf(req.query.search) - b.name.indexOf(req.query.search)
+		// If search indexes are equal, sort by last seen first.
+		|| b.lastSeen - a.lastSeen
+	));
+
+	if (req.query.limit !== undefined) {
+		const limit = +req.query.limit;
+
+		if (!Number.isNaN(limit)) {
+			results = results.slice(0, limit);
+		}
+	}
+
+	res.send(results);
 };
 
 export default Handler;
