@@ -34,6 +34,9 @@ import TagField from 'components/TagField';
 import type { APIClient } from 'modules/client/api';
 import api from 'modules/client/api';
 import DateField from 'components/DateField';
+import Timestamp from 'components/Timestamp';
+import EditButton from 'components/Button/EditButton';
+import { Dialog } from 'modules/client/dialogs';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 
@@ -131,6 +134,20 @@ const Component = withErrorPage<ServerSideProps>(({
 					useLeaveConfirmation(dirty);
 
 					const [ownerBeforeEdit, setOwnerBeforeEdit] = useState<string | undefined>(values.owner || privateStory.owner);
+
+					const [editingAnniversary, setEditingAnniversary] = useState(false);
+
+					const editAnniversary = useCallback(async () => {
+						if (!await Dialog.confirm({
+							id: 'edit-anniversary',
+							title: 'Edit Anniversary',
+							content: 'You can only change this adventure\'s anniversary date once. Once changed, it cannot be undone.\n\nAre you sure you want to edit the annivesary date?'
+						})) {
+							return;
+						}
+
+						setEditingAnniversary(true);
+					}, []);
 
 					return (
 						<Form>
@@ -258,15 +275,28 @@ const Component = withErrorPage<ServerSideProps>(({
 										{+values.privacy === StoryPrivacy.Public && (
 											<>
 												<LabeledBoxRow htmlFor="field-anniversary-day" label="Anniversary Date">
-													<DateField
-														name="anniversary"
-														required
-														disabled={
-															privateStory.anniversary.changed
-															|| !ownerPerms
-														}
-														max={Date.now()}
-													/>
+													{editingAnniversary ? (
+														<DateField
+															name="anniversary"
+															required
+															disabled={
+																privateStory.anniversary.changed
+																|| !ownerPerms
+															}
+															max={Date.now()}
+														/>
+													) : (
+														<>
+															<Timestamp className="spaced">
+																{values.anniversary}
+															</Timestamp>
+															<EditButton
+																className="spaced"
+																title="Edit Anniversary"
+																onClick={editAnniversary}
+															/>
+														</>
+													)}
 												</LabeledBoxRow>
 												<FieldBoxRow
 													type="url"
