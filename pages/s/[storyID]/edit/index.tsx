@@ -99,7 +99,7 @@ const Component = withErrorPage<ServerSideProps>(({
 		if (!await Dialog.confirm({
 			id: 'edit-anniversary',
 			title: 'Edit Anniversary',
-			content: 'You can only change this adventure\'s anniversary date once. Once changed, it cannot be undone.\n\nAre you sure you want to edit the anniversary date?'
+			content: 'You can only change this adventure\'s anniversary date once.\n\nOnce changed, it cannot be undone.\n\nAre you sure you want to edit the anniversary date?'
 		})) {
 			return;
 		}
