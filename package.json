@@ -17,6 +17,7 @@
 		"build-start": "npm run build && npm start",
 		"build": "next build",
 		"start": "next start",
+		"db": "mongod",
 		"setup": "ts-node scripts/setup"
 	},
 	"browserslist": [

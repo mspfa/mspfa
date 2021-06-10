@@ -1,13 +1,11 @@
-// To get tasks to work, if it doesn't work on its own, press ctrl+shift+P in VS Code, then select "Tasks: Manage Automatic Tasks in Folder", and then select "Allow Automatic Tasks in Folder". Then press ctrl+alt+R to refresh VS Code.
 // Documentation: https://go.microsoft.com/fwlink/?LinkId=733558
-
 {
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "MongoDB Server",
+			"label": "Database Server",
 			"type": "shell",
-			"command": "mongod",
+			"command": "npm run db",
 			"presentation": {
 				"reveal": "never",
 				"panel": "dedicated"
