@@ -34,8 +34,13 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 			const { parentNode } = dialogElement;
 			if (parentNode) {
 				// Replay the dialog pop animation.
+				const activeElement = document.activeElement as (
+					(Element & { focus?: HTMLInputElement['focus'] })
+					| null
+				);
 				parentNode.removeChild(dialogElement);
 				parentNode.appendChild(dialogElement);
+				activeElement?.focus?.();
 			}
 		};
 	}, [dialog]);
