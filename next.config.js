@@ -12,7 +12,7 @@ module.exports = {
 								&& entry.loader.includes(`${path.sep}css-loader${path.sep}`)
 							) {
 								// Let global styles be used in style modules.
-								entry.options.modules.mode = 'local';
+								entry.options.modules.mode = 'global';
 
 								// Undo the default hashing of style module class names.
 								entry.options.modules.getLocalIdent = (context, localIdentName, localName) => localName;
