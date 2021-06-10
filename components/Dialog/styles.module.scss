@@ -41,6 +41,16 @@
 	}
 }
 
+@keyframes dialog-pop {
+	from {
+		transform: translate(-2px, -2px);
+	}
+
+	to {
+		transform: none;
+	}
+}
+
 dialog {
 	pointer-events: auto;
 	display: flex;
@@ -53,12 +63,12 @@ dialog {
 	color: inherit;
 	background: none;
 	border: 1px solid;
-
 	@include theme(border-color, $back, meta.get-function('half-opacity'));
 
 	@function box-shadow($color) {
 		@return 16px 16px 0 0 half-opacity($color);
 	}
-
 	@include theme(box-shadow, $back, meta.get-function('box-shadow'));
+
+	animation: 0.05s step-end dialog-pop;
 }
