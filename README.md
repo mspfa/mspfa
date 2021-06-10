@@ -20,7 +20,9 @@ This is the official repository for [MS Paint Fan Adventures](https://mspfa.com/
 
 ## Development
 
-* Enter `npm run db` to run the database, which is necessary for the website to function. If you open this repo's directory as a project in VS Code, given you have automatic tasks enabled, this will run automatically for as long as VS Code is open, so you should not run it manually.
+* Enter `npm run db` to run the database, which is necessary for the website to function.
+
+	* If you open this repo's directory as a project in VS Code, given you have automatic tasks enabled, this will run automatically for as long as VS Code is open, so you should not run it manually.
 
 	* To get automatic tasks to work in VS Code, if it doesn't work on its own, press `ctrl`+`shift`+`P` in VS Code, then select "Tasks: Manage Automatic Tasks in Folder", and then "Allow Automatic Tasks in Folder". Then press `ctrl`+`alt`+`R` to refresh VS Code.
 
@@ -28,4 +30,4 @@ This is the official repository for [MS Paint Fan Adventures](https://mspfa.com/
 
 	* Alternatively, use `npm run build` to compile a production build, and then `npm run start` to run the compiled production web server. You can also use `npm run build-start` to both compile and run in one command.
 
-* If you ever edit an API's `APIHandler` types, you must run `npm run generate-validators` to automatically generate the API request validators.
+* If you ever edit an API's `APIHandler` types, you must run `npm run generate-validators` to automatically generate new API request validators.
