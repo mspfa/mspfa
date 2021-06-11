@@ -141,7 +141,7 @@ function permToGetUser(
 
 			if (res) {
 				res.status(403).send({
-					message: `Your permission level (${user.permLevel}) must be lower than the requested user's permission level (${requestedUser.permLevel}).`
+					message: `Your permission level (${user.permLevel}) must be lower than the specified user's permission level (${requestedUser.permLevel}).`
 				});
 			} else {
 				resolve({ statusCode: 403 });

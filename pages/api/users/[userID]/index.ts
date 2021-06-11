@@ -76,10 +76,11 @@ const Handler: APIHandler<{
 	const user = await permToGetUserInAPI(req, res, Perm.sudoDelete);
 
 	if (await stories.findOne({
-		editors: user._id
+		owner: user._id,
+		willDelete: { $exists: false }
 	})) {
 		res.status(422).send({
-			message: 'Users with adventures cannot be deleted.'
+			message: 'Users who own adventures cannot be deleted.'
 		});
 		return;
 	}

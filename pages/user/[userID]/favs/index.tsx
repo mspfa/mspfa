@@ -9,6 +9,7 @@ import Link from 'components/Link';
 import BoxRow from 'components/Box/BoxRow';
 import stories, { getPublicStory } from 'modules/server/stories';
 import type { PublicStory } from 'modules/client/stories';
+import { StoryPrivacy } from 'modules/client/stories';
 import List from 'components/List';
 import StoryListing from 'components/StoryListing';
 import { Perm } from 'modules/client/perms';
@@ -59,14 +60,14 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		return { props: { statusCode: 404 } };
 	}
 
-	if (!(
-		userFromParams.settings.favsPublic || (
-			req.user && (
-				req.user._id.equals(userFromParams._id)
-				|| req.user.perms & Perm.sudoRead
-			)
+	const readPerms = !!(
+		req.user && (
+			req.user._id.equals(userFromParams._id)
+			|| req.user.perms & Perm.sudoRead
 		)
-	)) {
+	);
+
+	if (!(userFromParams.settings.favsPublic || readPerms)) {
 		return { props: { statusCode: 403 } };
 	}
 
@@ -78,7 +79,15 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 				await stories.find!({
 					_id: {
 						$in: userFromParams.favs
-					}
+					},
+					privacy: (
+						readPerms
+							// A user should be able to see their own favorited unlisted adventures.
+							? { $in: [StoryPrivacy.Public, StoryPrivacy.Unlisted] }
+							// Other users should not.
+							: StoryPrivacy.Public
+					),
+					willDelete: { $exists: false }
 				}).map(getPublicStory).toArray()
 			)
 		}

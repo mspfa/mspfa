@@ -47,7 +47,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStories }) => (
 					{(privateStories.length
 						? (
 							<List listing={StoryListing}>
-								{privateStories}
+								{privateStories.sort((a, b) => b.updated - a.updated)}
 							</List>
 						)
 						: "You haven't started any adventures yet! Click the button below to begin."
@@ -118,7 +118,8 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 	return {
 		props: {
 			privateStories: await stories.find!({
-				editors: user!._id
+				editors: user!._id,
+				willDelete: { $exists: false }
 			}).map(getPrivateStory).toArray()
 		}
 	};

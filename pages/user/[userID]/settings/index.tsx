@@ -430,7 +430,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 														new Dialog({
 															id: 'delete-user',
 															title: 'Delete Account',
-															content: 'If you want to delete your account, first delete or transfer ownership of each of your adventures.'
+															content: 'If you want to delete your account, first delete or transfer ownership of each of the adventures you own.'
 														});
 
 														return;
@@ -447,15 +447,16 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 																<br />
 																If you do not sign into your account within 30 days, <span className="bolder red">the deletion will be irreversible.</span><br />
 																<br />
-																<Field
-																	type="checkbox"
-																	id="delete-user-confirm"
-																	className="spaced"
-																	name="confirm"
-																	required
-																/>
-																<label className="spaced bolder" htmlFor="delete-user-confirm">
-																	I am sure I want to delete my account: <i>{privateUser.name}</i>
+																<label>
+																	<Field
+																		type="checkbox"
+																		className="spaced"
+																		name="confirm"
+																		required
+																	/>
+																	<span className="spaced bolder">
+																		I am sure I want to delete my account: <i>{privateUser.name}</i>
+																	</span>
 																</label>
 															</>
 														),
@@ -475,7 +476,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 													});
 
 													if (getUser()!.id === privateUser.id) {
-														// We don't want it to reload when they sign out. We want it to go to the homepage.
+														// We don't want to reload when they sign out; we want to go to the homepage.
 														preventReloads();
 														setUser(undefined);
 													}

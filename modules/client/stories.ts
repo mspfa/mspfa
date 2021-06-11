@@ -34,6 +34,7 @@ export type PrivateStory = (
 	Pick<StoryDocument, PrivateStoryDocumentKey>
 	& {
 		id: StoryID,
+		willDelete?: number,
 		created: number,
 		updated: number,
 		owner: string,

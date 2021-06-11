@@ -17,7 +17,8 @@ const Handler: APIHandler<{
 
 	res.send(
 		!!await stories.findOne({
-			owner: user._id
+			owner: user._id,
+			willDelete: { $exists: false }
 		})
 	);
 };

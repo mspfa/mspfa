@@ -1,5 +1,6 @@
 import 'styles/global.scss';
 import 'modules/client/global'; // @client-only
+import 'modules/server/global'; // @server-only
 import App from 'next/app'; // @server-only
 import type { AppProps, AppContext } from 'next/app';
 import type { NextPageContext } from 'next';

@@ -53,6 +53,8 @@ export type StoryColor = {
 
 export type StoryDocument = {
 	_id: StoryID,
+	/** The date this story will be deleted from the database, or undefined if the story is not scheduled for deletion. */
+	willDelete?: Date,
 	created: Date,
 	// Anniversary dates are stored as an object of `number`s instead of as a `Date` so that they are more efficient to query.
 	anniversary: {
@@ -163,6 +165,9 @@ typeCheckedDefaultStory;
 /** Converts a `StoryDocument` to a `PrivateStory`. */
 export const getPrivateStory = (story: StoryDocument): PrivateStory => ({
 	id: story._id,
+	...story.willDelete !== undefined && {
+		willDelete: +story.willDelete
+	},
 	created: +story.created,
 	anniversary: story.anniversary,
 	updated: +story.updated,
@@ -230,9 +235,11 @@ export default stories;
  * If the `res` parameter is specified, failing to find a valid story will result in an error response, and this function will never resolve.
  */
 export const getStoryByUnsafeID = <Res extends APIResponse<any> | undefined>(
-	...[id, res]: [
+	...[id, res, allowDeleted]: [
 		id: string | number | undefined,
-		res: Res
+		res: Res,
+		/** Whether this function should be allowed to find deleted stories. */
+		allowDeleted?: boolean
 	] | [
 		id: string | number | undefined
 		// It is necessary to use tuple types instead of simply having `res` be an optional parameter, because otherwise `Res` will not always be inferred correctly.
@@ -244,7 +251,10 @@ export const getStoryByUnsafeID = <Res extends APIResponse<any> | undefined>(
 
 	if (!Number.isNaN(storyID)) {
 		story = await stories.findOne({
-			_id: storyID
+			_id: storyID,
+			...!allowDeleted && {
+				willDelete: { $exists: false }
+			}
 		});
 	}
 
@@ -265,7 +275,9 @@ export const getStoryByUnsafeID = <Res extends APIResponse<any> | undefined>(
 
 export const getPublicStoriesByEditor = async (editor: UserDocument) => (
 	stories.find!({
-		editors: editor._id
+		editors: editor._id,
+		privacy: StoryPrivacy.Public,
+		willDelete: { $exists: false }
 	}).map(getPublicStory).toArray()
 );
 
