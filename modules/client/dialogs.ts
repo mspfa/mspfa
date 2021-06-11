@@ -100,8 +100,6 @@ export class Dialog<Values extends Record<string, any>> extends Promise<DialogRe
 	open = false;
 	/** The action with `submit: true`. */
 	submitAction: DialogAction | undefined;
-	/** A function called when the dialog's component is mounted, called with an argument of the `Dialog` instance which was mounted. */
-	onMount?: (dialog: Dialog<Values>) => void;
 
 	#resolvePromise: typeof resolvePromise;
 

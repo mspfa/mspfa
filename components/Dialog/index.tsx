@@ -23,15 +23,12 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 	useIsomorphicLayoutEffect(() => {
 		dialog.open = true;
 
-		if (dialog.onMount) {
-			dialog.onMount(dialog);
-		}
-
 		const dialogElement = dialogRef.current;
 
 		return () => {
 			dialog.open = false;
 
+			// It is necessary to store `parentNode` in a variable so it does not become `null` after `removeChild` is called below.
 			const { parentNode } = dialogElement;
 			if (parentNode) {
 				// Replay the dialog pop animation.
