@@ -12,7 +12,8 @@
 			},
 			"runOptions": {
 				"runOn": "folderOpen"
-			}
+			},
+			"isBackground": true
 		}
 	]
 }
