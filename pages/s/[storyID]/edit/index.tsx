@@ -166,8 +166,10 @@ const Component = withErrorPage<ServerSideProps>(({
 				<>
 					<Box>
 						<BoxSection heading="Deleted Adventure">
-							<i>{privateStory.title}</i>
-							{` will be permanently deleted in ~${daysUntilDeletion} day${daysUntilDeletion === 1 ? 's' : ''}.`}
+							<BoxRow>
+								<i>{privateStory.title}</i>
+								{` will be permanently deleted in ~${daysUntilDeletion} day${daysUntilDeletion === 1 ? '' : 's'}.`}
+							</BoxRow>
 						</BoxSection>
 					</Box>
 					<BoxFooter>
