@@ -209,11 +209,11 @@ const Component = withErrorPage<ServerSideProps>(({
 											If you do not restore it within 30 days, <span className="bolder red">the deletion will be irreversible.</span><br />
 											<br />
 											<label>
-												<Field
+												<input
 													type="checkbox"
 													className="spaced"
-													name="confirm"
 													required
+													autoFocus
 												/>
 												<span className="spaced bolder">
 													I am sure I want to delete this adventure: <i>{privateStory.title}</i>
@@ -222,8 +222,8 @@ const Component = withErrorPage<ServerSideProps>(({
 										</>
 									),
 									actions: [
-										'Yes',
-										{ label: 'No', autoFocus: true }
+										{ label: 'Yes', autoFocus: false },
+										'No'
 									]
 								})
 							)) {

@@ -448,11 +448,11 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 																If you do not sign into your account within 30 days, <span className="bolder red">the deletion will be irreversible.</span><br />
 																<br />
 																<label>
-																	<Field
+																	<input
 																		type="checkbox"
 																		className="spaced"
-																		name="confirm"
 																		required
+																		autoFocus
 																	/>
 																	<span className="spaced bolder">
 																		I am sure I want to delete my account: <i>{privateUser.name}</i>
@@ -461,8 +461,8 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 															</>
 														),
 														actions: [
-															'Yes',
-															{ label: 'No', autoFocus: true }
+															{ label: 'Yes', autoFocus: false },
+															'No'
 														]
 													})) {
 														return;
