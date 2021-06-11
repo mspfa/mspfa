@@ -1,9 +1,10 @@
 import './styles.module.scss';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import type { Dialog as DialogClass } from 'modules/client/dialogs';
 import { Form, Formik } from 'formik';
 import Button from 'components/Button';
 import { toKebabCase } from 'modules/client/utilities';
+import { useIsomorphicLayoutEffect } from 'react-use';
 
 export type DialogProps = {
 	dialog: DialogClass<any>
@@ -19,7 +20,7 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 
 	const dialogRef = useRef<HTMLDialogElement>(null!);
 
-	useEffect(() => {
+	useIsomorphicLayoutEffect(() => {
 		dialog.open = true;
 
 		if (dialog.onMount) {
@@ -34,13 +35,8 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 			const { parentNode } = dialogElement;
 			if (parentNode) {
 				// Replay the dialog pop animation.
-				const activeElement = document.activeElement as (
-					(Element & { focus?: HTMLInputElement['focus'] })
-					| null
-				);
 				parentNode.removeChild(dialogElement);
 				parentNode.appendChild(dialogElement);
-				activeElement?.focus?.();
 			}
 		};
 	}, [dialog]);
