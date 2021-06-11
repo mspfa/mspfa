@@ -23,6 +23,7 @@ arbitraryInterval();
 
 // Don't run this interval on dev, because dev would run this interval many times and require a restart to stop any of them.
 if (process.env.NODE_ENV !== 'development') {
+	// Run the interval every 15 minutes.
 	setInterval(arbitraryInterval, 1000 * 60 * 15);
 }
 
