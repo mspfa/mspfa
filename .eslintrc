@@ -240,10 +240,7 @@
 		],
 		"quotes": [
 			"warn",
-			"single",
-			{
-				"avoidEscape": true
-			}
+			"single"
 		],
 		"semi": [
 			"warn",
@@ -611,10 +608,7 @@
 				"quotes": "off",
 				"@typescript-eslint/quotes": [
 					"warn",
-					"single",
-					{
-						"avoidEscape": true
-					}
+					"single"
 				],
 				"semi": "off",
 				"@typescript-eslint/semi": [

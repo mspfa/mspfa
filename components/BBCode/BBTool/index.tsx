@@ -486,7 +486,7 @@ const tagIndexes = Object.fromEntries(
 /** Escapes a user-inputted attribute value for use in BBCode. */
 const escapeAttribute = (value: string, handleEqualSigns?: boolean) => {
 	if (value.includes(']') || (handleEqualSigns && value.includes('='))) {
-		if (value.includes('"') && !value.includes("'")) {
+		if (value.includes('"') && !value.includes('\'')) {
 			return `'${value}'`;
 		}
 
@@ -494,14 +494,14 @@ const escapeAttribute = (value: string, handleEqualSigns?: boolean) => {
 	}
 
 	if (value[0] === '"') {
-		if (value.includes("'")) {
+		if (value.includes('\'')) {
 			return `&quot;${value.slice(1)}`;
 		}
 
 		return `'${value}'`;
 	}
 
-	if (value[0] === "'") {
+	if (value[0] === '\'') {
 		if (value.includes('"')) {
 			return `&apos;${value.slice(1)}`;
 		}

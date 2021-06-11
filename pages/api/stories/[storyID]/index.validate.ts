@@ -137,7 +137,7 @@ export default createValidator({
 				},
 				disableUserTheme: {
 					type: 'boolean',
-					description: "Whether the story should ignore the reader's theme setting."
+					description: 'Whether the story should ignore the reader\'s theme setting.'
 				},
 				tags: {
 					$ref: '#/definitions/RecursivePartial%3Cdef-alias--488-608--0-74451228754883%5B%5D2102017445%3E'
@@ -319,7 +319,7 @@ export default createValidator({
 				},
 				day: {
 					type: 'number',
-					description: "The anniversary's day of the month.",
+					description: 'The anniversary\'s day of the month.',
 					minimum: 1
 				}
 			},

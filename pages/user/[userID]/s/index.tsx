@@ -24,7 +24,7 @@ type StoriesAPI = APIClient<typeof import('pages/api/stories').default>;
 
 const getRandomStoryName = () => (
 	Math.random() < 1 / 1000
-		? "Help I'm trapped in an adventure creation screen"
+		? 'Help I\'m trapped in an adventure creation screen'
 		: (
 			randomStoryNames[Math.floor(Math.random() * randomStoryNames.length)].map(
 				possibilities => possibilities[Math.floor(Math.random() * possibilities.length)]
@@ -50,7 +50,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStories }) => (
 								{privateStories.sort((a, b) => b.updated - a.updated)}
 							</List>
 						)
-						: "You haven't started any adventures yet! Click the button below to begin."
+						: 'You haven\'t started any adventures yet! Click the button below to begin.'
 					)}
 				</BoxRow>
 			</BoxRowSection>

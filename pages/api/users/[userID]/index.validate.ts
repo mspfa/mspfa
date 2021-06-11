@@ -120,7 +120,7 @@ export default createValidator({
 				},
 				email: {
 					$ref: '#/definitions/EmailString',
-					description: "The user's verified email address."
+					description: 'The user\'s verified email address.'
 				},
 				description: {
 					type: 'string',
@@ -160,7 +160,7 @@ export default createValidator({
 		'EmailString': {
 			type: 'string',
 			description: 'The following regular expression is copied directly from https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.',
-			pattern: "^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
+			pattern: '^[a-zA-Z0-9.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$'
 		},
 		'URLString': {
 			type: 'string',

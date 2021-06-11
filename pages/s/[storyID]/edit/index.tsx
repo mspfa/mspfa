@@ -444,7 +444,7 @@ const Component = withErrorPage<ServerSideProps>(({
 														id="field-style"
 														name="style"
 														rows={8}
-														placeholder={"Paste SCSS here.\nIf you don't know what this is, don't worry about it."}
+														placeholder={'Paste SCSS here.\nIf you don\'t know what this is, don\'t worry about it.'}
 													/>
 												</Row>
 												<Row>
@@ -470,7 +470,7 @@ const Component = withErrorPage<ServerSideProps>(({
 													id="field-script"
 													name="script.unverified"
 													rows={8}
-													placeholder={"Paste JSX here.\nIf you don't know what this is, don't worry about it."}
+													placeholder={'Paste JSX here.\nIf you don\'t know what this is, don\'t worry about it.'}
 												/>
 											</div>
 										</Row>

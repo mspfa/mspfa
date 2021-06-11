@@ -224,7 +224,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 						if (await Dialog.confirm({
 							id: 'disable-ad',
 							title: 'Disable Ads',
-							content: "Ads are how we earn money, how we fund the website. By disabling this ad, a fraction of our funds are decreased.\n\nWe're okay with that if you don't think it's worth the unpleasant visual experience, but please first consider the effect of it.",
+							content: 'Ads are how we earn money, how we fund the website. By disabling this ad, a fraction of our funds are decreased.\n\nWe\'re okay with that if you don\'t think it\'s worth the unpleasant visual experience, but please first consider the effect of it.',
 							actions: [
 								'I understand the impact of my decision and wish to proceed.',
 								{ label: 'Cancel', autoFocus: true }
@@ -381,7 +381,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										id="field-style"
 										name="settings.style"
 										rows={5}
-										placeholder={"Paste SCSS here.\nIf you don't know what this is, don't worry about it."}
+										placeholder={'Paste SCSS here.\nIf you don\'t know what this is, don\'t worry about it.'}
 									/>
 								</BoxSection>
 								<BoxFooter>

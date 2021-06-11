@@ -83,7 +83,7 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 							if (await Dialog.confirm({
 								id: 'send-message',
 								title: 'Send Message',
-								content: "Sign in to send your message!\n\n(Don't worry, your message won't be lost if you don't leave the page.)",
+								content: 'Sign in to send your message!\n\n(Don\'t worry, your message won\'t be lost if you don\'t leave the page.)',
 								actions: ['Sign In', 'Cancel']
 							})) {
 								signIn();

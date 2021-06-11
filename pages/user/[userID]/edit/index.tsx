@@ -172,7 +172,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 										id="field-style"
 										name="profileStyle"
 										rows={5}
-										placeholder={"Paste SCSS here.\nIf you don't know what this is, don't worry about it."}
+										placeholder={'Paste SCSS here.\nIf you don\'t know what this is, don\'t worry about it.'}
 									/>
 								</BoxSection>
 								<BoxFooter>
