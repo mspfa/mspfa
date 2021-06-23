@@ -7,12 +7,14 @@ import Box from 'components/Box';
 import BoxSection from 'components/Box/BoxSection';
 import Link from 'components/Link';
 import BoxRow from 'components/Box/BoxRow';
+import type { StoryDocument } from 'modules/server/stories';
 import stories, { getPublicStory } from 'modules/server/stories';
 import type { PublicStory } from 'modules/client/stories';
 import { StoryPrivacy } from 'modules/client/stories';
 import List from 'components/List';
 import StoryListing from 'components/StoryListing';
 import { Perm } from 'modules/client/perms';
+import type { FilterQuery } from 'mongodb';
 
 type ServerSideProps = {
 	publicUser: PublicUser,
@@ -71,25 +73,53 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		return { props: { statusCode: 403 } };
 	}
 
+	/** Queries non-deleted favorites of the user from params. */
+	const favsFilterQuery: FilterQuery<StoryDocument> = {
+		_id: { $in: userFromParams.favs },
+		willDelete: { $exists: false }
+	};
+
+	/** Queries public adventures, or both public and unlisted adventures if the user is viewing their own favorites page. */
+	const privacyFilterQuery: FilterQuery<StoryDocument> = {
+		privacy: (
+			readPerms
+				// A user should be able to see unlisted adventures which they favorited.
+				? { $in: [StoryPrivacy.Public, StoryPrivacy.Unlisted] }
+				// Other users should not.
+				: StoryPrivacy.Public
+		)
+	};
+
 	return {
 		props: {
 			publicUser: getPublicUser(userFromParams),
 			favsPublic: userFromParams.settings.favsPublic,
-			publicStories: (
-				await stories.find!({
-					_id: {
-						$in: userFromParams.favs
-					},
-					privacy: (
-						readPerms
-							// A user should be able to see their own favorited unlisted adventures.
-							? { $in: [StoryPrivacy.Public, StoryPrivacy.Unlisted] }
-							// Other users should not.
-							: StoryPrivacy.Public
-					),
-					willDelete: { $exists: false }
-				}).map(getPublicStory).toArray()
-			)
+			publicStories: await stories.find!(
+				req.user
+					? req.user.perms & Perm.sudoRead
+						? favsFilterQuery
+						: {
+							$and: [favsFilterQuery, {
+								$or: [privacyFilterQuery, {
+									$and: [{
+										privacy: (
+											readPerms
+												// If the user is viewing their own favorites page, they can already see unlisted adventures via `privacyFilterQuery`.
+												? StoryPrivacy.Private
+												: { $in: [StoryPrivacy.Unlisted, StoryPrivacy.Private] }
+										)
+									}, {
+										// Only show unlisted/private adventures which the user owns or edits.
+										$or: [
+											{ owner: req.user._id },
+											{ editors: req.user._id }
+										]
+									}]
+								}]
+							}]
+						}
+					: Object.assign(favsFilterQuery, privacyFilterQuery)
+			).map(getPublicStory).toArray()
 		}
 	};
 });
