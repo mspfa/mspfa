@@ -121,7 +121,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 									</BoxRowSection>
 									<Box>
 										<BoxRowSection heading="Stats">
-											<LabeledBoxRow htmlFor="field-birthdate-day" label="Birthdate">
+											<LabeledBoxRow htmlFor="field-birthdate-year" label="Birthdate">
 												<BirthdateField required />
 											</LabeledBoxRow>
 											<FieldBoxRow

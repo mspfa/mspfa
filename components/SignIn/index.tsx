@@ -87,7 +87,7 @@ const SignIn = ({ page }: SignInProps) => {
 								onChange={onChange}
 							/>
 						</LabeledBoxRow>
-						<LabeledBoxRow htmlFor="sign-in-birthdate-day" label="Birthdate">
+						<LabeledBoxRow htmlFor="sign-in-birthdate-year" label="Birthdate">
 							<BirthdateField
 								id="sign-in-birthdate"
 								required

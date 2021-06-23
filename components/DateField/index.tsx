@@ -1,4 +1,3 @@
-import './styles.module.scss';
 import { useField } from 'formik';
 import { toKebabCase } from 'modules/client/utilities';
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
@@ -174,41 +173,9 @@ const DateField = ({
 
 	return (
 		<>
-			<input
-				type="number"
-				id={`${id}-day`}
-				className="date-field-day"
-				autoComplete={autoComplete ? `${autoComplete}-day` : undefined}
-				placeholder="DD"
-				min={minDay}
-				max={maxDay}
-				size={4}
-				value={Number.isNaN(day) ? '' : day}
-				onChange={onChange}
-				{...props}
-			/>
-			<select
-				id={`${id}-month`}
-				className="date-field-month"
-				autoComplete={autoComplete ? `${autoComplete}-month` : undefined}
-				value={Number.isNaN(month) ? '' : month}
-				onChange={onChange}
-				{...props}
-			>
-				<option value="" disabled hidden>Month</option>
-				{monthNames.map((monthName, i) => (
-					<option
-						key={i}
-						value={i}
-						disabled={i < minMonth || i > maxMonth}
-					>
-						{monthName}
-					</option>
-				))}
-			</select>
 			<select
 				id={`${id}-year`}
-				className="date-field-year"
+				className="date-field-year spaced"
 				autoComplete={autoComplete ? `${autoComplete}-year` : undefined}
 				value={!renderYearOptions || Number.isNaN(year) ? '' : year}
 				onChange={onChange}
@@ -228,6 +195,38 @@ const DateField = ({
 					})
 				)}
 			</select>
+			<select
+				id={`${id}-month`}
+				className="date-field-month spaced"
+				autoComplete={autoComplete ? `${autoComplete}-month` : undefined}
+				value={Number.isNaN(month) ? '' : month}
+				onChange={onChange}
+				{...props}
+			>
+				<option value="" disabled hidden>Month</option>
+				{monthNames.map((monthName, i) => (
+					<option
+						key={i}
+						value={i}
+						disabled={i < minMonth || i > maxMonth}
+					>
+						{monthName}
+					</option>
+				))}
+			</select>
+			<input
+				type="number"
+				id={`${id}-day`}
+				className="date-field-day spaced"
+				autoComplete={autoComplete ? `${autoComplete}-day` : undefined}
+				placeholder="DD"
+				min={minDay}
+				max={maxDay}
+				size={4}
+				value={Number.isNaN(day) ? '' : day}
+				onChange={onChange}
+				{...props}
+			/>
 		</>
 	);
 };

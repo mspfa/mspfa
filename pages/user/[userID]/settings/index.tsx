@@ -246,7 +246,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										required
 										maxLength={254}
 									/>
-									<LabeledBoxRow htmlFor="field-birthdate-day" label="Birthdate">
+									<LabeledBoxRow htmlFor="field-birthdate-year" label="Birthdate">
 										<BirthdateField required />
 									</LabeledBoxRow>
 									<BoxRow>
