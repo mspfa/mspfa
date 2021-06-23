@@ -19,6 +19,7 @@ import type { PrivateStory } from 'modules/client/stories';
 import stories, { getPrivateStory } from 'modules/server/stories';
 import List from 'components/List';
 import StoryListing from 'components/StoryListing';
+import Router from 'next/router';
 
 type StoriesAPI = APIClient<typeof import('pages/api/stories').default>;
 
@@ -95,7 +96,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStories }) => (
 								title: dialog.form!.values.title
 							});
 
-							console.log(privateStory);
+							Router.push(`/s/${privateStory.id}/edit`);
 						}, [])
 					}
 				>
