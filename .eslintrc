@@ -403,7 +403,7 @@
 		"react-hooks/exhaustive-deps": [
 			"warn",
 			{
-				"additionalHooks": "useIsomorphicLayoutEffect|useDeepCompareEffect"
+				"additionalHooks": "useIsomorphicLayoutEffect|useDeepCompareEffect|useThrottled"
 			}
 		]
 	},

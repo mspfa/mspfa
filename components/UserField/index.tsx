@@ -13,8 +13,9 @@ import EditButton from 'components/Button/EditButton';
 import axios from 'axios';
 import { useUserCache } from 'modules/client/UserCache';
 import RemoveButton from 'components/Button/RemoveButton';
-import { useIsomorphicLayoutEffect } from 'react-use';
+import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 import { Dialog } from 'modules/client/dialogs';
+import useThrottledCallback from 'modules/client/useThrottledCallback';
 
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
 
@@ -76,67 +77,53 @@ const UserField = ({
 	const userFieldRef = useRef<HTMLDivElement>(null);
 	const [autoCompleteUsers, setAutoCompleteUsers] = useState<PublicUser[]>([]);
 
-	/** ⚠️ Do not call `updateAutoComplete` directly. Call `autoComplete.update` instead, as it is always kept updated with the value from the latest render. */
-	const updateAutoComplete = async (search: string = inputValue) => {
+	const mountedRef = useRef(false);
+
+	useEffect(() => {
+		mountedRef.current = true;
+
+		return () => {
+			mountedRef.current = false;
+		};
+	}, []);
+
+	const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source> | undefined>();
+
+	const [updateAutoComplete, updateAutoCompleteTimeoutRef] = useThrottledCallback(async (search: string) => {
 		if (search) {
 			// Cancel any previous request.
-			autoComplete.cancelTokenSource?.cancel();
+			cancelTokenSourceRef.current?.cancel();
 			// Allow the next request to be cancelled.
-			autoComplete.cancelTokenSource = axios.CancelToken.source();
+			cancelTokenSourceRef.current = axios.CancelToken.source();
 
 			const { data: newAutoCompleteUsers } = await (api as UsersAPI).get('/users', {
 				params: {
 					limit: 8,
 					search
 				},
-				cancelToken: autoComplete.cancelTokenSource.token
+				cancelToken: cancelTokenSourceRef.current.token
 			});
 
 			// Now that the request is complete, do not allow it to be cancelled.
-			autoComplete.cancelTokenSource = undefined;
+			cancelTokenSourceRef.current = undefined;
 
 			newAutoCompleteUsers.forEach(cacheUser);
 
-			if (autoComplete.mounted) {
+			if (mountedRef.current) {
 				setAutoCompleteUsers(newAutoCompleteUsers);
 			}
 		} else {
 			setAutoCompleteUsers([]);
 		}
-	};
+	}, [cacheUser]);
 
-	const { current: autoComplete } = useRef({
-		timeout: undefined as NodeJS.Timeout | undefined,
-		update: updateAutoComplete,
-		mounted: false,
-		cancelTokenSource: undefined as ReturnType<typeof axios.CancelToken.source> | undefined
-	});
-
-	autoComplete.update = updateAutoComplete;
-
-	useEffect(() => {
-		autoComplete.mounted = true;
-
-		return () => {
-			autoComplete.mounted = false;
-		};
-	}, [autoComplete]);
+	const updateAutoCompleteRef = useLatest(updateAutoComplete);
 
 	const onChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
 		setInputValue(event.target.value);
 
-		// Only update the auto-complete at most once per 500 ms.
-
-		if (autoComplete.timeout) {
-			clearTimeout(autoComplete.timeout);
-		}
-
-		autoComplete.timeout = setTimeout(() => {
-			autoComplete.timeout = undefined;
-
-			autoComplete.update();
-		}, 500);
-	}, [autoComplete]);
+		updateAutoCompleteRef.current(event.target.value);
+	}, [updateAutoCompleteRef]);
 
 	const changeValue = useCallback(async (newValue: string | undefined) => {
 		setValueState(newValue);
@@ -166,10 +153,10 @@ const UserField = ({
 			setInputValue(newInputValue);
 		}
 
-		autoComplete.update(newInputValue);
+		updateAutoCompleteRef.current(newInputValue);
 
 		changeValue(undefined);
-	}, [value, changeValue, getCachedUser, inputValue, autoComplete, editTitle, confirmEdit]);
+	}, [value, changeValue, getCachedUser, inputValue, updateAutoCompleteRef, editTitle, confirmEdit]);
 
 	const isEditing = !value;
 	const [wasEditing, setWasEditing] = useState(isEditing);
@@ -222,14 +209,14 @@ const UserField = ({
 		} else {
 			// The user stopped editing.
 
-			if (autoComplete.timeout) {
-				clearTimeout(autoComplete.timeout);
-				autoComplete.timeout = undefined;
+			if (updateAutoCompleteTimeoutRef.current) {
+				clearTimeout(updateAutoCompleteTimeoutRef.current);
+				updateAutoCompleteTimeoutRef.current = undefined;
 			}
 
-			if (autoComplete.cancelTokenSource) {
-				autoComplete.cancelTokenSource.cancel();
-				autoComplete.cancelTokenSource = undefined;
+			if (cancelTokenSourceRef.current) {
+				cancelTokenSourceRef.current.cancel();
+				cancelTokenSourceRef.current = undefined;
 			}
 
 			// Reset the auto-complete users so starting editing does not display an outdated auto-complete list for an instant.
@@ -237,7 +224,7 @@ const UserField = ({
 		}
 
 		setWasEditing(isEditing);
-	}, [isEditing, wasEditing, inputValue, autoFocus, autoComplete]);
+	}, [isEditing, wasEditing, inputValue, autoFocus, updateAutoCompleteTimeoutRef]);
 
 	useIsomorphicLayoutEffect(() => {
 		if (isEditing) {
