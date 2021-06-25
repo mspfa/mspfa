@@ -110,13 +110,15 @@ const SignIn = ({ page }: SignInProps) => {
 
 	useIsomorphicLayoutEffect(() => {
 		emailInputRef.current?.setCustomValidity(
-			emailTaken
-				? 'This email is taken.'
-				: emailTaken === undefined && emailTest.test(emailInputRef.current.value)
-					? 'Loading...'
-					: ''
+			page === 1
+				? emailTaken
+					? 'This email is taken.'
+					: emailTaken === undefined && emailTest.test(emailInputRef.current.value)
+						? 'Loading...'
+						: ''
+				: ''
 		);
-	}, [emailTaken]);
+	}, [emailTaken, page]);
 
 	return (
 		<div id="sign-in-content">
