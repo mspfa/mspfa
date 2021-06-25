@@ -48,7 +48,7 @@ const Component = withErrorPage<ServerSideProps>(({
 	const user = useUser()!;
 	const [editing, setEditing] = useState(false);
 
-	const [previousMessage, setPreviousMessage] = useState<ClientMessage | undefined>(undefined);
+	const [previousMessage, setPreviousMessage] = useState<ClientMessage | undefined>();
 	// The above state must be initialized to `undefined` so the below `if` statement succeeds on the initial render.
 
 	if (message !== previousMessage) {
