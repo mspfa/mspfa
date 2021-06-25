@@ -39,30 +39,32 @@ type AuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMeth
 type PasswordAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods/password').default>;
 type DoesOwnStoriesAPI = APIClient<typeof import('pages/api/users/[userID]/doesOwnStories').default>;
 
-const getValuesFromUser = (privateUser: Pick<PrivateUser, 'settings'> & Partial<Omit<PrivateUser, 'settings'>>) => ({
+const getSettingsValues = (settings: PrivateUser['settings']) => ({
+	ads: settings.ads,
+	autoOpenSpoilers: settings.autoOpenSpoilers,
+	preloadImages: settings.preloadImages,
+	stickyNav: settings.stickyNav,
+	imageAliasing: settings.imageAliasing,
+	theme: settings.theme,
+	style: settings.style,
+	controls: settings.controls,
+	notifications: {
+		messages: settings.notifications.messages,
+		userTags: settings.notifications.userTags,
+		commentReplies: settings.notifications.commentReplies,
+		storyDefaults: settings.notifications.storyDefaults
+	}
+});
+
+const getValuesFromUser = (privateUser: PrivateUser) => ({
 	email: privateUser.email,
 	birthdate: privateUser.birthdate,
-	settings: {
-		ads: privateUser.settings.ads,
-		autoOpenSpoilers: privateUser.settings.autoOpenSpoilers,
-		preloadImages: privateUser.settings.preloadImages,
-		stickyNav: privateUser.settings.stickyNav,
-		imageAliasing: privateUser.settings.imageAliasing,
-		theme: privateUser.settings.theme,
-		style: privateUser.settings.style,
-		controls: privateUser.settings.controls,
-		notifications: {
-			messages: privateUser.settings.notifications.messages,
-			userTags: privateUser.settings.notifications.userTags,
-			commentReplies: privateUser.settings.notifications.commentReplies,
-			storyDefaults: privateUser.settings.notifications.storyDefaults
-		}
-	}
+	settings: getSettingsValues(privateUser.settings)
 });
 
 type Values = ReturnType<typeof getValuesFromUser>;
 
-let defaultValues: Values | undefined;
+let defaultSettingsValues: ReturnType<typeof getSettingsValues> | undefined;
 
 let formChanged = false;
 
@@ -71,17 +73,16 @@ const onFormChange = () => {
 };
 
 type ServerSideProps = {
-	initialPrivateUser: PrivateUser,
-	defaultSettings: PrivateUser['settings']
+	initialPrivateUser: PrivateUser
 } | {
 	statusCode: number
 };
 
-const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultSettings }) => {
+const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 	const [privateUser, setPrivateUser] = useState(initialPrivateUser);
 
-	if (!defaultValues) {
-		defaultValues = getValuesFromUser({ settings: defaultSettings });
+	if (!defaultSettingsValues) {
+		defaultSettingsValues = getSettingsValues(defaultSettings);
 	}
 
 	const initialValues = getValuesFromUser(privateUser);
@@ -395,7 +396,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 										</Button>
 										<Button
 											title="Reset settings to default"
-											disabled={isEqual(values.settings, defaultValues!.settings)}
+											disabled={isEqual(values.settings, defaultSettingsValues)}
 											onClick={
 												useCallback(async () => {
 													if (await Dialog.confirm({
@@ -403,7 +404,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser, defaultS
 														title: 'Reset Settings',
 														content: 'Are you sure you want to reset your settings to default?\n\nAll changes will be lost.'
 													})) {
-														setFieldValue('settings', defaultValues!.settings);
+														setFieldValue('settings', defaultSettingsValues);
 														onFormChange();
 													}
 												}, [setFieldValue])
@@ -510,8 +511,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 
 	return {
 		props: {
-			initialPrivateUser: getPrivateUser(user!),
-			defaultSettings
+			initialPrivateUser: getPrivateUser(user!)
 		}
 	};
 });
