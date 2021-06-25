@@ -85,7 +85,7 @@ const generateValidator = async (
 ) => {
 	const { sourcePathModule, outputPath } = getMetadata(sourcePath);
 
-	console.info(`${c.gray(sourcePathModule)} ${c.blue('Generating...')} ${c.gray(`(${index}/${sourcePaths.length})`)}`);
+	console.info(`${c.gray(sourcePathModule)} ${c.blue('Generating...')} ${c.gray(`(${index + 1}/${sourcePaths.length})`)}`);
 
 	const methodSchemaString = JSON.stringify(
 		generator.createSchema(`RequestMethod${index}`),
