@@ -16,6 +16,7 @@ import RemoveButton from 'components/Button/RemoveButton';
 import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 import { Dialog } from 'modules/client/dialogs';
 import useThrottledCallback from 'modules/client/useThrottledCallback';
+import useMountedRef from 'modules/client/useMountedRef';
 
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
 
@@ -77,23 +78,13 @@ const UserField = ({
 	const userFieldRef = useRef<HTMLDivElement>(null);
 	const [autoCompleteUsers, setAutoCompleteUsers] = useState<PublicUser[]>([]);
 
-	const mountedRef = useRef(false);
-
-	useEffect(() => {
-		mountedRef.current = true;
-
-		return () => {
-			mountedRef.current = false;
-		};
-	}, []);
+	const mountedRef = useMountedRef();
 
 	const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source> | undefined>();
 
 	const [updateAutoComplete, updateAutoCompleteTimeoutRef] = useThrottledCallback(async (search: string) => {
 		if (search) {
-			// Cancel any previous request.
 			cancelTokenSourceRef.current?.cancel();
-			// Allow the next request to be cancelled.
 			cancelTokenSourceRef.current = axios.CancelToken.source();
 
 			const { data: newAutoCompleteUsers } = await (api as UsersAPI).get('/users', {
@@ -104,7 +95,6 @@ const UserField = ({
 				cancelToken: cancelTokenSourceRef.current.token
 			});
 
-			// Now that the request is complete, do not allow it to be cancelled.
 			cancelTokenSourceRef.current = undefined;
 
 			newAutoCompleteUsers.forEach(cacheUser);
@@ -115,7 +105,7 @@ const UserField = ({
 		} else {
 			setAutoCompleteUsers([]);
 		}
-	}, [cacheUser]);
+	}, [cacheUser, mountedRef]);
 
 	const updateAutoCompleteRef = useLatest(updateAutoComplete);
 
