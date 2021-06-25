@@ -33,6 +33,8 @@ import AuthMethods from 'components/AuthMethod/AuthMethods';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import BirthdateField from 'components/DateField/BirthdateField';
 import { useDeepCompareEffect } from 'react-use';
+import Timestamp from 'components/Timestamp';
+import EditButton from 'components/Button/EditButton';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 type AuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;
@@ -181,6 +183,20 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 		});
 	}, [privateUser.id]);
 
+	const [editingBirthdate, setEditingBirthdate] = useState(false);
+
+	const editBirthdate = useCallback(async () => {
+		if (!await Dialog.confirm({
+			id: 'edit-birthdate',
+			title: 'Edit Birthdate',
+			content: 'You can only change your birthdate once.\n\nOnce changed, it cannot be undone.\n\nAre you sure you want to edit your birthdate?'
+		})) {
+			return;
+		}
+
+		setEditingBirthdate(true);
+	}, []);
+
 	return (
 		<Page flashyTitle heading="Settings">
 			<Formik
@@ -199,6 +215,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 						);
 
 						setPrivateUser(data);
+
+						setEditingBirthdate(false);
+
 						if (getUser()!.id === privateUser.id) {
 							setUser(data);
 						}
@@ -248,7 +267,22 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										maxLength={254}
 									/>
 									<LabeledBoxRow htmlFor="field-birthdate-year" label="Birthdate">
-										<BirthdateField required />
+										{editingBirthdate ? (
+											<BirthdateField required />
+										) : (
+											<>
+												<Timestamp className="spaced">
+													{values.birthdate}
+												</Timestamp>
+												{!privateUser.birthdateChanged && (
+													<EditButton
+														className="spaced"
+														title="Edit Birthdate"
+														onClick={editBirthdate}
+													/>
+												)}
+											</>
+										)}
 									</LabeledBoxRow>
 									<BoxRow>
 										{/* This button should remain visible even for those who do not have a password sign-in method, because those users may think they do regardless, and they should be informed that they don't upon clicking this button, to minimize confusion to those users. */}

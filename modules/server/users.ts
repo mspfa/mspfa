@@ -83,6 +83,8 @@ export type UserDocument = {
 	/** The date of the last authenticated request the user sent to the site. */
 	lastSeen: Date,
 	birthdate: Date,
+	/** Whether the user has ever changed their birthdate after creating their account. */
+	birthdateChanged: boolean,
 	authMethods: AuthMethod[],
 	sessions: UserSession[],
 	/** @maxLength 2000 */
@@ -145,6 +147,7 @@ export type UserDocument = {
 /** A `Partial<UserDocument>` used to spread some general properties on newly inserted `UserDocument`s. */
 export const defaultUser = {
 	sessions: [] as never[],
+	birthdateChanged: false,
 	description: '',
 	icon: '',
 	site: '',
@@ -174,6 +177,7 @@ export const getPrivateUser = (user: UserDocument): PrivateUser => ({
 	created: +user.created,
 	lastSeen: +user.lastSeen,
 	birthdate: +user.birthdate,
+	birthdateChanged: user.birthdateChanged,
 	description: user.description,
 	icon: user.icon,
 	site: user.site,

@@ -53,9 +53,17 @@ const Handler: APIHandler<{
 			const userChanges: RecursivePartial<UserDocument> = req.body as Omit<typeof req.body, 'birthdate'>;
 
 			if (req.body.birthdate !== undefined) {
+				if (user.birthdateChanged) {
+					res.status(422).send({
+						message: 'A user\'s birthdate can only be changed once.'
+					});
+					return;
+				}
+
 				await validateBirthdate(res, req.body.birthdate);
 
 				userChanges.birthdate = new Date(req.body.birthdate);
+				userChanges.birthdateChanged = true;
 			}
 
 			if (req.body.email !== undefined) {
