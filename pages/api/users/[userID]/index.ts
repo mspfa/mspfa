@@ -58,6 +58,22 @@ const Handler: APIHandler<{
 				userChanges.birthdate = new Date(req.body.birthdate);
 			}
 
+			if (req.body.email !== undefined) {
+				if (await users.findOne({
+					$or: [
+						{ email: req.body.email },
+						{ unverifiedEmail: req.body.email }
+					]
+				})) {
+					res.status(422).send({
+						message: 'The specified email is taken.'
+					});
+					return;
+				}
+
+				// TODO: Handle email changing.
+			}
+
 			await users.updateOne({
 				_id: user._id
 			}, {
