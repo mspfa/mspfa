@@ -3,6 +3,7 @@ import { setSignInPage, resolveExternalSignIn } from 'modules/client/signIn';
 import Link from 'components/Link';
 import createUpdater from 'react-component-updater';
 import type { ChangeEvent } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import Captcha from 'components/SignIn/Captcha';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import LabeledDialogBox from 'components/Box/LabeledDialogBox';
@@ -10,6 +11,14 @@ import ForgotPassword from 'components/ForgotPassword';
 import AuthButton from 'components/Button/AuthButton';
 import BirthdateField from 'components/DateField/BirthdateField';
 import { escapeRegExp } from 'lodash';
+import axios from 'axios';
+import useMountedRef from 'modules/client/useMountedRef';
+import useThrottledCallback from 'modules/client/useThrottledCallback';
+import api from 'modules/client/api';
+import type { APIClient } from 'modules/client/api';
+import { useIsomorphicLayoutEffect } from 'react-use';
+
+type EmailTakenAPI = APIClient<typeof import('pages/api/emailTaken').default>;
 
 const startSigningUp = () => {
 	setSignInPage(1);
@@ -50,6 +59,9 @@ const onChange = (
 	updateSignInValues();
 };
 
+// The following regular expression is copied directly from https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
+const emailTest = /^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
 export type SignInProps = {
 	/** 0 if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
 	page: number
@@ -57,6 +69,54 @@ export type SignInProps = {
 
 const SignIn = ({ page }: SignInProps) => {
 	useSignInValuesUpdater();
+
+	const mountedRef = useMountedRef();
+
+	const [emailTaken, setEmailTaken] = useState<boolean | undefined>();
+	const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source> | undefined>();
+
+	const [checkEmail] = useThrottledCallback(async (email: string) => {
+		cancelTokenSourceRef.current = axios.CancelToken.source();
+
+		const { data: { taken } } = await (api as EmailTakenAPI).get('/emailTaken', {
+			params: { email },
+			cancelToken: cancelTokenSourceRef.current.token
+		});
+
+		cancelTokenSourceRef.current = undefined;
+
+		if (mountedRef.current) {
+			setEmailTaken(taken);
+		}
+	}, [mountedRef]);
+
+	const onChangeEmail = useCallback((
+		event: ChangeEvent<HTMLInputElement & HTMLSelectElement & { name: 'email' }>
+	) => {
+		if (page === 1) {
+			cancelTokenSourceRef.current?.cancel();
+
+			setEmailTaken(undefined);
+
+			if (emailTest.test(event.target.value)) {
+				checkEmail(event.target.value);
+			}
+		}
+
+		onChange(event);
+	}, [page, checkEmail]);
+
+	const emailInputRef = useRef<HTMLInputElement>(null);
+
+	useIsomorphicLayoutEffect(() => {
+		emailInputRef.current?.setCustomValidity(
+			emailTaken
+				? 'This email is taken.'
+				: emailTaken === undefined && emailTest.test(emailInputRef.current.value)
+					? 'Loading...'
+					: ''
+		);
+	}, [emailTaken]);
 
 	return (
 		<div id="sign-in-content">
@@ -109,9 +169,15 @@ const SignIn = ({ page }: SignInProps) => {
 								maxLength={254}
 								autoFocus={!signInValues.email}
 								value={signInValues.email}
-								onChange={onChange}
+								onChange={onChangeEmail}
+								ref={emailInputRef}
 							/>
 						</LabeledBoxRow>
+						{page === 1 && emailTaken && (
+							<div id="sign-up-email-taken" className="red">
+								This email is taken.
+							</div>
+						)}
 						<LabeledBoxRow htmlFor="sign-in-password" label="Password">
 							<input
 								type="password"
