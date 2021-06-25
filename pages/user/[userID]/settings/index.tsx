@@ -266,7 +266,10 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										required
 										maxLength={254}
 									/>
-									<LabeledBoxRow htmlFor="field-birthdate-year" label="Birthdate">
+									<LabeledBoxRow
+										htmlFor={editingBirthdate ? 'field-birthdate-year' : ''}
+										label="Birthdate"
+									>
 										{editingBirthdate ? (
 											<BirthdateField required />
 										) : (
