@@ -222,10 +222,7 @@ const UserField = ({
 
 			const userFieldInput = userFieldRef.current!.getElementsByClassName('user-field-input')[0] as HTMLInputElement;
 
-			// This type assertion is necessary because the `setCustomValidity` method may not exist on all browsers.
-			(userFieldInput.setCustomValidity as typeof userFieldInput.setCustomValidity | undefined)?.(
-				required ? 'Please enter a username or ID and select a user.' : ''
-			);
+			userFieldInput.setCustomValidity(required ? 'Please enter a username or ID and select a user.' : '');
 		}
 	}, [isEditing, required]);
 
@@ -282,8 +279,6 @@ const UserField = ({
 						maxLength={32}
 						size={20}
 						required={required}
-						// If `required === true`, the below `pattern` will never allow the input to be valid due to the above `required` prop, invalidating the form for browsers that don't support `setCustomValidity`.
-						pattern={required ? '^$' : undefined}
 						readOnly={readOnly}
 						autoFocus={autoFocus}
 						value={inputValue}
