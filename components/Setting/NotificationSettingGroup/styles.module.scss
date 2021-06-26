@@ -2,18 +2,14 @@
 
 .notification-setting {
 	&-group {
-		@include desktop {
-			width: 50%;
-		}
-
 		& > .box-content {
 			grid-template-columns: auto 0fr 0fr;
 			justify-content: center;
 			align-items: center;
+		}
 
-			.box-row-content {
-				justify-content: center;
-			}
+		.box-row-content {
+			justify-content: center;
 		}
 	}
 

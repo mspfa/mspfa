@@ -7,8 +7,11 @@
 		flex-direction: column;
 	}
 
-	& > * {
-		flex-grow: 1;
+	@include desktop {
+		& > * {
+			flex-grow: 1;
+			width: 50%;
+		}
 	}
 
 	& > :not(:first-child) {

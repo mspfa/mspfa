@@ -1,11 +1,5 @@
 @import 'styles/general';
 
-@include desktop {
-	.box-columns > * {
-		width: 50%;
-	}
-}
-
 #story {
 	&-icon {
 		width: 150px;
@@ -28,12 +22,20 @@
 #code-fields {
 	display: flex;
 
-	& > * {
-		width: 50%;
+	@include desktop {
+		& > * {
+			width: 50%;
+		}
 	}
 
 	& > :not(:first-child) {
-		margin-left: 24px;
+		@include desktop {
+			margin-left: 24px;
+		}
+
+		@include mobile {
+			margin-top: 1em;
+		}
 	}
 }
 
