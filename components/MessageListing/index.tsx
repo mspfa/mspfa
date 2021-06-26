@@ -48,9 +48,11 @@ const MessageListing = ({
 	const user = useUser();
 	const userRef = useLatest(user);
 
-	/** Whether the user is a recipient of this message. */
-	const userIsRecipient = user && message.to.includes(user.id);
-	const userIsRecipientRef = useLatest(userIsRecipient);
+	/** A ref to whether the user is a sender or recipient of this message. */
+	const userIsParticipantRef = useLatest(!!user && (
+		message.from === user.id
+		|| message.to.includes(user.id)
+	));
 
 	const { userCache } = useUserCache();
 	const fromUser = userCache[message.from]!;
@@ -132,7 +134,7 @@ const MessageListing = ({
 
 	const { markRead } = message.ref.current = {
 		markRead: useCallback(async read => {
-			if (loading || !userIsRecipient || message.read === read) {
+			if (loading || !userIsParticipantRef.current || message.read === read) {
 				return;
 			}
 
@@ -186,15 +188,15 @@ const MessageListing = ({
 				read
 			});
 
-			if (userIsRecipientRef.current) {
+			if (userIsParticipantRef.current as boolean) {
 				setUser({
 					...userRef.current!,
 					unreadMessageCount
 				});
 			}
-		}, [message, loading, userIsRecipient, setMessageRef, user, userIsRecipientRef, userRef]),
+		}, [message, loading, setMessageRef, user, userIsParticipantRef, userRef]),
 		deleteMessage: useCallback(async () => {
-			if (loading || !userIsRecipient) {
+			if (loading || !userIsParticipantRef.current) {
 				return;
 			}
 
@@ -218,7 +220,7 @@ const MessageListing = ({
 				}
 			});
 
-			if (userIsRecipientRef.current && !message.read) {
+			if (userIsParticipantRef.current as boolean && !message.read) {
 				setUser({
 					...userRef.current!,
 					unreadMessageCount: userRef.current!.unreadMessageCount - 1
@@ -226,7 +228,7 @@ const MessageListing = ({
 			}
 
 			removeListingRef.current(message);
-		}, [loading, message, user, userRef, userIsRecipientRef, userIsRecipient, removeListingRef])
+		}, [loading, message, user, userRef, userIsParticipantRef, removeListingRef])
 	};
 
 	const toggleRead = useCallback(() => {
@@ -244,7 +246,7 @@ const MessageListing = ({
 
 	const confirmDeleteMessage = useCallback(async () => {
 		if (loading || !(
-			userIsRecipient
+			userIsParticipantRef.current
 			&& await Dialog.confirm({
 				id: 'delete-message',
 				title: 'Delete Message',
@@ -263,7 +265,7 @@ const MessageListing = ({
 		}
 
 		message.ref!.current.deleteMessage();
-	}, [loading, message.subject, userIsRecipient, message.ref]);
+	}, [loading, message.subject, userIsParticipantRef, message.ref]);
 
 	return (
 		<div
@@ -335,7 +337,7 @@ const MessageListing = ({
 					</div>
 				)}
 			</div>
-			{userIsRecipient && (
+			{userIsParticipantRef.current && (
 				<div className="listing-actions">
 					<ReplyButton
 						href={`/message/new?replyTo=${message.id}`}
