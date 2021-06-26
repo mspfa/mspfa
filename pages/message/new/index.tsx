@@ -152,8 +152,11 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 										</>
 									) : (
 										<div className="field-container">
-											<Label>Reply To</Label>
-											<Link href={`/message/${replyTo!.id}`}>
+											<Label className="spaced">Reply To</Label>
+											<Link
+												className="spaced"
+												href={`/message/${replyTo!.id}`}
+											>
 												{replyTo!.subject}
 											</Link>
 										</div>
