@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import Page from 'components/Page';
 import { withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
