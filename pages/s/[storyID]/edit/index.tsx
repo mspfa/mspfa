@@ -366,41 +366,37 @@ const Component = withErrorPage<ServerSideProps>(({
 												name="commentsEnabled"
 												label="Allow Comments"
 											/>
-											{+values.privacy === StoryPrivacy.Public && (
-												<>
-													<LabeledBoxRow
-														htmlFor={editingAnniversary ? 'field-anniversary-year' : ''}
-														label="Anniversary Date"
-													>
-														{editingAnniversary ? (
-															<DateField
-																name="anniversary"
-																required
-																max={Date.now()}
-															/>
-														) : (
-															<>
-																<Timestamp className="spaced">
-																	{values.anniversary}
-																</Timestamp>
-																{ownerPerms && !privateStory.anniversary.changed && (
-																	<EditButton
-																		className="spaced"
-																		title="Edit Anniversary"
-																		onClick={editAnniversary}
-																	/>
-																)}
-															</>
-														)}
-													</LabeledBoxRow>
-													<FieldBoxRow
-														type="url"
-														name="banner"
-														label="Banner URL"
-														help={'A direct URL to an image of your adventure\'s anniversary banner. The recommended image size is 940x90.\n\nIf your adventure is ongoing or complete and has at least 200 favorites, this image will be displayed on the homepage for one week starting on the adventure\'s anniversary date.'}
+											<LabeledBoxRow
+												htmlFor={editingAnniversary ? 'field-anniversary-year' : ''}
+												label="Anniversary Date"
+											>
+												{editingAnniversary ? (
+													<DateField
+														name="anniversary"
+														required
+														max={Date.now()}
 													/>
-												</>
-											)}
+												) : (
+													<>
+														<Timestamp className="spaced">
+															{values.anniversary}
+														</Timestamp>
+														{ownerPerms && !privateStory.anniversary.changed && (
+															<EditButton
+																className="spaced"
+																title="Edit Anniversary"
+																onClick={editAnniversary}
+															/>
+														)}
+													</>
+												)}
+											</LabeledBoxRow>
+											<FieldBoxRow
+												type="url"
+												name="banner"
+												label="Banner URL"
+												help={'A direct URL to an image of your adventure\'s anniversary banner. The recommended image size is 940x90.\n\nIf your adventure is public, is ongoing or complete, and has at least 200 favorites, this image will be displayed on the homepage for one week starting on the adventure\'s anniversary date.'}
+											/>
 										</BoxRowSection>
 									</BoxColumns>
 									<BoxSection id="story-details" heading="Details">
