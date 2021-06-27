@@ -256,14 +256,12 @@ const UserField = ({
 			ref={userFieldRef}
 		>
 			{value ? (
-				<>
-					<Link href={`/user/${value}`}>
-						{/* Non-nullability of the cached user can be asserted here because there are two possible cases: */}
-						{/* In the case that the value was set by the user selecting an auto-complete option, the value will already be cached because this component caches the users in the auto-complete entries that it fetches. */}
-						{/* In the case that the value was passed in from outside rather than by the user selecting an auto-complete option, the outside source of this user ID should cache the user it represents. If it does not, it should be changed to, or else this will throw an error. */}
-						{userCache[value]!.name}
-					</Link>
-				</>
+				<Link href={`/user/${value}`}>
+					{/* Non-nullability of the cached user can be asserted here because there are two possible cases: */}
+					{/* In the case that the value was set by the user selecting an auto-complete option, the value will already be cached because this component caches the users in the auto-complete entries that it fetches. */}
+					{/* In the case that the value was passed in from outside rather than by the user selecting an auto-complete option, the outside source of this user ID should cache the user it represents. If it does not, it should be changed to, or else this will throw an error. */}
+					{userCache[value]!.name}
+				</Link>
 			) : (
 				<>
 					<input
