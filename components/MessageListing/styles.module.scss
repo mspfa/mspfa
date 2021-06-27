@@ -4,14 +4,11 @@
 .message-list .listing {
 	position: relative;
 	box-sizing: content-box;
+	padding-top: 16px;
 
 	&:not(:last-child) {
-		padding-bottom: 1em;
+		padding-bottom: 16px;
 		border-bottom: 1px solid rgba(128, 128, 128, 0.5);
-	}
-
-	&:not(:first-child) {
-		padding-top: 1em;
 	}
 
 	&-selected-label {
