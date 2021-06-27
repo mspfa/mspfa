@@ -202,13 +202,21 @@ const Component = withErrorPage<ServerSideProps>(({
 							</>
 						)}
 					</div>
-					<List
-						listing={MessageListing}
-						setMessageRef={setMessageRef}
-						removeListingRef={removeListingRef}
-					>
-						{listedMessages}
-					</List>
+					{listedMessages.length === 0 ? (
+						<img
+							src={`/images/no-messages/${'image here.png'}`}
+							alt="Artwork for No Messages"
+							title={`Artist: ${'artist here'}`}
+						/>
+					) : (
+						<List
+							listing={MessageListing}
+							setMessageRef={setMessageRef}
+							removeListingRef={removeListingRef}
+						>
+							{listedMessages}
+						</List>
+					)}
 				</BoxSection>
 			</Box>
 		</Page>
