@@ -25,7 +25,11 @@
 		}
 	}
 
-	.button {
+	&-actions {
+		margin-left: 1ch;
+	}
+
+	&-action:not(:first-child) {
 		margin-left: 4px;
 	}
 }
