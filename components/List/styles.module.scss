@@ -2,18 +2,18 @@
 	display: flex;
 
 	&:not(:last-child) {
-		padding-bottom: 0.5em;
+		padding-bottom: 8px;
 	}
 
 	&:not(:first-child) {
-		padding-top: 0.5em;
+		padding-top: 8px;
 	}
 
 	&-icon {
 		&-container {
 			display: inline-block;
 			flex-shrink: 0;
-			margin: 0.5em 16px 0 0;
+			margin: 8px 16px 0 0;
 			width: 4em;
 			height: 4em;
 		}
