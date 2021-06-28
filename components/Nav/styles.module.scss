@@ -48,7 +48,8 @@ $nav-group-colors: (
 	&-group {
 		background-color: inherit;
 
-		&::before {
+		&:not(:first-child)::before {
+			content: '';
 			display: inline-block;
 			width: 16px;
 			height: 100%;
@@ -57,10 +58,6 @@ $nav-group-colors: (
 			background-repeat: no-repeat;
 			background-position: center;
 			background-image: url(/images/candy-heart.png);
-		}
-
-		&:not(:first-child)::before {
-			content: '';
 		}
 	}
 
