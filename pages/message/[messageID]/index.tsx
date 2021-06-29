@@ -287,7 +287,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 					_id: {
 						$in: userCacheIDs
 					},
-					willDelete: { $exists: false } // TODO: Handle deleted users missing from user cache on client.
+					willDelete: { $exists: false }
 				}).map(getPublicUser).toArray()
 			)
 		}
