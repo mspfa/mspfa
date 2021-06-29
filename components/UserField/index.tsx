@@ -222,9 +222,16 @@ const UserField = ({
 
 			const userFieldInput = userFieldRef.current!.getElementsByClassName('user-field-input')[0] as HTMLInputElement;
 
-			userFieldInput.setCustomValidity(required ? 'Please enter a username or ID and select a user.' : '');
+			userFieldInput.setCustomValidity(
+				// If the field is required, a field still being edited should be invalid to avoid `undefined` being submitted as its value.
+				required
+				// If the field is part of a `UserArrayField`, a field still being edited should be invalid to avoid `undefined`s in the submitted user array.
+				|| inUserArrayField
+					? 'Please enter a username or ID and select a user.'
+					: ''
+			);
 		}
-	}, [isEditing, required]);
+	}, [isEditing, required, inUserArrayField]);
 
 	const deleteFromArray = useCallback(() => {
 		if (required && userArrayFieldValue!.length === 1) {
