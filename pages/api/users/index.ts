@@ -129,7 +129,8 @@ const Handler: APIHandler<(
 			$or: [
 				{ _id: userID },
 				filterQuery
-			]
+			],
+			willDelete: { $exists: false }
 		};
 	}
 
