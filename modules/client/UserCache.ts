@@ -1,6 +1,6 @@
 import type { PublicUser } from 'modules/client/users';
 import React, { useContext } from 'react';
-import type { APIClient } from 'modules/client/api';
+import type { APIClient, APIError } from 'modules/client/api';
 import api from 'modules/client/api';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
@@ -23,11 +23,31 @@ export const useUserCache = () => {
 	};
 
 	/** Returns a `PublicUser` from the user cache by ID, or fetches and caches it before returning it if it isn't already cached. */
-	const fetchAndCacheUser = (userID: string) => (
-		(api as UserAPI).get(`/users/${userID}`).then(({ data: publicUser }) => {
+	const fetchAndCacheUser = async (userID: string) => {
+		if (userID in userCache) {
+			return userCache[userID];
+		}
+
+		return (api as UserAPI).get(`/users/${userID}`, {
+			beforeInterceptError: error => {
+				if (error.response?.status === 404) {
+					error.preventDefault();
+				}
+			}
+		}).then(({ data: publicUser }) => {
 			userCache[userID] = publicUser;
-		})
-	);
+
+			return publicUser;
+		}).catch((error: APIError) => {
+			if (error.defaultPrevented) {
+				userCache[userID] = undefined;
+
+				return undefined;
+			}
+
+			return Promise.reject(error);
+		});
+	};
 
 	return { userCache, cacheUser, fetchAndCacheUser };
 };
