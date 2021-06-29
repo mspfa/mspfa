@@ -9,7 +9,7 @@ const useThrottledCallback = <CallbackArgs extends unknown[]>(
 	/** The number of milliseconds to wait after the function stops being called. */
 	delay = 500
 ) => {
-	const timeoutRef = useRef<NodeJS.Timeout | undefined>();
+	const timeoutRef = useRef<NodeJS.Timeout>();
 
 	const throttledCallback = useCallback((...args: CallbackArgs) => {
 		if (timeoutRef.current) {

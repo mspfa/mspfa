@@ -29,7 +29,7 @@ const Flash = ({
 	height = 450
 }: FlashProps) => {
 	const [flashMode] = useFlashMode();
-	const [error, setError] = useState<Error | undefined>();
+	const [error, setError] = useState<Error>();
 	const emulationRef = useRef<HTMLDivElement>(null);
 
 	if (src) {

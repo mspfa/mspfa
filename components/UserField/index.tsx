@@ -80,7 +80,7 @@ const UserField = ({
 
 	const mountedRef = useMountedRef();
 
-	const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source> | undefined>();
+	const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source>>();
 
 	const [updateAutoComplete, updateAutoCompleteTimeoutRef] = useThrottledCallback(async (search: string) => {
 		if (search) {

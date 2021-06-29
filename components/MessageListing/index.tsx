@@ -71,7 +71,7 @@ const MessageListing = ({
 				: fullPlainContent.slice(0, lineBreakIndex)
 		);
 	}, [message.content]);
-	const [richContent, setRichContent] = useState<string | undefined>();
+	const [richContent, setRichContent] = useState<string>();
 
 	// This state is whether the message's content is rich, or whether it is not completely visible due to overflowing its container.
 	const [moreLinkVisible, setMoreLinkVisible] = useState(false);

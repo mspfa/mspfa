@@ -72,8 +72,8 @@ const SignIn = ({ page }: SignInProps) => {
 
 	const mountedRef = useMountedRef();
 
-	const [emailTaken, setEmailTaken] = useState<boolean | undefined>();
-	const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source> | undefined>();
+	const [emailTaken, setEmailTaken] = useState<boolean>();
+	const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source>>();
 
 	const [checkEmail] = useThrottledCallback(async (email: string) => {
 		cancelTokenSourceRef.current = axios.CancelToken.source();
