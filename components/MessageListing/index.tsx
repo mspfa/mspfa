@@ -15,6 +15,7 @@ import RemoveButton from 'components/Button/RemoveButton';
 import { Dialog } from 'modules/client/dialogs';
 import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 import ReplyButton from 'components/Button/ReplyButton';
+import UserLink from 'components/Link/UserLink';
 
 type MessageReadByAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy').default>;
 type MessageReadByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy/[userID]').default>;
@@ -55,7 +56,7 @@ const MessageListing = ({
 	));
 
 	const { userCache } = useUserCache();
-	const fromUser = userCache[message.from]!;
+	const fromUser = userCache[message.from];
 
 	const [open, setOpen] = useState(false);
 
@@ -293,8 +294,8 @@ const MessageListing = ({
 			>
 				<IconImage
 					className="listing-icon"
-					src={fromUser.icon}
-					alt={`${fromUser.name}'s Icon`}
+					src={fromUser?.icon}
+					alt={fromUser && `${fromUser.name}'s Icon`}
 				/>
 			</Link>
 			<div className="listing-info">
@@ -307,9 +308,7 @@ const MessageListing = ({
 				</Link>
 				<div className="listing-section listing-info">
 					{'From '}
-					<Link href={`/user/${fromUser.id}`}>
-						{fromUser.name}
-					</Link>
+					<UserLink>{message.from}</UserLink>
 					{' - '}
 					<Timestamp
 						relative

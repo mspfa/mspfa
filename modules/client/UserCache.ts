@@ -23,15 +23,11 @@ export const useUserCache = () => {
 	};
 
 	/** Returns a `PublicUser` from the user cache by ID, or fetches and caches it before returning it if it isn't already cached. */
-	const getCachedUser = async (userID: string) => {
-		if (!userCache[userID]) {
-			cacheUser(
-				(await (api as UserAPI).get(`/users/${userID}`)).data
-			);
-		}
+	const fetchAndCacheUser = (userID: string) => (
+		(api as UserAPI).get(`/users/${userID}`).then(({ data: publicUser }) => {
+			userCache[userID] = publicUser;
+		})
+	);
 
-		return userCache[userID]!;
-	};
-
-	return { userCache, cacheUser, getCachedUser };
+	return { userCache, cacheUser, fetchAndCacheUser };
 };

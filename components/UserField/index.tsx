@@ -8,7 +8,6 @@ import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
 import type { PublicUser } from 'modules/client/users';
 import UserFieldOption from 'components/UserField/UserFieldOption';
-import Link from 'components/Link';
 import EditButton from 'components/Button/EditButton';
 import axios from 'axios';
 import { useUserCache } from 'modules/client/UserCache';
@@ -17,6 +16,7 @@ import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 import { Dialog } from 'modules/client/dialogs';
 import useThrottledCallback from 'modules/client/useThrottledCallback';
 import useMountedRef from 'modules/client/useMountedRef';
+import UserLink from 'components/Link/UserLink';
 
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
 
@@ -64,7 +64,7 @@ const UserField = ({
 		id = `${idPrefix}field-${toKebabCase(name)}`;
 	}
 
-	const { userCache, cacheUser, getCachedUser } = useUserCache();
+	const { userCache, cacheUser } = useUserCache();
 
 	const { getFieldMeta, setFieldValue } = useFormikContext();
 	const fieldValue = getFieldMeta<string | undefined>(name).value;
@@ -136,7 +136,7 @@ const UserField = ({
 		}
 
 		// We can assert `value!` because `value` must already be set for the edit button to be visible.
-		const newInputValue = inputValue || (await getCachedUser(value!)).name;
+		const newInputValue = inputValue || userCache[value!]?.name || value!;
 
 		// If the value has never been edited before (and is therefore empty), auto-fill the user search input with the username from before editing started. But if it has been edited before, then leave it be what it was when it was last edited.
 		if (!inputValue) {
@@ -146,7 +146,7 @@ const UserField = ({
 		updateAutoCompleteRef.current(newInputValue);
 
 		changeValue(undefined);
-	}, [value, changeValue, getCachedUser, inputValue, updateAutoCompleteRef, editTitle, confirmEdit]);
+	}, [value, changeValue, inputValue, updateAutoCompleteRef, editTitle, confirmEdit, userCache]);
 
 	const isEditing = !value;
 	const [wasEditing, setWasEditing] = useState(isEditing);
@@ -256,12 +256,7 @@ const UserField = ({
 			ref={userFieldRef}
 		>
 			{value ? (
-				<Link href={`/user/${value}`}>
-					{/* Non-nullability of the cached user can be asserted here because there are two possible cases: */}
-					{/* In the case that the value was set by the user selecting an auto-complete option, the value will already be cached because this component caches the users in the auto-complete entries that it fetches. */}
-					{/* In the case that the value was passed in from outside rather than by the user selecting an auto-complete option, the outside source of this user ID should cache the user it represents. If it does not, it should be changed to, or else this will throw an error. */}
-					{userCache[value]!.name}
-				</Link>
+				<UserLink>{value}</UserLink>
 			) : (
 				<>
 					<input

@@ -26,6 +26,7 @@ import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
 import { Form, Formik } from 'formik';
 import { useLeaveConfirmation } from 'modules/client/forms';
+import UserLink from 'components/Link/UserLink';
 
 type MessageAPI = APIClient<typeof import('pages/api/messages/[messageID]').default>;
 type MessageDeletedByAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy').default>;
@@ -67,11 +68,8 @@ const Component = withErrorPage<ServerSideProps>(({
 		setPreviousMessage(message);
 	}
 
-	const { cacheUser, userCache } = useUserCache();
+	const { cacheUser } = useUserCache();
 	initialUserCache.forEach(cacheUser);
-
-	const fromUser = userCache[message.from]!;
-	const toUsers = message.to.map(userID => userCache[userID]!);
 
 	const onClickDelete	= useCallback(async () => {
 		if (!await Dialog.confirm({
@@ -150,18 +148,14 @@ const Component = withErrorPage<ServerSideProps>(({
 									)}
 									<div id="message-from">
 										{'From: '}
-										<Link href={`/user/${fromUser.id}`}>
-											{fromUser.name}
-										</Link>
+										<UserLink>{message.from}</UserLink>
 									</div>
 									<div id="message-to">
 										{'To: '}
-										{toUsers.map((toUser, index) => (
-											<Fragment key={toUser.id}>
+										{message.to.map((userID, index) => (
+											<Fragment key={userID}>
 												{index !== 0 && ', '}
-												<Link href={`/user/${toUser.id}`}>
-													{toUser.name}
-												</Link>
+												<UserLink>{userID}</UserLink>
 											</Fragment>
 										))}
 									</div>
