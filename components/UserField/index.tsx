@@ -227,7 +227,7 @@ const UserField = ({
 				required
 				// If the field is part of a `UserArrayField`, a field still being edited should be invalid to avoid `undefined`s in the submitted user array.
 				|| inUserArrayField
-					? 'Please enter a username or ID and select a user.'
+					? 'Please enter a valid username or ID, and select a user.'
 					: ''
 			);
 		}
