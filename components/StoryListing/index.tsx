@@ -53,7 +53,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 					{user && (
 						publicStory.owner === user.id
 						|| publicStory.editors.includes(user.id)
-						|| user.perms & Perm.sudoRead
+						|| !!(user.perms & Perm.sudoRead)
 					) && (
 						<EditButton
 							className="spaced"
