@@ -22,6 +22,7 @@ export type MessageDocument = {
 	replyTo?: MessageID,
 	/** The IDs of users who have access to this message. */
 	notDeletedBy: UserID[],
+	/** The IDs of users who have access to this message and have it marked as unread. */
 	notReadBy: UserID[],
 	/**
 	 * @minLength 1
@@ -117,4 +118,54 @@ export const updateUnreadMessages = async (userID: UserID) => {
 	});
 
 	return unreadMessageCount;
+};
+
+/** If the inputted message was a reply to another parent message which has been deleted by everyone, fully deletes the parent message as well, and repeats the check recursively on all ascendants. */
+const deleteUnnecessaryParentMessages = async (message: MessageDocument) => {
+	if (message.replyTo) {
+		const { value: parentMessage } = await messages.findOneAndDelete({
+			_id: message.replyTo,
+			notDeletedBy: { $size: 0 }
+		});
+
+		if (parentMessage) {
+			await deleteUnnecessaryParentMessages(parentMessage);
+		}
+	}
+};
+
+/**
+ * Deletes a message for a user.
+ *
+ * ⚠️ This assumes the message is not already deleted by the user.
+ */
+export const deleteMessageForUser = async (
+	/** The user for which the message should be deleted. */
+	userID: UserID,
+	/** The message to delete. */
+	message: MessageDocument
+) => {
+	if (
+		// Check if this user is the only one who hasn't deleted it yet.
+		message.notDeletedBy.length === 1
+		// Check if it has no replies.
+		&& !(await messages.findOne({ replyTo: message._id }))
+	) {
+		// It can safely be fully deleted from the database.
+
+		await messages.deleteOne({
+			_id: message._id
+		});
+
+		await deleteUnnecessaryParentMessages(message);
+	} else {
+		await messages.updateOne({
+			_id: message._id
+		}, {
+			$pull: {
+				notDeletedBy: userID,
+				notReadBy: userID
+			}
+		});
+	}
 };
