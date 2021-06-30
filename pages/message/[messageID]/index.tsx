@@ -55,7 +55,7 @@ const Component = withErrorPage<ServerSideProps>(({
 		if (!unreadMessageCountUpdated) {
 			setUser({
 				...user,
-				// Non-nullability can be asserted here because `unreadMessageCountUpdated` can only be false if `unreadMessageCount === undefined`.
+				// Non-nullability can be asserted here because `unreadMessageCountUpdated` can only be false if `unreadMessageCount !== undefined`.
 				unreadMessageCount: unreadMessageCount!
 			});
 
