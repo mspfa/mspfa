@@ -1,23 +1,8 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
-import type { MessageDocument } from 'modules/server/messages';
-import messages, { getMessageByUnsafeID, updateUnreadMessages } from 'modules/server/messages';
+import { deleteMessageForUser, getMessageByUnsafeID, updateUnreadMessages } from 'modules/server/messages';
 import { Perm } from 'modules/client/perms';
 import { permToGetUserInAPI } from 'modules/server/perms';
-
-/** If the inputted message was a reply to another parent message which has been deleted by everyone, fully deletes the parent message as well. */
-const deleteUnnecessaryParentMessages = async (message: MessageDocument) => {
-	if (message.replyTo) {
-		const { value: parentMessage } = await messages.findOneAndDelete({
-			_id: message.replyTo,
-			notDeletedBy: { $size: 0 }
-		});
-
-		if (parentMessage) {
-			await deleteUnnecessaryParentMessages(parentMessage);
-		}
-	}
-};
 
 const Handler: APIHandler<{
 	query: {
@@ -41,29 +26,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	if (
-		// Check if this user is the only one who hasn't deleted it yet.
-		message.notDeletedBy.length === 1
-		// Check if it has no replies.
-		&& !(await messages.findOne({ replyTo: message._id }))
-	) {
-		// It can safely be fully deleted from the database.
-
-		await messages.deleteOne({
-			_id: message._id
-		});
-
-		await deleteUnnecessaryParentMessages(message);
-	} else {
-		await messages.updateOne({
-			_id: message._id
-		}, {
-			$pull: {
-				notDeletedBy: user._id,
-				notReadBy: user._id
-			}
-		});
-	}
+	await deleteMessageForUser(user._id, message);
 
 	await updateUnreadMessages(user._id);
 
