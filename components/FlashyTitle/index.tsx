@@ -13,7 +13,6 @@ const flashyTitleColors = [
 	'#953ddb'
 ];
 
-/** Returns a random item of `flashyTitleColors`. */
 const getFlashyTitleColor = () => flashyTitleColors[Math.floor(Math.random() * flashyTitleColors.length)];
 
 const FlashyTitle = () => {
