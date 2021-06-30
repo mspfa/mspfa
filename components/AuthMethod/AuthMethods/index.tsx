@@ -16,7 +16,10 @@ export type AuthMethodsProps = {
 	authMethods: ClientAuthMethod[]
 };
 
-const AuthMethods = ({ userID, authMethods: initialAuthMethods }: AuthMethodsProps) => {
+const AuthMethods = ({
+	userID,
+	authMethods: initialAuthMethods
+}: AuthMethodsProps) => {
 	const [authMethods, setAuthMethods] = useState(initialAuthMethods);
 
 	const onResolve = useCallback(async (authMethodOptions: AuthMethodOptions) => {
