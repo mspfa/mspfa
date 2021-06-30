@@ -16,7 +16,7 @@ import { uniqBy } from 'lodash';
 import users, { getPrivateUser, getPublicUser } from 'modules/server/users';
 import type { ListedMessage } from 'components/MessageListing';
 import MessageListing from 'components/MessageListing';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Button from 'components/Button';
 import { useLatest } from 'react-use';
 import { Dialog } from 'modules/client/dialogs';
@@ -34,20 +34,12 @@ const Component = withErrorPage<ServerSideProps>(({
 	clientMessages,
 	userCache: initialUserCache
 }) => {
-	const [previousClientMessages, setPreviousClientMessages] = useState(clientMessages);
-	const listedMessagesFromProps = useMemo(() => (
+	const [listedMessages, setListedMessages] = useState(() => (
 		clientMessages.map<ListedMessage>(message => ({
 			...message,
 			selected: false
 		}))
-	), [clientMessages]);
-	const [listedMessages, setListedMessages] = useState(listedMessagesFromProps);
-
-	if (previousClientMessages !== clientMessages) {
-		setListedMessages(listedMessagesFromProps);
-
-		setPreviousClientMessages(clientMessages);
-	}
+	));
 
 	const { cacheUser } = useUserCache();
 	initialUserCache.forEach(cacheUser);

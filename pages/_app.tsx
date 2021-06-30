@@ -12,11 +12,12 @@ import env from 'modules/client/env';
 import { UserContext, useUserMerge, useUserInApp } from 'modules/client/users';
 import type { PrivateUser } from 'modules/client/users';
 import type { PageRequest } from 'modules/server/pages';
-import React, { useEffect, useRef } from 'react';
+import React, { Fragment, useEffect, useRef } from 'react';
 import { setTheme } from 'modules/client/themes';
 import { mergeWith } from 'lodash';
 import UserCache from 'modules/client/UserCache';
 import { overwriteArrays } from 'modules/client/utilities';
+import { useRouter } from 'next/router';
 
 const swrConfig = {
 	revalidateOnMount: true,
@@ -59,30 +60,32 @@ const MyApp = ({
 		setTheme(theme);
 	}, [theme]);
 
+	const router = useRouter();
+
 	return (
-		<>
-			<Head>
-				<title>MS Paint Fan Adventures</title>
-				<meta name="description" content="Hello, welcome to the bath house" />
-				<meta name="author" content="MS Paint Fan Adventures" />
-				<meta property="og:type" content="website" />
-				<meta property="og:site_name" content="MS Paint Fan Adventures" />
-				<meta property="og:description" content="Hello, welcome to the bath house" />
-				<meta property="og:title" content="MS Paint Fan Adventures" />
-				<meta property="og:image" content="/images/icon.png" />
-				<link rel="icon" href="/images/icon.png" /* Image credit: heyitskane */ />
-			</Head>
-			<SWRConfig value={swrConfig}>
-				<UserContext.Provider value={mergedUser}>
-					<UserCache.Provider value={userCache}>
-						<Component
-							// It is necessary that the props object passed here is the original `pageProps` object and not a clone, because after this point is reached, props from a page's `getServerSideProps` are assigned to the original `pageProps` object and would otherwise not be passed into the page component.
-							{...pageProps as any}
-						/>
-					</UserCache.Provider>
-				</UserContext.Provider>
-			</SWRConfig>
-		</>
+		<SWRConfig value={swrConfig}>
+			<UserContext.Provider value={mergedUser}>
+				<UserCache.Provider value={userCache}>
+					<Head>
+						<title>MS Paint Fan Adventures</title>
+						<meta name="description" content="Hello, welcome to the bath house" />
+						<meta name="author" content="MS Paint Fan Adventures" />
+						<meta property="og:type" content="website" />
+						<meta property="og:site_name" content="MS Paint Fan Adventures" />
+						<meta property="og:description" content="Hello, welcome to the bath house" />
+						<meta property="og:title" content="MS Paint Fan Adventures" />
+						<meta property="og:image" content="/images/icon.png" />
+						<link rel="icon" href="/images/icon.png" /* Image credit: heyitskane */ />
+					</Head>
+					<Component
+						// This `key` is necessary so a page's state is reset when the route changes.
+						key={router.asPath}
+						// It is necessary that the props object passed here is the original `pageProps` object and not a clone, because after this point is reached, props from a page's `getServerSideProps` are assigned to the original `pageProps` object and would otherwise not be passed into the page component.
+						{...pageProps as any}
+					/>
+				</UserCache.Provider>
+			</UserContext.Provider>
+		</SWRConfig>
 	);
 };
 

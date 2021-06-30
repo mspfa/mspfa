@@ -27,6 +27,7 @@ import BBField from 'components/BBCode/BBField';
 import { Form, Formik } from 'formik';
 import { useLeaveConfirmation } from 'modules/client/forms';
 import UserLink from 'components/Link/UserLink';
+import { useIsomorphicLayoutEffect } from 'react-use';
 
 type MessageAPI = APIClient<typeof import('pages/api/messages/[messageID]').default>;
 type MessageDeletedByAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy').default>;
@@ -48,25 +49,19 @@ const Component = withErrorPage<ServerSideProps>(({
 }) => {
 	const user = useUser()!;
 	const [editing, setEditing] = useState(false);
+	const [unreadMessageCountUpdated, setUnreadMessageCountUpdated] = useState(unreadMessageCount === undefined);
 
-	const [previousMessage, setPreviousMessage] = useState<ClientMessage>();
-	// The above state must be initialized to `undefined` so the below `if` statement succeeds on the initial render.
+	useIsomorphicLayoutEffect(() => {
+		if (!unreadMessageCountUpdated) {
+			setUser({
+				...user,
+				// Non-nullability can be asserted here because `unreadMessageCountUpdated` can only be false if `unreadMessageCount === undefined`.
+				unreadMessageCount: unreadMessageCount!
+			});
 
-	if (message !== previousMessage) {
-		setEditing(false);
-
-		// This timeout is necessary so the state change that it invokes doesn't occur while this component is rendering and cause an error.
-		setTimeout(() => {
-			if (unreadMessageCount !== undefined) {
-				setUser({
-					...user,
-					unreadMessageCount
-				});
-			}
-		});
-
-		setPreviousMessage(message);
-	}
+			setUnreadMessageCountUpdated(true);
+		}
+	}, [unreadMessageCount, user, unreadMessageCountUpdated]);
 
 	const { cacheUser } = useUserCache();
 	initialUserCache.forEach(cacheUser);
