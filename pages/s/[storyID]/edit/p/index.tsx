@@ -33,7 +33,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 	const initialValues = getValuesFromStory(privateStory);
 
 	return (
-		<Page flashyTitle heading="Edit Adventure">
+		<Page heading="Edit Adventure">
 			<Formik
 				initialValues={initialValues}
 				onSubmit={
@@ -49,7 +49,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 					return (
 						<Form>
 							<Box>
-								<BoxSection id="story-test" heading="Test">
+								<BoxSection heading={privateStory.title}>
 									hello world
 								</BoxSection>
 								<BoxFooter>

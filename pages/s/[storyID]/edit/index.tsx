@@ -161,7 +161,7 @@ const Component = withErrorPage<ServerSideProps>(({
 	);
 
 	return (
-		<Page flashyTitle heading="Edit Adventure">
+		<Page heading="Edit Adventure">
 			{privateStory.willDelete ? (
 				<>
 					<Box>
