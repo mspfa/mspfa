@@ -20,11 +20,15 @@ import { useCallback, useEffect, useState } from 'react';
 import Button from 'components/Button';
 import { useLatest } from 'react-use';
 import { Dialog } from 'modules/client/dialogs';
+import fs from 'fs-extra';
+import path from 'path';
+import Row from 'components/Row';
 
 type ServerSideProps = {
 	privateUser: PrivateUser,
 	clientMessages: ClientMessage[],
-	userCache: PublicUser[]
+	userCache: PublicUser[],
+	imageFilename: string
 } | {
 	statusCode: number
 };
@@ -32,7 +36,8 @@ type ServerSideProps = {
 const Component = withErrorPage<ServerSideProps>(({
 	privateUser,
 	clientMessages,
-	userCache: initialUserCache
+	userCache: initialUserCache,
+	imageFilename
 }) => {
 	const [listedMessages, setListedMessages] = useState(() => (
 		clientMessages.map<ListedMessage>(message => ({
@@ -195,11 +200,18 @@ const Component = withErrorPage<ServerSideProps>(({
 						)}
 					</div>
 					{listedMessages.length === 0 ? (
-						<img
-							src={`/images/no-messages/${'image here.png'}`}
-							alt="Artwork for No Messages"
-							title={`Artist: ${'artist here'}`}
-						/>
+						<div id="no-messages">
+							<Row>
+								<img
+									src={`/images/no-messages/${imageFilename}`}
+									width={400}
+									height={250}
+									alt="Artwork for No Messages"
+									title={`Artist: ${imageFilename.slice(0, imageFilename.indexOf('.'))}`}
+								/>
+							</Row>
+							<Row>No new messages.</Row>
+						</div>
 					) : (
 						<List
 							listing={MessageListing}
@@ -216,6 +228,14 @@ const Component = withErrorPage<ServerSideProps>(({
 });
 
 export default Component;
+
+// @server-only {
+const imageFilenames = (
+	fs.readdirSync(
+		path.join(process.cwd(), 'public/images/no-messages')
+	)
+).filter(filename => /\.(?:png|gif)$/i.test(filename));
+// @server-only }
 
 export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, params }) => {
 	const { user, statusCode } = await permToGetUserInPage(req, params.userID, Perm.sudoRead);
@@ -244,7 +264,8 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 					},
 					willDelete: { $exists: false }
 				}).map(getPublicUser).toArray()
-			)
+			),
+			imageFilename: imageFilenames[Math.floor(Math.random() * imageFilenames.length)]
 		}
 	};
 });
