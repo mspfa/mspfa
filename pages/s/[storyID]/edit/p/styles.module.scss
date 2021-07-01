@@ -1,9 +1,19 @@
-#story-page-box {
-	padding: 0 32px;
+#editor-options {
+	text-align: center;
+}
+
+#story-page {
+	&-box {
+		padding: 0 32px;
+	}
+
+	&-actions, &-view-actions {
+		text-align: center;
+	}
 }
 
 .story-page-section {
 	& + & {
-		margin-top: 16px;
+		margin-top: 1em;
 	}
 }
