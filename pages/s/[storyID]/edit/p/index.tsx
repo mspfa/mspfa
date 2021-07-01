@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import Page from 'components/Page';
 import { Perm } from 'modules/client/perms';
 import { withErrorPage } from 'modules/client/errors';
@@ -62,6 +63,19 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 										disabled={!dirty || isSubmitting}
 									>
 										Save
+									</Button>
+								</BoxFooter>
+							</Box>
+							<Box id="story-page-box">
+								<BoxSection className="story-page-section" heading="Page 2">
+									awdawdawdawda
+								</BoxSection>
+								<BoxSection className="story-page-section" heading="Page 1">
+									awdawdawdawda
+								</BoxSection>
+								<BoxFooter>
+									<Button>
+										More
 									</Button>
 								</BoxFooter>
 							</Box>

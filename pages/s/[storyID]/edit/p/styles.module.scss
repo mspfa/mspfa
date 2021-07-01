@@ -1,0 +1,9 @@
+#story-page-box {
+	padding: 0 32px;
+}
+
+.story-page-section {
+	& + & {
+		margin-top: 16px;
+	}
+}
