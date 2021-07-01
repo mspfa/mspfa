@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import Box from 'components/Box';
-import BoxRow from 'components/Box/BoxRow';
+import Row from 'components/Row';
 import Page from 'components/Page';
 import fs from 'fs-extra';
 import path from 'path';
@@ -14,22 +14,24 @@ export type ServerSideProps = {
 const Component = ({ imageFilename }: ServerSideProps) => (
 	<Page flashyTitle heading="Terms of Service">
 		<Box>
-			<BoxSection>
-				<BoxRow>
+			<BoxSection id="terms">
+				<Row>
 					<img
 						src={`/images/terms/${imageFilename}`}
+						width={650}
+						height={450}
 						alt="Artwork for Terms of Service"
 						title={`Artist: ${imageFilename.slice(0, imageFilename.indexOf('.'))}`}
 					/>
 					<div id="art-disclaimer">
 						Disclaimer: This image is not part of and has no effect related to the terms of service.
 					</div>
-				</BoxRow>
-				<BoxRow>
+				</Row>
+				<Row>
 					<p>
 						[ Terms of service here ]
 					</p>
-				</BoxRow>
+				</Row>
 			</BoxSection>
 		</Box>
 	</Page>

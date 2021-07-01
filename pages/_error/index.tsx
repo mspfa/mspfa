@@ -1,5 +1,6 @@
+import './styles.module.scss';
 import Box from 'components/Box';
-import BoxRow from 'components/Box/BoxRow';
+import Row from 'components/Row';
 import Page from 'components/Page';
 import type { ServerResponse } from 'http';
 import fs from 'fs-extra';
@@ -20,21 +21,19 @@ export type ErrorPageProps = {
 
 const ErrorPage = ({ statusCode, imageFilename }: ErrorPageProps) => (
 	<Page flashyTitle heading={`Error ${statusCode}`}>
-		<Box>
+		<Box id="error-box">
 			{statusCode === 403 && (
 				<BoxSection>
-					<BoxRow>
+					<Row>
 						<img
 							src={`/images/403/${imageFilename!}`}
+							width={650}
+							height={450}
 							alt="Artwork for Error 403"
 							title={`Artist: ${imageFilename!.slice(0, imageFilename!.indexOf('.'))}`}
 						/>
-					</BoxRow>
-					<BoxRow>
-						<p>
-							You don't have permission to access this page.
-						</p>
-					</BoxRow>
+					</Row>
+					<Row>You don't have permission to access this page.</Row>
 				</BoxSection>
 			)}
 			<BoxFooter>
