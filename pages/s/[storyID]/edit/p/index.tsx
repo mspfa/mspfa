@@ -53,6 +53,9 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 									hello world
 								</BoxSection>
 								<BoxFooter>
+									<Button href={`/s/${privateStory.id}/edit`}>
+										Edit Adventure
+									</Button>
 									<Button
 										type="submit"
 										className="alt"
