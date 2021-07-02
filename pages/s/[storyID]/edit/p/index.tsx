@@ -79,7 +79,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 									</Row>
 								</BoxSection>
 							</Box>
-							<Row id="story-page-actions">
+							<div id="story-page-actions">
 								<Button
 									onClick={
 										useCallback(() => {
@@ -119,7 +119,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 								>
 									Publish
 								</Button>
-							</Row>
+							</div>
 							<Box id="story-page-sections">
 								{values.pages.map((page, index) => (
 									<Fragment key={page.id}>
