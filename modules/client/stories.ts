@@ -30,37 +30,33 @@ export const storyPrivacyNames: Record<StoryPrivacy, string> = {
 type PrivateStoryDocumentKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'blurb' | 'icon' | 'favCount' | 'banner' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'commentsEnabled' | 'editorSettings' | 'colors' | 'quirks';
 
 /** A serializable version of `StoryDocument` which only has properties that can safely be exposed to any client. */
-export type PrivateStory = (
-	Pick<StoryDocument, PrivateStoryDocumentKey>
-	& {
-		id: StoryID,
-		willDelete?: number,
-		created: number,
-		updated: number,
-		owner: string,
-		editors: string[],
-		pageCount: number
-	}
-);
+export type PrivateStory = Pick<StoryDocument, PrivateStoryDocumentKey> & {
+	id: StoryID,
+	willDelete?: number,
+	created: number,
+	updated: number,
+	owner: string,
+	editors: string[],
+	pageCount: number
+};
 
 /** All keys whose values have the same serializable type in both `StoryDocument` and `PublicStory`. */
 type PublicStoryDocumentKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'blurb' | 'icon' | 'favCount' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'commentsEnabled' | 'colors' | 'quirks';
 
 /** A serializable version of `StoryDocument` which only has properties that can safely be exposed to any client. */
-export type PublicStory = (
-	Pick<StoryDocument, PublicStoryDocumentKey>
-	& {
-		id: StoryID,
-		created: number,
-		updated: number,
-		owner: string,
-		editors: string[],
-		pageCount: number
-	}
-);
+export type PublicStory = Pick<StoryDocument, PublicStoryDocumentKey> & {
+	id: StoryID,
+	created: number,
+	updated: number,
+	owner: string,
+	editors: string[],
+	pageCount: number
+};
 
-export const getBlurb = (story: PublicStory) => story.blurb || (
-	story.description.length > 500
-		? `${story.description.slice(0, 500)}...`
-		: story.description
+export const getBlurb = (story: PublicStory) => (
+	story.blurb || (
+		story.description.length > 500
+			? `${story.description.slice(0, 500)}...`
+			: story.description
+	)
 );
