@@ -1,4 +1,4 @@
-import type { StoryDocument, StoryID } from 'modules/server/stories';
+import type { StoryDocument, StoryID, StoryPage } from 'modules/server/stories';
 
 export enum StoryStatus {
 	Inactive = 0,
@@ -51,6 +51,14 @@ export type PublicStory = Pick<StoryDocument, PublicStoryDocumentKey> & {
 	owner: string,
 	editors: string[],
 	pageCount: number
+};
+
+/** All keys whose values have the same serializable type in both `StoryPage` and `ClientStoryPage`. */
+type ClientStoryPageKey = 'id' | 'title' | 'content' | 'nextPages' | 'tags' | 'unlisted' | 'commentary';
+
+/** A serializable version of `StoryPage` which only has properties that can safely be exposed to any client. */
+export type ClientStoryPage = Pick<StoryPage, ClientStoryPageKey> & {
+	published?: number
 };
 
 export const getBlurb = (story: PublicStory) => (

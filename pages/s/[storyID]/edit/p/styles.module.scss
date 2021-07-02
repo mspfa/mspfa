@@ -3,17 +3,19 @@
 }
 
 #story-page {
-	&-box {
+	&-sections {
 		padding: 0 32px;
+
+		& > :not(:last-child) {
+			margin-bottom: 1em;
+		}
 	}
 
-	&-actions, &-view-actions {
+	&-actions {
 		text-align: center;
 	}
 }
 
-.story-page-section {
-	& + & {
-		margin-top: 1em;
-	}
+.story-page-view-actions {
+	text-align: center;
 }

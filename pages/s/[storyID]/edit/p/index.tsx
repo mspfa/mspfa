@@ -4,23 +4,22 @@ import { Perm } from 'modules/client/perms';
 import { withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
 import { Form, Formik } from 'formik';
-import { useCallback, useRef, useState } from 'react';
+import { Fragment, useCallback, useRef, useState } from 'react';
 import { useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
 import Button from 'components/Button';
 import { getPrivateStory, getStoryByUnsafeID } from 'modules/server/stories';
-import type { PrivateStory } from 'modules/client/stories';
+import type { ClientStoryPage, PrivateStory } from 'modules/client/stories';
 import BoxSection from 'components/Box/BoxSection';
 import type { APIClient } from 'modules/client/api';
 import Row from 'components/Row';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 
-const getValuesFromStory = (privateStory: PrivateStory) => ({
-	pages: []
-});
-
-type Values = ReturnType<typeof getValuesFromStory>;
+type Values = {
+	/** The pages currently loaded into the page editor, in reverse order (last page first). */
+	pages: ClientStoryPage[]
+};
 
 type ServerSideProps = {
 	privateStory: PrivateStory
@@ -30,15 +29,16 @@ type ServerSideProps = {
 
 const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivateStory }) => {
 	const [privateStory, setPrivateStory] = useState(initialPrivateStory);
-
-	const initialValues = getValuesFromStory(privateStory);
+	const [initialPages, setInitialPages] = useState<ClientStoryPage[]>([]);
 
 	const notifyCheckboxRef = useRef<HTMLInputElement>(null!);
 
 	return (
 		<Page heading="Edit Adventure">
 			<Formik
-				initialValues={initialValues}
+				initialValues={{
+					pages: initialPages
+				}}
 				onSubmit={
 					useCallback(async (values: Values) => {
 
@@ -46,7 +46,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 				}
 				enableReinitialize
 			>
-				{({ isSubmitting, dirty }) => {
+				{({ isSubmitting, dirty, values, setFieldValue }) => {
 					useLeaveConfirmation(dirty);
 
 					return (
@@ -81,7 +81,29 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 								</BoxSection>
 							</Box>
 							<Row id="story-page-actions">
-								<Button>
+								<Button
+									onClick={
+										useCallback(() => {
+											const id = (
+												values.pages.length
+													? values.pages[0].id + 1
+													: 1
+											);
+
+											values.pages.unshift({
+												id,
+												title: '',
+												content: '',
+												nextPages: [id + 1],
+												tags: [],
+												unlisted: false,
+												commentary: ''
+											});
+
+											setFieldValue('pages', values.pages);
+										}, [values.pages, setFieldValue])
+									}
+								>
 									New Page
 								</Button>
 								<Button
@@ -98,26 +120,30 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 									Publish
 								</Button>
 							</Row>
-							<Box id="story-page-box">
-								<Row id="story-page-sections">
-									<BoxSection
-										className="story-page-section"
-										heading="Page 2"
-									>
-										awdawdawdawda
-									</BoxSection>
-									<BoxSection
-										className="story-page-section"
-										heading="Page 1"
-									>
-										awdawdawdawda
-									</BoxSection>
-								</Row>
-								<Row id="story-page-view-actions">
-									<Button>
-										More
-									</Button>
-								</Row>
+							<Box id="story-page-sections">
+								{values.pages.map((page, index) => (
+									<Fragment key={page.id}>
+										<BoxSection
+											className="story-page-section"
+											heading={`Page ${page.id}`}
+										>
+											{page.content}
+										</BoxSection>
+										{page.id !== (
+											index === values.pages.length - 1
+												? 1
+												// The ID of the following page plus 1, which is what this page's ID should be if and only if there are no gaps. (The pages are in reverse, so the following page has an ID one lower than this page, given there's no gap.)
+												: values.pages[index + 1].id + 1
+										) && (
+											// There is a gap in the page IDs, so present an option to load the missing pages.
+											<div className="story-page-view-actions">
+												<Button>
+													Load More
+												</Button>
+											</div>
+										)}
+									</Fragment>
+								))}
 							</Box>
 						</Form>
 					);

@@ -10,6 +10,9 @@ import type { APIResponse } from 'modules/server/api';
 /** @minimum 1 */
 export type StoryID = number;
 
+/** @minimum 1 */
+export type StoryPageID = number;
+
 /**
  * @minLength 1
  * @maxLength 50
@@ -18,13 +21,14 @@ export type StoryID = number;
 export type TagString = string;
 
 export type StoryPage = {
-	published: Date,
+	id: StoryPageID,
+	published?: Date,
 	title: string,
 	content: string,
 	nextPages: number[],
 	/** @uniqueItems */
 	tags: TagString[],
-	hidden: boolean,
+	unlisted: boolean,
 	commentary: string,
 	comments: StoryComment[]
 };
