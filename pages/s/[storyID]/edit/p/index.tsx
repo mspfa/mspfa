@@ -90,17 +90,18 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 													: 1
 											);
 
-											values.pages.unshift({
-												id,
-												title: '',
-												content: '',
-												nextPages: [id + 1],
-												tags: [],
-												unlisted: false,
-												commentary: ''
-											});
-
-											setFieldValue('pages', values.pages);
+											setFieldValue('pages', [
+												{
+													id,
+													title: '',
+													content: '',
+													nextPages: [id + 1],
+													tags: [],
+													unlisted: false,
+													commentary: ''
+												},
+												...values.pages
+											]);
 										}, [values.pages, setFieldValue])
 									}
 								>
