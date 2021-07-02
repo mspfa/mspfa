@@ -44,7 +44,6 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 
 					}, [])
 				}
-				enableReinitialize
 			>
 				{({ isSubmitting, dirty, values, setFieldValue }) => {
 					useLeaveConfirmation(dirty);
