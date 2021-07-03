@@ -30,10 +30,8 @@ export type StoryPage = {
 	tags: TagString[],
 	unlisted: boolean,
 	commentary: string,
-	comments: StoryComment[]
-};
-
-export type StoryPageDraft = StoryPage & {
+	comments: StoryComment[],
+	/** Whether this page was set to notify readers on publish. */
 	notify: boolean
 };
 
@@ -98,7 +96,6 @@ export type StoryDocument = {
 		site: '' | URLString
 	},
 	pages: StoryPage[],
-	drafts: StoryPageDraft[],
 	/** @maxLength 2000 */
 	description: string,
 	/** @maxLength 500 */
@@ -137,7 +134,6 @@ export const defaultStory = {
 	privacy: StoryPrivacy.Public,
 	editors: [] as never[],
 	pages: [] as never[],
-	drafts: [] as never[],
 	description: '',
 	blurb: '',
 	icon: '',
