@@ -54,7 +54,7 @@ export type PublicStory = Pick<StoryDocument, PublicStoryDocumentKey> & {
 };
 
 /** All keys whose values have the same serializable type in both `StoryPage` and `ClientStoryPage`. */
-type ClientStoryPageKey = 'id' | 'title' | 'content' | 'nextPages' | 'tags' | 'unlisted' | 'commentary';
+type ClientStoryPageKey = 'id' | 'title' | 'content' | 'nextPages' | 'tags' | 'unlisted' | 'commentary' | 'notify';
 
 /** A serializable version of `StoryPage` which only has properties that can safely be exposed to any client. */
 export type ClientStoryPage = Pick<StoryPage, ClientStoryPageKey> & {
