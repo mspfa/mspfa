@@ -70,6 +70,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 											<input
 												type="checkbox"
 												className="spaced"
+												defaultChecked
 												ref={notifyCheckboxRef}
 											/>
 											<span className="spaced">
