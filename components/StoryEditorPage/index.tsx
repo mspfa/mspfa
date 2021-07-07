@@ -9,6 +9,8 @@ import { useCallback, useRef } from 'react';
 import AddButton from 'components/Button/AddButton';
 import type { Values } from 'pages/s/[storyID]/edit/p';
 import RemoveButton from 'components/Button/RemoveButton';
+import { isEqual } from 'lodash';
+import Timestamp from 'components/Timestamp';
 
 export type StoryEditorPageProps = {
 	/** The `ClientStoryPage` being edited. */
@@ -27,7 +29,7 @@ const StoryEditorPage = ({
 	pageIndex,
 	firstTitleInputRef
 }: StoryEditorPageProps) => {
-	const { setFieldValue } = useFormikContext<Values>();
+	const { setFieldValue, initialValues } = useFormikContext<Values>();
 
 	const onClickRemoveNextPage = useCallback((event: MouseEvent<HTMLButtonElement & HTMLAnchorElement> & { target: HTMLButtonElement }) => {
 		// The `parentNode` of this `RemoveButton` will be the `div.story-editor-next-page` element.
@@ -44,19 +46,39 @@ const StoryEditorPage = ({
 
 	const lastNextPageInputRef = useRef<HTMLInputElement>(null);
 
+	const saved = isEqual(page, initialValues.pages.find(({ id }) => id === page.id));
+
+	const pageStatus = (
+		page.published === undefined
+			? 'draft' as const
+			: page.published < Date.now()
+				? 'scheduled' as const
+				: 'published' as const
+	);
+
 	return (
 		<BoxSection
-			className={
-				`story-editor-page ${
-					page.published === undefined
-						? 'draft'
-						// TODO: Fix unsaved drafts being considered "Scheduled" or "Published" due to having a set `published` date.
-						: page.published < Date.now()
-							? 'scheduled'
-							: 'published'
-				}`
+			className={`story-editor-page${saved ? ' saved' : ''} ${pageStatus}`}
+			heading={
+				pageStatus === 'draft'
+					// These are two separate templates in order to avoid React inserting unnecessary comments between text nodes in the HTML sent from the server.
+					? `Page ${page.id} (Draft)`
+					: (
+						<>
+							{
+								`Page ${page.id} (${
+									pageStatus === 'published'
+										? 'Published'
+										: 'Scheduled'
+								} `
+							}
+							<Timestamp short withTime>
+								{page.published!}
+							</Timestamp>
+							)
+						</>
+					)
 			}
-			heading={`Page ${page.id}`}
 		>
 			<div className="page-field page-field-title">
 				<Label
@@ -86,6 +108,7 @@ const StoryEditorPage = ({
 				<BBField
 					name={`pages.${pageIndex}.content`}
 					rows={6}
+					html
 				/>
 			</div>
 			<div className="page-field page-field-next-pages">
