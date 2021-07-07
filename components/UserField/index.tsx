@@ -82,7 +82,7 @@ const UserField = ({
 
 	const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source>>();
 
-	const [updateAutoComplete, updateAutoCompleteTimeoutRef] = useThrottledCallback(async (search: string) => {
+	const updateAutoComplete = useThrottledCallback(async (search: string) => {
 		if (search) {
 			cancelTokenSourceRef.current?.cancel();
 			cancelTokenSourceRef.current = axios.CancelToken.source();
@@ -199,9 +199,9 @@ const UserField = ({
 		} else {
 			// The user stopped editing.
 
-			if (updateAutoCompleteTimeoutRef.current) {
-				clearTimeout(updateAutoCompleteTimeoutRef.current);
-				updateAutoCompleteTimeoutRef.current = undefined;
+			if (updateAutoComplete.timeoutRef.current) {
+				clearTimeout(updateAutoComplete.timeoutRef.current);
+				updateAutoComplete.timeoutRef.current = undefined;
 			}
 
 			if (cancelTokenSourceRef.current) {
@@ -214,7 +214,7 @@ const UserField = ({
 		}
 
 		setWasEditing(isEditing);
-	}, [isEditing, wasEditing, inputValue, autoFocus, updateAutoCompleteTimeoutRef]);
+	}, [isEditing, wasEditing, inputValue, autoFocus, updateAutoComplete.timeoutRef]);
 
 	useIsomorphicLayoutEffect(() => {
 		if (isEditing) {

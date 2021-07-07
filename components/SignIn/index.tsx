@@ -75,7 +75,7 @@ const SignIn = ({ page }: SignInProps) => {
 	const [emailTaken, setEmailTaken] = useState<boolean>();
 	const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source>>();
 
-	const [checkEmail] = useThrottledCallback(async (email: string) => {
+	const checkEmail = useThrottledCallback(async (email: string) => {
 		cancelTokenSourceRef.current = axios.CancelToken.source();
 
 		const { data: { taken } } = await (api as EmailTakenAPI).get('/emailTaken', {
