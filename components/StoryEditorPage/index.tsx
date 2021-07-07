@@ -46,17 +46,17 @@ const StoryEditorPage = ({
 
 	return (
 		<BoxSection
-			className="story-editor-page"
-			heading={
-				`Page ${page.id} (${
+			className={
+				`story-editor-page ${
 					page.published === undefined
-						? 'Unsaved Draft'
+						? 'draft'
 						// TODO: Fix unsaved drafts being considered "Scheduled" or "Published" due to having a set `published` date.
 						: page.published < Date.now()
-							? 'Scheduled'
-							: 'Published'
-				})`
+							? 'scheduled'
+							: 'published'
+				}`
 			}
+			heading={`Page ${page.id}`}
 		>
 			<div className="page-field single-line">
 				<Label

@@ -14,6 +14,32 @@
 }
 
 .story-editor {
+	&-page {
+		& > .box-heading::after {
+			margin-left: 1ch;
+		}
+
+		&.draft > .box-heading::after {
+			content: '(Unsaved Draft)';
+		}
+
+		&.published > .box-heading {
+			background-color: #008407;
+
+			&::after {
+				content: '(Published)';
+			}
+		}
+
+		&.scheduled > .box-heading {
+			background-color: #cc7600;
+
+			&::after {
+				content: '(Scheduled)';
+			}
+		}
+	}
+
 	&-next-page {
 		margin-bottom: 2px;
 
