@@ -67,6 +67,7 @@ const StoryEditorPage = ({
 					Page Title/Command
 				</Label>
 				<Field
+					id={`field-pages-${pageIndex}-title`}
 					name={`pages.${pageIndex}.title`}
 					required
 					maxLength={500}
