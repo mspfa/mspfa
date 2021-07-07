@@ -23,6 +23,7 @@ export type TagString = string;
 export type StoryPage = {
 	id: StoryPageID,
 	published?: Date,
+	/** @maxLength 200 */
 	title: string,
 	content: string,
 	nextPages: number[],

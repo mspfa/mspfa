@@ -3,7 +3,8 @@ import Page from 'components/Page';
 import { Perm } from 'modules/client/perms';
 import { withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
-import { Form, Formik } from 'formik';
+import { Form, Formik, Field } from 'formik';
+import type { ChangeEvent } from 'react';
 import { Fragment, useCallback, useRef, useState } from 'react';
 import { useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
@@ -13,6 +14,11 @@ import type { ClientStoryPage, PrivateStory } from 'modules/client/stories';
 import BoxSection from 'components/Box/BoxSection';
 import type { APIClient } from 'modules/client/api';
 import Row from 'components/Row';
+import BBField from 'components/BBCode/BBField';
+import Label from 'components/Label';
+import api from 'modules/client/api';
+import useThrottledCallback from 'modules/client/useThrottledCallback';
+import axios from 'axios';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 
@@ -48,6 +54,36 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 				{({ isSubmitting, dirty, values, setFieldValue }) => {
 					useLeaveConfirmation(dirty);
 
+					const defaultPageTitleInputRef = useRef<HTMLInputElement>(null!);
+					const firstPageFieldTitle = useRef<HTMLInputElement>(null);
+
+					const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source>>();
+
+					const onChangeDefaultPageTitle = useThrottledCallback(async (event: ChangeEvent<HTMLInputElement>) => {
+						cancelTokenSourceRef.current = axios.CancelToken.source();
+
+						await (api as StoryAPI).put(`/stories/${privateStory.id}`, {
+							editorSettings: {
+								defaultPageTitle: event.target.value
+							}
+						}, {
+							cancelToken: cancelTokenSourceRef.current.token
+						});
+
+						cancelTokenSourceRef.current = undefined;
+
+						setPrivateStory({
+							...privateStory,
+							editorSettings: {
+								...privateStory.editorSettings,
+								defaultPageTitle: event.target.value
+							}
+						});
+
+						// This ESLint comment is necessary because ESLint does not recognize that `privateStory` can change from outside the scope of this hook's component.
+						// eslint-disable-next-line react-hooks/exhaustive-deps
+					}, [privateStory]);
+
 					return (
 						<Form>
 							<Box>
@@ -64,6 +100,33 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 										</Button>
 										<Button className="small">Jump to Page</Button>
 										<Button className="small">Find and Replace</Button>
+									</Row>
+									<Row>
+										<Label
+											className="spaced"
+											htmlFor="field-default-page-title"
+										>
+											Default Page Title
+										</Label>
+										<input
+											id="field-default-page-title"
+											className="spaced"
+											maxLength={200}
+											defaultValue={privateStory.editorSettings.defaultPageTitle}
+											autoComplete="off"
+											onChange={
+												useCallback((event: ChangeEvent<HTMLInputElement>) => {
+													cancelTokenSourceRef.current?.cancel();
+
+													if (!event.target.reportValidity()) {
+														return;
+													}
+
+													onChangeDefaultPageTitle(event);
+												}, [onChangeDefaultPageTitle])
+											}
+											ref={defaultPageTitleInputRef}
+										/>
 									</Row>
 									<Row>
 										<label>
@@ -93,7 +156,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 											setFieldValue('pages', [
 												{
 													id,
-													title: '',
+													title: privateStory.editorSettings.defaultPageTitle,
 													content: '',
 													nextPages: [id + 1],
 													tags: [],
@@ -102,7 +165,16 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 												},
 												...values.pages
 											]);
-										}, [values.pages, setFieldValue])
+
+											// Wait for the newly added editor page to render.
+											setTimeout(() => {
+												// Select the title field of the newly added page.
+												firstPageFieldTitle.current?.select();
+											});
+
+											// This ESLint comment is necessary because ESLint does not recognize that `privateStory.editorSettings.defaultPageTitle` can change from outside the scope of this hook's component.
+											// eslint-disable-next-line react-hooks/exhaustive-deps
+										}, [values.pages, setFieldValue, privateStory.editorSettings.defaultPageTitle])
 									}
 								>
 									New Page
@@ -128,7 +200,29 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 											className="story-editor-page"
 											heading={`Page ${page.id}`}
 										>
-											{page.content}
+											<div className="page-field single-line">
+												<Label
+													className="spaced"
+													htmlFor={`field-pages-${index}-title`}
+												>
+													Title
+												</Label>
+												<Field
+													name={`pages.${index}.title`}
+													className="spaced"
+													required
+													innerRef={firstPageFieldTitle}
+												/>
+											</div>
+											<div className="page-field">
+												<Label htmlFor={`field-pages-${index}-content`}>
+													Content
+												</Label>
+												<BBField
+													name={`pages.${index}.content`}
+													rows={6}
+												/>
+											</div>
 										</BoxSection>
 										{page.id !== (
 											index === values.pages.length - 1

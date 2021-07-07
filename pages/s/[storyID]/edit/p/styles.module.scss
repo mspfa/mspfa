@@ -20,3 +20,18 @@
 .story-editor-view-actions {
 	text-align: center;
 }
+
+.page-field {
+	&.single-line {
+		display: flex;
+		align-items: center;
+
+		input {
+			flex-grow: 1;
+		}
+	}
+
+	&:not(:first-child) {
+		margin-top: 1em;
+	}
+}
