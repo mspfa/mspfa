@@ -212,6 +212,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 													name={`pages.${index}.title`}
 													className="spaced"
 													required
+													autoComplete="off"
 													innerRef={firstPageFieldTitle}
 												/>
 											</div>
