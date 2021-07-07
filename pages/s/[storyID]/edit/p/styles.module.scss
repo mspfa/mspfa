@@ -17,8 +17,23 @@
 	}
 }
 
-.story-editor-view-actions {
-	text-align: center;
+.story-editor {
+	&-view-actions {
+		text-align: center;
+	}
+
+	&-next-page {
+		display: block;
+
+		&::before {
+			content: '>';
+			margin-right: 1ch;
+		}
+
+		&-input {
+			width: 8ch;
+		}
+	}
 }
 
 .page-field {

@@ -3,7 +3,7 @@ import Page from 'components/Page';
 import { Perm } from 'modules/client/perms';
 import { withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
-import { Form, Formik, Field } from 'formik';
+import { Form, Formik } from 'formik';
 import type { ChangeEvent } from 'react';
 import { Fragment, useCallback, useRef, useState } from 'react';
 import { useLeaveConfirmation } from 'modules/client/forms';
@@ -14,11 +14,11 @@ import type { ClientStoryPage, PrivateStory } from 'modules/client/stories';
 import BoxSection from 'components/Box/BoxSection';
 import type { APIClient } from 'modules/client/api';
 import Row from 'components/Row';
-import BBField from 'components/BBCode/BBField';
 import Label from 'components/Label';
 import api from 'modules/client/api';
 import useThrottledCallback from 'modules/client/useThrottledCallback';
 import axios from 'axios';
+import StoryEditorPage from 'components/StoryEditorPage';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 
@@ -55,7 +55,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 					useLeaveConfirmation(dirty);
 
 					const defaultPageTitleInputRef = useRef<HTMLInputElement>(null!);
-					const firstPageFieldTitle = useRef<HTMLInputElement>(null);
+					const firstTitleInputRef = useRef<HTMLInputElement>(null);
 
 					const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source>>();
 
@@ -170,7 +170,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 											// Wait for the newly added editor page to render.
 											setTimeout(() => {
 												// Select the title field of the newly added page.
-												firstPageFieldTitle.current?.select();
+												firstTitleInputRef.current?.select();
 											});
 
 											// This ESLint comment is necessary because ESLint does not recognize that `privateStory.editorSettings.defaultPageTitle` can change from outside the scope of this hook's component.
@@ -195,48 +195,24 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 								</Button>
 							</div>
 							<Box id="story-editor-pages">
-								{values.pages.map((page, index) => (
+								{values.pages.map((page, pageIndex) => (
 									<Fragment key={page.id}>
-										<BoxSection
-											className="story-editor-page"
-											heading={`Page ${page.id}`}
+										<StoryEditorPage
+											pageIndex={pageIndex}
+											firstTitleInputRef={firstTitleInputRef}
 										>
-											<div className="page-field single-line">
-												<Label
-													className="spaced"
-													htmlFor={`field-pages-${index}-title`}
-												>
-													Title
-												</Label>
-												<Field
-													name={`pages.${index}.title`}
-													className="spaced"
-													required
-													maxLength={500}
-													autoComplete="off"
-													innerRef={firstPageFieldTitle}
-												/>
-											</div>
-											<div className="page-field">
-												<Label htmlFor={`field-pages-${index}-content`}>
-													Content
-												</Label>
-												<BBField
-													name={`pages.${index}.content`}
-													rows={6}
-												/>
-											</div>
-										</BoxSection>
+											{page}
+										</StoryEditorPage>
 										{page.id !== (
-											index === values.pages.length - 1
+											pageIndex === values.pages.length - 1
 												? 1
 												// The ID of the following page plus 1, which is what this page's ID should be if and only if there are no gaps. (The pages are in reverse, so the following page has an ID one lower than this page, given there's no gap.)
-												: values.pages[index + 1].id + 1
+												: values.pages[pageIndex + 1].id + 1
 										) && (
 											// There is a gap in the page IDs, so present an option to load the missing pages.
 											<div className="story-editor-view-actions">
 												<Button>
-													Load More
+													Load Pages X-Y
 												</Button>
 											</div>
 										)}
