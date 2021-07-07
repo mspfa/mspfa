@@ -1,9 +1,9 @@
-#editor-options {
-	text-align: center;
-}
+#story-editor {
+	&-options {
+		text-align: center;
+	}
 
-#story-page {
-	&-sections {
+	&-pages {
 		padding: 0 32px;
 
 		& > * {
@@ -17,6 +17,6 @@
 	}
 }
 
-.story-page-view-actions {
+.story-editor-view-actions {
 	text-align: center;
 }

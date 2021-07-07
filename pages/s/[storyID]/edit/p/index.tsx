@@ -52,7 +52,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 						<Form>
 							<Box>
 								<BoxSection
-									id="editor-options"
+									id="story-editor-options"
 									heading={privateStory.title}
 								>
 									<Row>
@@ -80,7 +80,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 									</Row>
 								</BoxSection>
 							</Box>
-							<div id="story-page-actions">
+							<div id="story-editor-actions">
 								<Button
 									onClick={
 										useCallback(() => {
@@ -121,11 +121,11 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 									Publish
 								</Button>
 							</div>
-							<Box id="story-page-sections">
+							<Box id="story-editor-pages">
 								{values.pages.map((page, index) => (
 									<Fragment key={page.id}>
 										<BoxSection
-											className="story-page-section"
+											className="story-editor-page"
 											heading={`Page ${page.id}`}
 										>
 											{page.content}
@@ -137,7 +137,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 												: values.pages[index + 1].id + 1
 										) && (
 											// There is a gap in the page IDs, so present an option to load the missing pages.
-											<div className="story-page-view-actions">
+											<div className="story-editor-view-actions">
 												<Button>
 													Load More
 												</Button>
