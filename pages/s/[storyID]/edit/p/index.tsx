@@ -35,7 +35,7 @@ type ServerSideProps = {
 
 const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivateStory }) => {
 	const [privateStory, setPrivateStory] = useState(initialPrivateStory);
-	const [initialPages, setInitialPages] = useState<ClientStoryPage[]>([]);
+	const [savedPages, setSavedPages] = useState<ClientStoryPage[]>([]);
 
 	const notifyCheckboxRef = useRef<HTMLInputElement>(null!);
 
@@ -43,7 +43,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 		<Page heading="Edit Adventure">
 			<Formik
 				initialValues={{
-					pages: initialPages
+					pages: savedPages
 				}}
 				onSubmit={
 					useCallback(async (values: Values) => {
@@ -198,6 +198,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 								{values.pages.map((page, pageIndex) => (
 									<Fragment key={page.id}>
 										<StoryEditorPage
+											privateStory={privateStory}
 											pageIndex={pageIndex}
 											firstTitleInputRef={firstTitleInputRef}
 										>

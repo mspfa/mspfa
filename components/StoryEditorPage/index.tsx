@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import BoxSection from 'components/Box/BoxSection';
-import type { ClientStoryPage } from 'modules/client/stories';
+import type { ClientStoryPage, PrivateStory } from 'modules/client/stories';
 import { Field, useFormikContext } from 'formik';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
@@ -13,6 +13,8 @@ import RemoveButton from 'components/Button/RemoveButton';
 export type StoryEditorPageProps = {
 	/** The `ClientStoryPage` being edited. */
 	children: ClientStoryPage,
+	/** The `PrivateStory` this page is from. */
+	privateStory: PrivateStory,
 	/** The index of this page within the `pages` Formik value. */
 	pageIndex: number,
 	/** A ref to the first page field's title `input` element. */
@@ -21,6 +23,7 @@ export type StoryEditorPageProps = {
 
 const StoryEditorPage = ({
 	children: page,
+	privateStory,
 	pageIndex,
 	firstTitleInputRef
 }: StoryEditorPageProps) => {
@@ -44,7 +47,16 @@ const StoryEditorPage = ({
 	return (
 		<BoxSection
 			className="story-editor-page"
-			heading={`Page ${page.id}`}
+			heading={
+				`Page ${page.id} (${
+					page.published === undefined
+						? 'Unsaved Draft'
+						// TODO: Fix unsaved drafts being considered "Scheduled" or "Published" due to having a set `published` date.
+						: page.published < Date.now()
+							? 'Scheduled'
+							: 'Published'
+				})`
+			}
 		>
 			<div className="page-field single-line">
 				<Label
