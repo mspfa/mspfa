@@ -112,7 +112,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 										<input
 											id="field-default-page-title"
 											className="spaced"
-											maxLength={200}
+											maxLength={500}
 											defaultValue={privateStory.editorSettings.defaultPageTitle}
 											autoComplete="off"
 											onChange={
@@ -212,6 +212,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 													name={`pages.${index}.title`}
 													className="spaced"
 													required
+													maxLength={500}
 													autoComplete="off"
 													innerRef={firstPageFieldTitle}
 												/>
