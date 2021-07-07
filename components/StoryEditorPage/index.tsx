@@ -76,7 +76,7 @@ const StoryEditorPage = ({
 				/>
 			</div>
 			<div className="page-field">
-				<Label help="The page numbers of pages to link at the bottom of this page (in order). By default, a new page will already link to the page after it. This is particularly useful for branching stories.">
+				<Label help={'The page numbers of pages to link at the bottom of this page (in order). By default, each newly added page will already link to the page after it.\n\nThis is particularly useful for skipping hidden pages or adding multiple page links in branching stories.'}>
 					Next Pages
 				</Label>
 				<div className="story-editor-next-page-container">
