@@ -60,6 +60,15 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 					const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source>>();
 
 					const onChangeDefaultPageTitle = useThrottledCallback(async (event: ChangeEvent<HTMLInputElement>) => {
+						setPrivateStory({
+							...privateStory,
+							editorSettings: {
+								...privateStory.editorSettings,
+								defaultPageTitle: event.target.value
+							}
+						});
+						// Update the above state before syncing it with the server via the below request so the user can use the new default page title while the request is still loading.
+
 						cancelTokenSourceRef.current = axios.CancelToken.source();
 
 						await (api as StoryAPI).put(`/stories/${privateStory.id}`, {
@@ -71,14 +80,6 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 						});
 
 						cancelTokenSourceRef.current = undefined;
-
-						setPrivateStory({
-							...privateStory,
-							editorSettings: {
-								...privateStory.editorSettings,
-								defaultPageTitle: event.target.value
-							}
-						});
 
 						// This ESLint comment is necessary because ESLint does not recognize that `privateStory` can change from outside the scope of this hook's component.
 						// eslint-disable-next-line react-hooks/exhaustive-deps
