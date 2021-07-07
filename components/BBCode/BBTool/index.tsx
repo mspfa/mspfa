@@ -589,15 +589,15 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 					}
 
 					const openTag = `[${tagName}${
-						tagProps.attributes === ''
-							? ''
-							: tagProps.attributes instanceof Object
+						tagProps.attributes
+							? tagProps.attributes instanceof Object
 								? (
 									Object.entries(tagProps.attributes).map(
 										([name, value]) => ` ${name}=${escapeAttribute(value!.toString(), true)}`
 									).join('')
 								)
 								: `=${escapeAttribute(tagProps.attributes.toString())}`
+							: ''
 					}]`;
 					const closeTag = `[/${tagName}]`;
 
