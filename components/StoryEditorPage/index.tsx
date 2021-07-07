@@ -5,7 +5,7 @@ import { Field, useFormikContext } from 'formik';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
 import type { MouseEvent, RefObject } from 'react';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import AddButton from 'components/Button/AddButton';
 import type { Values } from 'pages/s/[storyID]/edit/p';
 import RemoveButton from 'components/Button/RemoveButton';
@@ -39,6 +39,8 @@ const StoryEditorPage = ({
 		]);
 	}, [setFieldValue, pageIndex, page.nextPages]);
 
+	const lastNextPageInputRef = useRef<HTMLInputElement>(null);
+
 	return (
 		<BoxSection
 			className="story-editor-page"
@@ -57,7 +59,11 @@ const StoryEditorPage = ({
 					required
 					maxLength={500}
 					autoComplete="off"
-					innerRef={firstTitleInputRef}
+					innerRef={
+						pageIndex === 0
+							? firstTitleInputRef
+							: undefined
+					}
 				/>
 			</div>
 			<div className="page-field">
@@ -70,7 +76,7 @@ const StoryEditorPage = ({
 				/>
 			</div>
 			<div className="page-field">
-				<Label help="The page numbers of pages to link at the bottom of this page (in order).">
+				<Label help="The page numbers of pages to link at the bottom of this page (in order). By default, a new page will already link to the page after it. This is particularly useful for branching stories.">
 					Next Pages
 				</Label>
 				<div className="story-editor-next-page-container">
@@ -86,6 +92,11 @@ const StoryEditorPage = ({
 									className="story-editor-next-page-input"
 									min={1}
 									required
+									innerRef={
+										nextPageIndex === page.nextPages.length - 1
+											? lastNextPageInputRef
+											: undefined
+									}
 								/>
 							</label>
 							<RemoveButton
@@ -104,6 +115,11 @@ const StoryEditorPage = ({
 								...page.nextPages,
 								''
 							]);
+
+							// Wait for the newly added next page to render.
+							setTimeout(() => {
+								lastNextPageInputRef.current?.focus();
+							});
 						}, [setFieldValue, pageIndex, page.nextPages])
 					}
 				/>
