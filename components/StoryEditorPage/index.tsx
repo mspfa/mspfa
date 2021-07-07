@@ -62,6 +62,7 @@ const StoryEditorPage = ({
 				<Label
 					className="spaced"
 					htmlFor={`field-pages-${pageIndex}-title`}
+					help="The text displayed at the top of this page. This text also appears in any link to this page from the commands at the bottom of another page."
 				>
 					Page Title/Command
 				</Label>
@@ -88,7 +89,7 @@ const StoryEditorPage = ({
 				/>
 			</div>
 			<div className="page-field">
-				<Label help={'The page numbers of pages to link at the bottom of this page (in order). By default, each newly added page will already link to the page after it.\n\nThis is particularly useful for skipping hidden pages or adding multiple page links in branching stories.'}>
+				<Label help={'The page numbers of the commands to link at the bottom of this page (in order). By default, each newly added page will already link to the page after it.\n\nThis is particularly useful for skipping hidden pages or adding multiple page links in branching stories.'}>
 					Next Pages
 				</Label>
 				<div className="story-editor-next-page-container">
