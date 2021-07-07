@@ -409,7 +409,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											<TagField rows={4} />
 										</Row>
 										<Row>
-											<Label htmlFor="field-description">
+											<Label block htmlFor="field-description">
 												Description
 											</Label>
 											<BBField
@@ -421,6 +421,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										</Row>
 										<Row>
 											<Label
+												block
 												htmlFor="field-blurb"
 												help={'This text appears when you click "Show More" under an adventure\'s listing, and the first line of it is used in external embeds of this adventure.\n\nThis is useful if you have content in the description that is excessive for or doesn\'t need to be in the blurb.\n\nThis can usually be left empty to default to the adventure\'s description.'}
 											>
@@ -440,7 +441,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										<Row id="code-fields">
 											<div>
 												<Row>
-													<Label htmlFor="field-style">
+													<Label block htmlFor="field-style">
 														Custom Style
 													</Label>
 													<Field
@@ -466,7 +467,7 @@ const Component = withErrorPage<ServerSideProps>(({
 												</Row>
 											</div>
 											<div>
-												<Label htmlFor="field-style">
+												<Label block htmlFor="field-style">
 													Custom Script
 												</Label>
 												<Field

@@ -411,7 +411,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 									/>
 								</BoxRowSection>
 								<BoxSection heading="Advanced" collapsible>
-									<Label htmlFor="field-style">
+									<Label block htmlFor="field-style">
 										Custom Site Style
 									</Label>
 									<Field

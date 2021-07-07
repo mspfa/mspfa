@@ -153,7 +153,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 									</Box>
 								</BoxColumns>
 								<BoxSection heading="Description">
-									<Label htmlFor="field-description">
+									<Label block htmlFor="field-description">
 										Description
 									</Label>
 									<BBField
@@ -164,7 +164,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 									/>
 								</BoxSection>
 								<BoxSection heading="Advanced" collapsible>
-									<Label htmlFor="field-style">
+									<Label block htmlFor="field-style">
 										Custom Profile Style
 									</Label>
 									<Field

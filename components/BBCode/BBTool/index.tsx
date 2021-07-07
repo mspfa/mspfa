@@ -109,7 +109,7 @@ const tags: Record<string, {
 					min={0}
 				/>
 				<BoxRow>
-					<Label htmlFor="field-bb-preview">
+					<Label block htmlFor="field-bb-preview">
 						Preview
 					</Label>
 					{/* This `.bbcode` container is necessary to give the preview text the correct relative font size. */}
@@ -164,7 +164,7 @@ const tags: Record<string, {
 						required
 					/>
 					<BoxRow>
-						<Label htmlFor="field-bb-preview">
+						<Label block htmlFor="field-bb-preview">
 							Preview
 						</Label>
 						<Field

@@ -283,6 +283,7 @@ const TagField = ({
 	return (
 		<div className="tag-field">
 			<Label
+				block
 				help={'Tags are keywords that help identify and describe an adventure.\n\nUsers can search for adventures with certain tags, and they can read an adventure\'s tags to get an idea of what kind of adventure it is before opening it.'}
 			>
 				Tags

@@ -168,7 +168,7 @@ const Component = withErrorPage<ServerSideProps>(({
 								<BoxSection id="message-content">
 									{editing ? (
 										<>
-											<Label htmlFor="field-content">
+											<Label block htmlFor="field-content">
 												Content
 											</Label>
 											<BBField

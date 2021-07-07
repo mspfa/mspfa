@@ -124,20 +124,18 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 									{toUsers ? (
 										<>
 											<div className="field-container">
-												<Label htmlFor="field-to">
+												<Label block htmlFor="field-to">
 													To
 												</Label>
-												<div>
-													<UserArrayField
-														name="to"
-														required
-														unique
-														autoFocus={!toUsers.length}
-													/>
-												</div>
+												<UserArrayField
+													name="to"
+													required
+													unique
+													autoFocus={!toUsers.length}
+												/>
 											</div>
 											<div className="field-container">
-												<Label htmlFor="field-subject">
+												<Label block htmlFor="field-subject">
 													Subject
 												</Label>
 												<Field
@@ -152,7 +150,9 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 										</>
 									) : (
 										<div className="field-container">
-											<Label className="spaced">Reply To</Label>
+											<Label className="spaced">
+												Reply To
+											</Label>
 											<Link
 												className="spaced"
 												href={`/message/${replyTo!.id}`}
@@ -162,7 +162,7 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 										</div>
 									)}
 									<div className="field-container">
-										<Label htmlFor="field-content">
+										<Label block htmlFor="field-content">
 											Content
 										</Label>
 										<BBField

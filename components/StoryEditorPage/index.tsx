@@ -58,9 +58,9 @@ const StoryEditorPage = ({
 			}
 			heading={`Page ${page.id}`}
 		>
-			<div className="page-field single-line">
+			<div className="page-field page-field-title">
 				<Label
-					className="spaced"
+					block
 					htmlFor={`field-pages-${pageIndex}-title`}
 					help="The text displayed at the top of this page. This text also appears in any link to this page from the commands at the bottom of another page."
 				>
@@ -68,7 +68,6 @@ const StoryEditorPage = ({
 				</Label>
 				<Field
 					name={`pages.${pageIndex}.title`}
-					className="spaced"
 					required
 					maxLength={500}
 					autoComplete="off"
@@ -79,8 +78,8 @@ const StoryEditorPage = ({
 					}
 				/>
 			</div>
-			<div className="page-field">
-				<Label htmlFor={`field-pages-${pageIndex}-content`}>
+			<div className="page-field page-field-content">
+				<Label block htmlFor={`field-pages-${pageIndex}-content`}>
 					Content
 				</Label>
 				<BBField
@@ -88,8 +87,11 @@ const StoryEditorPage = ({
 					rows={6}
 				/>
 			</div>
-			<div className="page-field">
-				<Label help={'The page numbers of the commands to link at the bottom of this page (in order). By default, each newly added page will already link to the page after it.\n\nThis is particularly useful for skipping hidden pages or adding multiple page links in branching stories.'}>
+			<div className="page-field page-field-next-pages">
+				<Label
+					block
+					help={'The page numbers of the commands to link at the bottom of this page (in order). By default, each newly added page will already link to the page after it.\n\nThis is particularly useful for skipping hidden pages or adding multiple page links in branching stories.'}
+				>
 					Next Pages
 				</Label>
 				<div className="story-editor-next-page-container">
