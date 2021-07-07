@@ -230,7 +230,7 @@ export default createValidator({
 			properties: {
 				defaultPageTitle: {
 					type: 'string',
-					maxLength: 200
+					maxLength: 500
 				},
 				defaultSpoiler: {
 					$ref: '#/definitions/RecursivePartial%3Cstructure--2897-2937--2879-2937--2837-2940--2747-2941--1306-2983--1277-2984--0-7509%3E'
