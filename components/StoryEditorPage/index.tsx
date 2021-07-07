@@ -63,7 +63,7 @@ const StoryEditorPage = ({
 					className="spaced"
 					htmlFor={`field-pages-${pageIndex}-title`}
 				>
-					Title
+					Page Title/Command
 				</Label>
 				<Field
 					name={`pages.${pageIndex}.title`}
