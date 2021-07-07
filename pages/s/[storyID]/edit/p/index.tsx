@@ -22,7 +22,7 @@ import StoryEditorPage from 'components/StoryEditorPage';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 
-type Values = {
+export type Values = {
 	/** The pages currently loaded into the page editor, in reverse order (last page first). */
 	pages: ClientStoryPage[]
 };

@@ -1,0 +1,29 @@
+.page-field {
+	&.single-line {
+		display: flex;
+		align-items: center;
+
+		input {
+			flex-grow: 1;
+		}
+	}
+
+	&:not(:first-child) {
+		margin-top: 1em;
+	}
+}
+
+.story-editor {
+	&-next-page {
+		margin-bottom: 2px;
+
+		label::before {
+			content: '>';
+			margin-right: 1ch;
+		}
+
+		&-input {
+			width: 8ch;
+		}
+	}
+}

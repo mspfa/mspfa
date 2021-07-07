@@ -21,32 +21,4 @@
 	&-view-actions {
 		text-align: center;
 	}
-
-	&-next-page {
-		display: block;
-
-		&::before {
-			content: '>';
-			margin-right: 1ch;
-		}
-
-		&-input {
-			width: 8ch;
-		}
-	}
-}
-
-.page-field {
-	&.single-line {
-		display: flex;
-		align-items: center;
-
-		input {
-			flex-grow: 1;
-		}
-	}
-
-	&:not(:first-child) {
-		margin-top: 1em;
-	}
 }
