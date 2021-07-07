@@ -22,6 +22,7 @@ export type TagString = string;
 
 export type StoryPage = {
 	id: StoryPageID,
+	/** The date that the page was or will be published, or undefined if the page is still a draft. */
 	published?: Date,
 	/** @maxLength 500 */
 	title: string,
