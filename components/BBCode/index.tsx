@@ -153,15 +153,12 @@ export type BBCodeProps = {
 };
 
 /** A component which parses its `children` string as BBCode. */
-const BBCode = React.forwardRef<HTMLSpanElement, BBCodeProps>((
-	{
-		html,
-		noBB,
-		raw,
-		children = ''
-	},
-	ref
-) => {
+const BBCode = React.forwardRef<HTMLSpanElement, BBCodeProps>(({
+	html,
+	noBB,
+	raw,
+	children = ''
+}, ref) => {
 	if (raw) {
 		return (
 			<span className="bbcode">
