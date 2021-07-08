@@ -164,12 +164,14 @@ const StoryEditorPage = ({
 					/>
 				</div>
 				<InlineRowSection className="page-field-container-misc">
-					<FieldBoxRow
-						type="checkbox"
-						name={`pages.${pageIndex}.unlisted`}
-						label="Unlisted"
-						help="Unlisted pages are not included in new update notifications and do not show in your adventure's log. Comments on an unlisted page will not appear under any other page."
-					/>
+					{page.id !== 1 && (
+						<FieldBoxRow
+							type="checkbox"
+							name={`pages.${pageIndex}.unlisted`}
+							label="Unlisted"
+							help="Unlisted pages are not included in new update notifications and do not show in your adventure's log. Comments on an unlisted page will not appear under any other page."
+						/>
+					)}
 					<FieldBoxRow
 						type="checkbox"
 						name={`pages.${pageIndex}.disableControls`}
