@@ -1,5 +1,6 @@
 import './styles.module.scss';
 import type { HTMLAttributes, ReactNode } from 'react';
+import React from 'react';
 
 export type BoxSectionProps = HTMLAttributes<HTMLDivElement> & {
 	heading?: ReactNode,
@@ -10,14 +11,14 @@ export type BoxSectionProps = HTMLAttributes<HTMLDivElement> & {
 };
 
 /** A `Box` section with a heading and content below it.  */
-const BoxSection = ({
+const BoxSection = React.forwardRef<HTMLDivElement, BoxSectionProps>(({
 	heading,
 	className,
 	collapsible,
 	customContent,
 	children,
 	...props
-}: BoxSectionProps) => {
+}, ref) => {
 	const SectionTag = collapsible ? 'details' : 'div';
 	const HeadingTag = collapsible ? 'summary' : 'div';
 
@@ -25,6 +26,7 @@ const BoxSection = ({
 		<SectionTag
 			className={`box-section${className ? ` ${className}` : ''}`}
 			{...props}
+			ref={ref}
 		>
 			{heading && (
 				<HeadingTag className="box-heading front-alt">
@@ -40,6 +42,6 @@ const BoxSection = ({
 			)}
 		</SectionTag>
 	);
-};
+});
 
 export default BoxSection;
