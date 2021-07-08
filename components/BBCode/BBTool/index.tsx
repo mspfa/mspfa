@@ -4,7 +4,7 @@ import { TextAreaRefContext } from 'components/BBCode/BBField';
 import Button from 'components/Button';
 import { Dialog } from 'modules/client/dialogs';
 import { videoIDTest } from 'components/BBCode/BBTags';
-import LabeledDialogBox from 'components/Box/LabeledDialogBox';
+import InlineRowSection from 'components/Box/InlineRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
 import Label from 'components/Label';
 import type { FormikProps } from 'formik';
@@ -69,7 +69,7 @@ const tags: Record<string, {
 		title: 'Text Color',
 		initialValues: randomColorAttributes,
 		content: (
-			<LabeledDialogBox>
+			<InlineRowSection>
 				<FieldBoxRow
 					type="color"
 					name="attributes"
@@ -77,14 +77,14 @@ const tags: Record<string, {
 					required
 					autoFocus
 				/>
-			</LabeledDialogBox>
+			</InlineRowSection>
 		)
 	},
 	background: {
 		title: 'Text Background Color',
 		initialValues: randomColorAttributes,
 		content: (
-			<LabeledDialogBox>
+			<InlineRowSection>
 				<FieldBoxRow
 					type="color"
 					name="attributes"
@@ -92,14 +92,14 @@ const tags: Record<string, {
 					required
 					autoFocus
 				/>
-			</LabeledDialogBox>
+			</InlineRowSection>
 		)
 	},
 	size: {
 		title: 'Font Size',
 		initialValues: { bbPreview },
 		content: ({ values }) => (
-			<LabeledDialogBox>
+			<InlineRowSection>
 				<FieldBoxRow
 					type="number"
 					name="attributes"
@@ -127,7 +127,7 @@ const tags: Record<string, {
 						/>
 					</span>
 				</BoxRow>
-			</LabeledDialogBox>
+			</InlineRowSection>
 		)
 	},
 	font: {
@@ -135,7 +135,7 @@ const tags: Record<string, {
 		initialValues: { bbPreview },
 		content: ({ values }) => (
 			<>
-				<LabeledDialogBox>
+				<InlineRowSection>
 					<FieldBoxRow
 						as="select"
 						name="attributes"
@@ -175,7 +175,7 @@ const tags: Record<string, {
 							style={{ fontFamily: values.attributes }}
 						/>
 					</BoxRow>
-				</LabeledDialogBox>
+				</InlineRowSection>
 			</>
 		)
 	},
@@ -191,7 +191,7 @@ const tags: Record<string, {
 			[children.includes('://') ? 'attributes' : 'children']: children
 		}),
 		content: ({ initialValues }) => (
-			<LabeledDialogBox>
+			<InlineRowSection>
 				<FieldBoxRow
 					type="url"
 					name="attributes"
@@ -206,7 +206,7 @@ const tags: Record<string, {
 					placeholder="Optional"
 					autoFocus={!!initialValues.attributes}
 				/>
-			</LabeledDialogBox>
+			</InlineRowSection>
 		),
 		getProps: ({ values: { attributes, children } }) => {
 			const childrenIsURL = !children || attributes === children;
@@ -224,7 +224,7 @@ const tags: Record<string, {
 			close: ''
 		},
 		content: (
-			<LabeledDialogBox>
+			<InlineRowSection>
 				<FieldBoxRow
 					name="open"
 					label={'"Show" Button Text'}
@@ -236,7 +236,7 @@ const tags: Record<string, {
 					label={'"Hide" Button Text'}
 					placeholder="Optional"
 				/>
-			</LabeledDialogBox>
+			</InlineRowSection>
 		),
 		getProps: ({ values: { open, close } }) => ({
 			attributes: (
@@ -253,14 +253,14 @@ const tags: Record<string, {
 	alt: {
 		title: 'Hover Text',
 		content: (
-			<LabeledDialogBox>
+			<InlineRowSection>
 				<FieldBoxRow
 					name="attributes"
 					label="Hover Text"
 					required
 					autoFocus
 				/>
-			</LabeledDialogBox>
+			</InlineRowSection>
 		)
 	},
 	img: {
@@ -270,7 +270,7 @@ const tags: Record<string, {
 			height: ''
 		},
 		content: (
-			<LabeledDialogBox>
+			<InlineRowSection>
 				<FieldBoxRow
 					type="url"
 					name="children"
@@ -293,7 +293,7 @@ const tags: Record<string, {
 					placeholder="Optional"
 					min={0}
 				/>
-			</LabeledDialogBox>
+			</InlineRowSection>
 		),
 		getProps: ({ values: { width, height, children } }) => ({
 			children,
@@ -312,7 +312,7 @@ const tags: Record<string, {
 			loop: false
 		},
 		content: (
-			<LabeledDialogBox>
+			<InlineRowSection>
 				<FieldBoxRow
 					type="text"
 					name="children"
@@ -358,7 +358,7 @@ const tags: Record<string, {
 						Advanced Attribute List
 					</Link>
 				</BoxRow>
-			</LabeledDialogBox>
+			</InlineRowSection>
 		),
 		getProps: ({
 			initialValues,
@@ -389,7 +389,7 @@ const tags: Record<string, {
 			height: 450
 		},
 		content: (
-			<LabeledDialogBox>
+			<InlineRowSection>
 				<FieldBoxRow
 					type="url"
 					name="children"
@@ -418,7 +418,7 @@ const tags: Record<string, {
 					required
 					min={0}
 				/>
-			</LabeledDialogBox>
+			</InlineRowSection>
 		),
 		getProps: ({ values: { width, height, children } }) => ({
 			children,
@@ -436,7 +436,7 @@ const tags: Record<string, {
 			height: 450
 		},
 		content: (
-			<LabeledDialogBox>
+			<InlineRowSection>
 				<BoxRow className="red">
 					It is highly recommended not to use Flash due to its loss of support. Consider using video or HTML5 instead.
 				</BoxRow>
@@ -461,7 +461,7 @@ const tags: Record<string, {
 					required
 					min={0}
 				/>
-			</LabeledDialogBox>
+			</InlineRowSection>
 		),
 		getProps: ({ values: { width, height, children } }) => ({
 			children,

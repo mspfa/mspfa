@@ -6,7 +6,7 @@ import type { ChangeEvent } from 'react';
 import { useState, useCallback, useRef } from 'react';
 import Captcha from 'components/SignIn/Captcha';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
-import LabeledDialogBox from 'components/Box/LabeledDialogBox';
+import InlineRowSection from 'components/Box/InlineRowSection';
 import ForgotPassword from 'components/ForgotPassword';
 import AuthButton from 'components/Button/AuthButton';
 import BirthdateField from 'components/DateField/BirthdateField';
@@ -134,7 +134,7 @@ const SignIn = ({ page }: SignInProps) => {
 					<div id="sign-in-divider" className="translucent-text">or</div>
 				</>
 			)}
-			<LabeledDialogBox>
+			<InlineRowSection>
 				{page === 2 ? (
 					<>
 						<LabeledBoxRow htmlFor="sign-in-name" label="Username">
@@ -211,7 +211,7 @@ const SignIn = ({ page }: SignInProps) => {
 						)}
 					</>
 				)}
-			</LabeledDialogBox>
+			</InlineRowSection>
 			{page === 2 && (
 				<>
 					<Captcha />

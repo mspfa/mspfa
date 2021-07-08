@@ -27,7 +27,7 @@ import { Dialog } from 'modules/client/dialogs';
 import Label from 'components/Label';
 import Router from 'next/router';
 import BoxRow from 'components/Box/BoxRow';
-import LabeledDialogBox from 'components/Box/LabeledDialogBox';
+import InlineRowSection from 'components/Box/InlineRowSection';
 import ForgotPassword from 'components/ForgotPassword';
 import AuthMethods from 'components/AuthMethod/AuthMethods';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
@@ -119,7 +119,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 				confirmPassword: '' as string
 			},
 			content: ({ values }) => (
-				<LabeledDialogBox>
+				<InlineRowSection>
 					<FieldBoxRow
 						type="password"
 						name="currentPassword"
@@ -147,7 +147,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 						placeholder="Re-Type Password"
 						pattern={escapeRegExp(values.password)}
 					/>
-				</LabeledDialogBox>
+				</InlineRowSection>
 			),
 			actions: [
 				{ label: 'Okay', autoFocus: false },

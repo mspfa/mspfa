@@ -3,7 +3,7 @@ import Button from 'components/Button';
 import { useCallback } from 'react';
 import env from 'modules/client/env';
 import { Dialog } from 'modules/client/dialogs';
-import LabeledDialogBox from 'components/Box/LabeledDialogBox';
+import InlineRowSection from 'components/Box/InlineRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
 import { toKebabCase } from 'modules/client/utilities';
 import type { ButtonProps } from 'components/Button';
@@ -30,7 +30,7 @@ const promptAuthMethod = {
 				confirmPassword: '' as string
 			},
 			content: ({ values }) => (
-				<LabeledDialogBox>
+				<InlineRowSection>
 					<FieldBoxRow
 						type="password"
 						name="password"
@@ -49,7 +49,7 @@ const promptAuthMethod = {
 						placeholder="Re-Type Password"
 						pattern={escapeRegExp(values.password)}
 					/>
-				</LabeledDialogBox>
+				</InlineRowSection>
 			),
 			actions: [
 				{ label: 'Okay', autoFocus: false },

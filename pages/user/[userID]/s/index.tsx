@@ -12,7 +12,7 @@ import { useCallback } from 'react';
 import type { APIClient } from 'modules/client/api';
 import api from 'modules/client/api';
 import { Dialog } from 'modules/client/dialogs';
-import LabeledDialogBox from 'components/Box/LabeledDialogBox';
+import InlineRowSection from 'components/Box/InlineRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
 import randomStoryNames from 'modules/client/randomStoryNames.json';
 import type { PrivateStory } from 'modules/client/stories';
@@ -68,7 +68,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStories }) => (
 									title: ''
 								},
 								content: (
-									<LabeledDialogBox>
+									<InlineRowSection>
 										<BoxRow>What will the title of this new adventure be?</BoxRow>
 										<FieldBoxRow
 											name="title"
@@ -80,7 +80,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStories }) => (
 											size={Math.max(20, randomStoryName.length)}
 											autoComplete="off"
 										/>
-									</LabeledDialogBox>
+									</InlineRowSection>
 								),
 								actions: [
 									{ label: 'Start!', autoFocus: false },
