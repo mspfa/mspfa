@@ -1,5 +1,9 @@
 .story-editor {
 	&-page {
+		& > .box-content > :not(:last-child) {
+			margin-bottom: 1em;
+		}
+
 		&:not(.saved) > .box-heading::after {
 			content: '*';
 		}
@@ -28,11 +32,21 @@
 }
 
 .page-field {
-	&:not(:last-child) {
-		margin-bottom: 1em;
+	&-container-title input {
+		width: 100%;
 	}
 
-	&-title input {
-		width: 100%;
+	&-columns {
+		display: flex;
+    	align-items: flex-start;
+
+		& > * {
+			width: 50%;
+		}
+
+		& > :last-child {
+			margin-left: 24px;
+			justify-content: right;
+		}
 	}
 }

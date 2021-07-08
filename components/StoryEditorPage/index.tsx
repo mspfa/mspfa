@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import BoxSection from 'components/Box/BoxSection';
-import type { ClientStoryPage, PrivateStory } from 'modules/client/stories';
+import type { ClientStoryPage } from 'modules/client/stories';
 import { Field, useFormikContext } from 'formik';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
@@ -11,12 +11,12 @@ import type { Values } from 'pages/s/[storyID]/edit/p';
 import RemoveButton from 'components/Button/RemoveButton';
 import { isEqual } from 'lodash';
 import Timestamp from 'components/Timestamp';
+import InlineRowSection from 'components/Box/InlineRowSection';
+import FieldBoxRow from 'components/Box/FieldBoxRow';
 
 export type StoryEditorPageProps = {
 	/** The `ClientStoryPage` being edited. */
 	children: ClientStoryPage,
-	/** The `PrivateStory` this page is from. */
-	privateStory: PrivateStory,
 	/** The index of this page within the `pages` Formik value. */
 	pageIndex: number,
 	/** A ref to the first page field's title `input` element. */
@@ -25,7 +25,6 @@ export type StoryEditorPageProps = {
 
 const StoryEditorPage = ({
 	children: page,
-	privateStory,
 	pageIndex,
 	firstTitleInputRef
 }: StoryEditorPageProps) => {
@@ -80,7 +79,7 @@ const StoryEditorPage = ({
 					)
 			}
 		>
-			<div className="page-field page-field-title">
+			<div className="page-field-container-title">
 				<Label
 					block
 					htmlFor={`field-pages-${pageIndex}-title`}
@@ -101,7 +100,7 @@ const StoryEditorPage = ({
 					}
 				/>
 			</div>
-			<div className="page-field page-field-content">
+			<div className="page-field-container-content">
 				<Label block htmlFor={`field-pages-${pageIndex}-content`}>
 					Content
 				</Label>
@@ -111,57 +110,73 @@ const StoryEditorPage = ({
 					html
 				/>
 			</div>
-			<div className="page-field page-field-next-pages">
-				<Label
-					block
-					help={'The page numbers of the commands to link at the bottom of this page (in order). By default, each newly added page will already link to the page after it.\n\nThis is particularly useful for skipping hidden pages or adding multiple page links in branching stories.'}
-				>
-					Next Pages
-				</Label>
-				<div className="story-editor-next-page-container">
-					{page.nextPages.map((pageID, nextPageIndex) => (
-						<div
-							key={nextPageIndex}
-							className="story-editor-next-page"
-						>
-							<label className="spaced">
-								<Field
-									type="number"
-									name={`pages.${pageIndex}.nextPages.${nextPageIndex}`}
-									className="story-editor-next-page-input"
-									min={1}
-									required
-									innerRef={
-										nextPageIndex === page.nextPages.length - 1
-											? lastNextPageInputRef
-											: undefined
-									}
+			<div className="page-field-columns">
+				<div className="page-field-container-next-pages">
+					<Label
+						block
+						help={'The page numbers of the commands to link at the bottom of this page (in order). By default, each newly added page will already link to the page after it.\n\nThis is particularly useful for skipping hidden pages or adding multiple page links in branching stories.'}
+					>
+						Next Pages
+					</Label>
+					<div className="story-editor-next-page-container">
+						{page.nextPages.map((pageID, nextPageIndex) => (
+							<div
+								key={nextPageIndex}
+								className="story-editor-next-page"
+							>
+								<label className="spaced">
+									<Field
+										type="number"
+										name={`pages.${pageIndex}.nextPages.${nextPageIndex}`}
+										className="story-editor-next-page-input"
+										min={1}
+										required
+										innerRef={
+											nextPageIndex === page.nextPages.length - 1
+												? lastNextPageInputRef
+												: undefined
+										}
+									/>
+								</label>
+								<RemoveButton
+									className="spaced"
+									title="Remove Page"
+									onClick={onClickRemoveNextPage}
 								/>
-							</label>
-							<RemoveButton
-								className="spaced"
-								title="Remove Page"
-								onClick={onClickRemoveNextPage}
-							/>
-						</div>
-					))}
-				</div>
-				<AddButton
-					title="Add Page"
-					onClick={
-						useCallback(() => {
-							setFieldValue(`pages.${pageIndex}.nextPages`, [
-								...page.nextPages,
-								''
-							]);
+							</div>
+						))}
+					</div>
+					<AddButton
+						title="Add Page"
+						onClick={
+							useCallback(() => {
+								setFieldValue(`pages.${pageIndex}.nextPages`, [
+									...page.nextPages,
+									''
+								]);
 
-							// Wait for the newly added next page to render.
-							setTimeout(() => {
-								lastNextPageInputRef.current?.focus();
-							});
-						}, [setFieldValue, pageIndex, page.nextPages])
-					}
-				/>
+								// Wait for the newly added next page to render.
+								setTimeout(() => {
+									lastNextPageInputRef.current?.focus();
+								});
+							}, [setFieldValue, pageIndex, page.nextPages])
+						}
+					/>
+				</div>
+				<InlineRowSection className="page-field-container-next-pages">
+					<FieldBoxRow
+						type="checkbox"
+						name={`pages.${pageIndex}.unlisted`}
+						label="Unlisted"
+						help="Unlisted pages are not included in new update notifications and do not show in your adventure's log. Comments on an unlisted page will not appear under any other page."
+					/>
+					<FieldBoxRow
+						type="checkbox"
+						name={`pages.${pageIndex}.controls`}
+						label="Allow Controls"
+						help="Allow users to use controls on this page (e.g. left and right arrow keys to navigate between pages)."
+					/>
+				</InlineRowSection>
 			</div>
 		</BoxSection>
 	);

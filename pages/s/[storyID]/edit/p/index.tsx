@@ -35,7 +35,7 @@ type ServerSideProps = {
 
 const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivateStory }) => {
 	const [privateStory, setPrivateStory] = useState(initialPrivateStory);
-	const [savedPages, setSavedPages] = useState<ClientStoryPage[]>([]);
+	const [initialPages, setInitialPages] = useState<ClientStoryPage[]>([]);
 
 	const notifyCheckboxRef = useRef<HTMLInputElement>(null!);
 
@@ -43,7 +43,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 		<Page heading="Edit Adventure">
 			<Formik
 				initialValues={{
-					pages: savedPages
+					pages: initialPages
 				}}
 				onSubmit={
 					useCallback(async (values: Values) => {
@@ -154,18 +154,19 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 													: 1
 											);
 
-											setFieldValue('pages', [
-												{
-													id,
-													title: privateStory.editorSettings.defaultPageTitle,
-													content: '',
-													nextPages: [id + 1],
-													tags: [],
-													unlisted: false,
-													commentary: ''
-												},
-												...values.pages
-											]);
+											const newPage: ClientStoryPage = {
+												id,
+												title: privateStory.editorSettings.defaultPageTitle,
+												content: '',
+												nextPages: [id + 1],
+												tags: [],
+												unlisted: false,
+												controls: true,
+												commentary: '',
+												notify: true
+											};
+
+											setFieldValue('pages', [newPage, ...values.pages]);
 
 											// Wait for the newly added editor page to render.
 											setTimeout(() => {
@@ -198,7 +199,6 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 								{values.pages.map((page, pageIndex) => (
 									<Fragment key={page.id}>
 										<StoryEditorPage
-											privateStory={privateStory}
 											pageIndex={pageIndex}
 											firstTitleInputRef={firstTitleInputRef}
 										>
