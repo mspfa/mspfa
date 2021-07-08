@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import BoxSection from 'components/Box/BoxSection';
-import type { ClientStoryPage, PrivateStory } from 'modules/client/stories';
+import type { ClientStoryPage } from 'modules/client/stories';
 import { Field, useFormikContext } from 'formik';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
@@ -14,11 +14,12 @@ import Timestamp from 'components/Timestamp';
 import InlineRowSection from 'components/Box/InlineRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
 import Button from 'components/Button';
+import type { StoryID } from 'modules/server/stories';
 
 export type StoryEditorPageProps = {
 	/** The `ClientStoryPage` being edited. */
 	children: ClientStoryPage,
-	privateStory: PrivateStory,
+	storyID: StoryID,
 	/** The index of this page within the `pages` Formik value. */
 	pageIndex: number,
 	/** A ref to the first page field's title `input` element. */
@@ -27,11 +28,11 @@ export type StoryEditorPageProps = {
 
 const StoryEditorPage = ({
 	children: page,
-	privateStory,
+	storyID,
 	pageIndex,
 	firstTitleInputRef
 }: StoryEditorPageProps) => {
-	const { setFieldValue, initialValues } = useFormikContext<Values>();
+	const { setFieldValue, initialValues, values } = useFormikContext<Values>();
 
 	const onClickRemoveNextPage = useCallback((event: MouseEvent<HTMLButtonElement & HTMLAnchorElement> & { target: HTMLButtonElement }) => {
 		// The `parentNode` of this `RemoveButton` will be the `div.story-editor-next-page` element.
@@ -217,7 +218,7 @@ const StoryEditorPage = ({
 				{saved ? (
 					<>
 						<Button
-							href={`/s/${privateStory.id}/p/${page.id}?preview=1`}
+							href={`/s/${storyID}/p/${page.id}?preview=1`}
 							target="_blank"
 						>
 							Preview
@@ -234,8 +235,14 @@ const StoryEditorPage = ({
 				<Button
 					onClick={
 						useCallback(() => {
-
-						}, [])
+							setFieldValue('pages', [
+								...values.pages.slice(0, pageIndex).map(pageAfter => ({
+									...pageAfter,
+									id: pageAfter.id - 1
+								})),
+								...values.pages.slice(pageIndex + 1, values.pages.length)
+							]);
+						}, [setFieldValue, pageIndex, values.pages])
 					}
 				>
 					Delete

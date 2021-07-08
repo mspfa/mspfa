@@ -199,6 +199,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 								{values.pages.map((page, pageIndex) => (
 									<Fragment key={page.id}>
 										<StoryEditorPage
+											storyID={privateStory.id}
 											pageIndex={pageIndex}
 											firstTitleInputRef={firstTitleInputRef}
 										>
