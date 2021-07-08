@@ -163,7 +163,7 @@ const StoryEditorPage = ({
 						}
 					/>
 				</div>
-				<InlineRowSection className="page-field-container-next-pages">
+				<InlineRowSection className="page-field-container-misc">
 					<FieldBoxRow
 						type="checkbox"
 						name={`pages.${pageIndex}.unlisted`}
