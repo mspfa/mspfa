@@ -6,7 +6,7 @@ import { Field } from 'formik';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
 import type { MouseEvent, MutableRefObject, RefObject } from 'react';
-import { useCallback, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import AddButton from 'components/Button/AddButton';
 import type { Values } from 'pages/s/[storyID]/edit/p';
 import RemoveButton from 'components/Button/RemoveButton';
@@ -28,13 +28,13 @@ export type StoryEditorPageProps = {
 	firstTitleInputRef: RefObject<HTMLInputElement>
 };
 
-const StoryEditorPage = ({
+const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 	children: page,
 	storyID,
 	pageIndex,
 	formikPropsRef,
 	firstTitleInputRef
-}: StoryEditorPageProps) => {
+}) => {
 	const onClickRemoveNextPage = useCallback((event: MouseEvent<HTMLButtonElement & HTMLAnchorElement> & { target: HTMLButtonElement }) => {
 		// The `parentNode` of this `RemoveButton` will be the `div.story-editor-next-page` element.
 		const nextPageElement = event.target.parentNode as HTMLDivElement;
@@ -254,6 +254,6 @@ const StoryEditorPage = ({
 			</div>
 		</BoxSection>
 	);
-};
+});
 
 export default StoryEditorPage;
