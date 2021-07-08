@@ -172,9 +172,9 @@ const StoryEditorPage = ({
 					/>
 					<FieldBoxRow
 						type="checkbox"
-						name={`pages.${pageIndex}.controls`}
-						label="Allow Controls"
-						help={'Allow users to use MSPFA\'s controls on this page (e.g. left and right arrow keys to navigate between pages).\n\nIt\'s generally only necessary to disable this if a script or embedded game has custom controls which conflict with MSPFA\'s controls.'}
+						name={`pages.${pageIndex}.disableControls`}
+						label="Disable Controls"
+						help={'Disallows users from using MSPFA\'s controls on this page (e.g. left and right arrow keys to navigate between pages).\n\nIt\'s generally only necessary to change this option if a script or embedded game has custom controls which conflict with MSPFA\'s controls.'}
 					/>
 				</InlineRowSection>
 			</div>

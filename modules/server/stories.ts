@@ -31,8 +31,8 @@ export type StoryPage = {
 	/** @uniqueItems */
 	tags: TagString[],
 	unlisted: boolean,
-	/** Whether the client's controls should be enabled while this page is rendered. */
-	controls: boolean,
+	/** Whether the client's controls should be disabled while this page is rendered. */
+	disableControls: boolean,
 	commentary: string,
 	comments: StoryComment[],
 	/** Whether this page was set to notify readers on publish. */

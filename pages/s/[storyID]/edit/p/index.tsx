@@ -161,7 +161,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 												nextPages: [id + 1],
 												tags: [],
 												unlisted: false,
-												controls: true,
+												disableControls: false,
 												commentary: '',
 												notify: true
 											};
