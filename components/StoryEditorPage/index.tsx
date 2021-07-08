@@ -28,6 +28,7 @@ export type StoryEditorPageProps = {
 	firstTitleInputRef: RefObject<HTMLInputElement>
 };
 
+/** A `BoxSection` for a page in the story editor. */
 const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 	children: page,
 	storyID,
