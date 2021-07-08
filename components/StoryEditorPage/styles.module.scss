@@ -1,19 +1,25 @@
 .story-editor {
 	&-page {
-		& > .box-content > :not(:last-child) {
-			margin-bottom: 1em;
+		&-section {
+			& > .box-content > :not(:last-child) {
+				margin-bottom: 1em;
+			}
+
+			&:not(.saved) > .box-heading::after {
+				content: '*';
+			}
+
+			&.published > .box-heading {
+				background-color: #008407;
+			}
+
+			&.scheduled > .box-heading {
+				background-color: #cc7600;
+			}
 		}
 
-		&:not(.saved) > .box-heading::after {
-			content: '*';
-		}
-
-		&.published > .box-heading {
-			background-color: #008407;
-		}
-
-		&.scheduled > .box-heading {
-			background-color: #cc7600;
+		&-actions {
+			text-align: right;
 		}
 	}
 

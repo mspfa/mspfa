@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import BoxSection from 'components/Box/BoxSection';
-import type { ClientStoryPage } from 'modules/client/stories';
+import type { ClientStoryPage, PrivateStory } from 'modules/client/stories';
 import { Field, useFormikContext } from 'formik';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
@@ -13,10 +13,12 @@ import { isEqual } from 'lodash';
 import Timestamp from 'components/Timestamp';
 import InlineRowSection from 'components/Box/InlineRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
+import Button from 'components/Button';
 
 export type StoryEditorPageProps = {
 	/** The `ClientStoryPage` being edited. */
 	children: ClientStoryPage,
+	privateStory: PrivateStory,
 	/** The index of this page within the `pages` Formik value. */
 	pageIndex: number,
 	/** A ref to the first page field's title `input` element. */
@@ -25,6 +27,7 @@ export type StoryEditorPageProps = {
 
 const StoryEditorPage = ({
 	children: page,
+	privateStory,
 	pageIndex,
 	firstTitleInputRef
 }: StoryEditorPageProps) => {
@@ -55,9 +58,38 @@ const StoryEditorPage = ({
 				: 'published' as const
 	);
 
+	const sectionRef = useRef<HTMLDivElement>(null!);
+
+	/** Reports the validity of all form elements in this page section. If one of them is found invalid, stops reporting and returns `false`. If all elements are valid, returns `true`. */
+	const reportPageValidity = useCallback(() => {
+		for (const element of sectionRef.current.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>('input, textarea, select')) {
+			if (!element.reportValidity()) {
+				return false;
+			}
+		}
+
+		return true;
+	}, []);
+
+	const savePage = useCallback(() => {
+		if (!reportPageValidity()) {
+			return;
+		}
+
+		console.log('save!');
+	}, [reportPageValidity]);
+
+	const publishPage = useCallback(() => {
+		if (!reportPageValidity()) {
+			return;
+		}
+
+		console.log('publish!');
+	}, [reportPageValidity]);
+
 	return (
 		<BoxSection
-			className={`story-editor-page${saved ? ' saved' : ''} ${pageStatus}`}
+			className={`story-editor-page-section${saved ? ' saved' : ''} ${pageStatus}`}
 			heading={
 				pageStatus === 'draft'
 					// These are two separate templates in order to avoid React inserting unnecessary comments between text nodes in the HTML sent from the server.
@@ -78,6 +110,7 @@ const StoryEditorPage = ({
 						</>
 					)
 			}
+			ref={sectionRef}
 		>
 			<div className="page-field-container-title">
 				<Label
@@ -179,6 +212,34 @@ const StoryEditorPage = ({
 						help={'Disallows users from using MSPFA\'s controls on this page (e.g. left and right arrow keys to navigate between pages).\n\nIt\'s generally only necessary to disable controls if a script or embedded game has custom controls which conflict with MSPFA\'s.'}
 					/>
 				</InlineRowSection>
+			</div>
+			<div className="story-editor-page-actions">
+				{saved ? (
+					<>
+						<Button
+							href={`/s/${privateStory.id}/p/${page.id}?preview=1`}
+							target="_blank"
+						>
+							Preview
+						</Button>
+						<Button onClick={publishPage}>
+							Publish
+						</Button>
+					</>
+				) : (
+					<Button onClick={savePage}>
+						{pageStatus === 'draft' ? 'Save Draft' : 'Save'}
+					</Button>
+				)}
+				<Button
+					onClick={
+						useCallback(() => {
+
+						}, [])
+					}
+				>
+					Delete
+				</Button>
 			</div>
 		</BoxSection>
 	);
