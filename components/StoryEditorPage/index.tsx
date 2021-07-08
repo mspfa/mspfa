@@ -1,10 +1,11 @@
 import './styles.module.scss';
 import BoxSection from 'components/Box/BoxSection';
 import type { ClientStoryPage } from 'modules/client/stories';
-import { Field, useFormikContext } from 'formik';
+import type { FormikProps } from 'formik';
+import { Field } from 'formik';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
-import type { MouseEvent, RefObject } from 'react';
+import type { MouseEvent, MutableRefObject, RefObject } from 'react';
 import { useCallback, useRef } from 'react';
 import AddButton from 'components/Button/AddButton';
 import type { Values } from 'pages/s/[storyID]/edit/p';
@@ -22,6 +23,7 @@ export type StoryEditorPageProps = {
 	storyID: StoryID,
 	/** The index of this page within the `pages` Formik value. */
 	pageIndex: number,
+	formikPropsRef: MutableRefObject<FormikProps<Values>>,
 	/** A ref to the first page field's title `input` element. */
 	firstTitleInputRef: RefObject<HTMLInputElement>
 };
@@ -30,10 +32,9 @@ const StoryEditorPage = ({
 	children: page,
 	storyID,
 	pageIndex,
+	formikPropsRef,
 	firstTitleInputRef
 }: StoryEditorPageProps) => {
-	const { setFieldValue, initialValues, values } = useFormikContext<Values>();
-
 	const onClickRemoveNextPage = useCallback((event: MouseEvent<HTMLButtonElement & HTMLAnchorElement> & { target: HTMLButtonElement }) => {
 		// The `parentNode` of this `RemoveButton` will be the `div.story-editor-next-page` element.
 		const nextPageElement = event.target.parentNode as HTMLDivElement;
@@ -41,15 +42,18 @@ const StoryEditorPage = ({
 		/** The index of the value in `page.nextPages` being removed, equal to the index of the `nextPageElement` in its parent `div.story-editor-next-page-container` element. */
 		const nextPageIndex = Array.prototype.indexOf.call(nextPageElement.parentNode!.childNodes, nextPageElement);
 
-		setFieldValue(`pages.${pageIndex}.nextPages`, [
+		formikPropsRef.current.setFieldValue(`pages.${pageIndex}.nextPages`, [
 			...page.nextPages.slice(0, nextPageIndex),
 			...page.nextPages.slice(nextPageIndex + 1, page.nextPages.length)
 		]);
-	}, [setFieldValue, pageIndex, page.nextPages]);
+	}, [formikPropsRef, pageIndex, page.nextPages]);
 
 	const lastNextPageInputRef = useRef<HTMLInputElement>(null);
 
-	const saved = isEqual(page, initialValues.pages.find(({ id }) => id === page.id));
+	// Check if this page is deeply equal to a saved page with the same ID to determine whether this page is saved.
+	const saved = isEqual(page, formikPropsRef.current.initialValues.pages.find(
+		({ id }) => id === page.id
+	));
 
 	const pageStatus = (
 		page.published === undefined
@@ -184,7 +188,7 @@ const StoryEditorPage = ({
 						title="Add Page"
 						onClick={
 							useCallback(() => {
-								setFieldValue(`pages.${pageIndex}.nextPages`, [
+								formikPropsRef.current.setFieldValue(`pages.${pageIndex}.nextPages`, [
 									...page.nextPages,
 									''
 								]);
@@ -193,7 +197,7 @@ const StoryEditorPage = ({
 								setTimeout(() => {
 									lastNextPageInputRef.current?.focus();
 								});
-							}, [setFieldValue, pageIndex, page.nextPages])
+							}, [formikPropsRef, pageIndex, page.nextPages])
 						}
 					/>
 				</div>
@@ -235,14 +239,14 @@ const StoryEditorPage = ({
 				<Button
 					onClick={
 						useCallback(() => {
-							setFieldValue('pages', [
-								...values.pages.slice(0, pageIndex).map(pageAfter => ({
+							formikPropsRef.current.setFieldValue('pages', [
+								...formikPropsRef.current.values.pages.slice(0, pageIndex).map(pageAfter => ({
 									...pageAfter,
 									id: pageAfter.id - 1
 								})),
-								...values.pages.slice(pageIndex + 1, values.pages.length)
+								...formikPropsRef.current.values.pages.slice(pageIndex + 1, formikPropsRef.current.values.pages.length)
 							]);
-						}, [setFieldValue, pageIndex, values.pages])
+						}, [formikPropsRef, pageIndex])
 					}
 				>
 					Delete

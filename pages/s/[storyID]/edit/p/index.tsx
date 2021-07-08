@@ -19,6 +19,7 @@ import api from 'modules/client/api';
 import useThrottledCallback from 'modules/client/useThrottledCallback';
 import axios from 'axios';
 import StoryEditorPage from 'components/StoryEditorPage';
+import { useLatest } from 'react-use';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 
@@ -51,8 +52,11 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 					}, [])
 				}
 			>
-				{({ isSubmitting, dirty, values, setFieldValue }) => {
-					useLeaveConfirmation(dirty);
+				{formikProps => {
+					// Using this instead of destructuring the Formik props directly is necessary as a performance optimization, to significantly reduce unnecessary re-renders.
+					const formikPropsRef = useLatest(formikProps);
+
+					useLeaveConfirmation(formikPropsRef.current.dirty);
 
 					const defaultPageTitleInputRef = useRef<HTMLInputElement>(null!);
 					const firstTitleInputRef = useRef<HTMLInputElement>(null);
@@ -149,8 +153,8 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 									onClick={
 										useCallback(() => {
 											const id = (
-												values.pages.length
-													? values.pages[0].id + 1
+												formikPropsRef.current.values.pages.length
+													? formikPropsRef.current.values.pages[0].id + 1
 													: 1
 											);
 
@@ -166,7 +170,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 												notify: true
 											};
 
-											setFieldValue('pages', [newPage, ...values.pages]);
+											formikPropsRef.current.setFieldValue('pages', [newPage, ...formikPropsRef.current.values.pages]);
 
 											// Wait for the newly added editor page to render.
 											setTimeout(() => {
@@ -176,7 +180,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 
 											// This ESLint comment is necessary because ESLint does not recognize that `privateStory.editorSettings.defaultPageTitle` can change from outside the scope of this hook's component.
 											// eslint-disable-next-line react-hooks/exhaustive-deps
-										}, [values.pages, setFieldValue, privateStory.editorSettings.defaultPageTitle])
+										}, [formikPropsRef, privateStory.editorSettings.defaultPageTitle])
 									}
 								>
 									New Page
@@ -184,32 +188,33 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 								<Button
 									type="submit"
 									className="alt"
-									disabled={!dirty || isSubmitting}
+									disabled={!formikPropsRef.current.dirty || formikPropsRef.current.isSubmitting}
 								>
 									Save All
 								</Button>
 								<Button
 									className="alt"
-									disabled={true || dirty || isSubmitting}
+									disabled={true || formikPropsRef.current.dirty || formikPropsRef.current.isSubmitting}
 								>
 									Publish
 								</Button>
 							</div>
 							<Box id="story-editor-pages">
-								{values.pages.map((page, pageIndex) => (
+								{formikPropsRef.current.values.pages.map((page, pageIndex) => (
 									<Fragment key={page.id}>
 										<StoryEditorPage
 											storyID={privateStory.id}
 											pageIndex={pageIndex}
+											formikPropsRef={formikPropsRef}
 											firstTitleInputRef={firstTitleInputRef}
 										>
 											{page}
 										</StoryEditorPage>
 										{page.id !== (
-											pageIndex === values.pages.length - 1
+											pageIndex === formikPropsRef.current.values.pages.length - 1
 												? 1
 												// The ID of the following page plus 1, which is what this page's ID should be if and only if there are no gaps. (The pages are in reverse, so the following page has an ID one lower than this page, given there's no gap.)
-												: values.pages[pageIndex + 1].id + 1
+												: formikPropsRef.current.values.pages[pageIndex + 1].id + 1
 										) && (
 											// There is a gap in the page IDs, so present an option to load the missing pages.
 											<div className="story-editor-view-actions">
