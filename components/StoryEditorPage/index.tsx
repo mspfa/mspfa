@@ -163,20 +163,18 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 								key={nextPageIndex}
 								className="story-editor-next-page"
 							>
-								<label className="spaced">
-									<Field
-										type="number"
-										name={`pages.${pageIndex}.nextPages.${nextPageIndex}`}
-										className="story-editor-next-page-input"
-										min={1}
-										required
-										innerRef={
-											nextPageIndex === page.nextPages.length - 1
-												? lastNextPageInputRef
-												: undefined
-										}
-									/>
-								</label>
+								<Field
+									type="number"
+									name={`pages.${pageIndex}.nextPages.${nextPageIndex}`}
+									className="story-editor-next-page-input spaced"
+									min={1}
+									required
+									innerRef={
+										nextPageIndex === page.nextPages.length - 1
+											? lastNextPageInputRef
+											: undefined
+									}
+								/>
 								<RemoveButton
 									className="spaced"
 									title="Remove Page"
@@ -184,23 +182,25 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 								/>
 							</div>
 						))}
-					</div>
-					<AddButton
-						title="Add Page"
-						onClick={
-							useCallback(() => {
-								formikPropsRef.current.setFieldValue(`pages.${pageIndex}.nextPages`, [
-									...page.nextPages,
-									''
-								]);
+						<div>
+							<AddButton
+								title="Add Page"
+								onClick={
+									useCallback(() => {
+										formikPropsRef.current.setFieldValue(`pages.${pageIndex}.nextPages`, [
+											...page.nextPages,
+											''
+										]);
 
-								// Wait for the newly added next page to render.
-								setTimeout(() => {
-									lastNextPageInputRef.current?.focus();
-								});
-							}, [formikPropsRef, pageIndex, page.nextPages])
-						}
-					/>
+										// Wait for the newly added next page to render.
+										setTimeout(() => {
+											lastNextPageInputRef.current?.focus();
+										});
+									}, [formikPropsRef, pageIndex, page.nextPages])
+								}
+							/>
+						</div>
+					</div>
 				</div>
 				<InlineRowSection className="page-field-container-misc">
 					{page.id !== 1 && (

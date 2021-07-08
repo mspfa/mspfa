@@ -24,12 +24,12 @@
 	}
 
 	&-next-page {
-		margin-bottom: 2px;
-
-		label::before {
+		&-container > *::before {
 			content: '>';
 			margin-right: 1ch;
 		}
+
+		margin-bottom: 2px;
 
 		&-input {
 			width: 8ch;
