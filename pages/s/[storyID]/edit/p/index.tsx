@@ -194,7 +194,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 								</Button>
 								<Button
 									className="alt"
-									disabled={true || formikPropsRef.current.dirty || formikPropsRef.current.isSubmitting}
+									disabled={true || formikPropsRef.current.dirty}
 								>
 									Publish
 								</Button>
