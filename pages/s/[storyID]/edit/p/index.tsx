@@ -217,11 +217,11 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 											{page}
 										</StoryEditorPage>
 										{page.id !== (
-											i === 0
-												// If this is the first page, there is a gap if and only if this page's ID is not 1.
+											i === pages.length - 1
+												// If this is the first page (which is last in the array since the pages are in reverse), there is a gap if and only if this page's ID is not 1.
 												? 1
-												// The ID of the previous page plus 1, which is what this page's ID should be if and only if there are no gaps.
-												: pages[i - 1].id + 1
+												// The ID of the previous page plus 1, which is what this page's ID should be if and only if there are no gaps. (The pages are in reverse, so the previous page has index `i + 1`.)
+												: pages[i + 1].id + 1
 										) && (
 											// There is a gap in the page IDs, so present an option to load the missing pages.
 											<div className="story-editor-view-actions">
