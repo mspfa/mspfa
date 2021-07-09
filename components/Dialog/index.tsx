@@ -72,9 +72,9 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 							</div>
 							{!!dialog.actions.length && (
 								<div className="dialog-actions front">
-									{dialog.actions.map((action, index) => (
+									{dialog.actions.map((action, i) => (
 										<Button
-											key={index}
+											key={i}
 											type={action.submit ? 'submit' : 'button'}
 											className="dialog-action"
 											autoFocus={action.autoFocus}

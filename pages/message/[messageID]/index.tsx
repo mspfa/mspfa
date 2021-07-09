@@ -147,9 +147,9 @@ const Component = withErrorPage<ServerSideProps>(({
 									</div>
 									<div id="message-to">
 										{'To: '}
-										{message.to.map((userID, index) => (
+										{message.to.map((userID, i) => (
 											<Fragment key={userID}>
-												{index !== 0 && ', '}
+												{i !== 0 && ', '}
 												<UserLink>{userID}</UserLink>
 											</Fragment>
 										))}

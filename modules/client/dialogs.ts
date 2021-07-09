@@ -121,13 +121,13 @@ export class Dialog<Values extends Record<string, any>> extends Promise<DialogRe
 		this.title = title;
 		this.initialValues = initialValues;
 		this.content = content;
-		this.actions = actionsOption.map((actionOption, index) => {
+		this.actions = actionsOption.map((actionOption, i) => {
 			const action: DialogAction = Object.assign(
 				actionOption instanceof Object && 'label' in actionOption
 					? { ...actionOption }
 					: { label: actionOption },
 				{
-					index,
+					index: i,
 					onClick: () => {
 						this.resolve(action);
 					}

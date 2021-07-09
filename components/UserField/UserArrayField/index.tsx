@@ -44,10 +44,10 @@ const UserArrayField = ({
 			className={`user-array-field${className ? ` ${className}` : ''}`}
 			ref={userArrayFieldRef}
 		>
-			{value.map((userID, index) => (
+			{value.map((userID, i) => (
 				<UserField
-					key={getUserFieldKey(index)}
-					name={`${name}.${index}`}
+					key={getUserFieldKey(i)}
+					name={`${name}.${i}`}
 					required={required && value.length === 1}
 					readOnly={readOnly}
 					inUserArrayField
