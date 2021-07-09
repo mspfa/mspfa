@@ -21,18 +21,15 @@ export type StoryEditorPageProps = {
 	/** The `ClientStoryPage` being edited. */
 	children: ClientStoryPage,
 	storyID: StoryID,
-	/** The index of this page within the `pages` Formik value. */
-	pageIndex: number,
 	formikPropsRef: MutableRefObject<FormikProps<Values>>,
 	/** A ref to the first page field's title `input` element. */
-	firstTitleInputRef: RefObject<HTMLInputElement>
+	firstTitleInputRef?: RefObject<HTMLInputElement>
 };
 
 /** A `BoxSection` for a page in the story editor. */
 const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 	children: page,
 	storyID,
-	pageIndex,
 	formikPropsRef,
 	firstTitleInputRef
 }) => {
@@ -43,18 +40,16 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 		/** The index of the value in `page.nextPages` being removed, equal to the index of the `nextPageElement` in its parent `div.story-editor-next-page-container` element. */
 		const nextPageIndex = Array.prototype.indexOf.call(nextPageElement.parentNode!.childNodes, nextPageElement);
 
-		formikPropsRef.current.setFieldValue(`pages.${pageIndex}.nextPages`, [
+		formikPropsRef.current.setFieldValue(`pages.${page.id}.nextPages`, [
 			...page.nextPages.slice(0, nextPageIndex),
 			...page.nextPages.slice(nextPageIndex + 1, page.nextPages.length)
 		]);
-	}, [formikPropsRef, pageIndex, page.nextPages]);
+	}, [formikPropsRef, page.id, page.nextPages]);
 
 	const lastNextPageInputRef = useRef<HTMLInputElement>(null);
 
 	// Check if this page is deeply equal to a saved page with the same ID to determine whether this page is saved.
-	const saved = isEqual(page, formikPropsRef.current.initialValues.pages.find(
-		({ id }) => id === page.id
-	));
+	const saved = isEqual(page, formikPropsRef.current.initialValues.pages[page.id]);
 
 	const pageStatus = (
 		page.published === undefined
@@ -121,30 +116,26 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 			<div className="page-field-container-title">
 				<Label
 					block
-					htmlFor={`field-pages-${pageIndex}-title`}
+					htmlFor={`field-pages-${page.id}-title`}
 					help="The text displayed at the top of this page. This text also appears in any link to this page from the commands at the bottom of another page."
 				>
 					Page Title/Command
 				</Label>
 				<Field
-					id={`field-pages-${pageIndex}-title`}
-					name={`pages.${pageIndex}.title`}
+					id={`field-pages-${page.id}-title`}
+					name={`pages.${page.id}.title`}
 					required
 					maxLength={500}
 					autoComplete="off"
-					innerRef={
-						pageIndex === 0
-							? firstTitleInputRef
-							: undefined
-					}
+					innerRef={firstTitleInputRef}
 				/>
 			</div>
 			<div className="page-field-container-content">
-				<Label block htmlFor={`field-pages-${pageIndex}-content`}>
+				<Label block htmlFor={`field-pages-${page.id}-content`}>
 					Content
 				</Label>
 				<BBField
-					name={`pages.${pageIndex}.content`}
+					name={`pages.${page.id}.content`}
 					rows={6}
 					html
 				/>
@@ -165,7 +156,7 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 							>
 								<Field
 									type="number"
-									name={`pages.${pageIndex}.nextPages.${nextPageIndex}`}
+									name={`pages.${page.id}.nextPages.${nextPageIndex}`}
 									className="story-editor-next-page-input spaced"
 									min={1}
 									required
@@ -187,7 +178,7 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 								title="Add Page"
 								onClick={
 									useCallback(() => {
-										formikPropsRef.current.setFieldValue(`pages.${pageIndex}.nextPages`, [
+										formikPropsRef.current.setFieldValue(`pages.${page.id}.nextPages`, [
 											...page.nextPages,
 											''
 										]);
@@ -196,7 +187,7 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 										setTimeout(() => {
 											lastNextPageInputRef.current?.focus();
 										});
-									}, [formikPropsRef, pageIndex, page.nextPages])
+									}, [formikPropsRef, page.id, page.nextPages])
 								}
 							/>
 						</div>
@@ -206,14 +197,14 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 					{page.id !== 1 && (
 						<FieldBoxRow
 							type="checkbox"
-							name={`pages.${pageIndex}.unlisted`}
+							name={`pages.${page.id}.unlisted`}
 							label="Unlisted"
 							help="Unlisted pages are not included in new update notifications and do not show in your adventure's log. Comments on an unlisted page will not appear under any other page."
 						/>
 					)}
 					<FieldBoxRow
 						type="checkbox"
-						name={`pages.${pageIndex}.disableControls`}
+						name={`pages.${page.id}.disableControls`}
 						label="Disable Controls"
 						help={'Disallows users from using MSPFA\'s controls on this page (e.g. left and right arrow keys to navigate between pages).\n\nIt\'s generally only necessary to disable controls if a script or embedded game has custom controls which conflict with MSPFA\'s.'}
 					/>
@@ -240,14 +231,22 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 				<Button
 					onClick={
 						useCallback(() => {
-							formikPropsRef.current.setFieldValue('pages', [
-								...formikPropsRef.current.values.pages.slice(0, pageIndex).map(pageAfter => ({
-									...pageAfter,
-									id: pageAfter.id - 1
-								})),
-								...formikPropsRef.current.values.pages.slice(pageIndex + 1, formikPropsRef.current.values.pages.length)
-							]);
-						}, [formikPropsRef, pageIndex])
+							const newPages: Values['pages'] = {};
+
+							for (const pageID in formikPropsRef.current.values.pages) {
+								const newPage = {
+									...formikPropsRef.current.values.pages[pageID]
+								};
+
+								if (+pageID > page.id) {
+									newPage.id--;
+								}
+
+								newPages[pageID] = newPage;
+							}
+
+							formikPropsRef.current.setFieldValue('pages', newPages);
+						}, [formikPropsRef, page.id])
 					}
 				>
 					Delete

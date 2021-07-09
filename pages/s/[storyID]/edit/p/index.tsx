@@ -9,6 +9,7 @@ import { Fragment, useCallback, useRef, useState } from 'react';
 import { useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
 import Button from 'components/Button';
+import type { StoryPageID } from 'modules/server/stories';
 import { getPrivateStory, getStoryByUnsafeID } from 'modules/server/stories';
 import type { ClientStoryPage, PrivateStory } from 'modules/client/stories';
 import BoxSection from 'components/Box/BoxSection';
@@ -24,8 +25,8 @@ import { useLatest } from 'react-use';
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 
 export type Values = {
-	/** The pages currently loaded into the page editor, in reverse order (last page first). */
-	pages: ClientStoryPage[]
+	/** An object mapping page IDs to their respective pages from the Formik values, sorted by lowest page ID first. */
+	pages: Record<StoryPageID, ClientStoryPage>
 };
 
 type ServerSideProps = {
@@ -36,7 +37,7 @@ type ServerSideProps = {
 
 const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivateStory }) => {
 	const [privateStory, setPrivateStory] = useState(initialPrivateStory);
-	const [initialPages, setInitialPages] = useState<ClientStoryPage[]>([]);
+	const [initialPages, setInitialPages] = useState<Values['pages']>({});
 
 	const notifyCheckboxRef = useRef<HTMLInputElement>(null!);
 
@@ -152,9 +153,12 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 								<Button
 									onClick={
 										useCallback(() => {
+											const pageIDs = Object.keys(formikPropsRef.current.values.pages);
+
+											// Get the ID of a new page being added after the last one.
 											const id = (
-												formikPropsRef.current.values.pages.length
-													? formikPropsRef.current.values.pages[0].id + 1
+												pageIDs.length
+													? +pageIDs[pageIDs.length - 1] + 1
 													: 1
 											);
 
@@ -170,7 +174,10 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 												notify: true
 											};
 
-											formikPropsRef.current.setFieldValue('pages', [newPage, ...formikPropsRef.current.values.pages]);
+											formikPropsRef.current.setFieldValue('pages', {
+												[id]: newPage,
+												...formikPropsRef.current.values.pages
+											});
 
 											// Wait for the newly added editor page to render.
 											setTimeout(() => {
@@ -200,21 +207,21 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 								</Button>
 							</div>
 							<Box id="story-editor-pages">
-								{formikPropsRef.current.values.pages.map((page, pageIndex) => (
+								{Object.values(formikPropsRef.current.values.pages).reverse().map((page, i, pages) => (
 									<Fragment key={page.id}>
 										<StoryEditorPage
 											storyID={privateStory.id}
-											pageIndex={pageIndex}
 											formikPropsRef={formikPropsRef}
-											firstTitleInputRef={firstTitleInputRef}
+											firstTitleInputRef={i === 0 ? firstTitleInputRef : undefined}
 										>
 											{page}
 										</StoryEditorPage>
 										{page.id !== (
-											pageIndex === formikPropsRef.current.values.pages.length - 1
+											i === 0
+												// If this is the first page, there is a gap if and only if this page's ID is not 1.
 												? 1
-												// The ID of the following page plus 1, which is what this page's ID should be if and only if there are no gaps. (The pages are in reverse, so the following page has an ID one lower than this page, given there's no gap.)
-												: formikPropsRef.current.values.pages[pageIndex + 1].id + 1
+												// The ID of the previous page plus 1, which is what this page's ID should be if and only if there are no gaps.
+												: pages[i - 1].id + 1
 										) && (
 											// There is a gap in the page IDs, so present an option to load the missing pages.
 											<div className="story-editor-view-actions">
