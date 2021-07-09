@@ -25,7 +25,7 @@ import { useLatest } from 'react-use';
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 
 export type Values = {
-	/** An object mapping page IDs to their respective pages. Standard JavaScript automatically sorts properties with numeric keys by lowest first. */
+	/** An object mapping page IDs to their respective pages. Since this object has numeric keys, standard JavaScript automatically sorts its properties by lowest first. */
 	pages: Record<StoryPageID, ClientStoryPage>
 };
 
