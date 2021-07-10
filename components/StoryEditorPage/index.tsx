@@ -167,7 +167,6 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 				<Field
 					id={`field-pages-${page.id}-title`}
 					name={`pages.${page.id}.title`}
-					required
 					maxLength={500}
 					autoComplete="off"
 					innerRef={firstTitleInputRef}
