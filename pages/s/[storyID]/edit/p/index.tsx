@@ -153,12 +153,12 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 								<Button
 									onClick={
 										useCallback(() => {
-											const pageIDs = Object.keys(formikPropsRef.current.values.pages);
+											const pages = Object.values(formikPropsRef.current.values.pages);
 
 											// Get the ID of a new page being added after the last one.
 											const id = (
-												pageIDs.length
-													? +pageIDs[pageIDs.length - 1] + 1
+												pages.length
+													? +pages[pages.length - 1].id + 1
 													: 1
 											);
 

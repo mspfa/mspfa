@@ -5,8 +5,8 @@ const Component = () => {
 	const router = useRouter();
 
 	useIsomorphicLayoutEffect(() => {
-		if (Object.keys(router.query).length) {
-			window.opener.postMessage(router.query, location.origin);
+		if (Object.values(router.query).length) {
+			window.opener?.postMessage(router.query, location.origin);
 			window.close();
 		}
 	});

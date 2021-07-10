@@ -11,7 +11,8 @@ import Label from 'components/Label';
 import { Dialog } from 'modules/client/dialogs';
 import Link from 'components/Link';
 
-const tagInfo: Partial<Record<TagString, string>> = {
+/** An object that maps `TagString`s to `string`s explaining each tag. */
+const tagHelp: Partial<Record<TagString, string>> = {
 	nonmspa: 'This adventure is unrelated to MSPA.',
 	test: 'This adventure was only made to test something.',
 	translation: 'This adventure only serves as a translation of something else.',
@@ -263,7 +264,7 @@ const TagField = ({
 		if (!isEqual(fieldValue, allTagValues)) {
 			setFieldValue(name, allTagValues);
 		}
-	}, [name, fieldValue, setFieldValue]);
+	}, [name, fieldValue, setFieldValue, max]);
 
 	useIsomorphicLayoutEffect(() => {
 		// Determine the element's height based on the `rows` prop.
@@ -363,7 +364,7 @@ const TagField = ({
 
 							const tagValue = tag.getAttribute('data-value');
 
-							if (!(tagValue && tagInfo[tagValue])) {
+							if (!(tagValue && tagHelp[tagValue])) {
 								return;
 							}
 
@@ -371,7 +372,7 @@ const TagField = ({
 								new Dialog({
 									id: 'help',
 									title: 'Help',
-									content: `Tag: ${tagValue}\n\n${tagInfo[tagValue]}`
+									content: `Tag: ${tagValue}\n\n${tagHelp[tagValue]}`
 								});
 							} else if (!fieldValue.includes(tagValue)) {
 								createAndInsertTag(tagValue, inputRef.current.lastChild!);
@@ -380,7 +381,7 @@ const TagField = ({
 						}, [name, fieldValue, setFieldValue])
 					}
 				>
-					{Object.keys(tagInfo).map(tagValue => (
+					{Object.keys(tagHelp).map(tagValue => (
 						<div
 							key={tagValue}
 							className={`tag-field-tag-preset${fieldValue.includes(tagValue) ? ' added' : ''}`}

@@ -49,7 +49,7 @@ const Handler: APIHandler<{
 	if (req.method === 'PUT') {
 		const user = await permToGetUserInAPI(req, res, Perm.sudoWrite);
 
-		if (Object.keys(req.body).length) {
+		if (Object.values(req.body).length) {
 			const userChanges: RecursivePartial<UserDocument> = req.body as Omit<typeof req.body, 'birthdate'>;
 
 			if (req.body.birthdate !== undefined) {

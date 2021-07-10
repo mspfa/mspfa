@@ -93,7 +93,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	if (Object.keys(req.body).length) {
+	if (Object.values(req.body).length) {
 		const storyChanges: RecursivePartial<StoryDocument> = req.body as Omit<typeof req.body, 'willDelete' | 'owner' | 'editors'>;
 
 		if ((
@@ -167,14 +167,14 @@ const Handler: APIHandler<{
 
 		if (req.body.editors) {
 			storyChanges.editors = req.body.editors.map(
-				unsafeUserID => unsafeUserID !== undefined && newEditors[unsafeUserID]._id
-			).filter(Boolean) as UserID[];
+				unsafeUserID => newEditors[unsafeUserID]._id
+			);
 		}
 
 		await stories.updateOne({
 			_id: story._id
 		}, {
-			...Object.keys(storyChanges).length && {
+			...Object.values(storyChanges).length && {
 				$set: flatten(storyChanges)
 			},
 			...willDelete === false && {
