@@ -39,6 +39,8 @@ export type StoryPage = {
 	notify: boolean
 };
 
+export type StoryPageRecord = Record<StoryPageID, StoryPage>;
+
 export type StoryComment = {
 	posted: Date,
 	edited?: Date,
@@ -99,7 +101,7 @@ export type StoryDocument = {
 		name: string,
 		site: '' | URLString
 	},
-	pages: StoryPage[],
+	pages: StoryPageRecord,
 	/** @maxLength 2000 */
 	description: string,
 	/** @maxLength 500 */
@@ -187,7 +189,7 @@ export const getPrivateStory = (story: StoryDocument): PrivateStory => ({
 	blurb: story.blurb,
 	icon: story.icon,
 	favCount: story.favCount,
-	pageCount: story.pages.length,
+	pageCount: Object.keys(story.pages).length,
 	banner: story.banner,
 	style: story.style,
 	disableUserTheme: story.disableUserTheme,
@@ -217,7 +219,7 @@ export const getPublicStory = (story: StoryDocument): PublicStory => ({
 	blurb: story.blurb,
 	icon: story.icon,
 	favCount: story.favCount,
-	pageCount: story.pages.length,
+	pageCount: Object.keys(story.pages).length,
 	style: story.style,
 	disableUserTheme: story.disableUserTheme,
 	script: story.script,

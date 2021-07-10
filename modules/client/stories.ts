@@ -1,4 +1,4 @@
-import type { StoryDocument, StoryID, StoryPage } from 'modules/server/stories';
+import type { StoryDocument, StoryID, StoryPage, StoryPageID } from 'modules/server/stories';
 
 export enum StoryStatus {
 	Inactive = 0,
@@ -60,6 +60,8 @@ type ClientStoryPageKey = 'id' | 'title' | 'content' | 'nextPages' | 'tags' | 'u
 export type ClientStoryPage = Pick<StoryPage, ClientStoryPageKey> & {
 	published?: number
 };
+
+export type ClientStoryPageRecord = Record<StoryPageID, StoryPage>;
 
 export const getBlurb = (story: PublicStory) => (
 	story.blurb || (
