@@ -6,7 +6,7 @@ import { Field } from 'formik';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
 import type { MouseEvent, MutableRefObject, RefObject } from 'react';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import AddButton from 'components/Button/AddButton';
 import type { Values } from 'pages/s/[storyID]/edit/p';
 import RemoveButton from 'components/Button/RemoveButton';
@@ -18,6 +18,7 @@ import Button from 'components/Button';
 import type { StoryID } from 'modules/server/stories';
 import { Dialog } from 'modules/client/dialogs';
 import Row from 'components/Row';
+import Link from 'components/Link';
 
 export type StoryEditorPageProps = {
 	/** The `ClientStoryPage` being edited. */
@@ -38,21 +39,6 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 	isSubmitting,
 	firstTitleInputRef
 }) => {
-	const onClickRemoveNextPage = useCallback((event: MouseEvent<HTMLButtonElement & HTMLAnchorElement> & { target: HTMLButtonElement }) => {
-		// The `parentNode` of this `RemoveButton` will be the `div.story-editor-next-page` element.
-		const nextPageElement = event.target.parentNode as HTMLDivElement;
-
-		/** The index of the value in `page.nextPages` being removed, equal to the index of the `nextPageElement` in its parent `div.story-editor-next-page-container` element. */
-		const nextPageIndex = Array.prototype.indexOf.call(nextPageElement.parentNode!.childNodes, nextPageElement);
-
-		formikPropsRef.current.setFieldValue(`pages.${page.id}.nextPages`, [
-			...page.nextPages.slice(0, nextPageIndex),
-			...page.nextPages.slice(nextPageIndex + 1, page.nextPages.length)
-		]);
-	}, [formikPropsRef, page.id, page.nextPages]);
-
-	const lastNextPageInputRef = useRef<HTMLInputElement>(null);
-
 	/** Whether this page exists on the server. */
 	const onServer = page.id in formikPropsRef.current.initialValues.pages;
 
@@ -68,6 +54,39 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 	);
 
 	const sectionRef = useRef<HTMLDivElement>(null!);
+
+	const [advancedShown, setAdvancedShown] = useState(false);
+
+	const showAdvanced = useCallback(() => {
+		setAdvancedShown(true);
+	}, []);
+
+	const removeNextPage = useCallback((event: MouseEvent<HTMLButtonElement & HTMLAnchorElement> & { target: HTMLButtonElement }) => {
+		// The `parentNode` of this `RemoveButton` will be the `div.story-editor-next-page` element.
+		const nextPageElement = event.target.parentNode as HTMLDivElement;
+
+		/** The index of the value in `page.nextPages` being removed, equal to the index of the `nextPageElement` in its parent `div.story-editor-next-page-container` element. */
+		const nextPageIndex = Array.prototype.indexOf.call(nextPageElement.parentNode!.childNodes, nextPageElement);
+
+		formikPropsRef.current.setFieldValue(`pages.${page.id}.nextPages`, [
+			...page.nextPages.slice(0, nextPageIndex),
+			...page.nextPages.slice(nextPageIndex + 1, page.nextPages.length)
+		]);
+	}, [formikPropsRef, page.id, page.nextPages]);
+
+	const addNextPage = useCallback(() => {
+		formikPropsRef.current.setFieldValue(`pages.${page.id}.nextPages`, [
+			...page.nextPages,
+			''
+		]);
+
+		// Wait for the newly added next page to render.
+		setTimeout(() => {
+			lastNextPageInputRef.current?.focus();
+		});
+	}, [formikPropsRef, page.id, page.nextPages]);
+
+	const lastNextPageInputRef = useRef<HTMLInputElement>(null);
 
 	/** Reports the validity of all form elements in this page section. If one of them is found invalid, stops reporting and returns `false`. If all elements are valid, returns `true`. */
 	const reportPageValidity = useCallback(() => {
@@ -148,76 +167,85 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 					html
 				/>
 			</Row>
-			<Row className="page-field-columns">
-				<div className="page-field-container-next-pages">
-					<Label
-						block
-						help={'The page numbers of the commands to link at the bottom of this page (in order). By default, each newly added page will already link to the page after it.\n\nThis is particularly useful for skipping hidden pages or adding multiple page links in branching stories.'}
-					>
-						Next Pages
-					</Label>
-					<div className="story-editor-next-page-container">
-						{page.nextPages.map((pageID, nextPageIndex) => (
-							<div
-								key={nextPageIndex}
-								className="story-editor-next-page"
+			{advancedShown ? (
+				<>
+					<Row className="page-field-columns">
+						<div className="page-field-container-next-pages">
+							<Label
+								block
+								help={'The page numbers of the commands to link at the bottom of this page (in order). By default, each newly added page will already link to the page after it.\n\nThis is particularly useful for skipping hidden pages or adding multiple page links in branching stories.'}
 							>
-								<Field
-									type="number"
-									name={`pages.${page.id}.nextPages.${nextPageIndex}`}
-									className="story-editor-next-page-input spaced"
-									min={1}
-									required
-									innerRef={
-										nextPageIndex === page.nextPages.length - 1
-											? lastNextPageInputRef
-											: undefined
-									}
-								/>
-								<RemoveButton
-									className="spaced"
-									title="Remove Page"
-									onClick={onClickRemoveNextPage}
-								/>
+								Next Pages
+							</Label>
+							<div className="story-editor-next-page-container">
+								{page.nextPages.map((pageID, nextPageIndex) => (
+									<div
+										key={nextPageIndex}
+										className="story-editor-next-page"
+									>
+										<Field
+											type="number"
+											name={`pages.${page.id}.nextPages.${nextPageIndex}`}
+											className="story-editor-next-page-input spaced"
+											min={1}
+											required
+											innerRef={
+												nextPageIndex === page.nextPages.length - 1
+													? lastNextPageInputRef
+													: undefined
+											}
+										/>
+										<RemoveButton
+											className="spaced"
+											title="Remove Page"
+											onClick={removeNextPage}
+										/>
+									</div>
+								))}
+								<div>
+									<AddButton
+										title="Add Page"
+										onClick={addNextPage}
+									/>
+								</div>
 							</div>
-						))}
-						<div>
-							<AddButton
-								title="Add Page"
-								onClick={
-									useCallback(() => {
-										formikPropsRef.current.setFieldValue(`pages.${page.id}.nextPages`, [
-											...page.nextPages,
-											''
-										]);
-
-										// Wait for the newly added next page to render.
-										setTimeout(() => {
-											lastNextPageInputRef.current?.focus();
-										});
-									}, [formikPropsRef, page.id, page.nextPages])
-								}
-							/>
 						</div>
-					</div>
-				</div>
-				<InlineRowSection className="page-field-container-misc">
-					{page.id !== 1 && (
-						<FieldBoxRow
-							type="checkbox"
-							name={`pages.${page.id}.unlisted`}
-							label="Unlisted"
-							help="Unlisted pages are not included in new update notifications and do not show in your adventure's log. Comments on an unlisted page will not appear under any other page."
+						<InlineRowSection className="page-field-container-misc">
+							{page.id !== 1 && (
+								<FieldBoxRow
+									type="checkbox"
+									name={`pages.${page.id}.unlisted`}
+									label="Unlisted"
+									help="Unlisted pages are not included in new update notifications and do not show in your adventure's log. Comments on an unlisted page will not appear under any other page."
+								/>
+							)}
+							<FieldBoxRow
+								type="checkbox"
+								name={`pages.${page.id}.disableControls`}
+								label="Disable Controls"
+								help={'Disallows users from using MSPFA\'s controls on this page (e.g. left and right arrow keys to navigate between pages).\n\nIt\'s generally only necessary to disable controls if a script or embedded game has custom controls conflicting with MSPFA\'s.'}
+							/>
+						</InlineRowSection>
+					</Row>
+					<Row className="page-field-container-content">
+						<Label block htmlFor={`field-pages-${page.id}-commentary`}>
+							Commentary
+						</Label>
+						<Field
+							as="textarea"
+							id={`field-pages-${page.id}-commentary`}
+							name={`pages.${page.id}.commentary`}
+							rows={3}
 						/>
-					)}
-					<FieldBoxRow
-						type="checkbox"
-						name={`pages.${page.id}.disableControls`}
-						label="Disable Controls"
-						help={'Disallows users from using MSPFA\'s controls on this page (e.g. left and right arrow keys to navigate between pages).\n\nIt\'s generally only necessary to disable controls if a script or embedded game has custom controls conflicting with MSPFA\'s.'}
-					/>
-				</InlineRowSection>
-			</Row>
+					</Row>
+				</>
+			) : (
+				<Row className="story-editor-page-show-advanced-link-container">
+					<Link className="translucent-text" onClick={showAdvanced}>
+						Show Advanced Options
+					</Link>
+				</Row>
+			)}
 			<Row className="story-editor-page-actions">
 				{saved ? (
 					<>
