@@ -55,12 +55,6 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 
 	const sectionRef = useRef<HTMLDivElement>(null!);
 
-	const [advancedShown, setAdvancedShown] = useState(false);
-
-	const toggleAdvanced = useCallback(() => {
-		setAdvancedShown(advancedShown => !advancedShown);
-	}, []);
-
 	const removeNextPage = useCallback((event: MouseEvent<HTMLButtonElement & HTMLAnchorElement> & { target: HTMLButtonElement }) => {
 		// The `parentNode` of this `RemoveButton` will be the `div.story-editor-next-page` element.
 		const nextPageElement = event.target.parentNode as HTMLDivElement;
@@ -89,10 +83,19 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 	const lastNextPageInputRef = useRef<HTMLInputElement>(null);
 
 	/** Reports the validity of all form elements in this page section. If one of them is found invalid, stops reporting and returns `false`. If all elements are valid, returns `true`. */
-	const reportPageValidity = useCallback(() => {
+	const reportPageValidity = useCallback((
+		/** Whether to only check the validity of advanced options. */
+		onlyAdvanced = false
+	) => {
 		// TODO: Handle invalid fields which are unmounted due to `advancedShown === false`.
 
-		for (const element of sectionRef.current.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>('input, textarea, select')) {
+		let selectors = ['input', 'textarea', 'select'];
+
+		if (onlyAdvanced) {
+			selectors = selectors.map(selector => `.story-editor-page-show-advanced-link-container ~ * ${selector}`);
+		}
+
+		for (const element of sectionRef.current.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(selectors.join(', '))) {
 			if (!element.reportValidity()) {
 				return false;
 			}
@@ -100,6 +103,17 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 
 		return true;
 	}, []);
+
+	const [advancedShown, setAdvancedShown] = useState(false);
+
+	const toggleAdvanced = useCallback(() => {
+		if (advancedShown && !reportPageValidity(true)) {
+			// Don't let the advanced section be hidden if it contains invalid fields.
+			return;
+		}
+
+		setAdvancedShown(advancedShown => !advancedShown);
+	}, [advancedShown, reportPageValidity]);
 
 	const savePage = useCallback(() => {
 		if (!reportPageValidity()) {
