@@ -61,7 +61,7 @@ export type ClientStoryPage = Pick<StoryPage, ClientStoryPageKey> & {
 	published?: number
 };
 
-export type ClientStoryPageRecord = Record<StoryPageID, StoryPage>;
+export type ClientStoryPageRecord = Record<StoryPageID, ClientStoryPage>;
 
 export const getBlurb = (story: PublicStory) => (
 	story.blurb || (

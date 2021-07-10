@@ -9,9 +9,8 @@ import { Fragment, useCallback, useRef, useState } from 'react';
 import { useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
 import Button from 'components/Button';
-import type { StoryPageID } from 'modules/server/stories';
 import { getPrivateStory, getStoryByUnsafeID } from 'modules/server/stories';
-import type { ClientStoryPage, PrivateStory } from 'modules/client/stories';
+import type { ClientStoryPage, ClientStoryPageRecord, PrivateStory } from 'modules/client/stories';
 import BoxSection from 'components/Box/BoxSection';
 import type { APIClient } from 'modules/client/api';
 import Row from 'components/Row';
@@ -26,7 +25,7 @@ type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 
 export type Values = {
 	/** An object mapping page IDs to their respective pages. Since this object has numeric keys, standard JavaScript automatically sorts its properties by lowest first. */
-	pages: Record<StoryPageID, ClientStoryPage>
+	pages: ClientStoryPageRecord
 };
 
 type ServerSideProps = {
