@@ -234,6 +234,11 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 							const newPages: Values['pages'] = {};
 
 							for (const pageID in formikPropsRef.current.values.pages) {
+								if (+pageID === page.id) {
+									// Skip the page being deleted.
+									continue;
+								}
+
 								const newPage = {
 									...formikPropsRef.current.values.pages[pageID]
 								};
@@ -242,7 +247,7 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 									newPage.id--;
 								}
 
-								newPages[pageID] = newPage;
+								newPages[newPage.id] = newPage;
 							}
 
 							formikPropsRef.current.setFieldValue('pages', newPages);
