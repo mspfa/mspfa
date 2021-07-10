@@ -264,7 +264,10 @@ export default createValidator({
 					$ref: '#/definitions/RecursivePartial%3Cdef-alias--1612-1804--0-79982047801771%3E'
 				},
 				stories: {
-					$ref: '#/definitions/RecursivePartial%3Cdef-alias--1804-2100--0-7998127147939%5B%5D%3E'
+					type: 'array',
+					items: {
+						$ref: '#/definitions/StoryNotificationSettings'
+					}
 				}
 			},
 			additionalProperties: false
@@ -287,28 +290,41 @@ export default createValidator({
 				$ref: '#/definitions/RecursivePartial%3CNotificationSetting%3E'
 			}
 		},
-		'RecursivePartial<def-alias--1804-2100--0-7998127147939[]>': {
-			type: 'array',
-			items: {
-				$ref: '#/definitions/RecursivePartial%3CStoryNotificationSettings%3E'
-			}
+		'StoryNotificationSettings': {
+			anyOf: [
+				{
+					type: 'boolean',
+					const: true
+				},
+				{
+					$ref: '#/definitions/StoryReaderNotificationSettings'
+				},
+				{
+					$ref: '#/definitions/StoryEditorNotificationSettings'
+				}
+			],
+			description: '`true` if the setting should inherit the user\'s default story notification settings.\n\n`StoryReaderNotificationSettings | StoryEditorNotificationSettings` otherwise.'
 		},
-		'RecursivePartial<StoryNotificationSettings>': {
+		'StoryReaderNotificationSettings': {
 			type: 'object',
+			additionalProperties: false,
 			properties: {
+				comments: {
+					not: {}
+				},
 				updates: {
-					$ref: '#/definitions/RecursivePartial%3CNotificationSetting%3E'
+					$ref: '#/definitions/NotificationSetting'
 				},
 				news: {
-					$ref: '#/definitions/RecursivePartial%3CNotificationSetting%3E'
-				},
-				comments: {
-					$ref: '#/definitions/RecursivePartial%3C(undefined%7CNotificationSetting)%3E'
+					$ref: '#/definitions/NotificationSetting'
 				}
 			},
-			additionalProperties: false
+			required: [
+				'news',
+				'updates'
+			]
 		},
-		'RecursivePartial<(undefined|NotificationSetting)>': {
+		'NotificationSetting': {
 			type: 'object',
 			properties: {
 				email: {
@@ -318,7 +334,17 @@ export default createValidator({
 					type: 'boolean'
 				}
 			},
+			required: [
+				'email',
+				'site'
+			],
 			additionalProperties: false
+		},
+		'StoryEditorNotificationSettings': {
+			type: 'object',
+			additionalProperties: {
+				$ref: '#/definitions/NotificationSetting'
+			}
 		}
 	}
 });

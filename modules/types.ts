@@ -4,7 +4,7 @@ import type { ObjectId } from 'mongodb';
 
 export type RecursivePartial<Type> = Partial<{
 	[Key in keyof Type]?: (
-		Type[Key] extends string | number | boolean | undefined | null | Date | ObjectId
+		Type[Key] extends string | number | boolean | undefined | null | any[] | Date | ObjectId
 			? Type[Key]
 			: RecursivePartial<Type[Key]>
 	)
