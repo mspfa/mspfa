@@ -136,9 +136,16 @@ const TagField = ({
 				} else if (child.className === 'tag-field-tag') {
 					const tagValue = child.getElementsByClassName('tag-field-tag-content')[0].textContent!;
 
-					if (!allTagValues.includes(tagValue)) {
-						allTagValues.push(tagValue);
+					if (allTagValues.includes(tagValue)) {
+						// Remove the duplicate tag.
+						inputRef.current.removeChild(child);
+
+						// Go two iterations back. One to redo this iteration since its child was removed, and another to redo the iteration of the element before the removed child (since changing its `nextSibling` may have an effect on it).
+						i -= 2;
+						continue;
 					}
+
+					allTagValues.push(tagValue);
 
 					// Replace the tag with a newly created copy in case the old one got messed up.
 
@@ -152,7 +159,7 @@ const TagField = ({
 						inputRef.current.insertBefore(createTagFieldEditable(), child.nextSibling);
 					}
 				} else {
-					// If this child is not an editable or a tag, insert an editable before it so the child can be merged into it later.
+					// If this child is not an editable or a tag, insert an editable before it so this child can be merged into it later.
 
 					const newChild = createTagFieldEditable();
 					inputRef.current.insertBefore(newChild, child);
@@ -216,10 +223,9 @@ const TagField = ({
 								.replace(startAndEndHyphens, '')
 						);
 
-						if (tagValue && !fieldValue.includes(tagValue) && !allTagValues.includes(tagValue)) {
+						if (tagValue && !allTagValues.includes(tagValue)) {
+							// Insert the new tag. New tag elements will be checked in following iterations.
 							createAndInsertTag(tagValue, child);
-
-							allTagValues.push(tagValue);
 						}
 					}
 				}
