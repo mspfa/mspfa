@@ -57,8 +57,8 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 
 	const [advancedShown, setAdvancedShown] = useState(false);
 
-	const showAdvanced = useCallback(() => {
-		setAdvancedShown(true);
+	const toggleAdvanced = useCallback(() => {
+		setAdvancedShown(advancedShown => !advancedShown);
 	}, []);
 
 	const removeNextPage = useCallback((event: MouseEvent<HTMLButtonElement & HTMLAnchorElement> & { target: HTMLButtonElement }) => {
@@ -90,6 +90,8 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 
 	/** Reports the validity of all form elements in this page section. If one of them is found invalid, stops reporting and returns `false`. If all elements are valid, returns `true`. */
 	const reportPageValidity = useCallback(() => {
+		// TODO: Handle invalid fields which are unmounted due to `advancedShown === false`.
+
 		for (const element of sectionRef.current.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>('input, textarea, select')) {
 			if (!element.reportValidity()) {
 				return false;
@@ -167,7 +169,12 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 					html
 				/>
 			</Row>
-			{advancedShown ? (
+			<Row className="story-editor-page-show-advanced-link-container">
+				<Link className="translucent-text" onClick={toggleAdvanced}>
+					{advancedShown ? 'Hide Advanced Options' : 'Show Advanced Options'}
+				</Link>
+			</Row>
+			{advancedShown && (
 				<>
 					<Row className="page-field-columns">
 						<div className="page-field-container-next-pages">
@@ -243,12 +250,6 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 						/>
 					</Row>
 				</>
-			) : (
-				<Row className="story-editor-page-show-advanced-link-container">
-					<Link className="translucent-text" onClick={showAdvanced}>
-						Show Advanced Options
-					</Link>
-				</Row>
 			)}
 			<Row className="story-editor-page-actions">
 				{saved ? (
