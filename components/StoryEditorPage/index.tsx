@@ -92,7 +92,7 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 		let selectors = ['input', 'textarea', 'select'];
 
 		if (onlyAdvanced) {
-			selectors = selectors.map(selector => `.story-editor-page-show-advanced-link-container ~ * ${selector}`);
+			selectors = selectors.map(selector => `.story-editor-page-advanced ${selector}`);
 		}
 
 		for (const element of sectionRef.current.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(selectors.join(', '))) {
@@ -188,7 +188,7 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 				</Link>
 			</Row>
 			{advancedShown && (
-				<>
+				<Row className="story-editor-page-advanced">
 					<Row className="page-field-columns">
 						<div className="page-field-container-next-pages">
 							<Label
@@ -262,7 +262,7 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 							rows={3}
 						/>
 					</Row>
-				</>
+				</Row>
 			)}
 			<Row className="story-editor-page-actions">
 				{saved ? (
