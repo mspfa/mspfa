@@ -140,7 +140,7 @@ const TagField = ({
 				} else if (child.className === 'tag-field-tag') {
 					const tagValue = child.getElementsByClassName('tag-field-tag-content')[0].textContent!;
 
-					// Check for invalid tags.
+					// Check for and remove invalid tags.
 					if (
 						// Check if this tag is a duplicate.
 						allTagValues.includes(tagValue)
