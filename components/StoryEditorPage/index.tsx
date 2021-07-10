@@ -206,7 +206,7 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 						type="checkbox"
 						name={`pages.${page.id}.disableControls`}
 						label="Disable Controls"
-						help={'Disallows users from using MSPFA\'s controls on this page (e.g. left and right arrow keys to navigate between pages).\n\nIt\'s generally only necessary to disable controls if a script or embedded game has custom controls which conflict with MSPFA\'s.'}
+						help={'Disallows users from using MSPFA\'s controls on this page (e.g. left and right arrow keys to navigate between pages).\n\nIt\'s generally only necessary to disable controls if a script or embedded game has custom controls conflicting with MSPFA\'s.'}
 					/>
 				</InlineRowSection>
 			</div>
