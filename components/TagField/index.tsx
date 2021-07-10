@@ -54,11 +54,15 @@ const createTagFieldEditable = () => {
 	return element;
 };
 
-export type TagFieldProps = Pick<TextareaHTMLAttributes<HTMLTextAreaElement>, 'name' | 'id' | 'rows'>;
+export type TagFieldProps = Pick<TextareaHTMLAttributes<HTMLTextAreaElement>, 'name' | 'id' | 'rows'> & {
+	/** The maximum number of tags allowed. Defaults to 50. */
+	max?: number
+};
 
 const TagField = ({
 	name = 'tags',
 	id,
+	max = 50,
 	rows
 }: TagFieldProps) => {
 	const idPrefix = usePrefixedID();
@@ -136,8 +140,14 @@ const TagField = ({
 				} else if (child.className === 'tag-field-tag') {
 					const tagValue = child.getElementsByClassName('tag-field-tag-content')[0].textContent!;
 
-					if (allTagValues.includes(tagValue)) {
-						// Remove the duplicate tag.
+					// Check for invalid tags.
+					if (
+						// Check if this tag is a duplicate.
+						allTagValues.includes(tagValue)
+						// Check if this tag exceeds the max tag count.
+						|| allTagValues.length >= max
+					) {
+						// Remove the invalid tag.
 						inputRef.current.removeChild(child);
 
 						// Go two iterations back. One to redo this iteration since its child was removed, and another to redo the iteration of the element before the removed child (since changing its `nextSibling` may have an effect on it).
