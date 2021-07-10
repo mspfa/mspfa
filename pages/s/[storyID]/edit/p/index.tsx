@@ -72,7 +72,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 								defaultPageTitle: event.target.value
 							}
 						});
-						// Update the above state before syncing it with the server via the below request so the user can use the new default page title while the request is still loading.
+						// The reason the above state is updated before syncing with the server via the below request rather than after is so the user can use the new default page title while the request is still loading.
 
 						cancelTokenSourceRef.current = axios.CancelToken.source();
 
