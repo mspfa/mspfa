@@ -16,12 +16,15 @@ import InlineRowSection from 'components/Box/InlineRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
 import Button from 'components/Button';
 import type { StoryID } from 'modules/server/stories';
+import { Dialog } from 'modules/client/dialogs';
 
 export type StoryEditorPageProps = {
 	/** The `ClientStoryPage` being edited. */
 	children: ClientStoryPage,
 	storyID: StoryID,
 	formikPropsRef: MutableRefObject<FormikProps<Values>>,
+	/** Whether the form is loading. */
+	isSubmitting: boolean,
 	/** A ref to the first page field's title `input` element. */
 	firstTitleInputRef?: RefObject<HTMLInputElement>
 };
@@ -31,6 +34,7 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 	children: page,
 	storyID,
 	formikPropsRef,
+	isSubmitting,
 	firstTitleInputRef
 }) => {
 	const onClickRemoveNextPage = useCallback((event: MouseEvent<HTMLButtonElement & HTMLAnchorElement> & { target: HTMLButtonElement }) => {
@@ -48,8 +52,11 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 
 	const lastNextPageInputRef = useRef<HTMLInputElement>(null);
 
-	// Check if this page is deeply equal to a saved page with the same ID to determine whether this page is saved.
-	const saved = isEqual(page, formikPropsRef.current.initialValues.pages[page.id]);
+	/** Whether this page exists on the server. */
+	const onServer = page.id in formikPropsRef.current.initialValues.pages;
+
+	/** Whether this page exists on the server and has the same values as on the server. */
+	const saved = onServer && isEqual(page, formikPropsRef.current.initialValues.pages[page.id]);
 
 	const pageStatus = (
 		page.published === undefined
@@ -216,25 +223,55 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 						<Button
 							href={`/s/${storyID}/p/${page.id}?preview=1`}
 							target="_blank"
+							disabled={isSubmitting}
 						>
 							Preview
 						</Button>
-						<Button onClick={publishPage}>
+						<Button
+							disabled={isSubmitting}
+							onClick={publishPage}
+						>
 							Publish
 						</Button>
 					</>
 				) : (
-					<Button onClick={savePage}>
+					<Button
+						disabled={isSubmitting}
+						onClick={savePage}
+					>
 						{pageStatus === 'draft' ? 'Save Draft' : 'Save'}
 					</Button>
 				)}
 				<Button
+					disabled={isSubmitting}
 					onClick={
-						useCallback(() => {
+						useCallback(async () => {
+							// Set `isSubmitting` to `true` so the form cannot be significantly modified while deletion is in progress and cause race conditions in this callback.
+							formikPropsRef.current.setSubmitting(true);
+
+							if (!await Dialog.confirm({
+								id: 'delete-pages',
+								title: 'Delete Page',
+								content: `Are you sure you want to delete page ${page.id}?\n\nThis cannot be undone.`
+							})) {
+								formikPropsRef.current.setSubmitting(false);
+								return;
+							}
+
+							if (onServer) {
+								// Delete the page on the server.
+
+								// TODO
+							}
+
+							// Delete the page on the client.
+
 							const newPages: Values['pages'] = {};
 
-							for (const pageID in formikPropsRef.current.values.pages) {
-								if (+pageID === page.id) {
+							for (const pageIDString in formikPropsRef.current.values.pages) {
+								const pageID = +pageIDString;
+
+								if (pageID === page.id) {
 									// Skip the page being deleted.
 									continue;
 								}
@@ -243,15 +280,23 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 									...formikPropsRef.current.values.pages[pageID]
 								};
 
-								if (+pageID > page.id) {
+								if (pageID > page.id) {
 									newPage.id--;
+								}
+
+								for (let i = 0; i < newPage.nextPages.length; i++) {
+									if (newPage.nextPages[i] > page.id) {
+										newPage.nextPages[i]--;
+									}
 								}
 
 								newPages[newPage.id] = newPage;
 							}
 
 							formikPropsRef.current.setFieldValue('pages', newPages);
-						}, [formikPropsRef, page.id])
+
+							formikPropsRef.current.setSubmitting(false);
+						}, [formikPropsRef, page.id, onServer])
 					}
 				>
 					Delete

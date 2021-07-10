@@ -212,6 +212,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 										<StoryEditorPage
 											storyID={privateStory.id}
 											formikPropsRef={formikPropsRef}
+											isSubmitting={formikPropsRef.current.isSubmitting}
 											firstTitleInputRef={i === 0 ? firstTitleInputRef : undefined}
 										>
 											{page}
