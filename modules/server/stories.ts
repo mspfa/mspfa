@@ -1,7 +1,7 @@
 import db from 'modules/server/db';
 import type { Quirk } from 'modules/client/quirks';
 import type { URLString } from 'modules/types';
-import type { PrivateStory, PublicStory } from 'modules/client/stories';
+import type { ClientStoryPage, PrivateStory, PublicStory } from 'modules/client/stories';
 import { StoryStatus, StoryPrivacy } from 'modules/client/stories';
 import type { UserDocument, UserID } from 'modules/server/users';
 import users from 'modules/server/users';
@@ -227,6 +227,22 @@ export const getPublicStory = (story: StoryDocument): PublicStory => ({
 	commentsEnabled: story.commentsEnabled,
 	colors: story.colors,
 	quirks: story.quirks
+});
+
+/** Converts a `StoryPage` to a `ClientStoryPage`. */
+export const getClientStoryPage = (page: StoryPage): ClientStoryPage => ({
+	id: page.id,
+	...page.published !== undefined && {
+		published: +page.published
+	},
+	title: page.title,
+	content: page.content,
+	nextPages: page.nextPages,
+	tags: page.tags,
+	unlisted: page.unlisted,
+	disableControls: page.disableControls,
+	commentary: page.commentary,
+	notify: page.notify
 });
 
 const stories = db.collection<StoryDocument>('stories');
