@@ -280,10 +280,12 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 									...formikPropsRef.current.values.pages[pageID]
 								};
 
+								// Adjust IDs of pages after the deleted page.
 								if (pageID > page.id) {
 									newPage.id--;
 								}
 
+								// Adjust `nextPages` IDs of pages after the deleted page.
 								for (let i = 0; i < newPage.nextPages.length; i++) {
 									if (newPage.nextPages[i] > page.id) {
 										newPage.nextPages[i]--;
