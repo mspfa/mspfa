@@ -228,7 +228,11 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 						</InlineRowSection>
 					</Row>
 					<Row className="page-field-container-content">
-						<Label block htmlFor={`field-pages-${page.id}-commentary`}>
+						<Label
+							block
+							htmlFor={`field-pages-${page.id}-commentary`}
+							help={'You can detail your thoughts about this page here. Readers viewing this page will be able to open your commentary and view what you wrote.\n\nBBCode is allowed here, but authors usually only use plain text for their commentary.'}
+						>
 							Commentary
 						</Label>
 						<Field
