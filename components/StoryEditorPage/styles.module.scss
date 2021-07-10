@@ -1,10 +1,6 @@
 .story-editor {
 	&-page {
 		&-section {
-			& > .box-content > :not(:last-child) {
-				margin-bottom: 1em;
-			}
-
 			&:not(.saved) > .box-heading::after {
 				content: '*';
 			}

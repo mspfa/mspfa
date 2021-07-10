@@ -17,6 +17,7 @@ import FieldBoxRow from 'components/Box/FieldBoxRow';
 import Button from 'components/Button';
 import type { StoryID } from 'modules/server/stories';
 import { Dialog } from 'modules/client/dialogs';
+import Row from 'components/Row';
 
 export type StoryEditorPageProps = {
 	/** The `ClientStoryPage` being edited. */
@@ -120,7 +121,7 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 			}
 			ref={sectionRef}
 		>
-			<div className="page-field-container-title">
+			<Row className="page-field-container-title">
 				<Label
 					block
 					htmlFor={`field-pages-${page.id}-title`}
@@ -136,8 +137,8 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 					autoComplete="off"
 					innerRef={firstTitleInputRef}
 				/>
-			</div>
-			<div className="page-field-container-content">
+			</Row>
+			<Row className="page-field-container-content">
 				<Label block htmlFor={`field-pages-${page.id}-content`}>
 					Content
 				</Label>
@@ -146,8 +147,8 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 					rows={6}
 					html
 				/>
-			</div>
-			<div className="page-field-columns">
+			</Row>
+			<Row className="page-field-columns">
 				<div className="page-field-container-next-pages">
 					<Label
 						block
@@ -216,8 +217,8 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 						help={'Disallows users from using MSPFA\'s controls on this page (e.g. left and right arrow keys to navigate between pages).\n\nIt\'s generally only necessary to disable controls if a script or embedded game has custom controls conflicting with MSPFA\'s.'}
 					/>
 				</InlineRowSection>
-			</div>
-			<div className="story-editor-page-actions">
+			</Row>
+			<Row className="story-editor-page-actions">
 				{saved ? (
 					<>
 						<Button
@@ -303,7 +304,7 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 				>
 					Delete
 				</Button>
-			</div>
+			</Row>
 		</BoxSection>
 	);
 });
