@@ -6,7 +6,7 @@ import { withStatusCode } from 'modules/server/errors';
 import { Form, Formik } from 'formik';
 import type { ChangeEvent } from 'react';
 import { Fragment, useCallback, useRef, useState } from 'react';
-import { useLeaveConfirmation } from 'modules/client/forms';
+import { getChangedValues, useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
 import Button from 'components/Button';
 import { getPrivateStory, getStoryByUnsafeID } from 'modules/server/stories';
@@ -22,6 +22,7 @@ import StoryEditorPage from 'components/StoryEditorPage';
 import { useLatest } from 'react-use';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
+type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 
 export type Values = {
 	/** An object mapping page IDs to their respective pages. Since this object has numeric keys, standard JavaScript automatically sorts its properties by lowest first. */
@@ -42,14 +43,25 @@ const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivate
 
 	return (
 		<Page heading="Edit Adventure">
-			<Formik
+			<Formik<Values>
 				initialValues={{
 					pages: initialPages
 				}}
 				onSubmit={
-					useCallback(async (values: Values) => {
+					useCallback(async values => {
+						const changedValues = getChangedValues(initialPages, values.pages);
 
-					}, [])
+						if (!changedValues) {
+							return;
+						}
+
+						const { data } = await (api as StoryPagesAPI).put(`/stories/${privateStory.id}/pages`, changedValues as any);
+
+						setInitialPages({
+							...initialPages,
+							...data
+						});
+					}, [privateStory.id, initialPages])
 				}
 			>
 				{formikProps => {

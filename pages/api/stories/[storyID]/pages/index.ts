@@ -1,6 +1,6 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
-import type { StoryPage, StoryPageID } from 'modules/server/stories';
+import type { StoryPage } from 'modules/server/stories';
 import stories, { getStoryByUnsafeID, getClientStoryPage } from 'modules/server/stories';
 import { authenticate } from 'modules/server/auth';
 import type { ClientStoryPage, ClientStoryPageRecord } from 'modules/client/stories';
@@ -21,7 +21,8 @@ const Handler: APIHandler<{
 	/** A record of `ClientStoryPage`s (some of which are partial) to add or change. */
 	body: Record<(
 		// The ID of the page to add or change.
-		StoryPageID
+		// The reason this is `string` is because the schema generator ignores `number` keys and doesn't seem to have any support for `patternProperties`. The checks to ensure the validity of these keys are instead done in the handler.
+		string
 	), (
 		// A new page being added (includes `id`).
 		ClientStoryPage
@@ -63,6 +64,16 @@ const Handler: APIHandler<{
 	for (const pageIDString of Object.keys(req.body)) {
 		const pageID = +pageIDString;
 
+		if (!(
+			Number.isInteger(pageID)
+			&& pageID > 0
+		)) {
+			res.status(400).send({
+				message: 'A page ID must be an integer greater than 0.'
+			});
+			return;
+		}
+
 		const clientPage = req.body[pageID];
 
 		if ('id' in clientPage) {
@@ -78,6 +89,17 @@ const Handler: APIHandler<{
 			if (pageID !== clientPage.id) {
 				res.status(400).send({
 					message: `Page ${pageID}'s \`id\` is not set to ${pageID}.`
+				});
+				return;
+			}
+
+			if (!(
+				pageID === 1
+				|| pageID - 1 in story.pages
+				|| pageID - 1 in req.body
+			)) {
+				res.status(422).send({
+					message: `Page ${pageID} cannot be added if there is no page ${pageID - 1}.`
 				});
 				return;
 			}
@@ -122,9 +144,11 @@ const Handler: APIHandler<{
 		}
 	}
 
-	stories.updateOne({ _id: story._id }, storyUpdate);
+	stories.updateOne({ _id: story._id }, {
+		$set: storyUpdate
+	});
 
-	res.status(201).send(newClientPages);
+	res.status(200).send(newClientPages);
 };
 
 export default Handler;

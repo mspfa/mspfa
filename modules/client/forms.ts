@@ -25,7 +25,7 @@ export const getChangedValues = <
 	}
 
 	for (const key of Object.keys(values) as Array<keyof Values>) {
-		if (values[key] instanceof Object) {
+		if (values[key] instanceof Object && initialValues[key] instanceof Object) {
 			const changedSubValues = getChangedValues(initialValues[key] as any, values[key]);
 
 			if (changedSubValues) {
