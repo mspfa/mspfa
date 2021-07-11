@@ -190,6 +190,13 @@
 		],
 		"no-negated-condition": "error",
 		"no-new-object": "error",
+		"no-restricted-syntax": [
+			"error",
+			{
+				"selector": "ForInStatement",
+				"message": "`for (const key of Object.keys(object))` is faster than `for (key in object)` (though `for (const value of Object.values(object))` is fastest)."
+			}
+		],
 		"no-trailing-spaces": [
 			"warn",
 			{

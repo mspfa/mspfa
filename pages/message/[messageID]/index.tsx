@@ -95,7 +95,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						const { data: newMessage } = await (api as MessageAPI).put(`/messages/${message.id}`, values);
 
 						// Clear the `message` object and assign new properties to it from `newMessage`.
-						for (const key in message) {
+						for (const key of Object.keys(message)) {
 							delete message[key as keyof ClientMessage];
 						}
 						Object.assign(message, newMessage);

@@ -112,7 +112,7 @@ export const flatten = (
 	prefix = '',
 	flatObject: Record<string, any> = {}
 ) => {
-	for (const key in object) {
+	for (const key of Object.keys(object)) {
 		const value = object[key];
 
 		if (value instanceof Object && !(
