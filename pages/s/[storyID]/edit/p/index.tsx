@@ -9,7 +9,7 @@ import { Fragment, useCallback, useRef, useState } from 'react';
 import { getChangedValues, useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
 import Button from 'components/Button';
-import { getPrivateStory, getStoryByUnsafeID } from 'modules/server/stories';
+import { getClientStoryPage, getPrivateStory, getStoryByUnsafeID } from 'modules/server/stories';
 import type { ClientStoryPage, ClientStoryPageRecord, PrivateStory } from 'modules/client/stories';
 import BoxSection from 'components/Box/BoxSection';
 import type { APIClient } from 'modules/client/api';
@@ -30,14 +30,18 @@ export type Values = {
 };
 
 type ServerSideProps = {
-	privateStory: PrivateStory
+	privateStory: PrivateStory,
+	pages: ClientStoryPageRecord
 } | {
 	statusCode: number
 };
 
-const Component = withErrorPage<ServerSideProps>(({ privateStory: initialPrivateStory }) => {
+const Component = withErrorPage<ServerSideProps>(({
+	privateStory: initialPrivateStory,
+	pages: initialPagesProp
+}) => {
 	const [privateStory, setPrivateStory] = useState(initialPrivateStory);
-	const [initialPages, setInitialPages] = useState<Values['pages']>({});
+	const [initialPages, setInitialPages] = useState<Values['pages']>(initialPagesProp);
 
 	const notifyCheckboxRef = useRef<HTMLInputElement>(null!);
 
@@ -268,9 +272,16 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		return { props: { statusCode: 403 } };
 	}
 
+	const clientPages: ClientStoryPageRecord = {};
+
+	for (const page of Object.values(story.pages).slice(-10)) {
+		clientPages[page.id] = getClientStoryPage(page);
+	}
+
 	return {
 		props: {
-			privateStory: getPrivateStory(story)
+			privateStory: getPrivateStory(story),
+			pages: clientPages
 		}
 	};
 });
