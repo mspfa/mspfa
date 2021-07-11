@@ -14,24 +14,18 @@ type PuttableStoryPageKey = 'published' | 'title' | 'content' | 'nextPages' | 't
 const Handler: APIHandler<{
 	query: {
 		storyID: string
-	}
-} & (
-	{
-		method: 'PUT',
-		/** A record of `ClientStoryPage`s (some of which are partial) to add or change. */
-		body: Record<(
-			// The ID of the page to add or change.
-			StoryPageID
-		), (
-			// A new page being added (includes `id`).
-			ClientStoryPage
-			// Changes to an existing page (excludes `id`).
-			| RecursivePartial<Pick<ClientStoryPage, PuttableStoryPageKey>>
-		)>
-	}
-), {
-	method: 'POST',
-	body: ClientStoryPageRecord
+	},
+	method: 'PUT',
+	/** A record of `ClientStoryPage`s (some of which are partial) to add or change. */
+	body: Record<(
+		// The ID of the page to add or change.
+		StoryPageID
+	), (
+		// A new page being added (includes `id`).
+		ClientStoryPage
+		// Changes to an existing page (excludes `id`).
+		| RecursivePartial<Pick<ClientStoryPage, PuttableStoryPageKey>>
+	)>
 }> = async (req, res) => {
 	await validate(req, res);
 
