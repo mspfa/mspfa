@@ -3,7 +3,7 @@ import type { APIHandler } from 'modules/server/api';
 import type { StoryPage, StoryPageID } from 'modules/server/stories';
 import stories, { getStoryByUnsafeID } from 'modules/server/stories';
 import { authenticate } from 'modules/server/auth';
-import type { ClientStoryPage, ClientStoryPageRecord } from 'modules/client/stories';
+import type { ClientStoryPage } from 'modules/client/stories';
 import type { RecursivePartial } from 'modules/types';
 import { Perm } from 'modules/client/perms';
 import { flatten } from 'modules/server/db';
