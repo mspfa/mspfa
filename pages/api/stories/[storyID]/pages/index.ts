@@ -1,12 +1,14 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
 import type { StoryPage, StoryPageID } from 'modules/server/stories';
-import stories, { getStoryByUnsafeID } from 'modules/server/stories';
+import stories, { getStoryByUnsafeID, getClientStoryPage } from 'modules/server/stories';
 import { authenticate } from 'modules/server/auth';
-import type { ClientStoryPage } from 'modules/client/stories';
+import type { ClientStoryPage, ClientStoryPageRecord } from 'modules/client/stories';
 import type { RecursivePartial } from 'modules/types';
 import { Perm } from 'modules/client/perms';
 import { flatten } from 'modules/server/db';
+import { mergeWith } from 'lodash';
+import { overwriteArrays } from 'modules/client/utilities';
 
 /** The keys of all `ClientStoryPage` properties which the client should be able to `PUT` into any of their existing `StoryDocument['pages']`. */
 type PuttableStoryPageKey = 'published' | 'title' | 'content' | 'nextPages' | 'tags' | 'unlisted' | 'disableControls' | 'commentary' | 'notify';
@@ -26,6 +28,10 @@ const Handler: APIHandler<{
 		// Changes to an existing page (excludes `id`).
 		| RecursivePartial<Pick<ClientStoryPage, PuttableStoryPageKey>>
 	)>
+}, {
+	method: 'PUT',
+	/** A record of the `ClientStoryPage`s which were modified or added. */
+	body: ClientStoryPageRecord
 }> = async (req, res) => {
 	await validate(req, res);
 
@@ -51,6 +57,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
+	const newClientPages: ClientStoryPageRecord = {};
 	const storyUpdate: Record<string, unknown> = {};
 
 	for (const pageIDString of Object.keys(req.body)) {
@@ -76,7 +83,6 @@ const Handler: APIHandler<{
 			}
 
 			const { published, ...clientPageWithoutPublished } = clientPage;
-
 			const page: StoryPage = {
 				...clientPageWithoutPublished,
 				...published !== undefined && {
@@ -86,16 +92,39 @@ const Handler: APIHandler<{
 			};
 
 			storyUpdate[`pages.${pageID}`] = page;
-		} else {
-			// `clientPage` is an existing page being edited.
 
-			flatten(clientPage, `pages.${pageID}.`, storyUpdate);
+			newClientPages[pageID] = getClientStoryPage(page);
+		} else {
+			// `clientPage` is the changes for an existing page being edited.
+
+			const { published, ...clientPageWithoutPublished } = clientPage;
+			const pageChanges: RecursivePartial<StoryPage> = {
+				...clientPageWithoutPublished,
+				...published !== undefined && {
+					published: new Date(published)
+				}
+			};
+
+			flatten(pageChanges, `pages.${pageID}.`, storyUpdate);
+
+			// Convert the modified `StoryPage` to a `ClientStoryPage` to send back to the client.
+			newClientPages[pageID] = getClientStoryPage(
+				// Merge the changes in `pageChanges` into the original `StoryPage` to get what it would be after the changes.
+				mergeWith(
+					{},
+					// The original `StoryPage`.
+					story.pages[pageID],
+					// The requested `StoryPage` changes.
+					pageChanges,
+					overwriteArrays
+				)
+			);
 		}
 	}
 
 	stories.updateOne({ _id: story._id }, storyUpdate);
 
-	res.status(201).end();
+	res.status(201).send(newClientPages);
 };
 
 export default Handler;
