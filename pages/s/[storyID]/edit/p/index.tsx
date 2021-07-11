@@ -67,6 +67,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						});
 					}, [privateStory.id, initialPages])
 				}
+				enableReinitialize
 			>
 				{formikProps => {
 					// Using this instead of destructuring the Formik props directly is necessary as a performance optimization, to significantly reduce unnecessary re-renders.
