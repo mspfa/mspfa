@@ -27,7 +27,7 @@ export const storyPrivacyNames: Record<StoryPrivacy, string> = {
 };
 
 /** All keys whose values have the same serializable type in both `StoryDocument` and `PrivateStory`. */
-type PrivateStoryDocumentKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'blurb' | 'icon' | 'favCount' | 'banner' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'commentsEnabled' | 'editorSettings' | 'colors' | 'quirks';
+type PrivateStoryDocumentKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'blurb' | 'icon' | 'pageCount' | 'favCount' | 'banner' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'commentsEnabled' | 'editorSettings' | 'colors' | 'quirks';
 
 /** A serializable version of `StoryDocument` which only has properties that can safely be exposed to any client. */
 export type PrivateStory = Pick<StoryDocument, PrivateStoryDocumentKey> & {
@@ -41,7 +41,7 @@ export type PrivateStory = Pick<StoryDocument, PrivateStoryDocumentKey> & {
 };
 
 /** All keys whose values have the same serializable type in both `StoryDocument` and `PublicStory`. */
-type PublicStoryDocumentKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'blurb' | 'icon' | 'favCount' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'commentsEnabled' | 'colors' | 'quirks';
+type PublicStoryDocumentKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'blurb' | 'icon' | 'pageCount' | 'favCount' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'commentsEnabled' | 'colors' | 'quirks';
 
 /** A serializable version of `StoryDocument` which only has properties that can safely be exposed to any client. */
 export type PublicStory = Pick<StoryDocument, PublicStoryDocumentKey> & {
