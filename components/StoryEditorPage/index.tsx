@@ -92,7 +92,11 @@ const StoryEditorPage = React.memo(({
 	/** Whether this page exists on the server. */
 	const onServer = page.id in formikPropsRef.current.initialValues.pages;
 
-	/** The page with the same ID as this one in `initialValues`, or undefined if `!onServer`. */
+	/**
+	 * The page with the same ID as this one in `initialValues`, or undefined if `!onServer`.
+	 *
+	 * ⚠️ In callback hooks, use `formikPropsRef.current.initialValues.pages[page.id]` instead if it helps avoid unnecessary updates.
+	 */
 	const initialPage = (
 		onServer
 			? formikPropsRef.current.initialValues.pages[page.id]
