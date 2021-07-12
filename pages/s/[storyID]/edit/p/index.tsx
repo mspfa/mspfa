@@ -36,8 +36,14 @@ type ServerSideProps = {
 	statusCode: number
 };
 
+/**
+ * The symbol used to index a `ClientStoryPage`'s React key.
+ *
+ * This must be a symbol rather than a string so it is not detected when diffing pages for unsaved changes, but it is still kept when creating a shallow clone of the page.
+ */
 const _key = Symbol('key');
 
+/** A `ClientStoryPage` with a React key. */
 type KeyedClientStoryPage = ClientStoryPage & {
 	/** This page's React key. */
 	[_key]: number
@@ -247,6 +253,7 @@ const Component = withErrorPage<ServerSideProps>(({
 								{Object.values(formikPropsRef.current.values.pages).reverse().map((page, i, pages) => {
 									const keyedPage = page as KeyedClientStoryPage;
 
+									// If this page doesn't have a React key yet, generate one.
 									if (!(_key in keyedPage)) {
 										keyedPage[_key] = ++lastKeyRef.current;
 									}
