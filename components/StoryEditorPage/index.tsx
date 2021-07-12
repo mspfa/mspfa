@@ -30,6 +30,7 @@ export type StoryEditorPageProps = {
 	storyID: StoryID,
 	formikPropsRef: MutableRefObject<FormikProps<Values>>,
 	setInitialPages: Dispatch<SetStateAction<ClientStoryPageRecord>>,
+	queuedValuesRef: MutableRefObject<Values | undefined>,
 	/** Whether the form is loading. */
 	isSubmitting: boolean,
 	/** A ref to the first page field's title `input` element. */
@@ -42,6 +43,7 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 	storyID,
 	formikPropsRef,
 	setInitialPages,
+	queuedValuesRef,
 	isSubmitting,
 	firstTitleInputRef
 }) => {
@@ -365,15 +367,13 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 							}
 
 							// Delete the page on the client.
-							const newPages = deleteFromClientStoryPageRecord(page.id, formikPropsRef.current.values.pages);
-
-							// Wait until after Formik resets the values due to the initial values changing with `enableReinitialization`.
-							setTimeout(() => {
-								formikPropsRef.current.setFieldValue('pages', newPages);
-							});
+							// The values must be queued instead of set immediately because the `setInitialPages` call above resets the values in the next re-render due to the `enableReinitialization` prop on the `Formik` component.
+							queuedValuesRef.current = {
+								pages: deleteFromClientStoryPageRecord(page.id, formikPropsRef.current.values.pages)
+							};
 
 							formikPropsRef.current.setSubmitting(false);
-						}, [formikPropsRef, page.id, onServer, storyID, setInitialPages])
+						}, [formikPropsRef, page.id, onServer, storyID, setInitialPages, queuedValuesRef])
 					}
 				>
 					Delete

@@ -19,7 +19,7 @@ import api from 'modules/client/api';
 import useThrottledCallback from 'modules/client/useThrottledCallback';
 import axios from 'axios';
 import StoryEditorPage from 'components/StoryEditorPage';
-import { useLatest } from 'react-use';
+import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -105,6 +105,18 @@ const Component = withErrorPage<ServerSideProps>(({
 						// This ESLint comment is necessary because ESLint does not recognize that `privateStory` can change from outside the scope of this hook's component.
 						// eslint-disable-next-line react-hooks/exhaustive-deps
 					}, [privateStory]);
+
+					/** Anything set to this ref should be set as the Formik values once before rendering. */
+					const queuedValuesRef = useRef<Values>();
+
+					useIsomorphicLayoutEffect(() => {
+						if (queuedValuesRef.current) {
+							// Set the values queued in `queuedValuesRef`.
+							formikPropsRef.current.setValues(queuedValuesRef.current);
+
+							queuedValuesRef.current = undefined;
+						}
+					});
 
 					return (
 						<Form>
@@ -229,6 +241,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											storyID={privateStory.id}
 											formikPropsRef={formikPropsRef}
 											setInitialPages={setInitialPages}
+											queuedValuesRef={queuedValuesRef}
 											isSubmitting={formikPropsRef.current.isSubmitting}
 											firstTitleInputRef={i === 0 ? firstTitleInputRef : undefined}
 										>
