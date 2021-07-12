@@ -72,11 +72,11 @@ const Component = withErrorPage<ServerSideProps>(({
 							return;
 						}
 
-						const { data } = await (api as StoryPagesAPI).put(`/stories/${privateStory.id}/pages`, changedValues as any);
+						const { data: newPages } = await (api as StoryPagesAPI).put(`/stories/${privateStory.id}/pages`, changedValues as any);
 
 						setInitialPages({
 							...initialPages,
-							...data
+							...newPages
 						});
 					}, [privateStory.id, initialPages])
 				}
@@ -119,7 +119,11 @@ const Component = withErrorPage<ServerSideProps>(({
 						// eslint-disable-next-line react-hooks/exhaustive-deps
 					}, [privateStory]);
 
-					/** Anything set to this ref should be set as the Formik values once before rendering. */
+					/**
+					 * Anything set to this ref should be set as the Formik values once before rendering.
+					 *
+					 * Values must be queued instead of set immediately whenever this form's initial values are changed, since doing so resets the values due to the `enableReinitialization` prop on the `Formik` component.
+					*/
 					const queuedValuesRef = useRef<Values>();
 
 					useIsomorphicLayoutEffect(() => {

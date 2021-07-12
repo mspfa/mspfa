@@ -21,7 +21,9 @@ import Row from 'components/Row';
 import Link from 'components/Link';
 import type { APIClient } from 'modules/client/api';
 import api from 'modules/client/api';
+import { getChangedValues } from 'modules/client/forms';
 
+type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 type StoryPageAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]').default>;
 
 /**
@@ -77,7 +79,7 @@ export type StoryEditorPageProps = {
 };
 
 /** A `BoxSection` for a page in the story editor. */
-const StoryEditorPage = React.memo<StoryEditorPageProps>(({
+const StoryEditorPage = React.memo(({
 	children: page,
 	storyID,
 	formikPropsRef,
@@ -85,7 +87,7 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 	queuedValuesRef,
 	isSubmitting,
 	firstTitleInputRef
-}) => {
+}: StoryEditorPageProps) => {
 	/** Whether this page exists on the server. */
 	const onServer = page.id in formikPropsRef.current.initialValues.pages;
 
@@ -132,24 +134,41 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 	/** Reports the validity of all form elements in this page section. If one of them is found invalid, stops reporting and returns `false`. If all elements are valid, returns `true`. */
 	const reportPageValidity = useCallback((
 		/** Whether to only check the validity of advanced options. */
-		onlyAdvanced = false
+		onlyAdvanced = false,
+		/** The IDs of pages to report the validity of. */
+		pageIDs?: StoryPageID[]
 	) => {
-		// TODO: Handle invalid fields which are unmounted due to `advancedShown === false`.
-
 		let selectors = ['input', 'textarea', 'select'];
 
 		if (onlyAdvanced) {
 			selectors = selectors.map(selector => `.story-editor-page-advanced ${selector}`);
 		}
 
-		for (const element of sectionRef.current.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(selectors.join(', '))) {
+		// If this page is the only page in `pageIDs` anyway, then `pageIDs` is unneeded and can be set to `undefined` as an optimization.
+		if (
+			pageIDs
+			&& pageIDs.length === 1
+			&& pageIDs[0] === page.id
+		) {
+			pageIDs = undefined;
+		}
+
+		if (pageIDs) {
+			selectors = selectors.flatMap(selector => (
+				pageIDs!.map(pageID => `#story-editor-page-section-${pageID} ${selector}`)
+			));
+		}
+
+		const container = pageIDs ? sectionRef.current.parentNode! : sectionRef.current;
+
+		for (const element of container.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(selectors.join(', '))) {
 			if (!element.reportValidity()) {
 				return false;
 			}
 		}
 
 		return true;
-	}, []);
+	}, [page.id]);
 
 	const [advancedShown, setAdvancedShown] = useState(false);
 
@@ -162,13 +181,61 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 		setAdvancedShown(advancedShown => !advancedShown);
 	}, [advancedShown, reportPageValidity]);
 
-	const savePage = useCallback(() => {
-		if (!reportPageValidity()) {
+	const savePage = useCallback(async () => {
+		/** The IDs of pages to save. */
+		const pageIDsToSave: number[] = [page.id];
+
+		/** The pages to save. */
+		const pagesToSave: ClientStoryPageRecord = {
+			[page.id]: formikPropsRef.current.values.pages[page.id]
+		};
+
+		/** The pages to save from `initialValues`. */
+		const initialPagesToSave: ClientStoryPageRecord = {
+			[page.id]: formikPropsRef.current.initialValues.pages[page.id]
+		};
+
+		if (!onServer) {
+			// If this page is not on the server, all pages before it which are also not on the server must be saved as well, or else there would be a gap in pages saved on the server, which shouldn't be allowed.
+			// For example, you could have pages 1 to 10 already published, and then add pages 11, 12, and 13. But if you could save page 13 without saving pages 11 and 12, page 13 would be saved on the server with a gap where pages 11 and 12 should be.
+			for (const pageValue of Object.values(formikPropsRef.current.values.pages)) {
+				if (
+					// Check if the page is before this one.
+					pageValue.id < page.id
+					// Check if the page is not yet on the server.
+					&& !(pageValue.id in formikPropsRef.current.initialValues.pages)
+				) {
+					pageIDsToSave.push(pageValue.id);
+					pagesToSave[pageValue.id] = formikPropsRef.current.values.pages[pageValue.id];
+					initialPagesToSave[pageValue.id] = formikPropsRef.current.initialValues.pages[pageValue.id];
+				}
+			}
+		}
+
+		if (!reportPageValidity(false, pageIDsToSave)) {
 			return;
 		}
 
-		console.log('save!');
-	}, [reportPageValidity]);
+		const changedValues = getChangedValues(initialPagesToSave, pagesToSave);
+
+		if (!changedValues) {
+			return;
+		}
+
+		const { data: newPages } = await (api as StoryPagesAPI).put(`/stories/${storyID}/pages`, changedValues as any);
+
+		setInitialPages({
+			...formikPropsRef.current.initialValues.pages,
+			...newPages
+		});
+
+		queuedValuesRef.current = {
+			pages: {
+				...formikPropsRef.current.values.pages,
+				...newPages
+			}
+		};
+	}, [onServer, page.id, reportPageValidity, storyID, formikPropsRef, setInitialPages, queuedValuesRef]);
 
 	const publishPage = useCallback(() => {
 		if (!reportPageValidity()) {
@@ -180,6 +247,7 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 
 	return (
 		<BoxSection
+			id={`story-editor-page-section-${page.id}`}
 			className={`story-editor-page-section${saved ? ' saved' : ''} ${pageStatus}`}
 			heading={
 				pageStatus === 'draft'
@@ -369,7 +437,6 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 								);
 
 								// Queue the `newPages` to be set into the Formik values.
-								// The values must be queued instead of set immediately because the `setInitialPages` call above resets the values in the next re-render due to the `enableReinitialization` prop on the `Formik` component.
 								queuedValuesRef.current = { pages: newPages };
 							} else {
 								// Set the `newPages` into the Formik values.
