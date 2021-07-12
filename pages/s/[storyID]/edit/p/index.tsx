@@ -77,7 +77,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						// Preserve the React keys of updated pages.
 						for (const newPage of Object.values(newPages)) {
 							(newPage as KeyedClientStoryPage)[_key] = (
-								initialPages[newPage.id] as KeyedClientStoryPage
+								values.pages[newPage.id] as KeyedClientStoryPage
 							)[_key];
 						}
 

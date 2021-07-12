@@ -228,7 +228,7 @@ const StoryEditorPage = React.memo(({
 		// Preserve the React keys of updated pages.
 		for (const newPage of Object.values(newPages)) {
 			(newPage as KeyedClientStoryPage)[_key] = (
-				formikPropsRef.current.initialValues.pages[newPage.id] as KeyedClientStoryPage
+				formikPropsRef.current.values.pages[newPage.id] as KeyedClientStoryPage
 			)[_key];
 		}
 
