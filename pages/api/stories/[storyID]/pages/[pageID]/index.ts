@@ -5,7 +5,7 @@ import stories, { getStoryByUnsafeID } from 'modules/server/stories';
 import { authenticate } from 'modules/server/auth';
 import { Perm } from 'modules/client/perms';
 import type { MatchKeysAndValues, UpdateQuery } from 'mongodb';
-import { Mutable } from 'modules/types';
+import type { Mutable } from 'modules/types';
 
 const Handler: APIHandler<{
 	query: {
