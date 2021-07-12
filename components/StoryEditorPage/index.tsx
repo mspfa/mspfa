@@ -19,6 +19,10 @@ import type { StoryID } from 'modules/server/stories';
 import { Dialog } from 'modules/client/dialogs';
 import Row from 'components/Row';
 import Link from 'components/Link';
+import type { APIClient } from 'modules/client/api';
+import api from 'modules/client/api';
+
+type StoryPageAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]').default>;
 
 export type StoryEditorPageProps = {
 	/** The `ClientStoryPage` being edited. */
@@ -308,7 +312,11 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 							if (onServer) {
 								// Delete the page on the server.
 
-								// TODO
+								await (api as StoryPageAPI).delete(`/stories/${storyID}/pages/${page.id}`).catch(error => {
+									formikPropsRef.current.setSubmitting(false);
+
+									return Promise.reject(error);
+								});
 							}
 
 							// Delete the page on the client.
@@ -341,7 +349,7 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 							formikPropsRef.current.setFieldValue('pages', newPages);
 
 							formikPropsRef.current.setSubmitting(false);
-						}, [formikPropsRef, page.id, onServer])
+						}, [formikPropsRef, page.id, onServer, storyID])
 					}
 				>
 					Delete

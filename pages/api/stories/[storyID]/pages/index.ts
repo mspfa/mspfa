@@ -144,7 +144,9 @@ const Handler: APIHandler<{
 		}
 	}
 
-	stories.updateOne({ _id: story._id }, {
+	await stories.updateOne({
+		_id: story._id
+	}, {
 		$set: storyUpdate
 	});
 

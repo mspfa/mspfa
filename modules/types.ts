@@ -10,6 +10,11 @@ export type RecursivePartial<Type> = Partial<{
 	)
 }>;
 
+/** Makes a read-only type not read-only. */
+export type Mutable<Type> = {
+	-readonly [Key in keyof Type]: Type[Key]
+};
+
 /** @pattern ^https?:// */
 export type URLString = string;
 
