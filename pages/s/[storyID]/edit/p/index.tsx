@@ -4,7 +4,7 @@ import { Perm } from 'modules/client/perms';
 import { withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
 import { Form, Formik } from 'formik';
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, ReactNode } from 'react';
 import { Fragment, useCallback, useRef, useState } from 'react';
 import { getChangedValues, useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
@@ -143,6 +143,33 @@ const Component = withErrorPage<ServerSideProps>(({
 					/** A ref to the next React key a `ClientStoryPage` should use. This is incremented after each time it is assigned to a page. */
 					const nextKeyRef = useRef(0);
 
+					const pageComponents: ReactNode[] = [];
+					const pages = Object.values(formikPropsRef.current.values.pages);
+
+					for (let i = 0; i < pages.length; i++) {
+						const page = pages[i] as KeyedClientStoryPage;
+
+						// If this page doesn't have a React key yet, set one.
+						if (!(_key in page)) {
+							page[_key] = nextKeyRef.current++;
+						}
+
+						pageComponents.unshift(
+							<StoryEditorPage
+								// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
+								key={page[_key]}
+								storyID={privateStory.id}
+								formikPropsRef={formikPropsRef}
+								setInitialPages={setInitialPages}
+								queuedValuesRef={queuedValuesRef}
+								isSubmitting={formikPropsRef.current.isSubmitting}
+								firstTitleInputRef={i === 0 ? firstTitleInputRef : undefined}
+							>
+								{page}
+							</StoryEditorPage>
+						);
+					}
+
 					return (
 						<Form>
 							<Box>
@@ -241,44 +268,7 @@ const Component = withErrorPage<ServerSideProps>(({
 								</Button>
 							</div>
 							<Box id="story-editor-pages">
-								{Object.values(formikPropsRef.current.values.pages).reverse().map((page, i, pages) => {
-									const keyedPage = page as KeyedClientStoryPage;
-
-									// If this page doesn't have a React key yet, generate one.
-									if (!(_key in keyedPage)) {
-										keyedPage[_key] = nextKeyRef.current++;
-									}
-
-									return (
-										// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
-										<Fragment key={keyedPage[_key]}>
-											<StoryEditorPage
-												storyID={privateStory.id}
-												formikPropsRef={formikPropsRef}
-												setInitialPages={setInitialPages}
-												queuedValuesRef={queuedValuesRef}
-												isSubmitting={formikPropsRef.current.isSubmitting}
-												firstTitleInputRef={i === 0 ? firstTitleInputRef : undefined}
-											>
-												{page}
-											</StoryEditorPage>
-											{page.id !== (
-												i === pages.length - 1
-													// If this is the first page (which is last in the array since the pages are in reverse), there is a gap if and only if this page's ID is not 1.
-													? 1
-													// The ID of the previous page plus 1, which is what this page's ID should be if and only if there are no gaps. (The pages are in reverse, so the previous page has index `i + 1`.)
-													: pages[i + 1].id + 1
-											) && (
-												// There is a gap in the page IDs, so present an option to load the missing pages.
-												<div className="story-editor-view-actions">
-													<Button>
-														Load Pages X-Y
-													</Button>
-												</div>
-											)}
-										</Fragment>
-									);
-								})}
+								{pageComponents}
 							</Box>
 						</Form>
 					);
