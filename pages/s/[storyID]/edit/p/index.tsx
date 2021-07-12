@@ -5,7 +5,7 @@ import { withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
 import { Form, Formik } from 'formik';
 import type { ChangeEvent, ReactNode } from 'react';
-import { Fragment, useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { getChangedValues, useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
 import Button from 'components/Button';
