@@ -305,7 +305,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 
 	const clientPages: ClientStoryPageRecord = {};
 
-	for (const page of Object.values(story.pages).slice(-10)) {
+	for (const page of Object.values(story.pages)) {
 		clientPages[page.id] = getClientStoryPage(page);
 	}
 
