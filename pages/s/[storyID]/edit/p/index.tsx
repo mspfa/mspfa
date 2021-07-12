@@ -41,7 +41,7 @@ const Component = withErrorPage<ServerSideProps>(({
 	pages: initialPagesProp
 }) => {
 	const [privateStory, setPrivateStory] = useState(initialPrivateStory);
-	const [initialPages, setInitialPages] = useState<ClientStoryPageRecord>(initialPagesProp);
+	const [initialPages, setInitialPages] = useState(initialPagesProp);
 
 	const notifyCheckboxRef = useRef<HTMLInputElement>(null!);
 
