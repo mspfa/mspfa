@@ -104,8 +104,8 @@ const Handler: APIHandler<{
 			)
 		) || (
 			'willDelete' in storyChanges && !(
-				story.owner.equals(user!._id)
-				|| user!.perms & Perm.sudoDelete
+				story.owner.equals(user._id)
+				|| user.perms & Perm.sudoDelete
 			)
 		)) {
 			res.status(403).send({

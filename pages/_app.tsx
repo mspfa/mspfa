@@ -12,7 +12,7 @@ import env from 'modules/client/env';
 import { UserContext, useUserMerge, useUserInApp } from 'modules/client/users';
 import type { PrivateUser } from 'modules/client/users';
 import type { PageRequest } from 'modules/server/pages';
-import React, { Fragment, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { setTheme } from 'modules/client/themes';
 import { mergeWith } from 'lodash';
 import UserCache from 'modules/client/UserCache';

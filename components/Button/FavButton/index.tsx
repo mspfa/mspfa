@@ -73,7 +73,7 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 							return Promise.reject(error);
 						}));
 
-						user.favs.splice(favIndex!, 1);
+						user.favs.splice(favIndex, 1);
 						setUser({ ...user });
 					} else {
 						({ data: { favCount: newFavCount } } = await (api as FavsAPI).post(`/users/${user.id}/favs`, { storyID }, {

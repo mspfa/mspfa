@@ -89,7 +89,7 @@ const Link = React.forwardRef<HTMLAnchorElement & HTMLButtonElement, LinkProps>(
 	// Otherwise, if the link is not external, wrap the anchor in a `NextLink` to get those [nice features](https://nextjs.org/docs/api-reference/next/link).
 	return (
 		<NextLink
-			href={href!}
+			href={href}
 			as={as}
 			prefetch={prefetch ?? false}
 			replace={replace}

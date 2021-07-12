@@ -1,9 +1,5 @@
 import type { PublicUser } from 'modules/client/users';
 import React, { useContext } from 'react';
-import type { APIClient, APIError } from 'modules/client/api';
-import api from 'modules/client/api';
-
-type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 
 const UserCache = React.createContext<Partial<Record<string, PublicUser>>>(undefined!);
 
