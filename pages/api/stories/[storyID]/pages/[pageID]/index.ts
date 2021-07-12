@@ -95,6 +95,8 @@ const Handler: APIHandler<{
 		_id: story._id
 	}, updateQuery);
 
+	// TODO: Adjust IDs of pages in users' gave saves.
+
 	res.status(200).end();
 };
 
