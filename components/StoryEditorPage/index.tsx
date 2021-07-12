@@ -8,7 +8,8 @@ import BBField from 'components/BBCode/BBField';
 import type { Dispatch, MouseEvent, MutableRefObject, RefObject, SetStateAction } from 'react';
 import React, { useCallback, useRef, useState } from 'react';
 import AddButton from 'components/Button/AddButton';
-import type { Values } from 'pages/s/[storyID]/edit/p';
+import type { KeyedClientStoryPage, Values } from 'pages/s/[storyID]/edit/p';
+import { _key } from 'pages/s/[storyID]/edit/p';
 import RemoveButton from 'components/Button/RemoveButton';
 import { isEqual } from 'lodash';
 import Timestamp from 'components/Timestamp';
@@ -223,6 +224,13 @@ const StoryEditorPage = React.memo(({
 		}
 
 		const { data: newPages } = await (api as StoryPagesAPI).put(`/stories/${storyID}/pages`, changedValues as any);
+
+		// Preserve the React keys of updated pages.
+		for (const newPage of Object.values(newPages)) {
+			(newPage as KeyedClientStoryPage)[_key] = (
+				formikPropsRef.current.initialValues.pages[newPage.id] as KeyedClientStoryPage
+			)[_key];
+		}
 
 		setInitialPages({
 			...formikPropsRef.current.initialValues.pages,

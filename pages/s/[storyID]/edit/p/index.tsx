@@ -41,10 +41,10 @@ type ServerSideProps = {
  *
  * This must be a symbol rather than a string so it is not detected when diffing pages for unsaved changes, but it is still kept when creating a shallow clone of the page.
  */
-const _key = Symbol('key');
+export const _key = Symbol('key');
 
 /** A `ClientStoryPage` with a React key. */
-type KeyedClientStoryPage = ClientStoryPage & {
+export type KeyedClientStoryPage = ClientStoryPage & {
 	/** This page's React key. */
 	[_key]: number
 };
