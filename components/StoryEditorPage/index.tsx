@@ -92,13 +92,20 @@ const StoryEditorPage = React.memo(({
 	/** Whether this page exists on the server. */
 	const onServer = page.id in formikPropsRef.current.initialValues.pages;
 
+	/** The page with the same ID as this one in `initialValues`, or undefined if `!onServer`. */
+	const initialPage = (
+		onServer
+			? formikPropsRef.current.initialValues.pages[page.id]
+			: undefined
+	);
+
 	/** Whether this page exists on the server and has the same values as on the server. */
 	const saved = onServer && isEqual(page, formikPropsRef.current.initialValues.pages[page.id]);
 
 	const pageStatus = (
-		page.published === undefined
+		initialPage?.published === undefined
 			? 'draft' as const
-			: page.published < Date.now()
+			: initialPage.published < Date.now()
 				? 'scheduled' as const
 				: 'published' as const
 	);
