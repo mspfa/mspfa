@@ -74,6 +74,13 @@ const Component = withErrorPage<ServerSideProps>(({
 
 						const { data: newPages } = await (api as StoryPagesAPI).put(`/stories/${privateStory.id}/pages`, changedValues as any);
 
+						// Preserve the React keys of updated pages.
+						for (const newPage of Object.values(newPages)) {
+							(newPage as KeyedClientStoryPage)[_key] = (
+								initialPages[newPage.id] as KeyedClientStoryPage
+							)[_key];
+						}
+
 						setInitialPages({
 							...initialPages,
 							...newPages
