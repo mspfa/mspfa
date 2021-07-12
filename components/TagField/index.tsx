@@ -34,7 +34,7 @@ const tagDelimiters = /[,\s\n]/g;
 const startAndEndHyphens = /^-+|-+$/g;
 
 /** A child node of a tag field element. */
-type TagFieldChild<NodeType extends ChildNode = ChildNode> = NodeType & (
+type TagFieldChild<NodeType extends Node = Node> = NodeType & (
 	{
 		// It's not really `undefined`, but `undefined` is the next best thing to `undefined | Exclude<string, 'tag-field-tag' | 'tag-field-editable'>`.
 		className?: undefined

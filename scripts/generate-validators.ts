@@ -126,7 +126,7 @@ const generateValidator = async (
 			// This is `false` so the server can trust that the client isn't adding any invalid properties to objects in the request body.
 			additionalProperties: false
 		});
-	} catch (error) {
+	} catch (error: any) {
 		for (const diagnostic of error.diagnostics) {
 			let lineIndex = 0;
 			let charIndex = 0;

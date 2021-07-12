@@ -11,5 +11,6 @@
 		// The following env files should be hidden to avoid accidental misclicks. If you want to open these files, open them from outside VS Code.
 		".env*.{local,production}": true,
 		"**/*.validate.ts": true
-	}
+	},
+	"typescript.tsdk": "node_modules\\typescript\\lib"
 }
