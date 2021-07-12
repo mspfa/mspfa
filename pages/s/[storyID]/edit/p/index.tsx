@@ -236,6 +236,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							</div>
 							<Box id="story-editor-pages">
 								{Object.values(formikPropsRef.current.values.pages).reverse().map((page, i, pages) => (
+									// TODO: Use a `key` that respects deleted pages. Deleting a page should not shift every page's key the same way it shifts every page's ID.
 									<Fragment key={page.id}>
 										<StoryEditorPage
 											storyID={privateStory.id}
