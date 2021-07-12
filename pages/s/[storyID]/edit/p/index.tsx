@@ -36,6 +36,13 @@ type ServerSideProps = {
 	statusCode: number
 };
 
+const _key = Symbol('key');
+
+type KeyedClientStoryPage = ClientStoryPage & {
+	/** This page's React key. */
+	[_key]: number
+};
+
 const Component = withErrorPage<ServerSideProps>(({
 	privateStory: initialPrivateStory,
 	pages: initialPagesProp
@@ -117,6 +124,8 @@ const Component = withErrorPage<ServerSideProps>(({
 							queuedValuesRef.current = undefined;
 						}
 					});
+
+					const lastKeyRef = useRef(0);
 
 					return (
 						<Form>
@@ -235,36 +244,43 @@ const Component = withErrorPage<ServerSideProps>(({
 								</Button>
 							</div>
 							<Box id="story-editor-pages">
-								{Object.values(formikPropsRef.current.values.pages).reverse().map((page, i, pages) => (
-									// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
-									// TODO: Use a `key` that respects deleted pages. Deleting a page should not shift every page's key the same way it shifts every page's ID.
-									<Fragment key={page.id}>
-										<StoryEditorPage
-											storyID={privateStory.id}
-											formikPropsRef={formikPropsRef}
-											setInitialPages={setInitialPages}
-											queuedValuesRef={queuedValuesRef}
-											isSubmitting={formikPropsRef.current.isSubmitting}
-											firstTitleInputRef={i === 0 ? firstTitleInputRef : undefined}
-										>
-											{page}
-										</StoryEditorPage>
-										{page.id !== (
-											i === pages.length - 1
-												// If this is the first page (which is last in the array since the pages are in reverse), there is a gap if and only if this page's ID is not 1.
-												? 1
-												// The ID of the previous page plus 1, which is what this page's ID should be if and only if there are no gaps. (The pages are in reverse, so the previous page has index `i + 1`.)
-												: pages[i + 1].id + 1
-										) && (
-											// There is a gap in the page IDs, so present an option to load the missing pages.
-											<div className="story-editor-view-actions">
-												<Button>
-													Load Pages X-Y
-												</Button>
-											</div>
-										)}
-									</Fragment>
-								))}
+								{Object.values(formikPropsRef.current.values.pages).reverse().map((page, i, pages) => {
+									const keyedPage = page as KeyedClientStoryPage;
+
+									if (!(_key in keyedPage)) {
+										keyedPage[_key] = ++lastKeyRef.current;
+									}
+
+									return (
+										// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
+										<Fragment key={keyedPage[_key]}>
+											<StoryEditorPage
+												storyID={privateStory.id}
+												formikPropsRef={formikPropsRef}
+												setInitialPages={setInitialPages}
+												queuedValuesRef={queuedValuesRef}
+												isSubmitting={formikPropsRef.current.isSubmitting}
+												firstTitleInputRef={i === 0 ? firstTitleInputRef : undefined}
+											>
+												{page}
+											</StoryEditorPage>
+											{page.id !== (
+												i === pages.length - 1
+													// If this is the first page (which is last in the array since the pages are in reverse), there is a gap if and only if this page's ID is not 1.
+													? 1
+													// The ID of the previous page plus 1, which is what this page's ID should be if and only if there are no gaps. (The pages are in reverse, so the previous page has index `i + 1`.)
+													: pages[i + 1].id + 1
+											) && (
+												// There is a gap in the page IDs, so present an option to load the missing pages.
+												<div className="story-editor-view-actions">
+													<Button>
+														Load Pages X-Y
+													</Button>
+												</div>
+											)}
+										</Fragment>
+									);
+								})}
 							</Box>
 						</Form>
 					);
