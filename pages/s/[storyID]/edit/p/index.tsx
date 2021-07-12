@@ -56,8 +56,6 @@ const Component = withErrorPage<ServerSideProps>(({
 	const [privateStory, setPrivateStory] = useState(initialPrivateStory);
 	const [initialPages, setInitialPages] = useState(initialPagesProp);
 
-	const notifyCheckboxRef = useRef<HTMLInputElement>(null!);
-
 	return (
 		<Page heading="Edit Adventure">
 			<Formik<Values>
@@ -189,19 +187,6 @@ const Component = withErrorPage<ServerSideProps>(({
 											ref={defaultPageTitleInputRef}
 										/>
 									</Row>
-									<Row>
-										<label>
-											<input
-												type="checkbox"
-												className="spaced"
-												defaultChecked
-												ref={notifyCheckboxRef}
-											/>
-											<span className="spaced">
-												Notify readers of newly published pages during this editing session
-											</span>
-										</label>
-									</Row>
 								</BoxSection>
 							</Box>
 							<div id="story-editor-actions">
@@ -253,12 +238,6 @@ const Component = withErrorPage<ServerSideProps>(({
 									disabled={!formikPropsRef.current.dirty || formikPropsRef.current.isSubmitting}
 								>
 									Save All
-								</Button>
-								<Button
-									className="alt"
-									disabled={true || formikPropsRef.current.dirty}
-								>
-									Publish
 								</Button>
 							</div>
 							<Box id="story-editor-pages">
