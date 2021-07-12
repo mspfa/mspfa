@@ -131,7 +131,8 @@ const Component = withErrorPage<ServerSideProps>(({
 						}
 					});
 
-					const lastKeyRef = useRef(0);
+					/** A ref to the next React key a `ClientStoryPage` should use. This is incremented after each time it is assigned to a page. */
+					const nextKeyRef = useRef(0);
 
 					return (
 						<Form>
@@ -255,7 +256,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 									// If this page doesn't have a React key yet, generate one.
 									if (!(_key in keyedPage)) {
-										keyedPage[_key] = ++lastKeyRef.current;
+										keyedPage[_key] = nextKeyRef.current++;
 									}
 
 									return (
