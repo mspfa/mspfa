@@ -24,6 +24,45 @@ import api from 'modules/client/api';
 
 type StoryPageAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]').default>;
 
+/**
+ * Deletes a page from a `ClientStoryPageRecord` by its ID. Returns the new `ClientStoryPageRecord`.
+ *
+ * Does not mutate any values passed in.
+ */
+const deleteFromClientStoryPageRecord = (
+	/** The ID of the page to delete. */
+	deletedPageID: StoryPageID,
+	/** The record to delete the page from. */
+	pages: ClientStoryPageRecord
+) => {
+	const newPages: ClientStoryPageRecord = {};
+
+	for (const oldPage of Object.values(pages)) {
+		if (oldPage.id === deletedPageID) {
+			// Skip the page being deleted.
+			continue;
+		}
+
+		const newPage = { ...oldPage };
+
+		// Adjust IDs of pages after the deleted page.
+		if (oldPage.id > deletedPageID) {
+			newPage.id--;
+		}
+
+		// Adjust `nextPages` IDs of pages after the deleted page.
+		for (let i = 0; i < newPage.nextPages.length; i++) {
+			if (newPage.nextPages[i] > deletedPageID) {
+				newPage.nextPages[i]--;
+			}
+		}
+
+		newPages[newPage.id] = newPage;
+	}
+
+	return newPages;
+};
+
 export type StoryEditorPageProps = {
 	/** The `ClientStoryPage` being edited. */
 	children: ClientStoryPage,
@@ -312,45 +351,6 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 								formikPropsRef.current.setSubmitting(false);
 								return;
 							}
-
-							/**
-							 * Deletes a page from a `ClientStoryPageRecord` by its ID. Returns the new `ClientStoryPageRecord`.
-							 *
-							 * Does not mutate any values passed in.
-							 */
-							const deleteFromClientStoryPageRecord = (
-								/** The ID of the page to delete. */
-								deletedPageID: StoryPageID,
-								/** The record to delete the page from. */
-								pages: ClientStoryPageRecord
-							) => {
-								const newPages: ClientStoryPageRecord = {};
-
-								for (const oldPage of Object.values(pages)) {
-									if (oldPage.id === deletedPageID) {
-										// Skip the page being deleted.
-										continue;
-									}
-
-									const newPage = { ...oldPage };
-
-									// Adjust IDs of pages after the deleted page.
-									if (oldPage.id > deletedPageID) {
-										newPage.id--;
-									}
-
-									// Adjust `nextPages` IDs of pages after the deleted page.
-									for (let i = 0; i < newPage.nextPages.length; i++) {
-										if (newPage.nextPages[i] > deletedPageID) {
-											newPage.nextPages[i]--;
-										}
-									}
-
-									newPages[newPage.id] = newPage;
-								}
-
-								return newPages;
-							};
 
 							// Delete the page on the client.
 							const newPages = deleteFromClientStoryPageRecord(page.id, formikPropsRef.current.values.pages);
