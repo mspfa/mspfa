@@ -352,6 +352,9 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 								return newPages;
 							};
 
+							// Delete the page on the client.
+							const newPages = deleteFromClientStoryPageRecord(page.id, formikPropsRef.current.values.pages);
+
 							if (onServer) {
 								// Delete the page on the server.
 								await (api as StoryPageAPI).delete(`/stories/${storyID}/pages/${page.id}`).catch(error => {
@@ -364,13 +367,14 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 								setInitialPages(
 									deleteFromClientStoryPageRecord(page.id, formikPropsRef.current.initialValues.pages)
 								);
-							}
 
-							// Delete the page on the client.
-							// The values must be queued instead of set immediately because the `setInitialPages` call above resets the values in the next re-render due to the `enableReinitialization` prop on the `Formik` component.
-							queuedValuesRef.current = {
-								pages: deleteFromClientStoryPageRecord(page.id, formikPropsRef.current.values.pages)
-							};
+								// Queue the `newPages` to be set into the Formik values.
+								// The values must be queued instead of set immediately because the `setInitialPages` call above resets the values in the next re-render due to the `enableReinitialization` prop on the `Formik` component.
+								queuedValuesRef.current = { pages: newPages };
+							} else {
+								// Set the `newPages` into the Formik values.
+								formikPropsRef.current.setFieldValue('pages', newPages);
+							}
 
 							formikPropsRef.current.setSubmitting(false);
 						}, [formikPropsRef, page.id, onServer, storyID, setInitialPages, queuedValuesRef])

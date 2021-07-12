@@ -236,6 +236,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							</div>
 							<Box id="story-editor-pages">
 								{Object.values(formikPropsRef.current.values.pages).reverse().map((page, i, pages) => (
+									// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
 									// TODO: Use a `key` that respects deleted pages. Deleting a page should not shift every page's key the same way it shifts every page's ID.
 									<Fragment key={page.id}>
 										<StoryEditorPage
