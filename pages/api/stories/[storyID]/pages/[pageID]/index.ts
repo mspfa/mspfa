@@ -38,7 +38,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	/** The ID of the page being deleted. */
+	/** The ID of the page to delete. */
 	const deletedPageID = +req.query.pageID;
 
 	if (!(deletedPageID in story.pages)) {

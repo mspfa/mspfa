@@ -41,7 +41,7 @@ const Component = withErrorPage<ServerSideProps>(({
 	pages: initialPagesProp
 }) => {
 	const [privateStory, setPrivateStory] = useState(initialPrivateStory);
-	const [initialPages, setInitialPages] = useState<Values['pages']>(initialPagesProp);
+	const [initialPages, setInitialPages] = useState<ClientStoryPageRecord>(initialPagesProp);
 
 	const notifyCheckboxRef = useRef<HTMLInputElement>(null!);
 
@@ -228,6 +228,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										<StoryEditorPage
 											storyID={privateStory.id}
 											formikPropsRef={formikPropsRef}
+											setInitialPages={setInitialPages}
 											isSubmitting={formikPropsRef.current.isSubmitting}
 											firstTitleInputRef={i === 0 ? firstTitleInputRef : undefined}
 										>

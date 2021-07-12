@@ -1,11 +1,11 @@
 import './styles.module.scss';
 import BoxSection from 'components/Box/BoxSection';
-import type { ClientStoryPage } from 'modules/client/stories';
+import type { ClientStoryPage, ClientStoryPageRecord } from 'modules/client/stories';
 import type { FormikProps } from 'formik';
 import { Field } from 'formik';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
-import type { MouseEvent, MutableRefObject, RefObject } from 'react';
+import type { Dispatch, MouseEvent, MutableRefObject, RefObject, SetStateAction } from 'react';
 import React, { useCallback, useRef, useState } from 'react';
 import AddButton from 'components/Button/AddButton';
 import type { Values } from 'pages/s/[storyID]/edit/p';
@@ -15,7 +15,7 @@ import Timestamp from 'components/Timestamp';
 import InlineRowSection from 'components/Box/InlineRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
 import Button from 'components/Button';
-import type { StoryID } from 'modules/server/stories';
+import type { StoryID, StoryPageID } from 'modules/server/stories';
 import { Dialog } from 'modules/client/dialogs';
 import Row from 'components/Row';
 import Link from 'components/Link';
@@ -29,6 +29,7 @@ export type StoryEditorPageProps = {
 	children: ClientStoryPage,
 	storyID: StoryID,
 	formikPropsRef: MutableRefObject<FormikProps<Values>>,
+	setInitialPages: Dispatch<SetStateAction<ClientStoryPageRecord>>,
 	/** Whether the form is loading. */
 	isSubmitting: boolean,
 	/** A ref to the first page field's title `input` element. */
@@ -40,6 +41,7 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 	children: page,
 	storyID,
 	formikPropsRef,
+	setInitialPages,
 	isSubmitting,
 	firstTitleInputRef
 }) => {
@@ -309,47 +311,69 @@ const StoryEditorPage = React.memo<StoryEditorPageProps>(({
 								return;
 							}
 
+							/**
+							 * Deletes a page from a `ClientStoryPageRecord` by its ID. Returns the new `ClientStoryPageRecord`.
+							 *
+							 * Does not mutate any values passed in.
+							 */
+							const deleteFromClientStoryPageRecord = (
+								/** The ID of the page to delete. */
+								deletedPageID: StoryPageID,
+								/** The record to delete the page from. */
+								pages: ClientStoryPageRecord
+							) => {
+								const newPages: ClientStoryPageRecord = {};
+
+								for (const oldPage of Object.values(pages)) {
+									if (oldPage.id === deletedPageID) {
+										// Skip the page being deleted.
+										continue;
+									}
+
+									const newPage = { ...oldPage };
+
+									// Adjust IDs of pages after the deleted page.
+									if (oldPage.id > deletedPageID) {
+										newPage.id--;
+									}
+
+									// Adjust `nextPages` IDs of pages after the deleted page.
+									for (let i = 0; i < newPage.nextPages.length; i++) {
+										if (newPage.nextPages[i] > deletedPageID) {
+											newPage.nextPages[i]--;
+										}
+									}
+
+									newPages[newPage.id] = newPage;
+								}
+
+								return newPages;
+							};
+
 							if (onServer) {
 								// Delete the page on the server.
-
 								await (api as StoryPageAPI).delete(`/stories/${storyID}/pages/${page.id}`).catch(error => {
 									formikPropsRef.current.setSubmitting(false);
 
 									return Promise.reject(error);
 								});
+
+								// Delete the page in the initial values.
+								setInitialPages(
+									deleteFromClientStoryPageRecord(page.id, formikPropsRef.current.initialValues.pages)
+								);
 							}
 
 							// Delete the page on the client.
+							const newPages = deleteFromClientStoryPageRecord(page.id, formikPropsRef.current.values.pages);
 
-							const newPages: Values['pages'] = {};
-
-							for (const oldPage of Object.values(formikPropsRef.current.values.pages)) {
-								if (oldPage.id === page.id) {
-									// Skip the page being deleted.
-									continue;
-								}
-
-								const newPage = { ...oldPage };
-
-								// Adjust IDs of pages after the deleted page.
-								if (oldPage.id > page.id) {
-									newPage.id--;
-								}
-
-								// Adjust `nextPages` IDs of pages after the deleted page.
-								for (let i = 0; i < newPage.nextPages.length; i++) {
-									if (newPage.nextPages[i] > page.id) {
-										newPage.nextPages[i]--;
-									}
-								}
-
-								newPages[newPage.id] = newPage;
-							}
-
-							formikPropsRef.current.setFieldValue('pages', newPages);
+							// Wait until after Formik resets the values due to the initial values changing with `enableReinitialization`.
+							setTimeout(() => {
+								formikPropsRef.current.setFieldValue('pages', newPages);
+							});
 
 							formikPropsRef.current.setSubmitting(false);
-						}, [formikPropsRef, page.id, onServer, storyID])
+						}, [formikPropsRef, page.id, onServer, storyID, setInitialPages])
 					}
 				>
 					Delete
