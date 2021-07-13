@@ -113,8 +113,6 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 				}
 			>
 				{({ isSubmitting, dirty }) => {
-					// This ESLint comment is necessary because ESLint is empirically wrong here.
-					// eslint-disable-next-line react-hooks/rules-of-hooks
 					useLeaveConfirmation(dirty && !isSubmitting);
 
 					return (

@@ -1,6 +1,3 @@
-// This ESLint comment is necessary because otherwise it thinks the values of `BBTags` are not React components due to being lowercase.
-/* eslint-disable react-hooks/rules-of-hooks */
-
 import './styles.module.scss';
 import Link from 'components/Link';
 import type { ReactNode } from 'react';
