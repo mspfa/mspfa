@@ -228,7 +228,13 @@ const StoryEditorPage = React.memo(({
 			return;
 		}
 
-		const { data: newPages } = await (api as StoryPagesAPI).put(`/stories/${storyID}/pages`, changedValues as any);
+		formikPropsRef.current.setSubmitting(true);
+
+		const { data: newPages } = await (api as StoryPagesAPI).put(`/stories/${storyID}/pages`, changedValues as any).catch(error => {
+			formikPropsRef.current.setSubmitting(false);
+
+			return Promise.reject(error);
+		});
 
 		// Preserve the React keys of updated pages.
 		for (const newPage of Object.values(newPages)) {
@@ -248,6 +254,8 @@ const StoryEditorPage = React.memo(({
 				...newPages
 			}
 		};
+
+		formikPropsRef.current.setSubmitting(false);
 	}, [onServer, page.id, reportPageValidity, storyID, formikPropsRef, setInitialPages, queuedValuesRef]);
 
 	const publishPage = useCallback(() => {
@@ -424,7 +432,6 @@ const StoryEditorPage = React.memo(({
 					disabled={isSubmitting}
 					onClick={
 						useCallback(async () => {
-							// Set `isSubmitting` to `true` so the form cannot be significantly modified while deletion is in progress and cause race conditions in this callback.
 							formikPropsRef.current.setSubmitting(true);
 
 							if (!await Dialog.confirm({
