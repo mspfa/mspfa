@@ -198,6 +198,7 @@ const tags: Record<string, {
 					label="URL"
 					required
 					autoFocus={!initialValues.attributes}
+					autoComplete="off"
 				/>
 				<FieldBoxRow
 					as="textarea"
@@ -259,6 +260,7 @@ const tags: Record<string, {
 					label="Hover Text"
 					required
 					autoFocus
+					autoComplete="off"
 				/>
 			</InlineRowSection>
 		)
@@ -277,6 +279,7 @@ const tags: Record<string, {
 					label="Image URL"
 					required
 					autoFocus
+					autoComplete="off"
 					help="TODO: Add info on getting image URLs."
 				/>
 				<FieldBoxRow
@@ -320,6 +323,7 @@ const tags: Record<string, {
 					required
 					autoFocus
 					pattern={videoIDTest.source}
+					autoComplete="off"
 					help={(
 						<>
 							Examples:
@@ -396,6 +400,7 @@ const tags: Record<string, {
 					label="HTML File URL"
 					required
 					autoFocus
+					autoComplete="off"
 					help={(
 						<>
 							A direct link to an HTML file (usually called "index.html"). You can upload HTML files to a file host that supports HTML5, such as <Link href="https://pipe.miroware.io" target="_blank">Miroware Pipe</Link>.<br />
@@ -446,6 +451,7 @@ const tags: Record<string, {
 					label="SWF File URL"
 					required
 					autoFocus
+					autoComplete="off"
 				/>
 				<FieldBoxRow
 					type="number"
