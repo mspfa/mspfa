@@ -274,7 +274,7 @@ const StoryEditorPage = React.memo(({
 								} `
 							}
 							<Timestamp short withTime>
-								{initialPublished}
+								{initialPublished!}
 							</Timestamp>
 							)
 						</>
