@@ -3,9 +3,9 @@ import Page from 'components/Page';
 import { Perm } from 'modules/client/perms';
 import { withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
-import { Form, Formik } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import type { ChangeEvent, ReactNode } from 'react';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState, useEffect } from 'react';
 import { getChangedValues, useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
 import Button from 'components/Button';
@@ -24,6 +24,7 @@ import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 import Dialog from 'modules/client/Dialog';
 import InlineRowSection from 'components/Box/InlineRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
+import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -203,7 +204,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										</Button>
 										<Button
 											className="small"
-											disabled={!(1 in formikPropsRef.current.values.pages)}
+											disabled={!pageValues.length}
 											onClick={
 												useCallback(async () => {
 													const dialog = new Dialog({
@@ -244,7 +245,114 @@ const Component = withErrorPage<ServerSideProps>(({
 										</Button>
 										<Button
 											className="small"
-											disabled={formikPropsRef.current.isSubmitting}
+											disabled={!pageValues.length}
+											onClick={
+												useCallback(async () => {
+													const dialog = new Dialog({
+														id: 'find-and-replace',
+														title: 'Find and Replace',
+														initialValues: {
+															regex: false,
+															find: '',
+															flags: 'g',
+															replace: ''
+														},
+														content: function Content({ values, setFieldValue }) {
+															const findInputRef = useRef<HTMLInputElement>(null!);
+
+															useEffect(() => {
+																let regexError = false;
+
+																if (values.regex && values.find) {
+																	try {
+																		new RegExp(values.find, values.flags);
+																	} catch {
+																		regexError = true;
+																	}
+																}
+
+																findInputRef.current.setCustomValidity(regexError ? 'This is not a valid regular expression.' : '');
+															}, [values.regex, values.find, values.flags]);
+
+															return (
+																<InlineRowSection>
+																	{values.regex ? (
+																		<LabeledBoxRow
+																			label="Find"
+																			htmlFor="field-find"
+																		>
+																			/
+																			<Field
+																				id="field-find"
+																				name="find"
+																				required
+																				autoFocus
+																				innerRef={findInputRef}
+																			/>
+																			/
+																			<Field
+																				id="field-find"
+																				name="flags"
+																				size="5"
+																				title="Flags"
+																				autocomplete="off"
+																			/>
+																		</LabeledBoxRow>
+																	) : (
+																		<FieldBoxRow
+																			name="find"
+																			label="Find"
+																			required
+																			autoFocus
+																			innerRef={findInputRef as any}
+																		/>
+																	)}
+																	<FieldBoxRow
+																		name="replace"
+																		label="Replace With"
+																	/>
+																	<LabeledBoxRow
+																		label="Case-Sensitive"
+																		htmlFor="field-case-sensitive"
+																	>
+																		<input
+																			id="field-case-sensitive"
+																			type="checkbox"
+																			checked={!values.flags.includes('i')}
+																			onChange={
+																				useCallback((event: ChangeEvent<HTMLInputElement>) => {
+																					setFieldValue(
+																						'flags',
+																						event.target.checked
+																							? values.flags.replace(/i/g, '')
+																							: `${values.flags}i`
+																					);
+																				}, [setFieldValue, values.flags])
+																			}
+																		/>
+																	</LabeledBoxRow>
+																	<FieldBoxRow
+																		type="checkbox"
+																		name="regex"
+																		label="Regex"
+																		help={'If you don\'t know what this is, don\'t enable it.\n\nRegex allows for advanced search patterns and replacements.'}
+																	/>
+																</InlineRowSection>
+															);
+														},
+														actions: [
+															{ label: 'Replace All', autoFocus: false },
+															'Cancel'
+														]
+													});
+
+													if (!(await dialog)?.submit) {
+														return;
+													}
+
+													// TODO
+												}, [])
+											}
 										>
 											Find and Replace
 										</Button>
