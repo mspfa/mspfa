@@ -21,7 +21,7 @@ import BoxFooter from 'components/Box/BoxFooter';
 import type { APIClient } from 'modules/client/api';
 import api from 'modules/client/api';
 import Router from 'next/router';
-import { Dialog } from 'modules/client/dialogs';
+import Dialog from 'modules/client/Dialog';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
 import { Form, Formik } from 'formik';

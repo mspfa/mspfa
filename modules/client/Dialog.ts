@@ -82,7 +82,7 @@ let resolvePromise: (value?: DialogResult) => void;
 
 let nextDialogID = 0;
 
-export class Dialog<Values extends Record<string, any>> extends Promise<DialogResult> {
+export default class Dialog<Values extends Record<string, any>> extends Promise<DialogResult> {
 	// This is so `then`, `catch`, etc. return a `Promise` rather than a `Dialog`. Weird errors occur when this is not here.
 	static readonly [Symbol.species] = Promise;
 

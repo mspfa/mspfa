@@ -6,7 +6,7 @@ import { useCallback, useState } from 'react';
 import { setUser, signIn, useUser } from 'modules/client/users';
 import api from 'modules/client/api';
 import type { APIClient, APIError } from 'modules/client/api';
-import { Dialog } from 'modules/client/dialogs';
+import Dialog from 'modules/client/Dialog';
 import type { StoryID } from 'modules/server/stories';
 
 type FavsAPI = APIClient<typeof import('pages/api/users/[userID]/favs').default>;

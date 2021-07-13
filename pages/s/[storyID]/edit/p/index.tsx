@@ -21,7 +21,7 @@ import useThrottledCallback from 'modules/client/useThrottledCallback';
 import axios from 'axios';
 import StoryEditorPage from 'components/StoryEditorPage';
 import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
-import { Dialog } from 'modules/client/dialogs';
+import Dialog from 'modules/client/Dialog';
 import InlineRowSection from 'components/Box/InlineRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
 

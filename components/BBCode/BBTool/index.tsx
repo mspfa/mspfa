@@ -2,7 +2,7 @@ import './styles.module.scss';
 import { useContext, useCallback } from 'react';
 import { TextAreaRefContext } from 'components/BBCode/BBField';
 import Button from 'components/Button';
-import { Dialog } from 'modules/client/dialogs';
+import Dialog from 'modules/client/Dialog';
 import { videoIDTest } from 'components/BBCode/BBTags';
 import InlineRowSection from 'components/Box/InlineRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';

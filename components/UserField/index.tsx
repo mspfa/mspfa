@@ -13,7 +13,7 @@ import axios from 'axios';
 import { useUserCache } from 'modules/client/UserCache';
 import RemoveButton from 'components/Button/RemoveButton';
 import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
-import { Dialog } from 'modules/client/dialogs';
+import Dialog from 'modules/client/Dialog';
 import useThrottledCallback from 'modules/client/useThrottledCallback';
 import useMountedRef from 'modules/client/useMountedRef';
 import UserLink from 'components/Link/UserLink';

@@ -14,7 +14,7 @@ import api from 'modules/client/api';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
 import BoxSection from 'components/Box/BoxSection';
-import { Dialog } from 'modules/client/dialogs';
+import Dialog from 'modules/client/Dialog';
 import users, { getPublicUser } from 'modules/server/users';
 import UserArrayField from 'components/UserField/UserArrayField';
 import { useUserCache } from 'modules/client/UserCache';

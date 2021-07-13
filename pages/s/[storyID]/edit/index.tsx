@@ -36,7 +36,7 @@ import api from 'modules/client/api';
 import DateField from 'components/DateField';
 import Timestamp from 'components/Timestamp';
 import EditButton from 'components/Button/EditButton';
-import { Dialog } from 'modules/client/dialogs';
+import Dialog from 'modules/client/Dialog';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 

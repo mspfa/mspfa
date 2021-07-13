@@ -8,7 +8,7 @@ import { useIsomorphicLayoutEffect } from 'react-use';
 import { isEqual, uniq } from 'lodash';
 import type { TagString } from 'modules/server/stories';
 import Label from 'components/Label';
-import { Dialog } from 'modules/client/dialogs';
+import Dialog from 'modules/client/Dialog';
 import Link from 'components/Link';
 
 /** An object that maps `TagString`s to `string`s explaining each tag. */

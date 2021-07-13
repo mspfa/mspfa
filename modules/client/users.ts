@@ -3,7 +3,7 @@ import React, { useContext, useState } from 'react';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
 import { startLoading, stopLoading } from 'components/LoadingIndicator';
-import { Dialog } from 'modules/client/dialogs';
+import Dialog from 'modules/client/Dialog';
 import createGlobalState from 'global-react-state';
 import type { RecursivePartial } from 'modules/types';
 

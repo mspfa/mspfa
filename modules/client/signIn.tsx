@@ -1,4 +1,4 @@
-import { Dialog } from 'modules/client/dialogs';
+import Dialog from 'modules/client/Dialog';
 import SignIn, { signInValues, resetSignInValues } from 'components/SignIn';
 import api from 'modules/client/api';
 import type { APIClient, APIError } from 'modules/client/api';

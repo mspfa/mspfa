@@ -17,7 +17,7 @@ import InlineRowSection from 'components/Box/InlineRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
 import Button from 'components/Button';
 import type { StoryID, StoryPageID } from 'modules/server/stories';
-import { Dialog } from 'modules/client/dialogs';
+import Dialog from 'modules/client/Dialog';
 import Row from 'components/Row';
 import Link from 'components/Link';
 import type { APIClient } from 'modules/client/api';

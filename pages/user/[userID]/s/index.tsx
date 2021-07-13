@@ -11,7 +11,7 @@ import Button from 'components/Button';
 import { useCallback } from 'react';
 import type { APIClient } from 'modules/client/api';
 import api from 'modules/client/api';
-import { Dialog } from 'modules/client/dialogs';
+import Dialog from 'modules/client/Dialog';
 import InlineRowSection from 'components/Box/InlineRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
 import randomStoryNames from 'modules/client/randomStoryNames.json';

@@ -3,7 +3,7 @@ import Button from 'components/Button';
 import type { PrivateUser } from 'modules/client/users';
 import { useCallback, useState } from 'react';
 import AuthMethod from 'components/AuthMethod';
-import { Dialog } from 'modules/client/dialogs';
+import Dialog from 'modules/client/Dialog';
 import AuthButton from 'components/Button/AuthButton';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';

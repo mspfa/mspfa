@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import React, { useCallback, useRef } from 'react';
-import type { Dialog as DialogClass } from 'modules/client/dialogs';
+import type { default as DialogClass } from 'modules/client/Dialog';
 import { Form, Formik } from 'formik';
 import Button from 'components/Button';
 import { toKebabCase } from 'modules/client/utilities';
@@ -18,7 +18,7 @@ export type DialogProps = {
 const Dialog = React.memo(({ dialog }: DialogProps) => {
 	const idKebab = toKebabCase(dialog.id.toString());
 
-	const dialogRef = useRef<HTMLDialogElement>(null!);
+	const dialogRef = useRef<HTMLElement>(null!);
 
 	useIsomorphicLayoutEffect(() => {
 		dialog.open = true;

@@ -12,7 +12,7 @@ import api from 'modules/client/api';
 import type { APIClient, APIError } from 'modules/client/api';
 import Button from 'components/Button';
 import RemoveButton from 'components/Button/RemoveButton';
-import { Dialog } from 'modules/client/dialogs';
+import Dialog from 'modules/client/Dialog';
 import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 import ReplyButton from 'components/Button/ReplyButton';
 import UserLink from 'components/Link/UserLink';

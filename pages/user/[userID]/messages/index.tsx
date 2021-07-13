@@ -19,7 +19,7 @@ import MessageListing from 'components/MessageListing';
 import { useCallback, useEffect, useState } from 'react';
 import Button from 'components/Button';
 import { useLatest } from 'react-use';
-import { Dialog } from 'modules/client/dialogs';
+import Dialog from 'modules/client/Dialog';
 import fs from 'fs-extra';
 import path from 'path';
 import Row from 'components/Row';

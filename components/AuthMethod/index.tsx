@@ -7,7 +7,7 @@ import { authMethodTypeNames } from 'modules/client/auth';
 import type { Dispatch, SetStateAction } from 'react';
 import { useCallback } from 'react';
 import type { APIClient } from 'modules/client/api';
-import { Dialog } from 'modules/client/dialogs';
+import Dialog from 'modules/client/Dialog';
 
 type AuthMethodAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods/[authMethodID]').default>;
 

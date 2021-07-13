@@ -23,7 +23,7 @@ import Button from 'components/Button';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
 import { escapeRegExp, isEqual } from 'lodash';
-import { Dialog } from 'modules/client/dialogs';
+import Dialog from 'modules/client/Dialog';
 import Label from 'components/Label';
 import Router from 'next/router';
 import BoxRow from 'components/Box/BoxRow';
