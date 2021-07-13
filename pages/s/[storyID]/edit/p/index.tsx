@@ -26,6 +26,7 @@ import InlineRowSection from 'components/Box/InlineRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import { escapeRegExp } from 'lodash';
+import BoxRow from 'components/Box/BoxRow';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -288,6 +289,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 															return (
 																<InlineRowSection>
+																	<BoxRow>Finds and replaces text in every page's content.</BoxRow>
 																	{values.regex ? (
 																		<LabeledBoxRow
 																			label="Find"
