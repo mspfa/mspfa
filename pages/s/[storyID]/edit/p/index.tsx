@@ -363,7 +363,7 @@ const Component = withErrorPage<ServerSideProps>(({
 														return;
 													}
 
-													const regex = (
+													const find = (
 														dialog.form!.values.regex
 															? new RegExp(dialog.form!.values.find, dialog.form!.values.flags)
 															: new RegExp(
@@ -373,7 +373,7 @@ const Component = withErrorPage<ServerSideProps>(({
 													);
 
 													for (const page of Object.values(formikPropsRef.current.values.pages)) {
-														const replacedContent = page.content.replace(regex, dialog.form!.values.replace);
+														const replacedContent = page.content.replace(find, dialog.form!.values.replace);
 
 														if (page.content !== replacedContent) {
 															formikPropsRef.current.setFieldValue(`pages.${page.id}.content`, replacedContent);
