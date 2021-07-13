@@ -412,6 +412,11 @@ const StoryEditorPage = React.memo(({
 						</Button>
 						<Button
 							disabled={isSubmitting}
+							title={
+								firstDraftID === page.id
+									? `Publish Page ${page.id}`
+									: `Publish Pages ${firstDraftID} to ${page.id}`
+							}
 							onClick={publishPage}
 						>
 							{(firstDraftID === page.id
