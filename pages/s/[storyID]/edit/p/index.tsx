@@ -21,6 +21,9 @@ import useThrottledCallback from 'modules/client/useThrottledCallback';
 import axios from 'axios';
 import StoryEditorPage from 'components/StoryEditorPage';
 import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
+import { Dialog } from 'modules/client/dialogs';
+import InlineRowSection from 'components/Box/InlineRowSection';
+import FieldBoxRow from 'components/Box/FieldBoxRow';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -145,19 +148,21 @@ const Component = withErrorPage<ServerSideProps>(({
 					const nextKeyRef = useRef(0);
 
 					const pageComponents: ReactNode[] = [];
-					const pages = Object.values(formikPropsRef.current.values.pages);
+					const pageValues = Object.values(formikPropsRef.current.values.pages);
 
 					let firstDraftID: StoryPageID | undefined;
 
-					for (let i = 0; i < pages.length; i++) {
-						const page = pages[i] as KeyedClientStoryPage;
+					for (let i = 0; i < pageValues.length; i++) {
+						const page = pageValues[i] as KeyedClientStoryPage;
 
 						// If this page doesn't have a React key yet, set one.
 						if (!(_key in page)) {
 							page[_key] = nextKeyRef.current++;
 						}
 
-						const initialPublished = formikPropsRef.current.initialValues.pages[page.id].published;
+						const initialPublished = (
+							formikPropsRef.current.initialValues.pages[page.id] as ClientStoryPage | undefined
+						)?.published;
 
 						// If the `firstDraftID` hasn't been found yet, and this page is a draft, then set the `firstDraftID` to this page's ID.
 						if (firstDraftID === undefined && initialPublished === undefined) {
@@ -196,8 +201,53 @@ const Component = withErrorPage<ServerSideProps>(({
 										>
 											Edit Adventure
 										</Button>
-										<Button className="small">Jump to Page</Button>
-										<Button className="small">Find and Replace</Button>
+										<Button
+											className="small"
+											disabled={!(1 in formikPropsRef.current.values.pages)}
+											onClick={
+												useCallback(async () => {
+													const dialog = new Dialog({
+														id: 'jump-to-page',
+														title: 'Jump to Page',
+														initialValues: {
+															pageID: '' as number | ''
+														},
+														content: (
+															<InlineRowSection>
+																<FieldBoxRow
+																	type="number"
+																	name="pageID"
+																	label="Page Number"
+																	required
+																	autoFocus
+																	min={1}
+																	max={pageValues.length}
+																/>
+															</InlineRowSection>
+														),
+														actions: [
+															{ label: 'Jump!', autoFocus: false },
+															'Cancel'
+														]
+													});
+
+													if (!(await dialog)?.submit) {
+														return;
+													}
+
+													location.hash = '';
+													location.hash = `p${dialog.form!.values.pageID}`;
+												}, [pageValues.length])
+											}
+										>
+											Jump to Page
+										</Button>
+										<Button
+											className="small"
+											disabled={formikPropsRef.current.isSubmitting}
+										>
+											Find and Replace
+										</Button>
 									</Row>
 									<Row>
 										<Label

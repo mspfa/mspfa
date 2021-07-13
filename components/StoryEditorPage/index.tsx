@@ -161,7 +161,7 @@ const StoryEditorPage = React.memo(({
 
 		if (pageIDs) {
 			selectors = selectors.flatMap(selector => (
-				pageIDs!.map(pageID => `#story-editor-page-section-${pageID} ${selector}`)
+				pageIDs!.map(pageID => `#p${pageID} ${selector}`)
 			));
 		}
 
@@ -268,7 +268,7 @@ const StoryEditorPage = React.memo(({
 
 	return (
 		<BoxSection
-			id={`story-editor-page-section-${page.id}`}
+			id={`p${page.id}`}
 			className={`story-editor-page-section${saved ? ' saved' : ''} ${pageStatus}`}
 			heading={
 				pageStatus === 'draft'
