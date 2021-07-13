@@ -425,7 +425,11 @@ const StoryEditorPage = React.memo(({
 						disabled={isSubmitting}
 						onClick={savePage}
 					>
-						{pageStatus === 'draft' ? 'Save Draft' : 'Save'}
+						{(pageStatus === 'draft'
+							// The reason this should say "Save Draft" instead of "Save" for drafts is because "Save" would be ambiguous with "Publish", making users more hesitant to click it if they aren't ready to publish yet.
+							? 'Save Draft'
+							: 'Save'
+						)}
 					</Button>
 				)}
 				<Button
