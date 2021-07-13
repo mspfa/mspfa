@@ -72,6 +72,7 @@ export type StoryEditorPageProps = {
 	storyID: StoryID,
 	/** This page's `published` value in the `initialValues`. */
 	initialPublished: number | undefined,
+	firstDraftID: StoryPageID | undefined,
 	formikPropsRef: MutableRefObject<FormikProps<Values>>,
 	setInitialPages: Dispatch<SetStateAction<ClientStoryPageRecord>>,
 	queuedValuesRef: MutableRefObject<Values | undefined>,
@@ -86,6 +87,7 @@ const StoryEditorPage = React.memo(({
 	children: page,
 	storyID,
 	initialPublished,
+	firstDraftID,
 	formikPropsRef,
 	setInitialPages,
 	queuedValuesRef,
@@ -404,7 +406,10 @@ const StoryEditorPage = React.memo(({
 							disabled={isSubmitting}
 							onClick={publishPage}
 						>
-							Publish
+							{(firstDraftID === page.id
+								? 'Publish'
+								: `Publish p${firstDraftID}-${page.id}`
+							)}
 						</Button>
 					</>
 				) : (

@@ -9,6 +9,7 @@ import { useCallback, useRef, useState } from 'react';
 import { getChangedValues, useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
 import Button from 'components/Button';
+import type { StoryPageID } from 'modules/server/stories';
 import { getClientStoryPage, getPrivateStory, getStoryByUnsafeID } from 'modules/server/stories';
 import type { ClientStoryPage, ClientStoryPageRecord, PrivateStory } from 'modules/client/stories';
 import BoxSection from 'components/Box/BoxSection';
@@ -146,6 +147,8 @@ const Component = withErrorPage<ServerSideProps>(({
 					const pageComponents: ReactNode[] = [];
 					const pages = Object.values(formikPropsRef.current.values.pages);
 
+					let firstDraftID: StoryPageID | undefined;
+
 					for (let i = 0; i < pages.length; i++) {
 						const page = pages[i] as KeyedClientStoryPage;
 
@@ -154,12 +157,20 @@ const Component = withErrorPage<ServerSideProps>(({
 							page[_key] = nextKeyRef.current++;
 						}
 
+						const initialPublished = formikPropsRef.current.initialValues.pages[page.id].published;
+
+						// If the `firstDraftID` hasn't been found yet, and this page is a draft, then set the `firstDraftID` to this page's ID.
+						if (firstDraftID === undefined && initialPublished === undefined) {
+							firstDraftID = page.id;
+						}
+
 						pageComponents.unshift(
 							<StoryEditorPage
 								// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
 								key={page[_key]}
 								storyID={privateStory.id}
-								initialPublished={formikPropsRef.current.initialValues.pages[page.id].published}
+								initialPublished={initialPublished}
+								firstDraftID={firstDraftID}
 								formikPropsRef={formikPropsRef}
 								setInitialPages={setInitialPages}
 								queuedValuesRef={queuedValuesRef}
