@@ -70,6 +70,8 @@ export type StoryEditorPageProps = {
 	/** The `ClientStoryPage` being edited. */
 	children: ClientStoryPage,
 	storyID: StoryID,
+	/** This page's `published` value in the `initialValues`. */
+	initialPublished: number | undefined,
 	formikPropsRef: MutableRefObject<FormikProps<Values>>,
 	setInitialPages: Dispatch<SetStateAction<ClientStoryPageRecord>>,
 	queuedValuesRef: MutableRefObject<Values | undefined>,
@@ -83,6 +85,7 @@ export type StoryEditorPageProps = {
 const StoryEditorPage = React.memo(({
 	children: page,
 	storyID,
+	initialPublished,
 	formikPropsRef,
 	setInitialPages,
 	queuedValuesRef,
@@ -92,24 +95,13 @@ const StoryEditorPage = React.memo(({
 	/** Whether this page exists on the server. */
 	const onServer = page.id in formikPropsRef.current.initialValues.pages;
 
-	/**
-	 * The page with the same ID as this one in `initialValues`, or undefined if `!onServer`.
-	 *
-	 * ⚠️ In callback hooks, use `formikPropsRef.current.initialValues.pages[page.id]` instead if it helps avoid unnecessary updates or race conditions.
-	 */
-	const initialPage = (
-		onServer
-			? formikPropsRef.current.initialValues.pages[page.id]
-			: undefined
-	);
-
 	/** Whether this page exists on the server and has the same values as on the server. */
 	const saved = onServer && isEqual(page, formikPropsRef.current.initialValues.pages[page.id]);
 
 	const pageStatus = (
-		initialPage?.published === undefined
+		initialPublished === undefined
 			? 'draft' as const
-			: initialPage.published < Date.now()
+			: initialPublished < Date.now()
 				? 'scheduled' as const
 				: 'published' as const
 	);
@@ -282,7 +274,7 @@ const StoryEditorPage = React.memo(({
 								} `
 							}
 							<Timestamp short withTime>
-								{page.published!}
+								{initialPublished}
 							</Timestamp>
 							)
 						</>
