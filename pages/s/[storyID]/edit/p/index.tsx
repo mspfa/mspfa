@@ -25,6 +25,7 @@ import Dialog from 'modules/client/Dialog';
 import InlineRowSection from 'components/Box/InlineRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
+import { escapeRegExp } from 'lodash';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -306,7 +307,7 @@ const Component = withErrorPage<ServerSideProps>(({
 																				name="flags"
 																				size="5"
 																				title="Flags"
-																				autocomplete="off"
+																				autoComplete="off"
 																				innerRef={flagsInputRef}
 																			/>
 																		</LabeledBoxRow>
@@ -362,8 +363,23 @@ const Component = withErrorPage<ServerSideProps>(({
 														return;
 													}
 
-													// TODO
-												}, [])
+													const regex = (
+														dialog.form!.values.regex
+															? new RegExp(dialog.form!.values.find, dialog.form!.values.flags)
+															: new RegExp(
+																escapeRegExp(dialog.form!.values.find),
+																`g${dialog.form!.values.flags.includes('i') ? 'i' : ''}`
+															)
+													);
+
+													for (const page of Object.values(formikPropsRef.current.values.pages)) {
+														const replacedContent = page.content.replace(regex, dialog.form!.values.replace);
+
+														if (page.content !== replacedContent) {
+															formikPropsRef.current.setFieldValue(`pages.${page.id}.content`, replacedContent);
+														}
+													}
+												}, [formikPropsRef])
 											}
 										>
 											Find and Replace
