@@ -259,19 +259,30 @@ const Component = withErrorPage<ServerSideProps>(({
 														},
 														content: function Content({ values, setFieldValue }) {
 															const findInputRef = useRef<HTMLInputElement>(null!);
+															const flagsInputRef = useRef<HTMLInputElement>(null);
 
 															useEffect(() => {
-																let regexError = false;
+																let regexPatternError = false;
 
 																if (values.regex && values.find) {
 																	try {
-																		new RegExp(values.find, values.flags);
+																		new RegExp(values.find, '');
 																	} catch {
-																		regexError = true;
+																		regexPatternError = true;
 																	}
+
+																	let regexFlagsError = false;
+
+																	try {
+																		new RegExp('test', values.flags);
+																	} catch {
+																		regexFlagsError = true;
+																	}
+
+																	flagsInputRef.current!.setCustomValidity(regexFlagsError ? 'Please enter valid regex flags.' : '');
 																}
 
-																findInputRef.current.setCustomValidity(regexError ? 'This is not a valid regular expression.' : '');
+																findInputRef.current.setCustomValidity(regexPatternError ? 'Please enter a valid regex pattern.' : '');
 															}, [values.regex, values.find, values.flags]);
 
 															return (
@@ -296,6 +307,7 @@ const Component = withErrorPage<ServerSideProps>(({
 																				size="5"
 																				title="Flags"
 																				autocomplete="off"
+																				innerRef={flagsInputRef}
 																			/>
 																		</LabeledBoxRow>
 																	) : (
