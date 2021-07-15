@@ -16,21 +16,36 @@ export const monthNames = [
 /** Outputs a string which is exactly two digits of the input. */
 const twoDigits = (value: any) => `0${value}`.slice(-2);
 
+/**
+ * Gets the time from a `Date`.
+ *
+ * Example outputs: `'02:49'`, `'18:03'`
+ */
 export const getTime = (date: Date) => [
 	date.getHours(),
 	date.getMinutes()
 ].map(twoDigits).join(':');
 
+/**
+ * Gets an absolute timestamp from a `Date`.
+ *
+ * Example outputs: `'February 4, 2021'`, `'July 15, 1999 at 04:53'`
+ */
 export const getAbsoluteTimestamp = (date: Date, withTime?: boolean) => {
 	let timestamp = `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 
 	if (withTime) {
-		timestamp += ` ${getTime(date)}`;
+		timestamp += ` at ${getTime(date)}`;
 	}
 
 	return timestamp;
 };
 
+/**
+ * Gets a short timestamp from a `Date`.
+ *
+ * Example outputs: `'02/04/21'`, `'07/15/99 04:53'`
+ */
 export const getShortTimestamp = (date: Date, withTime?: boolean) => {
 	let timestamp = [
 		date.getMonth() + 1,
@@ -45,6 +60,11 @@ export const getShortTimestamp = (date: Date, withTime?: boolean) => {
 	return timestamp;
 };
 
+/**
+ * Gets a relative timestamp from a `Date`.
+ *
+ * Example outputs: `'14 minutes ago'`, `'3 years, 1 month ago'`, `'Just now!'`
+ */
 export const getRelativeTimestamp = (dateThen: Date) => {
 	const then = +dateThen;
 	const dateNow = new Date();
