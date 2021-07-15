@@ -6,3 +6,4 @@ export { default as loadScript } from 'modules/client/loadScript';
 export { getUser, signIn, signOut, setUserMerge, getUserMerge } from 'modules/client/users';
 export { startLoading, stopLoading } from 'components/LoadingIndicator';
 export { default as BBTags } from 'components/BBCode/BBTags';
+export { monthNames, getAbsoluteTimestamp, getShortTimestamp, getRelativeTimestamp } from 'modules/client/dates';
