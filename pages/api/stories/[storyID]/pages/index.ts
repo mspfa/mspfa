@@ -144,11 +144,13 @@ const Handler: APIHandler<{
 		}
 	}
 
-	await stories.updateOne({
-		_id: story._id
-	}, {
-		$set: storyUpdate
-	});
+	if (Object.values(storyUpdate).length) {
+		await stories.updateOne({
+			_id: story._id
+		}, {
+			$set: storyUpdate
+		});
+	}
 
 	res.status(200).send(newClientPages);
 };

@@ -23,6 +23,7 @@ import Link from 'components/Link';
 import type { APIClient } from 'modules/client/api';
 import api from 'modules/client/api';
 import { getChangedValues } from 'modules/client/forms';
+import type { RecursivePartial } from 'modules/types';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 type StoryPageAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]').default>;
@@ -103,9 +104,9 @@ const StoryEditorPage = React.memo(({
 	const pageStatus = (
 		initialPublished === undefined
 			? 'draft' as const
-			: initialPublished < Date.now()
-				? 'scheduled' as const
-				: 'published' as const
+			: initialPublished <= Date.now()
+				? 'published' as const
+				: 'scheduled' as const
 	);
 
 	const sectionRef = useRef<HTMLDivElement>(null!);
@@ -258,13 +259,56 @@ const StoryEditorPage = React.memo(({
 		formikPropsRef.current.setSubmitting(false);
 	}, [onServer, page.id, reportPageValidity, storyID, formikPropsRef, setInitialPages, queuedValuesRef]);
 
-	const publishPage = useCallback(() => {
-		if (!reportPageValidity()) {
-			return;
+	const publishPage = useCallback(async () => {
+		const pageChanges: Record<string, RecursivePartial<ClientStoryPage>> = {};
+
+		const now = Date.now();
+
+		for (let pageID = firstDraftID!; pageID <= page.id; pageID++) {
+			// Check if any of the drafts to be published are unsaved.
+			if (!isEqual(formikPropsRef.current.values.pages[pageID], formikPropsRef.current.initialValues.pages[pageID])) {
+				new Dialog({
+					id: 'publish-pages',
+					title: 'Publish Pages',
+					content: `Page ${pageID} has unsaved changes. Any pages being published must first be saved.`
+				});
+
+				return;
+			}
+
+			// Set this draft to be published.
+			pageChanges[pageID] = { published: now };
 		}
 
-		console.log('publish!');
-	}, [reportPageValidity]);
+		formikPropsRef.current.setSubmitting(true);
+
+		const { data: newPages } = await (api as StoryPagesAPI).put(`/stories/${storyID}/pages`, pageChanges).catch(error => {
+			formikPropsRef.current.setSubmitting(false);
+
+			return Promise.reject(error);
+		});
+
+		// Preserve the React keys of updated pages.
+		for (const newPage of Object.values(newPages)) {
+			(newPage as KeyedClientStoryPage)[_key] = (
+				formikPropsRef.current.values.pages[newPage.id] as KeyedClientStoryPage
+			)[_key];
+		}
+
+		setInitialPages({
+			...formikPropsRef.current.initialValues.pages,
+			...newPages
+		});
+
+		queuedValuesRef.current = {
+			pages: {
+				...formikPropsRef.current.values.pages,
+				...newPages
+			}
+		};
+
+		formikPropsRef.current.setSubmitting(false);
+	}, [firstDraftID, page.id, storyID, setInitialPages, queuedValuesRef, formikPropsRef]);
 
 	return (
 		<BoxSection
@@ -410,20 +454,22 @@ const StoryEditorPage = React.memo(({
 						>
 							Preview
 						</Button>
-						<Button
-							disabled={isSubmitting}
-							title={
-								firstDraftID === page.id
-									? `Publish Page ${page.id}`
-									: `Publish Pages ${firstDraftID} to ${page.id}`
-							}
-							onClick={publishPage}
-						>
-							{(firstDraftID === page.id
-								? 'Publish'
-								: `Publish p${firstDraftID}-${page.id}`
-							)}
-						</Button>
+						{pageStatus === 'draft' && (
+							<Button
+								disabled={isSubmitting}
+								title={
+									firstDraftID === page.id
+										? `Publish Page ${page.id}`
+										: `Publish Pages ${firstDraftID} to ${page.id}`
+								}
+								onClick={publishPage}
+							>
+								{(firstDraftID === page.id
+									? 'Publish'
+									: `Publish p${firstDraftID}-${page.id}`
+								)}
+							</Button>
+						)}
 					</>
 				) : (
 					<Button
