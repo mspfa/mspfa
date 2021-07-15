@@ -46,7 +46,7 @@ const Timestamp = ({ short, relative, withTime, edited, className, children, ...
 				>
 					{(
 						short
-							? getShortTimestamp(date)
+							? getShortTimestamp(date, withTime)
 							: relative
 								? getRelativeTimestamp(date)
 								: getAbsoluteTimestamp(date, withTime)

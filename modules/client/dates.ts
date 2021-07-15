@@ -16,21 +16,34 @@ export const monthNames = [
 /** Outputs a string which is exactly two digits of the input. */
 const twoDigits = (value: any) => `0${value}`.slice(-2);
 
+export const getTime = (date: Date) => [
+	date.getHours(),
+	date.getMinutes()
+].map(twoDigits).join(':');
+
 export const getAbsoluteTimestamp = (date: Date, withTime?: boolean) => {
 	let timestamp = `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 
 	if (withTime) {
-		timestamp += ` ${date.getHours()}:${twoDigits(date.getMinutes())}`;
+		timestamp += ` ${getTime(date)}`;
 	}
 
 	return timestamp;
 };
 
-export const getShortTimestamp = (date: Date) => [
-	date.getMonth() + 1,
-	date.getDate(),
-	date.getFullYear()
-].map(twoDigits).join('/');
+export const getShortTimestamp = (date: Date, withTime?: boolean) => {
+	let timestamp = [
+		date.getMonth() + 1,
+		date.getDate(),
+		date.getFullYear()
+	].map(twoDigits).join('/');
+
+	if (withTime) {
+		timestamp += ` ${getTime(date)}`;
+	}
+
+	return timestamp;
+};
 
 export const getRelativeTimestamp = (dateThen: Date) => {
 	const then = +dateThen;
