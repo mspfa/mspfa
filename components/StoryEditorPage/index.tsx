@@ -314,26 +314,28 @@ const StoryEditorPage = React.memo(({
 		<BoxSection
 			id={`p${page.id}`}
 			className={`story-editor-page-section${saved ? ' saved' : ''} ${pageStatus}`}
-			heading={
-				pageStatus === 'draft'
-					// These are two separate templates in order to avoid React inserting unnecessary comments between text nodes in the HTML sent from the server.
-					? `Page ${page.id} (Draft)`
-					: (
-						<>
-							{
-								`Page ${page.id} (${
-									pageStatus === 'published'
+			heading={(
+				<>
+					<span className="story-editor-page-id spaced">
+						{page.id}
+					</span>
+					<span className="story-editor-page-status spaced">
+						{pageStatus === 'draft' ? 'Draft' : (
+							<>
+								{
+									`${pageStatus === 'published'
 										? 'Published'
 										: 'Scheduled'
-								} `
-							}
-							<Timestamp short withTime>
-								{initialPublished!}
-							</Timestamp>
-							)
-						</>
-					)
-			}
+									} `
+								}
+								<Timestamp short withTime>
+									{initialPublished!}
+								</Timestamp>
+							</>
+						)}
+					</span>
+				</>
+			)}
 			ref={sectionRef}
 		>
 			<Row className="page-field-container-title">

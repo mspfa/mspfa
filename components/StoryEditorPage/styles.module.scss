@@ -1,7 +1,7 @@
 .story-editor {
 	&-page {
 		&-section {
-			&:not(.saved) > .box-heading::after {
+			&:not(.saved) .story-editor-page-id::after {
 				content: '*';
 			}
 
@@ -11,6 +11,22 @@
 
 			&.scheduled > .box-heading {
 				background-color: #cc7600;
+			}
+		}
+
+		&-id::before {
+			content: 'Page ';
+		}
+
+		&-status {
+			opacity: 0.75;
+
+			&::before {
+				content: '(';
+			}
+
+			&::after {
+				content: ')';
 			}
 		}
 
