@@ -28,7 +28,7 @@ export const getAbsoluteTimestamp = (date: Date, withTime?: boolean) => {
 
 export const getShortTimestamp = (date: Date) => [
 	date.getMonth() + 1,
-	date.getDate() + 1,
+	date.getDate(),
 	date.getFullYear()
 ].map(twoDigits).join('/');
 
