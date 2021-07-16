@@ -16,13 +16,11 @@ export type TimestampProps = Omit<HTMLAttributes<HTMLSpanElement>, 'children'> &
 };
 
 const Timestamp = ({ short, relative, withTime, edited, className, children, ...props }: TimestampProps) => {
-	const date = children instanceof Date ? children : new Date(children);
+	const date = new Date(children);
 	const dateEdited = (
 		edited === undefined
 			? undefined
-			: edited instanceof Date
-				? edited
-				: new Date(edited)
+			: new Date(edited)
 	);
 
 	return (
