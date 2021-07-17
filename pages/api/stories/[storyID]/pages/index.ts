@@ -115,6 +115,7 @@ const Handler: APIHandler<{
 
 			storyUpdate[`pages.${pageID}`] = page;
 
+			story.pages[pageID] = page;
 			newClientPages[pageID] = getClientStoryPage(page);
 		} else {
 			// `clientPage` is the changes for an existing page being edited.
@@ -133,7 +134,6 @@ const Handler: APIHandler<{
 			newClientPages[pageID] = getClientStoryPage(
 				// Merge the changes in `pageChanges` into the original `StoryPage` to get what it would be after the changes.
 				mergeWith(
-					{},
 					// The original `StoryPage`.
 					story.pages[pageID],
 					// The requested `StoryPage` changes.
@@ -141,6 +141,24 @@ const Handler: APIHandler<{
 					overwriteArrays
 				)
 			);
+		}
+	}
+
+	const pageValues = Object.values(story.pages);
+	for (let i = 1; i < pageValues.length; i++) {
+		const page = pageValues[i];
+		const published = +(page.published ?? Infinity);
+
+		if (
+			// Check if the page is unpublished.
+			published > Date.now()
+			// Check if this page would be published before the previous page (which shouldn't be allowed since it would allow for gaps in published pages).
+			&& published < +(pageValues[i - 1].published ?? Infinity)
+		) {
+			res.status(422).send({
+				message: `Page ${page.id} should not have a \`published\` date set before page ${page.id - 1}.`
+			});
+			return;
 		}
 	}
 
