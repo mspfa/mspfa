@@ -59,7 +59,7 @@ const Handler: APIHandler<{
 	}
 
 	const newClientPages: ClientStoryPageRecord = {};
-	const storyUpdate: Record<string, unknown> = {};
+	const $set: Record<string, unknown> = {};
 
 	for (const pageIDString of Object.keys(req.body)) {
 		const pageID = +pageIDString;
@@ -113,7 +113,7 @@ const Handler: APIHandler<{
 				comments: []
 			};
 
-			storyUpdate[`pages.${pageID}`] = page;
+			$set[`pages.${pageID}`] = page;
 
 			story.pages[pageID] = page;
 			newClientPages[pageID] = getClientStoryPage(page);
@@ -135,7 +135,7 @@ const Handler: APIHandler<{
 				}
 			};
 
-			flatten(pageChanges, `pages.${pageID}.`, storyUpdate);
+			flatten(pageChanges, `pages.${pageID}.`, $set);
 
 			// Convert the modified `StoryPage` to a `ClientStoryPage` to send back to the client.
 			newClientPages[pageID] = getClientStoryPage(
@@ -151,31 +151,50 @@ const Handler: APIHandler<{
 		}
 	}
 
+	const now = Date.now();
+
+	let updatedPageCount = 0;
+
 	const pageValues = Object.values(story.pages);
-	for (let i = 1; i < pageValues.length; i++) {
+	for (let i = 0; i < pageValues.length; i++) {
 		const page = pageValues[i];
 		const published = +(page.published ?? Infinity);
-		const previousPublished = +(pageValues[i - 1].published ?? Infinity);
 
-		// Ensure that it is still impossible with the new changes for the `published` dates to result in gaps in published pages.
-		if (
-			// Check if the previous page is unpublished. On the other hand, if the previous page is published, we don't care when this page is being published.
-			previousPublished > Date.now()
-			// Check if this page would be published before the previous page (which shouldn't be allowed since it would allow for gaps in published pages).
-			&& published < previousPublished
-		) {
-			res.status(422).send({
-				message: `Page ${page.id} should not have a \`published\` date set before page ${page.id - 1}.`
-			});
-			return;
+		// The logic in this block requires information about the previous page, so we must exclude the first page, since that doesn't have a previous page.
+		if (i !== 0) {
+			const previousPublished = +(pageValues[i - 1].published ?? Infinity);
+
+			// Ensure that it is still impossible with the new changes for the `published` dates to result in gaps in published pages.
+			if (
+				// Check if the previous page is unpublished. On the other hand, if the previous page is published, we don't care when this page is being published.
+				previousPublished > now
+				// Check if this page would be published before the previous page (which shouldn't be allowed since it would allow for gaps in published pages).
+				&& published < previousPublished
+			) {
+				res.status(422).send({
+					message: `Page ${page.id} should not have a \`published\` date set before page ${page.id - 1}.`
+				});
+				return;
+			}
+		}
+
+		if (published <= now && !page.unlisted) {
+			// If this page is public, set the page count to its ID.
+			updatedPageCount = page.id;
+			// The reason we don't run `updatedPageCount++` here instead is because it's better to use the ID of the last public page as the page count rather than the actual quantity of public pages. If we did use the actual quantity of public pages as the page count, then for example, if a story's last public page ID is 40 but there is a single earlier page which is unlisted, then the page count would say 39. For those who notice this inconsistency, it could be confusing, appear to be a bug, or even hint at an unlisted page which they might then actively look for. Simply using the ID of the last public page rather than the true public page count avoids all of this.
 		}
 	}
 
-	if (Object.values(storyUpdate).length) {
+	if (updatedPageCount !== story.pageCount) {
+		// If the page count changed, update it.
+		$set.pageCount = updatedPageCount;
+	}
+
+	if (Object.values($set).length) {
 		await stories.updateOne({
 			_id: story._id
 		}, {
-			$set: storyUpdate
+			$set
 		});
 	}
 
