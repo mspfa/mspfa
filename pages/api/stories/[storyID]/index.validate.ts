@@ -52,7 +52,7 @@ export default createValidator({
 					additionalProperties: false,
 					properties: {
 						body: {
-							$ref: '#/definitions/RecursivePartial%3C(alias-731470504-70254-70395-731470504-0-212312%3Cdef-alias--998-1322--0-26561904767254%2Calias--795-1150--0-53581840202528%3E%26structure--1323-1470--1285-1470--1267-1471--1259-1471--1240-1474--1216-1474--1214-1476--1178-1476--1166-1570--1157-5332--1150-5332--1150-5333--0-5358)%3E'
+							$ref: '#/definitions/RecursivePartial%3C(alias-2073358172-70254-70395-2073358172-0-212312%3Cdef-alias--1061-1397--0-27571904767254%2Calias--795-1150--0-53741840202528%3E%26structure--1323-1470--1285-1470--1267-1471--1259-1471--1240-1474--1216-1474--1214-1476--1178-1476--1166-1570--1157-5348--1150-5348--1150-5349--0-5374)%3E'
 						},
 						query: {
 							type: 'object',
@@ -79,7 +79,7 @@ export default createValidator({
 				}
 			]
 		},
-		'RecursivePartial<(alias-731470504-70254-70395-731470504-0-212312<def-alias--998-1322--0-26561904767254,alias--795-1150--0-53581840202528>&structure--1323-1470--1285-1470--1267-1471--1259-1471--1240-1474--1216-1474--1214-1476--1178-1476--1166-1570--1157-5332--1150-5332--1150-5333--0-5358)>': {
+		'RecursivePartial<(alias-2073358172-70254-70395-2073358172-0-212312<def-alias--1061-1397--0-27571904767254,alias--795-1150--0-53741840202528>&structure--1323-1470--1285-1470--1267-1471--1259-1471--1240-1474--1216-1474--1214-1476--1178-1476--1166-1570--1157-5348--1150-5348--1150-5349--0-5374)>': {
 			type: 'object',
 			properties: {
 				title: {
@@ -103,7 +103,7 @@ export default createValidator({
 					}
 				},
 				author: {
-					$ref: '#/definitions/RecursivePartial%3C(structure--2558-2602--2548-2603--1599-3280--1570-3281--0-8262%7Cundefined)%3E'
+					$ref: '#/definitions/RecursivePartial%3C(structure--2558-2602--2548-2603--1599-3300--1570-3301--0-8261%7Cundefined)%3E'
 				},
 				description: {
 					type: 'string',
@@ -154,7 +154,7 @@ export default createValidator({
 					type: 'boolean'
 				},
 				editorSettings: {
-					$ref: '#/definitions/RecursivePartial%3Cstructure--3134-3237--3044-3238--1599-3280--1570-3281--0-8262281038569%3E'
+					$ref: '#/definitions/RecursivePartial%3Cstructure--3154-3257--3064-3258--1599-3300--1570-3301--0-8261281038569%3E'
 				},
 				colors: {
 					type: 'array',
@@ -172,10 +172,10 @@ export default createValidator({
 					type: 'boolean'
 				},
 				anniversary: {
-					$ref: '#/definitions/RecursivePartial%3Cindexed-type-731470504-70368-70394-731470504-70254-70395-731470504-0-212312%3Cstructure--1910-2253--1772-2254--1599-3280--1570-3281--0-8262%2Calias-731470504-70528-70643-731470504-0-212312%3C(%22year%22%7C%22month%22%7C%22day%22%7C%22changed%22)%2C%22changed%22%3E%3E%3E'
+					$ref: '#/definitions/RecursivePartial%3Cindexed-type-2073358172-70368-70394-2073358172-70254-70395-2073358172-0-212312%3Cstructure--1910-2253--1772-2254--1599-3300--1570-3301--0-8261%2Calias-2073358172-70528-70643-2073358172-0-212312%3C(%22year%22%7C%22month%22%7C%22day%22%7C%22changed%22)%2C%22changed%22%3E%3E%3E'
 				},
 				script: {
-					$ref: '#/definitions/RecursivePartial%3Cindexed-type-731470504-70368-70394-731470504-70254-70395-731470504-0-212312%3Cstructure--2901-2947--2892-2948--1599-3280--1570-3281--0-8262%2C%22unverified%22%3E%3E'
+					$ref: '#/definitions/RecursivePartial%3Cindexed-type-2073358172-70368-70394-2073358172-70254-70395-2073358172-0-212312%3Cstructure--2921-2967--2912-2968--1599-3300--1570-3301--0-8261%2C%22unverified%22%3E%3E'
 				}
 			},
 			additionalProperties: false
@@ -197,7 +197,7 @@ export default createValidator({
 				2
 			]
 		},
-		'RecursivePartial<(structure--2558-2602--2548-2603--1599-3280--1570-3281--0-8262|undefined)>': {
+		'RecursivePartial<(structure--2558-2602--2548-2603--1599-3300--1570-3301--0-8261|undefined)>': {
 			type: 'object',
 			properties: {
 				name: {
@@ -227,7 +227,7 @@ export default createValidator({
 			maxLength: 50,
 			pattern: '^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$'
 		},
-		'RecursivePartial<structure--3134-3237--3044-3238--1599-3280--1570-3281--0-8262281038569>': {
+		'RecursivePartial<structure--3154-3257--3064-3258--1599-3300--1570-3301--0-8261281038569>': {
 			type: 'object',
 			properties: {
 				defaultPageTitle: {
@@ -235,12 +235,12 @@ export default createValidator({
 					maxLength: 500
 				},
 				defaultSpoiler: {
-					$ref: '#/definitions/RecursivePartial%3Cstructure--3194-3234--3176-3234--3134-3237--3044-3238--1599-3280--1570-3281--0-8262%3E'
+					$ref: '#/definitions/RecursivePartial%3Cstructure--3214-3254--3196-3254--3154-3257--3064-3258--1599-3300--1570-3301--0-8261%3E'
 				}
 			},
 			additionalProperties: false
 		},
-		'RecursivePartial<structure--3194-3234--3176-3234--3134-3237--3044-3238--1599-3280--1570-3281--0-8262>': {
+		'RecursivePartial<structure--3214-3254--3196-3254--3154-3257--3064-3258--1599-3300--1570-3301--0-8261>': {
 			type: 'object',
 			properties: {
 				open: {
@@ -307,7 +307,7 @@ export default createValidator({
 			],
 			additionalProperties: false
 		},
-		'RecursivePartial<indexed-type-731470504-70368-70394-731470504-70254-70395-731470504-0-212312<structure--1910-2253--1772-2254--1599-3280--1570-3281--0-8262,alias-731470504-70528-70643-731470504-0-212312<("year"|"month"|"day"|"changed"),"changed">>>': {
+		'RecursivePartial<indexed-type-2073358172-70368-70394-2073358172-70254-70395-2073358172-0-212312<structure--1910-2253--1772-2254--1599-3300--1570-3301--0-8261,alias-2073358172-70528-70643-2073358172-0-212312<("year"|"month"|"day"|"changed"),"changed">>>': {
 			type: 'object',
 			properties: {
 				year: {
@@ -326,7 +326,7 @@ export default createValidator({
 			},
 			additionalProperties: false
 		},
-		'RecursivePartial<indexed-type-731470504-70368-70394-731470504-70254-70395-731470504-0-212312<structure--2901-2947--2892-2948--1599-3280--1570-3281--0-8262,"unverified">>': {
+		'RecursivePartial<indexed-type-2073358172-70368-70394-2073358172-70254-70395-2073358172-0-212312<structure--2921-2967--2912-2968--1599-3300--1570-3301--0-8261,"unverified">>': {
 			type: 'object',
 			properties: {
 				unverified: {

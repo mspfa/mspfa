@@ -1,4 +1,5 @@
 import type { StoryDocument, StoryID, StoryPage, StoryPageID } from 'modules/server/stories';
+import type { DateNumber } from 'modules/types';
 
 export enum StoryStatus {
 	Inactive = 0,
@@ -32,9 +33,9 @@ type PrivateStoryDocumentKey = 'anniversary' | 'title' | 'status' | 'privacy' | 
 /** A serializable version of `StoryDocument` which only has properties that can safely be exposed to any client. */
 export type PrivateStory = Pick<StoryDocument, PrivateStoryDocumentKey> & {
 	id: StoryID,
-	willDelete?: number,
-	created: number,
-	updated: number,
+	willDelete?: DateNumber,
+	created: DateNumber,
+	updated: DateNumber,
 	owner: string,
 	editors: string[],
 	pageCount: number
@@ -46,8 +47,8 @@ type PublicStoryDocumentKey = 'anniversary' | 'title' | 'status' | 'privacy' | '
 /** A serializable version of `StoryDocument` which only has properties that can safely be exposed to any client. */
 export type PublicStory = Pick<StoryDocument, PublicStoryDocumentKey> & {
 	id: StoryID,
-	created: number,
-	updated: number,
+	created: DateNumber,
+	updated: DateNumber,
 	owner: string,
 	editors: string[],
 	pageCount: number
@@ -58,7 +59,7 @@ type ClientStoryPageKey = 'id' | 'title' | 'content' | 'nextPages' | 'tags' | 'u
 
 /** A serializable version of `StoryPage` which only has properties that can safely be exposed to any client. */
 export type ClientStoryPage = Pick<StoryPage, ClientStoryPageKey> & {
-	published?: number
+	published?: DateNumber
 };
 
 export type ClientStoryPageRecord = Record<StoryPageID, ClientStoryPage>;

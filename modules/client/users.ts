@@ -5,7 +5,7 @@ import type { APIClient } from 'modules/client/api';
 import { startLoading, stopLoading } from 'components/LoadingIndicator';
 import Dialog from 'modules/client/Dialog';
 import createGlobalState from 'global-react-state';
-import type { RecursivePartial } from 'modules/types';
+import type { DateNumber, RecursivePartial } from 'modules/types';
 
 /** All keys whose values have the same serializable type in both `UserDocument` and `PrivateUser`. */
 type PrivateUserDocumentKey = 'email' | 'unverifiedEmail' | 'name' | 'birthdateChanged' | 'description' | 'icon' | 'site' | 'storySaves' | 'achievements' | 'favs' | 'profileStyle' | 'settings' | 'perms' | 'dev' | 'mod' | 'patron' | 'unreadMessageCount';
@@ -15,9 +15,9 @@ export type PrivateUser = (
 	Pick<UserDocument, PrivateUserDocumentKey>
 	& {
 		id: string,
-		created: number,
-		lastSeen: number,
-		birthdate: number
+		created: DateNumber,
+		lastSeen: DateNumber,
+		birthdate: DateNumber
 	}
 );
 
@@ -30,9 +30,9 @@ export type PublicUser = (
 	& {
 		id: string,
 		email?: UserDocument['email'],
-		created: number,
-		lastSeen: number,
-		birthdate?: number,
+		created: DateNumber,
+		lastSeen: DateNumber,
+		birthdate?: DateNumber,
 		favs?: UserDocument['favs']
 	}
 );
