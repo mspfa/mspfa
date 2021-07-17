@@ -159,7 +159,7 @@ const Handler: APIHandler<{
 
 		// Ensure that it is still impossible with the new changes for the `published` dates to result in gaps in published pages.
 		if (
-			// Check if the previous page is unpublished. If the previous page is published, we don't care when this page is being published.
+			// Check if the previous page is unpublished. On the other hand, if the previous page is published, we don't care when this page is being published.
 			previousPublished > Date.now()
 			// Check if this page would be published before the previous page (which shouldn't be allowed since it would allow for gaps in published pages).
 			&& published < previousPublished
