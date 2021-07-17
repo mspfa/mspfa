@@ -120,6 +120,13 @@ const Handler: APIHandler<{
 		} else {
 			// `clientPage` is the changes for an existing page being edited.
 
+			if (!(pageID in story.pages)) {
+				res.status(422).send({
+					message: `Page ${pageID} does not exist.`
+				});
+				return;
+			}
+
 			const { published, ...clientPageWithoutPublished } = clientPage;
 			const pageChanges: RecursivePartial<StoryPage> = {
 				...clientPageWithoutPublished,
@@ -148,12 +155,14 @@ const Handler: APIHandler<{
 	for (let i = 1; i < pageValues.length; i++) {
 		const page = pageValues[i];
 		const published = +(page.published ?? Infinity);
+		const previousPublished = +(pageValues[i - 1].published ?? Infinity);
 
+		// Ensure that it is still impossible with the new changes for the `published` dates to result in gaps in published pages.
 		if (
-			// Check if the page is unpublished.
-			published > Date.now()
+			// Check if the previous page is unpublished. If the previous page is published, we don't care when this page is being published.
+			previousPublished > Date.now()
 			// Check if this page would be published before the previous page (which shouldn't be allowed since it would allow for gaps in published pages).
-			&& published < +(pageValues[i - 1].published ?? Infinity)
+			&& published < previousPublished
 		) {
 			res.status(422).send({
 				message: `Page ${page.id} should not have a \`published\` date set before page ${page.id - 1}.`
