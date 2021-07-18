@@ -1,0 +1,7 @@
+.date-field {
+	&-day, &-hour, &-minute {
+		// This width matches Chrome's native width for two-digit number inputs exactly (at normal font size--perhaps this calculation should be adjusted to also match other font sizes in the future).
+		// The reason it is necessary to set a width at all is because Chrome resizes the field to be one digit large if `min` and `max` are both only one digit.
+		width: calc(2ch + 23px + 0.3em);
+	}
+}

@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import { useField } from 'formik';
 import { toKebabCase } from 'modules/client/utilities';
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
@@ -255,7 +256,6 @@ const DateField = ({
 				placeholder="DD"
 				min={minDay}
 				max={maxDay}
-				size={4}
 				value={Number.isNaN(day) ? '' : day}
 				onChange={onChange}
 				{...props}
@@ -271,7 +271,6 @@ const DateField = ({
 						placeholder="hh"
 						min={minHour}
 						max={maxHour}
-						size={4}
 						value={Number.isNaN(hour) ? '' : twoDigits(hour)}
 						onChange={onChange}
 						{...props}
@@ -285,7 +284,6 @@ const DateField = ({
 						placeholder="mm"
 						min={minMinute}
 						max={maxMinute}
-						size={4}
 						value={Number.isNaN(minute) ? '' : twoDigits(minute)}
 						onChange={onChange}
 						{...props}
