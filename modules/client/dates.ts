@@ -60,6 +60,13 @@ export const getShortTimestamp = (date: Date, withTime?: boolean) => {
 	return timestamp;
 };
 
+/** Prepends "in about" if the `timestamp` is `future`, or appends "ago" if it isn't. */
+const preposeTimestamp = (timestamp: string, future: boolean) => (
+	future
+		? `in about ${timestamp}`
+		: `${timestamp} ago`
+);
+
 /**
  * Gets a relative timestamp from a `Date`.
  *
@@ -70,32 +77,37 @@ export const getRelativeTimestamp = (dateThen: Date) => {
 	const dateNow = new Date();
 	const now = +dateNow;
 
-	const secondsAgo = Math.floor((now - then) / 1000);
+	let future = false;
 
-	if (secondsAgo <= 5) {
+	let seconds = Math.floor((now - then) / 1000);
+
+	if (seconds < 0) {
+		seconds *= -1;
+		future = true;
+	} else if (seconds <= 5) {
 		return 'Just now!';
 	}
 
-	if (secondsAgo < 60) {
-		return `${secondsAgo} seconds ago`;
+	if (seconds < 60) {
+		return preposeTimestamp(`${seconds} second${seconds === 1 ? '' : 's'}`, future);
 	}
 
-	const minutesAgo = Math.floor(secondsAgo / 60);
+	const minutes = Math.floor(seconds / 60);
 
-	if (minutesAgo < 60) {
-		return `${minutesAgo} minute${minutesAgo === 1 ? '' : 's'} ago`;
+	if (minutes < 60) {
+		return preposeTimestamp(`${minutes} minute${minutes === 1 ? '' : 's'}`, future);
 	}
 
-	const hoursAgo = Math.floor(minutesAgo / 60);
+	const hours = Math.floor(minutes / 60);
 
-	if (hoursAgo < 24) {
-		return `${hoursAgo} hour${hoursAgo === 1 ? '' : 's'} ago`;
+	if (hours < 24) {
+		return preposeTimestamp(`${hours} hour${hours === 1 ? '' : 's'}`, future);
 	}
 
-	const daysAgo = Math.floor(hoursAgo / 24);
+	const days = Math.floor(hours / 24);
 
-	if (daysAgo < 7) {
-		return `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago`;
+	if (days < 7) {
+		return preposeTimestamp(`${days} day${days === 1 ? '' : 's'}`, future);
 	}
 
 	const fullYearNow = dateNow.getFullYear();
@@ -104,30 +116,30 @@ export const getRelativeTimestamp = (dateThen: Date) => {
 	const monthThen = dateThen.getMonth();
 	const fullMonthNow = 12 * fullYearNow + monthNow;
 	const fullMonthThen = 12 * fullYearThen + monthThen;
-	const monthsAgo = fullMonthNow - fullMonthThen + (
+	const months = fullMonthNow - fullMonthThen + (
 		dateNow.getDate() < dateThen.getDate()
 			// If the day of the month now is lower than the day of the month then, the difference in months is one too high.
 			? -1
 			: 0
 	);
 
-	if (monthsAgo < 1) {
-		const weeksAgo = Math.floor(daysAgo / 7);
+	if (months < 1) {
+		const weeks = Math.floor(days / 7);
 
-		return `${weeksAgo} week${weeksAgo === 1 ? '' : 's'} ago`;
+		return preposeTimestamp(`${weeks} week${weeks === 1 ? '' : 's'}`, future);
 	}
 
-	if (monthsAgo < 12) {
-		return `${monthsAgo} month${monthsAgo === 1 ? '' : 's'} ago`;
+	if (months < 12) {
+		return preposeTimestamp(`${months} month${months === 1 ? '' : 's'}`, future);
 	}
 
-	const yearsAgo = fullYearNow - fullYearThen + (
+	const years = fullYearNow - fullYearThen + (
 		monthNow < monthThen
 			// If the month of the year now is lower than the month of the year then, the difference in years is one too high.
 			? -1
 			: 0
 	);
-	const moreMonthsAgo = monthsAgo - 12 * yearsAgo;
+	const moreMonths = months - 12 * years;
 
-	return `${yearsAgo} year${yearsAgo === 1 ? '' : 's'}${moreMonthsAgo ? `, ${moreMonthsAgo} month${moreMonthsAgo === 1 ? '' : 's'}` : ''} ago`;
+	return preposeTimestamp(`${years} year${years === 1 ? '' : 's'}${moreMonths ? `, ${moreMonths} month${moreMonths === 1 ? '' : 's'}` : ''}`, future);
 };
