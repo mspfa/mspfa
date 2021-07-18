@@ -15,7 +15,7 @@ export default createValidator({
 	$schema: 'http://json-schema.org/draft-07/schema#',
 	$ref: '#/definitions/Request',
 	definitions: {
-		'Request': {
+		Request: {
 			type: 'object',
 			additionalProperties: false,
 			properties: {
@@ -24,10 +24,116 @@ export default createValidator({
 					additionalProperties: {
 						anyOf: [
 							{
-								$ref: '#/definitions/ClientStoryPage'
+								type: 'object',
+								additionalProperties: false,
+								properties: {
+									published: {
+										anyOf: [
+											{
+												$ref: '#/definitions/DateNumber'
+											},
+											{
+												type: 'null'
+											}
+										]
+									},
+									id: {
+										$ref: '#/definitions/StoryPageID'
+									},
+									title: {
+										type: 'string',
+										maxLength: 500
+									},
+									content: {
+										type: 'string'
+									},
+									nextPages: {
+										type: 'array',
+										items: {
+											type: 'number'
+										}
+									},
+									tags: {
+										type: 'array',
+										items: {
+											$ref: '#/definitions/TagString'
+										}
+									},
+									unlisted: {
+										type: 'boolean'
+									},
+									disableControls: {
+										type: 'boolean',
+										description: 'Whether the client\'s controls should be disabled while this page is rendered.'
+									},
+									commentary: {
+										type: 'string'
+									},
+									notify: {
+										type: 'boolean',
+										description: 'Whether this page was set to notify readers on publish.'
+									}
+								},
+								required: [
+									'commentary',
+									'content',
+									'disableControls',
+									'id',
+									'nextPages',
+									'notify',
+									'tags',
+									'title',
+									'unlisted'
+								]
 							},
 							{
-								$ref: '#/definitions/RecursivePartial%3Calias-2073358172-70254-70395-2073358172-0-212312%3Cdef-alias--2295-2506--0-27571572850954%2Calias-ts-620-912-ts-0-56502145652127%3E%3E'
+								type: 'object',
+								additionalProperties: false,
+								properties: {
+									published: {
+										anyOf: [
+											{
+												$ref: '#/definitions/DateNumber'
+											},
+											{
+												type: 'null'
+											}
+										]
+									},
+									title: {
+										type: 'string',
+										maxLength: 500
+									},
+									content: {
+										type: 'string'
+									},
+									nextPages: {
+										type: 'array',
+										items: {
+											type: 'number'
+										}
+									},
+									tags: {
+										type: 'array',
+										items: {
+											$ref: '#/definitions/TagString'
+										}
+									},
+									unlisted: {
+										type: 'boolean'
+									},
+									disableControls: {
+										type: 'boolean',
+										description: 'Whether the client\'s controls should be disabled while this page is rendered.'
+									},
+									commentary: {
+										type: 'string'
+									},
+									notify: {
+										type: 'boolean',
+										description: 'Whether this page was set to notify readers on publish.'
+									}
+								}
 							}
 						]
 					},
@@ -56,119 +162,20 @@ export default createValidator({
 				'query'
 			]
 		},
-		'ClientStoryPage': {
-			type: 'object',
-			additionalProperties: false,
-			properties: {
-				published: {
-					$ref: '#/definitions/DateNumber'
-				},
-				id: {
-					$ref: '#/definitions/StoryPageID'
-				},
-				title: {
-					type: 'string',
-					maxLength: 500
-				},
-				content: {
-					type: 'string'
-				},
-				nextPages: {
-					type: 'array',
-					items: {
-						type: 'number'
-					}
-				},
-				tags: {
-					type: 'array',
-					items: {
-						$ref: '#/definitions/TagString'
-					}
-				},
-				unlisted: {
-					type: 'boolean'
-				},
-				disableControls: {
-					type: 'boolean',
-					description: 'Whether the client\'s controls should be disabled while this page is rendered.'
-				},
-				commentary: {
-					type: 'string'
-				},
-				notify: {
-					type: 'boolean',
-					description: 'Whether this page was set to notify readers on publish.'
-				}
-			},
-			required: [
-				'commentary',
-				'content',
-				'disableControls',
-				'id',
-				'nextPages',
-				'notify',
-				'tags',
-				'title',
-				'unlisted'
-			],
-			description: 'A serializable version of `StoryPage` which only has properties that can safely be exposed to any client.'
-		},
-		'DateNumber': {
+		DateNumber: {
 			type: 'number',
 			minimum: -8640000000000000,
 			maximum: 8640000000000000
 		},
-		'StoryPageID': {
+		StoryPageID: {
 			type: 'number',
 			minimum: 1
 		},
-		'TagString': {
+		TagString: {
 			type: 'string',
 			minLength: 1,
 			maxLength: 50,
 			pattern: '^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$'
-		},
-		'RecursivePartial<alias-2073358172-70254-70395-2073358172-0-212312<def-alias--2295-2506--0-27571572850954,alias-ts-620-912-ts-0-56502145652127>>': {
-			type: 'object',
-			properties: {
-				published: {
-					$ref: '#/definitions/DateNumber'
-				},
-				title: {
-					type: 'string',
-					maxLength: 500
-				},
-				content: {
-					type: 'string'
-				},
-				nextPages: {
-					type: 'array',
-					items: {
-						type: 'number'
-					}
-				},
-				tags: {
-					type: 'array',
-					items: {
-						$ref: '#/definitions/TagString'
-					}
-				},
-				unlisted: {
-					type: 'boolean'
-				},
-				disableControls: {
-					type: 'boolean',
-					description: 'Whether the client\'s controls should be disabled while this page is rendered.'
-				},
-				commentary: {
-					type: 'string'
-				},
-				notify: {
-					type: 'boolean',
-					description: 'Whether this page was set to notify readers on publish.'
-				}
-			},
-			additionalProperties: false
 		}
 	}
 });

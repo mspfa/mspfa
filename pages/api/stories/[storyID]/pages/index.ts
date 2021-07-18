@@ -4,14 +4,14 @@ import type { StoryPage } from 'modules/server/stories';
 import stories, { getStoryByUnsafeID, getClientStoryPage } from 'modules/server/stories';
 import { authenticate } from 'modules/server/auth';
 import type { ClientStoryPage, ClientStoryPageRecord } from 'modules/client/stories';
-import type { RecursivePartial } from 'modules/types';
+import type { DateNumber, RecursivePartial } from 'modules/types';
 import { Perm } from 'modules/client/perms';
 import { flatten } from 'modules/server/db';
 import { mergeWith } from 'lodash';
 import { overwriteArrays } from 'modules/client/utilities';
 
-/** The keys of all `ClientStoryPage` properties which the client should be able to `PUT` into any of their existing `StoryDocument['pages']`. */
-type PuttableStoryPageKey = 'published' | 'title' | 'content' | 'nextPages' | 'tags' | 'unlisted' | 'disableControls' | 'commentary' | 'notify';
+/** The keys of all `ClientStoryPage` properties which the client should be able to `PUT` into any of their existing `StoryDocument['pages']` (except `'published'`). */
+type PuttableStoryPageKey = 'title' | 'content' | 'nextPages' | 'tags' | 'unlisted' | 'disableControls' | 'commentary' | 'notify';
 
 const Handler: APIHandler<{
 	query: {
@@ -24,10 +24,14 @@ const Handler: APIHandler<{
 		// The reason this is `string` is because the schema generator ignores `number` keys and doesn't seem to have any support for `patternProperties`. The checks to ensure the validity of these keys are instead done in the handler.
 		string
 	), (
-		// A new page being added (includes `id`).
-		ClientStoryPage
-		// Changes to an existing page (excludes `id`).
-		| RecursivePartial<Pick<ClientStoryPage, PuttableStoryPageKey>>
+		(
+			// A new page being added (includes `id`).
+			Omit<ClientStoryPage, 'published'>
+			// Changes to an existing page (excludes `id`).
+			| RecursivePartial<Pick<ClientStoryPage, PuttableStoryPageKey>>
+		) & {
+			published?: DateNumber | null
+		}
 	)>
 }, {
 	method: 'PUT',
@@ -60,6 +64,7 @@ const Handler: APIHandler<{
 
 	const newClientPages: ClientStoryPageRecord = {};
 	const $set: Record<string, unknown> = {};
+	const $unset: Record<string, true> = {};
 
 	for (const pageIDString of Object.keys(req.body)) {
 		const pageID = +pageIDString;
@@ -107,7 +112,7 @@ const Handler: APIHandler<{
 			const { published, ...clientPageWithoutPublished } = clientPage;
 			const page: StoryPage = {
 				...clientPageWithoutPublished,
-				...published !== undefined && {
+				...published !== undefined && published !== null && {
 					published: new Date(published)
 				},
 				comments: []
@@ -130,10 +135,21 @@ const Handler: APIHandler<{
 			const { published, ...clientPageWithoutPublished } = clientPage;
 			const pageChanges: RecursivePartial<StoryPage> = {
 				...clientPageWithoutPublished,
-				...published !== undefined && {
+				...published !== undefined && published !== null && {
 					published: new Date(published)
 				}
 			};
+
+			if (
+				// The client wants to set this page as a draft.
+				published === null
+				// The page is not already a draft.
+				&& story.pages[pageID].published !== undefined
+			) {
+				// Set this page as a draft.
+				$unset[`pages.${pageID}.published`] = true;
+				delete story.pages[pageID].published;
+			}
 
 			flatten(pageChanges, `pages.${pageID}.`, $set);
 
@@ -188,13 +204,18 @@ const Handler: APIHandler<{
 	if (updatedPageCount !== story.pageCount) {
 		// If the page count changed, update it.
 		$set.pageCount = updatedPageCount;
+		// TODO: Update page count upon release of scheduled pages.
 	}
 
-	if (Object.values($set).length) {
+	const setValues = Object.values($set).length;
+	const unsetValues = Object.values($unset).length;
+
+	if (setValues || unsetValues) {
 		await stories.updateOne({
 			_id: story._id
 		}, {
-			$set
+			...setValues && { $set },
+			...unsetValues && { $unset }
 		});
 	}
 
