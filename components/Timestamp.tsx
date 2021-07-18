@@ -1,5 +1,6 @@
 import { getRelativeTimestamp, getAbsoluteTimestamp, getShortTimestamp } from 'modules/client/dates';
-import type { HTMLAttributes } from 'react';
+import { HTMLAttributes, useEffect } from 'react';
+import { useState } from 'react';
 
 export type TimestampProps = Omit<HTMLAttributes<HTMLSpanElement>, 'children'> & {
 	children: Date | number,
@@ -16,12 +17,25 @@ export type TimestampProps = Omit<HTMLAttributes<HTMLSpanElement>, 'children'> &
 };
 
 const Timestamp = ({ short, relative, withTime, edited, className, children, ...props }: TimestampProps) => {
+	const [, update] = useState(false);
+
 	const date = new Date(children);
 	const dateEdited = (
 		edited === undefined
 			? undefined
 			: new Date(edited)
 	);
+
+	useEffect(() => {
+		// Update this component every 60 seconds.
+		const updateInterval = setInterval(() => {
+			update(value => !value);
+		}, 1000 * 60);
+
+		return () => {
+			clearInterval(updateInterval);
+		};
+	}, []);
 
 	return (
 		<>
