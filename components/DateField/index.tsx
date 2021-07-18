@@ -276,7 +276,7 @@ const DateField = ({
 				placeholder="DD"
 				min={minDay}
 				max={maxDay}
-				value={Number.isNaN(day) ? '' : day}
+				value={Number.isNaN(day) ? '' : twoDigits(day)}
 				onChange={onChange}
 				{...props}
 			/>
