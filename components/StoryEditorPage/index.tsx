@@ -23,7 +23,8 @@ import Link from 'components/Link';
 import type { APIClient } from 'modules/client/api';
 import api from 'modules/client/api';
 import { getChangedValues } from 'modules/client/forms';
-import type { RecursivePartial } from 'modules/types';
+import type { DateNumber, RecursivePartial } from 'modules/types';
+import DateField from 'components/DateField';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 type StoryPageAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]').default>;
@@ -260,9 +261,80 @@ const StoryEditorPage = React.memo(({
 	}, [onServer, page.id, reportPageValidity, storyID, formikPropsRef, setInitialPages, queuedValuesRef]);
 
 	const publishPage = useCallback(async () => {
-		const pageChanges: Record<string, RecursivePartial<ClientStoryPage>> = {};
+		formikPropsRef.current.setSubmitting(true);
 
-		const now = Date.now();
+		const dialog = new Dialog({
+			id: 'publish-pages',
+			title: 'Publish Pages',
+			initialValues: {
+				action: 'publish' as 'publish' | 'schedule',
+				date: '' as DateNumber | ''
+			},
+			content: ({ values }) => (
+				<>
+					<Row>
+						{`What would you like to do with ${firstDraftID === page.id
+							? `page ${page.id}`
+							: `pages ${firstDraftID} to ${page.id}`
+						}?`}
+					</Row>
+					<Row id="field-container-action">
+						<Field
+							type="radio"
+							id="field-action-publish"
+							name="action"
+							value="publish"
+						/>
+						<label htmlFor="field-action-publish">
+							Publish Now
+						</label>
+						<Field
+							type="radio"
+							id="field-action-schedule"
+							name="action"
+							value="schedule"
+						/>
+						<label htmlFor="field-action-schedule">
+							Schedule for Later
+						</label>
+						{values.action === 'schedule' && (
+							<>
+								<div id="field-container-schedule-date">
+									<DateField
+										name="date"
+										withTime
+										required
+										min={Date.now() + 1000 * 60}
+										max={Date.now() + 1000 * 60 * 60 * 24 * 365}
+									/>
+								</div>
+								{typeof values.date === 'number' && (
+									<Timestamp relative withTime>
+										{values.date}
+									</Timestamp>
+								)}
+							</>
+						)}
+					</Row>
+				</>
+			),
+			actions: ['Submit', 'Cancel']
+		});
+
+		if (!(await dialog)?.submit) {
+			formikPropsRef.current.setSubmitting(false);
+			return;
+		}
+
+		/** The date number to publish the pages. */
+		const published = (
+			dialog.form!.values.action === 'schedule'
+			&& typeof dialog.form!.values.date === 'number'
+				? dialog.form!.values.date
+				: Date.now()
+		);
+
+		const pageChanges: Record<string, RecursivePartial<ClientStoryPage>> = {};
 
 		for (let pageID = firstDraftID!; pageID <= page.id; pageID++) {
 			// Check if any of the drafts to be published are unsaved.
@@ -277,10 +349,8 @@ const StoryEditorPage = React.memo(({
 			}
 
 			// Set this draft to be published.
-			pageChanges[pageID] = { published: now };
+			pageChanges[pageID] = { published };
 		}
-
-		formikPropsRef.current.setSubmitting(true);
 
 		const { data: newPages } = await (api as StoryPagesAPI).put(`/stories/${storyID}/pages`, pageChanges).catch(error => {
 			formikPropsRef.current.setSubmitting(false);

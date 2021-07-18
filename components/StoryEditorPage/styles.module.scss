@@ -73,3 +73,22 @@
 		}
 	}
 }
+
+#field-container {
+	&-action {
+		display: grid;
+		grid-template-columns: auto 1fr;
+    	align-items: center;
+		column-gap: 1ch;
+		row-gap: 0.5ch;
+
+		& > :not(input) {
+			grid-column: 2;
+		}
+
+		.timestamp {
+			opacity: 0.5;
+			font-size: 0.875em;
+		}
+	}
+}
