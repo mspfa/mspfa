@@ -306,6 +306,9 @@ const StoryEditorPage = React.memo(({
 										required
 										min={Date.now() + 1000 * 60}
 										max={Date.now() + 1000 * 60 * 60 * 24 * 365}
+										defaultYear={new Date().getFullYear()}
+										defaultMonth={new Date().getMonth()}
+										defaultDay={new Date().getDate()}
 									/>
 								</div>
 								{typeof values.date === 'number' && (
