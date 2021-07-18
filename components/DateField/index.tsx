@@ -44,7 +44,12 @@ export type DateFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 
 	 * If this is `NaN`, the value will be controlled internally and without Formik.
 	 */
 	value?: number | string,
-	withTime?: boolean
+	withTime?: boolean,
+	defaultYear?: number,
+	defaultMonth?: number,
+	defaultDay?: number,
+	defaultHour?: number,
+	defaultMinute?: number
 };
 
 const DateField = ({
@@ -56,6 +61,11 @@ const DateField = ({
 	max = Date.now() + 1000 * 60 * 60 * 24 * 365 * 100,
 	autoComplete,
 	withTime,
+	defaultYear = NaN,
+	defaultMonth = NaN,
+	defaultDay = NaN,
+	defaultHour = NaN,
+	defaultMinute = NaN,
 	...props
 }: DateFieldProps) => {
 	const idPrefix = usePrefixedID();
@@ -86,7 +96,13 @@ const DateField = ({
 	let hour = date ? date.getHours() : NaN;
 	let minute = date ? date.getMinutes() : NaN;
 
-	const [inputValues, setInputValues] = useState({ year, month, day, hour, minute } as const);
+	const [inputValues, setInputValues] = useState({
+		year: Number.isNaN(year) ? defaultYear : year,
+		month: Number.isNaN(month) ? defaultMonth : month,
+		day: Number.isNaN(day) ? defaultDay : day,
+		hour: Number.isNaN(hour) ? defaultHour : hour,
+		minute: Number.isNaN(minute) ? defaultMinute : minute
+	} as const);
 
 	if (Number.isNaN(year) || Number.isNaN(month) || Number.isNaN(day) || Number.isNaN(hour) || Number.isNaN(minute)) {
 		({ year, month, day, hour, minute } = inputValues);
