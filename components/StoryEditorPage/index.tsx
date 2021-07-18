@@ -323,9 +323,14 @@ const StoryEditorPage = React.memo(({
 								</>
 							)}
 						</Row>
-						<Row id="publish-tip">
-							Tip: Shift+click the publish button to bypass this dialog and publish immediately.
-						</Row>
+						{
+							// To reduce clutter, only show the tip on the default `action` setting.
+							values.action === 'publish' && (
+								<Row id="publish-tip">
+									Tip: Shift+click the publish button to bypass this dialog and publish immediately.
+								</Row>
+							)
+						}
 					</>
 				),
 				actions: ['Submit', 'Cancel']
