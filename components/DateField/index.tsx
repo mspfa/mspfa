@@ -178,8 +178,12 @@ const DateField = ({
 
 		if (withTime) {
 			newDate.setHours(
-				newValues.hour,
-				newValues.minute
+				newValues.hour >= 0 && newValues.hour < 24
+					? newValues.hour
+					: NaN,
+				newValues.minute >= 0 && newValues.minute < 60
+					? newValues.minute
+					: NaN
 			);
 		}
 
