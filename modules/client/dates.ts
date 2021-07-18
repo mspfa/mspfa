@@ -14,7 +14,7 @@ export const monthNames = [
 ] as const;
 
 /** Outputs a string which is exactly two digits of the input. */
-const twoDigits = (value: any) => `0${value}`.slice(-2);
+export const twoDigits = (value: any) => `0${value}`.slice(-2);
 
 /**
  * Gets the time from a `Date`.
