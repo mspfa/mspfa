@@ -360,6 +360,7 @@ const StoryEditorPage = React.memo(({
 					content: `Page ${pageID} has unsaved changes. Any pages being published must first be saved.`
 				});
 
+				formikPropsRef.current.setSubmitting(false);
 				return;
 			}
 
