@@ -260,82 +260,89 @@ const StoryEditorPage = React.memo(({
 		formikPropsRef.current.setSubmitting(false);
 	}, [onServer, page.id, reportPageValidity, storyID, formikPropsRef, setInitialPages, queuedValuesRef]);
 
-	const publishPage = useCallback(async () => {
+	const publishPage = useCallback(async (event: MouseEvent<HTMLButtonElement & HTMLAnchorElement>) => {
 		formikPropsRef.current.setSubmitting(true);
 
-		const dialog = new Dialog({
-			id: 'publish-pages',
-			title: 'Publish Pages',
-			initialValues: {
-				action: 'publish' as 'publish' | 'schedule',
-				date: '' as DateNumber | ''
-			},
-			content: ({ values }) => (
-				<>
-					<Row>
-						{`What would you like to do with ${firstDraftID === page.id
-							? `page ${page.id}`
-							: `pages ${firstDraftID} to ${page.id}`
-						}?`}
-					</Row>
-					<Row id="field-container-action">
-						<Field
-							type="radio"
-							id="field-action-publish"
-							name="action"
-							value="publish"
-						/>
-						<label htmlFor="field-action-publish">
-							Publish Now
-						</label>
-						<Field
-							type="radio"
-							id="field-action-schedule"
-							name="action"
-							value="schedule"
-						/>
-						<label htmlFor="field-action-schedule">
-							Schedule for Later
-						</label>
-						{values.action === 'schedule' && (
-							<>
-								<div id="field-container-schedule-date">
-									<DateField
-										name="date"
-										withTime
-										required
-										min={Date.now() + 1000 * 60}
-										max={Date.now() + 1000 * 60 * 60 * 24 * 365}
-										defaultYear={new Date().getFullYear()}
-										defaultMonth={new Date().getMonth()}
-										defaultDay={new Date().getDate()}
-									/>
-								</div>
-								{typeof values.date === 'number' && (
-									<Timestamp relative withTime>
-										{values.date}
-									</Timestamp>
-								)}
-							</>
-						)}
-					</Row>
-				</>
-			),
-			actions: ['Submit', 'Cancel']
-		});
+		/** The `published` value to set on the pages. */
+		let published = Date.now();
 
-		if (!(await dialog)?.submit) {
-			formikPropsRef.current.setSubmitting(false);
-			return;
+		if (!event.shiftKey) {
+			const dialog = new Dialog({
+				id: 'publish-pages',
+				title: 'Publish Pages',
+				initialValues: {
+					action: 'publish' as 'publish' | 'schedule',
+					date: '' as DateNumber | ''
+				},
+				content: ({ values }) => (
+					<>
+						<Row>
+							{`What would you like to do with ${firstDraftID === page.id
+								? `page ${page.id}`
+								: `pages ${firstDraftID} to ${page.id}`
+							}?`}
+						</Row>
+						<Row id="field-container-action">
+							<Field
+								type="radio"
+								id="field-action-publish"
+								name="action"
+								value="publish"
+							/>
+							<label htmlFor="field-action-publish">
+								Publish Now
+							</label>
+							<Field
+								type="radio"
+								id="field-action-schedule"
+								name="action"
+								value="schedule"
+							/>
+							<label htmlFor="field-action-schedule">
+								Schedule for Later
+							</label>
+							{values.action === 'schedule' && (
+								<>
+									<div id="field-container-date">
+										<DateField
+											name="date"
+											withTime
+											required
+											min={Date.now() + 1000 * 60}
+											max={Date.now() + 1000 * 60 * 60 * 24 * 365}
+											defaultYear={new Date().getFullYear()}
+											defaultMonth={new Date().getMonth()}
+											defaultDay={new Date().getDate()}
+										/>
+									</div>
+									{typeof values.date === 'number' && (
+										<Timestamp relative withTime>
+											{values.date}
+										</Timestamp>
+									)}
+								</>
+							)}
+						</Row>
+						<Row id="publish-tip">
+							Tip: Shift+click the publish button to bypass this dialog and publish immediately.
+						</Row>
+					</>
+				),
+				actions: ['Submit', 'Cancel']
+			});
+
+			if (!(await dialog)?.submit) {
+				formikPropsRef.current.setSubmitting(false);
+				return;
+			}
+
+			published = (
+				dialog.form!.values.action === 'schedule'
+					&& typeof dialog.form!.values.date === 'number'
+					? dialog.form!.values.date
+					: Date.now()
+			);
 		}
-
-		/** The date number to publish the pages. */
-		const published = (
-			dialog.form!.values.action === 'schedule'
-			&& typeof dialog.form!.values.date === 'number'
-				? dialog.form!.values.date
-				: Date.now()
-		);
 
 		const pageChanges: Record<string, RecursivePartial<ClientStoryPage>> = {};
 
