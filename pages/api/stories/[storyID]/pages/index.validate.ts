@@ -53,12 +53,6 @@ export default createValidator({
 											type: 'number'
 										}
 									},
-									tags: {
-										type: 'array',
-										items: {
-											$ref: '#/definitions/TagString'
-										}
-									},
 									unlisted: {
 										type: 'boolean'
 									},
@@ -81,7 +75,6 @@ export default createValidator({
 									'id',
 									'nextPages',
 									'notify',
-									'tags',
 									'title',
 									'unlisted'
 								]
@@ -111,12 +104,6 @@ export default createValidator({
 										type: 'array',
 										items: {
 											type: 'number'
-										}
-									},
-									tags: {
-										type: 'array',
-										items: {
-											$ref: '#/definitions/TagString'
 										}
 									},
 									unlisted: {
@@ -170,12 +157,6 @@ export default createValidator({
 		StoryPageID: {
 			type: 'number',
 			minimum: 1
-		},
-		TagString: {
-			type: 'string',
-			minLength: 1,
-			maxLength: 50,
-			pattern: '^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$'
 		}
 	}
 });

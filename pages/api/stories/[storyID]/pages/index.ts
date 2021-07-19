@@ -11,7 +11,7 @@ import { mergeWith } from 'lodash';
 import { overwriteArrays } from 'modules/client/utilities';
 
 /** The keys of all `ClientStoryPage` properties which the client should be able to `PUT` into any of their existing `StoryDocument['pages']` (except `'published'`). */
-type PuttableStoryPageKey = 'title' | 'content' | 'nextPages' | 'tags' | 'unlisted' | 'disableControls' | 'commentary' | 'notify';
+type PuttableStoryPageKey = 'title' | 'content' | 'nextPages' | 'unlisted' | 'disableControls' | 'commentary' | 'notify';
 
 const Handler: APIHandler<{
 	query: {

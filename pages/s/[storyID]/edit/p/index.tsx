@@ -434,7 +434,6 @@ const Component = withErrorPage<ServerSideProps>(({
 												title: privateStory.editorSettings.defaultPageTitle,
 												content: '',
 												nextPages: [id + 1],
-												tags: [],
 												unlisted: false,
 												disableControls: false,
 												commentary: '',

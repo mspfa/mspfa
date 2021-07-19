@@ -31,8 +31,6 @@ export type StoryPage = {
 	title: string,
 	content: string,
 	nextPages: number[],
-	/** @uniqueItems */
-	tags: TagString[],
 	unlisted: boolean,
 	/** Whether the client's controls should be disabled while this page is rendered. */
 	disableControls: boolean,
@@ -243,7 +241,6 @@ export const getClientStoryPage = (page: StoryPage): ClientStoryPage => ({
 	title: page.title,
 	content: page.content,
 	nextPages: page.nextPages,
-	tags: page.tags,
 	unlisted: page.unlisted,
 	disableControls: page.disableControls,
 	commentary: page.commentary,
