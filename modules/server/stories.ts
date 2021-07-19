@@ -351,7 +351,11 @@ export const unscheduleStory = (storyID: StoryID) => {
 /** Publishes due scheduled pages, sets a new timeout to rerun this function for future scheduled pages if there are any, and updates the story's `pageCount`. */
 export const updateStorySchedule = async (
 	story: StoryDocument,
-	/** An update query for this story. Any `$set` or `$unset` updates from this function will be added to this object. Upon this function's completion, any updates on this object will be pushed to the story. */
+	/**
+	 * An update query for this story. Any updates from this function will be added to this object. Upon this function's completion, anything on this object will be updated to the database for this story. Defaults to an empty object.
+	 *
+	 * This parameter is useful purely as an optimization, in order to avoid unnecessarily calling `updateOne` on the same story twice (once inside this function, and again outside wherever this function is being called), allowing it to instead only be called once inside.
+	 */
 	update: Omit<UpdateQuery<StoryDocument>, '$set' | '$unset'> & {
 		$set?: Mutable<UpdateQuery<StoryDocument>['$set']>,
 		$unset?: Mutable<UpdateQuery<StoryDocument>['$unset']>
