@@ -381,8 +381,9 @@ export const updateStorySchedule = async (
 
 		if (page.scheduled) {
 			if (published > now) {
+				// Ensure this is the first scheduled page and thus holds the next schedule date.
 				if (!storySchedules[story._id]) {
-					// Set a timeout to rerun this function on the schedule date of the first scheduled page.
+					// Set a timeout to rerun this function on the next schedule date.
 					// This timeout must be set before any async calls in this function, to avoid race conditions due to the delay argument being out of date.
 					storySchedules[story._id] = setTimeout(async () => {
 						updateStorySchedule(
