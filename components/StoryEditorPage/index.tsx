@@ -5,7 +5,7 @@ import type { FormikProps } from 'formik';
 import { Field } from 'formik';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
-import type { Dispatch, MouseEvent, MutableRefObject, RefObject, SetStateAction } from 'react';
+import { Dispatch, MouseEvent, MutableRefObject, RefObject, SetStateAction, useEffect } from 'react';
 import React, { useCallback, useRef, useState } from 'react';
 import AddButton from 'components/Button/AddButton';
 import type { KeyedClientStoryPage, Values } from 'pages/s/[storyID]/edit/p';
@@ -28,6 +28,9 @@ import DateField from 'components/DateField';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 type StoryPageAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]').default>;
+
+/** The maximum duration accepted by `setTimeout`. */
+const MAX_TIMEOUT = 2147483647;
 
 /**
  * Deletes a page from a `ClientStoryPageRecord` by its ID. Returns the new `ClientStoryPageRecord`.
@@ -109,6 +112,27 @@ const StoryEditorPage = React.memo(({
 				? 'published' as const
 				: 'scheduled' as const
 	);
+
+	const [, update] = useState(false);
+
+	// An effect hook to automatically re-render this component when the `pageStatus` should change from `'scheduled'` to `'published'`.
+	useEffect(() => {
+		if (pageStatus === 'scheduled') {
+			const timeout = setTimeout(() => {
+				// Re-render this component.
+				update(value => !value);
+			}, Math.min(
+				// The time until the schedule date.
+				initialPublished! - Date.now(),
+				// If the time until the schedule date is over the `MAX_TIMEOUT`, it's still fine if the timeout finishes before the schedule date, because whenever the timeout finishes, `setTimeout` would be called here again.
+				MAX_TIMEOUT
+			));
+
+			return () => {
+				clearTimeout(timeout);
+			};
+		}
+	}, [pageStatus, initialPublished]);
 
 	const sectionRef = useRef<HTMLDivElement>(null!);
 
