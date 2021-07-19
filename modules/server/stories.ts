@@ -419,6 +419,7 @@ export const updateStorySchedule = async (
 	}
 
 	// If there are still scheduled pages, set a timeout to rerun this function at the next schedule date.
+	// This must be after `updateOne` above finishes, to avoid race conditions.
 	if (nextScheduleDate !== undefined) {
 		storySchedules[story._id] = setTimeout(async () => {
 			updateStorySchedule(
