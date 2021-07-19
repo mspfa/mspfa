@@ -1,6 +1,6 @@
 import db from 'modules/server/db';
 import type { Quirk } from 'modules/client/quirks';
-import type { DateNumber, Mutable, URLString } from 'modules/types';
+import type { Mutable, URLString } from 'modules/types';
 import type { ClientStoryPage, PrivateStory, PublicStory } from 'modules/client/stories';
 import { StoryStatus, StoryPrivacy } from 'modules/client/stories';
 import type { UserDocument, UserID } from 'modules/server/users';
@@ -373,19 +373,30 @@ export const updateStorySchedule = async (
 
 	let updatedPageCount = 0;
 
-	// Store `Date.now()` into a variable so it is not a different value each time, possibly helping avoid race conditions.
+	// Store `Date.now()` into a variable so it is not a different value each time, helping avoid inconsistencies.
 	const now = Date.now();
-
-	/** The `published` value of the earliest page which is still scheduled. */
-	let nextScheduleDate: DateNumber | undefined;
 
 	for (const page of Object.values(story.pages)) {
 		const published = +(page.published ?? Infinity);
 
 		if (page.scheduled) {
 			if (published > now) {
-				if (nextScheduleDate === undefined) {
-					nextScheduleDate = published;
+				if (!storySchedules[story._id]) {
+					// Set a timeout to rerun this function on the schedule date of the first scheduled page.
+					// This timeout must be set before any async calls in this function, to avoid race conditions due to the delay argument being out of date.
+					storySchedules[story._id] = setTimeout(async () => {
+						updateStorySchedule(
+							(await stories.findOne({
+								_id: story._id
+							}))!
+							// The above non-nullability assertion is correct because either the story should be found at the end of this timeout, or whatever deleted it should clear this timeout so this point is never reached.
+						);
+					}, Math.min(
+						// The time until the schedule date.
+						published - Date.now(),
+						// If the time until the schedule date is over the `MAX_TIMEOUT`, it's still fine if the timeout finishes before the schedule date, because whenever the timeout finishes, `setTimeout` would be called here again.
+						MAX_TIMEOUT
+					));
 				}
 			} else {
 				// This scheduled page is due, so publish it.
@@ -420,23 +431,5 @@ export const updateStorySchedule = async (
 		await stories.updateOne({
 			_id: story._id
 		}, update);
-	}
-
-	// If there are still scheduled pages, set a timeout to rerun this function at the next schedule date.
-	// This must be after `updateOne` above finishes, to avoid race conditions.
-	if (nextScheduleDate !== undefined) {
-		storySchedules[story._id] = setTimeout(async () => {
-			updateStorySchedule(
-				(await stories.findOne({
-					_id: story._id
-				}))!
-				// The above non-nullability assertion is correct because either the story should be found at the end of this timeout, or whatever deleted it should clear this timeout so this point is never reached.
-			);
-		}, Math.min(
-			// The time until the schedule date.
-			nextScheduleDate - Date.now(),
-			// If the time until the schedule date is over the `MAX_TIMEOUT`, it's still fine if the timeout finishes before the schedule date, because whenever the timeout finishes, `setTimeout` would be called here again.
-			MAX_TIMEOUT
-		));
 	}
 };

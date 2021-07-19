@@ -66,7 +66,7 @@ const Handler: APIHandler<{
 	const $set: Record<string, unknown> = {};
 	const $unset: Record<string, true> = {};
 
-	// Store `Date.now()` into a variable so it is not a different value each time, possibly helping avoid race conditions.
+	// Store `Date.now()` into a variable so it is not a different value each time, helping avoid inconsistencies.
 	const now = Date.now();
 
 	for (const pageIDString of Object.keys(req.body)) {
