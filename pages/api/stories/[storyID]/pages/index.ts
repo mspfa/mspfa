@@ -1,7 +1,7 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
 import type { StoryPage } from 'modules/server/stories';
-import stories, { getStoryByUnsafeID, getClientStoryPage } from 'modules/server/stories';
+import { getStoryByUnsafeID, getClientStoryPage, updateStorySchedule } from 'modules/server/stories';
 import { authenticate } from 'modules/server/auth';
 import type { ClientStoryPage, ClientStoryPageRecord } from 'modules/client/stories';
 import type { DateNumber, RecursivePartial } from 'modules/types';
@@ -66,6 +66,9 @@ const Handler: APIHandler<{
 	const $set: Record<string, unknown> = {};
 	const $unset: Record<string, true> = {};
 
+	// Store `Date.now()` into a variable so it is not a different value each time, possibly helping avoid race conditions.
+	const now = Date.now();
+
 	for (const pageIDString of Object.keys(req.body)) {
 		const pageID = +pageIDString;
 
@@ -110,18 +113,21 @@ const Handler: APIHandler<{
 			}
 
 			const { published, ...clientPageWithoutPublished } = clientPage;
-			const page: StoryPage = {
+			const newPage: StoryPage = {
 				...clientPageWithoutPublished,
 				...published !== undefined && published !== null && {
-					published: new Date(published)
+					published: new Date(published),
+					...published > now && {
+						scheduled: true
+					}
 				},
 				comments: []
 			};
 
-			$set[`pages.${pageID}`] = page;
+			$set[`pages.${pageID}`] = newPage;
 
-			story.pages[pageID] = page;
-			newClientPages[pageID] = getClientStoryPage(page);
+			story.pages[pageID] = newPage;
+			newClientPages[pageID] = getClientStoryPage(newPage);
 		} else {
 			// `clientPage` is the changes for an existing page being edited.
 
@@ -136,19 +142,30 @@ const Handler: APIHandler<{
 			const pageChanges: RecursivePartial<StoryPage> = {
 				...clientPageWithoutPublished,
 				...published !== undefined && published !== null && {
-					published: new Date(published)
+					published: new Date(published),
+					...published > now && {
+						scheduled: true
+					}
 				}
 			};
+
+			const page = story.pages[pageID];
 
 			if (
 				// The client wants to set this page as a draft.
 				published === null
 				// The page is not already a draft.
-				&& story.pages[pageID].published !== undefined
+				&& page.published !== undefined
 			) {
 				// Set this page as a draft.
+
 				$unset[`pages.${pageID}.published`] = true;
-				delete story.pages[pageID].published;
+				delete page.published;
+
+				if (page.scheduled) {
+					$unset[`pages.${pageID}.scheduled`] = true;
+					delete page.scheduled;
+				}
 			}
 
 			flatten(pageChanges, `pages.${pageID}.`, $set);
@@ -156,68 +173,32 @@ const Handler: APIHandler<{
 			// Convert the modified `StoryPage` to a `ClientStoryPage` to send back to the client.
 			newClientPages[pageID] = getClientStoryPage(
 				// Merge the changes in `pageChanges` into the original `StoryPage` to get what it would be after the changes.
-				mergeWith(
-					// The original `StoryPage`.
-					story.pages[pageID],
-					// The requested `StoryPage` changes.
-					pageChanges,
-					overwriteArrays
-				)
+				mergeWith(page, pageChanges, overwriteArrays)
 			);
 		}
 	}
 
-	const now = Date.now();
-
-	let updatedPageCount = 0;
-
 	const pageValues = Object.values(story.pages);
-	for (let i = 0; i < pageValues.length; i++) {
+	for (let i = 1; i < pageValues.length; i++) {
 		const page = pageValues[i];
 		const published = +(page.published ?? Infinity);
+		const previousPublished = +(pageValues[i - 1].published ?? Infinity);
 
-		// The logic in this block requires information about the previous page, so we must exclude the first page, since that doesn't have a previous page.
-		if (i !== 0) {
-			const previousPublished = +(pageValues[i - 1].published ?? Infinity);
-
-			// Ensure that it is still impossible with the new changes for the `published` dates to result in gaps in published pages.
-			if (
-				// Check if the previous page is unpublished. On the other hand, if the previous page is published, we don't care when this page is being published.
-				previousPublished > now
-				// Check if this page would be published before the previous page (which shouldn't be allowed since it would allow for gaps in published pages).
-				&& published < previousPublished
-			) {
-				res.status(422).send({
-					message: `Page ${page.id} should not have a \`published\` date set before page ${page.id - 1}.`
-				});
-				return;
-			}
-		}
-
-		if (published <= now && !page.unlisted) {
-			// If this page is public, set the page count to its ID.
-			updatedPageCount = page.id;
-			// The reason we don't run `updatedPageCount++` here instead is because it's better to use the ID of the last public page as the page count rather than the actual quantity of public pages. If we did use the actual quantity of public pages as the page count, then for example, if a story's last public page ID is 40 but there is a single earlier page which is unlisted, then the page count would say 39. For those who notice this inconsistency, it could be confusing, appear to be a bug, or even hint at an unlisted page which they might then actively look for. Simply using the ID of the last public page rather than the true public page count avoids all of this with no tangible issues.
+		// Ensure that it is still impossible with the new changes for the `published` dates to result in gaps in published pages.
+		if (
+			// Check if the previous page is unpublished. On the other hand, if the previous page is published, we don't care when this page is being published.
+			previousPublished > now
+			// Check if this page would be published before the previous page (which shouldn't be allowed since it would allow for gaps in published pages).
+			&& published < previousPublished
+		) {
+			res.status(422).send({
+				message: `Page ${page.id} should not have a \`published\` date set before page ${page.id - 1}.`
+			});
+			return;
 		}
 	}
 
-	if (updatedPageCount !== story.pageCount) {
-		// If the page count changed, update it.
-		$set.pageCount = updatedPageCount;
-		// TODO: Update page count upon release of scheduled pages.
-	}
-
-	const setValues = Object.values($set).length;
-	const unsetValues = Object.values($unset).length;
-
-	if (setValues || unsetValues) {
-		await stories.updateOne({
-			_id: story._id
-		}, {
-			...setValues && { $set },
-			...unsetValues && { $unset }
-		});
-	}
+	await updateStorySchedule(story, { $set, $unset });
 
 	res.status(200).send(newClientPages);
 };

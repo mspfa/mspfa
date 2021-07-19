@@ -1,11 +1,14 @@
 // This script is executed once initially on the server.
 
 import users from 'modules/server/users';
-import stories from 'modules/server/stories';
+import stories, { unscheduleStory, updateStorySchedule } from 'modules/server/stories';
 import { connection } from 'modules/server/db';
 import messages, { deleteMessageForUser } from 'modules/server/messages';
 
 connection.then(() => {
+	// Set timeouts for any scheduled pages.
+	stories.find!().forEach(updateStorySchedule);
+
 	const arbitraryInterval = () => {
 		const now = new Date();
 
@@ -21,10 +24,14 @@ connection.then(() => {
 			users.deleteOne({ _id: user._id });
 		});
 
-		stories.deleteMany({
+		stories.find!({
 			willDelete: {
 				$lte: now
 			}
+		}).forEach(story => {
+			unscheduleStory(story._id);
+
+			stories.deleteOne({ _id: story._id });
 		});
 	};
 

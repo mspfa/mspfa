@@ -1,11 +1,12 @@
 import db from 'modules/server/db';
 import type { Quirk } from 'modules/client/quirks';
-import type { URLString } from 'modules/types';
+import type { DateNumber, Mutable, URLString } from 'modules/types';
 import type { ClientStoryPage, PrivateStory, PublicStory } from 'modules/client/stories';
 import { StoryStatus, StoryPrivacy } from 'modules/client/stories';
 import type { UserDocument, UserID } from 'modules/server/users';
 import users from 'modules/server/users';
 import type { APIResponse } from 'modules/server/api';
+import type { UpdateQuery } from 'mongodb';
 
 /** @minimum 1 */
 export type StoryID = number;
@@ -24,6 +25,8 @@ export type StoryPage = {
 	id: StoryPageID,
 	/** The date that the page was or will be published, or undefined if the page is still a draft. */
 	published?: Date,
+	/** `true` if this page still needs to be processed for publishing, otherwise undefined. */
+	scheduled?: true,
 	/** @maxLength 500 */
 	title: string,
 	content: string,
@@ -328,4 +331,107 @@ export const updateAndSendFavCount = async (
 	});
 
 	res.send({ favCount });
+};
+
+/** The maximum duration accepted by `setTimeout`. */
+const MAX_TIMEOUT = 2147483647;
+
+/** A record that maps each story ID in the record to a timeout that calls `updateStorySchedule` on that story. */
+const storySchedules: Partial<Record<StoryID, NodeJS.Timeout>> = {};
+
+export const unscheduleStory = (storyID: StoryID) => {
+	const oldTimeout = storySchedules[storyID];
+
+	if (oldTimeout) {
+		clearTimeout(oldTimeout);
+		delete storySchedules[storyID];
+	}
+};
+
+/** Publishes due scheduled pages, sets a new timeout to rerun this function for future scheduled pages if there are any, and updates the story's `pageCount`. */
+export const updateStorySchedule = async (
+	story: StoryDocument,
+	/** An update query for this story. Any `$set` or `$unset` updates from this function will be added to this object. Upon this function's completion, any updates on this object will be pushed to the story. */
+	update: Omit<UpdateQuery<StoryDocument>, '$set' | '$unset'> & {
+		$set?: Mutable<UpdateQuery<StoryDocument>['$set']>,
+		$unset?: Mutable<UpdateQuery<StoryDocument>['$unset']>
+	} = {}
+) => {
+	unscheduleStory(story._id);
+
+	if (!update.$set) {
+		update.$set = {};
+	}
+
+	if (!update.$unset) {
+		update.$unset = {};
+	}
+
+	let updatedPageCount = 0;
+
+	// Store `Date.now()` into a variable so it is not a different value each time, possibly helping avoid race conditions.
+	const now = Date.now();
+
+	/** The `published` value of the earliest page which is still scheduled. */
+	let nextScheduleDate: DateNumber | undefined;
+
+	for (const page of Object.values(story.pages)) {
+		const published = +(page.published ?? Infinity);
+
+		if (page.scheduled) {
+			if (published > now) {
+				if (nextScheduleDate === undefined) {
+					nextScheduleDate = published;
+				}
+			} else {
+				// This scheduled page is due, so publish it.
+
+				update.$unset[`pages.${page.id}.scheduled`] = true;
+
+				// TODO: Set update queries for publish notifications here, or something like that.
+			}
+		}
+
+		if (published <= now && !page.unlisted) {
+			// If this page is public, set the page count to its ID.
+			updatedPageCount = page.id;
+			// The reason we don't run `updatedPageCount++` here instead is because it's better to use the ID of the last public page as the page count rather than the actual quantity of public pages. If we did use the actual quantity of public pages as the page count, then for example, if a story's last public page ID is 40 but there is a single earlier page which is unlisted, then the page count would say 39. For those who notice this inconsistency, it could be confusing, appear to be a bug, or even hint at an unlisted page which they might then actively look for. Simply using the ID of the last public page rather than the true public page count avoids all of this with no tangible issues.
+		}
+	}
+
+	if (updatedPageCount !== story.pageCount) {
+		// If the page count changed, update it.
+		update.$set.pageCount = updatedPageCount;
+	}
+
+	if (!Object.values(update.$set).length) {
+		delete update.$set;
+	}
+
+	if (!Object.values(update.$unset).length) {
+		delete update.$unset;
+	}
+
+	if (Object.values(update).length) {
+		await stories.updateOne({
+			_id: story._id
+		}, update);
+	}
+
+	// If there are still scheduled pages, set a timeout to rerun this function at the next schedule date.
+	if (nextScheduleDate !== undefined) {
+		storySchedules[story._id] = setTimeout(async () => {
+			updateStorySchedule(
+				(await stories.findOne({
+					_id: story._id
+				}))!
+				// The above non-nullability assertion is correct because either the story should be found at the end of this timeout, or whatever deleted it should clear this timeout so this point is never reached.
+			);
+		}, Math.min(
+			// The time until the schedule date.
+			nextScheduleDate - Date.now(),
+			// If the time until the schedule date is over the `MAX_TIMEOUT`, it's still fine if the timeout finishes before the schedule date, because whenever the timeout finishes, `setTimeout` would be called here again.
+			MAX_TIMEOUT
+		));
+	}
 };
