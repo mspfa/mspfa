@@ -150,8 +150,78 @@ const Component = withErrorPage<ServerSideProps>(({
 					/** A ref to the next React key a `ClientStoryPage` should use. This is incremented after each time it is assigned to a page. */
 					const nextKeyRef = useRef(0);
 
-					const pageComponents: ReactNode[] = [];
 					const pageValues = Object.values(formikPropsRef.current.values.pages);
+
+					// This state is a record that maps page IDs to a boolean of their `sleeping` prop, or undefined if the record hasn't been processed by the below effect hook yet.
+					const [sleepingPages, setSleepingPages] = useState<Record<StoryPageID, boolean>>({});
+
+					const sleepingPagesRef = useLatest(sleepingPages);
+
+					useEffect(() => {
+						const updateSleepingPages = () => {
+							const newSleepingPages: Record<StoryPageID, boolean> = {};
+							let sleepingPagesChanged = false;
+
+							const pageSections = document.getElementsByClassName('story-editor-page-section') as HTMLCollectionOf<HTMLDivElement>;
+
+							const focusedPageSection: HTMLDivElement | undefined = Array.prototype.find.call(
+								pageSections,
+								(pageSection: HTMLDivElement) => pageSection.contains(document.activeElement)
+							);
+
+							for (const pageSection of pageSections) {
+								// If `pageSection.id === 'p14'` for example, then `pageID === 14`.
+								const pageID = +pageSection.id.slice(1);
+
+								const sleeping = !(
+									// The first page and the last page must not be sleeping so that they can be tabbed into from outside of view.
+									pageID === 1 || pageID === pageValues.length
+									// Whether this page is visible.
+									|| (
+										// Whether the bottom of this page is below the top of the view.
+										pageSection.offsetTop + pageSection.offsetHeight >= document.documentElement.scrollTop
+										// Whether the top of this page is above the bottom of the view.
+										&& pageSection.offsetTop <= document.documentElement.scrollTop + document.documentElement.clientHeight
+									)
+									// Page sections which have focus should not be able to sleep, or else they would lose focus, causing inconvenience to the user.
+									|| pageSection === focusedPageSection
+									// The pages before and after a focused page must also not be sleeping, so they can be tabbed into.
+									|| pageSection.previousSibling === focusedPageSection
+									|| pageSection.nextSibling === focusedPageSection
+								);
+
+								newSleepingPages[pageID] = sleeping;
+
+								// Check if the value we're setting used to be unset or different.
+								if (!(
+									pageID in sleepingPagesRef.current
+									&& sleepingPagesRef.current[pageID] === sleeping
+								)) {
+									sleepingPagesChanged = true;
+								}
+							}
+
+							if (sleepingPagesChanged) {
+								setSleepingPages(newSleepingPages);
+							}
+						};
+
+						updateSleepingPages();
+						document.addEventListener('scroll', updateSleepingPages);
+						document.addEventListener('resize', updateSleepingPages);
+						// We use `focusin` and `focusout` instead of `focus` and `blur` because the former two bubble while the latter two don't.
+						document.addEventListener('focusin', updateSleepingPages);
+						document.addEventListener('focusout', updateSleepingPages);
+
+						return () => {
+							document.removeEventListener('scroll', updateSleepingPages);
+							document.removeEventListener('resize', updateSleepingPages);
+							document.removeEventListener('focusin', updateSleepingPages);
+							document.removeEventListener('focusout', updateSleepingPages);
+						};
+					}, [pageValues.length, sleepingPagesRef]);
+
+					const pageComponents: ReactNode[] = [];
 
 					let firstDraftID: StoryPageID | undefined;
 
@@ -172,10 +242,16 @@ const Component = withErrorPage<ServerSideProps>(({
 							firstDraftID = page.id;
 						}
 
+						if (!(page.id in sleepingPages)) {
+							// Don't sleep by default, so the heights of the page sections can be cached.
+							sleepingPages[page.id] = false;
+						}
+
 						pageComponents.unshift(
 							<StoryEditorPage
 								// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
 								key={page[_key]}
+								sleeping={sleepingPages[page.id]}
 								storyID={privateStory.id}
 								initialPublished={initialPublished}
 								firstDraftID={firstDraftID}
