@@ -301,9 +301,10 @@ const StoryEditorPage = React.memo(({
 				content: ({ values }) => (
 					<>
 						<Row>
-							{`What would you like to do with ${firstDraftID === page.id
-								? `page ${page.id}`
-								: `pages ${firstDraftID} to ${page.id}`
+							{`What would you like to do with ${
+								firstDraftID === page.id
+									? `page ${page.id}`
+									: `pages ${firstDraftID} to ${page.id}`
 							}?`}
 						</Row>
 						<Row id="field-container-action">
