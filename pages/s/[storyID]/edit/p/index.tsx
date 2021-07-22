@@ -247,6 +247,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							sleepingPages[page.id] = false;
 						}
 
+						// We `unshift` and not `push` so the pages are displayed in reverse order: last pages first.
 						pageComponents.unshift(
 							<StoryEditorPageSection
 								// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
