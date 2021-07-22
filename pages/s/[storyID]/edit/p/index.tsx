@@ -179,7 +179,9 @@ const Component = withErrorPage<ServerSideProps>(({
 					/** A ref to whether `defaultCulledHeight` is still unset. */
 					const defaultCulledHeightUnsetRef = useRef(true);
 
-					const cachedPageHeightsRef = useRef<Partial<Record<StoryPageID, number>>>({});
+					/** A ref to a partial record that maps each page's key to its cached height. */
+					const cachedPageHeightsRef = useRef<Partial<Record<number, number>>>({});
+					// Keys are used instead of page IDs so that cached heights are preserved correctly when pages are deleted or rearranged.
 
 					// This is a layout effect rather than a normal effect to reduce the time the user can briefly see culled pages.
 					useIsomorphicLayoutEffect(() => {
@@ -236,7 +238,10 @@ const Component = withErrorPage<ServerSideProps>(({
 
 									if (culled) {
 										// If this unculled page is changing to be culled, cache its height beforehand so it can maintain that height after being culled.
-										cachedPageHeightsRef.current[pageID] = pageSection.offsetHeight;
+										cachedPageHeightsRef.current[
+											// This page's key.
+											(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[_key]
+										] = pageSection.offsetHeight;
 									}
 								}
 
@@ -266,7 +271,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							document.removeEventListener('resize', updateCulledPages);
 							document.removeEventListener('focusin', updateCulledPages);
 						};
-					}, [pageValues.length, culledPagesRef]);
+					}, [pageValues.length, culledPagesRef, formikPropsRef]);
 
 					const pageComponents: ReactNode[] = new Array(pageValues.length);
 

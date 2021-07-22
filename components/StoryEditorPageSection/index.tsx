@@ -72,7 +72,7 @@ const deleteFromClientStoryPageRecord = (
 
 export type StoryEditorPageSectionProps = {
 	/** The `ClientStoryPage` being edited. */
-	children: ClientStoryPage,
+	children: KeyedClientStoryPage,
 	/** Whether this page should only be partially loaded/rendered, as an optimization. */
 	culled: boolean,
 	/** This page's `published` value in the `initialValues`. */
@@ -456,7 +456,7 @@ const StoryEditorPageSection = React.memo(({
 	}, [formikPropsRef, page.id, onServer, storyID, setInitialPages, queuedValuesRef]);
 
 	/** The last known height of this component while not culled, or undefined if it has never been not culled. */
-	const cachedHeight = cachedPageHeightsRef.current[page.id];
+	const cachedHeight = cachedPageHeightsRef.current[page[_key]];
 
 	return culled ? (
 		<div
