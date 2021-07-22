@@ -161,7 +161,8 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					const culledPagesRef = useLatest(culledPages);
 
-					useEffect(() => {
+					// This is a layout effect rather than a normal effect to reduce the time the user can briefly see culled pages.
+					useIsomorphicLayoutEffect(() => {
 						const updateCulledPages = () => {
 							const newCulledPages: Record<StoryPageID, boolean> = {};
 							let culledPagesChanged = false;
@@ -261,10 +262,11 @@ const Component = withErrorPage<ServerSideProps>(({
 						}
 
 						if (!(page.id in culledPages)) {
-							// Only keep the last two pages unculled by default. Not culling more than a few pages leads to unacceptably large initial load times.
+							// Not culling more than a few pages leads to unacceptably large initial load times.
+							// We choose not to cull only the first page and the last two pages because that exact set of pages is the most likely to still be unculled after `updateCulledPages` is called, and thus it is the least likely to cause an unnecessary re-render due to a change in the culled pages.
 							culledPages[page.id] = !(
-								page.id === pageValues.length
-								|| page.id === pageValues.length - 1
+								page.id === 1
+								|| page.id >= pageValues.length - 1
 							);
 						}
 
