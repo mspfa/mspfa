@@ -239,11 +239,11 @@ const Component = withErrorPage<ServerSideProps>(({
 						};
 					}, [pageValues.length, culledPagesRef]);
 
-					const pageComponents: ReactNode[] = [];
+					const pageComponents: ReactNode[] = new Array(pageValues.length);
 
 					let firstDraftID: StoryPageID | undefined;
 
-					for (let i = 0; i < pageValues.length; i++) {
+					for (let i = pageValues.length - 1; i >= 0; i--) {
 						const page = pageValues[i] as KeyedClientStoryPage;
 
 						// If this page doesn't have a React key yet, set one.
@@ -268,8 +268,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							);
 						}
 
-						// We `unshift` and not `push` so the pages are displayed in reverse order: last pages first.
-						pageComponents.unshift(
+						pageComponents.push(
 							<StoryEditorPageSection
 								// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
 								key={page[_key]}
