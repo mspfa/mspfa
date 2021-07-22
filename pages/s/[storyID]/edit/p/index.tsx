@@ -167,6 +167,9 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					const pageValues = Object.values(formikPropsRef.current.values.pages);
 
+					// As a network optimization, the default is to `undefined` to prevent rendering the page components server-side.
+					const [viewMode, setViewMode] = useState<'sections' | 'tiles' | undefined>();
+
 					// This state is a record that maps page IDs to a boolean of their `culled` prop, or undefined if the record hasn't been processed by the below effect hook yet.
 					const [culledPages, setCulledPages] = useState<Partial<Record<StoryPageID, boolean>>>({});
 					const culledPagesRef = useLatest(culledPages);
@@ -185,6 +188,15 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					// This is a layout effect rather than a normal effect to reduce the time the user can briefly see culled pages.
 					useIsomorphicLayoutEffect(() => {
+						if (viewMode !== 'sections') {
+							if (viewMode === undefined) {
+								// Now that we're on the client, it's safe to render the page components.
+								setViewMode('sections');
+							}
+
+							return;
+						}
+
 						const updateCulledPages = () => {
 							const newCulledPages: Record<StoryPageID, boolean> = {};
 							let culledPagesChanged = false;
@@ -271,46 +283,50 @@ const Component = withErrorPage<ServerSideProps>(({
 							document.removeEventListener('resize', updateCulledPages);
 							document.removeEventListener('focusin', updateCulledPages);
 						};
-					}, [pageValues.length, culledPagesRef, formikPropsRef]);
+					}, [viewMode, pageValues.length, culledPagesRef, formikPropsRef]);
 
-					const pageComponents: ReactNode[] = new Array(pageValues.length);
+					let pageComponents: ReactNode[] | undefined;
 
 					let firstDraftID: StoryPageID | undefined;
 
-					for (let i = pageValues.length - 1; i >= 0; i--) {
-						const page = pageValues[i] as KeyedClientStoryPage;
+					if (viewMode === 'sections') {
+						pageComponents = new Array(pageValues.length);
 
-						// If this page doesn't have a React key yet, set one.
-						if (!(_key in page)) {
-							page[_key] = nextKeyRef.current++;
-						}
+						for (let i = pageValues.length - 1; i >= 0; i--) {
+							const page = pageValues[i] as KeyedClientStoryPage;
 
-						const initialPublished = (
-							formikPropsRef.current.initialValues.pages[page.id] as ClientStoryPage | undefined
-						)?.published;
+							// If this page doesn't have a React key yet, set one.
+							if (!(_key in page)) {
+								page[_key] = nextKeyRef.current++;
+							}
 
-						if (initialPublished === undefined) {
-							firstDraftID = page.id;
-						}
+							const initialPublished = (
+								formikPropsRef.current.initialValues.pages[page.id] as ClientStoryPage | undefined
+							)?.published;
 
-						if (!(page.id in culledPages)) {
-							// Not culling more than a few pages leads to unacceptably large initial load times.
-							// We choose not to cull only the first page and the last two pages because that exact set of pages is the most likely to still be unculled after `updateCulledPages` is called, and thus it is the least likely to cause an unnecessary re-render due to a change in the culled pages.
-							culledPages[page.id] = !(
-								page.id === 1
-								|| page.id >= pageValues.length - 1
+							if (initialPublished === undefined) {
+								firstDraftID = page.id;
+							}
+
+							if (!(page.id in culledPages)) {
+								// Not culling more than a few pages leads to unacceptably large initial load times.
+								// We choose not to cull only the first page and the last two pages because that exact set of pages is the most likely to still be unculled after `updateCulledPages` is called, and thus it is the least likely to cause an unnecessary re-render due to a change in the culled pages.
+								culledPages[page.id] = !(
+									page.id === 1
+									|| page.id >= pageValues.length - 1
+								);
+							}
+
+							pageComponents.push(
+								<StoryEditorPageSection
+									// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
+									key={page[_key]}
+									page={page}
+									culled={culledPages[page.id]!}
+									initialPublished={initialPublished}
+								/>
 							);
 						}
-
-						pageComponents.push(
-							<StoryEditorPageSection
-								// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
-								key={page[_key]}
-								page={page}
-								culled={culledPages[page.id]!}
-								initialPublished={initialPublished}
-							/>
-						);
 					}
 
 					return (
@@ -610,7 +626,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											cachedPageHeightsRef
 											// This ESLint comment is necessary because ESLint doesn't know that `privateStory.id` can change, and it doesn't understand that changes to `formikPropsRef.current.isSubmitting` need to cause this object to update.
 											// eslint-disable-next-line react-hooks/exhaustive-deps
-										}), [formikPropsRef.current.isSubmitting, privateStory.id, firstDraftID, formikPropsRef])
+										}), [formikPropsRef.current.isSubmitting, firstDraftID, privateStory.id, formikPropsRef])
 									}
 								>
 									{pageComponents}
