@@ -168,7 +168,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					const pageValues = Object.values(formikPropsRef.current.values.pages);
 
 					// As a network optimization, the default is to `undefined` to prevent rendering the page components server-side.
-					const [viewMode, setViewMode] = useState<'sections' | 'tiles' | undefined>();
+					const [viewMode, setViewMode] = useState<'sections' | 'grid' | undefined>();
 
 					// This state is a record that maps page IDs to a boolean of their `culled` prop, or undefined if the record hasn't been processed by the below effect hook yet.
 					const [culledPages, setCulledPages] = useState<Partial<Record<StoryPageID, boolean>>>({});
