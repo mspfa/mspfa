@@ -301,7 +301,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											className="small"
 											href={`/s/${privateStory.id}/edit`}
 										>
-											Edit Adventure
+											Edit Info
 										</Button>
 										<Button
 											className="small"
