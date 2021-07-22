@@ -141,7 +141,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 						cancelTokenSourceRef.current = undefined;
 
-						// This ESLint comment is necessary because ESLint does not recognize that `privateStory` can change from outside the scope of this hook's component.
+						// This ESLint comment is necessary because ESLint doesn't know that `privateStory` can change.
 						// eslint-disable-next-line react-hooks/exhaustive-deps
 					}, [privateStory]);
 
@@ -549,7 +549,7 @@ const Component = withErrorPage<ServerSideProps>(({
 												(document.getElementById(`field-pages-${id}-title`) as HTMLInputElement | null)?.select();
 											});
 
-											// This ESLint comment is necessary because ESLint does not recognize that `privateStory.editorSettings.defaultPageTitle` can change from outside the scope of this hook's component.
+											// This ESLint comment is necessary because ESLint doesn't know that `privateStory.editorSettings.defaultPageTitle` can change.
 											// eslint-disable-next-line react-hooks/exhaustive-deps
 										}, [formikPropsRef, privateStory.editorSettings.defaultPageTitle])
 									}
