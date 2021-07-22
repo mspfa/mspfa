@@ -539,8 +539,8 @@ const Component = withErrorPage<ServerSideProps>(({
 											};
 
 											formikPropsRef.current.setFieldValue('pages', {
-												[id]: newPage,
-												...formikPropsRef.current.values.pages
+												...formikPropsRef.current.values.pages,
+												[id]: newPage
 											});
 
 											// Wait for the newly added editor page to render.
