@@ -166,9 +166,16 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					const pageValues = Object.values(formikPropsRef.current.values.pages);
 
+					// This state is for the default height of a culled page section.
+					const [defaultCulledHeight, setDefaultCulledHeight] = useState(
+						// An arbitrary default culled page section height. Shouldn't be too small, or else unnecessary re-renders may occur initially due to a higher chance of more page sections being temporarily in view for a short time.
+						320
+					);
+					/** A ref to whether `defaultCulledHeight` is still unset. */
+					const defaultCulledHeightUnsetRef = useRef(true);
+
 					// This state is a record that maps page IDs to a boolean of their `culled` prop, or undefined if the record hasn't been processed by the below effect hook yet.
 					const [culledPages, setCulledPages] = useState<Partial<Record<StoryPageID, boolean>>>({});
-
 					const culledPagesRef = useLatest(culledPages);
 
 					// This is a layout effect rather than a normal effect to reduce the time the user can briefly see culled pages.
@@ -223,6 +230,14 @@ const Component = withErrorPage<ServerSideProps>(({
 
 								if (culledPagesRef.current[pageID] !== culled) {
 									culledPagesChanged = true;
+									console.log(pageID, culledPagesRef.current[pageID], culled);
+								}
+
+								if (!culled && defaultCulledHeightUnsetRef.current) {
+									// If this page section is unculled and no default culled page section height has been set yet, set the default culled height to this height.
+									// Using an arbitrary unculled height as the default culled height is a sufficient solution for scroll jitter in the vast majority of cases.
+									setDefaultCulledHeight(pageSection.offsetHeight);
+									defaultCulledHeightUnsetRef.current = false;
 								}
 							}
 
@@ -564,6 +579,13 @@ const Component = withErrorPage<ServerSideProps>(({
 								</Button>
 							</div>
 							<Box id="story-editor-pages">
+								<style jsx global>
+									{`
+										.story-editor-page-section.culled {
+											height: ${defaultCulledHeight}px;
+										}
+									`}
+								</style>
 								<StoryEditorContext.Provider
 									value={
 										// These values are passed through a context rather than directly as `StoryEditorPageSection` props to reduce `React.memo`'s prop comparison performance cost.
@@ -576,7 +598,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											isSubmitting: formikPropsRef.current.isSubmitting
 											// This ESLint comment is necessary because ESLint doesn't know that `privateStory.id` can change, and it doesn't understand that changes to `formikPropsRef.current.isSubmitting` need to cause this object to update.
 											// eslint-disable-next-line react-hooks/exhaustive-deps
-										}), [privateStory.id, firstDraftID, formikPropsRef, formikPropsRef.current.isSubmitting])
+										}), [formikPropsRef.current.isSubmitting, privateStory.id, firstDraftID, formikPropsRef])
 									}
 								>
 									{pageComponents}
