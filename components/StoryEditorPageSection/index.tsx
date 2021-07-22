@@ -1,22 +1,21 @@
 import './styles.module.scss';
 import BoxSection from 'components/Box/BoxSection';
 import type { ClientStoryPage, ClientStoryPageRecord } from 'modules/client/stories';
-import type { FormikProps } from 'formik';
 import { Field } from 'formik';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
-import type { Dispatch, MouseEvent, MutableRefObject, RefObject, SetStateAction } from 'react';
-import React, { useCallback, useRef, useState, useEffect } from 'react';
+import type { MouseEvent } from 'react';
+import React, { useCallback, useRef, useState, useEffect, useContext } from 'react';
 import AddButton from 'components/Button/AddButton';
-import type { KeyedClientStoryPage, Values } from 'pages/s/[storyID]/edit/p';
-import { _key } from 'pages/s/[storyID]/edit/p';
+import type { KeyedClientStoryPage } from 'pages/s/[storyID]/edit/p';
+import { StoryEditorContext, _key } from 'pages/s/[storyID]/edit/p';
 import RemoveButton from 'components/Button/RemoveButton';
 import { isEqual } from 'lodash';
 import Timestamp from 'components/Timestamp';
 import InlineRowSection from 'components/Box/InlineRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
 import Button from 'components/Button';
-import type { StoryID, StoryPageID } from 'modules/server/stories';
+import type { StoryPageID } from 'modules/server/stories';
 import Dialog from 'modules/client/Dialog';
 import Row from 'components/Row';
 import Link from 'components/Link';
@@ -77,32 +76,25 @@ export type StoryEditorPageSectionProps = {
 	children: ClientStoryPage,
 	/** Whether this page should only be partially loaded/rendered, as an optimization. */
 	culled: boolean,
-	storyID: StoryID,
 	/** This page's `published` value in the `initialValues`. */
-	initialPublished: number | undefined,
-	firstDraftID: StoryPageID | undefined,
-	formikPropsRef: MutableRefObject<FormikProps<Values>>,
-	setInitialPages: Dispatch<SetStateAction<ClientStoryPageRecord>>,
-	queuedValuesRef: MutableRefObject<Values | undefined>,
-	/** Whether the form is loading. */
-	isSubmitting: boolean,
-	/** A ref to the first page field's title `input` element. */
-	firstTitleInputRef?: RefObject<HTMLInputElement>
+	initialPublished: number | undefined
 };
 
 /** A `BoxSection` for a page in the story editor. */
 const StoryEditorPageSection = React.memo(({
 	children: page,
 	culled,
-	storyID,
-	initialPublished,
-	firstDraftID,
-	formikPropsRef,
-	setInitialPages,
-	queuedValuesRef,
-	isSubmitting,
-	firstTitleInputRef
+	initialPublished
 }: StoryEditorPageSectionProps) => {
+	const {
+		storyID,
+		firstDraftID,
+		formikPropsRef,
+		setInitialPages,
+		queuedValuesRef,
+		isSubmitting
+	} = useContext(StoryEditorContext);
+
 	/** Whether this page exists on the server. */
 	const onServer = page.id in formikPropsRef.current.initialValues.pages;
 
@@ -528,7 +520,6 @@ const StoryEditorPageSection = React.memo(({
 							name={`pages.${page.id}.title`}
 							maxLength={500}
 							autoComplete="off"
-							innerRef={firstTitleInputRef}
 						/>
 					</Row>
 					<Row className="page-field-container-content">

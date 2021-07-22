@@ -3,13 +3,14 @@ import Page from 'components/Page';
 import { Perm } from 'modules/client/perms';
 import { withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
+import type { FormikProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
-import type { ChangeEvent, ReactNode } from 'react';
-import { useCallback, useRef, useState, useEffect } from 'react';
+import type { ChangeEvent, Dispatch, MutableRefObject, ReactNode, SetStateAction } from 'react';
+import { useCallback, useRef, useState, useEffect, createContext, useMemo } from 'react';
 import { getChangedValues, useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
 import Button from 'components/Button';
-import type { StoryPageID } from 'modules/server/stories';
+import type { StoryID, StoryPageID } from 'modules/server/stories';
 import { getClientStoryPage, getPrivateStory, getStoryByUnsafeID } from 'modules/server/stories';
 import type { ClientStoryPage, ClientStoryPageRecord, PrivateStory } from 'modules/client/stories';
 import BoxSection from 'components/Box/BoxSection';
@@ -36,13 +37,6 @@ export type Values = {
 	pages: ClientStoryPageRecord
 };
 
-type ServerSideProps = {
-	privateStory: PrivateStory,
-	pages: ClientStoryPageRecord
-} | {
-	statusCode: number
-};
-
 /**
  * The symbol used to index a `ClientStoryPage`'s React key.
  *
@@ -54,6 +48,23 @@ export const _key = Symbol('key');
 export type KeyedClientStoryPage = ClientStoryPage & {
 	/** This page's React key. */
 	[_key]: number
+};
+
+export const StoryEditorContext = createContext<{
+	storyID: StoryID,
+	firstDraftID: StoryPageID | undefined,
+	formikPropsRef: MutableRefObject<FormikProps<Values>>,
+	setInitialPages: Dispatch<SetStateAction<ClientStoryPageRecord>>,
+	queuedValuesRef: MutableRefObject<Values | undefined>,
+	/** Whether the form is loading. */
+	isSubmitting: boolean
+}>(undefined!);
+
+type ServerSideProps = {
+	privateStory: PrivateStory,
+	pages: ClientStoryPageRecord
+} | {
+	statusCode: number
 };
 
 const Component = withErrorPage<ServerSideProps>(({
@@ -105,7 +116,6 @@ const Component = withErrorPage<ServerSideProps>(({
 					useLeaveConfirmation(formikPropsRef.current.dirty);
 
 					const defaultPageTitleInputRef = useRef<HTMLInputElement>(null!);
-					const firstTitleInputRef = useRef<HTMLInputElement>(null);
 
 					const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source>>();
 
@@ -271,15 +281,7 @@ const Component = withErrorPage<ServerSideProps>(({
 								// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
 								key={page[_key]}
 								culled={culledPages[page.id]!}
-								storyID={privateStory.id}
 								initialPublished={initialPublished}
-								firstDraftID={firstDraftID}
-								formikPropsRef={formikPropsRef}
-								setInitialPages={setInitialPages}
-								queuedValuesRef={queuedValuesRef}
-								isSubmitting={formikPropsRef.current.isSubmitting}
-								firstTitleInputRef={i === 0 ? firstTitleInputRef : undefined}
-								// TODO: Reduce the number of props so memoization is faster.
 							>
 								{page}
 							</StoryEditorPageSection>
@@ -544,7 +546,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											// Wait for the newly added editor page to render.
 											setTimeout(() => {
 												// Select the title field of the newly added page.
-												firstTitleInputRef.current?.select();
+												(document.getElementById(`field-pages-${id}-title`) as HTMLInputElement | null)?.select();
 											});
 
 											// This ESLint comment is necessary because ESLint does not recognize that `privateStory.editorSettings.defaultPageTitle` can change from outside the scope of this hook's component.
@@ -563,7 +565,23 @@ const Component = withErrorPage<ServerSideProps>(({
 								</Button>
 							</div>
 							<Box id="story-editor-pages">
-								{pageComponents}
+								<StoryEditorContext.Provider
+									value={
+										// These values are passed through a context rather than directly as `StoryEditorPageSection` props to reduce `React.memo`'s prop comparison performance cost.
+										useMemo(() => ({
+											storyID: privateStory.id,
+											firstDraftID,
+											formikPropsRef,
+											setInitialPages,
+											queuedValuesRef,
+											isSubmitting: formikPropsRef.current.isSubmitting
+											// This ESLint comment is necessary because ESLint doesn't know that `privateStory.id` can change, and it doesn't understand that changes to `formikPropsRef.current.isSubmitting` need to cause this object to update.
+											// eslint-disable-next-line react-hooks/exhaustive-deps
+										}), [privateStory.id, firstDraftID, formikPropsRef, formikPropsRef.current.isSubmitting])
+									}
+								>
+									{pageComponents}
+								</StoryEditorContext.Provider>
 							</Box>
 						</Form>
 					);
