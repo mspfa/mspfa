@@ -157,13 +157,13 @@ const Component = withErrorPage<ServerSideProps>(({
 					const pageValues = Object.values(formikPropsRef.current.values.pages);
 
 					// This state is a record that maps page IDs to a boolean of their `culled` prop, or undefined if the record hasn't been processed by the below effect hook yet.
-					const [culledPages, setSleepingPages] = useState<Record<StoryPageID, boolean>>({});
+					const [culledPages, setCulledPages] = useState<Record<StoryPageID, boolean>>({});
 
 					const culledPagesRef = useLatest(culledPages);
 
 					useEffect(() => {
-						const updateSleepingPages = () => {
-							const newSleepingPages: Record<StoryPageID, boolean> = {};
+						const updateCulledPages = () => {
+							const newCulledPages: Record<StoryPageID, boolean> = {};
 							let culledPagesChanged = false;
 
 							const pageSections = document.getElementsByClassName('story-editor-page-section') as HTMLCollectionOf<HTMLDivElement>;
@@ -187,14 +187,14 @@ const Component = withErrorPage<ServerSideProps>(({
 										// Whether the top of this page is above the bottom of the view.
 										&& pageSection.offsetTop <= document.documentElement.scrollTop + document.documentElement.clientHeight
 									)
-									// Page sections which have focus should not be able to sleep, or else they would lose focus, causing inconvenience to the user.
+									// Page sections which have focus should not be culled, or else they would lose focus, causing inconvenience to the user.
 									|| pageSection === focusedPageSection
 									// The pages before and after a focused page must also not be culled, so they can be tabbed into.
 									|| pageSection.previousSibling === focusedPageSection
 									|| pageSection.nextSibling === focusedPageSection
 								);
 
-								newSleepingPages[pageID] = culled;
+								newCulledPages[pageID] = culled;
 
 								// Check if the value we're setting used to be unset or different.
 								if (!(
@@ -206,22 +206,22 @@ const Component = withErrorPage<ServerSideProps>(({
 							}
 
 							if (culledPagesChanged) {
-								setSleepingPages(newSleepingPages);
+								setCulledPages(newCulledPages);
 							}
 						};
 
-						updateSleepingPages();
-						document.addEventListener('scroll', updateSleepingPages);
-						document.addEventListener('resize', updateSleepingPages);
+						updateCulledPages();
+						document.addEventListener('scroll', updateCulledPages);
+						document.addEventListener('resize', updateCulledPages);
 						// We use `focusin` and `focusout` instead of `focus` and `blur` because the former two bubble while the latter two don't.
-						document.addEventListener('focusin', updateSleepingPages);
-						document.addEventListener('focusout', updateSleepingPages);
+						document.addEventListener('focusin', updateCulledPages);
+						document.addEventListener('focusout', updateCulledPages);
 
 						return () => {
-							document.removeEventListener('scroll', updateSleepingPages);
-							document.removeEventListener('resize', updateSleepingPages);
-							document.removeEventListener('focusin', updateSleepingPages);
-							document.removeEventListener('focusout', updateSleepingPages);
+							document.removeEventListener('scroll', updateCulledPages);
+							document.removeEventListener('resize', updateCulledPages);
+							document.removeEventListener('focusin', updateCulledPages);
+							document.removeEventListener('focusout', updateCulledPages);
 						};
 					}, [pageValues.length, culledPagesRef]);
 
@@ -247,8 +247,11 @@ const Component = withErrorPage<ServerSideProps>(({
 						}
 
 						if (!(page.id in culledPages)) {
-							// Don't sleep by default, so the heights of the page sections can be cached.
-							culledPages[page.id] = false;
+							// Only keep the last two pages unculled by default. Not culling more than a few pages leads to unacceptably large initial load times.
+							culledPages[page.id] = !(
+								page.id === pageValues.length
+								|| page.id === pageValues.length - 1
+							);
 						}
 
 						// We `unshift` and not `push` so the pages are displayed in reverse order: last pages first.
