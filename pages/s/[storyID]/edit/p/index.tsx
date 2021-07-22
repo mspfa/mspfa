@@ -227,15 +227,15 @@ const Component = withErrorPage<ServerSideProps>(({
 						updateCulledPages();
 						document.addEventListener('scroll', updateCulledPages);
 						document.addEventListener('resize', updateCulledPages);
-						// We use `focusin` and `focusout` instead of `focus` and `blur` because the former two bubble while the latter two don't.
+						// We use `focusin` instead of `focus` because the former bubbles while the latter doesn't.
 						document.addEventListener('focusin', updateCulledPages);
-						document.addEventListener('focusout', updateCulledPages);
+						// We don't listen to `focusout` because, when `focusout` is dispatched, `document.activeElement` is set to `null`, causing any page section outside the view which the user is attempting to focus to instead be culled.
+						// Also, not listening to `focusout` improves performance by updating the culled page sections half as often when changing focus.
 
 						return () => {
 							document.removeEventListener('scroll', updateCulledPages);
 							document.removeEventListener('resize', updateCulledPages);
 							document.removeEventListener('focusin', updateCulledPages);
-							document.removeEventListener('focusout', updateCulledPages);
 						};
 					}, [pageValues.length, culledPagesRef]);
 
@@ -281,6 +281,7 @@ const Component = withErrorPage<ServerSideProps>(({
 								queuedValuesRef={queuedValuesRef}
 								isSubmitting={formikPropsRef.current.isSubmitting}
 								firstTitleInputRef={i === 0 ? firstTitleInputRef : undefined}
+								// TODO: Reduce the number of props so memoization is faster.
 							>
 								{page}
 							</StoryEditorPageSection>
