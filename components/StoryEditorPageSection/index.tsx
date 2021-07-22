@@ -452,8 +452,11 @@ const StoryEditorPageSection = React.memo(({
 			formikPropsRef.current.setFieldValue('pages', newPages);
 		}
 
+		// Delete this page's cached height.
+		delete cachedPageHeightsRef.current[page[_key]];
+
 		formikPropsRef.current.setSubmitting(false);
-	}, [formikPropsRef, page.id, onServer, storyID, setInitialPages, queuedValuesRef]);
+	}, [formikPropsRef, page, onServer, storyID, setInitialPages, queuedValuesRef, cachedPageHeightsRef]);
 
 	/** The last known height of this component while not culled, or undefined if it has never been not culled. */
 	const cachedHeight = cachedPageHeightsRef.current[page[_key]];
