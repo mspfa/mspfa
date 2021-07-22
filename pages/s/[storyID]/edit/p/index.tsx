@@ -262,8 +262,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							formikPropsRef.current.initialValues.pages[page.id] as ClientStoryPage | undefined
 						)?.published;
 
-						// If the `firstDraftID` hasn't been found yet, and this page is a draft, then set the `firstDraftID` to this page's ID.
-						if (firstDraftID === undefined && initialPublished === undefined) {
+						if (initialPublished === undefined) {
 							firstDraftID = page.id;
 						}
 
