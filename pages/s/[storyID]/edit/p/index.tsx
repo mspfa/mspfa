@@ -197,7 +197,7 @@ const Component = withErrorPage<ServerSideProps>(({
 									)
 									// Page sections which have focus should not be culled, or else they would lose focus, causing inconvenience to the user.
 									|| pageSection === focusedPageSection
-									// The pages before and after a focused page must also not be culled, so they can be tabbed into.
+									// The pages before and after a focused page must also not be culled, so that they can be tabbed into.
 									|| pageSection.previousSibling === focusedPageSection
 									|| pageSection.nextSibling === focusedPageSection
 									// Page sections with invalid form elements should not be culled so those invalid elements can be detected and focused when the user attempts to submit.
