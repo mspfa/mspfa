@@ -72,7 +72,7 @@ const deleteFromClientStoryPageRecord = (
 	return newPages;
 };
 
-export type StoryEditorPageProps = {
+export type StoryEditorPageSectionProps = {
 	/** The `ClientStoryPage` being edited. */
 	children: ClientStoryPage,
 	/** Whether this page should only be partially loaded/rendered, as an optimization. */
@@ -91,7 +91,7 @@ export type StoryEditorPageProps = {
 };
 
 /** A `BoxSection` for a page in the story editor. */
-const StoryEditorPage = React.memo(({
+const StoryEditorPageSection = React.memo(({
 	children: page,
 	sleeping,
 	storyID,
@@ -102,7 +102,7 @@ const StoryEditorPage = React.memo(({
 	queuedValuesRef,
 	isSubmitting,
 	firstTitleInputRef
-}: StoryEditorPageProps) => {
+}: StoryEditorPageSectionProps) => {
 	/** Whether this page exists on the server. */
 	const onServer = page.id in formikPropsRef.current.initialValues.pages;
 
@@ -672,4 +672,4 @@ const StoryEditorPage = React.memo(({
 	);
 });
 
-export default StoryEditorPage;
+export default StoryEditorPageSection;

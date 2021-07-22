@@ -19,7 +19,7 @@ import Label from 'components/Label';
 import api from 'modules/client/api';
 import useThrottledCallback from 'modules/client/useThrottledCallback';
 import axios from 'axios';
-import StoryEditorPage from 'components/StoryEditorPage';
+import StoryEditorPageSection from 'components/StoryEditorPageSection';
 import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 import Dialog from 'modules/client/Dialog';
 import InlineRowSection from 'components/Box/InlineRowSection';
@@ -248,7 +248,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						}
 
 						pageComponents.unshift(
-							<StoryEditorPage
+							<StoryEditorPageSection
 								// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
 								key={page[_key]}
 								sleeping={sleepingPages[page.id]}
@@ -262,7 +262,7 @@ const Component = withErrorPage<ServerSideProps>(({
 								firstTitleInputRef={i === 0 ? firstTitleInputRef : undefined}
 							>
 								{page}
-							</StoryEditorPage>
+							</StoryEditorPageSection>
 						);
 					}
 
