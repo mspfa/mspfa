@@ -92,6 +92,10 @@ const Component = withErrorPage<ServerSideProps>(({
 						});
 					}, [privateStory.id, initialPages])
 				}
+				// Even though we have no `validate` function, these props are necessary to set as a performance optimization.
+				validateOnChange={false}
+				validateOnBlur={false}
+				validateOnMount={false}
 				enableReinitialize
 			>
 				{formikProps => {
