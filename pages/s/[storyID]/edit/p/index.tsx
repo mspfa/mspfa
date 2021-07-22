@@ -168,12 +168,20 @@ const Component = withErrorPage<ServerSideProps>(({
 
 							const pageSections = document.getElementsByClassName('story-editor-page-section') as HTMLCollectionOf<HTMLDivElement>;
 
-							const focusedPageSection: HTMLDivElement | undefined = Array.prototype.find.call(
-								pageSections,
-								(pageSection: HTMLDivElement) => pageSection.contains(document.activeElement)
-							);
+							let focusedPageSection: HTMLDivElement | undefined;
 
-							for (const pageSection of pageSections) {
+							for (let i = 0; i < pageSections.length; i++) {
+								const pageSection = pageSections[i];
+
+								if (pageSection.contains(document.activeElement)) {
+									focusedPageSection = pageSection;
+									break;
+								}
+							}
+
+							for (let i = 0; i < pageSections.length; i++) {
+								const pageSection = pageSections[i];
+
 								// If `pageSection.id === 'p14'` for example, then `pageID === 14`.
 								const pageID = +pageSection.id.slice(1);
 
@@ -192,6 +200,13 @@ const Component = withErrorPage<ServerSideProps>(({
 									// The pages before and after a focused page must also not be culled, so they can be tabbed into.
 									|| pageSection.previousSibling === focusedPageSection
 									|| pageSection.nextSibling === focusedPageSection
+									// Page sections with invalid form elements should not be culled so those invalid elements can be detected and focused when the user attempts to submit.
+									|| (
+										// This page section was not culled last time.
+										pageID in culledPagesRef.current && !culledPagesRef.current[pageID]
+										// This page section contains an invalid element.
+										&& pageSection.querySelector(':invalid')
+									)
 								);
 
 								newCulledPages[pageID] = culled;
