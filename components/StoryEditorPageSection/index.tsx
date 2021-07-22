@@ -510,7 +510,10 @@ const StoryEditorPageSection = React.memo(({
 			}
 			ref={sectionRef}
 		>
-			{!culled && (
+			{culled ? (
+				// If there is a cached height, we don't need to say it's loading, because the cached height makes the loading less noticeable. But if there isn't a cached height, the change from loading to not loading can cause a noticeable change in height, so it's better to explicitly indicate it's loading via this text to make it less awkward.
+				cachedHeightRef.current === undefined && 'Loading...'
+			) : (
 				<>
 					<Row className="page-field-container-title">
 						<Label
