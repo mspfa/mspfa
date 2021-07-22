@@ -230,7 +230,6 @@ const Component = withErrorPage<ServerSideProps>(({
 
 								if (culledPagesRef.current[pageID] !== culled) {
 									culledPagesChanged = true;
-									console.log(pageID, culledPagesRef.current[pageID], culled);
 								}
 
 								if (!culled && defaultCulledHeightUnsetRef.current) {
