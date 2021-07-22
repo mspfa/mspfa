@@ -2,7 +2,8 @@
 	&-page {
 		&-section {
 			&.culled {
-				height: 4em;
+				// An arbitrary default culled page section height. Shouldn't be too small, or else scrolling quickly will cause unnecessary re-renders due to more being temporarily in view for the short time while the culling is loading.
+				height: 10em;
 			}
 
 			&:not(.saved) .story-editor-page-id::after {
