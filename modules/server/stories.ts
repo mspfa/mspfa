@@ -141,7 +141,7 @@ export const defaultStory = {
 	status: StoryStatus.Ongoing,
 	privacy: StoryPrivacy.Public,
 	editors: [] as never[],
-	pages: [] as never[],
+	pages: {} as Record<never, never>,
 	description: '',
 	blurb: '',
 	icon: '',
