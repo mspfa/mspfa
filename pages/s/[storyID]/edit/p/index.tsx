@@ -168,15 +168,14 @@ const Component = withErrorPage<ServerSideProps>(({
 
 							const pageSections = document.getElementsByClassName('story-editor-page-section') as HTMLCollectionOf<HTMLDivElement>;
 
-							let focusedPageSection: HTMLDivElement | undefined;
+							let focusedPageSection: Node | null = document.activeElement;
 
-							for (let i = 0; i < pageSections.length; i++) {
-								const pageSection = pageSections[i];
-
-								if (pageSection.contains(document.activeElement)) {
-									focusedPageSection = pageSection;
-									break;
-								}
+							// Find the ancestor of `document.activeElement` which is a page section.
+							while (
+								focusedPageSection instanceof Element
+								&& !focusedPageSection.classList.contains('story-editor-page-section')
+							) {
+								focusedPageSection = focusedPageSection.parentNode;
 							}
 
 							for (let i = 0; i < pageSections.length; i++) {
