@@ -152,15 +152,15 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					const pageValues = Object.values(formikPropsRef.current.values.pages);
 
-					// This state is a record that maps page IDs to a boolean of their `sleeping` prop, or undefined if the record hasn't been processed by the below effect hook yet.
-					const [sleepingPages, setSleepingPages] = useState<Record<StoryPageID, boolean>>({});
+					// This state is a record that maps page IDs to a boolean of their `culled` prop, or undefined if the record hasn't been processed by the below effect hook yet.
+					const [culledPages, setSleepingPages] = useState<Record<StoryPageID, boolean>>({});
 
-					const sleepingPagesRef = useLatest(sleepingPages);
+					const culledPagesRef = useLatest(culledPages);
 
 					useEffect(() => {
 						const updateSleepingPages = () => {
 							const newSleepingPages: Record<StoryPageID, boolean> = {};
-							let sleepingPagesChanged = false;
+							let culledPagesChanged = false;
 
 							const pageSections = document.getElementsByClassName('story-editor-page-section') as HTMLCollectionOf<HTMLDivElement>;
 
@@ -173,8 +173,8 @@ const Component = withErrorPage<ServerSideProps>(({
 								// If `pageSection.id === 'p14'` for example, then `pageID === 14`.
 								const pageID = +pageSection.id.slice(1);
 
-								const sleeping = !(
-									// The first page and the last page must not be sleeping so that they can be tabbed into from outside of view.
+								const culled = !(
+									// The first page and the last page must not be culled so that they can be tabbed into from outside of view.
 									pageID === 1 || pageID === pageValues.length
 									// Whether this page is visible.
 									|| (
@@ -185,23 +185,23 @@ const Component = withErrorPage<ServerSideProps>(({
 									)
 									// Page sections which have focus should not be able to sleep, or else they would lose focus, causing inconvenience to the user.
 									|| pageSection === focusedPageSection
-									// The pages before and after a focused page must also not be sleeping, so they can be tabbed into.
+									// The pages before and after a focused page must also not be culled, so they can be tabbed into.
 									|| pageSection.previousSibling === focusedPageSection
 									|| pageSection.nextSibling === focusedPageSection
 								);
 
-								newSleepingPages[pageID] = sleeping;
+								newSleepingPages[pageID] = culled;
 
 								// Check if the value we're setting used to be unset or different.
 								if (!(
-									pageID in sleepingPagesRef.current
-									&& sleepingPagesRef.current[pageID] === sleeping
+									pageID in culledPagesRef.current
+									&& culledPagesRef.current[pageID] === culled
 								)) {
-									sleepingPagesChanged = true;
+									culledPagesChanged = true;
 								}
 							}
 
-							if (sleepingPagesChanged) {
+							if (culledPagesChanged) {
 								setSleepingPages(newSleepingPages);
 							}
 						};
@@ -219,7 +219,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							document.removeEventListener('focusin', updateSleepingPages);
 							document.removeEventListener('focusout', updateSleepingPages);
 						};
-					}, [pageValues.length, sleepingPagesRef]);
+					}, [pageValues.length, culledPagesRef]);
 
 					const pageComponents: ReactNode[] = [];
 
@@ -242,9 +242,9 @@ const Component = withErrorPage<ServerSideProps>(({
 							firstDraftID = page.id;
 						}
 
-						if (!(page.id in sleepingPages)) {
+						if (!(page.id in culledPages)) {
 							// Don't sleep by default, so the heights of the page sections can be cached.
-							sleepingPages[page.id] = false;
+							culledPages[page.id] = false;
 						}
 
 						// We `unshift` and not `push` so the pages are displayed in reverse order: last pages first.
@@ -252,7 +252,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							<StoryEditorPageSection
 								// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
 								key={page[_key]}
-								sleeping={sleepingPages[page.id]}
+								culled={culledPages[page.id]}
 								storyID={privateStory.id}
 								initialPublished={initialPublished}
 								firstDraftID={firstDraftID}

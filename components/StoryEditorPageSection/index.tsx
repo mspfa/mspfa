@@ -76,7 +76,7 @@ export type StoryEditorPageSectionProps = {
 	/** The `ClientStoryPage` being edited. */
 	children: ClientStoryPage,
 	/** Whether this page should only be partially loaded/rendered, as an optimization. */
-	sleeping: boolean,
+	culled: boolean,
 	storyID: StoryID,
 	/** This page's `published` value in the `initialValues`. */
 	initialPublished: number | undefined,
@@ -93,7 +93,7 @@ export type StoryEditorPageSectionProps = {
 /** A `BoxSection` for a page in the story editor. */
 const StoryEditorPageSection = React.memo(({
 	children: page,
-	sleeping,
+	culled,
 	storyID,
 	initialPublished,
 	firstDraftID,
@@ -463,7 +463,7 @@ const StoryEditorPageSection = React.memo(({
 		formikPropsRef.current.setSubmitting(false);
 	}, [formikPropsRef, page.id, onServer, storyID, setInitialPages, queuedValuesRef]);
 
-	/** A ref to the last known height of this component while not sleeping, or undefined if it has never been not sleeping. */
+	/** A ref to the last known height of this component while not culled, or undefined if it has never been not culled. */
 	const cachedHeightRef = useRef<number | undefined>();
 
 	/** A ref to the last known height of this component. */
@@ -472,10 +472,10 @@ const StoryEditorPageSection = React.memo(({
 	useIsomorphicLayoutEffect(() => {
 		previousHeightRef.current = sectionRef.current.offsetHeight;
 
-		if (!sleeping) {
+		if (!culled) {
 			cachedHeightRef.current = sectionRef.current.offsetHeight;
 		}
-	}, [sleeping]);
+	}, [culled]);
 
 	return (
 		<BoxSection
@@ -504,13 +504,13 @@ const StoryEditorPageSection = React.memo(({
 				</>
 			)}
 			style={
-				sleeping && cachedHeightRef.current !== undefined
+				culled && cachedHeightRef.current !== undefined
 					? { height: `${cachedHeightRef.current}px` }
 					: undefined
 			}
 			ref={sectionRef}
 		>
-			{!sleeping && (
+			{!culled && (
 				<>
 					<Row className="page-field-container-title">
 						<Label
