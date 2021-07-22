@@ -1,6 +1,10 @@
 .story-editor {
 	&-page {
 		&-section {
+			&.culled {
+				height: 4em;
+			}
+
 			&:not(.saved) .story-editor-page-id::after {
 				content: '*';
 			}

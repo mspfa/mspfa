@@ -469,7 +469,18 @@ const StoryEditorPageSection = React.memo(({
 		}
 	}, [culled]);
 
-	return (
+	return culled ? (
+		<div
+			id={`p${page.id}`}
+			className="story-editor-page-section culled"
+			style={
+				cachedHeightRef.current === undefined
+					? undefined
+					: { height: `${cachedHeightRef.current}px` }
+			}
+			ref={sectionRef}
+		/>
+	) : (
 		<BoxSection
 			id={`p${page.id}`}
 			className={`story-editor-page-section${saved ? ' saved' : ''} ${pageStatus}`}
@@ -495,173 +506,161 @@ const StoryEditorPageSection = React.memo(({
 					</span>
 				</>
 			)}
-			style={
-				culled && cachedHeightRef.current !== undefined
-					? { height: `${cachedHeightRef.current}px` }
-					: undefined
-			}
 			ref={sectionRef}
 		>
-			{culled ? (
-				// If there is a cached height, we don't need to say it's loading, because the cached height makes the loading less noticeable. But if there isn't a cached height, the change from loading to not loading can cause a noticeable change in height, so it's better to explicitly indicate it's loading via this text to make it less awkward.
-				cachedHeightRef.current === undefined && 'Loading...'
-			) : (
-				<>
-					<Row className="page-field-container-title">
-						<Label
-							block
-							htmlFor={`field-pages-${page.id}-title`}
-							help="The text displayed at the top of this page. This text also appears in any link to this page from the commands at the bottom of another page."
-						>
-							Page Title/Command
-						</Label>
-						<Field
-							id={`field-pages-${page.id}-title`}
-							name={`pages.${page.id}.title`}
-							maxLength={500}
-							autoComplete="off"
-						/>
+			<Row className="page-field-container-title">
+				<Label
+					block
+					htmlFor={`field-pages-${page.id}-title`}
+					help="The text displayed at the top of this page. This text also appears in any link to this page from the commands at the bottom of another page."
+				>
+					Page Title/Command
+				</Label>
+				<Field
+					id={`field-pages-${page.id}-title`}
+					name={`pages.${page.id}.title`}
+					maxLength={500}
+					autoComplete="off"
+				/>
+			</Row>
+			<Row className="page-field-container-content">
+				<Label block htmlFor={`field-pages-${page.id}-content`}>
+					Content
+				</Label>
+				<BBField
+					name={`pages.${page.id}.content`}
+					rows={6}
+					html
+				/>
+			</Row>
+			<Row className="story-editor-page-show-advanced-link-container">
+				<Link className="translucent-text" onClick={toggleAdvanced}>
+					{advancedShown ? 'Hide Advanced Options' : 'Show Advanced Options'}
+				</Link>
+			</Row>
+			{advancedShown && (
+				<Row className="story-editor-page-advanced">
+					<Row className="page-field-columns">
+						<div className="page-field-container-next-pages">
+							<Label
+								block
+								help={'The page numbers of the commands to link at the bottom of this page (in order). By default, each newly added page will already link to the page after it.\n\nThis is particularly useful for skipping hidden pages or adding multiple page links in branching stories.'}
+							>
+								Next Pages
+							</Label>
+							<div className="story-editor-next-page-container">
+								{page.nextPages.map((pageID, nextPageIndex) => (
+									<div
+										key={nextPageIndex}
+										className="story-editor-next-page"
+									>
+										<Field
+											type="number"
+											name={`pages.${page.id}.nextPages.${nextPageIndex}`}
+											className="story-editor-next-page-input spaced"
+											min={1}
+											required
+											innerRef={
+												nextPageIndex === page.nextPages.length - 1
+													? lastNextPageInputRef
+													: undefined
+											}
+										/>
+										<RemoveButton
+											className="spaced"
+											title="Remove Page"
+											onClick={removeNextPage}
+										/>
+									</div>
+								))}
+								<div>
+									<AddButton
+										title="Add Page"
+										onClick={addNextPage}
+									/>
+								</div>
+							</div>
+						</div>
+						<InlineRowSection className="page-field-container-misc">
+							{page.id !== 1 && (
+								<FieldBoxRow
+									type="checkbox"
+									name={`pages.${page.id}.unlisted`}
+									label="Unlisted"
+									help="Unlisted pages are not included in new update notifications and do not show in your adventure's log. Comments on an unlisted page will not appear under any other page."
+								/>
+							)}
+							<FieldBoxRow
+								type="checkbox"
+								name={`pages.${page.id}.disableControls`}
+								label="Disable Controls"
+								help={'Disallows users from using MSPFA\'s controls on this page (e.g. left and right arrow keys to navigate between pages).\n\nIt\'s generally only necessary to disable controls if a script or embedded game has custom controls conflicting with MSPFA\'s.'}
+							/>
+						</InlineRowSection>
 					</Row>
 					<Row className="page-field-container-content">
-						<Label block htmlFor={`field-pages-${page.id}-content`}>
-							Content
+						<Label
+							block
+							htmlFor={`field-pages-${page.id}-commentary`}
+							help={'You can detail your thoughts about this page here. Readers viewing this page will be able to open your commentary and view what you wrote.\n\nBBCode is allowed here, but authors usually only use plain text for their commentary.'}
+						>
+							Commentary
 						</Label>
-						<BBField
-							name={`pages.${page.id}.content`}
-							rows={6}
-							html
+						<Field
+							as="textarea"
+							id={`field-pages-${page.id}-commentary`}
+							name={`pages.${page.id}.commentary`}
+							rows={3}
 						/>
 					</Row>
-					<Row className="story-editor-page-show-advanced-link-container">
-						<Link className="translucent-text" onClick={toggleAdvanced}>
-							{advancedShown ? 'Hide Advanced Options' : 'Show Advanced Options'}
-						</Link>
-					</Row>
-					{advancedShown && (
-						<Row className="story-editor-page-advanced">
-							<Row className="page-field-columns">
-								<div className="page-field-container-next-pages">
-									<Label
-										block
-										help={'The page numbers of the commands to link at the bottom of this page (in order). By default, each newly added page will already link to the page after it.\n\nThis is particularly useful for skipping hidden pages or adding multiple page links in branching stories.'}
-									>
-										Next Pages
-									</Label>
-									<div className="story-editor-next-page-container">
-										{page.nextPages.map((pageID, nextPageIndex) => (
-											<div
-												key={nextPageIndex}
-												className="story-editor-next-page"
-											>
-												<Field
-													type="number"
-													name={`pages.${page.id}.nextPages.${nextPageIndex}`}
-													className="story-editor-next-page-input spaced"
-													min={1}
-													required
-													innerRef={
-														nextPageIndex === page.nextPages.length - 1
-															? lastNextPageInputRef
-															: undefined
-													}
-												/>
-												<RemoveButton
-													className="spaced"
-													title="Remove Page"
-													onClick={removeNextPage}
-												/>
-											</div>
-										))}
-										<div>
-											<AddButton
-												title="Add Page"
-												onClick={addNextPage}
-											/>
-										</div>
-									</div>
-								</div>
-								<InlineRowSection className="page-field-container-misc">
-									{page.id !== 1 && (
-										<FieldBoxRow
-											type="checkbox"
-											name={`pages.${page.id}.unlisted`}
-											label="Unlisted"
-											help="Unlisted pages are not included in new update notifications and do not show in your adventure's log. Comments on an unlisted page will not appear under any other page."
-										/>
-									)}
-									<FieldBoxRow
-										type="checkbox"
-										name={`pages.${page.id}.disableControls`}
-										label="Disable Controls"
-										help={'Disallows users from using MSPFA\'s controls on this page (e.g. left and right arrow keys to navigate between pages).\n\nIt\'s generally only necessary to disable controls if a script or embedded game has custom controls conflicting with MSPFA\'s.'}
-									/>
-								</InlineRowSection>
-							</Row>
-							<Row className="page-field-container-content">
-								<Label
-									block
-									htmlFor={`field-pages-${page.id}-commentary`}
-									help={'You can detail your thoughts about this page here. Readers viewing this page will be able to open your commentary and view what you wrote.\n\nBBCode is allowed here, but authors usually only use plain text for their commentary.'}
-								>
-									Commentary
-								</Label>
-								<Field
-									as="textarea"
-									id={`field-pages-${page.id}-commentary`}
-									name={`pages.${page.id}.commentary`}
-									rows={3}
-								/>
-							</Row>
-						</Row>
-					)}
-					<Row className="story-editor-page-actions">
-						{saved ? (
-							<>
-								<Button
-									href={`/s/${storyID}/p/${page.id}?preview=1`}
-									target="_blank"
-									disabled={isSubmitting}
-								>
-									Preview
-								</Button>
-								{pageStatus === 'draft' && (
-									<Button
-										disabled={isSubmitting}
-										title={
-											firstDraftID === page.id
-												? `Publish Page ${page.id}`
-												: `Publish Pages ${firstDraftID} to ${page.id}`
-										}
-										onClick={publishPage}
-									>
-										{(firstDraftID === page.id
-											? 'Publish'
-											: `Publish p${firstDraftID}-${page.id}`
-										)}
-									</Button>
-								)}
-							</>
-						) : (
+				</Row>
+			)}
+			<Row className="story-editor-page-actions">
+				{saved ? (
+					<>
+						<Button
+							href={`/s/${storyID}/p/${page.id}?preview=1`}
+							target="_blank"
+							disabled={isSubmitting}
+						>
+							Preview
+						</Button>
+						{pageStatus === 'draft' && (
 							<Button
 								disabled={isSubmitting}
-								onClick={savePage}
+								title={
+									firstDraftID === page.id
+										? `Publish Page ${page.id}`
+										: `Publish Pages ${firstDraftID} to ${page.id}`
+								}
+								onClick={publishPage}
 							>
-								{(pageStatus === 'draft'
-								// The reason this should say "Save Draft" instead of "Save" for drafts is because "Save" would be ambiguous with "Publish", making users more hesitant to click it if they aren't ready to publish yet.
-									? 'Save Draft'
-									: 'Save'
+								{(firstDraftID === page.id
+									? 'Publish'
+									: `Publish p${firstDraftID}-${page.id}`
 								)}
 							</Button>
 						)}
-						<Button
-							disabled={isSubmitting}
-							onClick={deletePage}
-						>
-							Delete
-						</Button>
-					</Row>
-				</>
-			)}
+					</>
+				) : (
+					<Button
+						disabled={isSubmitting}
+						onClick={savePage}
+					>
+						{(pageStatus === 'draft'
+						// The reason this should say "Save Draft" instead of "Save" for drafts is because "Save" would be ambiguous with "Publish", making users more hesitant to click it if they aren't ready to publish yet.
+							? 'Save Draft'
+							: 'Save'
+						)}
+					</Button>
+				)}
+				<Button
+					disabled={isSubmitting}
+					onClick={deletePage}
+				>
+					Delete
+				</Button>
+			</Row>
 		</BoxSection>
 	);
 });
