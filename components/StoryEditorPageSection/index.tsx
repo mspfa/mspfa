@@ -24,7 +24,6 @@ import api from 'modules/client/api';
 import { getChangedValues } from 'modules/client/forms';
 import type { DateNumber, RecursivePartial } from 'modules/types';
 import DateField from 'components/DateField';
-import { useIsomorphicLayoutEffect } from 'react-use';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 type StoryPageAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]').default>;
@@ -92,7 +91,8 @@ const StoryEditorPageSection = React.memo(({
 		formikPropsRef,
 		setInitialPages,
 		queuedValuesRef,
-		isSubmitting
+		isSubmitting,
+		cachedPageHeightsRef
 	} = useContext(StoryEditorContext);
 
 	/** Whether this page exists on the server. */
@@ -130,7 +130,7 @@ const StoryEditorPageSection = React.memo(({
 		}
 	}, [pageStatus, initialPublished]);
 
-	const sectionRef = useRef<HTMLDivElement>(null!);
+	const ref = useRef<HTMLDivElement>(null!);
 
 	const removeNextPage = useCallback((event: MouseEvent<HTMLButtonElement & HTMLAnchorElement> & { target: HTMLButtonElement }) => {
 		// The `parentNode` of this `RemoveButton` will be the `div.story-editor-next-page` element.
@@ -187,7 +187,7 @@ const StoryEditorPageSection = React.memo(({
 			));
 		}
 
-		const container = pageIDs ? sectionRef.current.parentNode! : sectionRef.current;
+		const container = pageIDs ? ref.current.parentNode! : ref.current;
 
 		for (const element of container.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(selectors.join(', '))) {
 			if (!element.reportValidity()) {
@@ -455,30 +455,19 @@ const StoryEditorPageSection = React.memo(({
 		formikPropsRef.current.setSubmitting(false);
 	}, [formikPropsRef, page.id, onServer, storyID, setInitialPages, queuedValuesRef]);
 
-	/** A ref to the last known height of this component while not culled, or undefined if it has never been not culled. */
-	const cachedHeightRef = useRef<number | undefined>();
-
-	/** A ref to the last known height of this component. */
-	const previousHeightRef = useRef<number | undefined>();
-
-	useIsomorphicLayoutEffect(() => {
-		previousHeightRef.current = sectionRef.current.offsetHeight;
-
-		if (!culled) {
-			cachedHeightRef.current = sectionRef.current.offsetHeight;
-		}
-	}, [culled]);
+	/** The last known height of this component while not culled, or undefined if it has never been not culled. */
+	const cachedHeight = cachedPageHeightsRef.current[page.id];
 
 	return culled ? (
 		<div
 			id={`p${page.id}`}
 			className="story-editor-page-section culled"
 			style={
-				cachedHeightRef.current === undefined
+				cachedHeight === undefined
 					? undefined
-					: { height: `${cachedHeightRef.current}px` }
+					: { height: `${cachedHeight}px` }
 			}
-			ref={sectionRef}
+			ref={ref}
 		/>
 	) : (
 		<BoxSection
@@ -506,7 +495,7 @@ const StoryEditorPageSection = React.memo(({
 					</span>
 				</>
 			)}
-			ref={sectionRef}
+			ref={ref}
 		>
 			<Row className="page-field-container-title">
 				<Label

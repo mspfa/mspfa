@@ -57,7 +57,8 @@ export const StoryEditorContext = createContext<{
 	setInitialPages: Dispatch<SetStateAction<ClientStoryPageRecord>>,
 	queuedValuesRef: MutableRefObject<Values | undefined>,
 	/** Whether the form is loading. */
-	isSubmitting: boolean
+	isSubmitting: boolean,
+	cachedPageHeightsRef: MutableRefObject<Partial<Record<number, number>>>
 }>(undefined!);
 
 type ServerSideProps = {
@@ -166,6 +167,10 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					const pageValues = Object.values(formikPropsRef.current.values.pages);
 
+					// This state is a record that maps page IDs to a boolean of their `culled` prop, or undefined if the record hasn't been processed by the below effect hook yet.
+					const [culledPages, setCulledPages] = useState<Partial<Record<StoryPageID, boolean>>>({});
+					const culledPagesRef = useLatest(culledPages);
+
 					// This state is for the default height of a culled page section.
 					const [defaultCulledHeight, setDefaultCulledHeight] = useState(
 						// An arbitrary default culled page section height. Shouldn't be too small, or else unnecessary re-renders may occur initially due to a higher chance of more page sections being temporarily in view for a short time.
@@ -174,9 +179,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					/** A ref to whether `defaultCulledHeight` is still unset. */
 					const defaultCulledHeightUnsetRef = useRef(true);
 
-					// This state is a record that maps page IDs to a boolean of their `culled` prop, or undefined if the record hasn't been processed by the below effect hook yet.
-					const [culledPages, setCulledPages] = useState<Partial<Record<StoryPageID, boolean>>>({});
-					const culledPagesRef = useLatest(culledPages);
+					const cachedPageHeightsRef = useRef<Partial<Record<StoryPageID, number>>>({});
 
 					// This is a layout effect rather than a normal effect to reduce the time the user can briefly see culled pages.
 					useIsomorphicLayoutEffect(() => {
@@ -230,6 +233,11 @@ const Component = withErrorPage<ServerSideProps>(({
 
 								if (culledPagesRef.current[pageID] !== culled) {
 									culledPagesChanged = true;
+
+									if (culled) {
+										// If this unculled page is changing to be culled, cache its height beforehand so it can maintain that height after being culled.
+										cachedPageHeightsRef.current[pageID] = pageSection.offsetHeight;
+									}
 								}
 
 								if (!culled && defaultCulledHeightUnsetRef.current) {
@@ -594,7 +602,8 @@ const Component = withErrorPage<ServerSideProps>(({
 											formikPropsRef,
 											setInitialPages,
 											queuedValuesRef,
-											isSubmitting: formikPropsRef.current.isSubmitting
+											isSubmitting: formikPropsRef.current.isSubmitting,
+											cachedPageHeightsRef
 											// This ESLint comment is necessary because ESLint doesn't know that `privateStory.id` can change, and it doesn't understand that changes to `formikPropsRef.current.isSubmitting` need to cause this object to update.
 											// eslint-disable-next-line react-hooks/exhaustive-deps
 										}), [formikPropsRef.current.isSubmitting, privateStory.id, firstDraftID, formikPropsRef])
