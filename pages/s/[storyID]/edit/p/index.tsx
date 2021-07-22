@@ -211,11 +211,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 								newCulledPages[pageID] = culled;
 
-								// Check if the value we're setting used to be unset or different.
-								if (!(
-									pageID in culledPagesRef.current
-									&& culledPagesRef.current[pageID] === culled
-								)) {
+								if (culledPagesRef.current[pageID] !== culled) {
 									culledPagesChanged = true;
 								}
 							}
