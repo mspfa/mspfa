@@ -3,7 +3,7 @@ import { setSignInPage, resolveExternalSignIn } from 'modules/client/signIn';
 import Link from 'components/Link';
 import createUpdater from 'react-component-updater';
 import type { ChangeEvent } from 'react';
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import Captcha from 'components/SignIn/Captcha';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import InlineRowSection from 'components/Box/InlineRowSection';
@@ -75,6 +75,7 @@ const SignIn = ({ page }: SignInProps) => {
 	const [emailTaken, setEmailTaken] = useState<boolean>();
 	const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source>>();
 
+	/** Asynchronously checks if the `email` is taken and sets the `emailTaken` state accordingly. */
 	const checkEmail = useThrottledCallback(async (email: string) => {
 		cancelTokenSourceRef.current = axios.CancelToken.source();
 
@@ -107,6 +108,13 @@ const SignIn = ({ page }: SignInProps) => {
 	}, [page, checkEmail]);
 
 	const emailInputRef = useRef<HTMLInputElement>(null);
+
+	useEffect(() => {
+		if (page === 1) {
+			// Check if the email is taken in case they already have an email entered but just switched to the sign-up page.
+			checkEmail(signInValues.email);
+		}
+	}, [page, checkEmail]);
 
 	useIsomorphicLayoutEffect(() => {
 		emailInputRef.current?.setCustomValidity(
