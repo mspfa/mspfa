@@ -157,7 +157,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					const pageValues = Object.values(formikPropsRef.current.values.pages);
 
 					// This state is a record that maps page IDs to a boolean of their `culled` prop, or undefined if the record hasn't been processed by the below effect hook yet.
-					const [culledPages, setCulledPages] = useState<Record<StoryPageID, boolean>>({});
+					const [culledPages, setCulledPages] = useState<Partial<Record<StoryPageID, boolean>>>({});
 
 					const culledPagesRef = useLatest(culledPages);
 
@@ -203,7 +203,7 @@ const Component = withErrorPage<ServerSideProps>(({
 									// Page sections with invalid form elements should not be culled so those invalid elements can be detected and focused when the user attempts to submit.
 									|| (
 										// This page section was not culled last time.
-										pageID in culledPagesRef.current && !culledPagesRef.current[pageID]
+										culledPagesRef.current[pageID] === false
 										// This page section contains an invalid element.
 										&& pageSection.querySelector(':invalid')
 									)
@@ -274,7 +274,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							<StoryEditorPageSection
 								// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
 								key={page[_key]}
-								culled={culledPages[page.id]}
+								culled={culledPages[page.id]!}
 								storyID={privateStory.id}
 								initialPublished={initialPublished}
 								firstDraftID={firstDraftID}
