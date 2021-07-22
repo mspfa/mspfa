@@ -196,7 +196,7 @@ const Component = withErrorPage<ServerSideProps>(({
 								// Wait for the page components to render.
 								setTimeout(() => {
 									if (location.hash) {
-										// Since the location hash may reference a page component which wasn't rendered at the time, set the hash again now that all the page components are rendered.
+										// Since the location hash may reference a page component which wasn't rendered at the time that the browser tried to use it, set the hash again now that all the page components are rendered.
 
 										const locationHash = location.hash;
 										location.hash = '';
