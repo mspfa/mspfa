@@ -192,6 +192,17 @@ const Component = withErrorPage<ServerSideProps>(({
 							if (viewMode === undefined) {
 								// Now that we're on the client, it's safe to render the page components.
 								setViewMode('sections');
+
+								// Wait for the page components to render.
+								setTimeout(() => {
+									if (location.hash) {
+										// Since the location hash may reference a page component which wasn't rendered at the time, set the hash again now that all the page components are rendered.
+
+										const locationHash = location.hash;
+										location.hash = '';
+										location.hash = locationHash;
+									}
+								});
 							}
 
 							return;
