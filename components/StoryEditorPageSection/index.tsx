@@ -70,9 +70,10 @@ const deleteFromClientStoryPageRecord = (
 	return newPages;
 };
 
+// DO NOT add a `children` prop to this component unless practical. It is noticeably less performant than other props.
 export type StoryEditorPageSectionProps = {
 	/** The `ClientStoryPage` being edited. */
-	children: KeyedClientStoryPage,
+	page: KeyedClientStoryPage,
 	/** Whether this page should only be partially loaded/rendered, as an optimization. */
 	culled: boolean,
 	/** This page's `published` value in the `initialValues`. */
@@ -81,7 +82,7 @@ export type StoryEditorPageSectionProps = {
 
 /** A `BoxSection` for a page in the story editor. */
 const StoryEditorPageSection = React.memo(({
-	children: page,
+	page,
 	culled,
 	initialPublished
 }: StoryEditorPageSectionProps) => {

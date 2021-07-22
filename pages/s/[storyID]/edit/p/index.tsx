@@ -306,11 +306,10 @@ const Component = withErrorPage<ServerSideProps>(({
 							<StoryEditorPageSection
 								// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
 								key={page[_key]}
+								page={page}
 								culled={culledPages[page.id]!}
 								initialPublished={initialPublished}
-							>
-								{page}
-							</StoryEditorPageSection>
+							/>
 						);
 					}
 
