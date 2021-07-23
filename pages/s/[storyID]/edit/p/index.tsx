@@ -28,6 +28,7 @@ import FieldBoxRow from 'components/Box/FieldBoxRow';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import { escapeRegExp } from 'lodash';
 import BoxRow from 'components/Box/BoxRow';
+import Router from 'next/router';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -168,7 +169,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					const pageValues = Object.values(formikPropsRef.current.values.pages);
 
 					// As a network optimization, the default is `undefined` to prevent rendering page components server-side.
-					const [viewMode, setViewMode] = useState<'sections' | 'grid' | undefined>();
+					const [viewMode, setViewMode] = useState<'list' | 'grid' | undefined>();
 
 					// This state is a record that maps page IDs to a boolean of their `culled` prop, or undefined if the record hasn't been processed by the below effect hook yet.
 					const [culledPages, setCulledPages] = useState<Partial<Record<StoryPageID, boolean>>>({});
@@ -188,122 +189,128 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					// This is a layout effect rather than a normal effect to reduce the time the user can briefly see culled pages.
 					useIsomorphicLayoutEffect(() => {
-						if (viewMode !== 'sections') {
-							if (viewMode === undefined) {
-								// Now that we're on the client, it's safe to render the page components.
-								setViewMode('sections');
+						if (viewMode) {
+							// Set the view mode into the URL's query params.
 
-								// Wait for the page components to render.
-								setTimeout(() => {
-									if (location.hash) {
-										// Since the location hash may reference a page component which wasn't rendered at the time that the browser tried to use it, set the hash again now that all the page components are rendered.
+							const url = new URL(location.href);
+							url.searchParams.set('view', viewMode);
+							history.replaceState(null, '', url);
+						} else {
+							// Now that we're on the client, it's safe to render the page components.
 
-										const locationHash = location.hash;
-										location.hash = '';
-										location.hash = locationHash;
-									}
-								});
-							}
+							// If the view mode is not set, load it from the URL's query params.
+							setViewMode(Router.query.view === 'grid' ? 'grid' : 'list');
 
-							return;
+							// Wait for the page components to render.
+							setTimeout(() => {
+								if (location.hash) {
+									// Since the location hash may reference a page component which wasn't rendered at the time that the browser tried to use it, set the hash again now that all the page components are rendered.
+
+									const locationHash = location.hash;
+									location.hash = '';
+									location.hash = locationHash;
+								}
+							});
 						}
 
-						const updateCulledPages = () => {
-							const newCulledPages: Record<StoryPageID, boolean> = {};
-							let culledPagesChanged = false;
+						if (viewMode === 'list') {
+							const updateCulledPages = () => {
+								const newCulledPages: Record<StoryPageID, boolean> = {};
+								let culledPagesChanged = false;
 
-							const pageSections = document.getElementsByClassName('story-editor-page-section') as HTMLCollectionOf<HTMLDivElement>;
+								const pageSections = document.getElementsByClassName('story-editor-page-section') as HTMLCollectionOf<HTMLDivElement>;
 
-							let focusedPageSection: Node | null = document.activeElement;
+								let focusedPageSection: Node | null = document.activeElement;
 
-							// Find the ancestor of `document.activeElement` which is a page section.
-							while (
-								focusedPageSection instanceof Element
-								&& !focusedPageSection.classList.contains('story-editor-page-section')
-							) {
-								focusedPageSection = focusedPageSection.parentNode;
-							}
+								// Find the ancestor of `document.activeElement` which is a page section.
+								while (
+									focusedPageSection instanceof Element
+									&& !focusedPageSection.classList.contains('story-editor-page-section')
+								) {
+									focusedPageSection = focusedPageSection.parentNode;
+								}
 
-							for (let i = 0; i < pageSections.length; i++) {
-								const pageSection = pageSections[i];
+								for (let i = 0; i < pageSections.length; i++) {
+									const pageSection = pageSections[i];
 
-								// If `pageSection.id === 'p14'` for example, then `pageID === 14`.
-								const pageID = +pageSection.id.slice(1);
+									// If `pageSection.id === 'p14'` for example, then `pageID === 14`.
+									const pageID = +pageSection.id.slice(1);
 
-								// `getBoundingClientRect()` is significantly faster than `offsetTop` and `offsetHeight`.
-								const rect = pageSection.getBoundingClientRect();
+									// `getBoundingClientRect()` is significantly faster than `offsetTop` and `offsetHeight`.
+									const rect = pageSection.getBoundingClientRect();
 
-								const culled = !(
-									// The first page and the last page must not be culled so that they can be tabbed into from outside of view.
-									pageID === 1 || pageID === pageValues.length
-									// Whether this page is visible.
-									|| (
-										// Whether the bottom of this page is below the top of the view.
-										rect.bottom > 0
-										// Whether the top of this page is above the bottom of the view.
-										&& rect.top < document.documentElement.clientHeight + 1
-									)
-									// Page sections which have focus should not be culled, or else they would lose focus, causing inconvenience to the user.
-									|| pageSection === focusedPageSection
-									// The pages before and after a focused page must also not be culled, so that they can be tabbed into.
-									|| pageSection.previousSibling === focusedPageSection
-									|| pageSection.nextSibling === focusedPageSection
-									// Page sections with invalid form elements should not be culled so those invalid elements can be detected and focused when the user attempts to submit.
-									|| (
-										// This page section was not culled last time.
-										culledPagesRef.current[pageID] === false
-										// This page section contains an invalid element.
-										&& pageSection.querySelector(':invalid')
-									)
-								);
+									const culled = !(
+										// The first page and the last page must not be culled so that they can be tabbed into from outside of view.
+										pageID === 1 || pageID === pageValues.length
+										// Whether this page is visible.
+										|| (
+											// Whether the bottom of this page is below the top of the view.
+											rect.bottom > 0
+											// Whether the top of this page is above the bottom of the view.
+											&& rect.top < document.documentElement.clientHeight + 1
+										)
+										// Page sections which have focus should not be culled, or else they would lose focus, causing inconvenience to the user.
+										|| pageSection === focusedPageSection
+										// The pages before and after a focused page must also not be culled, so that they can be tabbed into.
+										|| pageSection.previousSibling === focusedPageSection
+										|| pageSection.nextSibling === focusedPageSection
+										// Page sections with invalid form elements should not be culled so those invalid elements can be detected and focused when the user attempts to submit.
+										|| (
+											// This page section was not culled last time.
+											culledPagesRef.current[pageID] === false
+											// This page section contains an invalid element.
+											&& pageSection.querySelector(':invalid')
+										)
+									);
 
-								newCulledPages[pageID] = culled;
+									newCulledPages[pageID] = culled;
 
-								if (culledPagesRef.current[pageID] !== culled) {
-									culledPagesChanged = true;
+									if (culledPagesRef.current[pageID] !== culled) {
+										culledPagesChanged = true;
 
-									if (culled) {
-										// If this unculled page is changing to be culled, cache its height beforehand so it can maintain that height after being culled.
-										cachedPageHeightsRef.current[
-											// This page's key.
-											(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[_key]
-										] = pageSection.offsetHeight;
+										if (culled) {
+											// If this unculled page is changing to be culled, cache its height beforehand so it can maintain that height after being culled.
+											cachedPageHeightsRef.current[
+												// This page's key.
+												(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[_key]
+											] = pageSection.offsetHeight;
+										}
+									}
+
+									if (!culled && defaultCulledHeightUnsetRef.current) {
+										// If this page section is unculled and no default culled page section height has been set yet, set the default culled height to this height.
+										// Using an arbitrary unculled height as the default culled height is a sufficient solution for scroll jitter in the vast majority of cases.
+										setDefaultCulledHeight(pageSection.offsetHeight);
+										defaultCulledHeightUnsetRef.current = false;
 									}
 								}
 
-								if (!culled && defaultCulledHeightUnsetRef.current) {
-									// If this page section is unculled and no default culled page section height has been set yet, set the default culled height to this height.
-									// Using an arbitrary unculled height as the default culled height is a sufficient solution for scroll jitter in the vast majority of cases.
-									setDefaultCulledHeight(pageSection.offsetHeight);
-									defaultCulledHeightUnsetRef.current = false;
+								if (culledPagesChanged) {
+									setCulledPages(newCulledPages);
 								}
-							}
+							};
 
-							if (culledPagesChanged) {
-								setCulledPages(newCulledPages);
-							}
-						};
+							updateCulledPages();
+							document.addEventListener('scroll', updateCulledPages);
+							document.addEventListener('resize', updateCulledPages);
+							// We use `focusin` instead of `focus` because the former bubbles while the latter doesn't.
+							document.addEventListener('focusin', updateCulledPages);
+							// We don't listen to `focusout` because, when `focusout` is dispatched, `document.activeElement` is set to `null`, causing any page section outside the view which the user is attempting to focus to instead be culled.
+							// Also, not listening to `focusout` improves performance significantly by updating the culled page sections half as often when changing focus.
 
-						updateCulledPages();
-						document.addEventListener('scroll', updateCulledPages);
-						document.addEventListener('resize', updateCulledPages);
-						// We use `focusin` instead of `focus` because the former bubbles while the latter doesn't.
-						document.addEventListener('focusin', updateCulledPages);
-						// We don't listen to `focusout` because, when `focusout` is dispatched, `document.activeElement` is set to `null`, causing any page section outside the view which the user is attempting to focus to instead be culled.
-						// Also, not listening to `focusout` improves performance significantly by updating the culled page sections half as often when changing focus.
-
-						return () => {
-							document.removeEventListener('scroll', updateCulledPages);
-							document.removeEventListener('resize', updateCulledPages);
-							document.removeEventListener('focusin', updateCulledPages);
-						};
+							return () => {
+								document.removeEventListener('scroll', updateCulledPages);
+								document.removeEventListener('resize', updateCulledPages);
+								document.removeEventListener('focusin', updateCulledPages);
+							};
+						}
 					}, [viewMode, pageValues.length, culledPagesRef, formikPropsRef]);
 
 					let pageComponents: ReactNode[] | undefined;
 
 					let firstDraftID: StoryPageID | undefined;
 
-					if (viewMode === 'sections') {
+					if (viewMode === 'list') {
 						pageComponents = new Array(pageValues.length);
 
 						for (let i = pageValues.length - 1; i >= 0; i--) {
@@ -341,6 +348,14 @@ const Component = withErrorPage<ServerSideProps>(({
 								/>
 							);
 						}
+					} else if (viewMode === 'grid') {
+						pageComponents = [
+							<>
+								hey whats up<br />
+								<br />
+								grid not implemented yet<br /><br /><br /><br /><br /><br /><br /><br />
+							</>
+						];
 					}
 
 					return (
@@ -538,6 +553,18 @@ const Component = withErrorPage<ServerSideProps>(({
 											}
 										>
 											Find and Replace
+										</Button>
+										<Button
+											className="small"
+											disabled={!viewMode && formikPropsRef.current.dirty}
+											onClick={
+												useCallback(() => {
+													// Toggle the `viewMode` between `'list'` and `'grid'`.
+													setViewMode(viewMode => viewMode === 'list' ? 'grid' : 'list');
+												}, [])
+											}
+										>
+											{`View: ${viewMode === 'grid' ? 'Grid' : 'List'}`}
 										</Button>
 									</Row>
 									<Row>
