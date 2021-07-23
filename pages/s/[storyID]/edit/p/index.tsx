@@ -619,6 +619,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										</Button>
 										<Button
 											className="small"
+											title={`Click to Set View Mode to ${viewMode === 'grid' ? 'List' : 'Grid'}`}
 											disabled={!viewMode || formikPropsRef.current.isSubmitting}
 											onClick={
 												useCallback(() => {
