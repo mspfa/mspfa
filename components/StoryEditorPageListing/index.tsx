@@ -71,7 +71,7 @@ const deleteFromClientStoryPageRecord = (
 };
 
 // DO NOT add a `children` prop to this component unless practical. It is noticeably less performant than other props.
-export type StoryEditorPageSectionProps = {
+export type StoryEditorPageListingProps = {
 	/** The `ClientStoryPage` being edited. */
 	page: KeyedClientStoryPage,
 	/** Whether this page should only be partially loaded/rendered, as an optimization. */
@@ -81,11 +81,11 @@ export type StoryEditorPageSectionProps = {
 };
 
 /** A `BoxSection` for a page in the story editor. */
-const StoryEditorPageSection = React.memo(({
+const StoryEditorPageListing = React.memo(({
 	page,
 	culled,
 	initialPublished
-}: StoryEditorPageSectionProps) => {
+}: StoryEditorPageListingProps) => {
 	const {
 		storyID,
 		firstDraftID,
@@ -160,7 +160,7 @@ const StoryEditorPageSection = React.memo(({
 
 	const lastNextPageInputRef = useRef<HTMLInputElement>(null);
 
-	/** Reports the validity of all form elements in this page section. If one of them is found invalid, stops reporting and returns `false`. If all elements are valid, returns `true`. */
+	/** Reports the validity of all form elements in this page listing. If one of them is found invalid, stops reporting and returns `false`. If all elements are valid, returns `true`. */
 	const reportPageValidity = useCallback((
 		/** Whether to only check the validity of advanced options. */
 		onlyAdvanced = false,
@@ -465,7 +465,7 @@ const StoryEditorPageSection = React.memo(({
 	return culled ? (
 		<div
 			id={`p${page.id}`}
-			className="story-editor-page-section culled"
+			className="story-editor-page-listing culled"
 			style={
 				cachedHeight === undefined
 					? undefined
@@ -476,7 +476,7 @@ const StoryEditorPageSection = React.memo(({
 	) : (
 		<BoxSection
 			id={`p${page.id}`}
-			className={`story-editor-page-section${saved ? ' saved' : ''} ${pageStatus}`}
+			className={`story-editor-page-listing${saved ? ' saved' : ''} ${pageStatus}`}
 			heading={(
 				<>
 					<span className="story-editor-page-id spaced">
@@ -658,4 +658,4 @@ const StoryEditorPageSection = React.memo(({
 	);
 });
 
-export default StoryEditorPageSection;
+export default StoryEditorPageListing;

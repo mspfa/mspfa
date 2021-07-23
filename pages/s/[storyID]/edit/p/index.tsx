@@ -20,7 +20,7 @@ import Label from 'components/Label';
 import api from 'modules/client/api';
 import useThrottledCallback from 'modules/client/useThrottledCallback';
 import axios from 'axios';
-import StoryEditorPageSection from 'components/StoryEditorPageSection';
+import StoryEditorPageListing from 'components/StoryEditorPageListing';
 import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 import Dialog from 'modules/client/Dialog';
 import InlineRowSection from 'components/Box/InlineRowSection';
@@ -217,9 +217,9 @@ const Component = withErrorPage<ServerSideProps>(({
 					const [culledPages, setCulledPages] = useState<Partial<Record<StoryPageID, boolean>>>({});
 					const culledPagesRef = useLatest(culledPages);
 
-					// This state is for the default height of a culled page section.
+					// This state is for the default height of a culled page listing.
 					const [defaultCulledHeight, setDefaultCulledHeight] = useState(
-						// An arbitrary default culled page section height. Shouldn't be too small, or else unnecessary re-renders may occur initially due to a higher chance of more page sections being temporarily in view for a short time.
+						// An arbitrary default culled page listing height. Shouldn't be too small, or else unnecessary re-renders may occur initially due to a higher chance of more page listings being temporarily in view for a short time.
 						320
 					);
 					/** A ref to whether `defaultCulledHeight` is still unset. */
@@ -260,16 +260,16 @@ const Component = withErrorPage<ServerSideProps>(({
 								const newCulledPages: Record<StoryPageID, boolean> = {};
 								let culledPagesChanged = false;
 
-								const pageSections = document.getElementsByClassName('story-editor-page-section') as HTMLCollectionOf<HTMLDivElement>;
+								const pageSections = document.getElementsByClassName('story-editor-page-listing') as HTMLCollectionOf<HTMLDivElement>;
 
-								let focusedPageSection: Node | null = document.activeElement;
+								let focusedPageListing: Node | null = document.activeElement;
 
-								// Find the ancestor of `document.activeElement` which is a page section.
+								// Find the ancestor of `document.activeElement` which is a page listing.
 								while (
-									focusedPageSection instanceof Element
-									&& !focusedPageSection.classList.contains('story-editor-page-section')
+									focusedPageListing instanceof Element
+									&& !focusedPageListing.classList.contains('story-editor-page-listing')
 								) {
-									focusedPageSection = focusedPageSection.parentNode;
+									focusedPageListing = focusedPageListing.parentNode;
 								}
 
 								for (let i = 0; i < pageSections.length; i++) {
@@ -291,16 +291,16 @@ const Component = withErrorPage<ServerSideProps>(({
 											// Whether the top of this page is above the bottom of the view.
 											&& rect.top < document.documentElement.clientHeight + 1
 										)
-										// Page sections which have focus should not be culled, or else they would lose focus, causing inconvenience to the user.
-										|| pageSection === focusedPageSection
+										// Page listings which have focus should not be culled, or else they would lose focus, causing inconvenience to the user.
+										|| pageSection === focusedPageListing
 										// The pages before and after a focused page must also not be culled, so that they can be tabbed into.
-										|| pageSection.previousSibling === focusedPageSection
-										|| pageSection.nextSibling === focusedPageSection
-										// Page sections with invalid form elements should not be culled so those invalid elements can be detected and focused when the user attempts to submit.
+										|| pageSection.previousSibling === focusedPageListing
+										|| pageSection.nextSibling === focusedPageListing
+										// Page listings with invalid form elements should not be culled so those invalid elements can be detected and focused when the user attempts to submit.
 										|| (
-											// This page section was not culled last time.
+											// This page listing was not culled last time.
 											culledPagesRef.current[pageID] === false
-											// This page section contains an invalid element.
+											// This page listing contains an invalid element.
 											&& pageSection.querySelector(':invalid')
 										)
 									);
@@ -320,7 +320,7 @@ const Component = withErrorPage<ServerSideProps>(({
 									}
 
 									if (!culled && defaultCulledHeightUnsetRef.current) {
-										// If this page section is unculled and no default culled page section height has been set yet, set the default culled height to this height.
+										// If this page listing is unculled and no default culled page listing height has been set yet, set the default culled height to this height.
 										// Using an arbitrary unculled height as the default culled height is a sufficient solution for scroll jitter in the vast majority of cases.
 										setDefaultCulledHeight(pageSection.offsetHeight);
 										defaultCulledHeightUnsetRef.current = false;
@@ -337,8 +337,8 @@ const Component = withErrorPage<ServerSideProps>(({
 							document.addEventListener('resize', updateCulledPages);
 							// We use `focusin` instead of `focus` because the former bubbles while the latter doesn't.
 							document.addEventListener('focusin', updateCulledPages);
-							// We don't listen to `focusout` because, when `focusout` is dispatched, `document.activeElement` is set to `null`, causing any page section outside the view which the user is attempting to focus to instead be culled.
-							// Also, not listening to `focusout` improves performance significantly by updating the culled page sections half as often when changing focus.
+							// We don't listen to `focusout` because, when `focusout` is dispatched, `document.activeElement` is set to `null`, causing any page listing outside the view which the user is attempting to focus to instead be culled.
+							// Also, not listening to `focusout` improves performance significantly by updating the culled page listings half as often when changing focus.
 
 							return () => {
 								document.removeEventListener('scroll', updateCulledPages);
@@ -382,7 +382,7 @@ const Component = withErrorPage<ServerSideProps>(({
 								}
 
 								pageComponents.push(
-									<StoryEditorPageSection
+									<StoryEditorPageListing
 										// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
 										key={page[_key]}
 										page={page}
@@ -407,7 +407,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					/**
 					 * The values to pass into the `value` of the `StoryEditorContext`.
 					 *
-					 * These values are passed through a context rather than directly as `StoryEditorPageSection` props to reduce `React.memo`'s prop comparison performance cost.
+					 * These values are passed through a context rather than directly as `StoryEditorPageListing` props to reduce `React.memo`'s prop comparison performance cost.
 					 */
 					const storyEditorContext = useMemo(() => ({
 						storyID: privateStory.id,
@@ -677,7 +677,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										<Box id="story-editor-pages" className="view-mode-list">
 											<style jsx global>
 												{`
-													.story-editor-page-section.culled {
+													.story-editor-page-listing.culled {
 														height: ${defaultCulledHeight}px;
 													}
 												`}

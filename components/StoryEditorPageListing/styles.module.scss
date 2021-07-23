@@ -1,6 +1,6 @@
 .story-editor {
 	&-page {
-		&-section {
+		&-listing {
 			&:not(.saved) .story-editor-page-id::after {
 				content: '*';
 			}
