@@ -117,6 +117,174 @@ const Component = withErrorPage<ServerSideProps>(({
 		changeDefaultPageTitle(event);
 	}, [changeDefaultPageTitle]);
 
+	const findAndReplace = useCallback(async () => {
+		const dialog = new Dialog({
+			id: 'find-and-replace',
+			title: 'Find and Replace',
+			initialValues: {
+				regex: false,
+				find: '',
+				flags: 'g',
+				replace: ''
+			},
+			content: function Content({ values, setFieldValue }) {
+				const findInputRef = useRef<HTMLInputElement>(null!);
+				const flagsInputRef = useRef<HTMLInputElement>(null);
+
+				useEffect(() => {
+					let regexPatternError = false;
+
+					if (values.regex && values.find) {
+						try {
+							new RegExp(values.find, '');
+						} catch {
+							regexPatternError = true;
+						}
+
+						let regexFlagsError = false;
+
+						try {
+							new RegExp('test', values.flags);
+						} catch {
+							regexFlagsError = true;
+						}
+
+						flagsInputRef.current!.setCustomValidity(regexFlagsError ? 'Please enter valid regex flags.' : '');
+					}
+
+					findInputRef.current.setCustomValidity(regexPatternError ? 'Please enter a valid regex pattern.' : '');
+				}, [values.regex, values.find, values.flags]);
+
+				return (
+					<InlineRowSection>
+						<BoxRow>Finds and replaces text in every page's content.</BoxRow>
+						{values.regex ? (
+							<LabeledBoxRow
+								label="Find"
+								htmlFor="field-find"
+							>
+								/
+								<Field
+									id="field-find"
+									name="find"
+									required
+									autoFocus
+									innerRef={findInputRef}
+								/>
+								/
+								<Field
+									id="field-find"
+									name="flags"
+									size="5"
+									title="Flags"
+									autoComplete="off"
+									innerRef={flagsInputRef}
+								/>
+							</LabeledBoxRow>
+						) : (
+							<FieldBoxRow
+								name="find"
+								label="Find"
+								required
+								autoFocus
+								innerRef={findInputRef as any}
+							/>
+						)}
+						<FieldBoxRow
+							name="replace"
+							label="Replace With"
+						/>
+						<LabeledBoxRow
+							label="Case-Sensitive"
+							htmlFor="field-case-sensitive"
+						>
+							<input
+								id="field-case-sensitive"
+								type="checkbox"
+								checked={!values.flags.includes('i')}
+								onChange={
+									useCallback((event: ChangeEvent<HTMLInputElement>) => {
+										setFieldValue(
+											'flags',
+											event.target.checked
+												? values.flags.replace(/i/g, '')
+												: `${values.flags}i`
+										);
+									}, [setFieldValue, values.flags])
+								}
+							/>
+						</LabeledBoxRow>
+						<FieldBoxRow
+							type="checkbox"
+							name="regex"
+							label="Regex"
+							help={'If you don\'t know what this is, don\'t enable it.\n\nRegex allows for advanced search patterns and replacements.'}
+						/>
+					</InlineRowSection>
+				);
+			},
+			actions: [
+				{ label: 'Replace All', autoFocus: false },
+				'Cancel'
+			]
+		});
+
+		if (!(await dialog)?.submit) {
+			return;
+		}
+
+		const find = (
+			dialog.form!.values.regex
+				? new RegExp(dialog.form!.values.find, dialog.form!.values.flags)
+				: new RegExp(
+					escapeRegExp(dialog.form!.values.find),
+					`g${dialog.form!.values.flags.includes('i') ? 'i' : ''}`
+				)
+		);
+
+		for (const page of Object.values(formikPropsRef.current.values.pages)) {
+			const replacedContent = page.content.replace(find, dialog.form!.values.replace);
+
+			if (page.content !== replacedContent) {
+				formikPropsRef.current.setFieldValue(`pages.${page.id}.content`, replacedContent);
+			}
+		}
+	}, []);
+
+	const jumpToPage = useCallback(async () => {
+		const dialog = new Dialog({
+			id: 'jump-to-page',
+			title: 'Jump to Page',
+			initialValues: {
+				pageID: '' as number | ''
+			},
+			content: (
+				<InlineRowSection>
+					<FieldBoxRow
+						type="number"
+						name="pageID"
+						label="Page Number"
+						required
+						autoFocus
+						min={1}
+						max={Object.values(formikPropsRef.current.values.pages).length}
+					/>
+				</InlineRowSection>
+			),
+			actions: [
+				{ label: 'Jump!', autoFocus: false },
+				'Cancel'
+			]
+		});
+
+		if (!(await dialog)?.submit) {
+			return;
+		}
+
+		location.hash = '';
+		location.hash = `p${dialog.form!.values.pageID}`;
+	}, []);
+
 	const newPage = useCallback(() => {
 		const pages = Object.values(formikPropsRef.current.values.pages);
 
@@ -467,184 +635,16 @@ const Component = withErrorPage<ServerSideProps>(({
 										<Button
 											className="small"
 											disabled={!pageValues.length}
-											onClick={
-												useCallback(async () => {
-													const dialog = new Dialog({
-														id: 'jump-to-page',
-														title: 'Jump to Page',
-														initialValues: {
-															pageID: '' as number | ''
-														},
-														content: (
-															<InlineRowSection>
-																<FieldBoxRow
-																	type="number"
-																	name="pageID"
-																	label="Page Number"
-																	required
-																	autoFocus
-																	min={1}
-																	max={pageValues.length}
-																/>
-															</InlineRowSection>
-														),
-														actions: [
-															{ label: 'Jump!', autoFocus: false },
-															'Cancel'
-														]
-													});
-
-													if (!(await dialog)?.submit) {
-														return;
-													}
-
-													location.hash = '';
-													location.hash = `p${dialog.form!.values.pageID}`;
-												}, [pageValues.length])
-											}
+											onClick={findAndReplace}
 										>
-											Jump to Page
+											Find and Replace
 										</Button>
 										<Button
 											className="small"
 											disabled={!pageValues.length}
-											onClick={
-												useCallback(async () => {
-													const dialog = new Dialog({
-														id: 'find-and-replace',
-														title: 'Find and Replace',
-														initialValues: {
-															regex: false,
-															find: '',
-															flags: 'g',
-															replace: ''
-														},
-														content: function Content({ values, setFieldValue }) {
-															const findInputRef = useRef<HTMLInputElement>(null!);
-															const flagsInputRef = useRef<HTMLInputElement>(null);
-
-															useEffect(() => {
-																let regexPatternError = false;
-
-																if (values.regex && values.find) {
-																	try {
-																		new RegExp(values.find, '');
-																	} catch {
-																		regexPatternError = true;
-																	}
-
-																	let regexFlagsError = false;
-
-																	try {
-																		new RegExp('test', values.flags);
-																	} catch {
-																		regexFlagsError = true;
-																	}
-
-																	flagsInputRef.current!.setCustomValidity(regexFlagsError ? 'Please enter valid regex flags.' : '');
-																}
-
-																findInputRef.current.setCustomValidity(regexPatternError ? 'Please enter a valid regex pattern.' : '');
-															}, [values.regex, values.find, values.flags]);
-
-															return (
-																<InlineRowSection>
-																	<BoxRow>Finds and replaces text in every page's content.</BoxRow>
-																	{values.regex ? (
-																		<LabeledBoxRow
-																			label="Find"
-																			htmlFor="field-find"
-																		>
-																			/
-																			<Field
-																				id="field-find"
-																				name="find"
-																				required
-																				autoFocus
-																				innerRef={findInputRef}
-																			/>
-																			/
-																			<Field
-																				id="field-find"
-																				name="flags"
-																				size="5"
-																				title="Flags"
-																				autoComplete="off"
-																				innerRef={flagsInputRef}
-																			/>
-																		</LabeledBoxRow>
-																	) : (
-																		<FieldBoxRow
-																			name="find"
-																			label="Find"
-																			required
-																			autoFocus
-																			innerRef={findInputRef as any}
-																		/>
-																	)}
-																	<FieldBoxRow
-																		name="replace"
-																		label="Replace With"
-																	/>
-																	<LabeledBoxRow
-																		label="Case-Sensitive"
-																		htmlFor="field-case-sensitive"
-																	>
-																		<input
-																			id="field-case-sensitive"
-																			type="checkbox"
-																			checked={!values.flags.includes('i')}
-																			onChange={
-																				useCallback((event: ChangeEvent<HTMLInputElement>) => {
-																					setFieldValue(
-																						'flags',
-																						event.target.checked
-																							? values.flags.replace(/i/g, '')
-																							: `${values.flags}i`
-																					);
-																				}, [setFieldValue, values.flags])
-																			}
-																		/>
-																	</LabeledBoxRow>
-																	<FieldBoxRow
-																		type="checkbox"
-																		name="regex"
-																		label="Regex"
-																		help={'If you don\'t know what this is, don\'t enable it.\n\nRegex allows for advanced search patterns and replacements.'}
-																	/>
-																</InlineRowSection>
-															);
-														},
-														actions: [
-															{ label: 'Replace All', autoFocus: false },
-															'Cancel'
-														]
-													});
-
-													if (!(await dialog)?.submit) {
-														return;
-													}
-
-													const find = (
-														dialog.form!.values.regex
-															? new RegExp(dialog.form!.values.find, dialog.form!.values.flags)
-															: new RegExp(
-																escapeRegExp(dialog.form!.values.find),
-																`g${dialog.form!.values.flags.includes('i') ? 'i' : ''}`
-															)
-													);
-
-													for (const page of Object.values(formikPropsRef.current.values.pages)) {
-														const replacedContent = page.content.replace(find, dialog.form!.values.replace);
-
-														if (page.content !== replacedContent) {
-															formikPropsRef.current.setFieldValue(`pages.${page.id}.content`, replacedContent);
-														}
-													}
-												}, [])
-											}
+											onClick={jumpToPage}
 										>
-											Find and Replace
+											Jump to Page
 										</Button>
 										<Button
 											className="small"
