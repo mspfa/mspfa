@@ -421,7 +421,9 @@ const Component = withErrorPage<ServerSideProps>(({
 										className={`story-editor-page ${pageStatus}`}
 										heading={page.id}
 									>
+										<span title={page.title}>
 											{page.title}
+										</span>
 									</BoxSection>
 								);
 							}
