@@ -28,7 +28,7 @@ import FieldBoxRow from 'components/Box/FieldBoxRow';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import { escapeRegExp } from 'lodash';
 import BoxRow from 'components/Box/BoxRow';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -75,6 +75,8 @@ const Component = withErrorPage<ServerSideProps>(({
 }) => {
 	const [privateStory, setPrivateStory] = useState(initialPrivateStory);
 	const [initialPages, setInitialPages] = useState(initialPagesProp);
+
+	const router = useRouter();
 
 	const formikPropsRef = useRef<FormikProps<Values>>(null!);
 
@@ -189,8 +191,13 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					useLeaveConfirmation(formikPropsRef.current.dirty);
 
-					// As a network optimization, the default is `undefined` to prevent rendering page components server-side.
+					// As a network optimization, the default `viewMode` is `undefined` to prevent rendering page components server-side.
 					const [viewMode, setViewMode] = useState<'list' | 'grid' | undefined>();
+					const [sortMode, setSortMode] = useState(
+						router.query.sort === 'oldest'
+							? 'oldest' as const
+							: 'newest' as const
+					);
 
 					/**
 					 * Anything set to this ref should be set as the Formik values once before rendering.
@@ -231,12 +238,14 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					// This is a layout effect rather than a normal effect to reduce the time the user can briefly see culled pages.
 					useIsomorphicLayoutEffect(() => {
+						const url = new URL(location.href);
+
+						// Set the sort mode into the URL's query params.
+						url.searchParams.set('sort', sortMode);
+
 						if (viewMode) {
 							// Set the view mode into the URL's query params.
-
-							const url = new URL(location.href);
 							url.searchParams.set('view', viewMode);
-							history.replaceState(null, '', url);
 						} else {
 							// Now that we're on the client, it's safe to render the page components.
 
@@ -254,6 +263,9 @@ const Component = withErrorPage<ServerSideProps>(({
 								}
 							});
 						}
+
+						// Update the URL's query params.
+						history.replaceState(null, '', url);
 
 						if (viewMode === 'list') {
 							const updateCulledPages = () => {
@@ -346,7 +358,7 @@ const Component = withErrorPage<ServerSideProps>(({
 								document.removeEventListener('focusin', updateCulledPages);
 							};
 						}
-					}, [viewMode, pageValues.length, culledPagesRef]);
+					}, [pageValues.length, viewMode, sortMode, culledPagesRef]);
 
 					let pageComponents: ReactNode[] | undefined;
 
@@ -409,10 +421,14 @@ const Component = withErrorPage<ServerSideProps>(({
 										className={`story-editor-page ${pageStatus}`}
 										heading={page.id}
 									>
-										{page.title}
+											{page.title}
 									</BoxSection>
 								);
 							}
+						}
+
+						if (sortMode === 'oldest') {
+							pageComponents.reverse();
 						}
 					}
 
@@ -668,6 +684,24 @@ const Component = withErrorPage<ServerSideProps>(({
 											onChange={onChangeDefaultPageTitle}
 											ref={defaultPageTitleInputRef}
 										/>
+									</Row>
+									<Row>
+										<Label className="spaced" htmlFor="field-sort-pages">
+											Sort Pages By
+										</Label>
+										<select
+											id="field-sort-pages"
+											className="spaced"
+											defaultValue={sortMode}
+											onChange={
+												useCallback((event: ChangeEvent<HTMLSelectElement>) => {
+													setSortMode(event.target.value as 'newest' | 'oldest');
+												}, [])
+											}
+										>
+											<option value="newest">Newest</option>
+											<option value="oldest">Oldest</option>
+										</select>
 									</Row>
 								</BoxSection>
 							</Box>
