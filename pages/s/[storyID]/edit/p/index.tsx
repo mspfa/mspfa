@@ -5,7 +5,7 @@ import { withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
 import type { FormikProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
-import type { ChangeEvent, Dispatch, MutableRefObject, ReactNode, SetStateAction } from 'react';
+import type { ChangeEvent, Dispatch, MouseEvent, MutableRefObject, ReactNode, SetStateAction } from 'react';
 import { useCallback, useRef, useState, useEffect, createContext, useMemo } from 'react';
 import { getChangedValues, useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
@@ -383,10 +383,24 @@ const Component = withErrorPage<ServerSideProps>(({
 						}
 					});
 
-					/** A ref to the next React key a `ClientStoryPage` should use. This is incremented after each time it is assigned to a page. */
-					const nextKeyRef = useRef(0);
-
 					const pageValues = Object.values(formikPropsRef.current.values.pages);
+
+					// This state is a partial record that maps page IDs to a boolean of whether the page is selected. If the page is not selected, it should not be in this record.
+					const [selectedPages, setSelectedPages] = useState<Partial<Record<StoryPageID, true>>>({});
+
+					const onClickPageTile = useCallback((event: MouseEvent<HTMLDivElement> & { target: HTMLDivElement }) => {
+						const pageID = +event.target.id.slice(1);
+
+						const newSelectedPages = { ...selectedPages };
+
+						if (selectedPages[pageID]) {
+							delete newSelectedPages[pageID];
+						} else {
+							newSelectedPages[pageID] = true;
+						}
+
+						setSelectedPages(newSelectedPages);
+					}, [selectedPages]);
 
 					// This state is a record that maps page IDs to a boolean of their `culled` prop, or undefined if the record hasn't been processed by the below effect hook yet.
 					const [culledPages, setCulledPages] = useState<Partial<Record<StoryPageID, boolean>>>({});
@@ -530,6 +544,9 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					let pageComponents: ReactNode[] | undefined;
 
+					/** A ref to the next React key a `ClientStoryPage` should use. This is incremented after each time it is assigned to a page. */
+					const nextKeyRef = useRef(0);
+
 					let firstDraftID: StoryPageID | undefined;
 
 					if (viewMode) {
@@ -581,12 +598,15 @@ const Component = withErrorPage<ServerSideProps>(({
 											: 'scheduled' as const
 								);
 
+								const selected = page.id in selectedPages;
+
 								pageComponents.push(
 									<BoxSection
 										key={page[_key]}
 										id={`p${page.id}`}
-										className={`story-editor-page ${pageStatus}`}
+										className={`story-editor-page ${pageStatus}${selected ? ' selected' : ''}`}
 										heading={page.id}
+										onClick={onClickPageTile}
 									>
 										<span title={page.title}>
 											{page.title}

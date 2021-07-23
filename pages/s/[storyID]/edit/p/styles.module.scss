@@ -11,6 +11,11 @@
 		&.view-mode-list > * {
 			margin-bottom: 24px;
 		}
+
+		&.view-mode-grid {
+			display: flex;
+			flex-wrap: wrap;
+		}
 	}
 
 	&-actions {
@@ -35,31 +40,39 @@
 	}
 
 	.view-mode-grid &-page {
-		&.box-section {
-			display: inline-flex;
-		}
-
+		display: inline-flex;
 		margin: 0.5ch;
 		overflow: hidden;
 		width: 85px;
 		height: 85px;
 		font-size: 0.875em;
+		cursor: pointer;
+		user-select: none;
+		box-shadow: 2px 2px 0 0 rgba(128, 128, 128, 0.5);
 
-		& > .box {
-			&-heading {
-				text-align: left;
-				margin-bottom: 0;
-				padding: 0.25em 0.75ch;
+		&.selected {
+			outline: 2px solid #0000ff;
+			outline-offset: -2px;
+		}
 
-				&::before {
-					content: 'p';
-				}
+		& > * {
+			// This is necessary so that `event.target` is set directly to the page tile element on click, rather than any of its children.
+			pointer-events: none;
+		}
+
+		& > .box-heading {
+			text-align: left;
+			margin-bottom: 0;
+			padding: 0.25em 0.75ch;
+
+			&::before {
+				content: 'p';
 			}
+		}
 
-			&-content {
-				padding: 0.75ch;
-				hyphens: auto;
-			}
+		& > .box-content {
+			padding: 0.75ch;
+			hyphens: auto;
 		}
 	}
 }
