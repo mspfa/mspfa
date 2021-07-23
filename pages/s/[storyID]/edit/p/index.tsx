@@ -230,15 +230,18 @@ const Component = withErrorPage<ServerSideProps>(({
 								// If `pageSection.id === 'p14'` for example, then `pageID === 14`.
 								const pageID = +pageSection.id.slice(1);
 
+								// `getBoundingClientRect()` is significantly faster than `offsetTop` and `offsetHeight`.
+								const rect = pageSection.getBoundingClientRect();
+
 								const culled = !(
 									// The first page and the last page must not be culled so that they can be tabbed into from outside of view.
 									pageID === 1 || pageID === pageValues.length
 									// Whether this page is visible.
 									|| (
 										// Whether the bottom of this page is below the top of the view.
-										pageSection.offsetTop + pageSection.offsetHeight >= document.documentElement.scrollTop
+										rect.bottom > 0
 										// Whether the top of this page is above the bottom of the view.
-										&& pageSection.offsetTop <= document.documentElement.scrollTop + document.documentElement.clientHeight
+										&& rect.top < document.documentElement.clientHeight + 1
 									)
 									// Page sections which have focus should not be culled, or else they would lose focus, causing inconvenience to the user.
 									|| pageSection === focusedPageSection
