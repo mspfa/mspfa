@@ -76,6 +76,78 @@ const Component = withErrorPage<ServerSideProps>(({
 	const [privateStory, setPrivateStory] = useState(initialPrivateStory);
 	const [initialPages, setInitialPages] = useState(initialPagesProp);
 
+	const formikPropsRef = useRef<FormikProps<Values>>(null!);
+
+	const defaultPageTitleInputRef = useRef<HTMLInputElement>(null!);
+
+	const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source>>();
+
+	const changeDefaultPageTitle = useThrottledCallback(async (event: ChangeEvent<HTMLInputElement>) => {
+		setPrivateStory({
+			...privateStory,
+			editorSettings: {
+				...privateStory.editorSettings,
+				defaultPageTitle: event.target.value
+			}
+		});
+		// The reason the above state is updated before syncing with the server via the below request rather than after is so the user can use the new default page title while the request is still loading.
+
+		cancelTokenSourceRef.current = axios.CancelToken.source();
+
+		await (api as StoryAPI).put(`/stories/${privateStory.id}`, {
+			editorSettings: {
+				defaultPageTitle: event.target.value
+			}
+		}, {
+			cancelToken: cancelTokenSourceRef.current.token
+		});
+
+		cancelTokenSourceRef.current = undefined;
+	}, [privateStory]);
+
+	const onChangeDefaultPageTitle = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+		cancelTokenSourceRef.current?.cancel();
+
+		if (!event.target.reportValidity()) {
+			return;
+		}
+
+		changeDefaultPageTitle(event);
+	}, [changeDefaultPageTitle]);
+
+	const newPage = useCallback(() => {
+		const pages = Object.values(formikPropsRef.current.values.pages);
+
+		// Get the ID of a new page being added after the last one.
+		const id = (
+			pages.length
+				? +pages[pages.length - 1].id + 1
+				: 1
+		);
+
+		const newPage: ClientStoryPage = {
+			id,
+			title: privateStory.editorSettings.defaultPageTitle,
+			content: '',
+			nextPages: [id + 1],
+			unlisted: false,
+			disableControls: false,
+			commentary: '',
+			notify: true
+		};
+
+		formikPropsRef.current.setFieldValue('pages', {
+			...formikPropsRef.current.values.pages,
+			[id]: newPage
+		});
+
+		// Wait for the newly added editor page to render.
+		setTimeout(() => {
+			// Select the title field of the newly added page.
+			(document.getElementById(`field-pages-${id}-title`) as HTMLInputElement | null)?.select();
+		});
+	}, [privateStory.editorSettings.defaultPageTitle]);
+
 	return (
 		<Page heading="Edit Adventure">
 			<Formik<Values>
@@ -113,39 +185,12 @@ const Component = withErrorPage<ServerSideProps>(({
 			>
 				{formikProps => {
 					// Using this instead of destructuring the Formik props directly is necessary as a performance optimization, to significantly reduce unnecessary re-renders.
-					const formikPropsRef = useLatest(formikProps);
+					formikPropsRef.current = formikProps;
 
 					useLeaveConfirmation(formikPropsRef.current.dirty);
 
-					const defaultPageTitleInputRef = useRef<HTMLInputElement>(null!);
-
-					const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source>>();
-
-					const onChangeDefaultPageTitle = useThrottledCallback(async (event: ChangeEvent<HTMLInputElement>) => {
-						setPrivateStory({
-							...privateStory,
-							editorSettings: {
-								...privateStory.editorSettings,
-								defaultPageTitle: event.target.value
-							}
-						});
-						// The reason the above state is updated before syncing with the server via the below request rather than after is so the user can use the new default page title while the request is still loading.
-
-						cancelTokenSourceRef.current = axios.CancelToken.source();
-
-						await (api as StoryAPI).put(`/stories/${privateStory.id}`, {
-							editorSettings: {
-								defaultPageTitle: event.target.value
-							}
-						}, {
-							cancelToken: cancelTokenSourceRef.current.token
-						});
-
-						cancelTokenSourceRef.current = undefined;
-
-						// This ESLint comment is necessary because ESLint doesn't know that `privateStory` can change.
-						// eslint-disable-next-line react-hooks/exhaustive-deps
-					}, [privateStory]);
+					// As a network optimization, the default is `undefined` to prevent rendering page components server-side.
+					const [viewMode, setViewMode] = useState<'list' | 'grid' | undefined>();
 
 					/**
 					 * Anything set to this ref should be set as the Formik values once before rendering.
@@ -167,9 +212,6 @@ const Component = withErrorPage<ServerSideProps>(({
 					const nextKeyRef = useRef(0);
 
 					const pageValues = Object.values(formikPropsRef.current.values.pages);
-
-					// As a network optimization, the default is `undefined` to prevent rendering page components server-side.
-					const [viewMode, setViewMode] = useState<'list' | 'grid' | undefined>();
 
 					// This state is a record that maps page IDs to a boolean of their `culled` prop, or undefined if the record hasn't been processed by the below effect hook yet.
 					const [culledPages, setCulledPages] = useState<Partial<Record<StoryPageID, boolean>>>({});
@@ -304,13 +346,13 @@ const Component = withErrorPage<ServerSideProps>(({
 								document.removeEventListener('focusin', updateCulledPages);
 							};
 						}
-					}, [viewMode, pageValues.length, culledPagesRef, formikPropsRef]);
+					}, [viewMode, pageValues.length, culledPagesRef]);
 
 					let pageComponents: ReactNode[] | undefined;
 
 					let firstDraftID: StoryPageID | undefined;
 
-					if (viewMode === 'list') {
+					if (viewMode) {
 						pageComponents = new Array(pageValues.length);
 
 						for (let i = pageValues.length - 1; i >= 0; i--) {
@@ -321,42 +363,63 @@ const Component = withErrorPage<ServerSideProps>(({
 								page[_key] = nextKeyRef.current++;
 							}
 
-							const initialPublished = (
-								formikPropsRef.current.initialValues.pages[page.id] as ClientStoryPage | undefined
-							)?.published;
+							if (viewMode === 'list') {
+								const initialPublished = (
+									formikPropsRef.current.initialValues.pages[page.id] as ClientStoryPage | undefined
+								)?.published;
 
-							if (initialPublished === undefined) {
-								firstDraftID = page.id;
-							}
+								if (initialPublished === undefined) {
+									firstDraftID = page.id;
+								}
 
-							if (!(page.id in culledPages)) {
-								// Not culling more than a few pages leads to unacceptably large initial load times.
-								// We choose not to cull only the first page and the last two pages because that exact set of pages is the most likely to still be unculled after `updateCulledPages` is called, and thus it is the least likely to cause an unnecessary re-render due to a change in the culled pages.
-								culledPages[page.id] = !(
-									page.id === 1
-									|| page.id >= pageValues.length - 1
+								if (!(page.id in culledPages)) {
+									// Not culling more than a few pages leads to unacceptably large initial load times.
+									// We choose not to cull only the first page and the last two pages because that exact set of pages is the most likely to still be unculled after `updateCulledPages` is called, and thus it is the least likely to cause an unnecessary re-render due to a change in the culled pages.
+									culledPages[page.id] = !(
+										page.id === 1
+										|| page.id >= pageValues.length - 1
+									);
+								}
+
+								pageComponents.push(
+									<StoryEditorPageSection
+										// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
+										key={page[_key]}
+										page={page}
+										culled={culledPages[page.id]!}
+										initialPublished={initialPublished}
+									/>
+								);
+							} else {
+								// If this point is reached, `viewMode === 'grid'`.
+
+								pageComponents.push(
+									<div
+										key={page[_key]}
+										id={`p${page.id}`}
+										className="story-editor-page-tile"
+									/>
 								);
 							}
-
-							pageComponents.push(
-								<StoryEditorPageSection
-									// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
-									key={page[_key]}
-									page={page}
-									culled={culledPages[page.id]!}
-									initialPublished={initialPublished}
-								/>
-							);
 						}
-					} else if (viewMode === 'grid') {
-						pageComponents = [
-							<>
-								hey whats up<br />
-								<br />
-								grid not implemented yet<br /><br /><br /><br /><br /><br /><br /><br />
-							</>
-						];
 					}
+
+					/**
+					 * The values to pass into the `value` of the `StoryEditorContext`.
+					 *
+					 * These values are passed through a context rather than directly as `StoryEditorPageSection` props to reduce `React.memo`'s prop comparison performance cost.
+					 */
+					const storyEditorContext = useMemo(() => ({
+						storyID: privateStory.id,
+						firstDraftID,
+						formikPropsRef,
+						setInitialPages,
+						queuedValuesRef,
+						isSubmitting: formikProps.isSubmitting,
+						cachedPageHeightsRef
+						// This ESLint comment is necessary because ESLint doesn't know that `privateStory.id` can change.
+						// eslint-disable-next-line react-hooks/exhaustive-deps
+					}), [formikProps.isSubmitting, firstDraftID, privateStory.id]);
 
 					return (
 						<Form>
@@ -549,7 +612,7 @@ const Component = withErrorPage<ServerSideProps>(({
 															formikPropsRef.current.setFieldValue(`pages.${page.id}.content`, replacedContent);
 														}
 													}
-												}, [formikPropsRef])
+												}, [])
 											}
 										>
 											Find and Replace
@@ -580,99 +643,61 @@ const Component = withErrorPage<ServerSideProps>(({
 											maxLength={500}
 											defaultValue={privateStory.editorSettings.defaultPageTitle}
 											autoComplete="off"
-											onChange={
-												useCallback((event: ChangeEvent<HTMLInputElement>) => {
-													cancelTokenSourceRef.current?.cancel();
-
-													if (!event.target.reportValidity()) {
-														return;
-													}
-
-													onChangeDefaultPageTitle(event);
-												}, [onChangeDefaultPageTitle])
-											}
+											onChange={onChangeDefaultPageTitle}
 											ref={defaultPageTitleInputRef}
 										/>
 									</Row>
 								</BoxSection>
 							</Box>
-							<div id="story-editor-actions">
-								<Button
-									onClick={
-										useCallback(() => {
-											const pages = Object.values(formikPropsRef.current.values.pages);
-
-											// Get the ID of a new page being added after the last one.
-											const id = (
-												pages.length
-													? +pages[pages.length - 1].id + 1
-													: 1
-											);
-
-											const newPage: ClientStoryPage = {
-												id,
-												title: privateStory.editorSettings.defaultPageTitle,
-												content: '',
-												nextPages: [id + 1],
-												unlisted: false,
-												disableControls: false,
-												commentary: '',
-												notify: true
-											};
-
-											formikPropsRef.current.setFieldValue('pages', {
-												...formikPropsRef.current.values.pages,
-												[id]: newPage
-											});
-
-											// Wait for the newly added editor page to render.
-											setTimeout(() => {
-												// Select the title field of the newly added page.
-												(document.getElementById(`field-pages-${id}-title`) as HTMLInputElement | null)?.select();
-											});
-
-											// This ESLint comment is necessary because ESLint doesn't know that `privateStory.editorSettings.defaultPageTitle` can change.
-											// eslint-disable-next-line react-hooks/exhaustive-deps
-										}, [formikPropsRef, privateStory.editorSettings.defaultPageTitle])
-									}
-								>
-									New Page
-								</Button>
-								<Button
-									type="submit"
-									className="alt"
-									disabled={!formikPropsRef.current.dirty || formikPropsRef.current.isSubmitting}
-								>
-									Save All
-								</Button>
-							</div>
-							<Box id="story-editor-pages">
-								<style jsx global>
-									{`
-										.story-editor-page-section.culled {
-											height: ${defaultCulledHeight}px;
-										}
-									`}
-								</style>
-								<StoryEditorContext.Provider
-									value={
-										// These values are passed through a context rather than directly as `StoryEditorPageSection` props to reduce `React.memo`'s prop comparison performance cost.
-										useMemo(() => ({
-											storyID: privateStory.id,
-											firstDraftID,
-											formikPropsRef,
-											setInitialPages,
-											queuedValuesRef,
-											isSubmitting: formikPropsRef.current.isSubmitting,
-											cachedPageHeightsRef
-											// This ESLint comment is necessary because ESLint doesn't know that `privateStory.id` can change, and it doesn't understand that changes to `formikPropsRef.current.isSubmitting` need to cause this object to update.
-											// eslint-disable-next-line react-hooks/exhaustive-deps
-										}), [formikPropsRef.current.isSubmitting, firstDraftID, privateStory.id, formikPropsRef])
-									}
-								>
-									{pageComponents}
-								</StoryEditorContext.Provider>
-							</Box>
+							{viewMode && (
+								viewMode === 'list' ? (
+									<>
+										<div id="story-editor-actions">
+											<Button onClick={newPage}>
+												New Page
+											</Button>
+											<Button
+												type="submit"
+												className="alt"
+												disabled={!formikPropsRef.current.dirty || formikPropsRef.current.isSubmitting}
+											>
+												Save All
+											</Button>
+										</div>
+										<Box id="story-editor-pages" className="view-mode-list">
+											<style jsx global>
+												{`
+													.story-editor-page-section.culled {
+														height: ${defaultCulledHeight}px;
+													}
+												`}
+											</style>
+											<StoryEditorContext.Provider value={storyEditorContext}>
+												{pageComponents}
+											</StoryEditorContext.Provider>
+										</Box>
+									</>
+								) : (
+									<>
+										<div id="story-editor-actions">
+											<Button>
+												Select All
+											</Button>
+											<Button>
+												Move
+											</Button>
+											<Button>
+												Delete
+											</Button>
+										</div>
+										<div id="story-editor-pages" className="view-mode-grid">
+											<StoryEditorContext.Provider value={storyEditorContext}>
+												{pageComponents}
+											</StoryEditorContext.Provider>
+										</div>
+									</>
+								)
+							)}
 						</Form>
 					);
 				}}
