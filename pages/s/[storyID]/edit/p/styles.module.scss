@@ -1,3 +1,5 @@
+@import 'styles/themes';
+
 #story-editor {
 	&-options {
 		text-align: center;
@@ -20,5 +22,42 @@
 .story-editor {
 	&-view-actions {
 		text-align: center;
+	}
+
+	&-page {
+		&.published > .box-heading {
+			background-color: #008407;
+		}
+
+		&.scheduled > .box-heading {
+			background-color: #cc7600;
+		}
+	}
+
+	.view-mode-grid &-page {
+		&.box-section {
+			display: inline-flex;
+		}
+
+		margin: 5px;
+		overflow: hidden;
+		width: 85px;
+		height: 85px;
+		font-size: 0.875em;
+
+		& > .box {
+			&-heading {
+				text-align: left;
+				margin-bottom: 0;
+
+				&::before {
+					content: 'p';
+				}
+			}
+
+			&-content {
+				padding: 1ch;
+			}
+		}
 	}
 }

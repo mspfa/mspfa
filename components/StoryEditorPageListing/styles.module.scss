@@ -1,17 +1,7 @@
 .story-editor {
 	&-page {
-		&-listing {
-			&:not(.saved) .story-editor-page-id::after {
-				content: '*';
-			}
-
-			&.published > .box-heading {
-				background-color: #008407;
-			}
-
-			&.scheduled > .box-heading {
-				background-color: #cc7600;
-			}
+		.view-mode-list &:not(.saved) .story-editor-page-id::after {
+			content: '*';
 		}
 
 		&-id::before {

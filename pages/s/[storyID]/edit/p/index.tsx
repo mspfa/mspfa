@@ -260,14 +260,14 @@ const Component = withErrorPage<ServerSideProps>(({
 								const newCulledPages: Record<StoryPageID, boolean> = {};
 								let culledPagesChanged = false;
 
-								const pageSections = document.getElementsByClassName('story-editor-page-listing') as HTMLCollectionOf<HTMLDivElement>;
+								const pageSections = document.getElementsByClassName('story-editor-page') as HTMLCollectionOf<HTMLDivElement>;
 
 								let focusedPageListing: Node | null = document.activeElement;
 
 								// Find the ancestor of `document.activeElement` which is a page listing.
 								while (
 									focusedPageListing instanceof Element
-									&& !focusedPageListing.classList.contains('story-editor-page-listing')
+									&& !focusedPageListing.classList.contains('story-editor-page')
 								) {
 									focusedPageListing = focusedPageListing.parentNode;
 								}
@@ -363,10 +363,11 @@ const Component = withErrorPage<ServerSideProps>(({
 								page[_key] = nextKeyRef.current++;
 							}
 
+							const initialPublished = (
+								formikPropsRef.current.initialValues.pages[page.id] as ClientStoryPage | undefined
+							)?.published;
+
 							if (viewMode === 'list') {
-								const initialPublished = (
-									formikPropsRef.current.initialValues.pages[page.id] as ClientStoryPage | undefined
-								)?.published;
 
 								if (initialPublished === undefined) {
 									firstDraftID = page.id;
@@ -393,12 +394,23 @@ const Component = withErrorPage<ServerSideProps>(({
 							} else {
 								// If this point is reached, `viewMode === 'grid'`.
 
+								const pageStatus = (
+									initialPublished === undefined
+										? 'draft' as const
+										: initialPublished <= Date.now()
+											? 'published' as const
+											: 'scheduled' as const
+								);
+
 								pageComponents.push(
-									<div
+									<BoxSection
 										key={page[_key]}
 										id={`p${page.id}`}
-										className="story-editor-page-tile"
-									/>
+										className={`story-editor-page ${pageStatus}`}
+										heading={page.id}
+									>
+										{page.title}
+									</BoxSection>
 								);
 							}
 						}

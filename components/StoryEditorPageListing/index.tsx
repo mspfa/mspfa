@@ -465,7 +465,7 @@ const StoryEditorPageListing = React.memo(({
 	return culled ? (
 		<div
 			id={`p${page.id}`}
-			className="story-editor-page-listing culled"
+			className="story-editor-page culled"
 			style={
 				cachedHeight === undefined
 					? undefined
@@ -476,7 +476,7 @@ const StoryEditorPageListing = React.memo(({
 	) : (
 		<BoxSection
 			id={`p${page.id}`}
-			className={`story-editor-page-listing${saved ? ' saved' : ''} ${pageStatus}`}
+			className={`story-editor-page ${saved ? ' saved' : ''} ${pageStatus}`}
 			heading={(
 				<>
 					<span className="story-editor-page-id spaced">
