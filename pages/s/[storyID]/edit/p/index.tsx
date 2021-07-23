@@ -619,9 +619,18 @@ const Component = withErrorPage<ServerSideProps>(({
 										</Button>
 										<Button
 											className="small"
-											disabled={!viewMode && formikPropsRef.current.dirty}
+											disabled={!viewMode || formikPropsRef.current.isSubmitting}
 											onClick={
 												useCallback(() => {
+													if (formikPropsRef.current.dirty) {
+														new Dialog({
+															id: 'story-editor-view-mode',
+															title: 'View Mode',
+															content: 'You cannot change the view mode with unsaved changes.'
+														});
+														return;
+													}
+
 													// Toggle the `viewMode` between `'list'` and `'grid'`.
 													setViewMode(viewMode => viewMode === 'list' ? 'grid' : 'list');
 												}, [])
