@@ -380,7 +380,6 @@ const Component = withErrorPage<ServerSideProps>(({
 							)?.published;
 
 							if (viewMode === 'list') {
-
 								if (initialPublished === undefined) {
 									firstDraftID = page.id;
 								}
