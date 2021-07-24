@@ -624,7 +624,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										Math.ceil(pixelsInView / pageHeight) + (
 											false // TODO: Possibly only add the below 1 conditionally. Ideally, it should only be added depending on something to do with ~`pageRect.top % pageHeight`.
 												? 0
-												: 1
+												: 0 // TODO: Maybe this should be 0 and not 1 after all?
 										),
 										rowCount - rowsAboveView
 									);
@@ -656,6 +656,8 @@ const Component = withErrorPage<ServerSideProps>(({
 									newGridCullingInfo.paddingTop = rowsAboveView * pageHeight;
 									newGridCullingInfo.paddingBottom = rowsBelowView * pageHeight;
 								}
+
+								// If `!pageElements.length`, the entire above block won't execute, and the values of `newGridCullingInfo` will equal those of `defaultGridCullingInfo`. This is to prevent it from permanently culling all pages if there have ever been 0 pages.
 
 								if (!(
 									newGridCullingInfo.firstIndex === gridCullingInfoRef.current.firstIndex
@@ -705,7 +707,8 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					let firstDraftID: StoryPageID | undefined;
 
-					if (viewMode) {
+					// It is necessary to also check for `pageValues.length` to prevent the `for` loop from trying to iterate over pages that don't exist when there are 0 pages.
+					if (viewMode && pageValues.length) {
 						let firstIndex = 0;
 						let lastIndex = pageValues.length - 1;
 
