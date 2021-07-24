@@ -11,11 +11,6 @@
 		&.view-mode-list > * {
 			margin-bottom: 24px;
 		}
-
-		&.view-mode-grid {
-			display: flex;
-			flex-wrap: wrap;
-		}
 	}
 
 	&-actions {
@@ -41,7 +36,7 @@
 
 	.view-mode-grid &-page {
 		display: inline-flex;
-		margin: 0.5ch;
+		margin: 5px;
 		overflow: hidden;
 		width: 85px;
 		height: 85px;

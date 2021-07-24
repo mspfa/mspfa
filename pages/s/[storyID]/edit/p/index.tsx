@@ -402,21 +402,72 @@ const Component = withErrorPage<ServerSideProps>(({
 						setSelectedPages(newSelectedPages);
 					}, [selectedPages]);
 
-					// This state is a record that maps page IDs to a boolean of their `culled` prop, or undefined if the record hasn't been processed by the below effect hook yet.
+					// When `viewMode === 'list'`, this state is a record that maps page IDs to a boolean of their `culled` prop, or to undefined if the page hasn't been processed by `updateCulledPages` yet.
 					const [culledPages, setCulledPages] = useState<Partial<Record<StoryPageID, boolean>>>({});
 					const culledPagesRef = useLatest(culledPages);
 
-					// This state is for the default height of a culled page listing.
+					// This state is for the default height of a culled page element when `viewMode === 'list'`.
 					const [defaultCulledHeight, setDefaultCulledHeight] = useState(
-						// An arbitrary default culled page listing height. Shouldn't be too small, or else unnecessary re-renders may occur initially due to a higher chance of more page listings being temporarily in view for a short time.
+						// An arbitrary default culled page element height. Shouldn't be too small, or else unnecessary re-renders may occur initially due to a higher chance of more page elements being temporarily in view for a short time.
 						320
 					);
-					/** A ref to whether `defaultCulledHeight` is still unset. */
+					/** A ref to whether `defaultCulledHeight` has still not been set. */
 					const defaultCulledHeightUnsetRef = useRef(true);
 
-					/** A ref to a partial record that maps each page's key to its cached height. */
+					/** A ref to a partial record that maps each page's key to its cached height when `viewMode === 'list'`. */
 					const cachedPageHeightsRef = useRef<Partial<Record<number, number>>>({});
 					// Keys are used instead of page IDs so that cached heights are preserved correctly when pages are deleted or rearranged.
+
+					// This state is some information useful for culling when `viewMode === 'grid'`.
+					const [gridCullingInfo, setGridCullingInfo] = useState({
+						// The default `firstIndex` and `lastIndex` must both be 0 so that exactly one page is rendered, and its size can be used to process culling.
+						/**
+						 * The index of the first page that should be unculled.
+						 *
+						 * If all pages are culled, this does not necessarily index a real page.
+						 */
+						firstIndex: 0,
+						/**
+						 * The index of the last page that should be unculled.
+						 *
+						 * If all pages are culled, this does not necessarily index a real page.
+						 */
+						lastIndex: 0,
+						/** The page container's top padding in pixels. */
+						paddingTop: 0,
+						/** The page container's bottom padding in pixels. */
+						paddingBottom: 0
+					});
+					const gridCullingInfoRef = useLatest(gridCullingInfo);
+
+					useEffect(() => {
+						const onHashChange = () => {
+							if (viewMode === 'grid' && /^#p\d+$/.test(location.hash)) {
+								const pageID = +location.hash.slice(2);
+
+								if (
+									// Check if the target is a real page.
+									pageID > 0
+									&& pageID <= Object.values(formikPropsRef.current.values.pages).length
+									// Check if the target location hash is a culled page.
+									&& (
+										pageID < gridCullingInfo.firstIndex
+										|| pageID > gridCullingInfo.lastIndex
+									)
+								) {
+									// Jump to where the target page would be if it weren't culled.
+
+									document.documentElement.scrollTop = 0; // TODO
+								}
+							}
+						};
+
+						window.addEventListener('hashchange', onHashChange);
+
+						return () => {
+							window.removeEventListener('hashchange', onHashChange);
+						};
+					}, [gridCullingInfo, viewMode]);
 
 					// This is a layout effect rather than a normal effect to reduce the time the user can briefly see culled pages.
 					useIsomorphicLayoutEffect(() => {
@@ -449,16 +500,20 @@ const Component = withErrorPage<ServerSideProps>(({
 						// Update the URL's query params.
 						history.replaceState(null, '', url);
 
-						if (viewMode === 'list') {
-							const updateCulledPages = () => {
+						if (!viewMode) {
+							return;
+						}
+
+						const updateCulledPages = () => {
+							const pageElements = document.getElementsByClassName('story-editor-page') as HTMLCollectionOf<HTMLDivElement>;
+
+							if (viewMode === 'list') {
 								const newCulledPages: Record<StoryPageID, boolean> = {};
 								let culledPagesChanged = false;
 
-								const pageSections = document.getElementsByClassName('story-editor-page') as HTMLCollectionOf<HTMLDivElement>;
-
 								let focusedPageListing: Node | null = document.activeElement;
 
-								// Find the ancestor of `document.activeElement` which is a page listing.
+								// Find the ancestor of `document.activeElement` which is a page element.
 								while (
 									focusedPageListing instanceof Element
 									&& !focusedPageListing.classList.contains('story-editor-page')
@@ -466,14 +521,14 @@ const Component = withErrorPage<ServerSideProps>(({
 									focusedPageListing = focusedPageListing.parentNode;
 								}
 
-								for (let i = 0; i < pageSections.length; i++) {
-									const pageSection = pageSections[i];
+								for (let i = 0; i < pageElements.length; i++) {
+									const pageElement = pageElements[i];
 
-									// If `pageSection.id === 'p14'` for example, then `pageID === 14`.
-									const pageID = +pageSection.id.slice(1);
+									// If `pageElement.id === 'p14'` for example, then `pageID === 14`.
+									const pageID = +pageElement.id.slice(1);
 
 									// `getBoundingClientRect()` is significantly faster than `offsetTop` and `offsetHeight`.
-									const rect = pageSection.getBoundingClientRect();
+									const pageRect = pageElement.getBoundingClientRect();
 
 									const culled = !(
 										// The first page and the last page must not be culled so that they can be tabbed into from outside of view.
@@ -481,21 +536,21 @@ const Component = withErrorPage<ServerSideProps>(({
 										// Whether this page is visible.
 										|| (
 											// Whether the bottom of this page is below the top of the view.
-											rect.bottom > 0
+											pageRect.bottom > 0
 											// Whether the top of this page is above the bottom of the view.
-											&& rect.top < document.documentElement.clientHeight + 1
+											&& pageRect.top <= window.innerHeight
 										)
-										// Page listings which have focus should not be culled, or else they would lose focus, causing inconvenience to the user.
-										|| pageSection === focusedPageListing
+										// Page elements which have focus should not be culled, or else they would lose focus, causing inconvenience to the user.
+										|| pageElement === focusedPageListing
 										// The pages before and after a focused page must also not be culled, so that they can be tabbed into.
-										|| pageSection.previousSibling === focusedPageListing
-										|| pageSection.nextSibling === focusedPageListing
-										// Page listings with invalid form elements should not be culled so those invalid elements can be detected and focused when the user attempts to submit.
+										|| pageElement.previousSibling === focusedPageListing
+										|| pageElement.nextSibling === focusedPageListing
+										// Page elements with invalid form elements should not be culled so those invalid elements can be detected and focused when the user attempts to submit.
 										|| (
-											// This page listing was not culled last time.
+											// This page element was not culled last time.
 											culledPagesRef.current[pageID] === false
-											// This page listing contains an invalid element.
-											&& pageSection.querySelector(':invalid')
+											// This page element contains an invalid element.
+											&& pageElement.querySelector(':invalid')
 										)
 									);
 
@@ -509,14 +564,14 @@ const Component = withErrorPage<ServerSideProps>(({
 											cachedPageHeightsRef.current[
 												// This page's key.
 												(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[_key]
-											] = pageSection.offsetHeight;
+											] = pageElement.offsetHeight;
 										}
 									}
 
 									if (!culled && defaultCulledHeightUnsetRef.current) {
-										// If this page listing is unculled and no default culled page listing height has been set yet, set the default culled height to this height.
+										// If this page element is unculled and no default culled page element height has been set yet, set the default culled height to this height.
 										// Using an arbitrary unculled height as the default culled height is a sufficient solution for scroll jitter in the vast majority of cases.
-										setDefaultCulledHeight(pageSection.offsetHeight);
+										setDefaultCulledHeight(pageElement.offsetHeight);
 										defaultCulledHeightUnsetRef.current = false;
 									}
 								}
@@ -524,33 +579,118 @@ const Component = withErrorPage<ServerSideProps>(({
 								if (culledPagesChanged) {
 									setCulledPages(newCulledPages);
 								}
-							};
+							} else if (pageElements.length) {
+								// If this point is reached, `viewMode === 'grid'`.
 
-							document.addEventListener('scroll', updateCulledPages);
-							document.addEventListener('resize', updateCulledPages);
-							// We use `focusin` instead of `focus` because the former bubbles while the latter doesn't.
-							document.addEventListener('focusin', updateCulledPages);
-							/** A media query which only matches if the current resolution equals the `window.devicePixelRatio` last detected by `updatePixelRatio`. */
-							let resolutionQuery: MediaQueryList;
+								const pageContainer = document.getElementById('story-editor-pages')!;
+								const pageContainerRect = pageContainer.getBoundingClientRect();
+								const pageContainerStyle = window.getComputedStyle(pageContainer);
+								// We use `getComputedStyle` to get the width rather than `getBoundingClientRect` because the former gets exclusively the content width (assuming `pageContainerStyle.boxSizing === 'content-box'`, which is default) while the latter does not.
+								const pageContainerWidth = +pageContainerStyle.width.slice(0, -2);
 
-							const updatePixelRatio = () => {
-								resolutionQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio * 96}dpi)`);
+								const pageRect = pageElements[0].getBoundingClientRect();
+								const pageStyle = window.getComputedStyle(pageElements[0]);
+								const pageWidth = (
+									pageRect.width
+									+ +pageStyle.marginLeft.slice(0, -2)
+									+ +pageStyle.marginRight.slice(0, -2)
+								);
+								const pageHeight = (
+									pageRect.height
+									+ +pageStyle.marginTop.slice(0, -2)
+									+ +pageStyle.marginBottom.slice(0, -2)
+								);
 
-								// Listen for a change in the pixel ratio in order to detect when the browser's zoom level changes.
-								resolutionQuery.addEventListener('change', updatePixelRatio, { once: true });
+								const pagesPerRow = Math.floor(pageContainerWidth / pageWidth);
 
-								// Call `updateCulledPages` whenever the pixel ratio changes, and on the effect hook's initial run due to the `updatePixelRatio` call below.
-								updateCulledPages();
-							};
-							updatePixelRatio();
+								const pageCount = Object.values(formikPropsRef.current.values.pages).length;
+								const rowCount = Math.ceil(pageCount / pagesPerRow);
 
-							return () => {
-								document.removeEventListener('scroll', updateCulledPages);
-								document.removeEventListener('resize', updateCulledPages);
-								document.removeEventListener('focusin', updateCulledPages);
-								resolutionQuery.removeEventListener('change', updatePixelRatio);
-							};
-					}, [pageValues.length, viewMode, sortMode, culledPagesRef]);
+								/** The number of pixels in `pageContainer`'s potential height which is above the top of the view. */
+								const pixelsAboveView = Math.max(0, -pageContainerRect.top);
+								/** The number of pixels in `pageContainer`'s potential height which is within view. */
+								const pixelsInView = window.innerHeight - Math.max(0, pageContainerRect.top);
+
+								const rowsAboveView = Math.min(
+									Math.floor(pixelsAboveView / pageHeight),
+									rowCount
+								);
+								const rowsInView = Math.min(
+									Math.ceil(pixelsInView / pageHeight) + (
+										false // TODO: Only add the below 1 conditionally. It should only be added depending on something to do with ~`pageRect.top % pageHeight`.
+											? 0
+											: 1
+									),
+									rowCount - rowsAboveView
+								);
+								const rowsBelowView = rowCount - rowsInView - rowsAboveView;
+
+								const pagesAboveView = Math.min(
+									rowsAboveView * pagesPerRow,
+									pageCount
+								);
+								const pagesInView = Math.min(
+									rowsInView * pagesPerRow,
+									pageCount - pagesAboveView
+								);
+
+								let firstIndex = pagesAboveView;
+								let lastIndex = Math.min(
+									firstIndex + pagesInView,
+									pageCount
+								) - 1;
+								// The reason we don't just calculate `lastIndex` as `pageCount - 1 - (rowsBelowView * pagesPerRow)` is because `rowsBelowView * pagesPerRow` is not necessarily equal to the number of pages below view, since the last row may not be completely full.
+
+								if (sortMode === 'newest') {
+									[firstIndex, lastIndex] = [
+										pageCount - 1 - lastIndex,
+										pageCount - 1 - firstIndex
+									];
+								}
+
+								const paddingTop = rowsAboveView * pageHeight;
+								const paddingBottom = rowsBelowView * pageHeight;
+
+								if (!(
+									firstIndex === gridCullingInfoRef.current.firstIndex
+									&& lastIndex === gridCullingInfoRef.current.lastIndex
+									&& paddingTop === gridCullingInfoRef.current.paddingTop
+									&& paddingBottom === gridCullingInfoRef.current.paddingBottom
+								)) {
+									// If not all the values of `gridCullingInfo` are the same, update `gridCullingInfoRef` with the new values.
+									setGridCullingInfo({ firstIndex, lastIndex, paddingTop, paddingBottom });
+								}
+							}
+						};
+
+						document.addEventListener('scroll', updateCulledPages);
+						document.addEventListener('resize', updateCulledPages);
+						// We use `focusin` instead of `focus` because the former bubbles while the latter doesn't.
+						document.addEventListener('focusin', updateCulledPages);
+						// We don't listen to `focusout` because, when `focusout` is dispatched, `document.activeElement` is set to `null`, causing any page element outside the view which the user is attempting to focus to instead be culled.
+						// Also, listening to `focusout` isn't necessary for any pragmatic reason, and not doing so improves performance significantly by updating the culled page elements half as often when frequently changing focus.
+
+						/** A media query which only matches if the current resolution equals the `window.devicePixelRatio` last detected by `updatePixelRatio`. */
+						let resolutionQuery: MediaQueryList;
+
+						const updatePixelRatio = () => {
+							resolutionQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio * 96}dpi)`);
+
+							// Listen for a change in the pixel ratio in order to detect when the browser's zoom level changes.
+							resolutionQuery.addEventListener('change', updatePixelRatio, { once: true });
+
+							// Call `updateCulledPages` whenever the pixel ratio changes, and on the effect hook's initial run due to the `updatePixelRatio` call below.
+							updateCulledPages();
+						};
+						updatePixelRatio();
+
+						return () => {
+							document.removeEventListener('scroll', updateCulledPages);
+							document.removeEventListener('resize', updateCulledPages);
+							document.removeEventListener('focusin', updateCulledPages);
+							resolutionQuery.removeEventListener('change', updatePixelRatio);
+						};
+					}, [pageValues.length, viewMode, sortMode, culledPagesRef, gridCullingInfoRef]);
 
 					let pageComponents: ReactNode[] | undefined;
 
@@ -560,9 +700,16 @@ const Component = withErrorPage<ServerSideProps>(({
 					let firstDraftID: StoryPageID | undefined;
 
 					if (viewMode) {
-						pageComponents = new Array(pageValues.length);
+						let firstIndex = 0;
+						let lastIndex = pageValues.length - 1;
 
-						for (let i = pageValues.length - 1; i >= 0; i--) {
+						if (viewMode === 'grid') {
+							({ firstIndex, lastIndex } = gridCullingInfo);
+						}
+
+						pageComponents = new Array(lastIndex - firstIndex + 1);
+
+						for (let i = lastIndex; i >= firstIndex; i--) {
 							const page = pageValues[i] as KeyedClientStoryPage;
 
 							// If this page doesn't have a React key yet, set one.
@@ -574,11 +721,11 @@ const Component = withErrorPage<ServerSideProps>(({
 								formikPropsRef.current.initialValues.pages[page.id] as ClientStoryPage | undefined
 							)?.published;
 
-							if (viewMode === 'list') {
-								if (initialPublished === undefined) {
-									firstDraftID = page.id;
-								}
+							if (initialPublished === undefined) {
+								firstDraftID = page.id;
+							}
 
+							if (viewMode === 'list') {
 								if (!(page.id in culledPages)) {
 									// Not culling more than a few pages leads to unacceptably large initial load times.
 									// We choose not to cull only the first page and the last two pages because that exact set of pages is the most likely to still be unculled after `updateCulledPages` is called, and thus it is the least likely to cause an unnecessary re-render due to a change in the culled pages.
@@ -588,12 +735,14 @@ const Component = withErrorPage<ServerSideProps>(({
 									);
 								}
 
+								const culled = culledPages[page.id]!;
+
 								pageComponents.push(
 									<StoryEditorPageListing
 										// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
 										key={page[_key]}
 										page={page}
-										culled={culledPages[page.id]!}
+										culled={culled}
 										initialPublished={initialPublished}
 									/>
 								);
@@ -754,7 +903,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										<Box id="story-editor-pages" className="view-mode-list">
 											<style jsx global>
 												{`
-													.story-editor-page-listing.culled {
+													.story-editor-page.culled {
 														height: ${defaultCulledHeight}px;
 													}
 												`}
@@ -777,7 +926,14 @@ const Component = withErrorPage<ServerSideProps>(({
 												Delete
 											</Button>
 										</div>
-										<div id="story-editor-pages" className="view-mode-grid">
+										<div
+											id="story-editor-pages"
+											className="view-mode-grid"
+											style={{
+												paddingTop: `${gridCullingInfo.paddingTop}px`,
+												paddingBottom: `${gridCullingInfo.paddingBottom}px`
+											}}
+										>
 											<StoryEditorContext.Provider value={storyEditorContext}>
 												{pageComponents}
 											</StoryEditorContext.Provider>
