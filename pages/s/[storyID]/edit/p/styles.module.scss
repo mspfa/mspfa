@@ -1,4 +1,4 @@
-@import 'styles/themes';
+@import 'styles/general';
 
 #story-editor {
 	&-options {
@@ -6,7 +6,15 @@
 	}
 
 	&-pages {
-		padding: 0 32px;
+		@include desktop {
+			padding: 0 32px;
+		}
+
+		@include mobile {
+			&.view-mode-grid {
+				padding: 0 10px;
+			}
+		}
 
 		&.view-mode-list > * {
 			margin-bottom: 24px;
