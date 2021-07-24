@@ -443,6 +443,19 @@ const Component = withErrorPage<ServerSideProps>(({
 					const gridCullingInfoRef = useLatest(gridCullingInfo);
 
 					useEffect(() => {
+						if (!viewMode) {
+							return;
+						}
+
+						const url = new URL(location.href);
+
+						// Set query params.
+						url.searchParams.set('view', viewMode);
+						url.searchParams.set('sort', sortMode);
+
+						// Update the URL's query params.
+						history.replaceState(null, '', url);
+
 						const onHashChange = () => {
 							if (viewMode === 'grid' && /^#p\d+$/.test(location.hash)) {
 								const pageID = +location.hash.slice(2);
@@ -453,8 +466,8 @@ const Component = withErrorPage<ServerSideProps>(({
 									&& pageID <= Object.values(formikPropsRef.current.values.pages).length
 									// Check if the target location hash is a culled page.
 									&& (
-										pageID < gridCullingInfo.firstIndex
-										|| pageID > gridCullingInfo.lastIndex
+										pageID < gridCullingInfoRef.current.firstIndex
+										|| pageID > gridCullingInfoRef.current.lastIndex
 									)
 								) {
 									// Jump to where the target page would be if it weren't culled.
@@ -469,25 +482,17 @@ const Component = withErrorPage<ServerSideProps>(({
 						return () => {
 							window.removeEventListener('hashchange', onHashChange);
 						};
-					}, [gridCullingInfo, viewMode]);
+					}, [viewMode, sortMode, gridCullingInfoRef]);
 
-					// This is a layout effect rather than a normal effect to reduce the time the user can briefly see culled pages.
+					// This is a layout effect rather than a normal effect to reduce the time the user can briefly see `viewMode === undefined` or culled pages.
 					useIsomorphicLayoutEffect(() => {
-						const url = new URL(location.href);
-
-						// Set the sort mode into the URL's query params.
-						url.searchParams.set('sort', sortMode);
-
-						if (viewMode) {
-							// Set the view mode into the URL's query params.
-							url.searchParams.set('view', viewMode);
-						} else {
+						if (!viewMode) {
 							// Now that we're on the client, it's safe to render the page components.
 
 							// If the view mode is not set, load it from the URL's query params.
 							setViewMode(Router.query.view === 'grid' ? 'grid' : 'list');
 
-							// Wait for the page components to render.
+							// Wait for the correct `viewMode` to render.
 							setTimeout(() => {
 								if (location.hash) {
 									// Since the location hash may reference a page component which wasn't rendered at the time that the browser tried to use it, set the hash again now that all the page components are rendered.
@@ -497,12 +502,7 @@ const Component = withErrorPage<ServerSideProps>(({
 									location.hash = locationHash;
 								}
 							});
-						}
 
-						// Update the URL's query params.
-						history.replaceState(null, '', url);
-
-						if (!viewMode) {
 							return;
 						}
 
