@@ -80,7 +80,7 @@ export type StoryEditorPageListingProps = {
 	initialPublished: number | undefined
 };
 
-/** A `BoxSection` for a page in the story editor. */
+/** A `BoxSection` for a page in the story editor when in the list view mode. */
 const StoryEditorPageListing = React.memo(({
 	page,
 	culled,
@@ -160,17 +160,17 @@ const StoryEditorPageListing = React.memo(({
 
 	const lastNextPageInputRef = useRef<HTMLInputElement>(null);
 
-	/** Reports the validity of all form elements in this page listing. If one of them is found invalid, stops reporting and returns `false`. If all elements are valid, returns `true`. */
+	/** If an invalid element is found in this page listing, reports its validity and returns `false`. Otherwise, returns `true`. */
 	const reportPageValidity = useCallback((
 		/** Whether to only check the validity of advanced options. */
 		onlyAdvanced = false,
 		/** The IDs of pages to report the validity of. */
 		pageIDs?: StoryPageID[]
 	) => {
-		let selectors = ['input', 'textarea', 'select'];
+		let selector = ':invalid';
 
 		if (onlyAdvanced) {
-			selectors = selectors.map(selector => `.story-editor-page-advanced ${selector}`);
+			selector = `.story-editor-page-advanced ${selector}`;
 		}
 
 		// If this page is the only page in `pageIDs` anyway, then `pageIDs` is unneeded and can be set to `undefined` as an optimization.
@@ -183,17 +183,16 @@ const StoryEditorPageListing = React.memo(({
 		}
 
 		if (pageIDs) {
-			selectors = selectors.flatMap(selector => (
-				pageIDs!.map(pageID => `#p${pageID} ${selector}`)
-			));
+			selector = pageIDs.map(pageID => `#p${pageID} ${selector}`).join(', ');
 		}
 
 		const container = pageIDs ? ref.current.parentNode! : ref.current;
 
-		for (const element of container.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(selectors.join(', '))) {
-			if (!element.reportValidity()) {
-				return false;
-			}
+		const invalidElement = container.querySelector<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(selector);
+
+		if (invalidElement) {
+			invalidElement.reportValidity();
+			return false;
 		}
 
 		return true;
