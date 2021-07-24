@@ -688,7 +688,11 @@ const Component = withErrorPage<ServerSideProps>(({
 						let resolutionQuery: MediaQueryList;
 
 						const updatePixelRatio = () => {
-							resolutionQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio * 96}dpi)`);
+							const dpi = window.devicePixelRatio * 96;
+							resolutionQuery = window.matchMedia(
+								// Allow any resolution in the range between the floor and the ceiling of `dpi` to ensure it works on browsers that have insufficient precision on `devicePixelRatio` or on `resolution` queries.
+								`(min-resolution: ${Math.floor(dpi)}dpi) and (max-resolution: ${Math.ceil(dpi)}dpi)`
+							);
 
 							// Listen for a change in the pixel ratio in order to detect when the browser's zoom level changes.
 							resolutionQuery.addEventListener('change', updatePixelRatio, { once: true });
