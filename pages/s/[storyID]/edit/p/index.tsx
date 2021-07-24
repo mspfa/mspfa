@@ -629,11 +629,8 @@ const Component = withErrorPage<ServerSideProps>(({
 										rowCount
 									);
 									const rowsInView = Math.min(
-										Math.ceil(pixelsInView / pageHeight) + (
-											false // TODO: Possibly only add the below 1 conditionally. Ideally, it should only be added depending on something to do with ~`pageRect.top % pageHeight`.
-												? 0
-												: 1
-										),
+										// The `+ 1` is not always necessary, but often it is, and it doesn't hurt when it isn't.
+										Math.ceil(pixelsInView / pageHeight) + 1,
 										rowCount - rowsAboveView
 									);
 									const rowsBelowView = rowCount - rowsInView - rowsAboveView;
