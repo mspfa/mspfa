@@ -51,6 +51,26 @@ export type KeyedClientStoryPage = ClientStoryPage & {
 	[_key]: number
 };
 
+const defaultGridCullingInfo = {
+	// The default `firstIndex` and `lastIndex` must both be 0 so that exactly one page is rendered, and its size can be used to process culling.
+	/**
+	 * The index of the first page that should be unculled.
+	 *
+	 * If all pages are culled, this does not necessarily index a real page.
+	 */
+	firstIndex: 0,
+	/**
+	 * The index of the last page that should be unculled.
+	 *
+	 * If all pages are culled, this does not necessarily index a real page.
+	 */
+	lastIndex: 0,
+	/** The page container's top padding in pixels. */
+	paddingTop: 0,
+	/** The page container's bottom padding in pixels. */
+	paddingBottom: 0
+};
+
 export const StoryEditorContext = createContext<{
 	storyID: StoryID,
 	firstDraftID: StoryPageID | undefined,
@@ -419,25 +439,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					// Keys are used instead of page IDs so that cached heights are preserved correctly when pages are deleted or rearranged.
 
 					// This state is some information useful for culling when `viewMode === 'grid'`.
-					const [gridCullingInfo, setGridCullingInfo] = useState({
-						// The default `firstIndex` and `lastIndex` must both be 0 so that exactly one page is rendered, and its size can be used to process culling.
-						/**
-						 * The index of the first page that should be unculled.
-						 *
-						 * If all pages are culled, this does not necessarily index a real page.
-						 */
-						firstIndex: 0,
-						/**
-						 * The index of the last page that should be unculled.
-						 *
-						 * If all pages are culled, this does not necessarily index a real page.
-						 */
-						lastIndex: 0,
-						/** The page container's top padding in pixels. */
-						paddingTop: 0,
-						/** The page container's bottom padding in pixels. */
-						paddingBottom: 0
-					});
+					const [gridCullingInfo, setGridCullingInfo] = useState({ ...defaultGridCullingInfo });
 					const gridCullingInfoRef = useLatest(gridCullingInfo);
 
 					useEffect(() => {
@@ -579,86 +581,90 @@ const Component = withErrorPage<ServerSideProps>(({
 								if (culledPagesChanged) {
 									setCulledPages(newCulledPages);
 								}
-							} else if (pageElements.length) {
+							} else {
 								// If this point is reached, `viewMode === 'grid'`.
 
-								const pageContainer = document.getElementById('story-editor-pages')!;
-								const pageContainerRect = pageContainer.getBoundingClientRect();
-								const pageContainerStyle = window.getComputedStyle(pageContainer);
-								// We use `getComputedStyle` to get the width rather than `getBoundingClientRect` because the former gets exclusively the content width (assuming `pageContainerStyle.boxSizing === 'content-box'`, which is default) while the latter does not.
-								const pageContainerWidth = +pageContainerStyle.width.slice(0, -2);
+								const newGridCullingInfo = { ...defaultGridCullingInfo };
 
-								const pageRect = pageElements[0].getBoundingClientRect();
-								const pageStyle = window.getComputedStyle(pageElements[0]);
-								const pageWidth = (
-									pageRect.width
-									+ +pageStyle.marginLeft.slice(0, -2)
-									+ +pageStyle.marginRight.slice(0, -2)
-								);
-								const pageHeight = (
-									pageRect.height
-									+ +pageStyle.marginTop.slice(0, -2)
-									+ +pageStyle.marginBottom.slice(0, -2)
-								);
+								if (pageElements.length) {
+									const pageContainer = document.getElementById('story-editor-pages')!;
+									const pageContainerRect = pageContainer.getBoundingClientRect();
+									const pageContainerStyle = window.getComputedStyle(pageContainer);
+									// We use `getComputedStyle` to get the width rather than `getBoundingClientRect` because the former gets exclusively the content width (assuming `pageContainerStyle.boxSizing === 'content-box'`, which is default) while the latter does not.
+									const pageContainerWidth = +pageContainerStyle.width.slice(0, -2);
 
-								const pagesPerRow = Math.floor(pageContainerWidth / pageWidth);
+									const pageRect = pageElements[0].getBoundingClientRect();
+									const pageStyle = window.getComputedStyle(pageElements[0]);
+									const pageWidth = (
+										pageRect.width
+										+ +pageStyle.marginLeft.slice(0, -2)
+										+ +pageStyle.marginRight.slice(0, -2)
+									);
+									const pageHeight = (
+										pageRect.height
+										+ +pageStyle.marginTop.slice(0, -2)
+										+ +pageStyle.marginBottom.slice(0, -2)
+									);
 
-								const pageCount = Object.values(formikPropsRef.current.values.pages).length;
-								const rowCount = Math.ceil(pageCount / pagesPerRow);
+									const pagesPerRow = Math.floor(pageContainerWidth / pageWidth);
 
-								/** The number of pixels in `pageContainer`'s potential height which is above the top of the view. */
-								const pixelsAboveView = Math.max(0, -pageContainerRect.top);
-								/** The number of pixels in `pageContainer`'s potential height which is within view. */
-								const pixelsInView = window.innerHeight - Math.max(0, pageContainerRect.top);
+									const pageCount = Object.values(formikPropsRef.current.values.pages).length;
+									const rowCount = Math.ceil(pageCount / pagesPerRow);
 
-								const rowsAboveView = Math.min(
-									Math.floor(pixelsAboveView / pageHeight),
-									rowCount
-								);
-								const rowsInView = Math.min(
-									Math.ceil(pixelsInView / pageHeight) + (
-										false // TODO: Only add the below 1 conditionally. It should only be added depending on something to do with ~`pageRect.top % pageHeight`.
-											? 0
-											: 1
-									),
-									rowCount - rowsAboveView
-								);
-								const rowsBelowView = rowCount - rowsInView - rowsAboveView;
+									/** The number of pixels in `pageContainer`'s potential height which is above the top of the view. */
+									const pixelsAboveView = Math.max(0, -pageContainerRect.top);
+									/** The number of pixels in `pageContainer`'s potential height which is within view. */
+									const pixelsInView = Math.max(0, window.innerHeight - pageContainerRect.top);
 
-								const pagesAboveView = Math.min(
-									rowsAboveView * pagesPerRow,
-									pageCount
-								);
-								const pagesInView = Math.min(
-									rowsInView * pagesPerRow,
-									pageCount - pagesAboveView
-								);
+									const rowsAboveView = Math.min(
+										Math.floor(pixelsAboveView / pageHeight),
+										rowCount
+									);
+									const rowsInView = Math.min(
+										Math.ceil(pixelsInView / pageHeight) + (
+											false // TODO: Possibly only add the below 1 conditionally. Ideally, it should only be added depending on something to do with ~`pageRect.top % pageHeight`.
+												? 0
+												: 1
+										),
+										rowCount - rowsAboveView
+									);
+									const rowsBelowView = rowCount - rowsInView - rowsAboveView;
 
-								let firstIndex = pagesAboveView;
-								let lastIndex = Math.min(
-									firstIndex + pagesInView,
-									pageCount
-								) - 1;
-								// The reason we don't just calculate `lastIndex` as `pageCount - 1 - (rowsBelowView * pagesPerRow)` is because `rowsBelowView * pagesPerRow` is not necessarily equal to the number of pages below view, since the last row may not be completely full.
+									const pagesAboveView = Math.min(
+										rowsAboveView * pagesPerRow,
+										pageCount
+									);
+									const pagesInView = Math.min(
+										rowsInView * pagesPerRow,
+										pageCount - pagesAboveView
+									);
 
-								if (sortMode === 'newest') {
-									[firstIndex, lastIndex] = [
-										pageCount - 1 - lastIndex,
-										pageCount - 1 - firstIndex
-									];
+									newGridCullingInfo.firstIndex = pagesAboveView;
+									newGridCullingInfo.lastIndex = Math.min(
+										newGridCullingInfo.firstIndex + pagesInView,
+										pageCount
+									) - 1;
+									// The reason we don't just calculate `lastIndex` as `pageCount - 1 - (rowsBelowView * pagesPerRow)` is because `rowsBelowView * pagesPerRow` is not necessarily equal to the number of pages below view, since the last row may not be completely full.
+
+									if (sortMode === 'newest') {
+										[newGridCullingInfo.firstIndex, newGridCullingInfo.lastIndex] = [
+											pageCount - 1 - newGridCullingInfo.lastIndex,
+											pageCount - 1 - newGridCullingInfo.firstIndex
+										];
+									}
+
+									newGridCullingInfo.paddingTop = rowsAboveView * pageHeight;
+									newGridCullingInfo.paddingBottom = rowsBelowView * pageHeight;
 								}
 
-								const paddingTop = rowsAboveView * pageHeight;
-								const paddingBottom = rowsBelowView * pageHeight;
-
 								if (!(
-									firstIndex === gridCullingInfoRef.current.firstIndex
-									&& lastIndex === gridCullingInfoRef.current.lastIndex
-									&& paddingTop === gridCullingInfoRef.current.paddingTop
-									&& paddingBottom === gridCullingInfoRef.current.paddingBottom
+									newGridCullingInfo.firstIndex === gridCullingInfoRef.current.firstIndex
+									&& newGridCullingInfo.lastIndex === gridCullingInfoRef.current.lastIndex
+									&& newGridCullingInfo.paddingTop === gridCullingInfoRef.current.paddingTop
+									&& newGridCullingInfo.paddingBottom === gridCullingInfoRef.current.paddingBottom
 								)) {
-									// If not all the values of `gridCullingInfo` are the same, update `gridCullingInfoRef` with the new values.
-									setGridCullingInfo({ firstIndex, lastIndex, paddingTop, paddingBottom });
+									// If not all the values of `gridCullingInfo` are the same, update `gridCullingInfo` with the new values.
+									setGridCullingInfo(newGridCullingInfo);
 								}
 							}
 						};
