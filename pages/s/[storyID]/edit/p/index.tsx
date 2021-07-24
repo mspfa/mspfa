@@ -586,6 +586,8 @@ const Component = withErrorPage<ServerSideProps>(({
 
 								const newGridCullingInfo = { ...defaultGridCullingInfo };
 
+								// If `!pageElements.length`, the entire below `if` block won't execute, and the values of `newGridCullingInfo` will equal those of `defaultGridCullingInfo`. This is to prevent permanently culling all pages if there have ever been 0 page elements.
+
 								if (pageElements.length) {
 									const pageContainer = document.getElementById('story-editor-pages')!;
 									const pageContainerRect = pageContainer.getBoundingClientRect();
@@ -640,10 +642,13 @@ const Component = withErrorPage<ServerSideProps>(({
 									);
 
 									newGridCullingInfo.firstIndex = pagesAboveView;
-									newGridCullingInfo.lastIndex = Math.min(
-										newGridCullingInfo.firstIndex + pagesInView,
-										pageCount
-									) - 1;
+									newGridCullingInfo.lastIndex = Math.max(
+										newGridCullingInfo.firstIndex,
+										Math.min(
+											newGridCullingInfo.firstIndex + pagesInView,
+											pageCount
+										) - 1
+									);
 									// The reason we don't just calculate `lastIndex` as `pageCount - 1 - (rowsBelowView * pagesPerRow)` is because `rowsBelowView * pagesPerRow` is not necessarily equal to the number of pages below view, since the last row may not be completely full.
 
 									if (sortMode === 'newest') {
@@ -656,8 +661,6 @@ const Component = withErrorPage<ServerSideProps>(({
 									newGridCullingInfo.paddingTop = rowsAboveView * pageHeight;
 									newGridCullingInfo.paddingBottom = rowsBelowView * pageHeight;
 								}
-
-								// If `!pageElements.length`, the entire above block won't execute, and the values of `newGridCullingInfo` will equal those of `defaultGridCullingInfo`. This is to prevent it from permanently culling all pages if there have ever been 0 pages.
 
 								if (!(
 									newGridCullingInfo.firstIndex === gridCullingInfoRef.current.firstIndex
