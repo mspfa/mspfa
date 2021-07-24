@@ -616,7 +616,13 @@ const Component = withErrorPage<ServerSideProps>(({
 									/** The number of pixels in `pageContainer`'s potential height which is above the top of the view. */
 									const pixelsAboveView = Math.max(0, -pageContainerRect.top);
 									/** The number of pixels in `pageContainer`'s potential height which is within view. */
-									const pixelsInView = Math.max(0, window.innerHeight - pageContainerRect.top);
+									const pixelsInView = (
+										pageContainerRect.top < 0
+											? window.innerHeight
+											: pageContainerRect.top > window.innerHeight
+												? 0
+												: window.innerHeight - pageContainerRect.top
+									);
 
 									const rowsAboveView = Math.min(
 										Math.floor(pixelsAboveView / pageHeight),
