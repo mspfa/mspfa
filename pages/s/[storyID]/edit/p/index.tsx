@@ -526,20 +526,30 @@ const Component = withErrorPage<ServerSideProps>(({
 								}
 							};
 
-							updateCulledPages();
 							document.addEventListener('scroll', updateCulledPages);
 							document.addEventListener('resize', updateCulledPages);
 							// We use `focusin` instead of `focus` because the former bubbles while the latter doesn't.
 							document.addEventListener('focusin', updateCulledPages);
-							// We don't listen to `focusout` because, when `focusout` is dispatched, `document.activeElement` is set to `null`, causing any page listing outside the view which the user is attempting to focus to instead be culled.
-							// Also, not listening to `focusout` improves performance significantly by updating the culled page listings half as often when changing focus.
+							/** A media query which only matches if the current resolution equals the `window.devicePixelRatio` last detected by `updatePixelRatio`. */
+							let resolutionQuery: MediaQueryList;
+
+							const updatePixelRatio = () => {
+								resolutionQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio * 96}dpi)`);
+
+								// Listen for a change in the pixel ratio in order to detect when the browser's zoom level changes.
+								resolutionQuery.addEventListener('change', updatePixelRatio, { once: true });
+
+								// Call `updateCulledPages` whenever the pixel ratio changes, and on the effect hook's initial run due to the `updatePixelRatio` call below.
+								updateCulledPages();
+							};
+							updatePixelRatio();
 
 							return () => {
 								document.removeEventListener('scroll', updateCulledPages);
 								document.removeEventListener('resize', updateCulledPages);
 								document.removeEventListener('focusin', updateCulledPages);
+								resolutionQuery.removeEventListener('change', updatePixelRatio);
 							};
-						}
 					}, [pageValues.length, viewMode, sortMode, culledPagesRef]);
 
 					let pageComponents: ReactNode[] | undefined;
