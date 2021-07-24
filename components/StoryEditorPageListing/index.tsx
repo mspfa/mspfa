@@ -475,7 +475,7 @@ const StoryEditorPageListing = React.memo(({
 	) : (
 		<BoxSection
 			id={`p${page.id}`}
-			className={`story-editor-page ${saved ? ' saved' : ''} ${pageStatus}`}
+			className={`story-editor-page${saved ? ' saved' : ''} ${pageStatus}`}
 			heading={(
 				<>
 					<span className="story-editor-page-id spaced">
