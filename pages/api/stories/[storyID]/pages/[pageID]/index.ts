@@ -1,7 +1,7 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
 import type { StoryDocument } from 'modules/server/stories';
-import stories, { getStoryByUnsafeID } from 'modules/server/stories';
+import { getStoryByUnsafeID, updateStorySchedule } from 'modules/server/stories';
 import { authenticate } from 'modules/server/auth';
 import { Perm } from 'modules/client/perms';
 import type { MatchKeysAndValues, UpdateQuery } from 'mongodb';
@@ -52,10 +52,13 @@ const Handler: APIHandler<{
 
 	const $set: Mutable<MatchKeysAndValues<StoryDocument>> = {};
 
+	/** The ID of the last page (which is the page technically being deleted). */
+	const lastPageID = pageValues[pageValues.length - 1].id;
+
 	const updateQuery: UpdateQuery<StoryDocument> = {
-		// Remove the last page.
+		// Delete the last page from the database.
 		$unset: {
-			[`pages.${pageValues[pageValues.length - 1].id}`]: true
+			[`pages.${lastPageID}`]: true
 		}
 	};
 
@@ -91,9 +94,10 @@ const Handler: APIHandler<{
 		updateQuery.$set = $set;
 	}
 
-	await stories.updateOne({
-		_id: story._id
-	}, updateQuery);
+	// Delete the last page from `story` so `story.pages` is in sync with what the database will be after the `updateQuery`, allowing `story` to safely be passed into `updateStorySchedule`.
+	delete story.pages[lastPageID];
+
+	await updateStorySchedule(story, updateQuery);
 
 	// TODO: Adjust IDs of pages in users' gave saves.
 

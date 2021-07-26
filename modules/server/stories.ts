@@ -345,8 +345,17 @@ export const unscheduleStory = (storyID: StoryID) => {
 	}
 };
 
-/** Publishes due scheduled pages, sets a new timeout to rerun this function for future scheduled pages if there are any, and updates the story's `pageCount`. */
+/**
+ * Publishes due scheduled pages, sets a new timeout to rerun this function for future scheduled pages if there are any, and updates the story's `pageCount`.
+ *
+ * Applies any database updates either determined within this function or passed into its `update` parameter.
+ */
 export const updateStorySchedule = async (
+	/**
+	 * The `StoryDocument` whose schedule and `pageCount` is being updated.
+	 *
+	 * ⚠️ Ensure `story.pages` matches what it would be in the database at the time _after_ this function's database update. Also ensure `story.pageCount` matches what it is in the database at the time _before_ this function is called.
+	 */
 	story: StoryDocument,
 	/**
 	 * An update query for this story. Any updates from this function will be added to this object. Upon this function's completion, anything on this object will be updated to the database for this story. Defaults to an empty object.
