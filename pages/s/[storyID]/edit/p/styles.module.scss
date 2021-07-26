@@ -1,4 +1,8 @@
+@use 'sass:map';
+@use 'sass:color';
+
 @import 'styles/general';
+@import 'styles/themes';
 
 #story-editor {
 	&-options {
@@ -33,6 +37,11 @@
 	}
 
 	&-page {
+		&.draft > .box-heading {
+			// Even though this is the default `.box-heading` `background-color`, non-standard themes may overwrite it, so this is to ensure it keeps the standard gray independently of theme.
+			background-color: map.get($front-alt, standard);
+		}
+
 		&.published > .box-heading {
 			background-color: #008407;
 		}
@@ -54,8 +63,12 @@
 		box-shadow: 2px 2px 0 0 rgba(128, 128, 128, 0.5);
 
 		&.selected {
-			outline: 2px solid #0000ff;
-			outline-offset: -2px;
+			$outline-thickness: 2px;
+			$outline-color: #4864ff;
+
+			outline: $outline-thickness solid $outline-color;
+			outline-offset: -$outline-thickness;
+			box-shadow: 2px 2px 0 0 color.scale($outline-color, $alpha: -50%, $saturation: -25%);
 		}
 
 		& > * {
