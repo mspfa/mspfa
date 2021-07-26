@@ -75,7 +75,7 @@
 
 		& > .box-content {
 			padding: 0.75ch;
-			hyphens: auto;
+			word-break: break-all;
 		}
 	}
 }
