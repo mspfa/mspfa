@@ -45,10 +45,12 @@ $front: (
 	dark: #323232
 );
 
+// The text color for `$front-alt`.
 $text-color-alt: (
 	standard: #f2f2f2
 );
 
+// A color used for areas which are darker independently of theme.
 $front-alt: (
 	standard: #696969
 );
