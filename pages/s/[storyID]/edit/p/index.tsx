@@ -784,11 +784,10 @@ const Component = withErrorPage<ServerSideProps>(({
 										id={`p${page.id}`}
 										className={`story-editor-page ${pageStatus}${selected ? ' selected' : ''}`}
 										heading={page.id}
+										title={page.title}
 										onClick={onClickPageTile}
 									>
-										<span title={page.title}>
-											{page.title}
-										</span>
+										{page.title}
 									</BoxSection>
 								);
 							}
