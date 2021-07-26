@@ -82,6 +82,68 @@ export const StoryEditorContext = createContext<{
 	cachedPageHeightsRef: MutableRefObject<Partial<Record<number, number>>>
 }>(undefined!);
 
+const calculateGridSizeInfo = (
+	formikPropsRef: MutableRefObject<FormikProps<Values>>,
+	pageElement: HTMLDivElement
+) => {
+	const pageContainer = document.getElementById('story-editor-pages')!;
+	const pageContainerRect = pageContainer.getBoundingClientRect();
+	const pageContainerStyle = window.getComputedStyle(pageContainer);
+	// We use `getComputedStyle` to get the width rather than `getBoundingClientRect` because the former gets exclusively the content size (assuming `pageContainerStyle.boxSizing === 'content-box'`, which is default) while the latter does not.
+	const pageContainerWidth = +pageContainerStyle.width.slice(0, -2);
+
+	const pageRect = pageElement.getBoundingClientRect();
+	const pageStyle = window.getComputedStyle(pageElement);
+	const pageWidth = (
+		pageRect.width
+		+ +pageStyle.marginLeft.slice(0, -2)
+		+ +pageStyle.marginRight.slice(0, -2)
+	);
+	const pageHeight = (
+		pageRect.height
+		+ +pageStyle.marginTop.slice(0, -2)
+		+ +pageStyle.marginBottom.slice(0, -2)
+	);
+
+	const pagesPerRow = Math.floor(pageContainerWidth / pageWidth);
+
+	const pageCount = Object.values(formikPropsRef.current.values.pages).length;
+	const rowCount = Math.ceil(pageCount / pagesPerRow);
+
+	/** The number of pixels in `pageContainer`'s potential height which is above the top of the view. */
+	const pixelsAboveView = Math.max(0, -pageContainerRect.top);
+	/** The number of pixels in `pageContainer`'s potential height which is within view. */
+	const pixelsInView = (
+		pageContainerRect.top < 0
+			? window.innerHeight
+			: pageContainerRect.top > window.innerHeight
+				? 0
+				: window.innerHeight - pageContainerRect.top
+	);
+
+	const rowsAboveView = Math.min(
+		Math.floor(pixelsAboveView / pageHeight),
+		rowCount
+	);
+	const rowsInView = Math.min(
+		// The `+ 1` is not always necessary, but often it is, and it doesn't hurt when it isn't.
+		Math.ceil(pixelsInView / pageHeight) + 1,
+		rowCount - rowsAboveView
+	);
+	const rowsBelowView = rowCount - rowsInView - rowsAboveView;
+
+	const pagesAboveView = Math.min(
+		rowsAboveView * pagesPerRow,
+		pageCount
+	);
+	const pagesInView = Math.min(
+		rowsInView * pagesPerRow,
+		pageCount - pagesAboveView
+	);
+
+	return { pageContainer, pageHeight, pagesPerRow, pageCount, rowsAboveView, rowsBelowView, pagesAboveView, pagesInView };
+};
+
 type ServerSideProps = {
 	privateStory: PrivateStory,
 	pages: ClientStoryPageRecord
@@ -472,7 +534,27 @@ const Component = withErrorPage<ServerSideProps>(({
 								) {
 									// Jump to where the target page would be if it weren't culled.
 
-									document.documentElement.scrollTop = 0; // TODO
+									const {
+										pageContainer,
+										pageHeight,
+										pagesPerRow,
+										pageCount
+									} = calculateGridSizeInfo(
+										formikPropsRef,
+										// We can assert this is non-null because we have verified in the parent `if` statement that the target page exists, and if a page exists, then at least one page element (though not the one we're jumping to, which is culled) must be mounted.
+										document.getElementsByClassName('story-editor-page')[0] as HTMLDivElement
+									);
+
+									/** The index of the row which the target page is on. */
+									const pageRow = Math.floor(
+										(
+											sortMode === 'oldest'
+												? pageID - 1
+												: pageCount - pageID
+										) / pagesPerRow
+									);
+
+									document.documentElement.scrollTop = pageContainer.offsetTop + pageRow * pageHeight;
 								}
 							}
 						};
@@ -589,60 +671,14 @@ const Component = withErrorPage<ServerSideProps>(({
 								// If `!pageElements.length`, the entire below `if` block won't execute, and the values of `newGridCullingInfo` will equal those of `defaultGridCullingInfo`. This is to prevent permanently culling all pages if there have ever been 0 page elements.
 
 								if (pageElements.length) {
-									const pageContainer = document.getElementById('story-editor-pages')!;
-									const pageContainerRect = pageContainer.getBoundingClientRect();
-									const pageContainerStyle = window.getComputedStyle(pageContainer);
-									// We use `getComputedStyle` to get the width rather than `getBoundingClientRect` because the former gets exclusively the content width (assuming `pageContainerStyle.boxSizing === 'content-box'`, which is default) while the latter does not.
-									const pageContainerWidth = +pageContainerStyle.width.slice(0, -2);
-
-									const pageRect = pageElements[0].getBoundingClientRect();
-									const pageStyle = window.getComputedStyle(pageElements[0]);
-									const pageWidth = (
-										pageRect.width
-										+ +pageStyle.marginLeft.slice(0, -2)
-										+ +pageStyle.marginRight.slice(0, -2)
-									);
-									const pageHeight = (
-										pageRect.height
-										+ +pageStyle.marginTop.slice(0, -2)
-										+ +pageStyle.marginBottom.slice(0, -2)
-									);
-
-									const pagesPerRow = Math.floor(pageContainerWidth / pageWidth);
-
-									const pageCount = Object.values(formikPropsRef.current.values.pages).length;
-									const rowCount = Math.ceil(pageCount / pagesPerRow);
-
-									/** The number of pixels in `pageContainer`'s potential height which is above the top of the view. */
-									const pixelsAboveView = Math.max(0, -pageContainerRect.top);
-									/** The number of pixels in `pageContainer`'s potential height which is within view. */
-									const pixelsInView = (
-										pageContainerRect.top < 0
-											? window.innerHeight
-											: pageContainerRect.top > window.innerHeight
-												? 0
-												: window.innerHeight - pageContainerRect.top
-									);
-
-									const rowsAboveView = Math.min(
-										Math.floor(pixelsAboveView / pageHeight),
-										rowCount
-									);
-									const rowsInView = Math.min(
-										// The `+ 1` is not always necessary, but often it is, and it doesn't hurt when it isn't.
-										Math.ceil(pixelsInView / pageHeight) + 1,
-										rowCount - rowsAboveView
-									);
-									const rowsBelowView = rowCount - rowsInView - rowsAboveView;
-
-									const pagesAboveView = Math.min(
-										rowsAboveView * pagesPerRow,
-										pageCount
-									);
-									const pagesInView = Math.min(
-										rowsInView * pagesPerRow,
-										pageCount - pagesAboveView
-									);
+									const {
+										pageHeight,
+										pageCount,
+										rowsAboveView,
+										rowsBelowView,
+										pagesAboveView,
+										pagesInView
+									} = calculateGridSizeInfo(formikPropsRef, pageElements[0]);
 
 									newGridCullingInfo.firstIndex = pagesAboveView;
 									newGridCullingInfo.lastIndex = Math.max(
