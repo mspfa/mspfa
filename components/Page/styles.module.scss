@@ -10,7 +10,7 @@
 
 	@include mobile {
 		width: 100%;
-		overflow: hidden;
+		// I would set `overflow-x: hidden;` here, except that breaks child elements with `position: sticky;`.
 	}
 }
 

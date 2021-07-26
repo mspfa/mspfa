@@ -566,6 +566,8 @@ const Component = withErrorPage<ServerSideProps>(({
 						};
 					}, [viewMode, sortMode, gridCullingInfoRef]);
 
+					const actionsElementRef = useRef<HTMLDivElement>(null);
+
 					// This is a layout effect rather than a normal effect to reduce the time the user can briefly see `viewMode === undefined` or culled pages.
 					useIsomorphicLayoutEffect(() => {
 						if (!viewMode) {
@@ -713,8 +715,18 @@ const Component = withErrorPage<ServerSideProps>(({
 							}
 						};
 
-						document.addEventListener('scroll', updateCulledPages);
-						document.addEventListener('resize', updateCulledPages);
+						const updateViewport = () => {
+							actionsElementRef.current!.classList[
+								actionsElementRef.current!.getBoundingClientRect().top === 0
+									? 'add'
+									: 'remove'
+							]('stuck');
+
+							updateCulledPages();
+						};
+
+						document.addEventListener('scroll', updateViewport);
+						document.addEventListener('resize', updateViewport);
 						// We use `focusin` instead of `focus` because the former bubbles while the latter doesn't.
 						document.addEventListener('focusin', updateCulledPages);
 						// We don't listen to `focusout` because, when `focusout` is dispatched, `document.activeElement` is set to `null`, causing any page element outside the view which the user is attempting to focus to instead be culled.
@@ -733,14 +745,14 @@ const Component = withErrorPage<ServerSideProps>(({
 							// Listen for a change in the pixel ratio in order to detect when the browser's zoom level changes.
 							resolutionQuery.addEventListener('change', updatePixelRatio, { once: true });
 
-							// Call `updateCulledPages` whenever the pixel ratio changes, and on the effect hook's initial run due to the `updatePixelRatio` call below.
-							updateCulledPages();
+							// Call `updateViewport` whenever the pixel ratio changes, and on the effect hook's initial run via to the `updatePixelRatio` call below.
+							updateViewport();
 						};
 						updatePixelRatio();
 
 						return () => {
-							document.removeEventListener('scroll', updateCulledPages);
-							document.removeEventListener('resize', updateCulledPages);
+							document.removeEventListener('scroll', updateViewport);
+							document.removeEventListener('resize', updateViewport);
 							document.removeEventListener('focusin', updateCulledPages);
 							resolutionQuery.removeEventListener('change', updatePixelRatio);
 						};
@@ -942,7 +954,11 @@ const Component = withErrorPage<ServerSideProps>(({
 							{viewMode && (
 								viewMode === 'list' ? (
 									<>
-										<div id="story-editor-actions">
+										<div
+											id="story-editor-actions"
+											className="mid"
+											ref={actionsElementRef}
+										>
 											<Button onClick={newPage}>
 												New Page
 											</Button>
@@ -969,7 +985,11 @@ const Component = withErrorPage<ServerSideProps>(({
 									</>
 								) : (
 									<>
-										<div id="story-editor-actions">
+										<div
+											id="story-editor-actions"
+											className="mid"
+											ref={actionsElementRef}
+										>
 											<Button>
 												Select All
 											</Button>
@@ -988,9 +1008,7 @@ const Component = withErrorPage<ServerSideProps>(({
 												paddingBottom: `${gridCullingInfo.paddingBottom}px`
 											}}
 										>
-											<StoryEditorContext.Provider value={storyEditorContext}>
-												{pageComponents}
-											</StoryEditorContext.Provider>
+											{pageComponents}
 										</div>
 									</>
 								)
