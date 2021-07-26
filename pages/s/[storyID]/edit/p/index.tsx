@@ -470,15 +470,36 @@ const Component = withErrorPage<ServerSideProps>(({
 					// This state is a partial record that maps page IDs to a boolean of whether the page is selected. If the page is not selected, it should not be in this record.
 					const [selectedPages, setSelectedPages] = useState<Partial<Record<StoryPageID, true>>>({});
 
+					const lastActivePageIDRef = useRef<StoryPageID>(1);
+
 					const onClickPageTile = useCallback((event: MouseEvent<HTMLDivElement> & { target: HTMLDivElement }) => {
 						const pageID = +event.target.id.slice(1);
 
 						const newSelectedPages = { ...selectedPages };
 
-						if (selectedPages[pageID]) {
-							delete newSelectedPages[pageID];
+						if (event.shiftKey) {
+							const startID = Math.min(lastActivePageIDRef.current, pageID);
+							const endID = Math.max(lastActivePageIDRef.current, pageID);
+
+							const pageCount = Object.values(formikPropsRef.current.values.pages).length;
+
+							// Select all the pages in the range between `lastActivePageIDRef.current` and `pageID` (inclusive).
+							for (let i = 1; i < pageCount; i++) {
+								if (i >= startID && i <= endID) {
+									newSelectedPages[i] = true;
+								} else if (!(event.ctrlKey || event.metaKey)) {
+									// If the user is not holding `ctrl` or `⌘`, deselect all pages outside the range.
+									delete newSelectedPages[i];
+								}
+							}
 						} else {
-							newSelectedPages[pageID] = true;
+							if (selectedPages[pageID]) {
+								delete newSelectedPages[pageID];
+							} else {
+								newSelectedPages[pageID] = true;
+							}
+
+							lastActivePageIDRef.current = pageID;
 						}
 
 						setSelectedPages(newSelectedPages);
