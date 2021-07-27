@@ -1060,6 +1060,14 @@ const Component = withErrorPage<ServerSideProps>(({
 						// eslint-disable-next-line react-hooks/exhaustive-deps
 					}), [formikProps.isSubmitting, firstDraftID, privateStory.id]);
 
+					const deselectAll = useCallback(() => {
+						setSelectedPages([]);
+					}, []);
+
+					const selectAll = useCallback(() => {
+						setSelectedPages(Object.values(formikPropsRef.current.values.pages).map(({ id }) => id));
+					}, []);
+
 					return (
 						<Form>
 							<Box>
@@ -1179,8 +1187,15 @@ const Component = withErrorPage<ServerSideProps>(({
 										className="mid"
 										ref={actionsElementRef}
 									>
-										<Button>
-											Select All
+										<Button
+											title={
+												selectedPages.length
+													? `Deselect Selected Pages (${selectedPages.length})`
+													: `Select All Pages (${pageValues.length})`
+											}
+											onClick={selectedPages.length ? deselectAll : selectAll}
+										>
+											{selectedPages.length ? 'Deselect All' : 'Select All'}
 										</Button>
 										<Button>
 											Move
