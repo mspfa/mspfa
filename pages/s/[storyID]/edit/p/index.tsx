@@ -526,12 +526,13 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					// When `viewMode === 'list'`, this state is a record that maps page IDs to a boolean of their `culled` prop, or to undefined if the page hasn't been processed by `updateCulledPages` yet.
 					const [culledPages, setCulledPages] = useState<Partial<Record<StoryPageID, boolean>>>({});
+					// This ref is to prevent unnecessary updates to the effect hook which calls `updateCulledPages`.
 					const culledPagesRef = useLatest(culledPages);
 
-					// This state is for the default height of a culled page element when `viewMode === 'list'`.
+					// This state is the default height of a culled page element when `viewMode === 'list'`.
 					const [defaultCulledHeight, setDefaultCulledHeight] = useState(
 						// An arbitrary default culled page element height. Shouldn't be too small, or else unnecessary re-renders may occur initially due to a higher chance of more page elements being temporarily in view for a short time.
-						320
+						350
 					);
 					/** A ref to whether `defaultCulledHeight` has still not been set. */
 					const defaultCulledHeightUnsetRef = useRef(true);
@@ -646,76 +647,130 @@ const Component = withErrorPage<ServerSideProps>(({
 							const pageElements = document.getElementsByClassName('story-editor-page') as HTMLCollectionOf<HTMLDivElement>;
 
 							if (viewMode === 'list') {
-								const newCulledPages: Record<StoryPageID, boolean> = {};
+								const lastPageID = Object.values(formikPropsRef.current.values.pages).length;
+
 								let culledPagesChanged = false;
+								const newCulledPages: Record<StoryPageID, boolean> = {};
 
-								let focusedPageListing: Node | null = document.activeElement;
+								if (lastPageID) {
+									// The first page and the last page should not be culled so that they can be tabbed into, even if they are outside of view.
+									newCulledPages[1] = false;
+									newCulledPages[lastPageID] = false;
 
-								// Find the ancestor of `document.activeElement` which is a page element.
-								while (
-									focusedPageListing instanceof Element
-									&& !focusedPageListing.classList.contains('story-editor-page')
-								) {
-									focusedPageListing = focusedPageListing.parentNode;
-								}
+									let activeElementAncestor: Node | null = document.activeElement;
 
-								for (let i = 0; i < pageElements.length; i++) {
-									const pageElement = pageElements[i];
+									// Find the ancestor of `document.activeElement` which is a page listing.
+									while (activeElementAncestor instanceof Element) {
+										if (activeElementAncestor.classList.contains('story-editor-page')) {
+											// If `activeElementAncestor.id === 'p14'` for example, then `pageID === 14`.
+											const pageID = +activeElementAncestor.id.slice(1);
 
-									// If `pageElement.id === 'p14'` for example, then `pageID === 14`.
-									const pageID = +pageElement.id.slice(1);
+											// The page listing which has focus should not be culled, or else it would lose focus, causing inconvenience to the user.
+											newCulledPages[pageID] = false;
+											// The pages before and after a focused page should also not be culled, so that they can be tabbed into.
+											if (pageID > 1) {
+												newCulledPages[pageID - 1] = false;
+											}
+											if (pageID < lastPageID) {
+												newCulledPages[pageID + 1] = false;
+											}
 
-									// `getBoundingClientRect()` is significantly faster than `offsetTop` and `offsetHeight`.
-									const pageRect = pageElement.getBoundingClientRect();
+											break;
+										}
 
-									const culled = !(
-										// The first page and the last page must not be culled so that they can be tabbed into from outside of view.
-										pageID === 1 || pageID === pageValues.length
-										// Whether this page is visible.
-										|| (
-											// Whether the bottom of this page is below the top of the view.
-											pageRect.bottom > 0
-											// Whether the top of this page is above the bottom of the view.
-											&& pageRect.top <= window.innerHeight
-										)
-										// Page elements which have focus should not be culled, or else they would lose focus, causing inconvenience to the user.
-										|| pageElement === focusedPageListing
-										// The pages before and after a focused page must also not be culled, so that they can be tabbed into.
-										|| pageElement.previousSibling === focusedPageListing
-										|| pageElement.nextSibling === focusedPageListing
-										// Page elements with invalid form elements should not be culled so those invalid elements can be detected and focused when the user attempts to submit.
-										|| (
-											// This page element was not culled last time.
-											culledPagesRef.current[pageID] === false
-											// This page element contains an invalid element.
-											&& pageElement.querySelector(':invalid')
-										)
-									);
+										activeElementAncestor = activeElementAncestor.parentNode;
+									}
 
-									newCulledPages[pageID] = culled;
+									// Compute this value beforehand for performance.
+									const windowInnerHeight = window.innerHeight;
 
-									if (culledPagesRef.current[pageID] !== culled) {
-										culledPagesChanged = true;
+									for (let i = 0; i < pageElements.length; i++) {
+										const pageElement = pageElements[i];
 
-										if (culled) {
-											// If this unculled page is changing to be culled, cache its height beforehand so it can maintain that height after being culled.
-											cachedPageHeightsRef.current[
-												// This page's key.
-												(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[_key]
-											] = pageRect.height;
+										const pageID = +pageElement.id.slice(1);
+
+										// `getBoundingClientRect()` is significantly faster than `offsetTop` and `offsetHeight`.
+										const pageRect = pageElement.getBoundingClientRect();
+
+										const pageHeight = (
+											pageRect.height
+											+ +window.getComputedStyle(pageElement).marginBottom.slice(0, -2)
+										);
+
+										// Cache this page's height. This should be done here and not in the `StoryEditorPageListing` component so it can be ensured that it is up-to-date.
+										cachedPageHeightsRef.current[
+											// This page's key.
+											(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[_key]
+										] = pageHeight;
+
+										if (defaultCulledHeightUnsetRef.current) {
+											// If no default culled page element height has been set yet, set it to this page element's height.
+											// Using an arbitrary page listing's height as the default is a sufficient solution for scroll jitter in the vast majority of cases.
+
+											setDefaultCulledHeight(pageHeight);
+											defaultCulledHeightUnsetRef.current = false;
+										}
+
+										// If whether this iteration's page should be culled has already been determined, skip this iteration.
+										if (pageID in newCulledPages) {
+											continue;
+										}
+
+										// Page elements containing invalid form elements should not be culled so those invalid elements can be detected and focused when the user attempts to submit.
+										if (pageElement.querySelector(':invalid')) {
+											newCulledPages[pageID] = false;
 										}
 									}
 
-									if (!culled && defaultCulledHeightUnsetRef.current) {
-										// If this page element is unculled and no default culled page element height has been set yet, set the default culled height to this height.
-										// Using an arbitrary unculled height as the default culled height is a sufficient solution for scroll jitter in the vast majority of cases.
-										setDefaultCulledHeight(pageRect.height);
-										defaultCulledHeightUnsetRef.current = false;
+									const scrollTop = document.documentElement.scrollTop;
+									let offsetTop = pageElements[0].offsetTop;
+
+									const iteratePage = (pageID: StoryPageID) => {
+										const pageHeight = cachedPageHeightsRef.current[
+											// This page's key.
+											(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[_key]
+										] ?? defaultCulledHeight;
+
+										// Only calculate whether this page should be culled if it hasn't already been determined previously.
+										if (!(pageID in newCulledPages)) {
+											newCulledPages[pageID] = !(
+												// Whether this page is expected to be in view.
+												(
+													// Whether the bottom of this page would be below the top of the view.
+													offsetTop + pageHeight > scrollTop
+													// Whether the top of this page would be above the bottom of the view.
+													&& offsetTop <= scrollTop + windowInnerHeight
+												)
+											);
+										}
+
+										// Add this page's height to the `offsetTop`.
+										offsetTop += pageHeight;
+
+										if (newCulledPages[pageID] !== culledPagesRef.current[pageID]) {
+											culledPagesChanged = true;
+										}
+									};
+
+									if (sortMode === 'oldest') {
+										for (let pageID = 1; pageID <= lastPageID; pageID++) {
+											iteratePage(pageID);
+										}
+									} else {
+										for (let pageID = lastPageID; pageID >= 1; pageID--) {
+											iteratePage(pageID);
+										}
 									}
+								} else {
+									// There are no pages, so `culledPagesChanged` should only be set to `true` if there were previously culled pages.
+									culledPagesChanged = Object.values(culledPagesRef.current).length !== 0;
 								}
 
 								if (culledPagesChanged) {
 									setCulledPages(newCulledPages);
+
+									// Run this function again in case height estimations becoming more accurate due to this culling update changed which pages should be culled.
+									throttledUpdateCulledPages();
 								}
 							} else {
 								// If this point is reached, `viewMode === 'grid'`.
@@ -782,11 +837,11 @@ const Component = withErrorPage<ServerSideProps>(({
 
 							// This check is to support custom CSS that disables `position: sticky;` on the actions element.
 							if (window.getComputedStyle(actionsElementRef.current!).position === 'sticky') {
-							actionsElementRef.current!.classList[
-								actionsElementRef.current!.getBoundingClientRect().top === 0
-									? 'add'
-									: 'remove'
-							]('stuck');
+								actionsElementRef.current!.classList[
+									actionsElementRef.current!.getBoundingClientRect().top === 0
+										? 'add'
+										: 'remove'
+								]('stuck');
 							}
 						};
 
@@ -839,7 +894,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							document.removeEventListener('focusin', throttledUpdateCulledPages);
 							resolutionQuery.removeEventListener('change', changePixelRatio);
 						};
-					}, [pageValues.length, viewMode, sortMode, culledPagesRef, gridCullingInfoRef]);
+					}, [pageValues.length, viewMode, sortMode, defaultCulledHeight, culledPagesRef, gridCullingInfoRef]);
 
 					const pageComponents: ReactNode[] = [];
 
@@ -857,7 +912,10 @@ const Component = withErrorPage<ServerSideProps>(({
 							({ firstIndex, lastIndex } = gridCullingInfo);
 						}
 
-						const iteratePageValue = (
+						/** The sum of cached heights of consecutive culled pages when `viewMode === 'list'`. */
+						let cachedHeightSum = 0;
+
+						const iteratePage = (
 							/** The index of this page in `pageValues`. */
 							i: number
 						) => {
@@ -878,25 +936,31 @@ const Component = withErrorPage<ServerSideProps>(({
 
 							if (viewMode === 'list') {
 								if (!(page.id in culledPages)) {
-									// Not culling more than a few pages leads to unacceptably large initial load times.
-									// We choose not to cull only the first page and the last two pages because that exact set of pages is the most likely to still be unculled after `updateCulledPages` is called, and thus it is the least likely to cause an unnecessary re-render due to a change in the culled pages.
+									// Having more than a few pages unculled leads to unacceptably large load times.
+									// We choose not to cull only the first page and the last two pages because that exact set of pages is the most likely to still be unculled after `updateCulledPages` is called (since the first and the last pages are always unculled, and the second page is usually initially within view), and thus it is the least likely to cause an unnecessary re-render due to a state change in `culledPages`.
 									culledPages[page.id] = !(
 										page.id === 1
 										|| page.id >= pageValues.length - 1
 									);
 								}
 
-								const culled = culledPages[page.id]!;
+								// Check if this page is culled.
+								if (culledPages[page.id]!) {
+									cachedHeightSum += cachedPageHeightsRef.current[page[_key]] || defaultCulledHeight;
+								} else {
+									pageComponents.push(
+										<StoryEditorPageListing
+											// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
+											key={page[_key]}
+											marginTop={cachedHeightSum}
+											page={page}
+											initialPublished={initialPublished}
+										/>
+									);
 
-								pageComponents.push(
-									<StoryEditorPageListing
-										// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
-										key={page[_key]}
-										page={page}
-										culled={culled}
-										initialPublished={initialPublished}
-									/>
-								);
+									// Since an unculled page was found, reset the height sum for consecutive culled pages.
+									cachedHeightSum = 0;
+								}
 							} else {
 								// If this point is reached, `viewMode === 'grid'`.
 
@@ -927,11 +991,11 @@ const Component = withErrorPage<ServerSideProps>(({
 
 						if (sortMode === 'oldest') {
 							for (let i = firstIndex; i <= lastIndex; i++) {
-								iteratePageValue(i);
+								iteratePage(i);
 							}
 						} else {
 							for (let i = lastIndex; i >= firstIndex; i--) {
-								iteratePageValue(i);
+								iteratePage(i);
 							}
 						}
 					}
@@ -1061,13 +1125,6 @@ const Component = withErrorPage<ServerSideProps>(({
 											</Button>
 										</div>
 										<Box id="story-editor-pages" className="view-mode-list">
-											<style jsx global>
-												{`
-													.story-editor-page.culled {
-														height: ${defaultCulledHeight}px;
-													}
-												`}
-											</style>
 											<StoryEditorContext.Provider value={storyEditorContext}>
 												{pageComponents}
 											</StoryEditorContext.Provider>

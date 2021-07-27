@@ -72,18 +72,18 @@ const deleteFromClientStoryPageRecord = (
 
 // DO NOT add a `children` prop to this component unless practical. It is noticeably less performant than other props.
 export type StoryEditorPageListingProps = {
+	/** The number of pixels to be added to this element's `style.marginTop` for holding the place of all consecutive culled page listings above this one. */
+	marginTop: number,
 	/** The `ClientStoryPage` being edited. */
 	page: KeyedClientStoryPage,
-	/** Whether this page should only be partially loaded/rendered, as an optimization. */
-	culled: boolean,
 	/** This page's `published` value in the `initialValues`. */
 	initialPublished: number | undefined
 };
 
 /** A `BoxSection` for a page in the story editor when in the list view mode. */
 const StoryEditorPageListing = React.memo(({
+	marginTop,
 	page,
-	culled,
 	initialPublished
 }: StoryEditorPageListingProps) => {
 	const {
@@ -458,21 +458,7 @@ const StoryEditorPageListing = React.memo(({
 		formikPropsRef.current.setSubmitting(false);
 	}, [formikPropsRef, page, onServer, storyID, setInitialPages, queuedValuesRef, cachedPageHeightsRef]);
 
-	/** The last known height of this component while not culled, or undefined if it has never been not culled. */
-	const cachedHeight = cachedPageHeightsRef.current[page[_key]];
-
-	return culled ? (
-		<div
-			id={`p${page.id}`}
-			className="story-editor-page culled"
-			style={
-				cachedHeight === undefined
-					? undefined
-					: { height: `${cachedHeight}px` }
-			}
-			ref={ref}
-		/>
-	) : (
+	return (
 		<BoxSection
 			id={`p${page.id}`}
 			className={`story-editor-page ${pageStatus}${saved ? ' saved' : ''}`}
@@ -498,6 +484,9 @@ const StoryEditorPageListing = React.memo(({
 					</span>
 				</>
 			)}
+			style={{
+				marginTop: `${marginTop}px`
+			}}
 			ref={ref}
 		>
 			<Row className="page-field-container-title">
