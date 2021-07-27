@@ -606,6 +606,9 @@ const Component = withErrorPage<ServerSideProps>(({
 												|| scrollTop >= document.documentElement.scrollTop + actionsRect.top + actionsRect.height
 													? actionsStyleTop + actionsRect.height
 													: 0
+											) - (
+												// Add an extra 4 pixels if `viewMode === 'list'` because it looks weird having the page listing up against the top of the screen.
+												viewMode === 'list' ? 4 : 0
 											);
 										}
 
@@ -663,7 +666,9 @@ const Component = withErrorPage<ServerSideProps>(({
 						window.addEventListener('hashchange', updateLocationHash);
 
 						if (!calledUpdateLocationHashRef.current) {
-							updateLocationHash();
+							// This timeout is necessary to wait for the browser to jump to the location hash first so that `updateLocationHash` can run afterward uninterrupted.
+							setTimeout(updateLocationHash);
+
 							calledUpdateLocationHashRef.current = true;
 						}
 
