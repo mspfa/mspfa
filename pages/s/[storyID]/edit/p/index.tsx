@@ -766,8 +766,9 @@ const Component = withErrorPage<ServerSideProps>(({
 							}
 						};
 
+						/** Calls `updateCulledPages` throttled by `frameThrottler`. */
 						const throttledUpdateCulledPages = async () => {
-							// Don't call `frameThrottler` if there is possibly already a pending animation frame request from `throttledUpdateViewport`, since this would then overwrite it and cancel the `throttledUpdateViewport` call, which includes a call to `updateCulledPages` anyway.
+							// Don't call `frameThrottler` if there is possibly already a pending animation frame request from `throttledViewportChange`, since this would then overwrite it and cancel the `throttledViewportChange` call, which includes a call to `updateCulledPages` anyway.
 							if (!frameThrottlerRequests[_updateViewportOrCulledPages]) {
 								await frameThrottler(_updateViewportOrCulledPages);
 
@@ -775,7 +776,8 @@ const Component = withErrorPage<ServerSideProps>(({
 							}
 						};
 
-						const throttledUpdateViewport = async () => {
+						/** A function called whenever the viewport changes, throttled by `frameThrottler`. */
+						const throttledViewportChange = async () => {
 							await frameThrottler(_updateViewportOrCulledPages);
 
 							updateCulledPages();
@@ -787,19 +789,20 @@ const Component = withErrorPage<ServerSideProps>(({
 							]('stuck');
 						};
 
-						throttledUpdateViewport();
+						throttledViewportChange();
 
-						document.addEventListener('scroll', throttledUpdateViewport);
-						document.addEventListener('resize', throttledUpdateViewport);
+						document.addEventListener('scroll', throttledViewportChange);
+						document.addEventListener('resize', throttledViewportChange);
 						// We use `focusin` instead of `focus` because the former bubbles while the latter doesn't.
 						document.addEventListener('focusin', throttledUpdateCulledPages);
 						// We don't listen to `focusout` because, when `focusout` is dispatched, `document.activeElement` is set to `null`, causing any page element outside the view which the user is attempting to focus to instead be culled.
 						// Also, listening to `focusout` isn't necessary for any pragmatic reason, and not doing so improves performance significantly by updating the culled page elements half as often when frequently changing focus.
 
-						/** A media query which only matches if the current resolution equals the `window.devicePixelRatio` last detected by `updatePixelRatio`. */
+						/** A media query which only matches if the current resolution equals the `window.devicePixelRatio` last detected by `listenToPixelRatio`. */
 						let resolutionQuery: MediaQueryList;
 
-						const updatePixelRatio = () => {
+						/** Gets the current resolution and calls `changePixelRatio` when it is no longer the current resolution. */
+						const listenToPixelRatio = () => {
 							const dpi = window.devicePixelRatio * 96;
 							resolutionQuery = window.matchMedia(
 								// Allow any resolution in the range between the floor and the ceiling of `dpi` to ensure it works on browsers that have insufficient precision on `devicePixelRatio` or on `resolution` queries.
@@ -807,20 +810,27 @@ const Component = withErrorPage<ServerSideProps>(({
 							);
 
 							// Listen for a change in the pixel ratio in order to detect when the browser's zoom level changes.
-							resolutionQuery.addEventListener('change', updatePixelRatio, { once: true });
-
-							// Call `throttledUpdateViewport` whenever the pixel ratio changes.
-							throttledUpdateViewport();
+							resolutionQuery.addEventListener('change', changePixelRatio, { once: true });
 						};
-						updatePixelRatio();
+
+						/** A function called whenever the pixel ratio changes. */
+						const changePixelRatio = () => {
+							// Listen for further changes in the pixel ratio again.
+							listenToPixelRatio();
+
+							// The pixel ratio has changed, so the viewport has changed.
+							throttledViewportChange();
+						};
+
+						listenToPixelRatio();
 
 						return () => {
 							cancelFrameThrottler(_updateViewportOrCulledPages);
 
-							document.removeEventListener('scroll', throttledUpdateViewport);
-							document.removeEventListener('resize', throttledUpdateViewport);
+							document.removeEventListener('scroll', throttledViewportChange);
+							document.removeEventListener('resize', throttledViewportChange);
 							document.removeEventListener('focusin', throttledUpdateCulledPages);
-							resolutionQuery.removeEventListener('change', updatePixelRatio);
+							resolutionQuery.removeEventListener('change', changePixelRatio);
 						};
 					}, [pageValues.length, viewMode, sortMode, culledPagesRef, gridCullingInfoRef]);
 
