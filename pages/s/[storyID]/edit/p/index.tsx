@@ -668,7 +668,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						window.addEventListener('hashchange', updateLocationHash);
 
 						if (!calledUpdateLocationHashRef.current) {
-							// This timeout is necessary to wait for the browser to jump to the location hash first so that `updateLocationHash` can run afterward uninterrupted.
+							// This timeout is necessary to wait for the browser to jump to the location hash first so that `updateLocationHash` can run afterward uninterrupted, and also so `updateCulledPages` can update `defaultCulledHeight`.
 							setTimeout(updateLocationHash);
 
 							calledUpdateLocationHashRef.current = true;
@@ -677,7 +677,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						return () => {
 							window.removeEventListener('hashchange', updateLocationHash);
 						};
-					}, [viewMode, sortMode, gridCullingInfoRef, culledPagesRef]);
+					}, [viewMode, sortMode, gridCullingInfoRef, culledPagesRef, defaultCulledHeightRef]);
 
 					/** A ref to the `#story-editor-actions` element. */
 					const actionsElementRef = useRef<HTMLDivElement>(null!);
