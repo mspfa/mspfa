@@ -471,6 +471,19 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					const lastActivePageIDRef = useRef<StoryPageID>(1);
 
+					// Deselect any selected pages which were deleted.
+					for (let i = 0; i < selectedPages.length; i++) {
+						// Check if this page's ID is greater than the number of pages, meaning the page was deleted.
+						if (selectedPages[i] > pageValues.length) {
+							selectedPages.splice(i, 1);
+						}
+					}
+
+					// Ensure the `lastActivePageIDRef` is not set to a deleted page.
+					if (lastActivePageIDRef.current > pageValues.length) {
+						lastActivePageIDRef.current = pageValues.length;
+					}
+
 					const onClickPageTile = useCallback((event: MouseEvent<HTMLDivElement> & { target: HTMLDivElement }) => {
 						const pageID = +event.target.id.slice(1);
 
