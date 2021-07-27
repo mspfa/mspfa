@@ -477,7 +477,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						if (selectedPages[i] > pageValues.length) {
 							selectedPages.splice(i, 1);
 
-							// Since `i` was removed from this arrays indexes, redo `i`'s iteration.
+							// Since `i` was removed from this array's indexes, redo `i`'s iteration.
 							i--;
 						}
 					}
