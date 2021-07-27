@@ -837,7 +837,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						};
 					}, [pageValues.length, viewMode, sortMode, culledPagesRef, gridCullingInfoRef]);
 
-					let pageComponents: ReactNode[] | undefined;
+					const pageComponents: ReactNode[] = [];
 
 					/** A ref to the next React key a `ClientStoryPage` should use. This is incremented after each time it is assigned to a page. */
 					const nextKeyRef = useRef(0);
@@ -853,9 +853,10 @@ const Component = withErrorPage<ServerSideProps>(({
 							({ firstIndex, lastIndex } = gridCullingInfo);
 						}
 
-						pageComponents = new Array(lastIndex - firstIndex + 1);
-
-						for (let i = lastIndex; i >= firstIndex; i--) {
+						const iteratePageValue = (
+							/** The index of this page in `pageValues`. */
+							i: number
+						) => {
 							const page = pageValues[i] as KeyedClientStoryPage;
 
 							// If this page doesn't have a React key yet, set one.
@@ -918,10 +919,16 @@ const Component = withErrorPage<ServerSideProps>(({
 									</BoxSection>
 								);
 							}
-						}
+						};
 
 						if (sortMode === 'oldest') {
-							pageComponents.reverse();
+							for (let i = firstIndex; i <= lastIndex; i++) {
+								iteratePageValue(i);
+							}
+						} else {
+							for (let i = lastIndex; i >= firstIndex; i--) {
+								iteratePageValue(i);
+							}
 						}
 					}
 
@@ -1050,13 +1057,6 @@ const Component = withErrorPage<ServerSideProps>(({
 											</Button>
 										</div>
 										<Box id="story-editor-pages" className="view-mode-list">
-											<style jsx global>
-												{`
-													.story-editor-page.culled {
-														height: ${defaultCulledHeight}px;
-													}
-												`}
-											</style>
 											<StoryEditorContext.Provider value={storyEditorContext}>
 												{pageComponents}
 											</StoryEditorContext.Provider>
