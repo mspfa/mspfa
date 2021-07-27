@@ -467,15 +467,14 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					const pageValues = Object.values(formikPropsRef.current.values.pages);
 
-					// This state is a partial record that maps page IDs to a boolean of whether the page is selected. If the page is not selected, it should not be in this record.
-					const [selectedPages, setSelectedPages] = useState<Partial<Record<StoryPageID, true>>>({});
+					const [selectedPages, setSelectedPages] = useState(new Set<StoryPageID>());
 
 					const lastActivePageIDRef = useRef<StoryPageID>(1);
 
 					const onClickPageTile = useCallback((event: MouseEvent<HTMLDivElement> & { target: HTMLDivElement }) => {
 						const pageID = +event.target.id.slice(1);
 
-						const newSelectedPages = { ...selectedPages };
+						const newSelectedPages = new Set(selectedPages);
 
 						if (event.shiftKey) {
 							const startID = Math.min(lastActivePageIDRef.current, pageID);
@@ -486,18 +485,19 @@ const Component = withErrorPage<ServerSideProps>(({
 							// Select all the pages in the range between `lastActivePageIDRef.current` and `pageID` (inclusive).
 							for (let i = 1; i < pageCount; i++) {
 								if (i >= startID && i <= endID) {
-									newSelectedPages[i] = true;
+									newSelectedPages.add(i);
 								} else if (!(event.ctrlKey || event.metaKey)) {
 									// If the user is not holding `ctrl` or `⌘`, deselect all pages outside the range.
-									delete newSelectedPages[i];
+									newSelectedPages.delete(i);
 								}
 							}
 						} else {
-							if (selectedPages[pageID]) {
-								delete newSelectedPages[pageID];
-							} else {
-								newSelectedPages[pageID] = true;
-							}
+							// Toggle whether this page is selected.
+							newSelectedPages[
+								newSelectedPages.has(pageID)
+									? 'delete'
+									: 'add'
+							](pageID);
 
 							lastActivePageIDRef.current = pageID;
 						}
@@ -845,7 +845,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											: 'scheduled' as const
 								);
 
-								const selected = page.id in selectedPages;
+								const selected = selectedPages.has(page.id);
 
 								pageComponents.push(
 									<BoxSection
