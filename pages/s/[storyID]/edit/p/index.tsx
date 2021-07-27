@@ -476,6 +476,9 @@ const Component = withErrorPage<ServerSideProps>(({
 						// Check if this page's ID is greater than the number of pages, meaning the page was deleted.
 						if (selectedPages[i] > pageValues.length) {
 							selectedPages.splice(i, 1);
+
+							// Since `i` was removed from this arrays indexes, redo `i`'s iteration.
+							i--;
 						}
 					}
 
@@ -806,6 +809,8 @@ const Component = withErrorPage<ServerSideProps>(({
 
 						if (viewMode === 'grid') {
 							({ firstIndex, lastIndex } = gridCullingInfo);
+
+							// TODO: Ensure the indexes are within the range of existing pages in case pages were deleted but `gridCullingInfo` has not been updated yet.
 						}
 
 						pageComponents = new Array(lastIndex - firstIndex + 1);
