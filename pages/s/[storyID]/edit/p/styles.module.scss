@@ -33,6 +33,10 @@
 		padding: 8px 0;
 		z-index: 5;
 
+		nav.sticky ~ * & {
+			top: 20px;
+		}
+
 		&.stuck {
 			border-bottom: 1px solid rgba(128, 128, 128, 0.5);
 		}

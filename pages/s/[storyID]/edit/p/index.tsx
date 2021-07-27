@@ -561,6 +561,9 @@ const Component = withErrorPage<ServerSideProps>(({
 						Object.assign(gridCullingInfo, defaultGridCullingInfo);
 					}
 
+					/** A ref to whether `updateLocationHash` has been called yet and shouldn't be called again without a `hashchange` event. */
+					const calledUpdateLocationHashRef = useRef(false);
+
 					useEffect(() => {
 						const url = new URL(location.href);
 
@@ -571,58 +574,108 @@ const Component = withErrorPage<ServerSideProps>(({
 						// Update the URL's query params.
 						history.replaceState(null, '', url);
 
-						const onHashChange = () => {
-							if (viewMode === 'grid' && /^#p\d+$/.test(location.hash)) {
+						const updateLocationHash = () => {
+							if (/^#p\d+$/.test(location.hash)) {
 								const pageID = +location.hash.slice(2);
 
+								const lastPageID = Object.values(formikPropsRef.current.values.pages).length;
+
+								// Check if the target is a real page.
 								if (
-									// Check if the target is a real page.
 									pageID > 0
-									&& pageID <= Object.values(formikPropsRef.current.values.pages).length
+									&& pageID <= lastPageID
 									// Check if the target location hash is a culled page.
-									&& (
-										pageID < gridCullingInfoRef.current.firstIndex
-										|| pageID > gridCullingInfoRef.current.lastIndex
-									)
 								) {
-									// Jump to where the target page would be if it weren't culled.
+									// Jump to where the target page is if it isn't culled, or where it would be if it weren't culled.
 
-									const {
-										pageContainer,
-										pageHeight,
-										pagesPerRow,
-										pageCount
-									} = calculateGridSizeInfo(
-										formikPropsRef,
-										// We can assert this is non-null because we have verified in the parent `if` statement that the target page exists, and if a page exists, then at least one page element (though not the one we're jumping to, which is culled) must be mounted.
-										document.getElementsByClassName('story-editor-page')[0] as HTMLDivElement
-									);
+									// We can assert this is non-null because we have verified in that the target page exists, and if a page exists, then at least one page element (though not necessarily the one we're jumping to) must be mounted.
+									const firstPageElement = document.getElementsByClassName('story-editor-page')[0] as HTMLDivElement;
 
-									/** The index of the row which the target page is on. */
-									const pageRow = Math.floor(
-										(
-											sortMode === 'oldest'
-												? pageID - 1
-												: pageCount - pageID
-										) / pagesPerRow
-									);
+									/** Offsets the inputted `scrollTop` by a certain amount for the user's convenience. */
+									const offsetScrollTop = (scrollTop: number) => {
+										const actionsStyle = window.getComputedStyle(actionsElementRef.current);
 
-									document.documentElement.scrollTop = pageContainer.offsetTop + pageRow * pageHeight;
+										if (actionsStyle.position === 'sticky') {
+											const actionsRect = actionsElementRef.current.getBoundingClientRect();
+											const actionsStyleTop = +actionsStyle.top.slice(0, -2);
+
+											return scrollTop - (
+												// Check if this element is currently stuck to its `style.top`.
+												actionsRect.top === actionsStyleTop
+												// If the actions element isn't stuck, then check if it would be after this function's scroll.
+												|| scrollTop >= document.documentElement.scrollTop + actionsRect.top + actionsRect.height
+													? actionsStyleTop + actionsRect.height
+													: 0
+											);
+										}
+
+										return scrollTop;
+									};
+
+									if (viewMode === 'list') {
+										let offsetTop = firstPageElement.offsetTop;
+
+										const iteratePage = (pageID: StoryPageID) => {
+											const pageHeight = cachedPageHeightsRef.current[
+												// This page's key.
+												(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[_key]
+											] ?? defaultCulledHeight;
+
+											// Add this page's height to the `offsetTop`.
+											offsetTop += pageHeight;
+										};
+
+										if (sortMode === 'oldest') {
+											for (let i = 1; i < pageID; i++) {
+												iteratePage(i);
+											}
+										} else {
+											for (let i = lastPageID; i > pageID; i--) {
+												iteratePage(i);
+											}
+										}
+
+										document.documentElement.scrollTop = offsetScrollTop(offsetTop);
+									} else {
+										// If this point is reached, `viewMode === 'grid'`.
+
+										const {
+											pageContainer,
+											pageHeight,
+											pagesPerRow
+										} = calculateGridSizeInfo(formikPropsRef, firstPageElement);
+
+										/** The index of the row which the target page is on. */
+										const pageRow = Math.floor(
+											(
+												sortMode === 'oldest'
+													? pageID - 1
+													: lastPageID - pageID
+											) / pagesPerRow
+										);
+
+										document.documentElement.scrollTop = offsetScrollTop(pageContainer.offsetTop + pageRow * pageHeight);
+									}
 								}
 							}
 						};
 
-						window.addEventListener('hashchange', onHashChange);
+						window.addEventListener('hashchange', updateLocationHash);
+
+						if (!calledUpdateLocationHashRef.current) {
+							updateLocationHash();
+							calledUpdateLocationHashRef.current = true;
+						}
 
 						return () => {
-							window.removeEventListener('hashchange', onHashChange);
+							window.removeEventListener('hashchange', updateLocationHash);
 						};
-					}, [viewMode, sortMode, gridCullingInfoRef]);
+					}, [defaultCulledHeight, viewMode, sortMode, gridCullingInfoRef, culledPagesRef]);
 
 					/** A ref to the `#story-editor-actions` element. */
-					const actionsElementRef = useRef<HTMLDivElement>(null);
+					const actionsElementRef = useRef<HTMLDivElement>(null!);
 
-					// This is a layout effect rather than a normal effect to reduce the time the user can briefly see `viewMode === undefined` or culled pages.
+					// This is a layout effect rather than a normal effect to reduce the time the user can briefly see culled pages.
 					useIsomorphicLayoutEffect(() => {
 						const updateCulledPages = () => {
 							const pageElements = document.getElementsByClassName('story-editor-page') as HTMLCollectionOf<HTMLDivElement>;
@@ -817,10 +870,10 @@ const Component = withErrorPage<ServerSideProps>(({
 						const updateViewport = () => {
 							updateCulledPages();
 
-							// This check is to support custom CSS that disables `position: sticky;` on the actions element.
-							if (window.getComputedStyle(actionsElementRef.current!).position === 'sticky') {
-								actionsElementRef.current!.classList[
-									actionsElementRef.current!.getBoundingClientRect().top === 0
+							const actionsStyle = window.getComputedStyle(actionsElementRef.current);
+							if (actionsStyle.position === 'sticky') {
+								actionsElementRef.current.classList[
+									actionsElementRef.current.getBoundingClientRect().top === +actionsStyle.top.slice(0, -2)
 										? 'add'
 										: 'remove'
 								]('stuck');
@@ -833,7 +886,8 @@ const Component = withErrorPage<ServerSideProps>(({
 								.then(updateViewport);
 						};
 
-						throttledUpdateViewport();
+						// Call `updateViewport` synchronously so the user can't see culled pages for a frame.
+						updateViewport();
 
 						document.addEventListener('scroll', throttledUpdateViewport);
 						document.addEventListener('resize', throttledUpdateViewport);
@@ -876,7 +930,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							document.removeEventListener('focusin', throttledUpdateCulledPages);
 							resolutionQuery.removeEventListener('change', changePixelRatio);
 						};
-					}, [pageValues.length, viewMode, sortMode, defaultCulledHeight, culledPagesRef, gridCullingInfoRef]);
+					}, [defaultCulledHeight, pageValues.length, viewMode, sortMode, culledPagesRef, gridCullingInfoRef]);
 
 					const pageComponents: ReactNode[] = [];
 
