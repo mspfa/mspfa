@@ -780,7 +780,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						const updateViewport = () => {
 							updateCulledPages();
 
-							// Support custom CSS via this check.
+							// This check is to support custom CSS that disables `position: sticky;` on the actions element.
 							if (window.getComputedStyle(actionsElementRef.current!).position === 'sticky') {
 							actionsElementRef.current!.classList[
 								actionsElementRef.current!.getBoundingClientRect().top === 0
