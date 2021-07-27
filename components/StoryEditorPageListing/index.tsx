@@ -202,7 +202,7 @@ const StoryEditorPageListing = React.memo(({
 
 	const toggleAdvanced = useCallback(() => {
 		if (advancedShown && !reportPageValidity(true)) {
-			// Don't let the advanced section be hidden if it contains invalid fields.
+			// Don't let the advanced section be hidden if it contains invalid fields, or else the invalid fields wouldn't be detectable.
 			return;
 		}
 
