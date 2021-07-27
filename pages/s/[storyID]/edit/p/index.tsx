@@ -28,7 +28,7 @@ import FieldBoxRow from 'components/Box/FieldBoxRow';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import { escapeRegExp } from 'lodash';
 import BoxRow from 'components/Box/BoxRow';
-import Router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import frameThrottler, { frameThrottlerRequests, cancelFrameThrottler } from 'modules/client/frameThrottler';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
@@ -444,11 +444,16 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					useLeaveConfirmation(formikPropsRef.current.dirty);
 
-					// As a network optimization, the default `viewMode` is `undefined` to prevent rendering page components server-side.
-					const [viewMode, setViewMode] = useState<'list' | 'grid' | undefined>();
+					const [viewMode, setViewMode] = useState(
+						router.query.view === 'grid'
+							? 'grid' as const
+							// Default to `'list'` for invalid query params.
+							: 'list' as const
+					);
 					const [sortMode, setSortMode] = useState(
 						router.query.sort === 'oldest'
 							? 'oldest' as const
+							// Default to `'newest'` for invalid query params.
 							: 'newest' as const
 					);
 
@@ -557,10 +562,6 @@ const Component = withErrorPage<ServerSideProps>(({
 					}
 
 					useEffect(() => {
-						if (!viewMode) {
-							return;
-						}
-
 						const url = new URL(location.href);
 
 						// Set query params.
@@ -623,26 +624,6 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					// This is a layout effect rather than a normal effect to reduce the time the user can briefly see `viewMode === undefined` or culled pages.
 					useIsomorphicLayoutEffect(() => {
-						if (!viewMode) {
-							// Now that we're on the client, it's safe to render the page components.
-
-							// If the view mode is not set, load it from the URL's query params.
-							setViewMode(Router.query.view === 'grid' ? 'grid' : 'list');
-
-							// Wait for the correct `viewMode` to render.
-							setTimeout(() => {
-								if (location.hash) {
-									// Since the location hash may reference a page component which wasn't rendered at the time that the browser tried to use it, set the hash again now that all the page components are rendered (or, if culled, can at least be jumped to via the `hashchange` listener in another effect hook).
-
-									const locationHash = location.hash;
-									location.hash = '';
-									location.hash = locationHash;
-								}
-							});
-
-							return;
-						}
-
 						const updateCulledPages = () => {
 							const pageElements = document.getElementsByClassName('story-editor-page') as HTMLCollectionOf<HTMLDivElement>;
 
@@ -655,6 +636,7 @@ const Component = withErrorPage<ServerSideProps>(({
 								if (lastPageID) {
 									// The first page and the last page should not be culled so that they can be tabbed into, even if they are outside of view.
 									newCulledPages[1] = false;
+									// Additionally, the last page must also not be unculled so that it can receive the `style.marginTop` to hold the place of any culled pages at the bottom.
 									newCulledPages[lastPageID] = false;
 
 									let activeElementAncestor: Node | null = document.activeElement;
@@ -903,8 +885,8 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					let firstDraftID: StoryPageID | undefined;
 
-					// It is necessary to also check for `pageValues.length` to prevent the `for` loop from trying to iterate over pages that don't exist when there are 0 pages.
-					if (viewMode && pageValues.length) {
+					// It is necessary to check for `pageValues.length` to prevent the `for` loop from trying to iterate over pages that don't exist when there are 0 pages.
+					if (pageValues.length) {
 						let firstIndex = 0;
 						let lastIndex = pageValues.length - 1;
 
@@ -937,10 +919,10 @@ const Component = withErrorPage<ServerSideProps>(({
 							if (viewMode === 'list') {
 								if (!(page.id in culledPages)) {
 									// Having more than a few pages unculled leads to unacceptably large load times.
-									// We choose not to cull only the first page and the last two pages because that exact set of pages is the most likely to still be unculled after `updateCulledPages` is called (since the first and the last pages are always unculled, and the second page is usually initially within view), and thus it is the least likely to cause an unnecessary re-render due to a state change in `culledPages`.
+									// We choose not to cull only the first page and the last pages by default because they must always be unculled (for reasons explained in the comments of `updateCulledPages`).
 									culledPages[page.id] = !(
 										page.id === 1
-										|| page.id >= pageValues.length - 1
+										|| page.id === pageValues.length
 									);
 								}
 
@@ -1048,7 +1030,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										<Button
 											className="small"
 											title={`Click to Set View Mode to ${viewMode === 'grid' ? 'List' : 'Grid'}`}
-											disabled={!viewMode || formikPropsRef.current.isSubmitting}
+											disabled={formikPropsRef.current.isSubmitting}
 											onClick={
 												useCallback(() => {
 													if (formikPropsRef.current.dirty) {
@@ -1105,60 +1087,58 @@ const Component = withErrorPage<ServerSideProps>(({
 									</Row>
 								</BoxSection>
 							</Box>
-							{viewMode && (
-								viewMode === 'list' ? (
-									<>
-										<div
-											id="story-editor-actions"
-											className="mid"
-											ref={actionsElementRef}
+							{viewMode === 'list' ? (
+								<>
+									<div
+										id="story-editor-actions"
+										className="mid"
+										ref={actionsElementRef}
+									>
+										<Button onClick={newPage}>
+											New Page
+										</Button>
+										<Button
+											type="submit"
+											className="alt"
+											disabled={!formikPropsRef.current.dirty || formikPropsRef.current.isSubmitting}
 										>
-											<Button onClick={newPage}>
-												New Page
-											</Button>
-											<Button
-												type="submit"
-												className="alt"
-												disabled={!formikPropsRef.current.dirty || formikPropsRef.current.isSubmitting}
-											>
-												Save All
-											</Button>
-										</div>
-										<Box id="story-editor-pages" className="view-mode-list">
-											<StoryEditorContext.Provider value={storyEditorContext}>
-												{pageComponents}
-											</StoryEditorContext.Provider>
-										</Box>
-									</>
-								) : (
-									<>
-										<div
-											id="story-editor-actions"
-											className="mid"
-											ref={actionsElementRef}
-										>
-											<Button>
-												Select All
-											</Button>
-											<Button>
-												Move
-											</Button>
-											<Button>
-												Delete
-											</Button>
-										</div>
-										<div
-											id="story-editor-pages"
-											className="view-mode-grid"
-											style={{
-												paddingTop: `${gridCullingInfo.paddingTop}px`,
-												paddingBottom: `${gridCullingInfo.paddingBottom}px`
-											}}
-										>
+											Save All
+										</Button>
+									</div>
+									<Box id="story-editor-pages" className="view-mode-list">
+										<StoryEditorContext.Provider value={storyEditorContext}>
 											{pageComponents}
-										</div>
-									</>
-								)
+										</StoryEditorContext.Provider>
+									</Box>
+								</>
+							) : (
+								<>
+									<div
+										id="story-editor-actions"
+										className="mid"
+										ref={actionsElementRef}
+									>
+										<Button>
+											Select All
+										</Button>
+										<Button>
+											Move
+										</Button>
+										<Button>
+											Delete
+										</Button>
+									</div>
+									<div
+										id="story-editor-pages"
+										className="view-mode-grid"
+										style={{
+											paddingTop: `${gridCullingInfo.paddingTop}px`,
+											paddingBottom: `${gridCullingInfo.paddingBottom}px`
+										}}
+									>
+										{pageComponents}
+									</div>
+								</>
 							)}
 						</Form>
 					);
