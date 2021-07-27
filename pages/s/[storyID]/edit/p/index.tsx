@@ -539,6 +539,8 @@ const Component = withErrorPage<ServerSideProps>(({
 						// An arbitrary default culled page element height. Shouldn't be too small, or else unnecessary re-renders may occur initially due to a higher chance of more page elements being temporarily in view for a short time.
 						350
 					);
+					/** A ref to the latest value of `defaultCulledHeight` to avoid race conditions. */
+					const defaultCulledHeightRef = useLatest(defaultCulledHeight);
 					/** A ref to whether `defaultCulledHeight` has still not been set. */
 					const defaultCulledHeightUnsetRef = useRef(true);
 
@@ -622,7 +624,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											const pageHeight = cachedPageHeightsRef.current[
 												// This page's key.
 												(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[_key]
-											] ?? defaultCulledHeight;
+											] ?? defaultCulledHeightRef.current;
 
 											// Add this page's height to the `offsetTop`.
 											offsetTop += pageHeight;
@@ -675,7 +677,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						return () => {
 							window.removeEventListener('hashchange', updateLocationHash);
 						};
-					}, [defaultCulledHeight, viewMode, sortMode, gridCullingInfoRef, culledPagesRef]);
+					}, [viewMode, sortMode, gridCullingInfoRef, culledPagesRef]);
 
 					/** A ref to the `#story-editor-actions` element. */
 					const actionsElementRef = useRef<HTMLDivElement>(null!);
