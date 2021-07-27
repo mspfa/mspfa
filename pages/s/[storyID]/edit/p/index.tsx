@@ -617,6 +617,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						};
 					}, [viewMode, sortMode, gridCullingInfoRef]);
 
+					/** A ref to the `#story-editor-actions` element. */
 					const actionsElementRef = useRef<HTMLDivElement>(null);
 
 					// This is a layout effect rather than a normal effect to reduce the time the user can briefly see `viewMode === undefined` or culled pages.
@@ -779,11 +780,14 @@ const Component = withErrorPage<ServerSideProps>(({
 						const updateViewport = () => {
 							updateCulledPages();
 
+							// Support custom CSS via this check.
+							if (window.getComputedStyle(actionsElementRef.current!).position === 'sticky') {
 							actionsElementRef.current!.classList[
 								actionsElementRef.current!.getBoundingClientRect().top === 0
 									? 'add'
 									: 'remove'
 							]('stuck');
+							}
 						};
 
 						/** Calls `updateViewport` throttled by `frameThrottler`. */
