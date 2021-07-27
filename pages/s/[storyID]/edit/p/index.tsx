@@ -537,7 +537,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					// This state is the default height of a culled page element when `viewMode === 'list'`.
 					const [defaultCulledHeight, setDefaultCulledHeight] = useState(
 						// An arbitrary default culled page element height. Shouldn't be too small, or else unnecessary re-renders may occur initially due to a higher chance of more page elements being temporarily in view for a short time.
-						350
+						400
 					);
 					/** A ref to the latest value of `defaultCulledHeight` to avoid race conditions. */
 					const defaultCulledHeightRef = useLatest(defaultCulledHeight);
