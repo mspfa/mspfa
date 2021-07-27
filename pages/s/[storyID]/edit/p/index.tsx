@@ -56,13 +56,13 @@ const defaultGridCullingInfo = {
 	/**
 	 * The index of the first page that should be unculled.
 	 *
-	 * If all pages are culled, this does not necessarily index a real page.
+	 * If there are no pages, this does not index a real page.
 	 */
 	firstIndex: 0,
 	/**
 	 * The index of the last page that should be unculled.
 	 *
-	 * If all pages are culled, this does not necessarily index a real page.
+	 * If there are no pages, this does not index a real page.
 	 */
 	lastIndex: 0,
 	/** The page container's top padding in pixels. */
@@ -541,6 +541,17 @@ const Component = withErrorPage<ServerSideProps>(({
 					const [gridCullingInfo, setGridCullingInfo] = useState({ ...defaultGridCullingInfo });
 					const gridCullingInfoRef = useLatest(gridCullingInfo);
 
+					// Ensure the `gridCullingInfo` indexes are within the range of existing pages in case pages were deleted but `gridCullingInfo` has not been updated yet.
+					if (
+						// If there aren't any pages, then `gridCullingInfo` cannot possibly refer to valid pages, so invalid `gridCullingInfo` only matters if there are any pages.
+						pageValues.length
+						// If the `firstIndex` is out of range, then the `lastIndex` is out of range, so it is only necessary to check the `lastIndex`.
+						&& gridCullingInfo.lastIndex >= pageValues.length
+					) {
+						// If the `gridCullingInfo` is invalid, reset it to the default.
+						Object.assign(gridCullingInfo, defaultGridCullingInfo);
+					}
+
 					useEffect(() => {
 						if (!viewMode) {
 							return;
@@ -809,8 +820,6 @@ const Component = withErrorPage<ServerSideProps>(({
 
 						if (viewMode === 'grid') {
 							({ firstIndex, lastIndex } = gridCullingInfo);
-
-							// TODO: Ensure the indexes are within the range of existing pages in case pages were deleted but `gridCullingInfo` has not been updated yet.
 						}
 
 						pageComponents = new Array(lastIndex - firstIndex + 1);
