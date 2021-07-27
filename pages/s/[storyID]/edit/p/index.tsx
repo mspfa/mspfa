@@ -1197,10 +1197,26 @@ const Component = withErrorPage<ServerSideProps>(({
 										>
 											{selectedPages.length ? 'Deselect All' : 'Select All'}
 										</Button>
-										<Button>
+										<Button
+											title={
+												selectedPages.length
+													? `Move Selected Pages (${selectedPages.length})`
+													: undefined
+											}
+											disabled={selectedPages.length === 0}
+											// onClick={moveSelectedPages}
+										>
 											Move
 										</Button>
-										<Button>
+										<Button
+											title={
+												selectedPages.length
+													? `Delete Selected Pages (${selectedPages.length})`
+													: undefined
+											}
+											disabled={selectedPages.length === 0}
+											// onClick={deleteSelectedPages}
+										>
 											Delete
 										</Button>
 									</div>
