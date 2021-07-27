@@ -698,14 +698,14 @@ const Component = withErrorPage<ServerSideProps>(({
 											cachedPageHeightsRef.current[
 												// This page's key.
 												(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[_key]
-											] = pageElement.offsetHeight;
+											] = pageRect.height;
 										}
 									}
 
 									if (!culled && defaultCulledHeightUnsetRef.current) {
 										// If this page element is unculled and no default culled page element height has been set yet, set the default culled height to this height.
 										// Using an arbitrary unculled height as the default culled height is a sufficient solution for scroll jitter in the vast majority of cases.
-										setDefaultCulledHeight(pageElement.offsetHeight);
+										setDefaultCulledHeight(pageRect.height);
 										defaultCulledHeightUnsetRef.current = false;
 									}
 								}
