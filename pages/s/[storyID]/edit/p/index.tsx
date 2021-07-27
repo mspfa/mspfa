@@ -467,14 +467,14 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					const pageValues = Object.values(formikPropsRef.current.values.pages);
 
-					const [selectedPages, setSelectedPages] = useState(new Set<StoryPageID>());
+					const [selectedPages, setSelectedPages] = useState<StoryPageID[]>([]);
 
 					const lastActivePageIDRef = useRef<StoryPageID>(1);
 
 					const onClickPageTile = useCallback((event: MouseEvent<HTMLDivElement> & { target: HTMLDivElement }) => {
 						const pageID = +event.target.id.slice(1);
 
-						const newSelectedPages = new Set(selectedPages);
+						const newSelectedPages = [...selectedPages];
 
 						if (event.shiftKey) {
 							const startID = Math.min(lastActivePageIDRef.current, pageID);
@@ -482,20 +482,22 @@ const Component = withErrorPage<ServerSideProps>(({
 
 							// If the user is not holding `ctrl` or `⌘`, deselect all pages outside the target range.
 							if (!(event.ctrlKey || event.metaKey)) {
-								newSelectedPages.clear();
+								while (newSelectedPages.pop()) {}
 							}
 
 							// Select all the pages in the range between `lastActivePageIDRef.current` and `pageID` (inclusive).
 							for (let i = startID; i <= endID; i++) {
-								newSelectedPages.add(i);
+								newSelectedPages.push(i);
 							}
 						} else {
 							// Toggle whether this page is selected.
-							newSelectedPages[
-								newSelectedPages.has(pageID)
-									? 'delete'
-									: 'add'
-							](pageID);
+
+							const pageIndex = newSelectedPages.indexOf(pageID);
+							if (pageIndex === -1) {
+								newSelectedPages.push(pageID);
+							} else {
+								newSelectedPages.splice(pageIndex, 1);
+							}
 
 							lastActivePageIDRef.current = pageID;
 						}
@@ -843,7 +845,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											: 'scheduled' as const
 								);
 
-								const selected = selectedPages.has(page.id);
+								const selected = selectedPages.includes(page.id);
 
 								pageComponents.push(
 									<BoxSection
