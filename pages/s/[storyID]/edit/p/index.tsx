@@ -1057,6 +1057,13 @@ const Component = withErrorPage<ServerSideProps>(({
 											</Button>
 										</div>
 										<Box id="story-editor-pages" className="view-mode-list">
+											<style jsx global>
+												{`
+													.story-editor-page.culled {
+														height: ${defaultCulledHeight}px;
+													}
+												`}
+											</style>
 											<StoryEditorContext.Provider value={storyEditorContext}>
 												{pageComponents}
 											</StoryEditorContext.Provider>
