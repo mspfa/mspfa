@@ -767,19 +767,16 @@ const Component = withErrorPage<ServerSideProps>(({
 						};
 
 						/** Calls `updateCulledPages` throttled by `frameThrottler`. */
-						const throttledUpdateCulledPages = async () => {
-							// Don't call `frameThrottler` if there is possibly already a pending animation frame request from `throttledViewportChange`, since this would then overwrite it and cancel the `throttledViewportChange` call, which includes a call to `updateCulledPages` anyway.
+						const throttledUpdateCulledPages = () => {
+							// Don't call `frameThrottler` if there is possibly already a pending animation frame request from `throttledUpdateViewport`, since this would then overwrite it and cancel the `updateViewport` call, which includes a call to `updateCulledPages` anyway.
 							if (!frameThrottlerRequests[_updateViewportOrCulledPages]) {
-								await frameThrottler(_updateViewportOrCulledPages);
-
-								updateCulledPages();
+								frameThrottler(_updateViewportOrCulledPages)
+									.then(updateCulledPages);
 							}
 						};
 
-						/** A function called whenever the viewport changes, throttled by `frameThrottler`. */
-						const throttledViewportChange = async () => {
-							await frameThrottler(_updateViewportOrCulledPages);
-
+						/** A function called whenever the viewport changes. */
+						const updateViewport = () => {
 							updateCulledPages();
 
 							actionsElementRef.current!.classList[
@@ -789,11 +786,17 @@ const Component = withErrorPage<ServerSideProps>(({
 							]('stuck');
 						};
 
-						throttledViewportChange();
+						/** Calls `updateViewport` throttled by `frameThrottler`. */
+						const throttledUpdateViewport = () => {
+							frameThrottler(_updateViewportOrCulledPages)
+								.then(updateViewport);
+						};
 
-						document.addEventListener('scroll', throttledViewportChange);
-						document.addEventListener('resize', throttledViewportChange);
-						// We use `focusin` instead of `focus` because the former bubbles while the latter doesn't.
+						throttledUpdateViewport();
+
+						document.addEventListener('scroll', throttledUpdateViewport);
+						document.addEventListener('resize', throttledUpdateViewport);
+						// We use `focusin` instead of `focus` because the former bubbles while the latter doesn't, and we want to capture any focus event among the page elements.
 						document.addEventListener('focusin', throttledUpdateCulledPages);
 						// We don't listen to `focusout` because, when `focusout` is dispatched, `document.activeElement` is set to `null`, causing any page element outside the view which the user is attempting to focus to instead be culled.
 						// Also, listening to `focusout` isn't necessary for any pragmatic reason, and not doing so improves performance significantly by updating the culled page elements half as often when frequently changing focus.
@@ -819,7 +822,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							listenToPixelRatio();
 
 							// The pixel ratio has changed, so the viewport has changed.
-							throttledViewportChange();
+							throttledUpdateViewport();
 						};
 
 						listenToPixelRatio();
@@ -827,8 +830,8 @@ const Component = withErrorPage<ServerSideProps>(({
 						return () => {
 							cancelFrameThrottler(_updateViewportOrCulledPages);
 
-							document.removeEventListener('scroll', throttledViewportChange);
-							document.removeEventListener('resize', throttledViewportChange);
+							document.removeEventListener('scroll', throttledUpdateViewport);
+							document.removeEventListener('resize', throttledUpdateViewport);
 							document.removeEventListener('focusin', throttledUpdateCulledPages);
 							resolutionQuery.removeEventListener('change', changePixelRatio);
 						};
