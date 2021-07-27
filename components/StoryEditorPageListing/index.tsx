@@ -485,7 +485,7 @@ const StoryEditorPageListing = React.memo(({
 				</>
 			)}
 			style={{
-				// Even if `marginTop === 0`, we still set it in order to discourage custom CSS from overwriting it.
+				// Even if `marginTop === 0`, we still set it in order to discourage custom CSS from overwriting it, as doing so would interfere with culling.
 				marginTop: `${marginTop}px`
 			}}
 			ref={ref}
