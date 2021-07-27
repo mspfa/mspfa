@@ -29,6 +29,7 @@ import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import { escapeRegExp } from 'lodash';
 import BoxRow from 'components/Box/BoxRow';
 import Router, { useRouter } from 'next/router';
+import frameThrottler, { frameThrottlerRequests, cancelFrameThrottler } from 'modules/client/frameThrottler';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -50,6 +51,8 @@ export type KeyedClientStoryPage = ClientStoryPage & {
 	/** This page's React key. */
 	[_key]: number
 };
+
+const _updateViewportOrCulledPages = Symbol('updateViewportOrCulledPages');
 
 const defaultGridCullingInfo = {
 	// The default `firstIndex` and `lastIndex` must both be 0 so that exactly one page is rendered, and its size can be used to process culling.
@@ -763,20 +766,33 @@ const Component = withErrorPage<ServerSideProps>(({
 							}
 						};
 
-						const updateViewport = () => {
+						const throttledUpdateCulledPages = async () => {
+							// Don't call `frameThrottler` if there is possibly already a pending animation frame request from `throttledUpdateViewport`, since this would then overwrite it and cancel the `throttledUpdateViewport` call, which includes a call to `updateCulledPages` anyway.
+							if (!frameThrottlerRequests[_updateViewportOrCulledPages]) {
+								await frameThrottler(_updateViewportOrCulledPages);
+
+								updateCulledPages();
+							}
+						};
+
+						const throttledUpdateViewport = async () => {
+							await frameThrottler(_updateViewportOrCulledPages);
+
+							updateCulledPages();
+
 							actionsElementRef.current!.classList[
 								actionsElementRef.current!.getBoundingClientRect().top === 0
 									? 'add'
 									: 'remove'
 							]('stuck');
-
-							updateCulledPages();
 						};
 
-						document.addEventListener('scroll', updateViewport);
-						document.addEventListener('resize', updateViewport);
+						throttledUpdateViewport();
+
+						document.addEventListener('scroll', throttledUpdateViewport);
+						document.addEventListener('resize', throttledUpdateViewport);
 						// We use `focusin` instead of `focus` because the former bubbles while the latter doesn't.
-						document.addEventListener('focusin', updateCulledPages);
+						document.addEventListener('focusin', throttledUpdateCulledPages);
 						// We don't listen to `focusout` because, when `focusout` is dispatched, `document.activeElement` is set to `null`, causing any page element outside the view which the user is attempting to focus to instead be culled.
 						// Also, listening to `focusout` isn't necessary for any pragmatic reason, and not doing so improves performance significantly by updating the culled page elements half as often when frequently changing focus.
 
@@ -793,15 +809,17 @@ const Component = withErrorPage<ServerSideProps>(({
 							// Listen for a change in the pixel ratio in order to detect when the browser's zoom level changes.
 							resolutionQuery.addEventListener('change', updatePixelRatio, { once: true });
 
-							// Call `updateViewport` whenever the pixel ratio changes, and on the effect hook's initial run via to the `updatePixelRatio` call below.
-							updateViewport();
+							// Call `throttledUpdateViewport` whenever the pixel ratio changes.
+							throttledUpdateViewport();
 						};
 						updatePixelRatio();
 
 						return () => {
-							document.removeEventListener('scroll', updateViewport);
-							document.removeEventListener('resize', updateViewport);
-							document.removeEventListener('focusin', updateCulledPages);
+							cancelFrameThrottler(_updateViewportOrCulledPages);
+
+							document.removeEventListener('scroll', throttledUpdateViewport);
+							document.removeEventListener('resize', throttledUpdateViewport);
+							document.removeEventListener('focusin', throttledUpdateCulledPages);
 							resolutionQuery.removeEventListener('change', updatePixelRatio);
 						};
 					}, [pageValues.length, viewMode, sortMode, culledPagesRef, gridCullingInfoRef]);
