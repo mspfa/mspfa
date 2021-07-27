@@ -480,16 +480,14 @@ const Component = withErrorPage<ServerSideProps>(({
 							const startID = Math.min(lastActivePageIDRef.current, pageID);
 							const endID = Math.max(lastActivePageIDRef.current, pageID);
 
-							const pageCount = Object.values(formikPropsRef.current.values.pages).length;
+							// If the user is not holding `ctrl` or `⌘`, deselect all pages outside the target range.
+							if (!(event.ctrlKey || event.metaKey)) {
+								newSelectedPages.clear();
+							}
 
 							// Select all the pages in the range between `lastActivePageIDRef.current` and `pageID` (inclusive).
-							for (let i = 1; i < pageCount; i++) {
-								if (i >= startID && i <= endID) {
-									newSelectedPages.add(i);
-								} else if (!(event.ctrlKey || event.metaKey)) {
-									// If the user is not holding `ctrl` or `⌘`, deselect all pages outside the range.
-									newSelectedPages.delete(i);
-								}
+							for (let i = startID; i <= endID; i++) {
+								newSelectedPages.add(i);
 							}
 						} else {
 							// Toggle whether this page is selected.
