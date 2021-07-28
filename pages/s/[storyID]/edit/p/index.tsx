@@ -476,6 +476,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					const pageValues = Object.values(formikPropsRef.current.values.pages);
 
+					// This state is an array of page tiles which are selected.
 					const [selectedPages, setSelectedPages] = useState<StoryPageID[]>([]);
 
 					const lastActivePageIDRef = useRef<StoryPageID>(1);
@@ -1099,6 +1100,25 @@ const Component = withErrorPage<ServerSideProps>(({
 						setSelectedPages(Object.values(formikPropsRef.current.values.pages).map(({ id }) => id));
 					}, []);
 
+					const deleteSelectedPages = useCallback(async () => {
+						formikPropsRef.current.setSubmitting(true);
+
+						if (!await Dialog.confirm({
+							id: 'delete-pages',
+							title: 'Delete Pages',
+							content: `Are you sure you want to delete ${
+								selectedPages.length === 1
+									? `page ${selectedPages[0]}`
+									: `the ${selectedPages.length} selected pages`
+							}?\n\nThis cannot be undone.`
+						})) {
+							formikPropsRef.current.setSubmitting(false);
+							return;
+						}
+
+						formikPropsRef.current.setSubmitting(false);
+					}, [selectedPages]);
+
 					return (
 						<Form>
 							<Box>
@@ -1224,6 +1244,7 @@ const Component = withErrorPage<ServerSideProps>(({
 													? `Deselect Selected Pages (${selectedPages.length})`
 													: `Select All Pages (${pageValues.length})`
 											}
+											disabled={formikPropsRef.current.isSubmitting}
 											onClick={selectedPages.length ? deselectAll : selectAll}
 										>
 											{selectedPages.length ? 'Deselect All' : 'Select All'}
@@ -1234,7 +1255,7 @@ const Component = withErrorPage<ServerSideProps>(({
 													? `Move Selected Pages (${selectedPages.length})`
 													: undefined
 											}
-											disabled={selectedPages.length === 0}
+											disabled={formikPropsRef.current.isSubmitting || selectedPages.length === 0}
 											// onClick={moveSelectedPages}
 										>
 											Move
@@ -1245,15 +1266,15 @@ const Component = withErrorPage<ServerSideProps>(({
 													? `Delete Selected Pages (${selectedPages.length})`
 													: undefined
 											}
-											disabled={selectedPages.length === 0}
-											// onClick={deleteSelectedPages}
+											disabled={formikPropsRef.current.isSubmitting || selectedPages.length === 0}
+											onClick={deleteSelectedPages}
 										>
 											Delete
 										</Button>
 									</div>
 									<div
 										id="story-editor-pages"
-										className="view-mode-grid"
+										className={`view-mode-grid${formikPropsRef.current.isSubmitting ? ' disabled' : ''}`}
 										style={{
 											paddingTop: `${gridCullingInfo.paddingTop}px`,
 											paddingBottom: `${gridCullingInfo.paddingBottom}px`

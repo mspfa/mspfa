@@ -23,6 +23,14 @@
 		&.view-mode-list > * {
 			margin-bottom: 24px;
 		}
+
+		&.disabled {
+			cursor: not-allowed;
+
+			& > * {
+				pointer-events: none;
+			}
+		}
 	}
 
 	&-actions {
