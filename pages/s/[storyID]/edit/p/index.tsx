@@ -13,6 +13,7 @@ import Button from 'components/Button';
 import type { StoryID, StoryPageID } from 'modules/server/stories';
 import { getClientStoryPage, getPrivateStory, getStoryByUnsafeID } from 'modules/server/stories';
 import type { ClientStoryPage, ClientStoryPageRecord, PrivateStory } from 'modules/client/stories';
+import { deleteFromClientStoryPageRecord } from 'modules/client/stories';
 import BoxSection from 'components/Box/BoxSection';
 import type { APIClient } from 'modules/client/api';
 import Row from 'components/Row';
@@ -440,6 +441,9 @@ const Component = withErrorPage<ServerSideProps>(({
 				{formikProps => {
 					// Using this instead of destructuring the Formik props directly is necessary as a performance optimization, to significantly reduce unnecessary re-renders.
 					formikPropsRef.current = formikProps;
+
+					// This is because ESLint doesn't recognize `privateStory.id` as a necessary hook dependency.
+					const storyID = privateStory.id;
 
 					useLeaveConfirmation(formikPropsRef.current.dirty);
 
@@ -1083,7 +1087,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					 * These values are passed through a context rather than directly as `StoryEditorPageListing` props to reduce `React.memo`'s prop comparison performance cost.
 					 */
 					const storyEditorContext = useMemo(() => ({
-						storyID: privateStory.id,
+						storyID,
 						firstDraftID,
 						formikPropsRef,
 						setInitialPages,
@@ -1091,9 +1095,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						isSubmitting: formikProps.isSubmitting,
 						cachedPageHeightsRef,
 						toggleAdvancedShown
-						// This ESLint comment is necessary because ESLint doesn't know that `privateStory.id` can change.
-						// eslint-disable-next-line react-hooks/exhaustive-deps
-					}), [formikProps.isSubmitting, firstDraftID, privateStory.id, toggleAdvancedShown]);
+					}), [formikProps.isSubmitting, firstDraftID, storyID, toggleAdvancedShown]);
 
 					const deselectAll = useCallback(() => {
 						setSelectedPages([]);
@@ -1188,8 +1190,29 @@ const Component = withErrorPage<ServerSideProps>(({
 							return;
 						}
 
+						await (api as StoryPagesAPI).delete(`/stories/${storyID}/pages`, {
+							data: {
+								pageIDs: selectedPages
+							}
+						}).catch(error => {
+							formikPropsRef.current.setSubmitting(false);
+
+							return Promise.reject(error);
+						});
+
+						let newPages = formikPropsRef.current.values.pages;
+
+						/** The largest ID of the selected pages. */
+						let lastSelectedPageID: StoryPageID | undefined;
+						while (lastSelectedPageID = selectedPages.pop()) {
+							newPages = deleteFromClientStoryPageRecord(lastSelectedPageID, newPages);
+						}
+
+						setSelectedPages([]);
+						setInitialPages(newPages);
+
 						formikPropsRef.current.setSubmitting(false);
-					}, [selectedPages]);
+					}, [selectedPages, storyID]);
 
 					return (
 						<Form>
@@ -1201,7 +1224,7 @@ const Component = withErrorPage<ServerSideProps>(({
 									<Row>
 										<Button
 											className="small"
-											href={`/s/${privateStory.id}/edit`}
+											href={`/s/${storyID}/edit`}
 										>
 											Edit Info
 										</Button>

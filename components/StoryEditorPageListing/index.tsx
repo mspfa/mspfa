@@ -1,6 +1,7 @@
 import './styles.module.scss';
 import BoxSection from 'components/Box/BoxSection';
 import type { ClientStoryPage, ClientStoryPageRecord } from 'modules/client/stories';
+import { deleteFromClientStoryPageRecord } from 'modules/client/stories';
 import { Field } from 'formik';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
@@ -31,45 +32,6 @@ type StoryPageAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[
 
 /** The maximum duration accepted by `setTimeout`. */
 const MAX_TIMEOUT = 2147483647;
-
-/**
- * Deletes a page from a `ClientStoryPageRecord` by its ID. Returns the new `ClientStoryPageRecord`.
- *
- * Does not mutate any values passed in.
- */
-const deleteFromClientStoryPageRecord = (
-	/** The ID of the page to delete. */
-	deletedPageID: StoryPageID,
-	/** The record to delete the page from. */
-	pages: ClientStoryPageRecord
-) => {
-	const newPages: ClientStoryPageRecord = {};
-
-	for (const oldPage of Object.values(pages)) {
-		if (oldPage.id === deletedPageID) {
-			// Skip the page being deleted.
-			continue;
-		}
-
-		const newPage = { ...oldPage };
-
-		// Adjust IDs of pages after the deleted page.
-		if (oldPage.id > deletedPageID) {
-			newPage.id--;
-		}
-
-		// Adjust `nextPages` IDs of pages after the deleted page.
-		for (let i = 0; i < newPage.nextPages.length; i++) {
-			if (newPage.nextPages[i] > deletedPageID) {
-				newPage.nextPages[i]--;
-			}
-		}
-
-		newPages[newPage.id] = newPage;
-	}
-
-	return newPages;
-};
 
 // DO NOT add a `children` prop to this component unless practical. It is noticeably less performant than other props.
 export type StoryEditorPageListingProps = {
