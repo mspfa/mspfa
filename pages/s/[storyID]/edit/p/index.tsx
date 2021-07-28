@@ -82,7 +82,8 @@ export const StoryEditorContext = createContext<{
 	queuedValuesRef: MutableRefObject<Values | undefined>,
 	/** Whether the form is loading. */
 	isSubmitting: boolean,
-	cachedPageHeightsRef: MutableRefObject<Partial<Record<number, number>>>
+	cachedPageHeightsRef: MutableRefObject<Partial<Record<number, number>>>,
+	toggleAdvancedShown: (pageKey: number) => void
 }>(undefined!);
 
 const calculateGridSizeInfo = (
@@ -939,6 +940,11 @@ const Component = withErrorPage<ServerSideProps>(({
 						};
 					}, [defaultCulledHeight, pageValues.length, viewMode, sortMode, culledPagesRef, gridCullingInfoRef]);
 
+					// This state is an array of the keys of pages whose advanced section is toggled open.
+					const [advancedShownPageKeys, setAdvancedShownPageKeys] = useState<number[]>([]);
+					/** A ref to the latest `advancedShownPageKeys` to reduce unnecessary callback dependency updates. */
+					const advancedShownPageKeysRef = useLatest(advancedShownPageKeys);
+
 					const pageComponents: ReactNode[] = [];
 
 					/** A ref to the next React key a `ClientStoryPage` should use. This is incremented after each time it is assigned to a page. */
@@ -987,17 +993,20 @@ const Component = withErrorPage<ServerSideProps>(({
 									);
 								}
 
+								const pageKey = page[_key];
+
 								// Check if this page is culled.
 								if (culledPages[page.id]!) {
-									cachedHeightSum += cachedPageHeightsRef.current[page[_key]] || defaultCulledHeight;
+									cachedHeightSum += cachedPageHeightsRef.current[pageKey] || defaultCulledHeight;
 								} else {
 									pageComponents.push(
 										<StoryEditorPageListing
 											// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
-											key={page[_key]}
+											key={pageKey}
 											marginTop={cachedHeightSum}
 											page={page}
 											initialPublished={initialPublished}
+											advancedShown={advancedShownPageKeys.includes(pageKey)}
 										/>
 									);
 
@@ -1043,6 +1052,27 @@ const Component = withErrorPage<ServerSideProps>(({
 						}
 					}
 
+					/** Toggles whether a page listing's advanced section is open. */
+					const toggleAdvancedShown = useCallback((
+						/** The key of the page to toggle the advanced section of. */
+						pageKey: number
+					) => {
+						const pageKeyIndex = advancedShownPageKeysRef.current.indexOf(pageKey);
+						if (pageKeyIndex === -1) {
+							// Add this `pageKey` to the `advancedShownPageKeys`.
+							setAdvancedShownPageKeys([
+								...advancedShownPageKeysRef.current,
+								pageKey
+							]);
+						} else {
+							// Remove this `pageKey` from the `advancedShownPageKeys`.
+							setAdvancedShownPageKeys([
+								...advancedShownPageKeysRef.current.slice(0, pageKeyIndex),
+								...advancedShownPageKeysRef.current.slice(pageKeyIndex + 1, advancedShownPageKeysRef.current.length)
+							]);
+						}
+					}, [advancedShownPageKeysRef]);
+
 					/**
 					 * The values to pass into the `value` of the `StoryEditorContext`.
 					 *
@@ -1055,10 +1085,11 @@ const Component = withErrorPage<ServerSideProps>(({
 						setInitialPages,
 						queuedValuesRef,
 						isSubmitting: formikProps.isSubmitting,
-						cachedPageHeightsRef
+						cachedPageHeightsRef,
+						toggleAdvancedShown
 						// This ESLint comment is necessary because ESLint doesn't know that `privateStory.id` can change.
 						// eslint-disable-next-line react-hooks/exhaustive-deps
-					}), [formikProps.isSubmitting, firstDraftID, privateStory.id]);
+					}), [formikProps.isSubmitting, firstDraftID, privateStory.id, toggleAdvancedShown]);
 
 					const deselectAll = useCallback(() => {
 						setSelectedPages([]);

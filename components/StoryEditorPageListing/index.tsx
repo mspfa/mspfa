@@ -77,14 +77,17 @@ export type StoryEditorPageListingProps = {
 	/** The `ClientStoryPage` being edited. */
 	page: KeyedClientStoryPage,
 	/** This page's `published` value in the `initialValues`. */
-	initialPublished: number | undefined
+	initialPublished: number | undefined,
+	/** Whether this page's advanced section is toggled open. */
+	advancedShown?: boolean
 };
 
 /** A `BoxSection` for a page in the story editor when in the list view mode. */
 const StoryEditorPageListing = React.memo(({
 	marginTop,
 	page,
-	initialPublished
+	initialPublished,
+	advancedShown
 }: StoryEditorPageListingProps) => {
 	const {
 		storyID,
@@ -93,7 +96,8 @@ const StoryEditorPageListing = React.memo(({
 		setInitialPages,
 		queuedValuesRef,
 		isSubmitting,
-		cachedPageHeightsRef
+		cachedPageHeightsRef,
+		toggleAdvancedShown
 	} = useContext(StoryEditorContext);
 
 	/** Whether this page exists on the server. */
@@ -198,16 +202,14 @@ const StoryEditorPageListing = React.memo(({
 		return true;
 	}, [page.id]);
 
-	const [advancedShown, setAdvancedShown] = useState(false);
-
-	const toggleAdvanced = useCallback(() => {
+	const togglePageAdvancedShown = useCallback(() => {
 		if (advancedShown && !reportPageValidity(true)) {
 			// Don't let the advanced section be hidden if it contains invalid fields, or else the invalid fields wouldn't be detectable.
 			return;
 		}
 
-		setAdvancedShown(advancedShown => !advancedShown);
-	}, [advancedShown, reportPageValidity]);
+		toggleAdvancedShown(page[_key]);
+	}, [advancedShown, reportPageValidity, toggleAdvancedShown, page]);
 
 	const savePage = useCallback(async () => {
 		/** The IDs of pages to save. */
@@ -516,7 +518,7 @@ const StoryEditorPageListing = React.memo(({
 				/>
 			</Row>
 			<Row className="story-editor-page-show-advanced-link-container">
-				<Link className="translucent-text" onClick={toggleAdvanced}>
+				<Link className="translucent-text" onClick={togglePageAdvancedShown}>
 					{advancedShown ? 'Hide Advanced Options' : 'Show Advanced Options'}
 				</Link>
 			</Row>
