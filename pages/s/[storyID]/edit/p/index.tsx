@@ -1200,13 +1200,15 @@ const Component = withErrorPage<ServerSideProps>(({
 										>
 											Edit Info
 										</Button>
-										<Button
-											className="small"
-											disabled={!pageValues.length}
-											onClick={findAndReplace}
-										>
-											Find and Replace
-										</Button>
+										{viewMode === 'list' && (
+											<Button
+												className="small"
+												disabled={!pageValues.length}
+												onClick={findAndReplace}
+											>
+												Find and Replace
+											</Button>
+										)}
 										<Button
 											className="small"
 											disabled={!pageValues.length}
