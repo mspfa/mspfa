@@ -24,6 +24,7 @@ import api from 'modules/client/api';
 import { getChangedValues } from 'modules/client/forms';
 import type { DateNumber, RecursivePartial } from 'modules/types';
 import DateField from 'components/DateField';
+import { useLatest } from 'react-use';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 type StoryPageAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]').default>;
@@ -419,6 +420,9 @@ const StoryEditorPageListing = React.memo(({
 		formikPropsRef.current.setSubmitting(false);
 	}, [firstDraftID, page.id, storyID, setInitialPages, queuedValuesRef, formikPropsRef]);
 
+	/** A ref to the latest value of `advancedShown` to avoid race conditions. */
+	const advancedShownRef = useLatest(advancedShown);
+
 	const deletePage = useCallback(async () => {
 		formikPropsRef.current.setSubmitting(true);
 
@@ -457,8 +461,13 @@ const StoryEditorPageListing = React.memo(({
 		// Delete this page's cached height.
 		delete cachedPageHeightsRef.current[page[_key]];
 
+		// If this page's key is in `advancedShownPageKeys`, delete it therefrom.
+		if (advancedShownRef.current) {
+			toggleAdvancedShown(page[_key]);
+		}
+
 		formikPropsRef.current.setSubmitting(false);
-	}, [formikPropsRef, page, onServer, storyID, setInitialPages, queuedValuesRef, cachedPageHeightsRef]);
+	}, [formikPropsRef, page, onServer, storyID, setInitialPages, toggleAdvancedShown, queuedValuesRef, cachedPageHeightsRef, advancedShownRef]);
 
 	return (
 		<BoxSection
