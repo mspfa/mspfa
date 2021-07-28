@@ -970,6 +970,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							const page = pageValues[i] as KeyedClientStoryPage | undefined;
 
 							if (!page) {
+								// If `i` doesn't index a real page, don't iterate over it.
 								return;
 							}
 
