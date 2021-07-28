@@ -59,13 +59,13 @@ const defaultGridCullingInfo = {
 	/**
 	 * The index of the first page that should be unculled.
 	 *
-	 * If there are no pages, this does not index a real page.
+	 * If there are no pages in view, this does not index a real page.
 	 */
 	firstIndex: 0,
 	/**
 	 * The index of the last page that should be unculled.
 	 *
-	 * If there are no pages, this does not index a real page.
+	 * If there are no pages in view, this does not index a real page.
 	 */
 	lastIndex: 0,
 	/** The page container's top padding in pixels. */
@@ -820,7 +820,6 @@ const Component = withErrorPage<ServerSideProps>(({
 								const newGridCullingInfo = { ...defaultGridCullingInfo };
 
 								// If `!pageElements.length`, the entire below `if` block won't execute, and the values of `newGridCullingInfo` will equal those of `defaultGridCullingInfo`. This is to prevent permanently culling all pages if there have ever been 0 page elements.
-
 								if (pageElements.length) {
 									const {
 										pageHeight,
@@ -967,7 +966,12 @@ const Component = withErrorPage<ServerSideProps>(({
 							/** The index of this page in `pageValues`. */
 							i: number
 						) => {
-							const page = pageValues[i] as KeyedClientStoryPage;
+							// This is typed as nullable because `i` may not index a real page if there should be no pages in view.
+							const page = pageValues[i] as KeyedClientStoryPage | undefined;
+
+							if (!page) {
+								return;
+							}
 
 							// If this page doesn't have a React key yet, set one.
 							if (!(_key in page)) {
