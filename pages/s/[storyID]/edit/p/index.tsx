@@ -445,6 +445,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					const router = useRouter();
 
+					// These states should not update when their respective `router.query` values change, because that would allow using history navigation to change the `viewMode` away from `'list'` while there are unsaved changes, which is disallowed.
 					const [viewMode, setViewMode] = useState(
 						router.query.view === 'grid'
 							? 'grid' as const
@@ -569,13 +570,10 @@ const Component = withErrorPage<ServerSideProps>(({
 					const calledUpdateLocationHashRef = useRef(false);
 
 					useEffect(() => {
+						// Update the URL's query params.
 						const url = new URL(location.href);
-
-						// Set query params.
 						url.searchParams.set('view', viewMode);
 						url.searchParams.set('sort', sortMode);
-
-						// Update the URL's query params.
 						Router.replace(url, undefined, { shallow: true });
 
 						const updateLocationHash = () => {
