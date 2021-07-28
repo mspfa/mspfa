@@ -1131,36 +1131,43 @@ const Component = withErrorPage<ServerSideProps>(({
 												/>
 												<span className="spaced bolder">
 													I am sure I want to permanently delete {(() => {
-														const pageRanges: Array<[StoryPageID, StoryPageID]> = [];
+														/** An array of objects representing closed intervals of selected page IDs. */
+														const selectedPageRanges: Array<{
+															/** The lower bound of this interval. */
+															start: StoryPageID,
+															/** The upper bound of this interval. */
+															end: StoryPageID
+														}> = [];
 
-														/** The page ID most recently added to `pageRanges`. */
+														/** The page ID most recently added to `selectedPageRanges`. */
 														let previousPage: StoryPageID | undefined;
 
 														for (const pageID of selectedPages.sort((a, b) => a - b)) {
 															// Check whether this page is adjacent to the previous.
 															if (previousPage === pageID - 1) {
 																// Add this page to the last page range.
-																pageRanges[pageRanges.length - 1][1] = pageID;
+																selectedPageRanges[selectedPageRanges.length - 1].end = pageID;
 															} else {
 																// Add this page to a new page range.
-																pageRanges.push([pageID, pageID]);
+																selectedPageRanges.push({ start: pageID, end: pageID });
 															}
 
 															previousPage = pageID;
 														}
 
-														const pageRangeStrings = pageRanges.map(([startPageID, endPageID]) => (
-															startPageID === endPageID
-																? `p${startPageID}`
-																: `p${startPageID}-${endPageID}`
+														/** An array of strings representing closed interval of selected page IDs. */
+														const rangeStrings = selectedPageRanges.map(({ start, end }) => (
+															start === end
+																? `p${start}`
+																: `p${start}-${end}`
 														));
 
 														return (
-															pageRangeStrings.length === 1
-																? pageRangeStrings[0]
-																: pageRangeStrings.length === 2
-																	? `${pageRangeStrings[0]} and ${pageRangeStrings[1]}`
-																	: `${pageRangeStrings.slice(0, -1).join(', ')}, and ${pageRangeStrings[pageRangeStrings.length - 1]}`
+															rangeStrings.length === 1
+																? rangeStrings[0]
+																: rangeStrings.length === 2
+																	? `${rangeStrings[0]} and ${rangeStrings[1]}`
+																	: `${rangeStrings.slice(0, -1).join(', ')}, and ${rangeStrings[rangeStrings.length - 1]}`
 														);
 													})()}.
 												</span>
