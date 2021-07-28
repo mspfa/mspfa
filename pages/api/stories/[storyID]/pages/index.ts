@@ -200,7 +200,7 @@ const Handler: APIHandler<{
 
 	await updateStorySchedule(story, { $set, $unset });
 
-	res.status(200).send(newClientPages);
+	res.send(newClientPages);
 };
 
 export default Handler;

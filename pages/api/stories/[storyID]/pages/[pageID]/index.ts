@@ -101,7 +101,7 @@ const Handler: APIHandler<{
 
 	// TODO: Adjust IDs of pages in users' gave saves.
 
-	res.status(200).end();
+	res.end();
 };
 
 export default Handler;
