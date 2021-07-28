@@ -162,8 +162,6 @@ const Component = withErrorPage<ServerSideProps>(({
 	const [privateStory, setPrivateStory] = useState(initialPrivateStory);
 	const [initialPages, setInitialPages] = useState(initialPagesProp);
 
-	const router = useRouter();
-
 	const formikPropsRef = useRef<FormikProps<Values>>(null!);
 
 	const defaultPageTitleInputRef = useRef<HTMLInputElement>(null!);
@@ -444,6 +442,8 @@ const Component = withErrorPage<ServerSideProps>(({
 					formikPropsRef.current = formikProps;
 
 					useLeaveConfirmation(formikPropsRef.current.dirty);
+
+					const router = useRouter();
 
 					const [viewMode, setViewMode] = useState(
 						router.query.view === 'grid'
