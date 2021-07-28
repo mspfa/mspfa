@@ -8,7 +8,10 @@ export default createValidator({
 	definitions: {
 		RequestMethod: {
 			type: 'string',
-			const: 'PUT'
+			enum: [
+				'PUT',
+				'DELETE'
+			]
 		}
 	}
 }, {
@@ -16,137 +19,185 @@ export default createValidator({
 	$ref: '#/definitions/Request',
 	definitions: {
 		Request: {
-			type: 'object',
-			additionalProperties: false,
-			properties: {
-				body: {
+			anyOf: [
+				{
 					type: 'object',
-					additionalProperties: {
-						anyOf: [
-							{
-								type: 'object',
-								additionalProperties: false,
-								properties: {
-									published: {
-										anyOf: [
-											{
-												$ref: '#/definitions/DateNumber'
+					additionalProperties: false,
+					properties: {
+						body: {
+							type: 'object',
+							additionalProperties: {
+								anyOf: [
+									{
+										type: 'object',
+										additionalProperties: false,
+										properties: {
+											published: {
+												anyOf: [
+													{
+														$ref: '#/definitions/DateNumber'
+													},
+													{
+														type: 'null'
+													}
+												]
 											},
-											{
-												type: 'null'
+											id: {
+												$ref: '#/definitions/StoryPageID'
+											},
+											title: {
+												type: 'string',
+												maxLength: 500
+											},
+											content: {
+												type: 'string'
+											},
+											nextPages: {
+												type: 'array',
+												items: {
+													type: 'number'
+												}
+											},
+											unlisted: {
+												type: 'boolean'
+											},
+											disableControls: {
+												type: 'boolean',
+												description: 'Whether the client\'s controls should be disabled while this page is rendered.'
+											},
+											commentary: {
+												type: 'string'
+											},
+											notify: {
+												type: 'boolean',
+												description: 'Whether this page was set to notify readers on publish.'
 											}
+										},
+										required: [
+											'commentary',
+											'content',
+											'disableControls',
+											'id',
+											'nextPages',
+											'notify',
+											'title',
+											'unlisted'
 										]
 									},
-									id: {
-										$ref: '#/definitions/StoryPageID'
-									},
-									title: {
-										type: 'string',
-										maxLength: 500
-									},
-									content: {
-										type: 'string'
-									},
-									nextPages: {
-										type: 'array',
-										items: {
-											type: 'number'
+									{
+										type: 'object',
+										additionalProperties: false,
+										properties: {
+											published: {
+												anyOf: [
+													{
+														$ref: '#/definitions/DateNumber'
+													},
+													{
+														type: 'null'
+													}
+												]
+											},
+											title: {
+												type: 'string',
+												maxLength: 500
+											},
+											content: {
+												type: 'string'
+											},
+											nextPages: {
+												type: 'array',
+												items: {
+													type: 'number'
+												}
+											},
+											unlisted: {
+												type: 'boolean'
+											},
+											disableControls: {
+												type: 'boolean',
+												description: 'Whether the client\'s controls should be disabled while this page is rendered.'
+											},
+											commentary: {
+												type: 'string'
+											},
+											notify: {
+												type: 'boolean',
+												description: 'Whether this page was set to notify readers on publish.'
+											}
 										}
-									},
-									unlisted: {
-										type: 'boolean'
-									},
-									disableControls: {
-										type: 'boolean',
-										description: 'Whether the client\'s controls should be disabled while this page is rendered.'
-									},
-									commentary: {
-										type: 'string'
-									},
-									notify: {
-										type: 'boolean',
-										description: 'Whether this page was set to notify readers on publish.'
 									}
-								},
-								required: [
-									'commentary',
-									'content',
-									'disableControls',
-									'id',
-									'nextPages',
-									'notify',
-									'title',
-									'unlisted'
 								]
 							},
-							{
-								type: 'object',
-								additionalProperties: false,
-								properties: {
-									published: {
-										anyOf: [
-											{
-												$ref: '#/definitions/DateNumber'
-											},
-											{
-												type: 'null'
-											}
-										]
-									},
-									title: {
-										type: 'string',
-										maxLength: 500
-									},
-									content: {
-										type: 'string'
-									},
-									nextPages: {
-										type: 'array',
-										items: {
-											type: 'number'
-										}
-									},
-									unlisted: {
-										type: 'boolean'
-									},
-									disableControls: {
-										type: 'boolean',
-										description: 'Whether the client\'s controls should be disabled while this page is rendered.'
-									},
-									commentary: {
-										type: 'string'
-									},
-									notify: {
-										type: 'boolean',
-										description: 'Whether this page was set to notify readers on publish.'
-									}
+							description: 'A record of `ClientStoryPage`s (some of which are partial) to add or change.'
+						},
+						query: {
+							type: 'object',
+							properties: {
+								storyID: {
+									type: 'string'
 								}
-							}
-						]
-					},
-					description: 'A record of `ClientStoryPage`s (some of which are partial) to add or change.'
-				},
-				query: {
-					type: 'object',
-					properties: {
-						storyID: {
-							type: 'string'
+							},
+							required: [
+								'storyID'
+							],
+							additionalProperties: false
+						},
+						method: {
+							type: 'string',
+							const: 'PUT'
 						}
 					},
 					required: [
-						'storyID'
-					],
-					additionalProperties: false
+						'body',
+						'method',
+						'query'
+					]
 				},
-				method: {
-					type: 'string',
-					const: 'PUT'
+				{
+					type: 'object',
+					additionalProperties: false,
+					properties: {
+						body: {
+							type: 'object',
+							properties: {
+								pageIDs: {
+									type: 'array',
+									items: {
+										$ref: '#/definitions/StoryPageID'
+									},
+									description: 'The IDs of pages to delete.',
+									uniqueItems: true
+								}
+							},
+							required: [
+								'pageIDs'
+							],
+							additionalProperties: false
+						},
+						query: {
+							type: 'object',
+							properties: {
+								storyID: {
+									type: 'string'
+								}
+							},
+							required: [
+								'storyID'
+							],
+							additionalProperties: false
+						},
+						method: {
+							type: 'string',
+							const: 'DELETE'
+						}
+					},
+					required: [
+						'body',
+						'method',
+						'query'
+					]
 				}
-			},
-			required: [
-				'body',
-				'method',
-				'query'
 			]
 		},
 		DateNumber: {

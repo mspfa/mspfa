@@ -99,7 +99,7 @@ const Handler: APIHandler<{
 
 	await updateStorySchedule(story, updateQuery);
 
-	// TODO: Adjust IDs of pages in users' gave saves.
+	// TODO: Adjust page IDs in users' gave saves.
 
 	res.end();
 };

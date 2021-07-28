@@ -1,6 +1,6 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
-import type { StoryPage } from 'modules/server/stories';
+import type { StoryDocument, StoryPage, StoryPageID } from 'modules/server/stories';
 import { getStoryByUnsafeID, getClientStoryPage, updateStorySchedule } from 'modules/server/stories';
 import { authenticate } from 'modules/server/auth';
 import type { ClientStoryPage, ClientStoryPageRecord } from 'modules/client/stories';
@@ -9,6 +9,7 @@ import { Perm } from 'modules/client/perms';
 import { flatten } from 'modules/server/db';
 import { mergeWith } from 'lodash';
 import { overwriteArrays } from 'modules/client/utilities';
+import type { UpdateQuery } from 'mongodb';
 
 /** The keys of all `ClientStoryPage` properties which the client should be able to `PUT` into any of their existing `StoryDocument['pages']` (except `'published'`). */
 type PuttableStoryPageKey = 'title' | 'content' | 'nextPages' | 'unlisted' | 'disableControls' | 'commentary' | 'notify';
@@ -16,24 +17,37 @@ type PuttableStoryPageKey = 'title' | 'content' | 'nextPages' | 'unlisted' | 'di
 const Handler: APIHandler<{
 	query: {
 		storyID: string
-	},
-	method: 'PUT',
-	/** A record of `ClientStoryPage`s (some of which are partial) to add or change. */
-	body: Record<(
-		// The ID of the page to add or change.
-		// The reason this is `string` is because the schema generator ignores `number` keys and doesn't seem to have any support for `patternProperties`. The checks to ensure the validity of these keys are instead done in the handler.
-		string
-	), (
-		(
-			// A new page being added (includes `id`).
-			Omit<ClientStoryPage, 'published'>
-			// Changes to an existing page (excludes `id`).
-			| RecursivePartial<Pick<ClientStoryPage, PuttableStoryPageKey>>
-		) & {
-			published?: DateNumber | null
+	}
+} & (
+	{
+		method: 'PUT',
+		/** A record of `ClientStoryPage`s (some of which are partial) to add or change. */
+		body: Record<(
+			// The ID of the page to add or change.
+			// The reason this is `string` is because the schema generator ignores `number` keys and doesn't seem to have any support for `patternProperties`. The checks to ensure the validity of these keys are instead done in the handler.
+			string
+		), (
+			(
+				// A new page being added (includes `id`).
+				Omit<ClientStoryPage, 'published'>
+				// Changes to an existing page (excludes `id`).
+				| RecursivePartial<Pick<ClientStoryPage, PuttableStoryPageKey>>
+			) & {
+				published?: DateNumber | null
+			}
+		)>
+	} | {
+		method: 'DELETE',
+		body: {
+			/**
+			 * The IDs of pages to delete.
+			 *
+			 * @uniqueItems true
+			 */
+			pageIDs: StoryPageID[]
 		}
-	)>
-}, {
+	}
+), {
 	method: 'PUT',
 	/** A record of the `ClientStoryPage`s which were modified or added. */
 	body: ClientStoryPageRecord
@@ -62,145 +76,222 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	const newClientPages: ClientStoryPageRecord = {};
 	const $set: Record<string, unknown> = {};
 	const $unset: Record<string, true> = {};
 
-	// Store `Date.now()` into a variable so it is not a different value each time, helping avoid inconsistencies.
-	const now = Date.now();
+	if (req.method === 'PUT') {
+		const newClientPages: ClientStoryPageRecord = {};
 
-	for (const pageIDString of Object.keys(req.body)) {
-		const pageID = +pageIDString;
+		// Store `Date.now()` into a variable so it is not a different value each time, helping avoid inconsistencies.
+		const now = Date.now();
 
-		if (!(
-			Number.isInteger(pageID)
-			&& pageID > 0
-		)) {
-			res.status(400).send({
-				message: 'A page ID must be an integer greater than 0.'
-			});
-			return;
-		}
-
-		const clientPage = req.body[pageID];
-
-		if ('id' in clientPage) {
-			// `clientPage` is a new page being posted.
-
-			if (pageID in story.pages) {
-				res.status(422).send({
-					message: `Page ${pageID} already exists and cannot have its \`id\` overwritten.`
-				});
-				return;
-			}
-
-			if (pageID !== clientPage.id) {
-				res.status(400).send({
-					message: `Page ${pageID}'s \`id\` is not set to ${pageID}.`
-				});
-				return;
-			}
+		for (const pageIDString of Object.keys(req.body)) {
+			const pageID = +pageIDString;
 
 			if (!(
-				pageID === 1
-				|| pageID - 1 in story.pages
-				|| pageID - 1 in req.body
+				Number.isInteger(pageID)
+				&& pageID > 0
 			)) {
-				res.status(422).send({
-					message: `Page ${pageID} cannot be added if there is no page ${pageID - 1}.`
+				res.status(400).send({
+					message: 'A page ID must be an integer greater than 0.'
 				});
 				return;
 			}
 
-			const { published, ...clientPageWithoutPublished } = clientPage;
-			const newPage: StoryPage = {
-				...clientPageWithoutPublished,
-				...published !== undefined && published !== null && {
-					published: new Date(published),
-					...published > now && {
-						scheduled: true
+			const clientPage = req.body[pageID];
+
+			if ('id' in clientPage) {
+				// `clientPage` is a new page being posted.
+
+				if (pageID in story.pages) {
+					res.status(422).send({
+						message: `Page ${pageID} already exists and cannot have its \`id\` overwritten.`
+					});
+					return;
+				}
+
+				if (pageID !== clientPage.id) {
+					res.status(400).send({
+						message: `Page ${pageID}'s \`id\` is not set to ${pageID}.`
+					});
+					return;
+				}
+
+				if (!(
+					pageID === 1
+					|| pageID - 1 in story.pages
+					|| pageID - 1 in req.body
+				)) {
+					res.status(422).send({
+						message: `Page ${pageID} cannot be added if there is no page ${pageID - 1}.`
+					});
+					return;
+				}
+
+				const { published, ...clientPageWithoutPublished } = clientPage;
+				const newPage: StoryPage = {
+					...clientPageWithoutPublished,
+					...published !== undefined && published !== null && {
+						published: new Date(published),
+						...published > now && {
+							scheduled: true
+						}
+					},
+					comments: []
+				};
+
+				$set[`pages.${pageID}`] = newPage;
+
+				story.pages[pageID] = newPage;
+				newClientPages[pageID] = getClientStoryPage(newPage);
+			} else {
+				// `clientPage` is the changes for an existing page being edited.
+
+				if (!(pageID in story.pages)) {
+					res.status(422).send({
+						message: `Page ${pageID} does not exist.`
+					});
+					return;
+				}
+
+				const { published, ...clientPageWithoutPublished } = clientPage;
+				const pageChanges: RecursivePartial<StoryPage> = {
+					...clientPageWithoutPublished,
+					...published !== undefined && published !== null && {
+						published: new Date(published),
+						...published > now && {
+							scheduled: true
+						}
 					}
-				},
-				comments: []
-			};
+				};
 
-			$set[`pages.${pageID}`] = newPage;
+				const page = story.pages[pageID];
 
-			story.pages[pageID] = newPage;
-			newClientPages[pageID] = getClientStoryPage(newPage);
-		} else {
-			// `clientPage` is the changes for an existing page being edited.
+				if (
+					// The client wants to set this page as a draft.
+					published === null
+					// The page is not already a draft.
+					&& page.published !== undefined
+				) {
+					// Set this page as a draft.
 
-			if (!(pageID in story.pages)) {
-				res.status(422).send({
-					message: `Page ${pageID} does not exist.`
-				});
-				return;
-			}
+					$unset[`pages.${pageID}.published`] = true;
+					delete page.published;
 
-			const { published, ...clientPageWithoutPublished } = clientPage;
-			const pageChanges: RecursivePartial<StoryPage> = {
-				...clientPageWithoutPublished,
-				...published !== undefined && published !== null && {
-					published: new Date(published),
-					...published > now && {
-						scheduled: true
+					if (page.scheduled) {
+						$unset[`pages.${pageID}.scheduled`] = true;
+						delete page.scheduled;
 					}
 				}
-			};
 
-			const page = story.pages[pageID];
+				flatten(pageChanges, `pages.${pageID}.`, $set);
 
+				// Convert the modified `StoryPage` to a `ClientStoryPage` to send back to the client.
+				newClientPages[pageID] = getClientStoryPage(
+					// Merge the changes in `pageChanges` into the original `StoryPage` to get what it would be after the changes.
+					mergeWith(page, pageChanges, overwriteArrays)
+				);
+			}
+		}
+
+		const pageValues = Object.values(story.pages);
+		for (let i = 1; i < pageValues.length; i++) {
+			const page = pageValues[i];
+			const published = +(page.published ?? Infinity);
+			const previousPublished = +(pageValues[i - 1].published ?? Infinity);
+
+			// Ensure that it is still impossible with the new changes for the `published` dates to result in gaps in published pages.
 			if (
-				// The client wants to set this page as a draft.
-				published === null
-				// The page is not already a draft.
-				&& page.published !== undefined
+				// Check if the previous page is unpublished. On the other hand, if the previous page is published, we don't care when this page is being published.
+				previousPublished > now
+				// Check if this page would be published before the previous page (which shouldn't be allowed since it would allow for gaps in published pages).
+				&& published < previousPublished
 			) {
-				// Set this page as a draft.
-
-				$unset[`pages.${pageID}.published`] = true;
-				delete page.published;
-
-				if (page.scheduled) {
-					$unset[`pages.${pageID}.scheduled`] = true;
-					delete page.scheduled;
-				}
+				res.status(422).send({
+					message: `Page ${page.id} should not have a \`published\` date set before page ${page.id - 1}.`
+				});
+				return;
 			}
+		}
 
-			flatten(pageChanges, `pages.${pageID}.`, $set);
+		await updateStorySchedule(story, { $set, $unset });
 
-			// Convert the modified `StoryPage` to a `ClientStoryPage` to send back to the client.
-			newClientPages[pageID] = getClientStoryPage(
-				// Merge the changes in `pageChanges` into the original `StoryPage` to get what it would be after the changes.
-				mergeWith(page, pageChanges, overwriteArrays)
-			);
+		res.send(newClientPages);
+		return;
+	}
+
+	// If this point is reached, `req.method === 'DELETE'`.
+
+	for (const pageIDToDelete of req.body.pageIDs) {
+		if (!(pageIDToDelete in story.pages)) {
+			res.status(422).send({
+				message: `Page ${pageIDToDelete} does not exist.`
+			});
+			return;
 		}
 	}
 
 	const pageValues = Object.values(story.pages);
-	for (let i = 1; i < pageValues.length; i++) {
-		const page = pageValues[i];
-		const published = +(page.published ?? Infinity);
-		const previousPublished = +(pageValues[i - 1].published ?? Infinity);
 
-		// Ensure that it is still impossible with the new changes for the `published` dates to result in gaps in published pages.
-		if (
-			// Check if the previous page is unpublished. On the other hand, if the previous page is published, we don't care when this page is being published.
-			previousPublished > now
-			// Check if this page would be published before the previous page (which shouldn't be allowed since it would allow for gaps in published pages).
-			&& published < previousPublished
-		) {
-			res.status(422).send({
-				message: `Page ${page.id} should not have a \`published\` date set before page ${page.id - 1}.`
-			});
-			return;
+	const updateQuery: UpdateQuery<StoryDocument> = { $unset };
+
+	/** The number of pages which have been deleted before the page in the current `for` loop iteration. */
+	let deletedBeforeThisPage = 0;
+	for (const page of pageValues) {
+		// Check if this page should be deleted.
+		if (req.body.pageIDs.includes(page.id)) {
+			/** The ID of the page which would technically be deleted from the database as a result of being shifted down due to this iteration's page being deleted. */
+			const lastPageID = pageValues.length - deletedBeforeThisPage;
+
+			// Delete the page from the database.
+			$unset[`pages.${lastPageID}`];
+
+			// Delete the page from `story` so `story.pages` is in sync with what the database will be after the `updateQuery`, allowing `story` to safely be passed into `updateStorySchedule`.
+			delete story.pages[lastPageID];
+
+			deletedBeforeThisPage++;
+		} else {
+			// This page should not be deleted and may need page ID adjustments.
+
+			/** Whether this page's `nextPages` has changed. */
+			let nextPagesChanged = false;
+
+			// Adjust IDs of pages in `page.nextPages` after the deleted pages.
+			for (let i = 0; i < page.nextPages.length; i++) {
+				/** The ID of this `nextPages` page. */
+				const nextPagesID = page.nextPages[i];
+
+				// Decrement this `nextPagesID` by 1 for each deleted page before it.
+				for (const pageIDToDelete of req.body.pageIDs) {
+					if (pageIDToDelete < nextPagesID) {
+						page.nextPages[i]--;
+						nextPagesChanged = true;
+					}
+				}
+			}
+
+			// Adjust IDs of pages after the deleted pages.
+			if (deletedBeforeThisPage) {
+				page.id -= deletedBeforeThisPage;
+
+				// Set this page (with its `id` decremented and `nextPages` adjusted) into the adjusted page ID.
+				$set[`pages.${page.id}`] = page;
+			} else if (nextPagesChanged) {
+				// If this page isn't already being added to `$set` due to an ID adjustment but still has a changed `nextPages`, add this page's changed `nextPages` to `$set`.
+				$set[`pages.${page.id}.nextPages`] = page.nextPages;
+			}
 		}
 	}
 
-	await updateStorySchedule(story, { $set, $unset });
+	if (Object.values($set).length) {
+		updateQuery.$set = $set;
+	}
 
-	res.send(newClientPages);
+	await updateStorySchedule(story, updateQuery);
+
+	// TODO: Adjust page IDs in users' gave saves.
+
+	res.end();
 };
 
 export default Handler;
