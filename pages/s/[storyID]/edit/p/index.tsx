@@ -28,7 +28,7 @@ import FieldBoxRow from 'components/Box/FieldBoxRow';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import { escapeRegExp } from 'lodash';
 import BoxRow from 'components/Box/BoxRow';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import frameThrottler, { frameThrottlerRequests, cancelFrameThrottler } from 'modules/client/frameThrottler';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
@@ -576,7 +576,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						url.searchParams.set('sort', sortMode);
 
 						// Update the URL's query params.
-						history.replaceState(null, '', url);
+						Router.replace(url, undefined, { shallow: true });
 
 						const updateLocationHash = () => {
 							if (/^#p\d+$/.test(location.hash)) {
