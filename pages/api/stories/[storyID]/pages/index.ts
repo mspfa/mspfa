@@ -244,7 +244,7 @@ const Handler: APIHandler<{
 			const lastPageID = pageValues.length - deletedBeforeThisPage;
 
 			// Delete the page from the database.
-			$unset[`pages.${lastPageID}`];
+			$unset[`pages.${lastPageID}`] = true;
 
 			// Delete the page from `story` so `story.pages` is in sync with what the database will be after the `updateQuery`, allowing `story` to safely be passed into `updateStorySchedule`.
 			delete story.pages[lastPageID];
@@ -274,8 +274,11 @@ const Handler: APIHandler<{
 			if (deletedBeforeThisPage) {
 				page.id -= deletedBeforeThisPage;
 
-				// Set this page (with its `id` decremented and `nextPages` adjusted) into the adjusted page ID.
+				// Set this page (with its `id` and `nextPages` adjusted) into the adjusted page ID in the database.
 				$set[`pages.${page.id}`] = page;
+
+				// Do the same in `story.pages` so it is in sync with what the database will be after the `updateQuery`, allowing `story` to safely be passed into `updateStorySchedule`.
+				story.pages[page.id] = page;
 			} else if (nextPagesChanged) {
 				// If this page isn't already being added to `$set` due to an ID adjustment but still has a changed `nextPages`, add this page's changed `nextPages` to `$set`.
 				$set[`pages.${page.id}.nextPages`] = page.nextPages;
