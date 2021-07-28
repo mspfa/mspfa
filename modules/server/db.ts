@@ -79,9 +79,7 @@ export type UnsafeObjectID = ConstructorParameters<typeof ObjectId>[0] | undefin
 export const safeObjectID = (id: UnsafeObjectID) => {
 	try {
 		return new ObjectId(id);
-	} catch {
-		return undefined;
-	}
+	} catch {}
 };
 
 /**

@@ -132,8 +132,7 @@ export const createSession = async (
 ) => {
 	if (!user.email) {
 		// The user is not verified. No session should be created.
-
-		return undefined;
+		return;
 	}
 
 	const token = crypto.randomBytes(TOKEN_LENGTH).toString('base64');
