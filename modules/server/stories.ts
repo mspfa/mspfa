@@ -48,9 +48,9 @@ export type StoryComment = {
 	author: UserID,
 	/** @minLength 1 */
 	content: string,
-	/** @uniqueItems */
+	/** @uniqueItems true */
 	likes: UserID[],
-	/** @uniqueItems */
+	/** @uniqueItems true */
 	dislikes: UserID[],
 	private: boolean
 };
