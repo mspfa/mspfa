@@ -943,7 +943,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					// This state is an array of the keys of pages whose advanced section is toggled open.
 					const [advancedShownPageKeys, setAdvancedShownPageKeys] = useState<number[]>([]);
-					/** A ref to the latest `advancedShownPageKeys` to reduce unnecessary callback dependency updates. */
+					/** A ref to the latest `advancedShownPageKeys` to reduce unnecessary callback dependencies. */
 					const advancedShownPageKeysRef = useLatest(advancedShownPageKeys);
 
 					const pageComponents: ReactNode[] = [];
@@ -1103,15 +1103,77 @@ const Component = withErrorPage<ServerSideProps>(({
 					const deleteSelectedPages = useCallback(async () => {
 						formikPropsRef.current.setSubmitting(true);
 
-						if (!await Dialog.confirm({
-							id: 'delete-pages',
-							title: 'Delete Pages',
-							content: `Are you sure you want to delete ${
+						if (!(
+							(
 								selectedPages.length === 1
-									? `page ${selectedPages[0]}`
-									: `the ${selectedPages.length} selected pages`
-							}?\n\nThis cannot be undone.`
-						})) {
+								&& await Dialog.confirm({
+									id: 'delete-pages',
+									title: 'Delete Page',
+									content: `Are you sure you want to delete page ${selectedPages[0]}?\n\nThis cannot be undone.`
+								})
+							) || (
+								selectedPages.length !== 1
+								&& await Dialog.confirm({
+									id: 'delete-pages',
+									title: 'Delete Pages',
+									content: (
+										<>
+											Are you sure you want to delete the {selectedPages.length} selected pages?<br />
+											<br />
+											This cannot be undone.<br />
+											<br />
+											<label>
+												<input
+													type="checkbox"
+													className="spaced"
+													required
+													autoFocus
+												/>
+												<span className="spaced bolder">
+													I am sure I want to permanently delete {(() => {
+														const pageRanges: Array<[StoryPageID, StoryPageID]> = [];
+
+														/** The page ID most recently added to `pageRanges`. */
+														let previousPage: StoryPageID | undefined;
+
+														for (const pageID of selectedPages.sort((a, b) => a - b)) {
+															// Check whether this page is adjacent to the previous.
+															if (previousPage === pageID - 1) {
+																// Add this page to the last page range.
+																pageRanges[pageRanges.length - 1][1] = pageID;
+															} else {
+																// Add this page to a new page range.
+																pageRanges.push([pageID, pageID]);
+															}
+
+															previousPage = pageID;
+														}
+
+														const pageRangeStrings = pageRanges.map(([startPageID, endPageID]) => (
+															startPageID === endPageID
+																? `p${startPageID}`
+																: `p${startPageID}-${endPageID}`
+														));
+
+														return (
+															pageRangeStrings.length === 1
+																? pageRangeStrings[0]
+																: pageRangeStrings.length === 2
+																	? `${pageRangeStrings[0]} and ${pageRangeStrings[1]}`
+																	: `${pageRangeStrings.slice(0, -1).join(', ')}, and ${pageRangeStrings[pageRangeStrings.length - 1]}`
+														);
+													})()}.
+												</span>
+											</label>
+										</>
+									),
+									actions: [
+										{ label: 'Yes', autoFocus: false },
+										'No'
+									]
+								})
+							)
+						)) {
 							formikPropsRef.current.setSubmitting(false);
 							return;
 						}
