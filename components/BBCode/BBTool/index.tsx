@@ -1,5 +1,5 @@
 import './styles.module.scss';
-import { useContext, useCallback } from 'react';
+import { useContext, useCallback, useState } from 'react';
 import { BBFieldContext } from 'components/BBCode/BBField';
 import Button from 'components/Button';
 import Dialog from 'modules/client/Dialog';
@@ -532,9 +532,12 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 	/** A ref to the latest value of `disabled` to avoid race conditions. */
 	const disabledRef = useLatest(disabled);
 
+	// Whether this BB tool currently has an open dialog.
+	const [open, setOpen] = useState(false);
+
 	return (
 		<Button
-			className="icon bb-tool"
+			className={`icon bb-tool${open ? ' open' : ''}`}
 			title={tag.title}
 			disabled={disabled}
 			style={{
@@ -556,6 +559,8 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 					if (tag.content) {
 						// Close any existing BB tool dialog.
 						await Dialog.getByID('bb-tool')?.resolve();
+
+						setOpen(true);
 
 						const dialog = new Dialog<Record<string, any>>({
 							id: 'bb-tool',
@@ -580,7 +585,11 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 							]
 						});
 
-						if (!(await dialog)?.submit) {
+						const dialogResult = await dialog;
+
+						setOpen(false);
+
+						if (!dialogResult?.submit) {
 							return;
 						}
 

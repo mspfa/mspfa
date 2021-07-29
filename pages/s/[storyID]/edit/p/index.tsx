@@ -772,7 +772,8 @@ const Component = withErrorPage<ServerSideProps>(({
 										}
 
 										// Page elements containing invalid form elements should not be culled so those invalid elements can be detected and focused when the user attempts to submit.
-										if (pageElement.querySelector(':invalid')) {
+										// Page elements containing open BB tools should also not be culled so submitting the BB tool's dialog is able to add the BBCode to the mounted BB field.
+										if (pageElement.querySelector(':invalid, .bb-tool.open')) {
 											newCulledPages[pageID] = false;
 										}
 									}

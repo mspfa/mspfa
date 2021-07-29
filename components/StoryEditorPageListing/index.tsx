@@ -547,7 +547,7 @@ const StoryEditorPageListing = React.memo(({
 				<Label block htmlFor={`field-pages-${page.id}-content`}>
 					Content
 				</Label>
-				<BBField // TODO: Fix errors being thrown when a BB tool is used on a culled page.
+				<BBField
 					name={`pages.${page.id}.content`}
 					rows={6}
 					html
