@@ -278,8 +278,8 @@ const StoryEditorPageListing = React.memo(({
 						<Row>
 							{`What would you like to do with ${
 								firstDraftID === page.id
-									? `page ${page.id}`
-									: `pages ${firstDraftID} to ${page.id}`
+									? `p${page.id}`
+									: `p${firstDraftID}-${page.id}`
 							}?`}
 						</Row>
 						<Row id="field-container-action">
@@ -322,6 +322,7 @@ const StoryEditorPageListing = React.memo(({
 									)}
 								</>
 							)}
+							{/* TODO: Add checkbox to set `notify`. */}
 						</Row>
 						{
 							// To reduce clutter, only show the tip on the default `action` setting.
@@ -392,8 +393,8 @@ const StoryEditorPageListing = React.memo(({
 			title: `${pageStatus === 'scheduled' ? 'Unschedule' : 'Unpublish'} Pages`,
 			content: `Are you sure you want to unpublish ${
 				lastNonDraftID === page.id
-					? `page ${page.id}`
-					: `pages ${page.id} to ${lastNonDraftID}`
+					? `p${page.id}`
+					: `p${page.id}-${lastNonDraftID}`
 			}?`
 		})) {
 			formikPropsRef.current.setSubmitting(false);
