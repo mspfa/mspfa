@@ -1202,17 +1202,40 @@ const Component = withErrorPage<ServerSideProps>(({
 
 						let newPages = formikPropsRef.current.values.pages;
 
-						/** The largest ID of the selected pages. */
-						let lastSelectedPageID: StoryPageID | undefined;
-						while (lastSelectedPageID = selectedPages.pop()) {
-							newPages = deleteFromClientStoryPageRecord(lastSelectedPageID, newPages);
+						const newAdvancedShownPageKeys = [...advancedShownPageKeysRef.current];
+						let advancedShownPageKeysChanged = false;
+
+						/** The ID of a page to delete. */
+						let pageID: StoryPageID | undefined;
+						while (
+							// The next assigned `pageID` must be the one with the largest ID so that deleting this page doesn't shift the IDs of the selected pages around such that they become inaccurate in `selectedPages`. Popping the last item in `selectedPages` is sufficient for this due to `selectedPages` being sorted earlier in this callback.
+							pageID = selectedPages.pop()
+						) {
+							const page = newPages[pageID] as KeyedClientStoryPage;
+							const pageKey = page[_key];
+
+							// Delete the page from the `newPages`.
+							newPages = deleteFromClientStoryPageRecord(pageID, newPages);
+
+							// Delete the page's cached height.
+							delete cachedPageHeightsRef.current[pageKey];
+
+							const advancedShownPageKeyIndex = newAdvancedShownPageKeys.indexOf(pageKey);
+							if (advancedShownPageKeyIndex !== -1) {
+								newAdvancedShownPageKeys.splice(advancedShownPageKeyIndex, 1);
+								advancedShownPageKeysChanged = true;
+							}
+						}
+
+						if (advancedShownPageKeysChanged) {
+							setAdvancedShownPageKeys(newAdvancedShownPageKeys);
 						}
 
 						setSelectedPages([]);
 						setInitialPages(newPages);
 
 						formikPropsRef.current.setSubmitting(false);
-					}, [selectedPages, storyID]);
+					}, [selectedPages, storyID, advancedShownPageKeysRef]);
 
 					return (
 						<Form>
