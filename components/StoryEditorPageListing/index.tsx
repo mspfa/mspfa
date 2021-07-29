@@ -28,7 +28,6 @@ import DateField from 'components/DateField';
 import { useLatest } from 'react-use';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
-type StoryPageAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]').default>;
 
 /** The maximum duration accepted by `setTimeout`. */
 const MAX_TIMEOUT = 2147483647;
@@ -402,7 +401,11 @@ const StoryEditorPageListing = React.memo(({
 
 		if (onServer) {
 			// Delete the page on the server.
-			await (api as StoryPageAPI).delete(`/stories/${storyID}/pages/${page.id}`).catch(error => {
+			await (api as StoryPagesAPI).delete(`/stories/${storyID}/pages`, {
+				data: {
+					pageIDs: [page.id]
+				}
+			}).catch(error => {
 				formikPropsRef.current.setSubmitting(false);
 
 				return Promise.reject(error);
