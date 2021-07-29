@@ -82,7 +82,6 @@ export const StoryEditorContext = createContext<{
 	formikPropsRef: MutableRefObject<FormikProps<Values>>,
 	setInitialPages: Dispatch<SetStateAction<ClientStoryPageRecord>>,
 	queuedValuesRef: MutableRefObject<Values | undefined>,
-	/** Whether the form is loading. */
 	isSubmitting: boolean,
 	cachedPageHeightsRef: MutableRefObject<Partial<Record<number, number>>>,
 	toggleAdvancedShown: (pageKey: number) => void
@@ -945,7 +944,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					// This state is an array of the keys of pages whose advanced section is toggled open.
 					const [advancedShownPageKeys, setAdvancedShownPageKeys] = useState<number[]>([]);
-					/** A ref to the latest `advancedShownPageKeys` to reduce unnecessary callback dependencies. */
+					/** A ref to the latest value of `advancedShownPageKeys` to reduce unnecessary callback dependencies. */
 					const advancedShownPageKeysRef = useLatest(advancedShownPageKeys);
 
 					const pageComponents: ReactNode[] = [];
