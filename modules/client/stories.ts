@@ -79,14 +79,14 @@ export const getBlurb = (story: PublicStory) => (
  */
 export const deleteFromClientStoryPageRecord = (
 	/** The ID of the page to delete. */
-	deletedPageID: StoryPageID,
+	pageIDToDelete: StoryPageID,
 	/** The record to delete the page from. */
 	pages: ClientStoryPageRecord
 ) => {
 	const newPages: ClientStoryPageRecord = {};
 
 	for (const oldPage of Object.values(pages)) {
-		if (oldPage.id === deletedPageID) {
+		if (oldPage.id === pageIDToDelete) {
 			// Skip the page being deleted.
 			continue;
 		}
@@ -94,13 +94,13 @@ export const deleteFromClientStoryPageRecord = (
 		const newPage = { ...oldPage };
 
 		// Adjust IDs of pages after the deleted page.
-		if (oldPage.id > deletedPageID) {
+		if (oldPage.id > pageIDToDelete) {
 			newPage.id--;
 		}
 
 		// Adjust IDs of pages in `newPage.nextPages` after the deleted page.
 		for (let i = 0; i < newPage.nextPages.length; i++) {
-			if (newPage.nextPages[i] > deletedPageID) {
+			if (newPage.nextPages[i] > pageIDToDelete) {
 				newPage.nextPages[i]--;
 			}
 		}
