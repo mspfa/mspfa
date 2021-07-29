@@ -248,6 +248,20 @@ const StoryEditorPageListing = React.memo(({
 	const publishPage = useCallback(async (event: MouseEvent<HTMLButtonElement & HTMLAnchorElement>) => {
 		formikPropsRef.current.setSubmitting(true);
 
+		// Ensure that none of the drafts to be published are unsaved.
+		for (let pageID = firstDraftID!; pageID <= page.id; pageID++) {
+			if (!isEqual(formikPropsRef.current.values.pages[pageID], formikPropsRef.current.initialValues.pages[pageID])) {
+				new Dialog({
+					id: 'publish-pages',
+					title: 'Publish Pages',
+					content: `Page ${pageID} has unsaved changes. Any pages being published must first be saved.`
+				});
+
+				formikPropsRef.current.setSubmitting(false);
+				return;
+			}
+		}
+
 		/** The `published` value to set on the pages. */
 		let published = Date.now();
 
@@ -329,7 +343,7 @@ const StoryEditorPageListing = React.memo(({
 
 			published = (
 				dialog.form!.values.action === 'schedule'
-					&& typeof dialog.form!.values.date === 'number'
+				&& typeof dialog.form!.values.date === 'number'
 					? dialog.form!.values.date
 					: Date.now()
 			);
@@ -337,20 +351,8 @@ const StoryEditorPageListing = React.memo(({
 
 		const pageChanges: Record<StoryPageID, RecursivePartial<ClientStoryPage>> = {};
 
+		// Set each draft to be published.
 		for (let pageID = firstDraftID!; pageID <= page.id; pageID++) {
-			// Check if any of the drafts to be published are unsaved.
-			if (!isEqual(formikPropsRef.current.values.pages[pageID], formikPropsRef.current.initialValues.pages[pageID])) {
-				new Dialog({
-					id: 'publish-pages',
-					title: 'Publish Pages',
-					content: `Page ${pageID} has unsaved changes. Any pages being published must first be saved.`
-				});
-
-				formikPropsRef.current.setSubmitting(false);
-				return;
-			}
-
-			// Set this draft to be published.
 			pageChanges[pageID] = { published };
 		}
 
@@ -538,16 +540,18 @@ const StoryEditorPageListing = React.memo(({
 					name={`pages.${page.id}.title`}
 					maxLength={500}
 					autoComplete="off"
+					disabled={isSubmitting}
 				/>
 			</Row>
 			<Row className="page-field-container-content">
 				<Label block htmlFor={`field-pages-${page.id}-content`}>
 					Content
 				</Label>
-				<BBField
+				<BBField // TODO: Fix errors being thrown when a BB tool is used on a culled page.
 					name={`pages.${page.id}.content`}
 					rows={6}
 					html
+					disabled={isSubmitting}
 				/>
 			</Row>
 			<Row className="story-editor-page-show-advanced-link-container">
@@ -577,6 +581,7 @@ const StoryEditorPageListing = React.memo(({
 											className="story-editor-next-page-input spaced"
 											min={1}
 											required
+											disabled={isSubmitting}
 											innerRef={
 												nextPageIndex === page.nextPages.length - 1
 													? lastNextPageInputRef
@@ -586,6 +591,7 @@ const StoryEditorPageListing = React.memo(({
 										<RemoveButton
 											className="spaced"
 											title="Remove Page"
+											disabled={isSubmitting}
 											onClick={removeNextPage}
 										/>
 									</div>
@@ -593,6 +599,7 @@ const StoryEditorPageListing = React.memo(({
 								<div>
 									<AddButton
 										title="Add Page"
+										disabled={isSubmitting}
 										onClick={addNextPage}
 									/>
 								</div>
@@ -605,6 +612,7 @@ const StoryEditorPageListing = React.memo(({
 									name={`pages.${page.id}.unlisted`}
 									label="Unlisted"
 									help="Unlisted pages are not included in new update notifications and do not show in your adventure's log. Comments on an unlisted page will not appear under any other page."
+									disabled={isSubmitting}
 								/>
 							)}
 							<FieldBoxRow
@@ -612,6 +620,7 @@ const StoryEditorPageListing = React.memo(({
 								name={`pages.${page.id}.disableControls`}
 								label="Disable Controls"
 								help={'Disallows users from using MSPFA\'s controls on this page (e.g. left and right arrow keys to navigate between pages).\n\nIt\'s generally only necessary to disable controls if a script or embedded game has custom controls conflicting with MSPFA\'s.'}
+								disabled={isSubmitting}
 							/>
 						</InlineRowSection>
 					</Row>
@@ -628,6 +637,7 @@ const StoryEditorPageListing = React.memo(({
 							id={`field-pages-${page.id}-commentary`}
 							name={`pages.${page.id}.commentary`}
 							rows={3}
+							disabled={isSubmitting}
 						/>
 					</Row>
 				</Row>

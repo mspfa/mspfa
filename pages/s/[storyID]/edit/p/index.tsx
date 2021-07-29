@@ -318,6 +318,15 @@ const Component = withErrorPage<ServerSideProps>(({
 			return;
 		}
 
+		if (formikPropsRef.current.isSubmitting) {
+			new Dialog({
+				id: 'find-and-replace',
+				title: 'Find and Replace',
+				content: 'The specified action could not be completed, as the form is currently read-only.'
+			});
+			return;
+		}
+
 		const find = (
 			dialog.form!.values.regex
 				? new RegExp(dialog.form!.values.find, dialog.form!.values.flags)
@@ -1271,7 +1280,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										{viewMode === 'list' && (
 											<Button
 												className="small"
-												disabled={!pageValues.length}
+												disabled={formikPropsRef.current.isSubmitting || !pageValues.length}
 												onClick={findAndReplace}
 											>
 												Find and Replace
