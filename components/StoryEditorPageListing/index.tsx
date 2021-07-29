@@ -513,7 +513,7 @@ const StoryEditorPageListing = React.memo(({
 										: 'Scheduled'
 									} `
 								}
-								<Timestamp short withTime>
+								<Timestamp short withTime relative>
 									{initialPublished!}
 								</Timestamp>
 							</>
