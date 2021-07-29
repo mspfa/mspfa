@@ -1132,6 +1132,48 @@ const Component = withErrorPage<ServerSideProps>(({
 						setSelectedPages(Object.values(formikPropsRef.current.values.pages).map(({ id }) => id));
 					}, []);
 
+					/** Mutates `selectedPages` to be sorted in ascending order and returns a user-friendly string describing the ranges of selected pages. */
+					const sortAndGetSelectedPages = useCallback(() => {
+						/** An array of objects representing closed intervals of selected page IDs. */
+						const selectedPageRanges: Array<{
+							/** The lower bound of this interval. */
+							start: StoryPageID,
+							/** The upper bound of this interval. */
+							end: StoryPageID
+						}> = [];
+
+						/** The page ID most recently added to `selectedPageRanges`. */
+						let previousPage: StoryPageID | undefined;
+
+						for (const pageID of selectedPages.sort((a, b) => a - b)) {
+							// Check whether this page is adjacent to the previous.
+							if (previousPage === pageID - 1) {
+								// Add this page to the last page range.
+								selectedPageRanges[selectedPageRanges.length - 1].end = pageID;
+							} else {
+								// Add this page to a new page range.
+								selectedPageRanges.push({ start: pageID, end: pageID });
+							}
+
+							previousPage = pageID;
+						}
+
+						/** An array of strings representing closed interval of selected page IDs. */
+						const rangeStrings = selectedPageRanges.map(({ start, end }) => (
+							start === end
+								? `p${start}`
+								: `p${start}-${end}`
+						));
+
+						return (
+							rangeStrings.length === 1
+								? rangeStrings[0]
+								: rangeStrings.length === 2
+									? `${rangeStrings[0]} and ${rangeStrings[1]}`
+									: `${rangeStrings.slice(0, -1).join(', ')}, and ${rangeStrings[rangeStrings.length - 1]}`
+						);
+					}, [selectedPages]);
+
 					const deleteSelectedPages = useCallback(async () => {
 						formikPropsRef.current.setSubmitting(true);
 
@@ -1162,46 +1204,7 @@ const Component = withErrorPage<ServerSideProps>(({
 													autoFocus
 												/>
 												<span className="spaced bolder">
-													I am sure I want to permanently delete {(() => {
-														/** An array of objects representing closed intervals of selected page IDs. */
-														const selectedPageRanges: Array<{
-															/** The lower bound of this interval. */
-															start: StoryPageID,
-															/** The upper bound of this interval. */
-															end: StoryPageID
-														}> = [];
-
-														/** The page ID most recently added to `selectedPageRanges`. */
-														let previousPage: StoryPageID | undefined;
-
-														for (const pageID of selectedPages.sort((a, b) => a - b)) {
-															// Check whether this page is adjacent to the previous.
-															if (previousPage === pageID - 1) {
-																// Add this page to the last page range.
-																selectedPageRanges[selectedPageRanges.length - 1].end = pageID;
-															} else {
-																// Add this page to a new page range.
-																selectedPageRanges.push({ start: pageID, end: pageID });
-															}
-
-															previousPage = pageID;
-														}
-
-														/** An array of strings representing closed interval of selected page IDs. */
-														const rangeStrings = selectedPageRanges.map(({ start, end }) => (
-															start === end
-																? `p${start}`
-																: `p${start}-${end}`
-														));
-
-														return (
-															rangeStrings.length === 1
-																? rangeStrings[0]
-																: rangeStrings.length === 2
-																	? `${rangeStrings[0]} and ${rangeStrings[1]}`
-																	: `${rangeStrings.slice(0, -1).join(', ')}, and ${rangeStrings[rangeStrings.length - 1]}`
-														);
-													})()}.
+													I am sure I want to permanently delete {sortAndGetSelectedPages()}.
 												</span>
 											</label>
 										</>
@@ -1235,7 +1238,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						/** The ID of a page to delete. */
 						let pageID: StoryPageID | undefined;
 						while (
-							// The next assigned `pageID` must be the one with the largest ID so that deleting this page doesn't shift the IDs of the selected pages around such that they become inaccurate in `selectedPages`. Popping the last item in `selectedPages` is sufficient for this due to `selectedPages` being sorted earlier in this callback.
+							// The next assigned `pageID` must be the one with the largest ID so that deleting this page doesn't shift the IDs of the selected pages around such that they become inaccurate in `selectedPages`. Popping the last item in `selectedPages` is sufficient for this due to `selectedPages` being sorted by `sortAndGetSelectedPages` earlier in this callback.
 							pageID = selectedPages.pop()
 						) {
 							const page = newPages[pageID] as KeyedClientStoryPage;
@@ -1262,7 +1265,65 @@ const Component = withErrorPage<ServerSideProps>(({
 						setInitialPages(newPages);
 
 						formikPropsRef.current.setSubmitting(false);
-					}, [selectedPages, storyID, advancedShownPageKeysRef]);
+					}, [selectedPages, storyID, sortAndGetSelectedPages, advancedShownPageKeysRef]);
+
+					const moveSelectedPages = useCallback(async () => {
+						formikPropsRef.current.setSubmitting(true);
+
+						const dialog = new Dialog({
+							id: 'move-pages',
+							title: 'Move Pages',
+							initialValues: {
+								relation: 'after' as 'before' | 'after',
+								pageID: '' as number | ''
+							},
+							content: function Content({ handleChange }) {
+								return (
+									<>
+										Where do you want to move {sortAndGetSelectedPages()}?<br />
+										<br />
+										This cannot be undone.<br />
+										<br />
+										<Field as="select" name="relation">
+											<option value="before">before</option>
+											<option value="after">after</option>
+										</Field>
+										{' page '}
+										<Field
+											type="number"
+											name="pageID"
+											required
+											min={1}
+											max={pageValues.length}
+											autoFocus
+											onChange={
+												useCallback((event: ChangeEvent<HTMLInputElement>) => {
+													handleChange(event);
+
+													event.target.setCustomValidity(
+														selectedPages.includes(+event.target.value)
+															? 'Please choose a page which is not selected.'
+															: ''
+													);
+												}, [handleChange])
+											}
+										/>
+									</>
+								);
+							},
+							actions: [
+								{ label: 'Move!', autoFocus: false },
+								'Cancel'
+							]
+						});
+
+						if (!(await dialog)?.submit) {
+							formikPropsRef.current.setSubmitting(false);
+							return;
+						}
+
+						formikPropsRef.current.setSubmitting(false);
+					}, [selectedPages, pageValues.length, sortAndGetSelectedPages]);
 
 					return (
 						<Form>
@@ -1408,7 +1469,7 @@ const Component = withErrorPage<ServerSideProps>(({
 													: undefined
 											}
 											disabled={formikPropsRef.current.isSubmitting || selectedPages.length === 0}
-											// onClick={moveSelectedPages}
+											onClick={moveSelectedPages}
 										>
 											Move
 										</Button>
