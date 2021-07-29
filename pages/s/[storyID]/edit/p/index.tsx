@@ -1290,23 +1290,25 @@ const Component = withErrorPage<ServerSideProps>(({
 											{`View: ${viewMode === 'grid' ? 'Grid' : 'List'}`}
 										</Button>
 									</Row>
-									<Row>
-										<Label
-											className="spaced"
-											htmlFor="field-default-page-title"
-										>
-											Default Page Title
-										</Label>
-										<input
-											id="field-default-page-title"
-											className="spaced"
-											maxLength={500}
-											defaultValue={privateStory.editorSettings.defaultPageTitle}
-											autoComplete="off"
-											onChange={onChangeDefaultPageTitle}
-											ref={defaultPageTitleInputRef}
-										/>
-									</Row>
+									{viewMode === 'list' && (
+										<Row>
+											<Label
+												className="spaced"
+												htmlFor="field-default-page-title"
+											>
+												Default Page Title
+											</Label>
+											<input
+												id="field-default-page-title"
+												className="spaced"
+												maxLength={500}
+												defaultValue={privateStory.editorSettings.defaultPageTitle}
+												autoComplete="off"
+												onChange={onChangeDefaultPageTitle}
+												ref={defaultPageTitleInputRef}
+											/>
+										</Row>
+									)}
 									<Row>
 										<Label className="spaced" htmlFor="field-sort-pages">
 											Sort Pages By
