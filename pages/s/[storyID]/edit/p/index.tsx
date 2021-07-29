@@ -1362,7 +1362,10 @@ const Component = withErrorPage<ServerSideProps>(({
 										className="mid"
 										ref={actionsElementRef}
 									>
-										<Button onClick={newPage}>
+										<Button
+											disabled={formikPropsRef.current.isSubmitting}
+											onClick={newPage}
+										>
 											New Page
 										</Button>
 										<Button
