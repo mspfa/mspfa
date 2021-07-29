@@ -587,7 +587,7 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 						if (disabledRef.current) {
 							new Dialog({
 								id: 'bb-tool',
-								title: 'Error',
+								title: tag.title,
 								content: 'The specified BBCode could not be inserted into the target text area, as it is currently read-only.'
 							});
 							return;
