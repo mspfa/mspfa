@@ -31,9 +31,23 @@ import { escapeRegExp } from 'lodash';
 import BoxRow from 'components/Box/BoxRow';
 import Router, { useRouter } from 'next/router';
 import frameThrottler, { frameThrottlerRequests, cancelFrameThrottler } from 'modules/client/frameThrottler';
+import type { DateNumber } from 'modules/types';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
+
+/** Returns a boolean for whether it should be allowed for a page with the first argument's `published` date to be before a page with the second argument's `published` date. */
+const invalidPublishedOrder = (
+	firstPublished: DateNumber = Infinity,
+	secondPublished: DateNumber = Infinity,
+	/** The current `Date.now()`. */
+	now = Date.now()
+) => !(
+	// It should only be allowed if both pages are published
+	(firstPublished <= now && secondPublished <= now)
+	// or the first page is published before or at the same time as the second.
+	|| firstPublished <= secondPublished
+);
 
 export type Values = {
 	/** An object mapping page IDs to their respective pages. Since this object has numeric keys, standard JavaScript automatically sorts its properties by lowest first. */
@@ -1270,6 +1284,14 @@ const Component = withErrorPage<ServerSideProps>(({
 					const moveSelectedPages = useCallback(async () => {
 						formikPropsRef.current.setSubmitting(true);
 
+						const selectedPagesString = sortAndGetSelectedPages();
+						// The above function call sorts `selectedPages` so they are in order for the below two assignments.
+
+						/** The selected page with the lowest ID. */
+						const firstSelectedPage = formikPropsRef.current.values.pages[selectedPages[0]];
+						/** The selected page with the highest ID. */
+						const lastSelectedPage = formikPropsRef.current.values.pages[selectedPages[selectedPages.length - 1]];
+
 						const dialog = new Dialog({
 							id: 'move-pages',
 							title: 'Move Pages',
@@ -1277,10 +1299,52 @@ const Component = withErrorPage<ServerSideProps>(({
 								relation: 'after' as 'before' | 'after',
 								pageID: '' as number | ''
 							},
-							content: function Content({ handleChange }) {
+							content: function Content({ values: { relation } }) {
+								const pageIDInputRef = useRef<HTMLInputElement>(null!);
+
+								useEffect(() => {
+									const pageID = +pageIDInputRef.current.value;
+									const validPage = pageID in formikPropsRef.current.values.pages;
+
+									/** The deselected page which the selected pages are being moved after. */
+									let pageBefore: ClientStoryPage | undefined;
+									/** The deselected page which the selected pages are being moved before. */
+									let pageAfter: ClientStoryPage | undefined;
+
+									if (validPage) {
+										let pageBeforeID = pageID + (relation === 'before' ? -1 : 0);
+										while (selectedPages.includes(pageBeforeID)) {
+											pageBeforeID--;
+										}
+										pageBefore = formikPropsRef.current.values.pages[pageBeforeID];
+
+										let pageAfterID = pageID + (relation === 'before' ? 0 : 1);
+										while (selectedPages.includes(pageAfterID)) {
+											pageAfterID++;
+										}
+										pageAfter = formikPropsRef.current.values.pages[pageAfterID];
+									}
+
+									pageIDInputRef.current.setCustomValidity(
+										validPage
+											? selectedPages.includes(pageID)
+												? 'Please choose a page which is not selected.'
+												// The `firstSelectedPage` is being moved after the `pageBefore`, so check if that arrangement is valid.
+												: pageBefore && invalidPublishedOrder(pageBefore.published, firstSelectedPage.published)
+													? `Page ${firstSelectedPage.id} can't be moved after page ${pageBefore.id} because page ${firstSelectedPage.id} would be published first.`
+													// The `lastSelectedPage` is being moved before the `pageAfter`, so check if that arrangement is valid.
+													: pageAfter && invalidPublishedOrder(lastSelectedPage.published, pageAfter.published)
+														? `Page ${lastSelectedPage.id} can't be moved before page ${pageAfter.id} because page ${pageAfter.id} would be published first.`
+														// All is valid.
+														: ''
+											// Let the browser handle the invalid page ID via the props on the `pageID` `Field`.
+											: ''
+									);
+								});
+
 								return (
 									<>
-										Where do you want to move {sortAndGetSelectedPages()}?<br />
+										Where do you want to move {selectedPagesString}?<br />
 										<br />
 										This cannot be undone.<br />
 										<br />
@@ -1296,17 +1360,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											min={1}
 											max={pageValues.length}
 											autoFocus
-											onChange={
-												useCallback((event: ChangeEvent<HTMLInputElement>) => {
-													handleChange(event);
-
-													event.target.setCustomValidity(
-														selectedPages.includes(+event.target.value)
-															? 'Please choose a page which is not selected.'
-															: ''
-													);
-												}, [handleChange])
-											}
+											innerRef={pageIDInputRef}
 										/>
 									</>
 								);
