@@ -1,5 +1,5 @@
 import './styles.module.scss';
-import type { TextareaHTMLAttributes } from 'react';
+import type { MutableRefObject, TextareaHTMLAttributes } from 'react';
 import React, { useRef, useMemo } from 'react';
 import BBTool from 'components/BBCode/BBTool';
 import type { BBCodeProps } from 'components/BBCode';
@@ -9,12 +9,13 @@ import { Field, useField } from 'formik';
 import { toKebabCase } from 'modules/client/utilities';
 import { usePrefixedID } from 'modules/client/IDPrefix';
 
-export type TextAreaRef = React.MutableRefObject<HTMLTextAreaElement>;
-
-export const TextAreaRefContext = React.createContext<{
-	textAreaRef: TextAreaRef,
+export const BBFieldContext = React.createContext<{
+	/** A ref to the `BBField`'s text area element. */
+	textAreaRef: MutableRefObject<HTMLTextAreaElement>,
 	/** A function which sets the value of the text area. */
-	setValue: (value: string) => void
+	setValue: (value: string) => void,
+	/** Whether changes to the `BBField`'s value should be disallowed. */
+	disabled?: boolean
 }>(undefined!);
 
 export type BBFieldProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'children' | 'value'> & {
@@ -24,15 +25,19 @@ export type BBFieldProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'ch
 /** A text area field that accepts BBCode. */
 const BBField = ({ name, html, noBB, raw, ...props }: BBFieldProps) => {
 	const [, { value }, { setValue }] = useField<string>(name);
+
 	const textAreaRef = useRef<HTMLTextAreaElement>(null!);
 
+	const disableBBTools = props.disabled || props.readOnly;
+
 	return (
-		<TextAreaRefContext.Provider
+		<BBFieldContext.Provider
 			value={
 				useMemo(() => ({
 					textAreaRef,
-					setValue
-				}), [textAreaRef, setValue])
+					setValue,
+					disabled: disableBBTools
+				}), [textAreaRef, disableBBTools, setValue])
 			}
 		>
 			<div className="bb-toolbar">
@@ -84,7 +89,7 @@ const BBField = ({ name, html, noBB, raw, ...props }: BBFieldProps) => {
 					{value}
 				</BBCode>
 			</Spoiler>
-		</TextAreaRefContext.Provider>
+		</BBFieldContext.Provider>
 	);
 };
 

@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import { useContext, useCallback } from 'react';
-import { TextAreaRefContext } from 'components/BBCode/BBField';
+import { BBFieldContext } from 'components/BBCode/BBField';
 import Button from 'components/Button';
 import Dialog from 'modules/client/Dialog';
 import { videoIDTest } from 'components/BBCode/BBTags';
@@ -13,6 +13,7 @@ import BoxRow from 'components/Box/BoxRow';
 import Link from 'components/Link';
 import { getChangedValues } from 'modules/client/forms';
 import IDPrefix from 'modules/client/IDPrefix';
+import { useLatest } from 'react-use';
 
 const bbPreview = 'The quick brown fox jumps over the lazy dog.';
 
@@ -527,12 +528,15 @@ export type BBToolProps = {
 const BBTool = ({ tag: tagName }: BBToolProps) => {
 	const tag = tags[tagName];
 
-	const { textAreaRef, setValue } = useContext(TextAreaRefContext);
+	const { textAreaRef, setValue, disabled } = useContext(BBFieldContext);
+	/** A ref to the latest value of `disabled` to avoid race conditions. */
+	const disabledRef = useLatest(disabled);
 
 	return (
 		<Button
 			className="icon bb-tool"
 			title={tag.title}
+			disabled={disabled}
 			style={{
 				backgroundPositionX: `${-tagIndexes[tagName]}em`
 			}}
@@ -550,6 +554,7 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 					};
 
 					if (tag.content) {
+						// Close any existing BB tool dialog.
 						await Dialog.getByID('bb-tool')?.resolve();
 
 						const dialog = new Dialog<Record<string, any>>({
@@ -576,6 +581,15 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 						});
 
 						if (!(await dialog)?.submit) {
+							return;
+						}
+
+						if (disabledRef.current) {
+							new Dialog({
+								id: 'bb-tool',
+								title: 'Error',
+								content: 'The specified BBCode could not be inserted into the target text area, as it is currently read-only.'
+							});
 							return;
 						}
 
