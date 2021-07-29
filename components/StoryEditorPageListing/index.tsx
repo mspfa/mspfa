@@ -54,6 +54,7 @@ const StoryEditorPageListing = React.memo(({
 	const {
 		storyID,
 		firstDraftID,
+		lastNonDraftID,
 		formikPropsRef,
 		setInitialPages,
 		queuedValuesRef,
@@ -216,28 +217,28 @@ const StoryEditorPageListing = React.memo(({
 
 		formikPropsRef.current.setSubmitting(true);
 
-		const { data: newPages } = await (api as StoryPagesAPI).put(`/stories/${storyID}/pages`, changedValues as any).catch(error => {
+		const { data: newInitialPages } = await (api as StoryPagesAPI).put(`/stories/${storyID}/pages`, changedValues as any).catch(error => {
 			formikPropsRef.current.setSubmitting(false);
 
 			return Promise.reject(error);
 		});
 
 		// Preserve the React keys of updated pages.
-		for (const newPage of Object.values(newPages)) {
-			(newPage as KeyedClientStoryPage)[_key] = (
-				formikPropsRef.current.values.pages[newPage.id] as KeyedClientStoryPage
+		for (const newInitialPage of Object.values(newInitialPages)) {
+			(newInitialPage as KeyedClientStoryPage)[_key] = (
+				formikPropsRef.current.values.pages[newInitialPage.id] as KeyedClientStoryPage
 			)[_key];
 		}
 
 		setInitialPages({
 			...formikPropsRef.current.initialValues.pages,
-			...newPages
+			...newInitialPages
 		});
 
 		queuedValuesRef.current = {
 			pages: {
 				...formikPropsRef.current.values.pages,
-				...newPages
+				...newInitialPages
 			}
 		};
 
@@ -334,7 +335,7 @@ const StoryEditorPageListing = React.memo(({
 			);
 		}
 
-		const pageChanges: Record<string, RecursivePartial<ClientStoryPage>> = {};
+		const pageChanges: Record<StoryPageID, RecursivePartial<ClientStoryPage>> = {};
 
 		for (let pageID = firstDraftID!; pageID <= page.id; pageID++) {
 			// Check if any of the drafts to be published are unsaved.
@@ -353,22 +354,80 @@ const StoryEditorPageListing = React.memo(({
 			pageChanges[pageID] = { published };
 		}
 
-		const { data: newPages } = await (api as StoryPagesAPI).put(`/stories/${storyID}/pages`, pageChanges).catch(error => {
+		const { data: newInitialPages } = await (api as StoryPagesAPI).put(`/stories/${storyID}/pages`, pageChanges).catch(error => {
 			formikPropsRef.current.setSubmitting(false);
 
 			return Promise.reject(error);
 		});
 
 		// Preserve the React keys of updated pages.
-		for (const newPage of Object.values(newPages)) {
-			(newPage as KeyedClientStoryPage)[_key] = (
-				formikPropsRef.current.values.pages[newPage.id] as KeyedClientStoryPage
+		for (const newInitialPage of Object.values(newInitialPages)) {
+			(newInitialPage as KeyedClientStoryPage)[_key] = (
+				formikPropsRef.current.values.pages[newInitialPage.id] as KeyedClientStoryPage
 			)[_key];
 		}
 
 		setInitialPages({
 			...formikPropsRef.current.initialValues.pages,
-			...newPages
+			...newInitialPages
+		});
+
+		queuedValuesRef.current = {
+			pages: {
+				...formikPropsRef.current.values.pages,
+				...newInitialPages
+			}
+		};
+
+		formikPropsRef.current.setSubmitting(false);
+	}, [firstDraftID, page.id, storyID, setInitialPages, queuedValuesRef, formikPropsRef]);
+
+	const unpublishPage = useCallback(async () => {
+		formikPropsRef.current.setSubmitting(true);
+
+		if (!await Dialog.confirm({
+			id: 'unpublish-pages',
+			title: `${pageStatus === 'scheduled' ? 'Unschedule' : 'Unpublish'} Pages`,
+			content: `Are you sure you want to unpublish ${
+				lastNonDraftID === page.id
+					? `page ${page.id}`
+					: `pages ${page.id} to ${lastNonDraftID}`
+			}?`
+		})) {
+			formikPropsRef.current.setSubmitting(false);
+			return;
+		}
+
+		const pageChanges: Record<StoryPageID, { published: null }> = {};
+
+		const newPages: ClientStoryPageRecord = {};
+
+		for (let pageID = page.id; pageID <= lastNonDraftID!; pageID++) {
+			// Set this page to be unpublished for the API request.
+			pageChanges[pageID] = { published: null };
+
+			// Set this page to be unpublished for the form values update.
+			const newPage = { ...formikPropsRef.current.values.pages[pageID] };
+			delete newPage.published;
+			newPages[pageID] = newPage;
+		}
+
+		const { data: newInitialPages } = await (api as StoryPagesAPI).put(`/stories/${storyID}/pages`, pageChanges).catch(error => {
+			formikPropsRef.current.setSubmitting(false);
+
+			return Promise.reject(error);
+		});
+
+		// Preserve the React keys of updated pages.
+		for (const newInitialPage of Object.values(newInitialPages)) {
+			(newInitialPage as KeyedClientStoryPage)[_key] = (
+				formikPropsRef.current.values.pages[newInitialPage.id] as KeyedClientStoryPage
+			)[_key];
+		}
+
+		setInitialPages({
+			...formikPropsRef.current.initialValues.pages,
+			...newInitialPages
 		});
 
 		queuedValuesRef.current = {
@@ -379,7 +438,7 @@ const StoryEditorPageListing = React.memo(({
 		};
 
 		formikPropsRef.current.setSubmitting(false);
-	}, [firstDraftID, page.id, storyID, setInitialPages, queuedValuesRef, formikPropsRef]);
+	}, [lastNonDraftID, pageStatus, page.id, setInitialPages, storyID, formikPropsRef, queuedValuesRef]);
 
 	/** A ref to the latest value of `advancedShown` to avoid race conditions. */
 	const advancedShownRef = useLatest(advancedShown);
@@ -610,6 +669,29 @@ const StoryEditorPageListing = React.memo(({
 							? 'Save Draft'
 							: 'Save'
 						)}
+					</Button>
+				)}
+				{pageStatus !== 'draft' && (
+					<Button
+						disabled={isSubmitting}
+						title={
+							`${
+								pageStatus === 'scheduled' ? 'Unschedule' : 'Unpublish'
+							} ${
+								lastNonDraftID === page.id
+									? `Page ${page.id}`
+									: `Pages ${page.id} to ${lastNonDraftID}`
+							}`
+						}
+						onClick={unpublishPage}
+					>
+						{
+							`${
+								pageStatus === 'scheduled' ? 'Unschedule' : 'Unpublish'
+							} ${
+								lastNonDraftID === page.id ? '' : ` p${page.id}-${lastNonDraftID}`
+							}`
+						}
 					</Button>
 				)}
 				<Button

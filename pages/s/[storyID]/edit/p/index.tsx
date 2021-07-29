@@ -78,6 +78,7 @@ const defaultGridCullingInfo = {
 export const StoryEditorContext = createContext<{
 	storyID: StoryID,
 	firstDraftID: StoryPageID | undefined,
+	lastNonDraftID: StoryPageID | undefined,
 	formikPropsRef: MutableRefObject<FormikProps<Values>>,
 	setInitialPages: Dispatch<SetStateAction<ClientStoryPageRecord>>,
 	queuedValuesRef: MutableRefObject<Values | undefined>,
@@ -578,7 +579,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						const url = new URL(location.href);
 						url.searchParams.set('view', viewMode);
 						url.searchParams.set('sort', sortMode);
-						Router.replace(url, undefined, { shallow: true });
+						Router.replace(url, undefined, { shallow: true }); // TODO: Fix leave confirmation dialog appearing because of this.
 
 						const updateLocationHash = () => {
 							if (/^#p\d+$/.test(location.hash)) {
@@ -953,6 +954,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					const nextKeyRef = useRef(0);
 
 					let firstDraftID: StoryPageID | undefined;
+					let lastNonDraftID: StoryPageID | undefined;
 
 					// It is necessary to check for `pageValues.length` to prevent the `for` loop from trying to iterate over pages that don't exist when there are 0 pages.
 					if (pageValues.length) {
@@ -987,8 +989,23 @@ const Component = withErrorPage<ServerSideProps>(({
 								formikPropsRef.current.initialValues.pages[page.id] as ClientStoryPage | undefined
 							)?.published;
 
+							// Set `firstDraftID` and `lastNonDraftID`.
 							if (initialPublished === undefined) {
-								firstDraftID = page.id;
+								if (
+									// If `sortMode === 'oldest'`, set `firstDraftID` to the first applicable iterated page.
+									firstDraftID === undefined
+									// If `sortMode === 'newest'`, set `firstDraftID` to the last applicable iterated page.
+									|| sortMode === 'newest'
+								) {
+									firstDraftID = page.id;
+								}
+							} else if (
+								// If `sortMode === 'oldest'`, set `lastNonDraftID` to the last applicable iterated page.
+								sortMode === 'oldest'
+								// If `sortMode === 'newest'`, set `lastNonDraftID` to the first applicable iterated page.
+								|| lastNonDraftID === undefined
+							) {
+								lastNonDraftID = page.id;
 							}
 
 							if (viewMode === 'list') {
@@ -1089,13 +1106,14 @@ const Component = withErrorPage<ServerSideProps>(({
 					const storyEditorContext = useMemo(() => ({
 						storyID,
 						firstDraftID,
+						lastNonDraftID,
 						formikPropsRef,
 						setInitialPages,
 						queuedValuesRef,
 						isSubmitting: formikProps.isSubmitting,
 						cachedPageHeightsRef,
 						toggleAdvancedShown
-					}), [formikProps.isSubmitting, firstDraftID, storyID, toggleAdvancedShown]);
+					}), [formikProps.isSubmitting, firstDraftID, lastNonDraftID, storyID, toggleAdvancedShown]);
 
 					const deselectAll = useCallback(() => {
 						setSelectedPages([]);
