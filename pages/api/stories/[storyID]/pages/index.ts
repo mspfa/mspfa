@@ -231,17 +231,15 @@ const Handler: APIHandler<{
 		}
 	}
 
-	const pageValues = Object.values(story.pages);
-
 	const updateQuery: UpdateQuery<StoryDocument> = { $unset };
 
 	/** The number of pages which have been deleted before the page in the current `for` loop iteration. */
 	let deletedBeforeThisPage = 0;
-	for (const page of pageValues) {
+	for (const page of Object.values(story.pages)) {
 		// Check if this page should be deleted.
 		if (req.body.pageIDs.includes(page.id)) {
 			/** The ID of the page which would technically be deleted from the database as a result of being shifted down due to this iteration's page being deleted. */
-			const lastPageID = pageValues.length - deletedBeforeThisPage;
+			const lastPageID = story.pageCount - deletedBeforeThisPage;
 
 			// Delete the page from the database.
 			$unset[`pages.${lastPageID}`] = true;
