@@ -1272,7 +1272,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						formikPropsRef.current.setSubmitting(true);
 
 						const selectedPagesString = sortAndGetSelectedPages();
-						// The above function call sorts `selectedPages` so they are in order for the below two assignments.
+						// The above function call sorts `selectedPages` so they are in order for the below two assignments and the page move API request.
 
 						/** The selected page with the lowest ID. */
 						const firstSelectedPage = formikPropsRef.current.values.pages[selectedPages[0]];
