@@ -13,7 +13,7 @@ import Button from 'components/Button';
 import type { StoryID, StoryPageID } from 'modules/server/stories';
 import { getClientStoryPage, getPrivateStory, getStoryByUnsafeID } from 'modules/server/stories';
 import type { ClientStoryPage, ClientStoryPageRecord, PrivateStory } from 'modules/client/stories';
-import { deleteFromClientStoryPageRecord } from 'modules/client/stories';
+import { deleteFromClientStoryPageRecord, invalidPublishedOrder } from 'modules/client/stories';
 import BoxSection from 'components/Box/BoxSection';
 import type { APIClient } from 'modules/client/api';
 import Row from 'components/Row';
@@ -31,23 +31,10 @@ import { escapeRegExp } from 'lodash';
 import BoxRow from 'components/Box/BoxRow';
 import Router, { useRouter } from 'next/router';
 import frameThrottler, { frameThrottlerRequests, cancelFrameThrottler } from 'modules/client/frameThrottler';
-import type { DateNumber } from 'modules/types';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
-
-/** Returns a boolean for whether it should be allowed for a page with the first argument's `published` date to be before a page with the second argument's `published` date. */
-const invalidPublishedOrder = (
-	firstPublished: DateNumber = Infinity,
-	secondPublished: DateNumber = Infinity,
-	/** The current `Date.now()`. */
-	now = Date.now()
-) => !(
-	// It should only be allowed if both pages are published
-	(firstPublished <= now && secondPublished <= now)
-	// or the first page is published before or at the same time as the second.
-	|| firstPublished <= secondPublished
-);
+type StoryMovePagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/movePages').default>;
 
 export type Values = {
 	/** An object mapping page IDs to their respective pages. Since this object has numeric keys, standard JavaScript automatically sorts its properties by lowest first. */
@@ -440,18 +427,18 @@ const Component = withErrorPage<ServerSideProps>(({
 							return;
 						}
 
-						const { data: newPages } = await (api as StoryPagesAPI).put(`/stories/${privateStory.id}/pages`, changedValues as any);
+						const { data: newInitialPages } = await (api as StoryPagesAPI).put(`/stories/${privateStory.id}/pages`, changedValues as any);
 
 						// Preserve the React keys of updated pages.
-						for (const newPage of Object.values(newPages)) {
-							(newPage as KeyedClientStoryPage)[_key] = (
-								values.pages[newPage.id] as KeyedClientStoryPage
+						for (const newInitialPage of Object.values(newInitialPages)) {
+							(newInitialPage as KeyedClientStoryPage)[_key] = (
+								formikPropsRef.current.values.pages[newInitialPage.id] as KeyedClientStoryPage
 							)[_key];
 						}
 
 						setInitialPages({
 							...initialPages,
-							...newPages
+							...newInitialPages
 						});
 					}, [privateStory.id, initialPages])
 				}

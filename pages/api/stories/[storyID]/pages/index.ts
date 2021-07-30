@@ -4,6 +4,7 @@ import type { StoryDocument, StoryPage, StoryPageID } from 'modules/server/stori
 import { getStoryByUnsafeID, getClientStoryPage, updateStorySchedule } from 'modules/server/stories';
 import { authenticate } from 'modules/server/auth';
 import type { ClientStoryPage, ClientStoryPageRecord } from 'modules/client/stories';
+import { invalidPublishedOrder } from 'modules/client/stories';
 import type { DateNumber, RecursivePartial } from 'modules/types';
 import { Perm } from 'modules/client/perms';
 import { flatten } from 'modules/server/db';
@@ -49,7 +50,7 @@ const Handler: APIHandler<{
 	}
 ), {
 	method: 'PUT',
-	/** A record of the `ClientStoryPage`s which were modified or added. */
+	/** A `ClientStoryPageRecord` of the pages which were modified or added. */
 	body: ClientStoryPageRecord
 }> = async (req, res) => {
 	await validate(req, res);
@@ -195,20 +196,16 @@ const Handler: APIHandler<{
 		}
 
 		const pageValues = Object.values(story.pages);
+		// Iterate over all `pageValues` except the first one.
 		for (let i = 1; i < pageValues.length; i++) {
-			const page = pageValues[i];
-			const published = +(page.published ?? Infinity);
-			const previousPublished = +(pageValues[i - 1].published ?? Infinity);
-
 			// Ensure that it is still impossible with the new changes for the `published` dates to result in gaps in published pages.
-			if (
-				// Check if the previous page is unpublished. On the other hand, if the previous page is published, we don't care when this page is being published.
-				previousPublished > now
-				// Check if this page would be published before the previous page (which shouldn't be allowed since it would allow for gaps in published pages).
-				&& published < previousPublished
-			) {
+			if (invalidPublishedOrder(
+				pageValues[i].published,
+				pageValues[i - 1].published,
+				now
+			)) {
 				res.status(422).send({
-					message: `Page ${page.id} should not have a \`published\` date set before page ${page.id - 1}.`
+					message: `Page ${i + 1} should not have a \`published\` date set before page ${i}.`
 				});
 				return;
 			}
@@ -233,13 +230,15 @@ const Handler: APIHandler<{
 
 	const updateQuery: UpdateQuery<StoryDocument> = { $unset };
 
+	const pageValues = Object.values(story.pages);
+
 	/** The number of pages which have been deleted before the page in the current `for` loop iteration. */
 	let deletedBeforeThisPage = 0;
-	for (const page of Object.values(story.pages)) {
+	for (const page of pageValues) {
 		// Check if this page should be deleted.
 		if (req.body.pageIDs.includes(page.id)) {
 			/** The ID of the page which would technically be deleted from the database as a result of being shifted down due to this iteration's page being deleted. */
-			const lastPageID = story.pageCount - deletedBeforeThisPage;
+			const lastPageID = pageValues.length - deletedBeforeThisPage;
 
 			// Delete the page from the database.
 			$unset[`pages.${lastPageID}`] = true;

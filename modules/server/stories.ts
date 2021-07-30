@@ -108,6 +108,11 @@ export type StoryDocument = {
 	/** @maxLength 500 */
 	blurb: string,
 	icon: '' | URLString,
+	/**
+	 * The public page count.
+	 *
+	 * ⚠️ Does not necessarily equal `Object.values(story.pages).length`.
+	 */
 	pageCount: number,
 	favCount: number,
 	banner: '' | URLString,
@@ -354,7 +359,7 @@ export const updateStorySchedule = async (
 	/**
 	 * The `StoryDocument` whose schedule and `pageCount` is being updated.
 	 *
-	 * ⚠️ Ensure `story.pages` matches what it would be in the database at the time _after_ this function's database update. Also ensure `story.pageCount` matches what it is in the database at the time _before_ this function is called.
+	 * ⚠️ Ensure `story.pages` matches what it would be in the database at the time AFTER this function's database update. Also ensure `story.pageCount` matches what it is in the database at the time BEFORE this function is called.
 	 */
 	story: StoryDocument,
 	/**
