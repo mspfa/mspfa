@@ -584,10 +584,17 @@ const Component = withErrorPage<ServerSideProps>(({
 					const calledUpdateLocationHashRef = useRef(false);
 
 					useEffect(() => {
-						// Update the URL's query params.
 						const url = new URL(location.href);
+
+						// Update the URL's query params.
 						url.searchParams.set('view', viewMode);
 						url.searchParams.set('sort', sortMode);
+
+						if (calledUpdateLocationHashRef.current) {
+							// If the location hash has already been used, remove it so the browser doesn't try to scroll each time `view` or `sort` changes.
+							url.hash = '';
+						}
+
 						Router.replace(url, undefined, { shallow: true }); // TODO: Fix leave confirmation dialog appearing because of this.
 
 						const updateLocationHash = () => {
