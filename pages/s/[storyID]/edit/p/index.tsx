@@ -31,6 +31,7 @@ import { escapeRegExp } from 'lodash';
 import BoxRow from 'components/Box/BoxRow';
 import Router, { useRouter } from 'next/router';
 import frameThrottler, { frameThrottlerRequests, cancelFrameThrottler } from 'modules/client/frameThrottler';
+import { shouldIgnoreControl } from 'modules/client/utilities';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -165,6 +166,7 @@ const Component = withErrorPage<ServerSideProps>(({
 	const [initialPages, setInitialPages] = useState(initialPagesProp);
 
 	const formikPropsRef = useRef<FormikProps<Values>>(null!);
+	const formRef = useRef<HTMLFormElement>(null!);
 
 	const defaultPageTitleInputRef = useRef<HTMLInputElement>(null!);
 
@@ -512,6 +514,11 @@ const Component = withErrorPage<ServerSideProps>(({
 						lastActivePageIDRef.current = pageValues.length;
 					}
 
+					// This state is an array of the keys of pages whose advanced section is toggled open.
+					const [advancedShownPageKeys, setAdvancedShownPageKeys] = useState<number[]>([]);
+					/** A ref to the latest value of `advancedShownPageKeys` to reduce unnecessary callback dependencies. */
+					const advancedShownPageKeysRef = useLatest(advancedShownPageKeys);
+
 					const onClickPageTile = useCallback((event: MouseEvent<HTMLDivElement> & { target: HTMLDivElement }) => {
 						const pageID = +event.target.id.slice(1);
 
@@ -545,597 +552,6 @@ const Component = withErrorPage<ServerSideProps>(({
 
 						setSelectedPages(newSelectedPages);
 					}, [selectedPages]);
-
-					// When `viewMode === 'list'`, this state is a record that maps page IDs to a boolean of their `culled` prop, or to undefined if the page hasn't been processed by `updateCulledPages` yet.
-					const [culledPages, setCulledPages] = useState<Partial<Record<StoryPageID, boolean>>>({});
-					// This ref is to prevent unnecessary updates to the effect hook which calls `updateCulledPages`.
-					const culledPagesRef = useLatest(culledPages);
-
-					// This state is the default height of a culled page element when `viewMode === 'list'`.
-					const [defaultCulledHeight, setDefaultCulledHeight] = useState(
-						// An arbitrary default culled page element height. Shouldn't be too small, or else unnecessary re-renders may occur initially due to a higher chance of more page elements being temporarily in view for a short time.
-						400
-					);
-					/** A ref to the latest value of `defaultCulledHeight` to avoid race conditions. */
-					const defaultCulledHeightRef = useLatest(defaultCulledHeight);
-					/** A ref to whether `defaultCulledHeight` has still not been set. */
-					const defaultCulledHeightUnsetRef = useRef(true);
-
-					/** A ref to a partial record that maps each page's key to its cached height when `viewMode === 'list'`. */
-					const cachedPageHeightsRef = useRef<Partial<Record<number, number>>>({});
-					// Keys are used instead of page IDs so that cached heights are preserved correctly when pages are deleted or rearranged.
-
-					// This state is some information useful for culling when `viewMode === 'grid'`.
-					const [gridCullingInfo, setGridCullingInfo] = useState({ ...defaultGridCullingInfo });
-					const gridCullingInfoRef = useLatest(gridCullingInfo);
-
-					// Ensure the `gridCullingInfo` indexes are within the range of existing pages in case pages were deleted but `gridCullingInfo` has not been updated yet.
-					if (
-						// If there aren't any pages, then `gridCullingInfo` cannot possibly refer to valid pages, so invalid `gridCullingInfo` only matters if there are any pages.
-						pageValues.length
-						// If the `firstIndex` is out of range, then the `lastIndex` is out of range, so it is only necessary to check the `lastIndex`.
-						&& gridCullingInfo.lastIndex >= pageValues.length
-					) {
-						// If the `gridCullingInfo` is invalid, reset it to the default.
-						Object.assign(gridCullingInfo, defaultGridCullingInfo);
-					}
-
-					/** A ref to whether `updateLocationHash` has been called yet and shouldn't be called again without a `hashchange` event. */
-					const calledUpdateLocationHashRef = useRef(false);
-
-					useEffect(() => {
-						const url = new URL(location.href);
-
-						// Update the URL's query params.
-						url.searchParams.set('view', viewMode);
-						url.searchParams.set('sort', sortMode);
-
-						if (calledUpdateLocationHashRef.current) {
-							// If the location hash has already been used, remove it so the browser doesn't try to scroll each time `view` or `sort` changes.
-							url.hash = '';
-						}
-
-						// Check if this URL replacement will trigger a route change. Ignore differences in hashes since those don't trigger route changes.
-						if (url.href.replace(/#.*$/, '') !== location.href.replace(/#.*$/, '')) {
-							preventLeaveConfirmations();
-						}
-
-						Router.replace(url, undefined, { shallow: true });
-
-						const updateLocationHash = () => {
-							if (/^#p\d+$/.test(location.hash)) {
-								const pageID = +location.hash.slice(2);
-
-								const lastPageID = Object.values(formikPropsRef.current.values.pages).length;
-
-								// Check if the target is a real page.
-								if (
-									pageID > 0
-									&& pageID <= lastPageID
-									// Check if the target location hash is a culled page.
-								) {
-									// Jump to where the target page is if it isn't culled, or where it would be if it weren't culled.
-
-									// We can assert this is non-null because we have verified in that the target page exists, and if a page exists, then at least one page element (though not necessarily the one we're jumping to) must be mounted.
-									const firstPageElement = document.getElementsByClassName('story-editor-page')[0] as HTMLDivElement;
-
-									/** Offsets the inputted `scrollTop` by a certain amount for the user's convenience. */
-									const offsetScrollTop = (scrollTop: number) => {
-										const actionsStyle = window.getComputedStyle(actionsElementRef.current);
-
-										if (actionsStyle.position === 'sticky') {
-											const actionsRect = actionsElementRef.current.getBoundingClientRect();
-											const actionsStyleTop = +actionsStyle.top.slice(0, -2);
-
-											return scrollTop - (
-												// Check if this element is currently stuck to its `style.top`.
-												actionsRect.top === actionsStyleTop
-												// If the actions element isn't stuck, then check if it would be after this function's scroll.
-												|| scrollTop >= document.documentElement.scrollTop + actionsRect.top + actionsRect.height
-													? actionsStyleTop + actionsRect.height
-													: 0
-											) - (
-												// Add an extra 4 pixels if `viewMode === 'list'` because it looks weird having the page listing up against the top of the screen.
-												viewMode === 'list' ? 4 : 0
-											);
-										}
-
-										return scrollTop;
-									};
-
-									if (viewMode === 'list') {
-										let offsetTop = firstPageElement.offsetTop;
-
-										const iteratePage = (pageID: StoryPageID) => {
-											const pageHeight = cachedPageHeightsRef.current[
-												// This page's key.
-												(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[_key]
-											] ?? defaultCulledHeightRef.current;
-
-											// Add this page's height to the `offsetTop`.
-											offsetTop += pageHeight;
-										};
-
-										if (sortMode === 'oldest') {
-											for (let i = 1; i < pageID; i++) {
-												iteratePage(i);
-											}
-										} else {
-											for (let i = lastPageID; i > pageID; i--) {
-												iteratePage(i);
-											}
-										}
-
-										document.documentElement.scrollTop = offsetScrollTop(offsetTop);
-									} else {
-										// If this point is reached, `viewMode === 'grid'`.
-
-										const {
-											pageContainer,
-											pageHeight,
-											pagesPerRow
-										} = calculateGridSizeInfo(formikPropsRef, firstPageElement);
-
-										/** The index of the row which the target page is on. */
-										const pageRow = Math.floor(
-											(
-												sortMode === 'oldest'
-													? pageID - 1
-													: lastPageID - pageID
-											) / pagesPerRow
-										);
-
-										document.documentElement.scrollTop = offsetScrollTop(pageContainer.offsetTop + pageRow * pageHeight);
-									}
-								}
-							}
-						};
-
-						window.addEventListener('hashchange', updateLocationHash);
-
-						if (!calledUpdateLocationHashRef.current) {
-							// This timeout is necessary to wait for the browser to jump to the location hash first so that `updateLocationHash` can run afterward uninterrupted, and also so `updateCulledPages` can update `defaultCulledHeight`.
-							setTimeout(updateLocationHash);
-
-							calledUpdateLocationHashRef.current = true;
-						}
-
-						return () => {
-							window.removeEventListener('hashchange', updateLocationHash);
-						};
-					}, [viewMode, sortMode, gridCullingInfoRef, culledPagesRef, defaultCulledHeightRef]);
-
-					/** A ref to the `#story-editor-actions` element. */
-					const actionsElementRef = useRef<HTMLDivElement>(null!);
-
-					// This is a layout effect rather than a normal effect to reduce the time the user can briefly see culled pages.
-					useIsomorphicLayoutEffect(() => {
-						const updateCulledPages = () => {
-							const pageElements = document.getElementsByClassName('story-editor-page') as HTMLCollectionOf<HTMLDivElement>;
-
-							if (viewMode === 'list') {
-								const lastPageID = Object.values(formikPropsRef.current.values.pages).length;
-
-								let culledPagesChanged = false;
-								const newCulledPages: Record<StoryPageID, boolean> = {};
-
-								if (lastPageID) {
-									// The first page and the last page should not be culled so that they can be tabbed into, even if they are outside of view.
-									newCulledPages[1] = false;
-									// Additionally, the last page must also not be unculled so that it can receive the `style.marginTop` to hold the place of any culled pages at the bottom.
-									newCulledPages[lastPageID] = false;
-
-									let activeElementAncestor: Node | null = document.activeElement;
-
-									// Find the ancestor of `document.activeElement` which is a page listing.
-									while (activeElementAncestor instanceof Element) {
-										if (activeElementAncestor.classList.contains('story-editor-page')) {
-											// If `activeElementAncestor.id === 'p14'` for example, then `pageID === 14`.
-											const pageID = +activeElementAncestor.id.slice(1);
-
-											// The page listing which has focus should not be culled, or else it would lose focus, causing inconvenience to the user.
-											newCulledPages[pageID] = false;
-											// The pages before and after a focused page should also not be culled, so that they can be tabbed into.
-											if (pageID > 1) {
-												newCulledPages[pageID - 1] = false;
-											}
-											if (pageID < lastPageID) {
-												newCulledPages[pageID + 1] = false;
-											}
-
-											break;
-										}
-
-										activeElementAncestor = activeElementAncestor.parentNode;
-									}
-
-									// Compute this value beforehand for performance.
-									const windowInnerHeight = window.innerHeight;
-
-									for (let i = 0; i < pageElements.length; i++) {
-										const pageElement = pageElements[i];
-
-										const pageID = +pageElement.id.slice(1);
-
-										// `getBoundingClientRect()` is significantly faster than `offsetTop` and `offsetHeight`.
-										const pageRect = pageElement.getBoundingClientRect();
-
-										const pageHeight = (
-											pageRect.height
-											+ +window.getComputedStyle(pageElement).marginBottom.slice(0, -2)
-										);
-
-										// Cache this page's height. This should be done here and not in the `StoryEditorPageListing` component so it can be ensured that it is up-to-date.
-										cachedPageHeightsRef.current[
-											// This page's key.
-											(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[_key]
-										] = pageHeight;
-
-										if (defaultCulledHeightUnsetRef.current) {
-											// If no default culled page element height has been set yet, set it to this page element's height.
-											// Using an arbitrary page listing's height as the default is a sufficient solution for scroll jitter in the vast majority of cases.
-
-											setDefaultCulledHeight(pageHeight);
-											defaultCulledHeightUnsetRef.current = false;
-										}
-
-										// If whether this iteration's page should be culled has already been determined, skip this iteration.
-										if (pageID in newCulledPages) {
-											continue;
-										}
-
-										// Page elements containing invalid form elements should not be culled so those invalid elements can be detected and focused when the user attempts to submit.
-										// Page elements containing open BB tools should also not be culled so submitting the BB tool's dialog is able to add the BBCode to the mounted BB field.
-										if (pageElement.querySelector(':invalid, .bb-tool.open')) {
-											newCulledPages[pageID] = false;
-										}
-									}
-
-									const scrollTop = document.documentElement.scrollTop;
-									let offsetTop = pageElements[0].offsetTop;
-
-									const iteratePage = (pageID: StoryPageID) => {
-										const pageHeight = cachedPageHeightsRef.current[
-											// This page's key.
-											(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[_key]
-										] ?? defaultCulledHeight;
-
-										// Only calculate whether this page should be culled if it hasn't already been determined previously.
-										if (!(pageID in newCulledPages)) {
-											newCulledPages[pageID] = !(
-												// Whether this page is expected to be in view.
-												(
-													// Whether the bottom of this page would be below the top of the view.
-													offsetTop + pageHeight > scrollTop
-													// Whether the top of this page would be above the bottom of the view.
-													&& offsetTop <= scrollTop + windowInnerHeight
-												)
-											);
-										}
-
-										// Add this page's height to the `offsetTop`.
-										offsetTop += pageHeight;
-
-										if (newCulledPages[pageID] !== culledPagesRef.current[pageID]) {
-											culledPagesChanged = true;
-										}
-									};
-
-									if (sortMode === 'oldest') {
-										for (let pageID = 1; pageID <= lastPageID; pageID++) {
-											iteratePage(pageID);
-										}
-									} else {
-										for (let pageID = lastPageID; pageID >= 1; pageID--) {
-											iteratePage(pageID);
-										}
-									}
-								} else {
-									// There are no pages, so `culledPagesChanged` should only be set to `true` if there were previously culled pages.
-									culledPagesChanged = Object.values(culledPagesRef.current).length !== 0;
-								}
-
-								if (culledPagesChanged) {
-									setCulledPages(newCulledPages);
-
-									// Run this function again in case height estimations becoming more accurate due to this culling update changed which pages should be culled.
-									throttledUpdateCulledPages();
-								}
-							} else {
-								// If this point is reached, `viewMode === 'grid'`.
-
-								const newGridCullingInfo = { ...defaultGridCullingInfo };
-
-								// If `!pageElements.length`, the entire below `if` block won't execute, and the values of `newGridCullingInfo` will equal those of `defaultGridCullingInfo`. This is to prevent permanently culling all pages if there have ever been 0 page elements.
-								if (pageElements.length) {
-									const {
-										pageHeight,
-										pageCount,
-										rowsAboveView,
-										rowsBelowView,
-										pagesAboveView,
-										pagesInView
-									} = calculateGridSizeInfo(formikPropsRef, pageElements[0]);
-
-									newGridCullingInfo.firstIndex = pagesAboveView;
-									newGridCullingInfo.lastIndex = Math.max(
-										newGridCullingInfo.firstIndex,
-										Math.min(
-											newGridCullingInfo.firstIndex + pagesInView,
-											pageCount
-										) - 1
-									);
-									// The reason we don't just calculate `lastIndex` as `pageCount - 1 - (rowsBelowView * pagesPerRow)` is because `rowsBelowView * pagesPerRow` is not necessarily equal to the number of pages below view, since the last row may not be completely full.
-
-									if (sortMode === 'newest') {
-										[newGridCullingInfo.firstIndex, newGridCullingInfo.lastIndex] = [
-											pageCount - 1 - newGridCullingInfo.lastIndex,
-											pageCount - 1 - newGridCullingInfo.firstIndex
-										];
-									}
-
-									newGridCullingInfo.paddingTop = rowsAboveView * pageHeight;
-									newGridCullingInfo.paddingBottom = rowsBelowView * pageHeight;
-								}
-
-								if (!(
-									newGridCullingInfo.firstIndex === gridCullingInfoRef.current.firstIndex
-									&& newGridCullingInfo.lastIndex === gridCullingInfoRef.current.lastIndex
-									&& newGridCullingInfo.paddingTop === gridCullingInfoRef.current.paddingTop
-									&& newGridCullingInfo.paddingBottom === gridCullingInfoRef.current.paddingBottom
-								)) {
-									// If not all the values of `gridCullingInfo` are the same, update `gridCullingInfo` with the new values.
-									setGridCullingInfo(newGridCullingInfo);
-								}
-							}
-						};
-
-						/** Calls `updateCulledPages` throttled by `frameThrottler`. */
-						const throttledUpdateCulledPages = () => {
-							// Don't call `frameThrottler` if there is possibly already a pending animation frame request from `throttledUpdateViewport`, since this would then overwrite it and cancel the `updateViewport` call, which includes a call to `updateCulledPages` anyway.
-							if (!frameThrottlerRequests[_updateViewportOrCulledPages]) {
-								frameThrottler(_updateViewportOrCulledPages)
-									.then(updateCulledPages);
-							}
-						};
-
-						/** A function called whenever the viewport changes. */
-						const updateViewport = () => {
-							updateCulledPages();
-
-							const actionsStyle = window.getComputedStyle(actionsElementRef.current);
-							if (actionsStyle.position === 'sticky') {
-								actionsElementRef.current.classList[
-									actionsElementRef.current.getBoundingClientRect().top === +actionsStyle.top.slice(0, -2)
-										? 'add'
-										: 'remove'
-								]('stuck');
-							}
-						};
-
-						/** Calls `updateViewport` throttled by `frameThrottler`. */
-						const throttledUpdateViewport = () => {
-							frameThrottler(_updateViewportOrCulledPages)
-								.then(updateViewport);
-						};
-
-						// Call `updateViewport` synchronously so the user can't see culled pages for a frame.
-						updateViewport();
-
-						document.addEventListener('scroll', throttledUpdateViewport);
-						document.addEventListener('resize', throttledUpdateViewport);
-						// We use `focusin` instead of `focus` because the former bubbles while the latter doesn't, and we want to capture any focus event among the page elements.
-						document.addEventListener('focusin', throttledUpdateCulledPages);
-						// We don't listen to `focusout` because, when `focusout` is dispatched, `document.activeElement` is set to `null`, causing any page element outside the view which the user is attempting to focus to instead be culled.
-						// Also, listening to `focusout` isn't necessary for any pragmatic reason, and not doing so improves performance significantly by updating the culled page elements half as often when frequently changing focus.
-
-						/** A media query which only matches if the current resolution equals the `window.devicePixelRatio` last detected by `listenToPixelRatio`. */
-						let resolutionQuery: MediaQueryList;
-
-						/** Gets the current resolution and calls `changePixelRatio` when it is no longer the current resolution. */
-						const listenToPixelRatio = () => {
-							const dpi = window.devicePixelRatio * 96;
-							resolutionQuery = window.matchMedia(
-								// Allow any resolution in the range between the floor and the ceiling of `dpi` to ensure it works on browsers that have insufficient precision on `devicePixelRatio` or on `resolution` queries.
-								`(min-resolution: ${Math.floor(dpi)}dpi) and (max-resolution: ${Math.ceil(dpi)}dpi)`
-							);
-
-							// Listen for a change in the pixel ratio in order to detect when the browser's zoom level changes.
-							resolutionQuery.addEventListener('change', changePixelRatio, { once: true });
-						};
-
-						/** A function called whenever the pixel ratio changes. */
-						const changePixelRatio = () => {
-							// Listen for further changes in the pixel ratio again.
-							listenToPixelRatio();
-
-							// The pixel ratio has changed, so the viewport has changed.
-							throttledUpdateViewport();
-						};
-
-						listenToPixelRatio();
-
-						return () => {
-							cancelFrameThrottler(_updateViewportOrCulledPages);
-
-							document.removeEventListener('scroll', throttledUpdateViewport);
-							document.removeEventListener('resize', throttledUpdateViewport);
-							document.removeEventListener('focusin', throttledUpdateCulledPages);
-							resolutionQuery.removeEventListener('change', changePixelRatio);
-						};
-					}, [defaultCulledHeight, pageValues.length, viewMode, sortMode, culledPagesRef, gridCullingInfoRef]);
-
-					// This state is an array of the keys of pages whose advanced section is toggled open.
-					const [advancedShownPageKeys, setAdvancedShownPageKeys] = useState<number[]>([]);
-					/** A ref to the latest value of `advancedShownPageKeys` to reduce unnecessary callback dependencies. */
-					const advancedShownPageKeysRef = useLatest(advancedShownPageKeys);
-
-					const pageComponents: ReactNode[] = [];
-
-					/** A ref to the next React key a `ClientStoryPage` should use. This is incremented after each time it is assigned to a page. */
-					const nextKeyRef = useRef(0);
-
-					let firstDraftID: StoryPageID | undefined;
-					let lastNonDraftID: StoryPageID | undefined;
-
-					// It is necessary to check for `pageValues.length` to prevent the `for` loop from trying to iterate over pages that don't exist when there are 0 pages.
-					if (pageValues.length) {
-						let firstIndex = 0;
-						let lastIndex = pageValues.length - 1;
-
-						if (viewMode === 'grid') {
-							({ firstIndex, lastIndex } = gridCullingInfo);
-						}
-
-						/** The sum of cached heights of consecutive culled pages when `viewMode === 'list'`. */
-						let cachedHeightSum = 0;
-
-						const iteratePage = (
-							/** The index of this page in `pageValues`. */
-							i: number
-						) => {
-							// This is typed as nullable because `i` may not index a real page if there should be no pages in view.
-							const page = pageValues[i] as KeyedClientStoryPage | undefined;
-
-							if (!page) {
-								// If `i` doesn't index a real page, don't iterate over it.
-								return;
-							}
-
-							// If this page doesn't have a React key yet, set one.
-							if (!(_key in page)) {
-								page[_key] = nextKeyRef.current++;
-							}
-
-							const initialPublished = (
-								formikPropsRef.current.initialValues.pages[page.id] as ClientStoryPage | undefined
-							)?.published;
-
-							// Set `firstDraftID` and `lastNonDraftID`.
-							if (initialPublished === undefined) {
-								if (
-									// If `sortMode === 'oldest'`, set `firstDraftID` to the first applicable iterated page.
-									firstDraftID === undefined
-									// If `sortMode === 'newest'`, set `firstDraftID` to the last applicable iterated page.
-									|| sortMode === 'newest'
-								) {
-									firstDraftID = page.id;
-								}
-							} else if (
-								// If `sortMode === 'oldest'`, set `lastNonDraftID` to the last applicable iterated page.
-								sortMode === 'oldest'
-								// If `sortMode === 'newest'`, set `lastNonDraftID` to the first applicable iterated page.
-								|| lastNonDraftID === undefined
-							) {
-								lastNonDraftID = page.id;
-							}
-
-							if (viewMode === 'list') {
-								if (!(page.id in culledPages)) {
-									// Having more than a few pages unculled leads to unacceptably large load times.
-									// We choose not to cull only the first page and the last pages by default because they must always be unculled (for reasons explained in the comments of `updateCulledPages`).
-									culledPages[page.id] = !(
-										page.id === 1
-										|| page.id === pageValues.length
-									);
-								}
-
-								const pageKey = page[_key];
-
-								// Check if this page is culled.
-								if (culledPages[page.id]!) {
-									cachedHeightSum += cachedPageHeightsRef.current[pageKey] || defaultCulledHeight;
-								} else {
-									pageComponents.push(
-										<StoryEditorPageListing
-											// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
-											key={pageKey}
-											marginTop={cachedHeightSum}
-											page={page}
-											initialPublished={initialPublished}
-											advancedShown={advancedShownPageKeys.includes(pageKey)}
-										/>
-									);
-
-									// Since an unculled page was found, reset the height sum for consecutive culled pages.
-									cachedHeightSum = 0;
-								}
-							} else {
-								// If this point is reached, `viewMode === 'grid'`.
-
-								const pageStatus = (
-									initialPublished === undefined
-										? 'draft' as const
-										: initialPublished <= Date.now()
-											? 'published' as const
-											: 'scheduled' as const
-								);
-
-								const selected = selectedPages.includes(page.id);
-
-								pageComponents.push(
-									<BoxSection
-										key={page[_key]}
-										id={`p${page.id}`}
-										className={`story-editor-page ${pageStatus}${selected ? ' selected' : ''}`}
-										heading={page.id}
-										title={page.title}
-										onClick={onClickPageTile}
-									>
-										{page.title}
-									</BoxSection>
-								);
-							}
-						};
-
-						if (sortMode === 'oldest') {
-							for (let i = firstIndex; i <= lastIndex; i++) {
-								iteratePage(i);
-							}
-						} else {
-							for (let i = lastIndex; i >= firstIndex; i--) {
-								iteratePage(i);
-							}
-						}
-					}
-
-					/** Toggles whether a page listing's advanced section is open. */
-					const toggleAdvancedShown = useCallback((
-						/** The key of the page to toggle the advanced section of. */
-						pageKey: number
-					) => {
-						const pageKeyIndex = advancedShownPageKeysRef.current.indexOf(pageKey);
-						if (pageKeyIndex === -1) {
-							// Add this `pageKey` to the `advancedShownPageKeys`.
-							setAdvancedShownPageKeys([
-								...advancedShownPageKeysRef.current,
-								pageKey
-							]);
-						} else {
-							// Remove this `pageKey` from the `advancedShownPageKeys`.
-							setAdvancedShownPageKeys([
-								...advancedShownPageKeysRef.current.slice(0, pageKeyIndex),
-								...advancedShownPageKeysRef.current.slice(pageKeyIndex + 1, advancedShownPageKeysRef.current.length)
-							]);
-						}
-					}, [advancedShownPageKeysRef]);
-
-					/**
-					 * The values to pass into the `value` of the `StoryEditorContext`.
-					 *
-					 * These values are passed through a context rather than directly as `StoryEditorPageListing` props to reduce `React.memo`'s prop comparison performance cost.
-					 */
-					const storyEditorContext = useMemo(() => ({
-						storyID,
-						firstDraftID,
-						lastNonDraftID,
-						formikPropsRef,
-						setInitialPages,
-						queuedValuesRef,
-						isSubmitting: formikProps.isSubmitting,
-						cachedPageHeightsRef,
-						toggleAdvancedShown
-					}), [formikProps.isSubmitting, firstDraftID, lastNonDraftID, storyID, toggleAdvancedShown]);
 
 					const deselectAll = useCallback(() => {
 						setSelectedPages([]);
@@ -1418,8 +834,660 @@ const Component = withErrorPage<ServerSideProps>(({
 						formikPropsRef.current.setSubmitting(false);
 					}, [selectedPages, pageValues.length, sortAndGetSelectedPages, storyID]);
 
+					// When `viewMode === 'list'`, this state is a record that maps page IDs to a boolean of their `culled` prop, or to undefined if the page hasn't been processed by `updateCulledPages` yet.
+					const [culledPages, setCulledPages] = useState<Partial<Record<StoryPageID, boolean>>>({});
+					// This ref is to prevent unnecessary updates to the effect hook which calls `updateCulledPages`.
+					const culledPagesRef = useLatest(culledPages);
+
+					// This state is the default height of a culled page element when `viewMode === 'list'`.
+					const [defaultCulledHeight, setDefaultCulledHeight] = useState(
+						// An arbitrary default culled page element height. Shouldn't be too small, or else unnecessary re-renders may occur initially due to a higher chance of more page elements being temporarily in view for a short time.
+						400
+					);
+					/** A ref to the latest value of `defaultCulledHeight` to avoid race conditions. */
+					const defaultCulledHeightRef = useLatest(defaultCulledHeight);
+					/** A ref to whether `defaultCulledHeight` has still not been set. */
+					const defaultCulledHeightUnsetRef = useRef(true);
+
+					/** A ref to a partial record that maps each page's key to its cached height when `viewMode === 'list'`. */
+					const cachedPageHeightsRef = useRef<Partial<Record<number, number>>>({});
+					// Keys are used instead of page IDs so that cached heights are preserved correctly when pages are deleted or rearranged.
+
+					// This state is some information useful for culling when `viewMode === 'grid'`.
+					const [gridCullingInfo, setGridCullingInfo] = useState({ ...defaultGridCullingInfo });
+					const gridCullingInfoRef = useLatest(gridCullingInfo);
+
+					// Ensure the `gridCullingInfo` indexes are within the range of existing pages in case pages were deleted but `gridCullingInfo` has not been updated yet.
+					if (
+						// If there aren't any pages, then `gridCullingInfo` cannot possibly refer to valid pages, so invalid `gridCullingInfo` only matters if there are any pages.
+						pageValues.length
+						// If the `firstIndex` is out of range, then the `lastIndex` is out of range, so it is only necessary to check the `lastIndex`.
+						&& gridCullingInfo.lastIndex >= pageValues.length
+					) {
+						// If the `gridCullingInfo` is invalid, reset it to the default.
+						Object.assign(gridCullingInfo, defaultGridCullingInfo);
+					}
+
+					/** A ref to whether `updateLocationHash` has been called yet and shouldn't be called again without a `hashchange` event. */
+					const calledUpdateLocationHashRef = useRef(false);
+
+					useEffect(() => {
+						const url = new URL(location.href);
+
+						// Update the URL's query params.
+						url.searchParams.set('view', viewMode);
+						url.searchParams.set('sort', sortMode);
+
+						if (calledUpdateLocationHashRef.current) {
+							// If the location hash has already been used, remove it so the browser doesn't try to scroll each time `view` or `sort` changes.
+							url.hash = '';
+						}
+
+						// Check if this URL replacement will trigger a route change. Ignore differences in hashes since those don't trigger route changes.
+						if (url.href.replace(/#.*$/, '') !== location.href.replace(/#.*$/, '')) {
+							preventLeaveConfirmations();
+						}
+
+						Router.replace(url, undefined, { shallow: true });
+
+						const updateLocationHash = () => {
+							if (/^#p\d+$/.test(location.hash)) {
+								const pageID = +location.hash.slice(2);
+
+								const lastPageID = Object.values(formikPropsRef.current.values.pages).length;
+
+								// Check if the target is a real page.
+								if (
+									pageID > 0
+									&& pageID <= lastPageID
+									// Check if the target location hash is a culled page.
+								) {
+									// Jump to where the target page is if it isn't culled, or where it would be if it weren't culled.
+
+									// We can assert this is non-null because we have verified in that the target page exists, and if a page exists, then at least one page element (though not necessarily the one we're jumping to) must be mounted.
+									const firstPageElement = document.getElementsByClassName('story-editor-page')[0] as HTMLDivElement;
+
+									/** Offsets the inputted `scrollTop` by a certain amount for the user's convenience. */
+									const offsetScrollTop = (scrollTop: number) => {
+										const actionsStyle = window.getComputedStyle(actionsElementRef.current);
+
+										if (actionsStyle.position === 'sticky') {
+											const actionsRect = actionsElementRef.current.getBoundingClientRect();
+											const actionsStyleTop = +actionsStyle.top.slice(0, -2);
+
+											return scrollTop - (
+												// Check if this element is currently stuck to its `style.top`.
+												actionsRect.top === actionsStyleTop
+												// If the actions element isn't stuck, then check if it would be after this function's scroll.
+												|| scrollTop >= document.documentElement.scrollTop + actionsRect.top + actionsRect.height
+													? actionsStyleTop + actionsRect.height
+													: 0
+											) - (
+												// Add an extra 4 pixels if `viewMode === 'list'` because it looks weird having the page listing up against the top of the screen.
+												viewMode === 'list' ? 4 : 0
+											);
+										}
+
+										return scrollTop;
+									};
+
+									if (viewMode === 'list') {
+										let offsetTop = firstPageElement.offsetTop;
+
+										const iteratePage = (pageID: StoryPageID) => {
+											const pageHeight = cachedPageHeightsRef.current[
+												// This page's key.
+												(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[_key]
+											] ?? defaultCulledHeightRef.current;
+
+											// Add this page's height to the `offsetTop`.
+											offsetTop += pageHeight;
+										};
+
+										if (sortMode === 'oldest') {
+											for (let i = 1; i < pageID; i++) {
+												iteratePage(i);
+											}
+										} else {
+											for (let i = lastPageID; i > pageID; i--) {
+												iteratePage(i);
+											}
+										}
+
+										document.documentElement.scrollTop = offsetScrollTop(offsetTop);
+									} else {
+										// If this point is reached, `viewMode === 'grid'`.
+
+										const {
+											pageContainer,
+											pageHeight,
+											pagesPerRow
+										} = calculateGridSizeInfo(formikPropsRef, firstPageElement);
+
+										/** The index of the row which the target page is on. */
+										const pageRow = Math.floor(
+											(
+												sortMode === 'oldest'
+													? pageID - 1
+													: lastPageID - pageID
+											) / pagesPerRow
+										);
+
+										document.documentElement.scrollTop = offsetScrollTop(pageContainer.offsetTop + pageRow * pageHeight);
+									}
+								}
+							}
+						};
+
+						window.addEventListener('hashchange', updateLocationHash);
+
+						if (!calledUpdateLocationHashRef.current) {
+							// This timeout is necessary to wait for the browser to jump to the location hash first so that `updateLocationHash` can run afterward uninterrupted, and also so `updateCulledPages` can update `defaultCulledHeight`.
+							setTimeout(updateLocationHash);
+
+							calledUpdateLocationHashRef.current = true;
+						}
+
+						const onKeyDown = (event: KeyboardEvent) => {
+							if (event.altKey) {
+								// If the user is holding `alt`, let the browser handle it.
+								return;
+							}
+
+							// Check for `ctrl`+`S` or `⌘`+`S`.
+							if ((event.ctrlKey || event.metaKey) && event.code === 'KeyS') {
+								if (viewMode === 'list') {
+									// Save all.
+									if (formRef.current.reportValidity()) {
+										// Save the focused element since it may be lost due to `isSubmitting`.
+										const initialActiveElement = document.activeElement;
+
+										formikPropsRef.current.submitForm().then(() => {
+											// Restore focus to the `initialActiveElement` if possible.
+											(initialActiveElement as any)?.focus?.();
+										});
+									}
+								}
+
+								// Prevent default regardless of `viewMode` in case they accidentally pressed it.
+								event.preventDefault();
+								return;
+							}
+
+							if (viewMode === 'grid') {
+								if (shouldIgnoreControl()) {
+									return;
+								}
+
+								// Check for `ctrl` or `⌘`.
+								if (event.ctrlKey || event.metaKey) {
+									if (event.code === 'KeyA') {
+										if (!formikPropsRef.current.isSubmitting) {
+											selectAll();
+										}
+
+										event.preventDefault();
+										return;
+									}
+
+									if (event.code === 'KeyD') {
+										if (!formikPropsRef.current.isSubmitting) {
+											deselectAll();
+										}
+
+										event.preventDefault();
+									}
+
+									return;
+								}
+
+								if (event.code === 'Delete') {
+									if (!formikPropsRef.current.isSubmitting) {
+										deleteSelectedPages();
+									}
+
+									event.preventDefault();
+								}
+							}
+						};
+
+						document.addEventListener('keydown', onKeyDown);
+
+						return () => {
+							window.removeEventListener('hashchange', updateLocationHash);
+							document.removeEventListener('keydown', onKeyDown);
+						};
+					}, [viewMode, sortMode, selectAll, deselectAll, deleteSelectedPages, gridCullingInfoRef, culledPagesRef, defaultCulledHeightRef]);
+
+					/** A ref to the `#story-editor-actions` element. */
+					const actionsElementRef = useRef<HTMLDivElement>(null!);
+
+					// This is a layout effect rather than a normal effect to reduce the time the user can briefly see culled pages.
+					useIsomorphicLayoutEffect(() => {
+						const updateCulledPages = () => {
+							const pageElements = document.getElementsByClassName('story-editor-page') as HTMLCollectionOf<HTMLDivElement>;
+
+							if (viewMode === 'list') {
+								const lastPageID = Object.values(formikPropsRef.current.values.pages).length;
+
+								let culledPagesChanged = false;
+								const newCulledPages: Record<StoryPageID, boolean> = {};
+
+								if (lastPageID) {
+									// The first page and the last page should not be culled so that they can be tabbed into, even if they are outside of view.
+									newCulledPages[1] = false;
+									// Additionally, the last page must also not be unculled so that it can receive the `style.marginTop` to hold the place of any culled pages at the bottom.
+									newCulledPages[lastPageID] = false;
+
+									let activeElementAncestor: Node | null = document.activeElement;
+
+									// Find the ancestor of `document.activeElement` which is a page listing.
+									while (activeElementAncestor instanceof Element) {
+										if (activeElementAncestor.classList.contains('story-editor-page')) {
+											// If `activeElementAncestor.id === 'p14'` for example, then `pageID === 14`.
+											const pageID = +activeElementAncestor.id.slice(1);
+
+											// The page listing which has focus should not be culled, or else it would lose focus, causing inconvenience to the user.
+											newCulledPages[pageID] = false;
+											// The pages before and after a focused page should also not be culled, so that they can be tabbed into.
+											if (pageID > 1) {
+												newCulledPages[pageID - 1] = false;
+											}
+											if (pageID < lastPageID) {
+												newCulledPages[pageID + 1] = false;
+											}
+
+											break;
+										}
+
+										activeElementAncestor = activeElementAncestor.parentNode;
+									}
+
+									// Compute this value beforehand for performance.
+									const windowInnerHeight = window.innerHeight;
+
+									for (let i = 0; i < pageElements.length; i++) {
+										const pageElement = pageElements[i];
+
+										const pageID = +pageElement.id.slice(1);
+
+										// `getBoundingClientRect()` is significantly faster than `offsetTop` and `offsetHeight`.
+										const pageRect = pageElement.getBoundingClientRect();
+
+										const pageHeight = (
+											pageRect.height
+											+ +window.getComputedStyle(pageElement).marginBottom.slice(0, -2)
+										);
+
+										// Cache this page's height. This should be done here and not in the `StoryEditorPageListing` component so it can be ensured that it is up-to-date.
+										cachedPageHeightsRef.current[
+											// This page's key.
+											(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[_key]
+										] = pageHeight;
+
+										if (defaultCulledHeightUnsetRef.current) {
+											// If no default culled page element height has been set yet, set it to this page element's height.
+											// Using an arbitrary page listing's height as the default is a sufficient solution for scroll jitter in the vast majority of cases.
+
+											setDefaultCulledHeight(pageHeight);
+											defaultCulledHeightUnsetRef.current = false;
+										}
+
+										// If whether this iteration's page should be culled has already been determined, skip this iteration.
+										if (pageID in newCulledPages) {
+											continue;
+										}
+
+										// Page elements containing invalid form elements should not be culled so those invalid elements can be detected and focused when the user attempts to submit.
+										// Page elements containing open BB tools should also not be culled so submitting the BB tool's dialog is able to add the BBCode to the mounted BB field.
+										if (pageElement.querySelector(':invalid, .bb-tool.open')) {
+											newCulledPages[pageID] = false;
+										}
+									}
+
+									const scrollTop = document.documentElement.scrollTop;
+									let offsetTop = pageElements[0].offsetTop;
+
+									const iteratePage = (pageID: StoryPageID) => {
+										const pageHeight = cachedPageHeightsRef.current[
+											// This page's key.
+											(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[_key]
+										] ?? defaultCulledHeight;
+
+										// Only calculate whether this page should be culled if it hasn't already been determined previously.
+										if (!(pageID in newCulledPages)) {
+											newCulledPages[pageID] = !(
+												// Whether this page is expected to be in view.
+												(
+													// Whether the bottom of this page would be below the top of the view.
+													offsetTop + pageHeight > scrollTop
+													// Whether the top of this page would be above the bottom of the view.
+													&& offsetTop <= scrollTop + windowInnerHeight
+												)
+											);
+										}
+
+										// Add this page's height to the `offsetTop`.
+										offsetTop += pageHeight;
+
+										if (newCulledPages[pageID] !== culledPagesRef.current[pageID]) {
+											culledPagesChanged = true;
+										}
+									};
+
+									if (sortMode === 'oldest') {
+										for (let pageID = 1; pageID <= lastPageID; pageID++) {
+											iteratePage(pageID);
+										}
+									} else {
+										for (let pageID = lastPageID; pageID >= 1; pageID--) {
+											iteratePage(pageID);
+										}
+									}
+								} else {
+									// There are no pages, so `culledPagesChanged` should only be set to `true` if there were previously culled pages.
+									culledPagesChanged = Object.values(culledPagesRef.current).length !== 0;
+								}
+
+								if (culledPagesChanged) {
+									setCulledPages(newCulledPages);
+
+									// Run this function again in case height estimations becoming more accurate due to this culling update changed which pages should be culled.
+									throttledUpdateCulledPages();
+								}
+							} else {
+								// If this point is reached, `viewMode === 'grid'`.
+
+								const newGridCullingInfo = { ...defaultGridCullingInfo };
+
+								// If `!pageElements.length`, the entire below `if` block won't execute, and the values of `newGridCullingInfo` will equal those of `defaultGridCullingInfo`. This is to prevent permanently culling all pages if there have ever been 0 page elements.
+								if (pageElements.length) {
+									const {
+										pageHeight,
+										pageCount,
+										rowsAboveView,
+										rowsBelowView,
+										pagesAboveView,
+										pagesInView
+									} = calculateGridSizeInfo(formikPropsRef, pageElements[0]);
+
+									newGridCullingInfo.firstIndex = pagesAboveView;
+									newGridCullingInfo.lastIndex = Math.max(
+										newGridCullingInfo.firstIndex,
+										Math.min(
+											newGridCullingInfo.firstIndex + pagesInView,
+											pageCount
+										) - 1
+									);
+									// The reason we don't just calculate `lastIndex` as `pageCount - 1 - (rowsBelowView * pagesPerRow)` is because `rowsBelowView * pagesPerRow` is not necessarily equal to the number of pages below view, since the last row may not be completely full.
+
+									if (sortMode === 'newest') {
+										[newGridCullingInfo.firstIndex, newGridCullingInfo.lastIndex] = [
+											pageCount - 1 - newGridCullingInfo.lastIndex,
+											pageCount - 1 - newGridCullingInfo.firstIndex
+										];
+									}
+
+									newGridCullingInfo.paddingTop = rowsAboveView * pageHeight;
+									newGridCullingInfo.paddingBottom = rowsBelowView * pageHeight;
+								}
+
+								if (!(
+									newGridCullingInfo.firstIndex === gridCullingInfoRef.current.firstIndex
+									&& newGridCullingInfo.lastIndex === gridCullingInfoRef.current.lastIndex
+									&& newGridCullingInfo.paddingTop === gridCullingInfoRef.current.paddingTop
+									&& newGridCullingInfo.paddingBottom === gridCullingInfoRef.current.paddingBottom
+								)) {
+									// If not all the values of `gridCullingInfo` are the same, update `gridCullingInfo` with the new values.
+									setGridCullingInfo(newGridCullingInfo);
+								}
+							}
+						};
+
+						/** Calls `updateCulledPages` throttled by `frameThrottler`. */
+						const throttledUpdateCulledPages = () => {
+							// Don't call `frameThrottler` if there is possibly already a pending animation frame request from `throttledUpdateViewport`, since this would then overwrite it and cancel the `updateViewport` call, which includes a call to `updateCulledPages` anyway.
+							if (!frameThrottlerRequests[_updateViewportOrCulledPages]) {
+								frameThrottler(_updateViewportOrCulledPages)
+									.then(updateCulledPages);
+							}
+						};
+
+						/** A function called whenever the viewport changes. */
+						const updateViewport = () => {
+							updateCulledPages();
+
+							const actionsStyle = window.getComputedStyle(actionsElementRef.current);
+							if (actionsStyle.position === 'sticky') {
+								actionsElementRef.current.classList[
+									actionsElementRef.current.getBoundingClientRect().top === +actionsStyle.top.slice(0, -2)
+										? 'add'
+										: 'remove'
+								]('stuck');
+							}
+						};
+
+						/** Calls `updateViewport` throttled by `frameThrottler`. */
+						const throttledUpdateViewport = () => {
+							frameThrottler(_updateViewportOrCulledPages)
+								.then(updateViewport);
+						};
+
+						// Call `updateViewport` synchronously so the user can't see culled pages for a frame.
+						updateViewport();
+
+						document.addEventListener('scroll', throttledUpdateViewport);
+						document.addEventListener('resize', throttledUpdateViewport);
+						// We use `focusin` instead of `focus` because the former bubbles while the latter doesn't, and we want to capture any focus event among the page elements.
+						document.addEventListener('focusin', throttledUpdateCulledPages);
+						// We don't listen to `focusout` because, when `focusout` is dispatched, `document.activeElement` is set to `null`, causing any page element outside the view which the user is attempting to focus to instead be culled.
+						// Also, listening to `focusout` isn't necessary for any pragmatic reason, and not doing so improves performance significantly by updating the culled page elements half as often when frequently changing focus.
+
+						/** A media query which only matches if the current resolution equals the `window.devicePixelRatio` last detected by `listenToPixelRatio`. */
+						let resolutionQuery: MediaQueryList;
+
+						/** Gets the current resolution and calls `changePixelRatio` when it is no longer the current resolution. */
+						const listenToPixelRatio = () => {
+							const dpi = window.devicePixelRatio * 96;
+							resolutionQuery = window.matchMedia(
+								// Allow any resolution in the range between the floor and the ceiling of `dpi` to ensure it works on browsers that have insufficient precision on `devicePixelRatio` or on `resolution` queries.
+								`(min-resolution: ${Math.floor(dpi)}dpi) and (max-resolution: ${Math.ceil(dpi)}dpi)`
+							);
+
+							// Listen for a change in the pixel ratio in order to detect when the browser's zoom level changes.
+							resolutionQuery.addEventListener('change', changePixelRatio, { once: true });
+						};
+
+						/** A function called whenever the pixel ratio changes. */
+						const changePixelRatio = () => {
+							// Listen for further changes in the pixel ratio again.
+							listenToPixelRatio();
+
+							// The pixel ratio has changed, so the viewport has changed.
+							throttledUpdateViewport();
+						};
+
+						listenToPixelRatio();
+
+						return () => {
+							cancelFrameThrottler(_updateViewportOrCulledPages);
+
+							document.removeEventListener('scroll', throttledUpdateViewport);
+							document.removeEventListener('resize', throttledUpdateViewport);
+							document.removeEventListener('focusin', throttledUpdateCulledPages);
+							resolutionQuery.removeEventListener('change', changePixelRatio);
+						};
+					}, [defaultCulledHeight, pageValues.length, viewMode, sortMode, culledPagesRef, gridCullingInfoRef]);
+
+					const pageComponents: ReactNode[] = [];
+
+					/** A ref to the next React key a `ClientStoryPage` should use. This is incremented after each time it is assigned to a page. */
+					const nextKeyRef = useRef(0);
+
+					let firstDraftID: StoryPageID | undefined;
+					let lastNonDraftID: StoryPageID | undefined;
+
+					// It is necessary to check for `pageValues.length` to prevent the `for` loop from trying to iterate over pages that don't exist when there are 0 pages.
+					if (pageValues.length) {
+						let firstIndex = 0;
+						let lastIndex = pageValues.length - 1;
+
+						if (viewMode === 'grid') {
+							({ firstIndex, lastIndex } = gridCullingInfo);
+						}
+
+						/** The sum of cached heights of consecutive culled pages when `viewMode === 'list'`. */
+						let cachedHeightSum = 0;
+
+						const iteratePage = (
+							/** The index of this page in `pageValues`. */
+							i: number
+						) => {
+							// This is typed as nullable because `i` may not index a real page if there should be no pages in view.
+							const page = pageValues[i] as KeyedClientStoryPage | undefined;
+
+							if (!page) {
+								// If `i` doesn't index a real page, don't iterate over it.
+								return;
+							}
+
+							// If this page doesn't have a React key yet, set one.
+							if (!(_key in page)) {
+								page[_key] = nextKeyRef.current++;
+							}
+
+							const initialPublished = (
+								formikPropsRef.current.initialValues.pages[page.id] as ClientStoryPage | undefined
+							)?.published;
+
+							// Set `firstDraftID` and `lastNonDraftID`.
+							if (initialPublished === undefined) {
+								if (
+									// If `sortMode === 'oldest'`, set `firstDraftID` to the first applicable iterated page.
+									firstDraftID === undefined
+									// If `sortMode === 'newest'`, set `firstDraftID` to the last applicable iterated page.
+									|| sortMode === 'newest'
+								) {
+									firstDraftID = page.id;
+								}
+							} else if (
+								// If `sortMode === 'oldest'`, set `lastNonDraftID` to the last applicable iterated page.
+								sortMode === 'oldest'
+								// If `sortMode === 'newest'`, set `lastNonDraftID` to the first applicable iterated page.
+								|| lastNonDraftID === undefined
+							) {
+								lastNonDraftID = page.id;
+							}
+
+							if (viewMode === 'list') {
+								if (!(page.id in culledPages)) {
+									// Having more than a few pages unculled leads to unacceptably large load times.
+									// We choose not to cull only the first page and the last pages by default because they must always be unculled (for reasons explained in the comments of `updateCulledPages`).
+									culledPages[page.id] = !(
+										page.id === 1
+										|| page.id === pageValues.length
+									);
+								}
+
+								const pageKey = page[_key];
+
+								// Check if this page is culled.
+								if (culledPages[page.id]!) {
+									cachedHeightSum += cachedPageHeightsRef.current[pageKey] || defaultCulledHeight;
+								} else {
+									pageComponents.push(
+										<StoryEditorPageListing
+											// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
+											key={pageKey}
+											marginTop={cachedHeightSum}
+											page={page}
+											initialPublished={initialPublished}
+											advancedShown={advancedShownPageKeys.includes(pageKey)}
+										/>
+									);
+
+									// Since an unculled page was found, reset the height sum for consecutive culled pages.
+									cachedHeightSum = 0;
+								}
+							} else {
+								// If this point is reached, `viewMode === 'grid'`.
+
+								const pageStatus = (
+									initialPublished === undefined
+										? 'draft' as const
+										: initialPublished <= Date.now()
+											? 'published' as const
+											: 'scheduled' as const
+								);
+
+								const selected = selectedPages.includes(page.id);
+
+								pageComponents.push(
+									<BoxSection
+										key={page[_key]}
+										id={`p${page.id}`}
+										className={`story-editor-page ${pageStatus}${selected ? ' selected' : ''}`}
+										heading={page.id}
+										title={page.title}
+										onClick={onClickPageTile}
+									>
+										{page.title}
+									</BoxSection>
+								);
+							}
+						};
+
+						if (sortMode === 'oldest') {
+							for (let i = firstIndex; i <= lastIndex; i++) {
+								iteratePage(i);
+							}
+						} else {
+							for (let i = lastIndex; i >= firstIndex; i--) {
+								iteratePage(i);
+							}
+						}
+					}
+
+					/** Toggles whether a page listing's advanced section is open. */
+					const toggleAdvancedShown = useCallback((
+						/** The key of the page to toggle the advanced section of. */
+						pageKey: number
+					) => {
+						const pageKeyIndex = advancedShownPageKeysRef.current.indexOf(pageKey);
+						if (pageKeyIndex === -1) {
+							// Add this `pageKey` to the `advancedShownPageKeys`.
+							setAdvancedShownPageKeys([
+								...advancedShownPageKeysRef.current,
+								pageKey
+							]);
+						} else {
+							// Remove this `pageKey` from the `advancedShownPageKeys`.
+							setAdvancedShownPageKeys([
+								...advancedShownPageKeysRef.current.slice(0, pageKeyIndex),
+								...advancedShownPageKeysRef.current.slice(pageKeyIndex + 1, advancedShownPageKeysRef.current.length)
+							]);
+						}
+					}, [advancedShownPageKeysRef]);
+
+					/**
+					 * The values to pass into the `value` of the `StoryEditorContext`.
+					 *
+					 * These values are passed through a context rather than directly as `StoryEditorPageListing` props to reduce `React.memo`'s prop comparison performance cost.
+					 */
+					const storyEditorContext = useMemo(() => ({
+						storyID,
+						firstDraftID,
+						lastNonDraftID,
+						formikPropsRef,
+						setInitialPages,
+						queuedValuesRef,
+						isSubmitting: formikProps.isSubmitting,
+						cachedPageHeightsRef,
+						toggleAdvancedShown
+					}), [formikProps.isSubmitting, firstDraftID, lastNonDraftID, storyID, toggleAdvancedShown]);
+
 					return (
-						<Form>
+						<Form ref={formRef}>
 							<Box>
 								<BoxSection
 									id="story-editor-options"
