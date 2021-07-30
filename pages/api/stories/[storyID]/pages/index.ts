@@ -200,8 +200,8 @@ const Handler: APIHandler<{
 		for (let i = 1; i < pageValues.length; i++) {
 			// Ensure that it is still impossible with the new changes for the `published` dates to result in gaps in published pages.
 			if (invalidPublishedOrder(
-				pageValues[i].published,
 				pageValues[i - 1].published,
+				pageValues[i].published,
 				now
 			)) {
 				res.status(422).send({
