@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import BoxSection from 'components/Box/BoxSection';
 import type { ClientStoryPage, ClientStoryPageRecord } from 'modules/client/stories';
-import { deleteFromClientStoryPageRecord } from 'modules/client/stories';
+import deleteFromClientStoryPageRecord from 'modules/client/deleteFromClientStoryPageRecord';
 import { Field } from 'formik';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';

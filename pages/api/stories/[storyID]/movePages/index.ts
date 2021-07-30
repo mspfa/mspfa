@@ -5,7 +5,7 @@ import stories, { getStoryByUnsafeID, getClientStoryPage } from 'modules/server/
 import { authenticate } from 'modules/server/auth';
 import { Perm } from 'modules/client/perms';
 import type { ClientStoryPageRecord } from 'modules/client/stories';
-import { invalidPublishedOrder } from 'modules/client/stories';
+import invalidPublishedOrder from 'modules/client/invalidPublishedOrder';
 
 const Handler: APIHandler<{
 	query: {

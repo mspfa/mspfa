@@ -4,7 +4,7 @@ import type { StoryDocument, StoryPage, StoryPageID } from 'modules/server/stori
 import { getStoryByUnsafeID, getClientStoryPage, updateStorySchedule } from 'modules/server/stories';
 import { authenticate } from 'modules/server/auth';
 import type { ClientStoryPage, ClientStoryPageRecord } from 'modules/client/stories';
-import { invalidPublishedOrder } from 'modules/client/stories';
+import invalidPublishedOrder from 'modules/client/invalidPublishedOrder';
 import type { DateNumber, RecursivePartial } from 'modules/types';
 import { Perm } from 'modules/client/perms';
 import { flatten } from 'modules/server/db';
