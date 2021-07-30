@@ -314,7 +314,7 @@ const TagField = ({
 				onKeyDown={
 					useCallback((event: KeyboardEvent<HTMLDivElement>) => {
 						// Don't let the user press `Enter`, because `Enter` has annoying functionality with `contentEditable`, and it is buggy in Firefox.
-						if (event.key === 'Enter' || (
+						if (event.code === 'Enter' || (
 							event.key.length === 1 && !(
 								event.ctrlKey
 								|| event.metaKey

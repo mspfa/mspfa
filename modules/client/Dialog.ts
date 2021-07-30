@@ -254,7 +254,7 @@ Router.events.on('routeChangeStart', () => {
 
 // @client-only {
 document.addEventListener('keydown', event => {
-	if (event.key === 'Escape') {
+	if (event.code === 'Escape') {
 		const topDialog = dialogs.length && dialogs[dialogs.length - 1];
 		if (topDialog) {
 			topDialog.resolve();
