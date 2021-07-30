@@ -266,6 +266,16 @@ const StoryEditorPageListing = React.memo(({
 		let published = Date.now();
 
 		if (!event.shiftKey) {
+			const minDate = Math.max(
+				// One minute from now.
+				Date.now() + 1000 * 60,
+				firstDraftID! === 1
+					// If the first page being published is page 1, then there should be no other minimum `published` date.
+					? -Infinity
+					// The `published` date of the previous page.
+					: formikPropsRef.current.values.pages[firstDraftID! - 1].published!
+			);
+
 			const dialog = new Dialog({
 				id: 'publish-pages',
 				title: 'Publish Pages',
@@ -277,9 +287,9 @@ const StoryEditorPageListing = React.memo(({
 					<>
 						<Row>
 							{`What would you like to do with ${
-								firstDraftID === page.id
+								firstDraftID! === page.id
 									? `p${page.id}`
-									: `p${firstDraftID}-${page.id}`
+									: `p${firstDraftID!}-${page.id}`
 							}?`}
 						</Row>
 						<Row id="field-container-action">
@@ -308,11 +318,11 @@ const StoryEditorPageListing = React.memo(({
 											name="date"
 											withTime
 											required
-											min={Date.now() + 1000 * 60}
+											min={minDate}
 											max={Date.now() + 1000 * 60 * 60 * 24 * 365}
-											defaultYear={new Date().getFullYear()}
-											defaultMonth={new Date().getMonth()}
-											defaultDay={new Date().getDate()}
+											defaultYear={new Date(minDate).getFullYear()}
+											defaultMonth={new Date(minDate).getMonth()}
+											defaultDay={new Date(minDate).getDate()}
 										/>
 									</div>
 									{typeof values.date === 'number' && (
