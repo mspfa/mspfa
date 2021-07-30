@@ -1279,6 +1279,9 @@ const Component = withErrorPage<ServerSideProps>(({
 						/** The selected page with the highest ID. */
 						const lastSelectedPage = formikPropsRef.current.values.pages[selectedPages[selectedPages.length - 1]];
 
+						/** The position to insert the pages at. */
+						let position: number | undefined;
+
 						const dialog = new Dialog({
 							id: 'move-pages',
 							title: 'Move Pages',
@@ -1286,12 +1289,14 @@ const Component = withErrorPage<ServerSideProps>(({
 								relation: 'after' as 'before' | 'after',
 								pageID: '' as number | ''
 							},
-							content: function Content({ values: { relation } }) {
+							content: function Content({ values: { relation, pageID } }) {
 								const pageIDInputRef = useRef<HTMLInputElement>(null!);
 
 								useEffect(() => {
-									const pageID = +pageIDInputRef.current.value;
-									const validPage = pageID in formikPropsRef.current.values.pages;
+									const validPage = (
+										typeof pageID === 'number'
+										&& pageID in formikPropsRef.current.values.pages
+									);
 
 									/** The deselected page which the selected pages are being moved after. */
 									let pageBefore: ClientStoryPage | undefined;
@@ -1299,12 +1304,16 @@ const Component = withErrorPage<ServerSideProps>(({
 									let pageAfter: ClientStoryPage | undefined;
 
 									if (validPage) {
+										/** The ID of `pageBefore`. May not index a real page after the `while` loop. */
 										let pageBeforeID = pageID + (relation === 'before' ? -1 : 0);
 										while (selectedPages.includes(pageBeforeID)) {
 											pageBeforeID--;
 										}
 										pageBefore = formikPropsRef.current.values.pages[pageBeforeID];
 
+										position = pageBeforeID;
+
+										/** The ID of `pageAfter`. May not index a real page after the `while` loop. */
 										let pageAfterID = pageID + (relation === 'before' ? 0 : 1);
 										while (selectedPages.includes(pageAfterID)) {
 											pageAfterID++;
@@ -1327,7 +1336,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											// Let the browser handle the invalid page ID via the props on the `pageID` `Field`.
 											: ''
 									);
-								});
+								}, [relation, pageID]);
 
 								return (
 									<>
@@ -1363,8 +1372,39 @@ const Component = withErrorPage<ServerSideProps>(({
 							return;
 						}
 
+						const {
+							data: {
+								changedPageIDs,
+								changedPages: newInitialPages
+							}
+						} = await (api as StoryMovePagesAPI).post(`/stories/${storyID}/movePages`, {
+							pageIDs: selectedPages,
+							position: position!
+						}).catch(error => {
+							formikPropsRef.current.setSubmitting(false);
+
+							return Promise.reject(error);
+						});
+
+						// Preserve the React keys of updated pages.
+						for (const oldPageIDString of Object.keys(changedPageIDs)) {
+							const oldPageID = +oldPageIDString;
+							const oldPage = formikPropsRef.current.values.pages[oldPageID] as KeyedClientStoryPage;
+							const newPageID = changedPageIDs[oldPageID];
+							const newPage = newInitialPages[newPageID] as KeyedClientStoryPage;
+
+							newPage[_key] = oldPage[_key];
+						}
+
+						setInitialPages({
+							...formikPropsRef.current.initialValues.pages,
+							...newInitialPages
+						});
+
+						setSelectedPages(selectedPages.map(pageID => changedPageIDs[pageID]));
+
 						formikPropsRef.current.setSubmitting(false);
-					}, [selectedPages, pageValues.length, sortAndGetSelectedPages]);
+					}, [selectedPages, pageValues.length, sortAndGetSelectedPages, storyID]);
 
 					return (
 						<Form>
