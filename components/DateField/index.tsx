@@ -45,10 +45,35 @@ export type DateFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 
 	 */
 	value?: number | string,
 	withTime?: boolean,
+	/**
+	 * The default value of the year input.
+	 *
+	 * ⚠️ There is no validation that this is within the bounds of `min` and `max`.
+	 */
 	defaultYear?: number,
+	/**
+	 * The default value of the month input.
+	 *
+	 * ⚠️ There is no validation that this is within the bounds of `min` and `max`.
+	 */
 	defaultMonth?: number,
+	/**
+	 * The default value of the day input.
+	 *
+	 * ⚠️ There is no validation that this is within the bounds of `min` and `max`.
+	 */
 	defaultDay?: number,
+	/**
+	 * The default value of the hour input.
+	 *
+	 * ⚠️ There is no validation that this is within the bounds of `min` and `max`.
+	 */
 	defaultHour?: number,
+	/**
+	 * The default value of the minute input.
+	 *
+	 * ⚠️ There is no validation that this is within the bounds of `min` and `max`.
+	 */
 	defaultMinute?: number
 };
 
@@ -96,6 +121,18 @@ const DateField = ({
 	let hour = date ? date.getHours() : NaN;
 	let minute = date ? date.getMinutes() : NaN;
 
+	const [inputValues, setInputValues] = useState({
+		year: Number.isNaN(year) ? defaultYear : year,
+		month: Number.isNaN(month) ? defaultMonth : month,
+		day: Number.isNaN(day) ? defaultDay : day,
+		hour: Number.isNaN(hour) ? defaultHour : hour,
+		minute: Number.isNaN(minute) ? defaultMinute : minute
+	} as const);
+
+	if (Number.isNaN(year) || Number.isNaN(month) || Number.isNaN(day) || Number.isNaN(hour) || Number.isNaN(minute)) {
+		({ year, month, day, hour, minute } = inputValues);
+	}
+
 	const minYear = new Date(min).getFullYear();
 	const maxYear = new Date(max).getFullYear();
 
@@ -142,28 +179,6 @@ const DateField = ({
 			? new Date(max).getMinutes()
 			: 59
 	);
-
-	const [inputValues, setInputValues] = useState({
-		year: Number.isNaN(year)
-			? Math.min(Math.max(defaultYear, minYear), maxYear)
-			: year,
-		month: Number.isNaN(month)
-			? Math.min(Math.max(defaultMonth, minMonth), maxMonth)
-			: month,
-		day: Number.isNaN(day)
-			? Math.min(Math.max(defaultDay, minDay), maxDay)
-			: day,
-		hour: Number.isNaN(hour)
-			? Math.min(Math.max(defaultHour, minHour), maxHour)
-			: hour,
-		minute: Number.isNaN(minute)
-			? Math.min(Math.max(defaultMinute, minMinute), maxMinute)
-			: minute
-	} as const);
-
-	if (Number.isNaN(year) || Number.isNaN(month) || Number.isNaN(day) || Number.isNaN(hour) || Number.isNaN(minute)) {
-		({ year, month, day, hour, minute } = inputValues);
-	}
 
 	const onChange = useCallback((event: ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
 		const targetType = event.target.id.slice(event.target.id.lastIndexOf('-') + 1) as 'year' | 'month' | 'day' | 'hour' | 'minute';
