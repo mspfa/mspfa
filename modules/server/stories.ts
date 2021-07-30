@@ -30,7 +30,7 @@ export type StoryPage = {
 	/** @maxLength 500 */
 	title: string,
 	content: string,
-	nextPages: number[],
+	nextPages: StoryPageID[],
 	unlisted: boolean,
 	/** Whether the client's controls should be disabled while this page is rendered. */
 	disableControls: boolean,

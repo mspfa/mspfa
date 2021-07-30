@@ -55,7 +55,7 @@ export default createValidator({
 											nextPages: {
 												type: 'array',
 												items: {
-													type: 'number'
+													$ref: '#/definitions/StoryPageID'
 												}
 											},
 											unlisted: {
@@ -108,7 +108,7 @@ export default createValidator({
 											nextPages: {
 												type: 'array',
 												items: {
-													type: 'number'
+													$ref: '#/definitions/StoryPageID'
 												}
 											},
 											unlisted: {
