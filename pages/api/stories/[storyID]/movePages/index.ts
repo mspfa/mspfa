@@ -71,10 +71,12 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	const $set: Record<string, StoryPage> = {};
+	const $set: Record<string, unknown> = {};
 
 	/** A record that maps each changed page's initial ID to its new ID after the move. */
 	const changedPageIDs: Record<StoryPageID, StoryPageID> = {};
+	/** A record that maps each changed page's new ID from after the move to its initial ID (the reverse of `changedPageIDs`). */
+	const oldPageIDs: Record<StoryPageID, StoryPageID> = {};
 	const newClientPages: ClientStoryPageRecord = {};
 
 	// Store `Date.now()` into a variable so it is not a different value each time, helping avoid inconsistencies.
@@ -110,6 +112,7 @@ const Handler: APIHandler<{
 
 		if (oldPageID !== newPageID) {
 			changedPageIDs[oldPageID] = newPageID;
+			oldPageIDs[newPageID] = oldPageID;
 
 			// Adjust the page ID.
 			page.id = newPageID;
@@ -127,9 +130,9 @@ const Handler: APIHandler<{
 		previousPublished = page.published;
 	});
 
-	const lastPageID = Object.values(story.pages).length;
+	const pageValues = Object.values(story.pages);
 
-	for (let i = 0; i <= lastPageID; i++) {
+	for (let i = 0; i <= pageValues.length; i++) {
 		// Ensure this index is a valid page ID.
 		if (i !== 0) {
 			const pageID = i;
@@ -149,7 +152,41 @@ const Handler: APIHandler<{
 		}
 	}
 
-	// TODO: Adjust `nextPages`.
+	// Adjust each page's `nextPages`.
+	for (const page of pageValues) {
+		const newPageID = page.id;
+		const oldPageID = oldPageIDs[newPageID];
+
+		/** Whether this page's `nextPages` has changed. */
+		let nextPagesChanged = false;
+
+		for (let i = 0; i < page.nextPages.length; i++) {
+			/** The initial ID of this `nextPages` page. */
+			const oldNextPagesID = page.nextPages[i];
+
+			// If this link goes to the next page, adjust the ID to still link to the next page.
+			if (oldNextPagesID === oldPageID + 1) {
+				page.nextPages[i] = newPageID + 1;
+				nextPagesChanged = true;
+				continue;
+			}
+
+			// If this link goes to a page which was moved, adjust it to link to the same page at its new ID.
+			if (oldNextPagesID in changedPageIDs) {
+				page.nextPages[i] = changedPageIDs[oldNextPagesID];
+				nextPagesChanged = true;
+			}
+		}
+
+		if (
+			nextPagesChanged
+			// Ensure that this page's changed `nextPages` isn't already added to `$set` via the whole page being added to `$set`.
+			&& !(`pages.${newPageID}` in $set)
+		) {
+			// Add this page's changed `nextPages` to `$set`.
+			$set[`pages.${newPageID}.nextPages`] = page.nextPages;
+		}
+	}
 
 	if (Object.values($set).length) {
 		await stories.updateOne({
