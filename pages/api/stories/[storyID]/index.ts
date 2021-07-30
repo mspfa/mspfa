@@ -11,7 +11,7 @@ import stories, { getPrivateStory, getPublicStory, getStoryByUnsafeID } from 'mo
 import type { PrivateStory, PublicStory } from 'modules/client/stories';
 import { StoryPrivacy } from 'modules/client/stories';
 import { authenticate } from 'modules/server/auth';
-import { overwriteArrays } from 'modules/client/utilities';
+import overwriteArrays from 'modules/client/overwriteArrays';
 
 /** The keys of all `PrivateStory` properties which the client should be able to `PUT` into their `StoryDocument`. */
 type PuttableStoryKey = 'title' | 'status' | 'privacy' | 'owner' | 'editors' | 'author' | 'description' | 'blurb' | 'icon' | 'banner' | 'style' | 'disableUserTheme' | 'tags' | 'commentsEnabled' | 'editorSettings' | 'colors' | 'quirks';

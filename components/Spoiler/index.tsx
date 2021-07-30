@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import { defaultSettings, getUser, useUser } from 'modules/client/users';
-import { shouldIgnoreControl } from 'modules/client/utilities';
+import shouldIgnoreControl from 'modules/client/shouldIgnoreControl';
 import type { HTMLAttributes, ReactNode } from 'react';
 import { useState, useCallback, useEffect } from 'react';
 

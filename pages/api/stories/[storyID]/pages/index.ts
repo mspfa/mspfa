@@ -9,7 +9,7 @@ import type { DateNumber, RecursivePartial } from 'modules/types';
 import { Perm } from 'modules/client/perms';
 import { flatten } from 'modules/server/db';
 import { mergeWith } from 'lodash';
-import { overwriteArrays } from 'modules/client/utilities';
+import overwriteArrays from 'modules/client/overwriteArrays';
 import type { UpdateQuery } from 'mongodb';
 
 /** The keys of all `ClientStoryPage` properties which the client should be able to `PUT` into any of their existing `StoryDocument['pages']` (except `'published'`). */

@@ -6,7 +6,7 @@ import type { BBCodeProps } from 'components/BBCode';
 import BBCode from 'components/BBCode';
 import Spoiler from 'components/Spoiler';
 import { Field, useField } from 'formik';
-import { toKebabCase } from 'modules/client/utilities';
+import toKebabCase from 'modules/client/toKebabCase';
 import { usePrefixedID } from 'modules/client/IDPrefix';
 
 export const BBFieldContext = React.createContext<{

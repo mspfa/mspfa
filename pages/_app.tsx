@@ -16,7 +16,7 @@ import React, { useEffect, useRef } from 'react';
 import { setTheme } from 'modules/client/themes';
 import { mergeWith } from 'lodash';
 import UserCache from 'modules/client/UserCache';
-import { overwriteArrays } from 'modules/client/utilities';
+import overwriteArrays from 'modules/client/overwriteArrays';
 import { useRouter } from 'next/router';
 
 const swrConfig = {

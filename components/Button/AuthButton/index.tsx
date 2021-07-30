@@ -5,7 +5,7 @@ import env from 'modules/client/env';
 import Dialog from 'modules/client/Dialog';
 import InlineRowSection from 'components/Box/InlineRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
-import { toKebabCase } from 'modules/client/utilities';
+import toKebabCase from 'modules/client/toKebabCase';
 import type { ButtonProps } from 'components/Button';
 import type { AuthMethodOptions } from 'modules/client/auth';
 import { authMethodTypeNames } from 'modules/client/auth';

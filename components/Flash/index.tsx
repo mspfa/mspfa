@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import createGlobalState from 'global-react-state';
-import { sanitizeURL } from 'modules/client/utilities';
+import sanitizeURL from 'modules/client/sanitizeURL';
 import Button from 'components/Button';
 import Link from 'components/Link';
 import { useCallback, useEffect, useRef, useState } from 'react';

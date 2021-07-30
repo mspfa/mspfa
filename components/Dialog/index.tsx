@@ -3,7 +3,7 @@ import React, { useCallback, useRef } from 'react';
 import type { default as DialogClass } from 'modules/client/Dialog';
 import { Form, Formik } from 'formik';
 import Button from 'components/Button';
-import { toKebabCase } from 'modules/client/utilities';
+import toKebabCase from 'modules/client/toKebabCase';
 import { useIsomorphicLayoutEffect } from 'react-use';
 
 export type DialogProps = {

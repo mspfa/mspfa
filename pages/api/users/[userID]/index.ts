@@ -10,7 +10,7 @@ import type { UserDocument } from 'modules/server/users';
 import { flatten } from 'modules/server/db';
 import { mergeWith } from 'lodash';
 import stories from 'modules/server/stories';
-import { overwriteArrays } from 'modules/client/utilities';
+import overwriteArrays from 'modules/client/overwriteArrays';
 
 /** The keys of all `PrivateUser` properties which the client should be able to `PUT` into their `UserDocument`. */
 type PuttableUserKey = 'birthdate' | 'name' | 'email' | 'description' | 'icon' | 'site' | 'profileStyle' | 'settings';

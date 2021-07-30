@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import { useField } from 'formik';
-import { toKebabCase } from 'modules/client/utilities';
+import toKebabCase from 'modules/client/toKebabCase';
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
 import { useCallback, useState } from 'react';
 import { monthNames, twoDigits } from 'modules/client/dates';

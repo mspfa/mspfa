@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import { useFormikContext } from 'formik';
-import { toKebabCase } from 'modules/client/utilities';
+import toKebabCase from 'modules/client/toKebabCase';
 import type { TextareaHTMLAttributes, KeyboardEvent, MouseEvent } from 'react';
 import React, { useCallback, useRef, useState } from 'react';
 import { usePrefixedID } from 'modules/client/IDPrefix';
