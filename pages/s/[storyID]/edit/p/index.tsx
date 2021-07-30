@@ -7,7 +7,7 @@ import type { FormikProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import type { ChangeEvent, Dispatch, MouseEvent, MutableRefObject, ReactNode, SetStateAction } from 'react';
 import { useCallback, useRef, useState, useEffect, createContext, useMemo } from 'react';
-import { getChangedValues, useLeaveConfirmation } from 'modules/client/forms';
+import { getChangedValues, preventLeaveConfirmations, useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
 import Button from 'components/Button';
 import type { StoryID, StoryPageID } from 'modules/server/stories';
@@ -455,7 +455,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					// This is because ESLint doesn't recognize `privateStory.id` as a necessary hook dependency.
 					const storyID = privateStory.id;
 
-					useLeaveConfirmation(formikPropsRef.current.dirty);
+					useLeaveConfirmation(formikPropsRef.current.dirty || formikPropsRef.current.isSubmitting);
 
 					const router = useRouter();
 
@@ -595,7 +595,12 @@ const Component = withErrorPage<ServerSideProps>(({
 							url.hash = '';
 						}
 
-						Router.replace(url, undefined, { shallow: true }); // TODO: Fix leave confirmation dialog appearing because of this.
+						// Check if this URL replacement will trigger a route change. Ignore differences in hashes since those don't trigger route changes.
+						if (url.href.replace(/#.*$/, '') !== location.href.replace(/#.*$/, '')) {
+							preventLeaveConfirmations();
+						}
+
+						Router.replace(url, undefined, { shallow: true });
 
 						const updateLocationHash = () => {
 							if (/^#p\d+$/.test(location.hash)) {
