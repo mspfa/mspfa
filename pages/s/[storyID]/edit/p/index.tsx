@@ -462,7 +462,6 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					const router = useRouter();
 
-					// These states should not update when their respective `router.query` values change, because that would allow using history navigation to change the `viewMode` away from `'list'` while there are unsaved changes, which is disallowed.
 					const [viewMode, setViewMode] = useState(
 						router.query.view === 'grid'
 							? 'grid' as const
@@ -889,6 +888,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							preventLeaveConfirmations();
 						}
 
+						// This is `replace`d and not `push`ed because `push`ing would allow using history navigation to change the `viewMode` while `dirty` or `isSubmitting`, which is disallowed.
 						Router.replace(url, undefined, { shallow: true });
 
 						const updateLocationHash = () => {
