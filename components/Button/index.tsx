@@ -9,31 +9,26 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & LinkProps & 
 };
 
 /** A styled `button` element. Accepts any props which `button` or `Link` accepts. */
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((
+const Button = React.forwardRef<HTMLButtonElement & HTMLAnchorElement, ButtonProps>((
 	{
 		type = 'button',
-		className,
 		href,
 		...props
 	},
 	ref
-) => {
-	const buttonClassName = `button${className ? ` ${className}` : ''}`;
-
-	return href ? (
-		<Link
-			className={buttonClassName}
-			href={href}
-			{...props}
-		/>
-	) : (
-		<button
-			type={type}
-			className={buttonClassName}
-			{...props}
-			ref={ref}
-		/>
-	);
-});
+) => href ? (
+	<Link
+		buttonClass
+		href={href}
+		ref={ref}
+		{...props}
+	/>
+) : (
+	<button
+		type={type}
+		ref={ref}
+		{...props}
+	/>
+));
 
 export default Button;
