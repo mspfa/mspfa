@@ -8,7 +8,7 @@ import { signIn, signOut, useUser } from 'modules/client/users';
 const visitRandomStory = () => {
 	// TODO: Visit random story.
 
-	Router.push(`/s/${Math.random()}/p/1`);
+	Router.push(`/?s=${Math.random()}&p=1`);
 };
 
 const Nav = () => {
