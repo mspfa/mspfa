@@ -29,7 +29,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 		<div className="listing">
 			<Link
 				className="listing-icon-container"
-				href={`/s/${publicStory.id}/p/1`}
+				href={`/?s=${publicStory.id}&p=1`}
 				title={publicStory.title}
 			>
 				<IconImage
@@ -41,7 +41,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 			<div className="listing-info">
 				<Link
 					className="listing-title translucent-text"
-					href={`/s/${publicStory.id}/p/1`}
+					href={`/?s=${publicStory.id}&p=1`}
 					title={publicStory.title}
 				>
 					{publicStory.title}
