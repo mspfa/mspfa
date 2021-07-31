@@ -423,7 +423,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											<Label
 												block
 												htmlFor="field-blurb"
-												help={'This text appears when you click "Show More" under an adventure\'s listing, and the first line of it is used in external embeds of this adventure.\n\nThis is useful if you have content in the description that is excessive for or doesn\'t need to be in the blurb.\n\nThis can usually be left empty to default to the adventure\'s description.'}
+												help={'This text appears when you click "Show More" under an adventure\'s listing, and the first line of it is used in external embeds of this adventure.\n\nThis is useful if you have excessive content in the description that doesn\'t need to be in the blurb.\n\nThis can usually be left empty to default to the adventure\'s description.'}
 											>
 												Blurb
 											</Label>
