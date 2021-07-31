@@ -12,6 +12,7 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & LinkProps & 
 const Button = React.forwardRef<HTMLButtonElement & HTMLAnchorElement, ButtonProps>((
 	{
 		type = 'button',
+		className,
 		href,
 		...props
 	},
@@ -19,6 +20,7 @@ const Button = React.forwardRef<HTMLButtonElement & HTMLAnchorElement, ButtonPro
 ) => href ? (
 	<Link
 		buttonClass
+		className={className}
 		href={href}
 		ref={ref}
 		{...props}
@@ -26,6 +28,7 @@ const Button = React.forwardRef<HTMLButtonElement & HTMLAnchorElement, ButtonPro
 ) : (
 	<button
 		type={type}
+		className={`button${className ? ` ${className}` : ''}`}
 		ref={ref}
 		{...props}
 	/>
