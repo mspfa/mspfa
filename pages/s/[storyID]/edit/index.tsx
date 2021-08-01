@@ -63,7 +63,7 @@ const getValuesFromStory = (privateStory: PrivateStory) => ({
 	disableUserTheme: privateStory.disableUserTheme,
 	script: privateStory.script,
 	tags: privateStory.tags,
-	commentsEnabled: privateStory.commentsEnabled
+	allowComments: privateStory.allowComments
 });
 
 type Values = ReturnType<typeof getValuesFromStory>;
@@ -363,7 +363,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											</LabeledBoxRow>
 											<FieldBoxRow
 												type="checkbox"
-												name="commentsEnabled"
+												name="allowComments"
 												label="Allow Comments"
 											/>
 											<LabeledBoxRow

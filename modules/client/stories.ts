@@ -28,9 +28,9 @@ export const storyPrivacyNames: Record<StoryPrivacy, string> = {
 };
 
 /** All keys whose values have the same serializable type in both `StoryDocument` and `PrivateStory`. */
-type PrivateStoryDocumentKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'blurb' | 'icon' | 'pageCount' | 'favCount' | 'banner' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'commentsEnabled' | 'editorSettings' | 'colors' | 'quirks';
+type PrivateStoryDocumentKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'blurb' | 'icon' | 'pageCount' | 'favCount' | 'banner' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'allowComments' | 'defaultPageTitle' | 'spoilerPresets' | 'colors' | 'quirks';
 
-/** A serializable version of `StoryDocument` which only has properties that can safely be exposed to any client. */
+/** A serializable version of `StoryDocument` with only the properties that can safely be exposed to any client. */
 export type PrivateStory = Pick<StoryDocument, PrivateStoryDocumentKey> & {
 	id: StoryID,
 	willDelete?: DateNumber,
@@ -42,9 +42,9 @@ export type PrivateStory = Pick<StoryDocument, PrivateStoryDocumentKey> & {
 };
 
 /** All keys whose values have the same serializable type in both `StoryDocument` and `PublicStory`. */
-type PublicStoryDocumentKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'blurb' | 'icon' | 'pageCount' | 'favCount' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'commentsEnabled' | 'colors' | 'quirks';
+type PublicStoryDocumentKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'blurb' | 'icon' | 'pageCount' | 'favCount' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'allowComments' | 'colors' | 'quirks';
 
-/** A serializable version of `StoryDocument` which only has properties that can safely be exposed to any client. */
+/** A serializable version of `StoryDocument` with only the properties that can safely be exposed to any client. */
 export type PublicStory = Pick<StoryDocument, PublicStoryDocumentKey> & {
 	id: StoryID,
 	created: DateNumber,
@@ -57,7 +57,7 @@ export type PublicStory = Pick<StoryDocument, PublicStoryDocumentKey> & {
 /** All keys whose values have the same serializable type in both `StoryPage` and `ClientStoryPage`. */
 type ClientStoryPageKey = 'id' | 'title' | 'content' | 'nextPages' | 'unlisted' | 'disableControls' | 'commentary' | 'notify';
 
-/** A serializable version of `StoryPage` which only has properties that can safely be exposed to any client. */
+/** A serializable version of `StoryPage` with only the properties that can safely be exposed to any client. */
 export type ClientStoryPage = Pick<StoryPage, ClientStoryPageKey> & {
 	published?: DateNumber
 };

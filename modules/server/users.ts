@@ -160,7 +160,7 @@ export const defaultUser = {
 	unreadMessageCount: 0
 } as const;
 
-// This is just for type safety on `defaultUser`.
+// This is just for partial type safety on `defaultUser`.
 const typeCheckedDefaultUser: Partial<UserDocument> = defaultUser;
 typeCheckedDefaultUser;
 

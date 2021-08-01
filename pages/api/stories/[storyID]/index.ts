@@ -14,7 +14,7 @@ import { authenticate } from 'modules/server/auth';
 import overwriteArrays from 'modules/client/overwriteArrays';
 
 /** The keys of all `PrivateStory` properties which the client should be able to `PUT` into their `StoryDocument`. */
-type PuttableStoryKey = 'title' | 'status' | 'privacy' | 'owner' | 'editors' | 'author' | 'description' | 'blurb' | 'icon' | 'banner' | 'style' | 'disableUserTheme' | 'tags' | 'commentsEnabled' | 'editorSettings' | 'colors' | 'quirks';
+type PuttableStoryKey = 'title' | 'status' | 'privacy' | 'owner' | 'editors' | 'author' | 'description' | 'blurb' | 'icon' | 'banner' | 'style' | 'disableUserTheme' | 'tags' | 'allowComments' | 'defaultPageTitle';
 
 const Handler: APIHandler<{
 	query: {
@@ -26,8 +26,8 @@ const Handler: APIHandler<{
 	} | {
 		method: 'PUT',
 		body: RecursivePartial<Pick<PrivateStory, PuttableStoryKey> & {
-			willDelete?: boolean,
-			anniversary: Omit<PrivateStory['anniversary'], 'changed'>,
+			willDelete: boolean,
+			anniversary: Pick<PrivateStory['anniversary'], 'year' | 'month' | 'day'>,
 			script: Pick<PrivateStory['script'], 'unverified'>
 		}>
 	}

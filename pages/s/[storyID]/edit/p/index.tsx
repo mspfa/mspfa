@@ -176,19 +176,14 @@ const Component = withErrorPage<ServerSideProps>(({
 	const changeDefaultPageTitle = useThrottledCallback(async (event: ChangeEvent<HTMLInputElement>) => {
 		setPrivateStory({
 			...privateStory,
-			editorSettings: {
-				...privateStory.editorSettings,
-				defaultPageTitle: event.target.value
-			}
+			defaultPageTitle: event.target.value
 		});
 		// The reason the above state is updated before syncing with the server via the below request rather than after is so the user can use the new default page title while the request is still loading.
 
 		cancelTokenSourceRef.current = axios.CancelToken.source();
 
 		await (api as StoryAPI).put(`/stories/${privateStory.id}`, {
-			editorSettings: {
-				defaultPageTitle: event.target.value
-			}
+			defaultPageTitle: event.target.value
 		}, {
 			cancelToken: cancelTokenSourceRef.current.token
 		});
@@ -395,7 +390,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 		const newPage: ClientStoryPage = {
 			id,
-			title: privateStory.editorSettings.defaultPageTitle,
+			title: privateStory.defaultPageTitle,
 			content: '',
 			nextPages: [id + 1],
 			unlisted: false,
@@ -414,7 +409,7 @@ const Component = withErrorPage<ServerSideProps>(({
 			// Select the title field of the newly added page.
 			(document.getElementById(`field-pages-${id}-title`) as HTMLInputElement | null)?.select();
 		});
-	}, [privateStory.editorSettings.defaultPageTitle]);
+	}, [privateStory.defaultPageTitle]);
 
 	return (
 		<Page heading="Edit Adventure">
@@ -1552,7 +1547,7 @@ const Component = withErrorPage<ServerSideProps>(({
 												id="field-default-page-title"
 												className="spaced"
 												maxLength={500}
-												defaultValue={privateStory.editorSettings.defaultPageTitle}
+												defaultValue={privateStory.defaultPageTitle}
 												autoComplete="off"
 												onChange={onChangeDefaultPageTitle}
 												ref={defaultPageTitleInputRef}

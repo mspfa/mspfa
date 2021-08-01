@@ -7,6 +7,7 @@ import type { UserDocument, UserID } from 'modules/server/users';
 import users from 'modules/server/users';
 import type { APIResponse } from 'modules/server/api';
 import type { UpdateQuery } from 'mongodb';
+import type { Comment } from 'modules/server/comments';
 
 /** @minimum 1 */
 export type StoryID = number;
@@ -21,6 +22,7 @@ export type StoryPageID = number;
  */
 export type TagString = string;
 
+// I call them `StoryPage`s instead of `Page`s
 export type StoryPage = {
 	id: StoryPageID,
 	/** The date that the page was or will be published, or undefined if the page is still a draft. */
@@ -35,24 +37,16 @@ export type StoryPage = {
 	/** Whether the client's controls should be disabled while this page is rendered. */
 	disableControls: boolean,
 	commentary: string,
-	comments: StoryComment[],
+	comments: Comment[],
 	/** Whether this page was set to notify readers on publish. */
 	notify: boolean
 };
 
 export type StoryPageRecord = Record<StoryPageID, StoryPage>;
 
-export type StoryComment = {
-	posted: Date,
-	edited?: Date,
-	author: UserID,
-	/** @minLength 1 */
-	content: string,
-	/** @uniqueItems true */
-	likes: UserID[],
-	/** @uniqueItems true */
-	dislikes: UserID[],
-	private: boolean
+export type SpoilerPreset = {
+	open: string,
+	close: string
 };
 
 export type StoryColor = {
@@ -111,7 +105,7 @@ export type StoryDocument = {
 	/**
 	 * The public page count.
 	 *
-	 * ⚠️ Does not necessarily equal `Object.values(story.pages).length`.
+	 * ⚠️ Does not necessarily equal `Object.values(story.pages).length` due to excluding pages which are not public.
 	 */
 	pageCount: number,
 	favCount: number,
@@ -128,15 +122,9 @@ export type StoryDocument = {
 	 * @maxItems 50
 	 */
 	tags: TagString[],
-	commentsEnabled: boolean,
-	/** Properties of the story which are only used in the story editor. */
-	editorSettings: {
-		defaultPageTitle: StoryPage['title'],
-		defaultSpoiler: {
-			open: string,
-			close: string
-		}
-	},
+	allowComments: boolean,
+	defaultPageTitle: StoryPage['title'],
+	spoilerPresets: SpoilerPreset[],
 	colors: StoryColor[],
 	quirks: Quirk[]
 };
@@ -160,19 +148,14 @@ export const defaultStory = {
 		verified: ''
 	},
 	tags: [] as never[],
-	commentsEnabled: true,
-	editorSettings: {
-		defaultPageTitle: 'Next.',
-		defaultSpoiler: {
-			open: '',
-			close: ''
-		}
-	},
+	allowComments: true,
+	defaultPageTitle: 'Next.',
+	spoilerPresets: [] as never[],
 	colors: [] as never[],
 	quirks: [] as never[]
 } as const;
 
-// This is just for type safety on `defaultStory`.
+// This is just for partial type safety on `defaultStory`.
 const typeCheckedDefaultStory: Partial<StoryDocument> = defaultStory;
 typeCheckedDefaultStory;
 
@@ -203,8 +186,9 @@ export const getPrivateStory = (story: StoryDocument): PrivateStory => ({
 	disableUserTheme: story.disableUserTheme,
 	script: story.script,
 	tags: story.tags,
-	commentsEnabled: story.commentsEnabled,
-	editorSettings: story.editorSettings,
+	allowComments: story.allowComments,
+	defaultPageTitle: story.defaultPageTitle,
+	spoilerPresets: story.spoilerPresets,
 	colors: story.colors,
 	quirks: story.quirks
 });
@@ -232,7 +216,7 @@ export const getPublicStory = (story: StoryDocument): PublicStory => ({
 	disableUserTheme: story.disableUserTheme,
 	script: story.script,
 	tags: story.tags,
-	commentsEnabled: story.commentsEnabled,
+	allowComments: story.allowComments,
 	colors: story.colors,
 	quirks: story.quirks
 });

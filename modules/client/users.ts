@@ -10,7 +10,7 @@ import type { DateNumber, RecursivePartial } from 'modules/types';
 /** All keys whose values have the same serializable type in both `UserDocument` and `PrivateUser`. */
 type PrivateUserDocumentKey = 'email' | 'unverifiedEmail' | 'name' | 'birthdateChanged' | 'description' | 'icon' | 'site' | 'storySaves' | 'achievements' | 'favs' | 'profileStyle' | 'settings' | 'perms' | 'dev' | 'mod' | 'patron' | 'unreadMessageCount';
 
-/** A serializable version of `UserDocument` which only has properties that can safely be exposed to the client that owns the user data. */
+/** A serializable version of `UserDocument` with only the properties that can safely be exposed to the client that owns the user data. */
 export type PrivateUser = (
 	Pick<UserDocument, PrivateUserDocumentKey>
 	& {
@@ -24,7 +24,7 @@ export type PrivateUser = (
 /** All keys whose values have the same serializable type in both `UserDocument` and `PublicUser`. */
 type PublicUserDocumentKey = 'name' | 'description' | 'icon' | 'site' | 'achievements' | 'profileStyle' | 'dev' | 'mod' | 'patron';
 
-/** A serializable version of `UserDocument` which only has properties that can safely be exposed to any client. */
+/** A serializable version of `UserDocument` with only the properties that can safely be exposed to any client. */
 export type PublicUser = (
 	Pick<UserDocument, PublicUserDocumentKey>
 	& {
