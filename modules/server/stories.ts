@@ -3,7 +3,7 @@ import type { Quirk } from 'modules/client/quirks';
 import type { Mutable, URLString } from 'modules/types';
 import type { ClientStoryPage, PrivateStory, PublicStory } from 'modules/client/stories';
 import { StoryStatus, StoryPrivacy } from 'modules/client/stories';
-import type { UserDocument, UserID } from 'modules/server/users';
+import type { ServerUser, UserID } from 'modules/server/users';
 import users from 'modules/server/users';
 import type { APIResponse } from 'modules/server/api';
 import type { UpdateQuery } from 'mongodb';
@@ -54,7 +54,7 @@ export type StoryColor = {
 	name: string
 };
 
-export type StoryDocument = {
+export type ServerStory = {
 	_id: StoryID,
 	/** The date this story will be deleted from the database, or undefined if the story is not scheduled for deletion. */
 	willDelete?: Date,
@@ -129,7 +129,7 @@ export type StoryDocument = {
 	quirks: Quirk[]
 };
 
-/** A `Partial<StoryDocument>` used to spread some general properties on newly inserted `StoryDocument`s. */
+/** A `Partial<ServerStory>` used to spread some general properties on newly inserted `ServerStory`s. */
 export const defaultStory = {
 	status: StoryStatus.Ongoing,
 	privacy: StoryPrivacy.Public,
@@ -156,11 +156,11 @@ export const defaultStory = {
 } as const;
 
 // This is just for partial type safety on `defaultStory`.
-const typeCheckedDefaultStory: Partial<StoryDocument> = defaultStory;
+const typeCheckedDefaultStory: Partial<ServerStory> = defaultStory;
 typeCheckedDefaultStory;
 
-/** Converts a `StoryDocument` to a `PrivateStory`. */
-export const getPrivateStory = (story: StoryDocument): PrivateStory => ({
+/** Converts a `ServerStory` to a `PrivateStory`. */
+export const getPrivateStory = (story: ServerStory): PrivateStory => ({
 	id: story._id,
 	...story.willDelete !== undefined && {
 		willDelete: +story.willDelete
@@ -193,8 +193,8 @@ export const getPrivateStory = (story: StoryDocument): PrivateStory => ({
 	quirks: story.quirks
 });
 
-/** Converts a `StoryDocument` to a `PublicStory`. */
-export const getPublicStory = (story: StoryDocument): PublicStory => ({
+/** Converts a `ServerStory` to a `PublicStory`. */
+export const getPublicStory = (story: ServerStory): PublicStory => ({
 	id: story._id,
 	created: +story.created,
 	anniversary: story.anniversary,
@@ -236,12 +236,12 @@ export const getClientStoryPage = (page: StoryPage): ClientStoryPage => ({
 	notify: page.notify
 });
 
-const stories = db.collection<StoryDocument>('stories');
+const stories = db.collection<ServerStory>('stories');
 
 export default stories;
 
 /**
- * Finds and returns a `StoryDocument` by a possibly unsafe ID.
+ * Finds and returns a `ServerStory` by a possibly unsafe ID.
  *
  * Returns `undefined` if the ID is invalid or the story is not found.
  *
@@ -257,10 +257,10 @@ export const getStoryByUnsafeID = <Res extends APIResponse<any> | undefined>(
 		id: string | number | undefined
 		// It is necessary to use tuple types instead of simply having `res` be an optional parameter, because otherwise `Res` will not always be inferred correctly.
 	]
-) => new Promise<StoryDocument | (undefined extends Res ? undefined : never)>(async resolve => {
+) => new Promise<ServerStory | (undefined extends Res ? undefined : never)>(async resolve => {
 	const storyID: StoryID = id !== undefined && id !== '' ? +id : NaN;
 
-	let story: StoryDocument | null | undefined;
+	let story: ServerStory | null | undefined;
 
 	if (!Number.isNaN(storyID)) {
 		story = await stories.findOne({
@@ -286,7 +286,7 @@ export const getStoryByUnsafeID = <Res extends APIResponse<any> | undefined>(
 	resolve(story);
 });
 
-export const getPublicStoriesByEditor = async (editor: UserDocument) => (
+export const getPublicStoriesByEditor = async (editor: ServerUser) => (
 	stories.find!({
 		editors: editor._id,
 		privacy: StoryPrivacy.Public,
@@ -298,7 +298,7 @@ export const getPublicStoriesByEditor = async (editor: UserDocument) => (
 export const updateAndSendFavCount = async (
 	res: APIResponse<{
 		body: {
-			favCount: StoryDocument['favCount']
+			favCount: ServerStory['favCount']
 		}
 	}>,
 	storyID: StoryID
@@ -341,19 +341,19 @@ export const unscheduleStory = (storyID: StoryID) => {
  */
 export const updateStorySchedule = async (
 	/**
-	 * The `StoryDocument` whose schedule and `pageCount` is being updated.
+	 * The `ServerStory` whose schedule and `pageCount` is being updated.
 	 *
 	 * ⚠️ Ensure `story.pages` matches what it would be in the database at the time AFTER this function's database update. Also ensure `story.pageCount` matches what it is in the database at the time BEFORE this function is called.
 	 */
-	story: StoryDocument,
+	story: ServerStory,
 	/**
 	 * An update query for this story. Any updates from this function will be added to this object. Upon this function's completion, anything on this object will be updated to the database for this story. Defaults to an empty object.
 	 *
 	 * This parameter is useful purely as an optimization, in order to avoid unnecessarily calling `updateOne` on the same story twice (once inside this function, and again outside wherever this function is being called), allowing it to instead only be called once inside.
 	 */
-	update: Omit<UpdateQuery<StoryDocument>, '$set' | '$unset'> & {
-		$set?: Mutable<UpdateQuery<StoryDocument>['$set']>,
-		$unset?: Mutable<UpdateQuery<StoryDocument>['$unset']>
+	update: Omit<UpdateQuery<ServerStory>, '$set' | '$unset'> & {
+		$set?: Mutable<UpdateQuery<ServerStory>['$set']>,
+		$unset?: Mutable<UpdateQuery<ServerStory>['$unset']>
 	} = {}
 ) => {
 	unscheduleStory(story._id);

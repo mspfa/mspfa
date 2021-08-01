@@ -1,7 +1,7 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
 import users, { getPrivateUser } from 'modules/server/users';
-import type { UserDocument } from 'modules/server/users';
+import type { ServerUser } from 'modules/server/users';
 import type { ExternalAuthMethodOptions, InternalAuthMethodOptions } from 'modules/client/auth';
 import { authenticate, getAuthMethodInfo, createSession, verifyPassword, VerifyPasswordResult } from 'modules/server/auth';
 import Cookies from 'cookies';
@@ -30,7 +30,7 @@ const Handler: APIHandler<(
 	await validate(req, res);
 
 	if (req.method === 'POST') {
-		let user: UserDocument | undefined | null;
+		let user: ServerUser | undefined | null;
 
 		if (req.body.authMethod.type === 'password') {
 			const email = req.body.email!.toLowerCase();

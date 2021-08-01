@@ -2,7 +2,7 @@ import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
 import { authenticate } from 'modules/server/auth';
 import type { ClientMessage } from 'modules/client/messages';
-import type { MessageDocument } from 'modules/server/messages';
+import type { ServerMessage } from 'modules/server/messages';
 import messages, { updateUnreadMessages, getClientMessage, getMessageByUnsafeID } from 'modules/server/messages';
 import { ObjectId } from 'mongodb';
 import { getUserByUnsafeID } from 'modules/server/users';
@@ -58,7 +58,7 @@ const Handler: APIHandler<{
 			], String)
 	);
 
-	const message: MessageDocument = {
+	const message: ServerMessage = {
 		_id: new ObjectId(),
 		sent: now,
 		from: user._id,

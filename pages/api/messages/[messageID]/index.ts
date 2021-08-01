@@ -1,7 +1,7 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
 import { authenticate } from 'modules/server/auth';
-import type { MessageDocument } from 'modules/server/messages';
+import type { ServerMessage } from 'modules/server/messages';
 import messages, { getMessageByUnsafeID, getClientMessage, updateUnreadMessages } from 'modules/server/messages';
 import { Perm } from 'modules/client/perms';
 import type { ClientMessage } from 'modules/client/messages';
@@ -15,7 +15,7 @@ const Handler: APIHandler<{
 		method: 'DELETE'
 	} | {
 		method: 'PUT',
-		body: Partial<Pick<MessageDocument, 'content'>>
+		body: Partial<Pick<ServerMessage, 'content'>>
 	}
 ), {
 	method: 'PUT',
@@ -61,7 +61,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	const messageMerge: Partial<MessageDocument> = {
+	const messageMerge: Partial<ServerMessage> = {
 		...req.body,
 		edited: new Date()
 	};

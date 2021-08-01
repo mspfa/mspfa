@@ -1,5 +1,5 @@
 import { getUserByUnsafeID } from 'modules/server/users';
-import type { UserDocument } from 'modules/server/users';
+import type { ServerUser } from 'modules/server/users';
 import type { UnsafeObjectID } from 'modules/server/db';
 import type { APIRequest, APIResponse } from 'modules/server/api';
 import type { PageRequest } from 'modules/server/pages';
@@ -23,7 +23,7 @@ function permToGetUser(
 	/** This request's `APIResponse` object, or `undefined` if no response should be sent on error (i.e. if this is a page and not an API). */
 	res: APIResponse,
 	/** The user to check the perms of. */
-	user: UserDocument | undefined,
+	user: ServerUser | undefined,
 	/** The potentially unsafe user ID of the user to get. */
 	id: UnsafeObjectID,
 	/**
@@ -33,7 +33,7 @@ function permToGetUser(
 	 */
 	perms: number
 ): Promise<{
-	user: UserDocument,
+	user: ServerUser,
 	statusCode?: undefined
 }>;
 
@@ -41,7 +41,7 @@ function permToGetUser(
 	/** This request's `APIResponse` object, or `undefined` if no response should be sent on error (e.g. if this is a page and not an API). */
 	res: APIResponse | undefined,
 	/** The user to check the perms of. */
-	user: UserDocument | undefined,
+	user: ServerUser | undefined,
 	/** The potentially unsafe user ID of the user to get. */
 	id: UnsafeObjectID,
 	/**
@@ -51,7 +51,7 @@ function permToGetUser(
 	 */
 	perms: number
 ): Promise<{
-	user: UserDocument,
+	user: ServerUser,
 	statusCode?: undefined
 } | {
 	user?: undefined,
@@ -64,7 +64,7 @@ function permToGetUser(
 	/** This request's `APIResponse` object, or `undefined` if no response should be sent on error (i.e. if this is a page and not an API). */
 	res: APIResponse | undefined,
 	/** The user to check the perms of. */
-	user: UserDocument | undefined,
+	user: ServerUser | undefined,
 	/** The potentially unsafe user ID of the user to get. */
 	id: UnsafeObjectID,
 	/**
@@ -75,7 +75,7 @@ function permToGetUser(
 	perms: number
 ) {
 	return new Promise<{
-		user: UserDocument,
+		user: ServerUser,
 		statusCode?: undefined
 	} | {
 		user?: undefined,

@@ -1,6 +1,6 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
-import type { StoryDocument, StoryPage, StoryPageID } from 'modules/server/stories';
+import type { ServerStory, StoryPage, StoryPageID } from 'modules/server/stories';
 import { getStoryByUnsafeID, getClientStoryPage, updateStorySchedule } from 'modules/server/stories';
 import { authenticate } from 'modules/server/auth';
 import type { ClientStoryPage, ClientStoryPageRecord } from 'modules/client/stories';
@@ -12,7 +12,7 @@ import { mergeWith } from 'lodash';
 import overwriteArrays from 'modules/client/overwriteArrays';
 import type { UpdateQuery } from 'mongodb';
 
-/** The keys of all `ClientStoryPage` properties which the client should be able to `PUT` into any of their existing `StoryDocument['pages']` (except `'published'`). */
+/** The keys of all `ClientStoryPage` properties which the client should be able to `PUT` into any of their existing `ServerStory['pages']` (except `'published'`). */
 type PuttableStoryPageKey = 'title' | 'content' | 'nextPages' | 'unlisted' | 'disableControls' | 'commentary' | 'notify';
 
 const Handler: APIHandler<{
@@ -228,7 +228,7 @@ const Handler: APIHandler<{
 		}
 	}
 
-	const updateQuery: UpdateQuery<StoryDocument> = { $unset };
+	const updateQuery: UpdateQuery<ServerStory> = { $unset };
 
 	const pageValues = Object.values(story.pages);
 

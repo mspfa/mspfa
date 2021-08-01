@@ -1,14 +1,14 @@
 import type { ObjectId } from 'mongodb';
 import type { UnsafeObjectID } from 'modules/server/db';
 import db, { safeObjectID } from 'modules/server/db';
-import type { UserDocument, UserID } from 'modules/server/users';
+import type { ServerUser, UserID } from 'modules/server/users';
 import type { ClientMessage } from 'modules/client/messages';
 import users from 'modules/server/users';
 import type { APIResponse } from 'modules/server/api';
 
 export type MessageID = ObjectId;
 
-export type MessageDocument = {
+export type ServerMessage = {
 	_id: MessageID,
 	sent: Date,
 	edited?: Date,
@@ -36,11 +36,11 @@ export type MessageDocument = {
 	content: string
 };
 
-/** Converts a `MessageDocument` to a `ClientMessage`. */
+/** Converts a `ServerMessage` to a `ClientMessage`. */
 export const getClientMessage = (
-	message: MessageDocument,
+	message: ServerMessage,
 	/** The user accessing this message, or the user whose list this message is being rendered to. */
-	user: UserDocument
+	user: ServerUser
 ): ClientMessage => ({
 	id: message._id.toString(),
 	sent: +message.sent,
@@ -57,12 +57,12 @@ export const getClientMessage = (
 	read: !message.notReadBy.some(userID => userID.equals(user._id))
 });
 
-const messages = db.collection<MessageDocument>('messages');
+const messages = db.collection<ServerMessage>('messages');
 
 export default messages;
 
 /**
- * Finds and returns a `MessageDocument` by a possibly unsafe ID.
+ * Finds and returns a `ServerMessage` by a possibly unsafe ID.
  *
  * Returns `undefined` if the ID is invalid or the message is not found.
  *
@@ -76,10 +76,10 @@ export const getMessageByUnsafeID = <Res extends APIResponse<any> | undefined>(
 		id: UnsafeObjectID
 		// It is necessary to use tuple types instead of simply having `res` be an optional parameter, because otherwise `Res` will not always be inferred correctly.
 	]
-) => new Promise<MessageDocument | (undefined extends Res ? undefined : never)>(async resolve => {
+) => new Promise<ServerMessage | (undefined extends Res ? undefined : never)>(async resolve => {
 	const messageID = safeObjectID(id);
 
-	let message: MessageDocument | null | undefined;
+	let message: ServerMessage | null | undefined;
 
 	if (messageID) {
 		message = await messages.findOne({
@@ -121,7 +121,7 @@ export const updateUnreadMessages = async (userID: UserID) => {
 };
 
 /** If the inputted message was a reply to another parent message which has been deleted by everyone, fully deletes the parent message as well, and repeats the check recursively on all ascendants. */
-const deleteUnnecessaryParentMessages = async (message: MessageDocument) => {
+const deleteUnnecessaryParentMessages = async (message: ServerMessage) => {
 	if (message.replyTo) {
 		const { value: parentMessage } = await messages.findOneAndDelete({
 			_id: message.replyTo,
@@ -143,7 +143,7 @@ export const deleteMessageForUser = async (
 	/** The user for which the message should be deleted. */
 	userID: UserID,
 	/** The message to delete. */
-	message: MessageDocument
+	message: ServerMessage
 ) => {
 	if (
 		// Check if this user is the only one who hasn't deleted it yet.

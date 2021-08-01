@@ -6,13 +6,13 @@ import type { RecursivePartial } from 'modules/types';
 import { Perm } from 'modules/client/perms';
 import { permToGetUserInAPI } from 'modules/server/perms';
 import users, { getPrivateUser, getPublicUser, getUserByUnsafeID } from 'modules/server/users';
-import type { UserDocument } from 'modules/server/users';
+import type { ServerUser } from 'modules/server/users';
 import { flatten } from 'modules/server/db';
 import { mergeWith } from 'lodash';
 import stories from 'modules/server/stories';
 import overwriteArrays from 'modules/client/overwriteArrays';
 
-/** The keys of all `PrivateUser` properties which the client should be able to `PUT` into their `UserDocument`. */
+/** The keys of all `PrivateUser` properties which the client should be able to `PUT` into their `ServerUser`. */
 type PuttableUserKey = 'birthdate' | 'name' | 'email' | 'description' | 'icon' | 'site' | 'profileStyle' | 'settings';
 
 const Handler: APIHandler<{
@@ -50,7 +50,7 @@ const Handler: APIHandler<{
 		const user = await permToGetUserInAPI(req, res, Perm.sudoWrite);
 
 		if (Object.values(req.body).length) {
-			const userChanges: RecursivePartial<UserDocument> = req.body as Omit<typeof req.body, 'birthdate'>;
+			const userChanges: RecursivePartial<ServerUser> = req.body as Omit<typeof req.body, 'birthdate'>;
 
 			if (req.body.birthdate !== undefined) {
 				if (user.birthdateChanged) {

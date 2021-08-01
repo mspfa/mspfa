@@ -1,6 +1,6 @@
-import type { MessageDocument } from 'modules/server/messages';
+import type { ServerMessage } from 'modules/server/messages';
 
-export type ClientMessage = Pick<MessageDocument, 'subject' | 'content'> & {
+export type ClientMessage = Pick<ServerMessage, 'subject' | 'content'> & {
 	id: string,
 	sent: number,
 	edited?: number,

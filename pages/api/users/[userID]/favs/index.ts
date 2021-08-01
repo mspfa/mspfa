@@ -3,7 +3,7 @@ import type { APIHandler } from 'modules/server/api';
 import { Perm } from 'modules/client/perms';
 import { permToGetUserInAPI } from 'modules/server/perms';
 import users from 'modules/server/users';
-import type { StoryDocument, StoryID } from 'modules/server/stories';
+import type { ServerStory, StoryID } from 'modules/server/stories';
 import { getStoryByUnsafeID, updateAndSendFavCount } from 'modules/server/stories';
 
 const Handler: APIHandler<{
@@ -16,7 +16,7 @@ const Handler: APIHandler<{
 	}
 }, {
 	body: {
-		favCount: StoryDocument['favCount']
+		favCount: ServerStory['favCount']
 	}
 }> = async (req, res) => {
 	await validate(req, res);

@@ -1,4 +1,4 @@
-import type { StoryDocument, StoryID, StoryPage, StoryPageID } from 'modules/server/stories';
+import type { ServerStory, StoryID, StoryPage, StoryPageID } from 'modules/server/stories';
 import type { DateNumber } from 'modules/types';
 
 export enum StoryStatus {
@@ -27,11 +27,11 @@ export const storyPrivacyNames: Record<StoryPrivacy, string> = {
 	[StoryPrivacy.Private]: 'Private'
 };
 
-/** All keys whose values have the same serializable type in both `StoryDocument` and `PrivateStory`. */
-type PrivateStoryDocumentKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'blurb' | 'icon' | 'pageCount' | 'favCount' | 'banner' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'allowComments' | 'defaultPageTitle' | 'spoilerPresets' | 'colors' | 'quirks';
+/** All keys whose values have the same serializable type in both `ServerStory` and `PrivateStory`. */
+type PrivateServerStoryKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'blurb' | 'icon' | 'pageCount' | 'favCount' | 'banner' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'allowComments' | 'defaultPageTitle' | 'spoilerPresets' | 'colors' | 'quirks';
 
-/** A serializable version of `StoryDocument` with only the properties that can safely be exposed to any client. */
-export type PrivateStory = Pick<StoryDocument, PrivateStoryDocumentKey> & {
+/** A serializable version of `ServerStory` with only the properties that can safely be exposed to any client. */
+export type PrivateStory = Pick<ServerStory, PrivateServerStoryKey> & {
 	id: StoryID,
 	willDelete?: DateNumber,
 	created: DateNumber,
@@ -41,11 +41,11 @@ export type PrivateStory = Pick<StoryDocument, PrivateStoryDocumentKey> & {
 	pageCount: number
 };
 
-/** All keys whose values have the same serializable type in both `StoryDocument` and `PublicStory`. */
-type PublicStoryDocumentKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'blurb' | 'icon' | 'pageCount' | 'favCount' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'allowComments' | 'colors' | 'quirks';
+/** All keys whose values have the same serializable type in both `ServerStory` and `PublicStory`. */
+type PublicServerStoryKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'blurb' | 'icon' | 'pageCount' | 'favCount' | 'style' | 'disableUserTheme' | 'script' | 'tags' | 'allowComments' | 'colors' | 'quirks';
 
-/** A serializable version of `StoryDocument` with only the properties that can safely be exposed to any client. */
-export type PublicStory = Pick<StoryDocument, PublicStoryDocumentKey> & {
+/** A serializable version of `ServerStory` with only the properties that can safely be exposed to any client. */
+export type PublicStory = Pick<ServerStory, PublicServerStoryKey> & {
 	id: StoryID,
 	created: DateNumber,
 	updated: DateNumber,

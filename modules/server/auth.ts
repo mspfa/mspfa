@@ -6,7 +6,7 @@ import { ObjectId } from 'mongodb';
 import type { APIRequest, APIResponse } from 'modules/server/api';
 import type { IncomingMessage, ServerResponse } from 'http';
 import users from 'modules/server/users';
-import type { UserDocument, UserSession, AuthMethod } from 'modules/server/users';
+import type { ServerUser, UserSession, AuthMethod } from 'modules/server/users';
 import { OAuth2Client } from 'google-auth-library';
 import type { EmailString } from 'modules/types';
 import type { AuthMethodOptions } from 'modules/client/auth';
@@ -128,7 +128,7 @@ export const createSession = async (
 	req: APIRequest,
 	res: APIResponse,
 	/** The user which the session is for. */
-	user: UserDocument
+	user: ServerUser
 ) => {
 	if (!user.email) {
 		// The user is not verified. No session should be created.
@@ -173,7 +173,7 @@ export const authenticate = async (
 	updateDB = true
 ): Promise<{
 	/** The authenticated user. */
-	user?: UserDocument,
+	user?: ServerUser,
 	/** The authenticated user's hashed session token. */
 	token?: string
 }> => {
@@ -253,7 +253,7 @@ export enum VerifyPasswordResult {
 export const verifyPassword = (
 	res: APIResponse,
 	/** The user to verify the password of. */
-	user: UserDocument,
+	user: ServerUser,
 	/** The user-inputted password to verify. */
 	password: string,
 	/**

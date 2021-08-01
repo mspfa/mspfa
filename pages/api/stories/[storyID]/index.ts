@@ -6,14 +6,14 @@ import type { UserID } from 'modules/server/users';
 import users from 'modules/server/users';
 import { flatten, safeObjectID } from 'modules/server/db';
 import { mergeWith, uniqBy } from 'lodash';
-import type { StoryDocument } from 'modules/server/stories';
+import type { ServerStory } from 'modules/server/stories';
 import stories, { getPrivateStory, getPublicStory, getStoryByUnsafeID } from 'modules/server/stories';
 import type { PrivateStory, PublicStory } from 'modules/client/stories';
 import { StoryPrivacy } from 'modules/client/stories';
 import { authenticate } from 'modules/server/auth';
 import overwriteArrays from 'modules/client/overwriteArrays';
 
-/** The keys of all `PrivateStory` properties which the client should be able to `PUT` into their `StoryDocument`. */
+/** The keys of all `PrivateStory` properties which the client should be able to `PUT` into their `ServerStory`. */
 type PuttableStoryKey = 'title' | 'status' | 'privacy' | 'owner' | 'editors' | 'author' | 'description' | 'blurb' | 'icon' | 'banner' | 'style' | 'disableUserTheme' | 'tags' | 'allowComments' | 'defaultPageTitle';
 
 const Handler: APIHandler<{
@@ -94,7 +94,7 @@ const Handler: APIHandler<{
 	}
 
 	if (Object.values(req.body).length) {
-		const storyChanges: RecursivePartial<StoryDocument> = req.body as Omit<typeof req.body, 'willDelete' | 'owner' | 'editors'>;
+		const storyChanges: RecursivePartial<ServerStory> = req.body as Omit<typeof req.body, 'willDelete' | 'owner' | 'editors'>;
 
 		if ((
 			!ownerPerms && (

@@ -1,4 +1,4 @@
-import type { UserDocument } from 'modules/server/users';
+import type { ServerUser } from 'modules/server/users';
 import React, { useContext, useState } from 'react';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
@@ -7,12 +7,12 @@ import Dialog from 'modules/client/Dialog';
 import createGlobalState from 'global-react-state';
 import type { DateNumber, RecursivePartial } from 'modules/types';
 
-/** All keys whose values have the same serializable type in both `UserDocument` and `PrivateUser`. */
-type PrivateUserDocumentKey = 'email' | 'unverifiedEmail' | 'name' | 'birthdateChanged' | 'description' | 'icon' | 'site' | 'storySaves' | 'achievements' | 'favs' | 'profileStyle' | 'settings' | 'perms' | 'dev' | 'mod' | 'patron' | 'unreadMessageCount';
+/** All keys whose values have the same serializable type in both `ServerUser` and `PrivateUser`. */
+type PrivateServerUserKey = 'email' | 'unverifiedEmail' | 'name' | 'birthdateChanged' | 'description' | 'icon' | 'site' | 'storySaves' | 'achievements' | 'favs' | 'profileStyle' | 'settings' | 'perms' | 'dev' | 'mod' | 'patron' | 'unreadMessageCount';
 
-/** A serializable version of `UserDocument` with only the properties that can safely be exposed to the client that owns the user data. */
+/** A serializable version of `ServerUser` with only the properties that can safely be exposed to the client that owns the user data. */
 export type PrivateUser = (
-	Pick<UserDocument, PrivateUserDocumentKey>
+	Pick<ServerUser, PrivateServerUserKey>
 	& {
 		id: string,
 		created: DateNumber,
@@ -21,19 +21,19 @@ export type PrivateUser = (
 	}
 );
 
-/** All keys whose values have the same serializable type in both `UserDocument` and `PublicUser`. */
-type PublicUserDocumentKey = 'name' | 'description' | 'icon' | 'site' | 'achievements' | 'profileStyle' | 'dev' | 'mod' | 'patron';
+/** All keys whose values have the same serializable type in both `ServerUser` and `PublicUser`. */
+type PublicServerUserKey = 'name' | 'description' | 'icon' | 'site' | 'achievements' | 'profileStyle' | 'dev' | 'mod' | 'patron';
 
-/** A serializable version of `UserDocument` with only the properties that can safely be exposed to any client. */
+/** A serializable version of `ServerUser` with only the properties that can safely be exposed to any client. */
 export type PublicUser = (
-	Pick<UserDocument, PublicUserDocumentKey>
+	Pick<ServerUser, PublicServerUserKey>
 	& {
 		id: string,
-		email?: UserDocument['email'],
+		email?: ServerUser['email'],
 		created: DateNumber,
 		lastSeen: DateNumber,
 		birthdate?: DateNumber,
-		favs?: UserDocument['favs']
+		favs?: ServerUser['favs']
 	}
 );
 

@@ -7,7 +7,7 @@ import Box from 'components/Box';
 import BoxSection from 'components/Box/BoxSection';
 import Link from 'components/Link';
 import BoxRow from 'components/Box/BoxRow';
-import type { StoryDocument } from 'modules/server/stories';
+import type { ServerStory } from 'modules/server/stories';
 import stories, { getPublicStory } from 'modules/server/stories';
 import type { PublicStory } from 'modules/client/stories';
 import { StoryPrivacy } from 'modules/client/stories';
@@ -74,13 +74,13 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 	}
 
 	/** Queries non-deleted favorites of the user from params. */
-	const favsFilterQuery: FilterQuery<StoryDocument> = {
+	const favsFilterQuery: FilterQuery<ServerStory> = {
 		_id: { $in: userFromParams.favs },
 		willDelete: { $exists: false }
 	};
 
 	/** Queries public adventures, or both public and unlisted adventures if the user is viewing their own favorites page. */
-	const privacyFilterQuery: FilterQuery<StoryDocument> = {
+	const privacyFilterQuery: FilterQuery<ServerStory> = {
 		privacy: (
 			readPerms
 				// A user should be able to see unlisted adventures which they favorited.

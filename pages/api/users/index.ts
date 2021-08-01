@@ -4,7 +4,7 @@ import type { APIHandler } from 'modules/server/api';
 import type { SessionBody } from 'pages/api/session';
 import { getAuthMethodInfo, createSession } from 'modules/server/auth';
 import users, { defaultUser, getPrivateUser, getPublicUser } from 'modules/server/users';
-import type { UserDocument } from 'modules/server/users';
+import type { ServerUser } from 'modules/server/users';
 import { ObjectId } from 'mongodb';
 import type { PrivateUser, PublicUser } from 'modules/client/users';
 import axios from 'axios';
@@ -18,7 +18,7 @@ const Handler: APIHandler<(
 		body: SessionBody & {
 			/** @minLength 1 */
 			captchaToken: string,
-			name: UserDocument['name'],
+			name: ServerUser['name'],
 			birthdate: number
 		}
 	} | {
@@ -27,7 +27,7 @@ const Handler: APIHandler<(
 			/** How many results to respond with. */
 			limit?: number | string,
 			/** A case-insensitive username search or exact user ID match. */
-			search: UserDocument['name']
+			search: ServerUser['name']
 		}
 	}
 ), (
@@ -92,7 +92,7 @@ const Handler: APIHandler<(
 
 		const now = new Date();
 
-		const user: UserDocument = {
+		const user: ServerUser = {
 			...defaultUser,
 			_id: new ObjectId(),
 			authMethods: [authMethod],
@@ -115,7 +115,7 @@ const Handler: APIHandler<(
 
 	await connection;
 
-	let filterQuery: FilterQuery<UserDocument> = {
+	let filterQuery: FilterQuery<ServerUser> = {
 		name: {
 			$regex: new RegExp(escapeRegExp(req.query.search), 'i')
 		},

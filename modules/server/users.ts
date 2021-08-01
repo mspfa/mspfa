@@ -67,7 +67,7 @@ export type StoryEditorNotificationSettings = (
  */
 export type StoryNotificationSettings = true | StoryReaderNotificationSettings | StoryEditorNotificationSettings;
 
-export type UserDocument = {
+export type ServerUser = {
 	_id: UserID,
 	/** The user's verified email address. */
 	email?: EmailString,
@@ -144,7 +144,7 @@ export type UserDocument = {
 	unreadMessageCount: number
 };
 
-/** A `Partial<UserDocument>` used to spread some general properties on newly inserted `UserDocument`s. */
+/** A `Partial<ServerUser>` used to spread some general properties on newly inserted `ServerUser`s. */
 export const defaultUser = {
 	sessions: [] as never[],
 	birthdateChanged: false,
@@ -161,11 +161,11 @@ export const defaultUser = {
 } as const;
 
 // This is just for partial type safety on `defaultUser`.
-const typeCheckedDefaultUser: Partial<UserDocument> = defaultUser;
+const typeCheckedDefaultUser: Partial<ServerUser> = defaultUser;
 typeCheckedDefaultUser;
 
-/** Converts a `UserDocument` to a `PrivateUser`. */
-export const getPrivateUser = (user: UserDocument): PrivateUser => ({
+/** Converts a `ServerUser` to a `PrivateUser`. */
+export const getPrivateUser = (user: ServerUser): PrivateUser => ({
 	id: user._id.toString(),
 	...user.email && {
 		email: user.email
@@ -199,8 +199,8 @@ export const getPrivateUser = (user: UserDocument): PrivateUser => ({
 	unreadMessageCount: user.unreadMessageCount
 });
 
-/** Converts a `UserDocument` to a `PublicUser`. */
-export const getPublicUser = (user: UserDocument): PublicUser => ({
+/** Converts a `ServerUser` to a `PublicUser`. */
+export const getPublicUser = (user: ServerUser): PublicUser => ({
 	id: user._id.toString(),
 	...user.email !== undefined && user.settings.emailPublic && {
 		email: user.email
@@ -230,12 +230,12 @@ export const getPublicUser = (user: UserDocument): PublicUser => ({
 	}
 });
 
-const users = db.collection<UserDocument>('users');
+const users = db.collection<ServerUser>('users');
 
 export default users;
 
 /**
- * Finds and returns a `UserDocument` by a possibly unsafe ID.
+ * Finds and returns a `ServerUser` by a possibly unsafe ID.
  *
  * Returns `undefined` if the ID is invalid, the user is not found, or the user is scheduled for deletion.
  *
@@ -249,10 +249,10 @@ export const getUserByUnsafeID = <Res extends APIResponse<any> | undefined>(
 		id: UnsafeObjectID
 		// It is necessary to use tuple types instead of simply having `res` be an optional parameter, because otherwise `Res` will not always be inferred correctly.
 	]
-) => new Promise<UserDocument | (undefined extends Res ? undefined : never)>(async resolve => {
+) => new Promise<ServerUser | (undefined extends Res ? undefined : never)>(async resolve => {
 	const userID = safeObjectID(id);
 
-	let user: UserDocument | null | undefined;
+	let user: ServerUser | null | undefined;
 
 	if (userID) {
 		user = await users.findOne({

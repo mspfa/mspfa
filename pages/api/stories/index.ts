@@ -1,6 +1,6 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
-import type { StoryDocument } from 'modules/server/stories';
+import type { ServerStory } from 'modules/server/stories';
 import stories, { defaultStory, getPrivateStory } from 'modules/server/stories';
 import { authenticate } from 'modules/server/auth';
 import type { PrivateStory } from 'modules/client/stories';
@@ -8,7 +8,7 @@ import { connection } from 'modules/server/db';
 
 const Handler: APIHandler<{
 	method: 'POST',
-	body: Pick<StoryDocument, 'title'>
+	body: Pick<ServerStory, 'title'>
 }, {
 	method: 'POST',
 	body: PrivateStory
@@ -37,7 +37,7 @@ const Handler: APIHandler<{
 			]).next()
 		)?._id || 0
 	);
-	const story: StoryDocument = {
+	const story: ServerStory = {
 		...defaultStory,
 		_id: storyID,
 		created: now,
