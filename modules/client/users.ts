@@ -46,7 +46,6 @@ export const defaultSettings: PrivateUser['settings'] = {
 		matchedContent: true
 	},
 	autoOpenSpoilers: false,
-	preloadImages: true,
 	stickyNav: false,
 	imageAliasing: false,
 	theme: 'standard',

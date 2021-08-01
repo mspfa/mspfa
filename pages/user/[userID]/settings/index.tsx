@@ -44,7 +44,6 @@ type DoesOwnStoriesAPI = APIClient<typeof import('pages/api/users/[userID]/doesO
 const getSettingsValues = (settings: PrivateUser['settings']) => ({
 	ads: settings.ads,
 	autoOpenSpoilers: settings.autoOpenSpoilers,
-	preloadImages: settings.preloadImages,
 	stickyNav: settings.stickyNav,
 	imageAliasing: settings.imageAliasing,
 	theme: settings.theme,
@@ -305,7 +304,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										</Button>
 									</BoxRow>
 								</BoxRowSection>
-								<BoxRowSection heading="Display">
+								<BoxRowSection heading="General">
 									<FieldBoxRow
 										as="select"
 										name="settings.theme"
@@ -325,6 +324,12 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 									/>
 									<FieldBoxRow
 										type="checkbox"
+										name="settings.autoOpenSpoilers"
+										label="Auto-Open Spoilers"
+										help="Makes spoilers open by default instead of closed."
+									/>
+									<FieldBoxRow
+										type="checkbox"
 										name="settings.imageAliasing"
 										// This setting's label should not use terminology less obscure than "Aliasing", because if its phrasing is less obscure (for example if it were called "Crisp Images" or "Image Sharpening"), it would be easily misinterpretable and lead to misunderstandings about what the setting does, even among users who know what aliasing is, since it wouldn't be called that. With this more obscure but more accurate name, it is much less likely that inaccurate assumptions would be made about the meaning, and users would be more inclined to click the help button for clarity.
 										label="Image Aliasing"
@@ -341,20 +346,6 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										name="settings.ads.matchedContent"
 										label="Matched Content Ad"
 										onChange={values.settings.ads.matchedContent ? interceptAdDisable : handleChange}
-									/>
-								</BoxRowSection>
-								<BoxRowSection heading="Utility">
-									<FieldBoxRow
-										type="checkbox"
-										name="settings.autoOpenSpoilers"
-										label="Auto-Open Spoilers"
-										help="Makes spoilers open by default instead of closed."
-									/>
-									<FieldBoxRow
-										type="checkbox"
-										name="settings.preloadImages"
-										label="Preload Images"
-										help="Loads images on adjacent adventure pages so they may already be loaded when an adjacent page is opened."
 									/>
 								</BoxRowSection>
 								<BoxColumns>

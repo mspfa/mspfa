@@ -107,8 +107,6 @@ export type ServerUser = {
 			matchedContent: boolean
 		},
 		autoOpenSpoilers: boolean,
-		/** This makes images on adjacent pages always preload when a user visits a story page. */
-		preloadImages: boolean,
 		/** This makes the nav bar always stay at the top of the screen when scrolling below it. */
 		stickyNav: boolean,
 		/** This sets the image rendering style to nearest-neighbor on images which the user might want that on (such as story panels). */
