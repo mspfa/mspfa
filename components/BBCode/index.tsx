@@ -161,7 +161,10 @@ const BBCode = React.forwardRef<HTMLSpanElement, BBCodeProps>(({
 }, ref) => {
 	if (raw) {
 		return (
-			<span className="bbcode">
+			<span
+				className="bbcode"
+				ref={ref}
+			>
 				{children}
 			</span>
 		);
@@ -175,7 +178,7 @@ const BBCode = React.forwardRef<HTMLSpanElement, BBCodeProps>(({
 			ref={ref}
 		>
 			{(noBB && !html
-				// If BBCode and HTML are both disabled, then the HTML is plain text, so it's more optimized to insert the string as a text node rather than parsing it as HTML.
+				// If BBCode and HTML are both disabled, then the `htmlString` should be treated as plain text, so it's more optimized to insert the string as a text node rather than parsing it as HTML.
 				? htmlString
 				: parse(htmlString, parseOptions)
 			)}
