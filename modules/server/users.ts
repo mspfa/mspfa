@@ -9,7 +9,7 @@ import type { Theme } from 'modules/client/themes';
 import type { StoryID } from 'modules/server/stories';
 import type { APIResponse } from 'modules/server/api';
 
-export type UserID = ObjectId;
+export type ServerUserID = ObjectId;
 
 type AuthMethodProperties = {
 	id: string,
@@ -67,8 +67,9 @@ export type StoryEditorNotificationSettings = (
  */
 export type StoryNotificationSettings = true | StoryReaderNotificationSettings | StoryEditorNotificationSettings;
 
+/** A user object used on the server and stored in the database. No `ServerUser` can ever be on the client. */
 export type ServerUser = {
-	_id: UserID,
+	_id: ServerUserID,
 	/** The user's verified email address. */
 	email?: EmailString,
 	unverifiedEmail?: EmailString,

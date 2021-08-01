@@ -1,13 +1,13 @@
-import type { UserID } from 'modules/server/users';
+import type { ServerUserID } from 'modules/server/users';
 
 export type Comment = {
 	posted: Date,
 	edited?: Date,
-	author: UserID,
+	author: ServerUserID,
 	/** @minLength 1 */
 	content: string,
 	/** @uniqueItems true */
-	likes: UserID[],
+	likes: ServerUserID[],
 	/** @uniqueItems true */
-	dislikes: UserID[]
+	dislikes: ServerUserID[]
 };

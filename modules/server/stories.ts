@@ -3,7 +3,7 @@ import type { Quirk } from 'modules/client/quirks';
 import type { Mutable, URLString } from 'modules/types';
 import type { ClientStoryPage, PrivateStory, PublicStory } from 'modules/client/stories';
 import { StoryStatus, StoryPrivacy } from 'modules/client/stories';
-import type { ServerUser, UserID } from 'modules/server/users';
+import type { ServerUser, ServerUserID } from 'modules/server/users';
 import users from 'modules/server/users';
 import type { APIResponse } from 'modules/server/api';
 import type { UpdateQuery } from 'mongodb';
@@ -54,6 +54,7 @@ export type StoryColor = {
 	name: string
 };
 
+/** A story object used on the server and stored in the database. No `ServerStory` can ever be on the client. */
 export type ServerStory = {
 	_id: StoryID,
 	/** The date this story will be deleted from the database, or undefined if the story is not scheduled for deletion. */
@@ -85,13 +86,13 @@ export type ServerStory = {
 	title: string,
 	status: StoryStatus,
 	privacy: StoryPrivacy,
-	owner: UserID,
+	owner: ServerUserID,
 	/**
 	 * Users with permission to edit this adventure, not necessarily including the adventure's owner.
 	 *
 	 * @uniqueItems true
 	 */
-	editors: UserID[],
+	editors: ServerUserID[],
 	author?: {
 		name: string,
 		site: '' | URLString

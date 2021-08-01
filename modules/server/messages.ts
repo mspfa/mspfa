@@ -1,29 +1,30 @@
 import type { ObjectId } from 'mongodb';
 import type { UnsafeObjectID } from 'modules/server/db';
 import db, { safeObjectID } from 'modules/server/db';
-import type { ServerUser, UserID } from 'modules/server/users';
+import type { ServerUser, ServerUserID } from 'modules/server/users';
 import type { ClientMessage } from 'modules/client/messages';
 import users from 'modules/server/users';
 import type { APIResponse } from 'modules/server/api';
 
-export type MessageID = ObjectId;
+export type ServerMessageID = ObjectId;
 
+/** A message object used on the server and stored in the database. No `ServerMessage` should ever be on the client. */
 export type ServerMessage = {
-	_id: MessageID,
+	_id: ServerMessageID,
 	sent: Date,
 	edited?: Date,
-	from: UserID,
+	from: ServerUserID,
 	/**
 	 * @minItems 1
 	 * @uniqueItems true
 	 */
-	to: UserID[],
+	to: ServerUserID[],
 	/** The message ID which this is a reply to, or undefined if it is not a reply. */
-	replyTo?: MessageID,
+	replyTo?: ServerMessageID,
 	/** The IDs of users who have access to this message. */
-	notDeletedBy: UserID[],
+	notDeletedBy: ServerUserID[],
 	/** The IDs of users who have access to this message and have it marked as unread. */
-	notReadBy: UserID[],
+	notReadBy: ServerUserID[],
 	/**
 	 * @minLength 1
 	 * @maxLength 50
@@ -103,7 +104,7 @@ export const getMessageByUnsafeID = <Res extends APIResponse<any> | undefined>(
 });
 
 /** Updates the specified user's `unreadMessageCount`. Returns the new `unreadMessageCount` value. */
-export const updateUnreadMessages = async (userID: UserID) => {
+export const updateUnreadMessages = async (userID: ServerUserID) => {
 	const unreadMessageCount = (
 		await messages.aggregate!([
 			{ $match: { notReadBy: userID } },
@@ -141,7 +142,7 @@ const deleteUnnecessaryParentMessages = async (message: ServerMessage) => {
  */
 export const deleteMessageForUser = async (
 	/** The user for which the message should be deleted. */
-	userID: UserID,
+	userID: ServerUserID,
 	/** The message to delete. */
 	message: ServerMessage
 ) => {

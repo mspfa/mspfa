@@ -2,7 +2,7 @@ import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
 import type { RecursivePartial } from 'modules/types';
 import { Perm } from 'modules/client/perms';
-import type { UserID } from 'modules/server/users';
+import type { ServerUserID } from 'modules/server/users';
 import users from 'modules/server/users';
 import { flatten, safeObjectID } from 'modules/server/db';
 import { mergeWith, uniqBy } from 'lodash';
@@ -145,7 +145,7 @@ const Handler: APIHandler<{
 						[
 							...req.body.owner ? [req.body.owner] : [],
 							...req.body.editors ? req.body.editors : []
-						].map(safeObjectID).filter(Boolean) as UserID[],
+						].map(safeObjectID).filter(Boolean) as ServerUserID[],
 						String
 					)
 				}
