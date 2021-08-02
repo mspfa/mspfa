@@ -10,6 +10,9 @@ import { useIsomorphicLayoutEffect } from 'react-use';
 import Stick from 'components/Stick';
 import Delimit from 'components/Delimit';
 import Dialog from 'modules/client/Dialog';
+import { setStoryNavGroup } from 'components/Nav';
+import NavGroup from 'components/Nav/NavGroup';
+import NavItem from 'components/Nav/NavItem';
 
 /**
  * The number of next pages to preload ahead of the user's current page.
@@ -49,6 +52,19 @@ const StoryViewer = ({
 	// If a page ID's value is undefined, then it has not been cached or requested yet.
 	const [pages, setPages] = useState(initialPages);
 	const page = pages[pageID];
+
+	useEffect(() => {
+		setStoryNavGroup(
+			<NavGroup id="story">
+				<NavItem id="story-log" label="Log" href={`/s/${story.id}/log`} />
+				<NavItem id="story-search" label="Search" href={`/s/${story.id}/search`} />
+			</NavGroup>
+		);
+
+		return () => {
+			setStoryNavGroup(null);
+		};
+	}, [story.id]);
 
 	/** The page ID to take the user to when clicking the "Go Back" link. Unless undefined, necessarily indexes a cached page. */
 	const previousPageID = ( // TODO: Calculate this correctly.

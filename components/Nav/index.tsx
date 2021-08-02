@@ -4,6 +4,10 @@ import NavItem from 'components/Nav/NavItem';
 import NavMenu from 'components/Nav/NavMenu';
 import Router, { useRouter } from 'next/router';
 import { signIn, signOut, useUser } from 'modules/client/users';
+import createGlobalState from 'global-react-state';
+import type { ReactNode } from 'react';
+
+export const [useStoryNavGroup, setStoryNavGroup] = createGlobalState<ReactNode>(null);
 
 const visitRandomStory = () => {
 	// TODO: Visit random story.
@@ -14,6 +18,7 @@ const visitRandomStory = () => {
 const Nav = () => {
 	const router = useRouter();
 	const user = useUser();
+	const [storyNavGroup] = useStoryNavGroup();
 
 	const notificationsBubble = 0;
 	let messagesBubble = 0;
@@ -69,10 +74,7 @@ const Nav = () => {
 				<NavItem id="search" label="Explore" href="/search" />
 				<NavItem id="random" label="Mystery" title="Take me to a random adventure!" onClick={visitRandomStory} />
 			</NavGroup>
-			<NavGroup id="story">
-				<NavItem id="story-log" label="Log" href={`/s/${0}/log`} />
-				<NavItem id="story-search" label="Search" href={`/s/${0}/search`} />
-			</NavGroup>
+			{storyNavGroup}
 			<NavGroup id="more">
 				<NavMenu id="help" label="Help">
 					<NavItem id="help-discord" label="Discord" href="/discord" target="_blank" />

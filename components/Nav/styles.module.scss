@@ -11,14 +11,11 @@ nav {
 	background-color: #000000;
 	z-index: 10;
 	padding: 0 1ch;
+	color: #bbbbbb;
 
 	&.sticky {
 		position: sticky;
 		top: 0;
-	}
-
-	.stick {
-		color: #bbbbbb;
 	}
 
 	.divider {
