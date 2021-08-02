@@ -22,22 +22,24 @@ const Footer = () => {
 							`}
 						</style>
 					)}
-					<div className="mspface front" />
+					<div className="mspface left" />
 					<WealthDungeon />
+					<div className="mspface right" />
+				</div>
+				<div id="legal" className="mid">
+					<div id="copyright">
+						{`MS Paint Fan Adventures © 2010-${new Date().getFullYear()}`}
+					</div>
+					<Stick />
+					<div id="boring-important-stuff">
+						<Link href="/privacy" target="_blank">Privacy Policy</Link>
+						<Stick nix />
+						<Link href="/terms" target="_blank">Terms of Service</Link>
+						<Stick />
+						<Link href="/rules" target="_blank">Rules</Link>
+					</div>
 				</div>
 			</footer>
-			<div id="legal">
-				<div id="copyright">
-					{`© MS Paint Fan Adventures 2010-${new Date().getFullYear()}`}
-				</div>
-				<div id="boring-important-stuff">
-					<Link href="/privacy" target="_blank">Privacy Policy</Link>
-					<Stick nix />
-					<Link href="/terms" target="_blank">Terms of Service</Link>
-					<Stick />
-					<Link href="/rules" target="_blank">Rules</Link>
-				</div>
-			</div>
 		</>
 	);
 };

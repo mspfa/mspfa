@@ -163,118 +163,120 @@ const StoryViewer = ({
 
 	return (
 		<Page>
-			<div
-				className="story-page front"
-				ref={storyPageElementRef}
-			>
-				<Fragment
-					// This key is here to force the inner DOM to reset between different pages.
-					key={pageID}
+			<div className="story-page-container">
+				<div
+					className="story-page front"
+					ref={storyPageElementRef}
 				>
-					{page?.title && (
-						<div className="story-page-title">
-							{page.title}
-						</div>
-					)}
-					<div className="story-page-content">
-						{page === null ? (
-							story.pageCount ? (
-								// This page does not exist.
-								<>This page does not exist.</>
-							) : (
-								// This story has no pages.
-								<>This adventure has no pages.</>
-							)
-						) : page === undefined ? (
-							// This page has not loaded yet.
-							null
-						) : (
-							// This page is loaded.
-							<BBCode alreadySanitized>
-								{pageContents[pageID]}
-							</BBCode>
+					<Fragment
+						// This key is here to force the inner DOM to reset between different pages.
+						key={pageID}
+					>
+						{page?.title && (
+							<div className="story-page-title">
+								{page.title}
+							</div>
 						)}
-					</div>
-					<div className="story-page-links">
-						{page?.nextPages.map((nextPageID, i) => {
-							const nextPage = pages[nextPageID];
+						<div className="story-page-content">
+							{page === null ? (
+								story.pageCount ? (
+									// This page does not exist.
+									<>This page does not exist.</>
+								) : (
+									// This story has no pages.
+									<>This adventure has no pages.</>
+								)
+							) : page === undefined ? (
+								// This page has not loaded yet.
+								null
+							) : (
+								// This page is loaded.
+								<BBCode alreadySanitized>
+									{pageContents[pageID]}
+								</BBCode>
+							)}
+						</div>
+						<div className="story-page-links">
+							{page?.nextPages.map((nextPageID, i) => {
+								const nextPage = pages[nextPageID];
 
-							// Only render this link if its page exists and isn't loading.
-							return nextPage && (
-								<div
-									key={i}
-									className="story-page-link-container"
-								>
-									<Link
-										shallow
-										href={`/?s=${story.id}&p=${nextPageID}${previewQuery}`}
+								// Only render this link if its page exists and isn't loading.
+								return nextPage && (
+									<div
+										key={i}
+										className="story-page-link-container"
 									>
-										{nextPage.title}
-									</Link>
-								</div>
-							);
-						})}
+										<Link
+											shallow
+											href={`/?s=${story.id}&p=${nextPageID}${previewQuery}`}
+										>
+											{nextPage.title}
+										</Link>
+									</div>
+								);
+							})}
+						</div>
+					</Fragment>
+					<div className="story-page-footer">
+						{(
+							// Only render the group if its children would be rendered.
+							pageID !== 1
+							|| previousPageID !== undefined
+						) && (
+							<>
+								<span className="story-page-footer-group">
+									<Delimit with={<Stick />}>
+										{pageID !== 1 && (
+											<Link
+												key="start-over"
+												shallow
+												href={`/?s=${story.id}&p=1${previewQuery}`}
+											>
+												Start Over
+											</Link>
+										)}
+										{previousPageID !== undefined && (
+											<Link
+												key="go-back"
+												shallow
+												href={`/?s=${story.id}&p=${previousPageID}${previewQuery}`}
+											>
+												Go Back
+											</Link>
+										)}
+									</Delimit>
+								</span>
+								<span className="story-page-footer-group-delimiter" />
+							</>
+						)}
+						<span className="story-page-footer-group">
+							<Link>
+								Save Game
+							</Link>
+							{' '}
+							<Link
+								onClick={
+									useCallback(() => {
+										new Dialog({
+											id: 'help',
+											title: 'Help',
+											content: 'Save Game\n\nIf you\'re signed in, you can save your spot in the story. Click "Save Game", then when you return to the site, click "Load Game" to return to where you were.\n\nYour saves are stored on your MSPFA account, so you can even save and load between different devices!'
+										});
+									}, [])
+								}
+							>
+								(?)
+							</Link>
+							<Stick />
+							<Link>
+								Load Game
+							</Link>
+							<Stick />
+							<Link>
+								Delete Game Data
+							</Link>
+						</span>
 					</div>
-				</Fragment>
-				<div className="story-page-footer">
-					{(
-						// Only render the group if its children would be rendered.
-						pageID !== 1
-						|| previousPageID !== undefined
-					) && (
-						<>
-							<span className="story-page-footer-group">
-								<Delimit with={<Stick />}>
-									{pageID !== 1 && (
-										<Link
-											key="start-over"
-											shallow
-											href={`/?s=${story.id}&p=1${previewQuery}`}
-										>
-											Start Over
-										</Link>
-									)}
-									{previousPageID !== undefined && (
-										<Link
-											key="go-back"
-											shallow
-											href={`/?s=${story.id}&p=${previousPageID}${previewQuery}`}
-										>
-											Go Back
-										</Link>
-									)}
-								</Delimit>
-							</span>
-							<span className="story-page-footer-group-delimiter" />
-						</>
-					)}
-					<span className="story-page-footer-group">
-						<Link>
-							Save Game
-						</Link>
-						{' '}
-						<Link
-							onClick={
-								useCallback(() => {
-									new Dialog({
-										id: 'help',
-										title: 'Help',
-										content: 'Save Game\n\nIf you\'re signed in, you can save your spot in the story. Click "Save Game", then when you return to the site, click "Load Game" to return to where you were.\n\nYour saves are stored on your MSPFA account, so you can even save and load between different devices!'
-									});
-								}, [])
-							}
-						>
-							(?)
-						</Link>
-						<Stick />
-						<Link>
-							Load Game
-						</Link>
-						<Stick />
-						<Link>
-							Delete Game Data
-						</Link>
-					</span>
 				</div>
 			</div>
 		</Page>

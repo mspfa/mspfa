@@ -23,9 +23,9 @@ const Page = ({ heading, children, flashyTitle }: PageProps) => (
 		<span id="preload-font" />
 		{/* It is necessary for dialogs to be before the page so that dialog elements are reached first when tabbing. */}
 		<Dialogs />
-		<div id="page" className="mid">
+		<div id="page">
 			<Header flashyTitle={flashyTitle} />
-			<main className={heading ? 'padded' : undefined}>
+			<main className={`mid${heading ? ' padded' : ''}`}>
 				{(heading
 					? <PageHeading>{heading}</PageHeading>
 					: null

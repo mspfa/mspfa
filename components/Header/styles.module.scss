@@ -1,3 +1,9 @@
 header .mspface {
-	background-image: url(/images/mspface.gif); // Image credit: VorkedLarfleeze
+	&.left {
+		background-image: url(/images/mspface/index.png); // Image credit: VorkedLarfleeze
+	}
+
+	&.right {
+		background-image: url(/images/mspface/index.gif); // Image credit: VorkedLarfleeze
+	}
 }

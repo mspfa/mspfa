@@ -24,7 +24,7 @@ const FlashyTitle = () => {
 	}, [router.asPath]);
 
 	return (
-		<div id="flashy-title-container" className="front">
+		<div id="flashy-title-container">
 			<style jsx global>
 				{`
 					#flashy-title {
