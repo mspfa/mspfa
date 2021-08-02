@@ -3,12 +3,13 @@ import Page from 'components/Page';
 import type { ClientStoryPage, PublicStory } from 'modules/client/stories';
 import Link from 'components/Link';
 import { useRouter } from 'next/router';
-import { useState, useEffect, useRef, Fragment } from 'react';
+import { useState, useEffect, useRef, Fragment, useCallback } from 'react';
 import type { StoryPageID } from 'modules/server/stories';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
 import { useIsomorphicLayoutEffect } from 'react-use';
 import Stick from 'components/Stick';
 import Delimit from 'components/Delimit';
+import Dialog from 'modules/client/Dialog';
 
 /**
  * The number of next pages to preload ahead of the user's current page.
@@ -232,11 +233,31 @@ const StoryViewer = ({
 						</>
 					)}
 					<span className="story-page-footer-group">
-						<Link>Save Game</Link>
+						<Link>
+							Save Game
+						</Link>
+						{' '}
+						<Link
+							onClick={
+								useCallback(() => {
+									new Dialog({
+										id: 'help',
+										title: 'Help',
+										content: 'Save Game\n\nIf you\'re signed in, you can save your spot in the story. Click "Save Game", then when you return to the site, click "Load Game" to return to where you were.\n\nYour saves are stored on your MSPFA account, so you can even save and load between different devices!'
+									});
+								}, [])
+							}
+						>
+							(?)
+						</Link>
 						<Stick />
-						<Link>Load Game</Link>
+						<Link>
+							Load Game
+						</Link>
 						<Stick />
-						<Link>Delete Game Data</Link>
+						<Link>
+							Delete Game Data
+						</Link>
 					</span>
 				</div>
 			</div>
