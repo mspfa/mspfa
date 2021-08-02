@@ -33,7 +33,7 @@
 }
 
 main.padded {
-	padding: 16px 56px;
+	padding: 16px 56px 24px 56px;
 
 	@include mobile {
 		padding-left: 0;
