@@ -12,6 +12,6 @@ $story-page-padding: 25px;
 }
 
 .panel {
-	margin: 0 -$story-page-padding;
+	margin: 0 #{-$story-page-padding};
 	max-width: $page-width;
 }
