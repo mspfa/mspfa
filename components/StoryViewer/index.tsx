@@ -2,7 +2,6 @@ import Page from 'components/Page';
 import type { ClientStoryPage, PublicStory } from 'modules/client/stories';
 import Link from 'components/Link';
 import { useRouter } from 'next/router';
-import type { ReactNode } from 'react';
 import { useState, useEffect } from 'react';
 import type { StoryPageID } from 'modules/server/stories';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
