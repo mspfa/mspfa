@@ -1,16 +1,18 @@
 @use 'sass:color';
 
+$page-width: 950px;
+
 $monospace: 'Courier New', 'Courier', monospace;
 $sans-serif: Verdana, Arial, Helvetica, sans-serif;
 
 @mixin desktop {
-	@media screen and (min-width: 940px) {
+	@media screen and (min-width: $page-width) {
 		@content;
 	}
 }
 
 @mixin mobile {
-	@media not screen and (min-width: 940px) {
+	@media not screen and (min-width: $page-width) {
 		@content;
 	}
 }
