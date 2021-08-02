@@ -4,7 +4,7 @@
 
 @import 'styles/general';
 
-$story-page-min-width: 600px;
+$story-page-min-width: 650px;
 $story-page-padding: 25px;
 
 .story-page {
@@ -16,10 +16,16 @@ $story-page-padding: 25px;
 
 	// `display: table;` conveniently allows the element's width to dynamically increase to fit its contents exactly the way we want it to.
 	display: table;
+	box-sizing: border-box;
 	padding: 0 $story-page-padding;
     width: $story-page-min-width;
-	// `box-sizing: border-box;` must not be set on this element, as an effect hook depends on this element's `min-width` to refer to its content width.
+	// `min-width` is necessary and must equal `width` because it is used by an effect hook to calculate this element's content width.
 	min-width: $story-page-min-width;
+
+	@include mobile {
+		width: 100%;
+		min-width: 100%;
+	}
 
 	&-title {
 		text-align: center;
@@ -68,4 +74,8 @@ $story-page-padding: 25px;
 .panel {
 	margin: 0 (-$story-page-padding);
 	max-width: $page-width;
+
+	@include mobile {
+		max-width: 100%;
+	}
 }

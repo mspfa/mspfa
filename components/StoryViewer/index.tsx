@@ -103,8 +103,14 @@ const StoryViewer = ({
 	// Add the `panel` class to any media elements large enough to be considered a panel.
 	// This is a layout effect rather than a normal effect so that media is not briefly visible at the wrong size.
 	useIsomorphicLayoutEffect(() => {
+		const storyPageElementStyle = window.getComputedStyle(storyPageElementRef.current);
+
 		/** The content width of the `#story-page` element. */
-		const storyPageContentWidth = +window.getComputedStyle(storyPageElementRef.current).minWidth.slice(0, -2);
+		const storyPageContentWidth = (
+			+storyPageElementStyle.minWidth.slice(0, -2)
+			- +storyPageElementStyle.paddingLeft.slice(0, -2)
+			- +storyPageElementStyle.paddingRight.slice(0, -2)
+		);
 
 		/** Adds or removes the `panel` class to an inputted element based on its size relative to the `#story-page` element. */
 		const classifyPotentialPanel = (element: HTMLElement) => {
