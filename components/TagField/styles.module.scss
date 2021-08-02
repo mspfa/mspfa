@@ -63,11 +63,11 @@
 		}
 
 		&-remove::after {
-			content: '[x]';
+			content: '(x)';
 		}
 
 		&-help::after {
-			content: '[?]';
+			content: '(?)';
 		}
 	}
 
