@@ -20,7 +20,7 @@ export const BBFieldContext = React.createContext<{
 
 export type BBFieldProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'children' | 'value'> & {
 	name: string
-} & Omit<BBCodeProps, 'children'>;
+} & Omit<BBCodeProps, 'children' | 'alreadySanitized'>;
 
 /** A text area field that accepts BBCode. */
 const BBField = ({ name, html, noBB, ...props }: BBFieldProps) => {
