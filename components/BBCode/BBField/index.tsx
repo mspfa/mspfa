@@ -23,7 +23,7 @@ export type BBFieldProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'ch
 } & Omit<BBCodeProps, 'children'>;
 
 /** A text area field that accepts BBCode. */
-const BBField = ({ name, html, noBB, raw, ...props }: BBFieldProps) => {
+const BBField = ({ name, html, noBB, ...props }: BBFieldProps) => {
 	const [, { value }, { setValue }] = useField<string>(name);
 
 	const textAreaRef = useRef<HTMLTextAreaElement>(null!);
@@ -85,7 +85,7 @@ const BBField = ({ name, html, noBB, raw, ...props }: BBFieldProps) => {
 				close="Hide Preview"
 				initialOpen={false}
 			>
-				<BBCode html={html} noBB={noBB} raw={raw}>
+				<BBCode html={html} noBB={noBB}>
 					{value}
 				</BBCode>
 			</Spoiler>

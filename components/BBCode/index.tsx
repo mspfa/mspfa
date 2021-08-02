@@ -146,8 +146,8 @@ export type BBCodeProps = {
 	html?: boolean,
 	/** Whether to blacklist all BBCode. */
 	noBB?: boolean,
-	/** Whether to insert a `.bb` element with the inputted children directly without any sanitization or parsing. */
-	raw?: boolean,
+	/** Whether the input has already been sanitized and no sanitization should be performed by this component. */
+	alreadySanitized?: boolean,
 	/** The original input BBCode string. */
 	children?: string
 };
@@ -156,21 +156,12 @@ export type BBCodeProps = {
 const BBCode = React.forwardRef<HTMLSpanElement, BBCodeProps>(({
 	html,
 	noBB,
-	raw,
-	children = ''
+	alreadySanitized,
+	children: htmlString = ''
 }, ref) => {
-	if (raw) {
-		return (
-			<span
-				className="bb"
-				ref={ref}
-			>
-				{children}
-			</span>
-		);
+	if (!alreadySanitized) {
+		htmlString = sanitizeBBCode(htmlString, { html, noBB });
 	}
-
-	const htmlString = sanitizeBBCode(children, { html, noBB });
 
 	return (
 		<span
