@@ -1,4 +1,4 @@
-import type { ServerStory, StoryID, StoryPage, StoryPageID } from 'modules/server/stories';
+import type { ServerStory, StoryID, ServerStoryPage, StoryPageID } from 'modules/server/stories';
 import type { DateNumber } from 'modules/types';
 
 export enum StoryStatus {
@@ -54,11 +54,11 @@ export type PublicStory = Pick<ServerStory, PublicServerStoryKey> & {
 	pageCount: number
 };
 
-/** All keys whose values have the same serializable type in both `StoryPage` and `ClientStoryPage`. */
+/** All keys whose values have the same serializable type in both `ServerStoryPage` and `ClientStoryPage`. */
 type ClientStoryPageKey = 'id' | 'title' | 'content' | 'nextPages' | 'unlisted' | 'disableControls' | 'commentary' | 'notify';
 
-/** A serializable version of `StoryPage` with only the properties that can safely be exposed to any client. */
-export type ClientStoryPage = Pick<StoryPage, ClientStoryPageKey> & {
+/** A serializable version of `ServerStoryPage` with only the properties that can safely be exposed to any client. */
+export type ClientStoryPage = Pick<ServerStoryPage, ClientStoryPageKey> & {
 	published?: DateNumber
 };
 

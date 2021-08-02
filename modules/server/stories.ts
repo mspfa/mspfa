@@ -22,8 +22,8 @@ export type StoryPageID = number;
  */
 export type TagString = string;
 
-// I call them `StoryPage`s instead of `Page`s
-export type StoryPage = {
+// I call them `ServerStoryPage`s instead of `Page`s
+export type ServerStoryPage = {
 	id: StoryPageID,
 	/** The date that the page was or will be published, or undefined if the page is still a draft. */
 	published?: Date,
@@ -42,7 +42,7 @@ export type StoryPage = {
 	notify: boolean
 };
 
-export type StoryPageRecord = Record<StoryPageID, StoryPage>;
+export type StoryPageRecord = Record<StoryPageID, ServerStoryPage>;
 
 export type SpoilerPreset = {
 	open: string,
@@ -124,7 +124,7 @@ export type ServerStory = {
 	 */
 	tags: TagString[],
 	allowComments: boolean,
-	defaultPageTitle: StoryPage['title'],
+	defaultPageTitle: ServerStoryPage['title'],
 	spoilerPresets: SpoilerPreset[],
 	colors: StoryColor[],
 	quirks: Quirk[]
@@ -222,8 +222,8 @@ export const getPublicStory = (story: ServerStory): PublicStory => ({
 	quirks: story.quirks
 });
 
-/** Converts a `StoryPage` to a `ClientStoryPage`. */
-export const getClientStoryPage = (page: StoryPage): ClientStoryPage => ({
+/** Converts a `ServerStoryPage` to a `ClientStoryPage`. */
+export const getClientStoryPage = (page: ServerStoryPage): ClientStoryPage => ({
 	id: page.id,
 	...page.published !== undefined && {
 		published: +page.published

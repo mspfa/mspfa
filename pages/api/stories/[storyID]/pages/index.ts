@@ -1,6 +1,6 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
-import type { ServerStory, StoryPage, StoryPageID } from 'modules/server/stories';
+import type { ServerStory, ServerStoryPage, StoryPageID } from 'modules/server/stories';
 import { getStoryByUnsafeID, getClientStoryPage, updateStorySchedule } from 'modules/server/stories';
 import { authenticate } from 'modules/server/auth';
 import type { ClientStoryPage, ClientStoryPageRecord } from 'modules/client/stories';
@@ -130,7 +130,7 @@ const Handler: APIHandler<{
 				}
 
 				const { published, ...clientPageWithoutPublished } = clientPage;
-				const newPage: StoryPage = {
+				const newPage: ServerStoryPage = {
 					...clientPageWithoutPublished,
 					...published !== undefined && published !== null && {
 						published: new Date(published),
@@ -156,7 +156,7 @@ const Handler: APIHandler<{
 				}
 
 				const { published, ...clientPageWithoutPublished } = clientPage;
-				const pageChanges: RecursivePartial<StoryPage> = {
+				const pageChanges: RecursivePartial<ServerStoryPage> = {
 					...clientPageWithoutPublished,
 					...published !== undefined && published !== null && {
 						published: new Date(published),
@@ -187,9 +187,9 @@ const Handler: APIHandler<{
 
 				flatten(pageChanges, `pages.${pageID}.`, $set);
 
-				// Convert the modified `StoryPage` to a `ClientStoryPage` to send back to the client.
+				// Convert the modified `ServerStoryPage` to a `ClientStoryPage` to send back to the client.
 				newClientPages[pageID] = getClientStoryPage(
-					// Merge the changes in `pageChanges` into the original `StoryPage` to get what it would be after the changes.
+					// Merge the changes in `pageChanges` into the original `ServerStoryPage` to get what it would be after the changes.
 					mergeWith(page, pageChanges, overwriteArrays)
 				);
 			}

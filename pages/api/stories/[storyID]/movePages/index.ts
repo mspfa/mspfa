@@ -1,6 +1,6 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
-import type { StoryPage, StoryPageID } from 'modules/server/stories';
+import type { ServerStoryPage, StoryPageID } from 'modules/server/stories';
 import stories, { getStoryByUnsafeID, getClientStoryPage } from 'modules/server/stories';
 import { authenticate } from 'modules/server/auth';
 import { Perm } from 'modules/client/perms';
@@ -87,14 +87,14 @@ const Handler: APIHandler<{
 	/** The initial page ID of the previous page passed into `pushNewPage`. */
 	let previousOldPageID: StoryPageID | undefined;
 	/** The `published` value of the previous page passed into `pushNewPage`. */
-	let previousPublished: StoryPage['published'] | undefined;
+	let previousPublished: ServerStoryPage['published'] | undefined;
 
 	/**
 	 * Pushes a page to the story's updated set of pages. Adjusts the page's ID and sets it into the database update. If there is an error, never resolves.
 	 *
 	 * This should be called on every page of this story in the order of the new requested pages. This must not set properties into `story.pages`, since that is used to hold the original pages from before the move.
 	 */
-	const pushNewPage = (page: StoryPage) => new Promise<void>(resolve => {
+	const pushNewPage = (page: ServerStoryPage) => new Promise<void>(resolve => {
 		const oldPageID = page.id;
 		newPageID++;
 
