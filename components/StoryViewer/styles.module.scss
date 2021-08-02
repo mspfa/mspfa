@@ -76,6 +76,7 @@ $story-page-padding: 25px;
 	max-width: $page-width;
 
 	@include mobile {
-		max-width: 100%;
+		max-width: 100%; // For browsers that don't support `vw`.
+		max-width: 100vw;
 	}
 }
