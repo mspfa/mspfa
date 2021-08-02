@@ -4,15 +4,22 @@
 
 @import 'styles/general';
 
+$story-page-min-width: 600px;
 $story-page-padding: 25px;
 
 .story-page {
+	&-container {
+		display: flex;
+		justify-content: center;
+		padding: 7px 0 23px 0;
+	}
+
 	// `display: table;` conveniently allows the element's width to dynamically increase to fit its contents exactly the way we want it to.
 	display: table;
-	margin: 7px auto 23px auto;
 	padding: 0 $story-page-padding;
-	// `box-sizing: border-box;` must not be set here, as an effect hook depends on this element's `min-width` to refer to its content width.
-	min-width: 600px;
+    width: $story-page-min-width;
+	// `box-sizing: border-box;` must not be set on this element, as an effect hook depends on this element's `min-width` to refer to its content width.
+	min-width: $story-page-min-width;
 
 	&-title {
 		text-align: center;
