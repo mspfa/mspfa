@@ -146,7 +146,7 @@ export type BBCodeProps = {
 	html?: boolean,
 	/** Whether to blacklist all BBCode. */
 	noBB?: boolean,
-	/** Whether to insert a `.bbcode` element with the inputted children directly without any sanitization or parsing. */
+	/** Whether to insert a `.bb` element with the inputted children directly without any sanitization or parsing. */
 	raw?: boolean,
 	/** The original input BBCode string. */
 	children?: string
@@ -162,7 +162,7 @@ const BBCode = React.forwardRef<HTMLSpanElement, BBCodeProps>(({
 	if (raw) {
 		return (
 			<span
-				className="bbcode"
+				className="bb"
 				ref={ref}
 			>
 				{children}
@@ -174,7 +174,7 @@ const BBCode = React.forwardRef<HTMLSpanElement, BBCodeProps>(({
 
 	return (
 		<span
-			className="bbcode"
+			className="bb"
 			ref={ref}
 		>
 			{(noBB && !html

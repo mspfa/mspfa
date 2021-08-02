@@ -113,8 +113,8 @@ const tags: Record<string, {
 					<Label block htmlFor="field-bb-preview">
 						Preview
 					</Label>
-					{/* This `.bbcode` container is necessary to give the preview text the correct relative font size. */}
-					<span className="bbcode">
+					{/* This `.bb` container is to give the preview text the correct relative font size. */}
+					<span className="bb">
 						<Field
 							as="textarea"
 							id="field-bb-preview"
