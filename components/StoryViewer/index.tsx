@@ -1,10 +1,12 @@
+import './styles.module.scss';
 import Page from 'components/Page';
 import type { ClientStoryPage, PublicStory } from 'modules/client/stories';
 import Link from 'components/Link';
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { StoryPageID } from 'modules/server/stories';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
+import { useIsomorphicLayoutEffect } from 'react-use';
 
 /**
  * The number of next pages to preload ahead of the user's current page.
@@ -68,12 +70,94 @@ const StoryViewer = ({
 		}
 	}, [pageID, pages, pageContents]);
 
+	const storyPageElementRef = useRef<HTMLDivElement>(null!);
+
+	// Add the `panel` class to any media elements large enough to be considered a panel.
+	// This is a layout effect rather than a normal effect so that media is not briefly visible at the wrong size.
+	useIsomorphicLayoutEffect(() => {
+		/** The content width of the `#story-page` element. */
+		const storyPageContentWidth = +window.getComputedStyle(storyPageElementRef.current).minWidth.slice(0, -2);
+
+		/** Adds or removes the `panel` class to an inputted element based on its size relative to the `#story-page` element. */
+		const classifyPotentialPanel = (element: HTMLElement) => {
+			element.classList[
+				element.getBoundingClientRect().width > storyPageContentWidth
+					// If and only if the element is wider than the content width of the `#story-page` element, this element should have the `panel` class.
+					? 'add'
+					: 'remove'
+			]('panel');
+		};
+
+		/** An array of potential panel elements being listened to. */
+		const listeningPotentialPanels: Array<HTMLImageElement | HTMLVideoElement> = [];
+
+		/** Calls `classifyPotentialPanel` on the `event.target`. */
+		const potentialPanelListener = (event: Event) => {
+			classifyPotentialPanel(event.target as HTMLElement);
+		};
+
+		for (const tagName of ['img', 'video', 'iframe', 'canvas', 'object'] as const) {
+			for (const element of storyPageElementRef.current.getElementsByTagName(tagName)) {
+				// Clasify this element in case it's already loaded or it already has a set size.
+				classifyPotentialPanel(element);
+
+				if (
+					element instanceof HTMLImageElement
+					|| element instanceof HTMLVideoElement
+				) {
+					// If this element is one of the tags that can change size on load or error, then add listeners to classify potential panels on load or error.
+
+					element.addEventListener(
+						element instanceof HTMLVideoElement
+							? 'loadeddata'
+							: 'load',
+						potentialPanelListener
+					);
+					element.addEventListener('error', potentialPanelListener);
+
+					listeningPotentialPanels.push(element);
+				}
+			}
+		}
+
+		return () => {
+			for (const element of listeningPotentialPanels) {
+				element.removeEventListener(
+					element instanceof HTMLVideoElement
+						? 'loadeddata'
+						: 'load',
+					potentialPanelListener
+				);
+				element.removeEventListener('error', potentialPanelListener);
+			}
+		};
+	});
+
 	return (
 		<Page>
-			{story.title}<br />
-			<BBCode alreadySanitized>
-				{pageContents[pageID]}
-			</BBCode>
+			<div
+				id="story-page"
+				className="front"
+				ref={storyPageElementRef}
+			>
+				{page === null ? (
+					story.pageCount ? (
+						// This page does not exist.
+						<>This page does not exist.</>
+					) : (
+						// This story has no pages.
+						<>This adventure has no pages.</>
+					)
+				) : page === undefined ? (
+					// This page has not loaded yet.
+					<>Loading...</>
+				) : (
+					// This page is loaded.
+					<BBCode alreadySanitized>
+						{pageContents[pageID]}
+					</BBCode>
+				)}
+			</div>
 		</Page>
 	);
 };
