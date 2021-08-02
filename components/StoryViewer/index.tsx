@@ -47,7 +47,7 @@ const StoryViewer = ({
 	// This state is a ref to a partial record that maps each cached page ID to an HTML string of its sanitized `content`, as a caching optimization due to the performance cost of BBCode sanitization.
 	const [pageContents, setPageContents] = useState<Partial<Record<StoryPageID, string>>>({});
 	// Mutate `pageContents` to load this page's sanitized contents synchronously.
-	if (page && pageContents[pageID] !== undefined) {
+	if (page && pageContents[pageID] === undefined) {
 		pageContents[pageID] = sanitizePageContent(page);
 	}
 
@@ -58,7 +58,7 @@ const StoryViewer = ({
 		const newPageContents = { ...pageContents };
 
 		for (const page of Object.values(pages)) {
-			if (page && newPageContents[pageID] !== undefined) {
+			if (page && newPageContents[pageID] === undefined) {
 				newPageContents[pageID] = sanitizePageContent(page);
 				pageContentsChanged = true;
 			}
