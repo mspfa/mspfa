@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 
 export type DelimitProps = {
-	children?: JSX.Element | JSX.Element[],
+	children?: JSX.Element | Array<JSX.Element | false | undefined | null | ''>,
 	/** The element to delimit this component's children with. */
 	with: JSX.Element
 };
@@ -17,6 +17,7 @@ export type DelimitProps = {
  * ```
  * <Delimit with={<span className="delimiter"> | </span>}>
  * 	<span>example 1</span>
+ * 	{false}
  * 	<span>example 2</span>
  * 	<span key="my-key">example 3</span>
  * </Delimit>
@@ -44,8 +45,15 @@ export type DelimitProps = {
 const Delimit = ({ children = [], with: delimiter }: DelimitProps) => (
 	<>
 		{(Array.isArray(children)
-			? children.map((child, i) => (
-				<Fragment key={child.key === null ? child.props.id || i : child.key}>
+			? (children.filter(Boolean) as JSX.Element[]).map((child, i) => (
+				<Fragment
+					key={
+						child.key === null
+							// If no `key` is defined on this child component, default to its `id` prop instead, or if that's undefined too, default to the index of the child.
+							? child.props.id || i
+							: child.key
+					}
+				>
 					{i !== 0 && delimiter}
 					{child}
 				</Fragment>
