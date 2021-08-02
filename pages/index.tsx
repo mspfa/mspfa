@@ -94,7 +94,11 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 	const now = Date.now();
 
 	/** Whether this user is in preview mode (which shows unpublished pages) and has permission to be in preview mode. */
-	const previewMode = 'preview' in query && readPerms;
+	const previewMode = 'preview' in query;
+	if (previewMode && !readPerms) {
+		// The user does not have permission to be in preview mode.
+		return { props: { statusCode: 403 } };
+	}
 
 	/** Adds pages to `clientPages`, doing the same for their `nextPages` recursively until the recursion depth reaches the `PAGE_PRELOAD_DEPTH`. */
 	const addToClientPages = (

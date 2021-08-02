@@ -3,10 +3,12 @@ import Page from 'components/Page';
 import type { ClientStoryPage, PublicStory } from 'modules/client/stories';
 import Link from 'components/Link';
 import { useRouter } from 'next/router';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Fragment } from 'react';
 import type { StoryPageID } from 'modules/server/stories';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
 import { useIsomorphicLayoutEffect } from 'react-use';
+import Stick from 'components/Stick';
+import Delimit from 'components/Delimit';
 
 /**
  * The number of next pages to preload ahead of the user's current page.
@@ -38,12 +40,21 @@ const StoryViewer = ({
 			? +router.query.p
 			: 1
 	);
+	/** A URL query for whether the user is in preview mode, to be appended to URLs to this story. */
+	const previewQuery = 'preview' in router.query ? '&preview=1' as const : '' as const;
 
 	// This state is record of cached pages.
 	// If a page ID maps to `null`, then the page does not exist to this client, letting it know not to try to request it.
 	// If a page ID's value is undefined, then it has not been cached or requested yet.
 	const [pages, setPages] = useState(initialPages);
 	const page = pages[pageID];
+
+	/** The page ID to take the user to when clicking the "Go Back" link. Unless undefined, necessarily indexes a cached page. */
+	const previousPageID = ( // TODO: Calculate this correctly.
+		pageID === 1
+			? undefined
+			: pageID - 1
+	);
 
 	// This state is a ref to a partial record that maps each cached page ID to an HTML string of its sanitized `content`, as a caching optimization due to the performance cost of BBCode sanitization.
 	const [pageContents, setPageContents] = useState<Partial<Record<StoryPageID, string>>>({});
@@ -131,32 +142,103 @@ const StoryViewer = ({
 				element.removeEventListener('error', potentialPanelListener);
 			}
 		};
-	});
+	}, [pageID]);
 
 	return (
 		<Page>
 			<div
-				id="story-page"
-				className="front"
+				className="story-page front"
 				ref={storyPageElementRef}
 			>
-				{page === null ? (
-					story.pageCount ? (
-						// This page does not exist.
-						<>This page does not exist.</>
-					) : (
-						// This story has no pages.
-						<>This adventure has no pages.</>
-					)
-				) : page === undefined ? (
-					// This page has not loaded yet.
-					<>Loading...</>
-				) : (
-					// This page is loaded.
-					<BBCode alreadySanitized>
-						{pageContents[pageID]}
-					</BBCode>
-				)}
+				<Fragment
+					// This key is here to force the inner DOM to reset between different pages.
+					key={pageID}
+				>
+					{page?.title && (
+						<div className="story-page-title">
+							{page.title}
+						</div>
+					)}
+					<div className="story-page-content">
+						{page === null ? (
+							story.pageCount ? (
+								// This page does not exist.
+								<>This page does not exist.</>
+							) : (
+								// This story has no pages.
+								<>This adventure has no pages.</>
+							)
+						) : page === undefined ? (
+							// This page has not loaded yet.
+							null
+						) : (
+							// This page is loaded.
+							<BBCode alreadySanitized>
+								{pageContents[pageID]}
+							</BBCode>
+						)}
+					</div>
+					<div className="story-page-links">
+						{page?.nextPages.map((nextPageID, i) => {
+							const nextPage = pages[nextPageID];
+
+							// Only render this link if its page exists and isn't loading.
+							return nextPage && (
+								<div
+									key={i}
+									className="story-page-link-container"
+								>
+									<Link
+										shallow
+										href={`/?s=${story.id}&p=${nextPageID}${previewQuery}`}
+									>
+										{nextPage.title}
+									</Link>
+								</div>
+							);
+						})}
+					</div>
+				</Fragment>
+				<div className="story-page-footer">
+					{(
+						// Only render the group if its children would be rendered.
+						pageID !== 1
+						|| previousPageID !== undefined
+					) && (
+						<>
+							<span className="story-page-footer-group">
+								<Delimit with={<Stick />}>
+									{pageID !== 1 && (
+										<Link
+											key="start-over"
+											shallow
+											href={`/?s=${story.id}&p=1${previewQuery}`}
+										>
+											Start Over
+										</Link>
+									)}
+									{previousPageID !== undefined && (
+										<Link
+											key="go-back"
+											shallow
+											href={`/?s=${story.id}&p=${previousPageID}${previewQuery}`}
+										>
+											Go Back
+										</Link>
+									)}
+								</Delimit>
+							</span>
+							<span className="story-page-footer-group-delimiter" />
+						</>
+					)}
+					<span className="story-page-footer-group">
+						<Link>Save Game</Link>
+						<Stick />
+						<Link>Load Game</Link>
+						<Stick />
+						<Link>Delete Game Data</Link>
+					</span>
+				</div>
 			</div>
 		</Page>
 	);

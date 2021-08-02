@@ -1,14 +1,61 @@
+// This stylesheet is fine-tuned to be perfectly consistent with MSPA. Be extremely careful when editing it.
+
+@use 'sass:math';
+
 @import 'styles/general';
 
 $story-page-padding: 25px;
 
-#story-page {
+.story-page {
 	// `display: table;` conveniently allows the element's width to dynamically increase to fit its contents exactly the way we want it to.
 	display: table;
 	margin: 7px auto 23px auto;
 	padding: 0 $story-page-padding;
 	// `box-sizing: border-box;` must not be set here, as an effect hook depends on this element's `min-width` to refer to its content width.
 	min-width: 600px;
+
+	&-title {
+		text-align: center;
+		padding: 14px 5px;
+		font-size: xx-large;
+	}
+
+	&-content {
+		text-align: center;
+		padding-bottom: 14px;
+		line-height: 1;
+	}
+
+	&-links, &-footer {
+		padding: 17px 0;
+		font-family: $sans-serif;
+		font-weight: normal;
+	}
+
+	&-links {
+		font-size: x-large;
+	}
+
+	&-link-container::before {
+		content: '> ';
+	}
+
+	&-footer {
+		font-size: 0.875em;
+
+		&-group {
+			font-size: #{math.div(10, 14)}em;
+
+			&-delimiter::before {
+				content: '             ';
+				white-space: pre;
+			}
+		}
+
+		.link {
+			font-weight: bold;
+		}
+	}
 }
 
 .panel {
