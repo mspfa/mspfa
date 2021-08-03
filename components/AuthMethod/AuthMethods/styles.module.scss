@@ -6,7 +6,7 @@
 #auth-methods {
 	& > :not(:first-child) {
 		border-top: 1px solid;
-		@include theme(border-top-color, $back, meta.get-function('half-opacity'));
+		@include theme(border-top-color, $back-color, meta.get-function('half-opacity'));
 	}
 
 	&-footer {

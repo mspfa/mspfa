@@ -30,32 +30,32 @@ $text-color: (
 	dark: #e4e4e4
 );
 
-$back: (
+$back-color: (
 	standard: #535353,
 	dark: #141414
 );
 
-$mid: (
+$mid-color: (
 	standard: #c6c6c6,
 	dark: #202020
 );
 
-$front: (
+$front-color: (
 	standard: #eeeeee,
 	dark: #323232
 );
 
-// The text color for `$front-alt`.
-$text-color-alt: (
+// The text color for `$front-alt-color`.
+$text-alt-color: (
 	standard: #f2f2f2
 );
 
 // A color used for areas which are darker independently of theme.
-$front-alt: (
+$front-alt-color: (
 	standard: #696969
 );
 
-$frontest: (
+$frontest-color: (
 	standard: #ffffff,
 	dark: #1a1a1a
 );

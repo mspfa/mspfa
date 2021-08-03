@@ -3,7 +3,7 @@
 
 .input-like, input, textarea, select, option {
 	font-size: 0.8333rem;
-	@include theme(background-color, $frontest);
+	@include theme(background-color, $frontest-color);
 }
 
 .input-like, input, textarea, select {

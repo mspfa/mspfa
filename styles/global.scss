@@ -24,7 +24,7 @@ body {
 	margin: 0;
 	// This makes the scrollbar not change visibility and offset the page horizontally when changing the page height, for example by toggling tall spoilers on a short page.
 	overflow-y: scroll;
-	@include theme(background-color, $back);
+	@include theme(background-color, $back-color);
 	word-break: break-word;
 }
 
@@ -49,20 +49,20 @@ summary {
 }
 
 .mid {
-	@include theme(background-color, $mid);
+	@include theme(background-color, $mid-color);
 }
 
 .front {
-	@include theme(background-color, $front);
+	@include theme(background-color, $front-color);
 }
 
 .front-alt {
-	@include theme(background-color, $front-alt);
-	@include theme(color, $text-color-alt);
+	@include theme(background-color, $front-alt-color);
+	@include theme(color, $text-alt-color);
 }
 
 .frontest, input, textarea, select, option {
-	@include theme(background-color, $frontest);
+	@include theme(background-color, $frontest-color);
 }
 
 .translucent-text {

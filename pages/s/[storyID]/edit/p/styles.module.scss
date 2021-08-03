@@ -56,7 +56,7 @@
 	&-page {
 		&.draft > .box-heading {
 			// Even though this is the default `.box-heading` `background-color`, non-standard themes may overwrite it, so this is to ensure it keeps the standard gray independently of theme.
-			background-color: map.get($front-alt, standard);
+			background-color: map.get($front-alt-color, standard);
 		}
 
 		&.published > .box-heading {
