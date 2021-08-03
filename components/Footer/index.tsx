@@ -1,7 +1,5 @@
 import './styles.module.scss';
 import useSWR from 'swr';
-import Stick from 'components/Stick';
-import Link from 'components/Link';
 import WealthDungeon from 'components/WealthDungeon';
 
 type FooterAPIResponse = NonNullable<typeof import('pages/api/images/footer').default['Response']>['body'];
@@ -26,18 +24,8 @@ const Footer = () => {
 					<WealthDungeon />
 					<div className="mspface right" />
 				</div>
-				<div id="legal" className="mid">
-					<div id="copyright">
-						{`MS Paint Fan Adventures © 2010-${new Date().getFullYear()}`}
-					</div>
-					<Stick />
-					<div id="boring-important-stuff">
-						<Link href="/privacy" target="_blank">Privacy Policy</Link>
-						<Stick nix />
-						<Link href="/terms" target="_blank">Terms of Service</Link>
-						<Stick />
-						<Link href="/rules" target="_blank">Rules</Link>
-					</div>
+				<div id="copyright">
+					{`MS Paint Fan Adventures © 2010-${new Date().getFullYear()}`}
 				</div>
 			</footer>
 		</>

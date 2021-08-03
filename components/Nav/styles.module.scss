@@ -26,10 +26,11 @@ nav {
 }
 
 $nav-group-colors: (
-	primary: #39d5f6,
+	primary: #ffffff,
 	secondary: #29ff4a,
-	story: #f7f72a,
-	more: #ffb529
+	story: #39d5f6,
+	external: #f7f72a,
+	boring: #ffb529
 );
 
 #nav-group {
@@ -86,7 +87,7 @@ $nav-group-colors: (
 		position: relative;
 
 		&:focus {
-			color: #ffffff !important;
+			color: #c0c0c0 !important;
 		}
 
 		.nav-menu & {
@@ -94,7 +95,7 @@ $nav-group-colors: (
 			padding: 0 10px 0 5px;
 
 			&:hover {
-				background-color: rgba(255, 255, 255, 0.25);
+				background-color: rgba(128, 128, 128, 0.5);
 			}
 		}
 	}

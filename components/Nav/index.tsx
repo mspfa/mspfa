@@ -75,7 +75,8 @@ const Nav = () => {
 				<NavItem id="random" label="Mystery" title="Take me to a random adventure!" onClick={visitRandomStory} />
 			</NavGroup>
 			{storyNavGroup}
-			<NavGroup id="more">
+			<NavGroup id="external">
+				{/** Since these are all external links, they should all have `target="_blank"`, since the user's intention with them is generally not going to be to leave the site. */}
 				<NavMenu id="help" label="Help">
 					<NavItem id="help-discord" label="Discord" href="/discord" target="_blank" />
 					<NavItem id="help-email" label="Email" href="mailto:support@mspfa.com" target="_blank" />
@@ -85,6 +86,13 @@ const Nav = () => {
 					<NavItem id="patreon" label="Patreon" href="https://www.patreon.com/mspfa" target="_blank" />
 					<NavItem id="twitter" label="Twitter" href="https://twitter.com/mspfa" target="_blank" />
 					<NavItem id="github" label="GitHub" href="https://github.com/MSPFA/MSPFA" target="_blank" />
+				</NavMenu>
+			</NavGroup>
+			<NavGroup id="boring">
+				<NavItem id="rules" label="Rules" href="/rules" />
+				<NavMenu id="legal" label="Legal">
+					<NavItem id="privacy" label="Privacy Policy" href="/privacy" />
+					<NavItem id="terms" label="Terms of Service" href="/terms" />
 				</NavMenu>
 			</NavGroup>
 		</nav>
