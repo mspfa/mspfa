@@ -18,7 +18,7 @@ $story-page-padding: 25px;
 	display: table;
 	box-sizing: border-box;
 	padding: 0 $story-page-padding;
-    width: $story-page-min-width;
+	width: $story-page-min-width;
 	// `min-width` is necessary and must equal `width` because it is used by an effect hook to calculate this element's content width.
 	min-width: $story-page-min-width;
 

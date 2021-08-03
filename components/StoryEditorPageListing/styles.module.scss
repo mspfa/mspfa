@@ -51,7 +51,7 @@
 
 	&-columns {
 		display: flex;
-    	align-items: flex-start;
+		align-items: flex-start;
 
 		& > * {
 			width: 50%;
@@ -68,7 +68,7 @@
 	&-action {
 		display: grid;
 		grid-template-columns: auto 1fr;
-    	align-items: center;
+		align-items: center;
 		column-gap: 1ch;
 		row-gap: 0.5ch;
 
