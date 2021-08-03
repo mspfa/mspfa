@@ -72,7 +72,7 @@
 	font-family: $monospace;
 	font-weight: bold;
 	padding: 1px;
-	line-height: 1;
+	line-height: 0;
 
 	@include styled-button(
 		$scale: 1,
