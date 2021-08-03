@@ -32,7 +32,7 @@
 
 // Applies a pixelated shadow which gives the element 3D depth. Lowers the depth on `:active`.
 @mixin elevation(
-	$colors,
+	$color,
 	$scale: 2,
 	$depth: 2,
 	$depth-active: math.div($depth, 2),
@@ -43,12 +43,12 @@
 
 	margin-right: #{$margin}px;
 	margin-bottom: #{$margin}px;
-	@include theme(box-shadow, $colors, meta.get-function('elevation'), $scale, $depth);
+	@include theme(box-shadow, $color, meta.get-function('elevation'), $scale, $depth);
 
 	&:active {
 		left: #{$offset-active}px;
 		top: #{$offset-active}px;
-		@include theme(box-shadow, $colors, meta.get-function('elevation'), $scale, $depth-active);
+		@include theme(box-shadow, $color, meta.get-function('elevation'), $scale, $depth-active);
 
 		&::after {
 			// Prevent the button's bounding box from moving when active.
@@ -80,43 +80,35 @@
 // Applies styles to color and add depth to a `button` element.
 @mixin styled-button(
 	// A color value or a map of themes to color values for the color of the button.
-	$colors,
+	$color: false,
 	// Optional override for the default button text color.
 	$button-text-color: false,
-	// Whether `$colors` represents the color behind the button and not the color of the button.
-	$color-is-behind-button: false,
 	$scale: 2,
 	$depth: 2,
 	$depth-active: math.div($depth, 2),
 	$border: false
 ) {
-	@if type-of($colors) != 'map' {
-		$colors: (standard: $colors);
-	}
-
-	@if $button-text-color == false {
-		$button-text-color: $translucent-text-color;
-	}
-
-	@if type-of($button-text-color) != 'map' {
-		$button-text-color: (standard: $button-text-color);
-	}
-
-	@if $color-is-behind-button {
-		@each $theme, $color in $colors {
-			$colors: map.set($colors, $theme, adjust-color($color, -12));
+	@if $button-text-color {
+		@if type-of($button-text-color) == 'color' {
+			$button-text-color: (standard: $button-text-color);
 		}
+
+		@include theme(color, $button-text-color);
 	}
 
-	@include theme(background-color, $colors);
-	@include theme(color, $button-text-color);
-	@include elevation($colors, $scale, $depth, $depth-active, $border);
+	@if ($color) {
+		@if type-of($color) == 'color' {
+			$color: (standard: $color);
+		}
+
+		@include theme(background-color, $color);
+	} @else {
+		$color: $button-color;
+	}
+
+	@include elevation($color, $scale, $depth, $depth-active, $border);
 
 	@if $border {
-		@include theme(border, $colors, meta.get-function('styled-button-border'));
-	}
-
-	&:focus:not(:active) {
-		@include theme(background-color, $colors, meta.get-function('adjust-color'), 28);
+		@include theme(border, $color, meta.get-function('styled-button-border'));
 	}
 }

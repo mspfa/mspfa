@@ -11,7 +11,8 @@ export type HelpButtonProps = Omit<ButtonProps, 'children' | 'onClick' | 'title'
 
 const HelpButton = ({ className, children, ...props }: HelpButtonProps) => (
 	<Button
-		className={`icon help${className ? ` ${className}` : ''}`}
+		icon
+		className={`help-button${className ? ` ${className}` : ''}`}
 		title="Help"
 		onClick={
 			useCallback(() => {

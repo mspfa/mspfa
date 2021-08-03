@@ -6,7 +6,8 @@ export type AddButtonProps = Omit<ButtonProps, 'children'>;
 
 const AddButton = ({ className, ...props }: AddButtonProps) => (
 	<Button
-		className={`icon add${className ? ` ${className}` : ''}`}
+		icon
+		className={`add-button${className ? ` ${className}` : ''}`}
 		title="Add"
 		{...props}
 	/>

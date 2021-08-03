@@ -15,9 +15,9 @@
 }
 
 * {
-    outline: none;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-focus-ring-color: transparent;
+	outline: none;
+	-webkit-tap-highlight-color: transparent;
+	-webkit-focus-ring-color: transparent;
 }
 
 body {
@@ -34,7 +34,8 @@ input,
 input:-webkit-autofill::first-line,
 textarea,
 select,
-option {
+option,
+.button {
 	font-family: $monospace;
 	font-weight: bold;
 	@include theme(color, $text-color);

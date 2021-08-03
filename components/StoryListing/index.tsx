@@ -7,7 +7,7 @@ import FavButton from 'components/Button/FavButton';
 import EditButton from 'components/Button/EditButton';
 import { useUser } from 'modules/client/users';
 import { Perm } from 'modules/client/perms';
-import PagesIcon from 'components/LabeledIcon/PagesIcon';
+import PageCount from 'components/Icon/PageCount';
 import { Fragment, useCallback, useState } from 'react';
 import BBCode from 'components/BBCode';
 
@@ -64,9 +64,9 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 					<FavButton className="spaced" storyID={publicStory.id}>
 						{publicStory.favCount}
 					</FavButton>
-					<PagesIcon className="spaced">
+					<PageCount className="spaced">
 						{publicStory.pageCount}
-					</PagesIcon>
+					</PageCount>
 				</div>
 				{open && (
 					<div className="listing-section listing-blurb">

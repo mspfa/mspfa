@@ -85,6 +85,11 @@ $active-link-color: (
 	dark: #ee3333
 );
 
+$button-color: (
+	standard: #dadada,
+	dark: #6d6d6d
+);
+
 $translucent-text-color: ();
 @each $theme, $color in $text-color {
 	$translucent-text-color: map.set($translucent-text-color, $theme, color.scale($color, $alpha: -30%));

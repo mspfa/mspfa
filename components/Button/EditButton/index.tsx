@@ -6,7 +6,8 @@ export type EditButtonProps = Omit<ButtonProps, 'children'>;
 
 const EditButton = ({ className, ...props }: EditButtonProps) => (
 	<Button
-		className={`icon edit${className ? ` ${className}` : ''}`}
+		icon
+		className={`edit-button${className ? ` ${className}` : ''}`}
 		title="Edit"
 		{...props}
 	/>

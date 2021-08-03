@@ -16,11 +16,10 @@
 	text-decoration: none;
 	flex-shrink: 0;
 	@include styled-button(
-		$front-color,
-		$color-is-behind-button: true
+		$button-color
 	);
 
-	& + &:not(.icon) {
+	& + &:not(.icon-button) {
 		margin-left: 1ch;
 	}
 
@@ -32,6 +31,17 @@
 		opacity: 0.5;
 	}
 
+	&:focus:not(:active)::before {
+		content: '';
+		position: absolute;
+		pointer-events: none;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(255, 255, 255, 0.8);
+	}
+
 	&::after {
 		content: '';
 		position: absolute;
@@ -41,38 +51,35 @@
 		height: 100%;
 	}
 
-	&.icon, &.labeled-icon {
-		// Setting `font-size` to `1em` is necessary so that `1ch` measures the current font size correctly.
-		font-size: 1em;
-
-		@include styled-button(
-			$front-color,
-			$color-is-behind-button: true,
-			$scale: 1,
-			$border: true
-		);
-	}
-
-	&.icon {
-		width: 1em;
-		height: 1em;
-		padding: 1px;
-		background-repeat: no-repeat;
-		background-size: 1em;
-		background-position: 1px;
-	}
-
-	&.labeled-icon {
-		font-family: $monospace;
-		font-weight: bold;
-		padding: 0 3px 0 1px;
-	}
-
 	&.alt {
 		@include styled-button($front-alt-color, $text-alt-color);
 	}
 
 	&.small {
 		font-size: 1.25em;
+	}
+
+	.icon, &-label {
+		// This is necessary or else `z-index` doesn't do anything.
+		position: relative;
+		z-index: 1;
+	}
+}
+
+.icon-button {
+	// Setting `font-size` to `1em` is necessary even if the button is empty, so that `1ch` measures the current font size correctly.
+	font-size: 1em;
+	font-family: $monospace;
+	font-weight: bold;
+	padding: 1px;
+	line-height: 1;
+
+	@include styled-button(
+		$scale: 1,
+		$border: true
+	);
+
+	.button-label {
+		padding-right: 3px;
 	}
 }

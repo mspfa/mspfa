@@ -1,5 +1,4 @@
 import './styles.module.scss';
-import 'components/LabeledIcon/styles.module.scss';
 import Button from 'components/Button';
 import type { ButtonProps } from 'components/Button';
 import { useCallback, useState } from 'react';
@@ -29,7 +28,8 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 
 	return (
 		<Button
-			className={`labeled-icon heart${active ? ' active' : ''}${className ? ` ${className}` : ''}`}
+			icon
+			className={`fav-button${active ? ' active' : ''}${className ? ` ${className}` : ''}`}
 			title={`${favCount} Favorite${favCount === 1 ? '' : 's'}`}
 			onClick={
 				useCallback(async () => {

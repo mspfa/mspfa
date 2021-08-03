@@ -6,7 +6,8 @@ export type ReplyButtonProps = Omit<ButtonProps, 'children'>;
 
 const ReplyButton = ({ className, ...props }: ReplyButtonProps) => (
 	<Button
-		className={`icon reply${className ? ` ${className}` : ''}`}
+		icon
+		className={`reply-button${className ? ` ${className}` : ''}`}
 		title="Reply"
 		{...props}
 	/>

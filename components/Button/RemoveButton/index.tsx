@@ -6,7 +6,8 @@ export type RemoveButtonProps = Omit<ButtonProps, 'children'>;
 
 const RemoveButton = ({ className, ...props }: RemoveButtonProps) => (
 	<Button
-		className={`icon remove${className ? ` ${className}` : ''}`}
+		icon
+		className={`remove-button${className ? ` ${className}` : ''}`}
 		title="Remove"
 		{...props}
 	/>

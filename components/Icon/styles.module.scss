@@ -1,0 +1,13 @@
+.icon {
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 1em;
+	vertical-align: middle;
+
+	&.labeled {
+		margin-right: 2px;
+	}
+}
