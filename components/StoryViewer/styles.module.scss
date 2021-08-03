@@ -62,6 +62,13 @@ $story-page-padding: 25px;
 			&-delimiter::before {
 				content: '             ';
 				white-space: pre;
+
+				@include mobile {
+					content: '';
+					display: block;
+					// Separate the lines apart a bit to prevent mistapping.
+					height: 1.5em;
+				}
 			}
 		}
 
