@@ -537,12 +537,14 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 
 	return (
 		<Button
-			className={`icon bb-tool${open ? ' open' : ''}`}
+			icon={{
+				style: {
+					backgroundPositionX: `${-tagIndexes[tagName]}em`
+				}
+			}}
+			className={`bb-tool${open ? ' open' : ''}`}
 			title={tag.title}
 			disabled={disabled}
-			style={{
-				backgroundPositionX: `${-tagIndexes[tagName]}em`
-			}}
 			onClick={
 				useCallback(async () => {
 					let children = textAreaRef.current.value.slice(

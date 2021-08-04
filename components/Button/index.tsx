@@ -3,11 +3,16 @@ import React from 'react';
 import type { ButtonHTMLAttributes } from 'react';
 import type { LinkProps } from 'components/Link';
 import Link from 'components/Link';
+import type { IconProps } from 'components/Icon';
 import Icon from 'components/Icon';
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & Omit<LinkProps, 'buttonClass'> & {
-	/** Whether this is an icon button. This adds an `icon-button` class to the button element and inserts an `Icon` component as the button's first child. */
-	icon?: boolean,
+	/**
+	 * Whether this is an icon button. This adds an `icon-button` class to the button element and inserts an `Icon` component as the button's first child.
+	 *
+	 * The `Icon`'s props can also be passed here instead of `true`.
+	 */
+	icon?: boolean | IconProps,
 	href?: LinkProps['href']
 };
 
@@ -36,7 +41,11 @@ const Button = React.forwardRef<HTMLButtonElement & HTMLAnchorElement, ButtonPro
 	if (icon) {
 		className = `icon-button${className ? ` ${className}` : ''}`;
 
-		children = <Icon>{children}</Icon>;
+		children = (
+			<Icon {...icon}>
+				{children}
+			</Icon>
+		);
 	}
 
 	return href ? (
