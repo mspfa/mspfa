@@ -25,11 +25,6 @@
 	}
 }
 
-$text-color: (
-	standard: #000000,
-	dark: #e4e4e4
-);
-
 $back-color: (
 	standard: #535353,
 	dark: #141414
@@ -45,14 +40,21 @@ $front-color: (
 	dark: #2b2b2b
 );
 
-// The text color for `$front-alt-color`.
-$text-alt-color: (
-	standard: #f2f2f2
+$text-color: (
+	standard: #000000,
+	dark: #e4e4e4
 );
 
 // A color used for areas which are darker independently of theme.
 $front-alt-color: (
-	standard: #696969
+	standard: #696969,
+	dark: #494949
+);
+
+// The text color for `$front-alt-color`.
+$text-alt-color: (
+	standard: #f2f2f2,
+	dark: #f2f2f2
 );
 
 $frontest-color: (
@@ -87,22 +89,22 @@ $link-active-color: (
 
 $button-color: (
 	standard: #dadada,
-	dark: #505050
+	dark: #545454
 );
 
 $button-text-color: (
-	standard: #000000,
+	standard: #3e3e3e,
 	dark: #e0e0e0
 );
 
 $button-alt-color: (
 	standard: #585858,
-	dark: map-get($button-color, standard)
+	dark: #dadada
 );
 
 $button-text-alt-color: (
-	standard: map-get($button-text-color, dark),
-	dark: map-get($button-text-color, standard)
+	standard: #dddddd,
+	dark: #3e3e3e
 );
 
 $translucent-text-color: ();
