@@ -63,11 +63,13 @@ dialog {
 	color: inherit;
 	background: none;
 	border: 1px solid;
+	// Color the border so it blends with the shadow.
 	@include theme(border-color, $back-color, meta.get-function('half-opacity'));
 
 	@function box-shadow($color) {
 		@return 16px 16px 0 0 half-opacity($color);
 	}
+	// Color the shadow so it blends with the back color.
 	@include theme(box-shadow, $back-color, meta.get-function('box-shadow'));
 
 	animation: 0.05s step-end dialog-pop;
