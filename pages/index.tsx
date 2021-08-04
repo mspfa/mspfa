@@ -1,3 +1,4 @@
+import type { ClientPreviousPageIDs } from 'components/StoryViewer';
 import { PAGE_PRELOAD_DEPTH } from 'components/StoryViewer';
 import { uniqBy } from 'lodash';
 import { withErrorPage } from 'modules/client/errors';
@@ -18,11 +19,13 @@ const StoryViewer = dynamic(() => import('components/StoryViewer'));
 type ServerSideProps = {
 	userCache?: never,
 	publicStory?: never,
-	pages?: never
+	pages?: never,
+	previousPageIDs?: never
 } | {
 	userCache: PublicUser[],
 	publicStory: PublicStory,
-	pages: Record<StoryPageID, ClientStoryPage | null>
+	pages: Record<StoryPageID, ClientStoryPage | null>,
+	previousPageIDs: ClientPreviousPageIDs
 } | {
 	statusCode: number
 };
@@ -30,7 +33,8 @@ type ServerSideProps = {
 const Component = withErrorPage<ServerSideProps>(({
 	userCache: initialUserCache,
 	publicStory,
-	pages
+	pages,
+	previousPageIDs
 }) => {
 	const { cacheUser } = useUserCache();
 	initialUserCache?.forEach(cacheUser);
@@ -43,6 +47,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					key={publicStory.id}
 					story={publicStory}
 					pages={pages!}
+					previousPageIDs={previousPageIDs!}
 				/>
 			)
 			: <Homepage />
@@ -84,13 +89,6 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 			: 1
 	);
 
-	/**
-	 * A record of pages to send to the client.
-	 *
-	 * If a page ID maps to `null`, then the page does not exist to the client, letting the client know not to try to request it.
-	 */
-	const clientPages: Record<StoryPageID, ClientStoryPage | null> = {};
-
 	const now = Date.now();
 
 	/** Whether this user is in preview mode (which shows unpublished pages) and has permission to be in preview mode. */
@@ -117,6 +115,16 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 			previousPageIDs[nextPageID]!.push(page.id);
 		}
 	}
+
+	/** The initial `ClientPreviousPageIDs` to send to the client. */
+	const clientPreviousPageIDs: ClientPreviousPageIDs = {};
+
+	/**
+	 * A record of pages to send to the client.
+	 *
+	 * If a page ID maps to `null`, then the page does not exist to the client, letting the client know not to try to request it.
+	 */
+	const clientPages: Record<StoryPageID, ClientStoryPage | null> = {};
 
 	/** Adds pages to `clientPages`, doing the same for their `previousPageIDs` and `nextPages` recursively until the recursion depth reaches the `PAGE_PRELOAD_DEPTH`. */
 	const addToClientPages = (
@@ -148,6 +156,8 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 
 		// Add the `clientPage` to `clientPages`.
 		clientPages[pageID] = clientPage;
+		// Add the first of the `clientPage`'s `previousPageIDs` to `clientPreviousPageIDs`, or `null` if this page has no previous pages.
+		clientPreviousPageIDs[pageID] = previousPageIDs[pageID]?.[0] || null;
 
 		if (++depth > PAGE_PRELOAD_DEPTH) {
 			// If this iteration has reached the `PAGE_PRELOAD_DEPTH`, don't iterate any deeper.
@@ -179,7 +189,8 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 				willDelete: { $exists: false }
 			}).map(getPublicUser).toArray(),
 			publicStory: getPublicStory(story),
-			pages: clientPages
+			pages: clientPages,
+			previousPageIDs: clientPreviousPageIDs
 		}
 	};
 });

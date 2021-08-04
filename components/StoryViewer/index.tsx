@@ -6,13 +6,22 @@ import { useRouter } from 'next/router';
 import { useState, useEffect, useRef, Fragment, useCallback } from 'react';
 import type { StoryPageID } from 'modules/server/stories';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
-import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
+import { useIsomorphicLayoutEffect } from 'react-use';
 import Stick from 'components/Stick';
 import Delimit from 'components/Delimit';
 import Dialog from 'modules/client/Dialog';
 import { setStoryNavGroup } from 'components/Nav';
 import NavGroup from 'components/Nav/NavGroup';
 import NavItem from 'components/Nav/NavItem';
+
+/**
+ * A partial record that maps each page ID to a page ID that links to it via `nextPages`.
+ *
+ * If a page ID maps to `undefined`, the page's previous page is unknown. If it maps to `null`, then the page's previous page is known not to exist.
+ *
+ * For example, if page 6 maps to page 5, that means page 5 has 6 is its `nextPages`, and clicking "Go Back" on page 6 will take the user to page 5.
+ */
+export type ClientPreviousPageIDs = Partial<Record<StoryPageID, StoryPageID | null>>;
 
 /**
  * The number of next pages to preload ahead of the user's current page.
@@ -31,12 +40,14 @@ export type StoryViewerProps = {
 	 *
 	 * If a page ID maps to `null`, then the page does not exist to the client, letting the client know not to try to request it.
 	 */
-	pages: Partial<Record<StoryPageID, ClientStoryPage | null>>
+	pages: Partial<Record<StoryPageID, ClientStoryPage | null>>,
+	previousPageIDs: ClientPreviousPageIDs
 };
 
 const StoryViewer = ({
 	story,
-	pages: initialPages
+	pages: initialPages,
+	previousPageIDs: initialPreviousPageIDs
 }: StoryViewerProps) => {
 	const router = useRouter();
 	const pageID = (
@@ -66,12 +77,7 @@ const StoryViewer = ({
 		};
 	}, [story.id]);
 
-	// This state is a partial record that maps each page ID to a page ID that links to it via `nextPages`.
-	// If a page ID maps to `undefined`, the page's previous page is unknown. If it maps to `null`, then the page's previous page is known not to exist.
-	// For example, if page 6 maps to page 5, that means page 5 has 6 is its `nextPages`, and clicking "Go Back" on page 6 will take the user to page 5.
-	const [previousPageIDs, setPreviousPageIDs] = useState<Partial<Record<StoryPageID, StoryPageID | null>>>({});
-	/** A ref to the latest value of `previousPageIDs` to avoid race conditions. */
-	const previousPageIDsRef = useLatest(previousPageIDs);
+	const [previousPageIDs, setPreviousPageIDs] = useState(initialPreviousPageIDs);
 
 	/** The page ID to take the user to when clicking the "Go Back" link. Unless undefined, necessarily indexes a cached page. */
 	const previousPageID = previousPageIDs[pageID];
@@ -118,6 +124,7 @@ const StoryViewer = ({
 			// If this page is within the `PAGE_PRELOAD_DEPTH` but isn't cached, then fetch it and don't continue.
 			if (pageToCheck === undefined) {
 				// TODO: Fetch the `pageIDToCheck`.
+				console.log('fetch page', pageIDToCheck);
 
 				return;
 			}
@@ -126,6 +133,7 @@ const StoryViewer = ({
 			if (previousPageID === undefined) {
 				// If the `previousPageID` is unknown, fetch it.
 				// TODO: Ask the server with this page's first previous page is (via `?limit=1`).
+				console.log('fetch previous page of', pageIDToCheck);
 			} else if (previousPageID !== null) {
 				// If the `previousPageID` is known and exists, call this function on it.
 				fetchUnknownPages(previousPageID, depth);
