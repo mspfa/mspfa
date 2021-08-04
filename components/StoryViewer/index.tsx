@@ -124,7 +124,7 @@ const StoryViewer = ({
 			// If this page is within the `PAGE_PRELOAD_DEPTH` but isn't cached, then fetch it and don't continue.
 			if (pageToCheck === undefined) {
 				// TODO: Fetch the `pageIDToCheck`.
-				console.log('fetch page', pageIDToCheck);
+				console.log('fetch', pageIDToCheck);
 
 				return;
 			}
@@ -133,7 +133,7 @@ const StoryViewer = ({
 			if (previousPageID === undefined) {
 				// If the `previousPageID` is unknown, fetch it.
 				// TODO: Ask the server with this page's first previous page is (via `?limit=1`).
-				console.log('fetch previous page of', pageIDToCheck);
+				console.log('fetch previous to', pageIDToCheck);
 			} else if (previousPageID !== null) {
 				// If the `previousPageID` is known and exists, call this function on it.
 				fetchUnknownPages(previousPageID, depth);
