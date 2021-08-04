@@ -42,7 +42,7 @@ $mid-color: (
 
 $front-color: (
 	standard: #eeeeee,
-	dark: #323232
+	dark: #2b2b2b
 );
 
 // The text color for `$front-alt-color`.
@@ -57,12 +57,12 @@ $front-alt-color: (
 
 $frontest-color: (
 	standard: #ffffff,
-	dark: #1a1a1a
+	dark: #1b1b1b
 );
 
 $border-color: (
 	standard: #8d8d8d,
-	dark: #545454
+	dark: #484848
 );
 
 $border-focus-color: (
@@ -87,16 +87,16 @@ $link-active-color: (
 
 $button-color: (
 	standard: #dadada,
-	dark: #585858
+	dark: #505050
 );
 
 $button-text-color: (
 	standard: #000000,
-	dark: #ffffff
+	dark: #e0e0e0
 );
 
 $button-alt-color: (
-	standard: map-get($button-color, dark),
+	standard: #585858,
 	dark: map-get($button-color, standard)
 );
 
