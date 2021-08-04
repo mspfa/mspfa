@@ -5,11 +5,11 @@
 	@include theme(color, $link-color);
 
 	&:visited {
-		@include theme(color, $visited-link-color);
+		@include theme(color, $link-visited-color);
 	}
 
 	&:focus, &:active {
-		@include theme(color, $active-link-color);
+		@include theme(color, $link-active-color);
 	}
 
 	@at-root button#{&} {

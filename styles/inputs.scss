@@ -13,7 +13,7 @@
 	@include theme(border-color, $border-color);
 
 	&:focus {
-		@include theme(border-color, $focused-border-color);
+		@include theme(border-color, $border-focus-color);
 	}
 }
 
