@@ -100,12 +100,30 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		return { props: { statusCode: 403 } };
 	}
 
-	/** Adds pages to `clientPages`, doing the same for their `nextPages` recursively until the recursion depth reaches the `PAGE_PRELOAD_DEPTH`. */
+	/**
+	 * A record that maps each page ID to a sorted array of all page IDs that link to it via `nextPages`.
+	 *
+	 * For example, if page 6 maps to `[4, 5]`, that means pages 4 and 5 have 6 is their `nextPages`.
+	 */
+	const previousPageIDs: Partial<Record<StoryPageID, StoryPageID[]>> = {};
+
+	// Compute the `previousPageIDs`.
+	for (const page of Object.values(story.pages)) {
+		for (const nextPageID of page.nextPages) {
+			if (!(nextPageID in previousPageIDs)) {
+				previousPageIDs[nextPageID] = [];
+			}
+
+			previousPageIDs[nextPageID]!.push(page.id);
+		}
+	}
+
+	/** Adds pages to `clientPages`, doing the same for their `previousPageIDs` and `nextPages` recursively until the recursion depth reaches the `PAGE_PRELOAD_DEPTH`. */
 	const addToClientPages = (
-		/** The the ID of the page to add to `clientPages`. */
+		/** The ID of the page to add to `clientPages`. */
 		pageID: StoryPageID,
 		/** The recursion depth of this function call. */
-		depth: number
+		depth = 0
 	) => {
 		// If this page is already added, then don't continue.
 		if (pageID in clientPages) {
@@ -136,13 +154,21 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 			return;
 		}
 
-		// Call this function of each of this page's `nextPages` as well.
+		// Call this function on each of the `previousPageIDsOfThisPage`, if there are any.
+		const previousPageIDsOfThisPage = previousPageIDs[pageID];
+		if (previousPageIDsOfThisPage) {
+			for (const previousPageID of previousPageIDsOfThisPage) {
+				addToClientPages(previousPageID, depth);
+			}
+		}
+
+		// Call this function on each of this page's `nextPages`.
 		for (const nextPageID of clientPage.nextPages) {
 			addToClientPages(nextPageID, depth);
 		}
 	};
 
-	addToClientPages(pageID, 0);
+	addToClientPages(pageID);
 
 	return {
 		props: {

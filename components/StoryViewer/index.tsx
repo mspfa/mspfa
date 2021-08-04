@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { useState, useEffect, useRef, Fragment, useCallback } from 'react';
 import type { StoryPageID } from 'modules/server/stories';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
-import { useIsomorphicLayoutEffect } from 'react-use';
+import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 import Stick from 'components/Stick';
 import Delimit from 'components/Delimit';
 import Dialog from 'modules/client/Dialog';
@@ -66,12 +66,15 @@ const StoryViewer = ({
 		};
 	}, [story.id]);
 
+	// This state is a partial record that maps each page ID to a page ID that links to it via `nextPages`.
+	// If a page ID maps to `undefined`, the page's previous page is unknown. If it maps to `null`, then the page's previous page is known not to exist.
+	// For example, if page 6 maps to page 5, that means page 5 has 6 is its `nextPages`, and clicking "Go Back" on page 6 will take the user to page 5.
+	const [previousPageIDs, setPreviousPageIDs] = useState<Partial<Record<StoryPageID, StoryPageID | null>>>({});
+	/** A ref to the latest value of `previousPageIDs` to avoid race conditions. */
+	const previousPageIDsRef = useLatest(previousPageIDs);
+
 	/** The page ID to take the user to when clicking the "Go Back" link. Unless undefined, necessarily indexes a cached page. */
-	const previousPageID = ( // TODO: Calculate this correctly.
-		pageID === 1
-			? undefined
-			: pageID - 1
-	);
+	const previousPageID = previousPageIDs[pageID];
 
 	// This state is a ref to a partial record that maps each cached page ID to an HTML string of its sanitized `content`, as a caching optimization due to the performance cost of BBCode sanitization.
 	const [pageContents, setPageContents] = useState<Partial<Record<StoryPageID, string>>>({});
@@ -80,23 +83,79 @@ const StoryViewer = ({
 		pageContents[pageID] = sanitizePageContent(page);
 	}
 
-	// Cache new pages and preload the BBCode and images of cached pages.
+	// Fetch new pages, cache page BBCode, and preload the BBCode and images of cached pages.
 	// None of this should be done server-side, because anything cached or preloaded server-side would be unnecessary as it would not be sent to the client.
 	useEffect(() => {
+		/** A partial record mapping each page ID to `true` if `fetchUnknownPages` has already been called on it. */
+		const checkedForUnknownPages: Partial<Record<StoryPageID, true>> = {};
+
+		/** Fetches unknown `previousPageIDs` and `nextPages`, doing the same for their `previousPageIDs` and `nextPages` recursively until the recursion depth reaches the `PAGE_PRELOAD_DEPTH`. */
+		const fetchUnknownPages = (
+			/** The page ID to check the `previousPageIDs` and `nextPages` of. */
+			pageIDToCheck: StoryPageID,
+			/** The recursion depth of this function call. */
+			depth = 0
+		) => {
+			// If this page is already checked, then don't continue.
+			if (checkedForUnknownPages[pageIDToCheck]) {
+				return;
+			}
+
+			// Mark this `pageIDToCheck` as checked.
+			checkedForUnknownPages[pageIDToCheck] = true;
+
+			const pageToCheck = pages[pageIDToCheck];
+
+			if (
+				// If this page doesn't exist, don't bother checking it.
+				pageToCheck === null
+				// If this iteration has reached the `PAGE_PRELOAD_DEPTH`, don't iterate any deeper.
+				|| ++depth > PAGE_PRELOAD_DEPTH
+			) {
+				return;
+			}
+
+			// If this page is within the `PAGE_PRELOAD_DEPTH` but isn't cached, then fetch it and don't continue.
+			if (pageToCheck === undefined) {
+				// TODO: Fetch the `pageIDToCheck`.
+
+				return;
+			}
+
+			const previousPageID = previousPageIDs[pageIDToCheck];
+			if (previousPageID === undefined) {
+				// If the `previousPageID` is unknown, fetch it.
+				// TODO: Ask the server with this page's first previous page is (via `?limit=1`).
+			} else if (previousPageID !== null) {
+				// If the `previousPageID` is known and exists, call this function on it.
+				fetchUnknownPages(previousPageID, depth);
+			}
+
+			// Iterate over each of this page's `nextPages`.
+			for (const nextPageID of pageToCheck.nextPages) {
+				fetchUnknownPages(nextPageID, depth);
+			}
+		};
+
+		fetchUnknownPages(pageID);
+
 		let pageContentsChanged = false;
 		const newPageContents = { ...pageContents };
 
-		for (const page of Object.values(pages)) {
-			if (page && newPageContents[pageID] === undefined) {
-				newPageContents[pageID] = sanitizePageContent(page);
+		// Iterate through all fetched pages.
+		for (const pageValue of Object.values(pages)) {
+			// If the page exists, cache its BBCode if it is not already cached.
+			if (pageValue && newPageContents[pageValue.id] === undefined) {
+				newPageContents[pageValue.id] = sanitizePageContent(pageValue);
 				pageContentsChanged = true;
 			}
 		}
 
+		// Update the cache if it changed.
 		if (pageContentsChanged) {
 			setPageContents(newPageContents);
 		}
-	}, [pageID, pages, pageContents]);
+	}, [pageID, pages, pageContents, previousPageIDs]);
 
 	const storyPageElementRef = useRef<HTMLDivElement>(null!);
 
