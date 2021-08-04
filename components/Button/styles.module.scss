@@ -39,7 +39,7 @@
 		height: 100%;
 		// Inherit the button's background color so we can filter it below.
 		background-color: inherit;
-		// The reason this filter is double-inverted is so brightness is applied roughly evently regardless of whether the original color is light or dark.
+		// The reason this filter is double-inverted is so brightness is applied roughly evenly regardless of whether the original color is light or dark.
 		filter: brightness(1.15) invert(1) brightness(0.85) invert(1);
 	}
 
