@@ -99,7 +99,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 	}
 
 	/**
-	 * A record that maps each page ID to a sorted array of all page IDs that link to it via `nextPages`.
+	 * A record that maps each page ID to a sorted array of all page IDs before it that link to it via `nextPages`.
 	 *
 	 * For example, if page 6 maps to `[4, 5]`, that means pages 4 and 5 have 6 is their `nextPages`.
 	 */
@@ -108,6 +108,11 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 	// Compute the `previousPageIDs`.
 	for (const page of Object.values(story.pages)) {
 		for (const nextPageID of page.nextPages) {
+			// Don't consider the page a previous page if it's after the linked page i.e. if the page link goes backward.
+			if (page.id < nextPageID) {
+				continue;
+			}
+
 			if (!(nextPageID in previousPageIDs)) {
 				previousPageIDs[nextPageID] = [];
 			}

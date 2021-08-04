@@ -15,7 +15,7 @@ import NavGroup from 'components/Nav/NavGroup';
 import NavItem from 'components/Nav/NavItem';
 
 /**
- * A partial record that maps each page ID to a page ID that links to it via `nextPages`.
+ * A partial record that maps each page ID to a page ID before it that links to it via `nextPages`.
  *
  * If a page ID maps to `undefined`, the page's previous page is unknown. If it maps to `null`, then the page's previous page is known not to exist.
  *
@@ -234,6 +234,12 @@ const StoryViewer = ({
 		};
 	}, [pageID]);
 
+	/** Whether the "Go Back" link should be shown. */
+	const showGoBack = !(
+		previousPageID === null
+		|| previousPageID === undefined
+	);
+
 	return (
 		<Page>
 			<div className="story-page-container">
@@ -292,9 +298,8 @@ const StoryViewer = ({
 					</Fragment>
 					<div className="story-page-footer">
 						{(
-							// Only render the group if its children would be rendered.
-							pageID !== 1
-							|| previousPageID !== undefined
+							// Only render the group if any of its children would be rendered.
+							pageID !== 1 || showGoBack
 						) && (
 							<>
 								<span className="story-page-footer-group">
@@ -308,7 +313,7 @@ const StoryViewer = ({
 												Start Over
 											</Link>
 										)}
-										{previousPageID !== undefined && (
+										{showGoBack && (
 											<Link
 												key="go-back"
 												shallow
