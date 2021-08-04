@@ -34,8 +34,7 @@ input,
 input:-webkit-autofill::first-line,
 textarea,
 select,
-option,
-.button {
+option {
 	font-family: $monospace;
 	font-weight: bold;
 	@include theme(color, $text-color);
