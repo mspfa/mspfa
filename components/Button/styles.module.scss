@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 @import 'styles/general';
 @import 'styles/buttons';
 @import 'styles/themes';
@@ -39,8 +41,11 @@
 		height: 100%;
 		// Inherit the button's background color so we can filter it below.
 		background-color: inherit;
-		// The reason this filter is double-inverted is so brightness is applied roughly evenly regardless of whether the original color is light or dark.
-		filter: brightness(1.15) invert(1) brightness(0.85) invert(1);
+
+		// An amount of brightness to add to the background color (from 0 to 1).
+		$added-brightness: 0.2;
+		// This formula works. It adds a constant amount of brightness independently of the initial brightness. Just trust me; I tested it on Desmos.
+		filter: brightness(math.div(1, 1 - $added-brightness)) invert(1) brightness(1 - $added-brightness) invert(1);
 	}
 
 	&::after {
