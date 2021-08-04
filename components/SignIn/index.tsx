@@ -72,7 +72,9 @@ const SignIn = ({ page }: SignInProps) => {
 
 	const mountedRef = useMountedRef();
 
+	// This state is whether the inputted email is valid and taken on `page === 1`, or undefined if whether it's taken is still loading.
 	const [emailTaken, setEmailTaken] = useState<boolean>();
+
 	const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source>>();
 
 	/** Asynchronously checks if the `email` is taken and sets the `emailTaken` state accordingly. */
@@ -91,38 +93,57 @@ const SignIn = ({ page }: SignInProps) => {
 		}
 	}, [mountedRef]);
 
+	/** If `page === 1`, queues an update to the `emailTaken` state, possibly via a `checkEmail` call. */
+	const updateEmailTaken = useCallback((email: string) => {
+		// Cancel the last `checkEmail` call, if there is one pending.
+		if (checkEmail.timeoutRef.current) {
+			clearTimeout(checkEmail.timeoutRef.current);
+		}
+		// Cancel the last `/emailTaken` request, if there is one pending.
+		if (cancelTokenSourceRef.current) {
+			cancelTokenSourceRef.current.cancel();
+			cancelTokenSourceRef.current = undefined;
+		}
+
+		// If the user isn't on the first sign-up page, then stop since doing anything else would be useless.
+		if (page !== 1) {
+			return;
+		}
+
+		if (!emailTest.test(email)) {
+			// If the email is invalid, then it shouldn't report an error for being taken.
+			setEmailTaken(false);
+			return;
+		}
+
+		// Set whether the email is taken as unknown, since it's about to be checked afterward by the `checkEmail` call.
+		setEmailTaken(undefined);
+
+		checkEmail(email);
+	}, [page, checkEmail]);
+
 	const onChangeEmail = useCallback((
 		event: ChangeEvent<HTMLInputElement & HTMLSelectElement & { name: 'email' }>
 	) => {
-		if (page === 1) {
-			cancelTokenSourceRef.current?.cancel();
-
-			setEmailTaken(undefined);
-
-			if (emailTest.test(event.target.value)) {
-				checkEmail(event.target.value);
-			}
-		}
+		updateEmailTaken(event.target.value);
 
 		onChange(event);
-	}, [page, checkEmail]);
+	}, [updateEmailTaken]);
 
 	const emailInputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
-		if (page === 1) {
-			// Check if the email is taken in case they already have an email entered but just switched to the sign-up page.
-			checkEmail(signInValues.email);
-		}
-	}, [page, checkEmail]);
+		// Check if the email is taken in case they already have an email entered but just switched to the sign-up page.
+		updateEmailTaken(signInValues.email);
+	}, [updateEmailTaken]);
 
 	useIsomorphicLayoutEffect(() => {
 		emailInputRef.current?.setCustomValidity(
 			page === 1
 				? emailTaken
 					? 'This email is taken.'
-					: emailTaken === undefined && emailTest.test(emailInputRef.current.value)
-						? 'Loading...'
+					: emailTaken === undefined
+						? 'Checking whether this email is taken...'
 						: ''
 				: ''
 		);
