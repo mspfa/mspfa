@@ -44,7 +44,7 @@
 
 		// An amount of brightness to add to the background color (from 0 to 1).
 		$added-brightness: 0.2;
-		// This formula works. It adds a constant amount of brightness independently of the initial brightness. Just trust me; I tested it on Desmos.
+		// This formula adds a constant amount of brightness independently of the initial brightness. It works. Just trust me; I tested it on Desmos.
 		filter: brightness(math.div(1, 1 - $added-brightness)) invert(1) brightness(1 - $added-brightness) invert(1);
 	}
 
