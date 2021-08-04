@@ -9,7 +9,7 @@ nav {
 	text-transform: uppercase;
 	flex-wrap: wrap;
 	background-color: #000000;
-	z-index: 10;
+	z-index: 200;
 	padding: 0 1ch;
 	color: #bbbbbb;
 
@@ -66,7 +66,7 @@ $nav-group-colors: (
 
 		display: none;
 		position: absolute;
-		z-index: 30;
+		z-index: 400;
 		margin-left: -5px;
 		background-color: inherit;
 		flex-direction: column;
@@ -74,7 +74,7 @@ $nav-group-colors: (
 
 		&-container:hover & {
 			display: flex;
-			z-index: 31;
+			z-index: 401;
 		}
 
 		&-container.force-open & {

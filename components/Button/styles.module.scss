@@ -65,6 +65,7 @@
 	.icon, &-label {
 		// This is necessary or else `z-index` doesn't do anything.
 		position: relative;
+		// Put the label in front of the `::before`.
 		z-index: 1;
 	}
 }
