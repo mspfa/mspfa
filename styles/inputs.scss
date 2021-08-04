@@ -23,8 +23,8 @@
 
 input, textarea, select {
 	&:disabled {
-		opacity: 0.7;
 		cursor: default;
+		opacity: 0.7;
 	}
 }
 

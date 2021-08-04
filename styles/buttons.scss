@@ -45,7 +45,7 @@
 	margin-bottom: #{$margin}px;
 	@include theme(box-shadow, $color, meta.get-function('elevation'), $scale, $depth);
 
-	&:active {
+	&:active:not(:disabled) {
 		left: #{$offset-active}px;
 		top: #{$offset-active}px;
 		@include theme(box-shadow, $color, meta.get-function('elevation'), $scale, $depth-active);
