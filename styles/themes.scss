@@ -87,7 +87,22 @@ $active-link-color: (
 
 $button-color: (
 	standard: #dadada,
-	dark: #6d6d6d
+	dark: #585858
+);
+
+$button-text-color: (
+	standard: #000000,
+	dark: #ffffff
+);
+
+$button-alt-color: (
+	standard: map-get($button-color, dark),
+	dark: map-get($button-color, standard)
+);
+
+$button-text-alt-color: (
+	standard: map-get($button-text-color, dark),
+	dark: map-get($button-text-color, standard)
 );
 
 $translucent-text-color: ();

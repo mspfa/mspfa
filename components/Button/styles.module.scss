@@ -15,9 +15,7 @@
 	vertical-align: middle;
 	text-decoration: none;
 	flex-shrink: 0;
-	@include styled-button(
-		$button-color
-	);
+	@include styled-button($button-color, $button-text-color);
 
 	& + &:not(.icon-button) {
 		margin-left: 1ch;
@@ -55,7 +53,7 @@
 	}
 
 	&.alt {
-		@include styled-button($front-alt-color, $text-alt-color);
+		@include styled-button($button-alt-color, $button-text-alt-color);
 	}
 
 	&.small {
@@ -78,10 +76,7 @@
 	padding: 1px;
 	line-height: 0;
 
-	@include styled-button(
-		$scale: 1,
-		$border: true
-	);
+	@include styled-button($scale: 1, $border: true);
 
 	.button-label {
 		margin-right: 1px;
