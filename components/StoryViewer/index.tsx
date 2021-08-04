@@ -116,7 +116,7 @@ const StoryViewer = ({
 				// If this page doesn't exist, don't bother checking it.
 				pageToCheck === null
 				// If this iteration has reached the `PAGE_PRELOAD_DEPTH`, don't iterate any deeper.
-				// The reason it's `depth++` instead of `++depth` like on the server is because it needs to go one extra recursion step in order to fetch the pages one step outside the `PAGE_PRELOAD_DEPTH`.
+				// The reason it's `depth++` instead of `++depth` (like on the server) is because it needs to go one extra recursion step in order to fetch the pages one step outside the `PAGE_PRELOAD_DEPTH`.
 				|| depth++ > PAGE_PRELOAD_DEPTH
 			) {
 				return;
