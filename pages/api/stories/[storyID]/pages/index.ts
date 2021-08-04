@@ -10,7 +10,7 @@ import { Perm } from 'modules/client/perms';
 import { flatten } from 'modules/server/db';
 import { mergeWith } from 'lodash';
 import overwriteArrays from 'modules/client/overwriteArrays';
-import type { UpdateQuery } from 'mongodb';
+import type { UpdateFilter } from 'mongodb';
 
 /** The keys of all `ClientStoryPage` properties which the client should be able to `PUT` into any of their existing `ServerStory['pages']` (except `'published'`). */
 type PuttableStoryPageKey = 'title' | 'content' | 'nextPages' | 'unlisted' | 'disableControls' | 'commentary' | 'notify';
@@ -228,7 +228,7 @@ const Handler: APIHandler<{
 		}
 	}
 
-	const updateQuery: UpdateQuery<ServerStory> = { $unset };
+	const updateQuery: UpdateFilter<ServerStory> = { $unset };
 
 	const pageValues = Object.values(story.pages);
 

@@ -14,7 +14,7 @@ import { StoryPrivacy } from 'modules/client/stories';
 import List from 'components/List';
 import StoryListing from 'components/StoryListing';
 import { Perm } from 'modules/client/perms';
-import type { FilterQuery } from 'mongodb';
+import type { Filter } from 'mongodb';
 
 type ServerSideProps = {
 	publicUser: PublicUser,
@@ -74,13 +74,13 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 	}
 
 	/** Queries non-deleted favorites of the user from params. */
-	const favsFilterQuery: FilterQuery<ServerStory> = {
+	const favsFilter: Filter<ServerStory> = {
 		_id: { $in: userFromParams.favs },
 		willDelete: { $exists: false }
 	};
 
 	/** Queries public adventures, or both public and unlisted adventures if the user is viewing their own favorites page. */
-	const privacyFilterQuery: FilterQuery<ServerStory> = {
+	const privacyFilter: Filter<ServerStory> = {
 		privacy: (
 			readPerms
 				// A user should be able to see unlisted adventures which they favorited.
@@ -97,14 +97,14 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 			publicStories: await stories.find!(
 				req.user
 					? req.user.perms & Perm.sudoRead
-						? favsFilterQuery
+						? favsFilter
 						: {
-							$and: [favsFilterQuery, {
-								$or: [privacyFilterQuery, {
+							$and: [favsFilter, {
+								$or: [privacyFilter, {
 									$and: [{
 										privacy: (
 											readPerms
-												// If the user is viewing their own favorites page, they can already see unlisted adventures via `privacyFilterQuery`.
+												// If the user is viewing their own favorites page, they can already see unlisted adventures via `privacyFilter`.
 												? StoryPrivacy.Private
 												: { $in: [StoryPrivacy.Unlisted, StoryPrivacy.Private] }
 										)
@@ -118,7 +118,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 								}]
 							}]
 						}
-					: Object.assign(favsFilterQuery, privacyFilterQuery)
+					: Object.assign(favsFilter, privacyFilter)
 			).map(getPublicStory).toArray()
 		}
 	};

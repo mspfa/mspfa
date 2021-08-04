@@ -10,7 +10,7 @@ import type { PrivateUser, PublicUser } from 'modules/client/users';
 import axios from 'axios';
 import { connection, safeObjectID } from 'modules/server/db';
 import { escapeRegExp } from 'lodash';
-import type { FilterQuery } from 'mongodb';
+import type { Filter } from 'mongodb';
 
 const Handler: APIHandler<(
 	{
@@ -115,7 +115,7 @@ const Handler: APIHandler<(
 
 	await connection;
 
-	let filterQuery: FilterQuery<ServerUser> = {
+	let filter: Filter<ServerUser> = {
 		name: {
 			$regex: new RegExp(escapeRegExp(req.query.search), 'i')
 		},
@@ -125,17 +125,17 @@ const Handler: APIHandler<(
 	const userID = safeObjectID(req.query.search);
 
 	if (userID) {
-		filterQuery = {
+		filter = {
 			$or: [
 				{ _id: userID },
-				filterQuery
+				filter
 			],
 			willDelete: { $exists: false }
 		};
 	}
 
 	let results = (
-		await users.find!(filterQuery).map(getPublicUser).toArray()
+		await users.find!(filter).map(getPublicUser).toArray()
 	).sort((a, b) => (
 		// Sort by lowest search index first.
 		a.name.indexOf(req.query.search) - b.name.indexOf(req.query.search)

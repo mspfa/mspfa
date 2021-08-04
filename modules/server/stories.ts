@@ -6,7 +6,7 @@ import { StoryStatus, StoryPrivacy } from 'modules/client/stories';
 import type { ServerUser, ServerUserID } from 'modules/server/users';
 import users from 'modules/server/users';
 import type { APIResponse } from 'modules/server/api';
-import type { UpdateQuery } from 'mongodb';
+import type { UpdateFilter } from 'mongodb';
 import type { Comment } from 'modules/server/comments';
 
 /** @minimum 1 */
@@ -348,13 +348,13 @@ export const updateStorySchedule = async (
 	 */
 	story: ServerStory,
 	/**
-	 * An update query for this story. Any updates from this function will be added to this object. Upon this function's completion, anything on this object will be updated to the database for this story. Defaults to an empty object.
+	 * An update filter for this story. Any updates from this function will be added to this object. Upon this function's completion, anything on this object will be updated to the database for this story. Defaults to an empty object.
 	 *
 	 * This parameter is useful purely as an optimization, in order to avoid unnecessarily calling `updateOne` on the same story twice (once inside this function, and again outside wherever this function is being called), allowing it to instead only be called once inside.
 	 */
-	update: Omit<UpdateQuery<ServerStory>, '$set' | '$unset'> & {
-		$set?: Mutable<UpdateQuery<ServerStory>['$set']>,
-		$unset?: Mutable<UpdateQuery<ServerStory>['$unset']>
+	update: Omit<UpdateFilter<ServerStory>, '$set' | '$unset'> & {
+		$set?: Mutable<UpdateFilter<ServerStory>['$set']>,
+		$unset?: Mutable<UpdateFilter<ServerStory>['$unset']>
 	} = {}
 ) => {
 	unscheduleStory(story._id);

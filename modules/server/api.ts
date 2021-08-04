@@ -81,7 +81,7 @@ export const createValidator = (methodSchema: Record<string, unknown>, schema: R
 					let errorMessage = error.message!;
 					// Filter out unhelpful error messages.
 					if (!errorMessage.includes('schema')) {
-						errorMessage = `${error.dataPath.slice(1).replace(/\//g, '.')}: ${errorMessage}`;
+						errorMessage = `${error.instancePath.slice(1).replace(/\//g, '.')}: ${errorMessage}`;
 						if (!errorMessages.includes(errorMessage)) {
 							errorMessages.push(errorMessage);
 						}

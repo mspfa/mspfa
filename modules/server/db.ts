@@ -1,10 +1,8 @@
-import mongodb, { MongoClient, ObjectId } from 'mongodb';
-import type { Db, Collection } from 'mongodb';
+import { Collection, MongoClient, ObjectId } from 'mongodb';
+import type { Db } from 'mongodb';
 
 // `as any` below is to make TypeScript not angry when this module is imported from `scripts/setup`.
-const client = new MongoClient((process.env as any).DB_HOST, {
-	useUnifiedTopology: true
-});
+const client = new MongoClient((process.env as any).DB_HOST);
 
 let mspfaDB: Db | undefined;
 
@@ -18,9 +16,8 @@ export const connection = client.connect().then(() => {
 	return mspfaDB;
 });
 
-// `mongodb as any` below, along with the `mongodb` import as opposed to importing `Collection` directly, is necessary because `@types/mongodb` doesn't support the `Collection` class.
-/** An array of the keys of a `Collection` instance. */
-const collectionKeys: Array<keyof Collection> = Object.keys((mongodb as any).Collection.prototype) as any[];
+/** An array of all the keys of a `Collection` instance. */
+const collectionKeys = Object.getOwnPropertyNames(Collection.prototype) as Array<keyof Collection>;
 
 /** A `Collection` with only its async function properties. */
 type PartialCollection<Document extends Record<string, any> = any> = {
@@ -38,12 +35,13 @@ const db = {
 			return mspfaDB.collection<Document>(name);
 		}
 
+		// This is typed as `any` because I don't think figuring out a mutable type that works here is worth my time.
 		/**
 		 * Before the DB connects, this is the collection with only its async function properties (`PartialCollection<Document>`).
 		 *
 		 * After the DB connects, this is set to the full collection (`Collection<Document>`).
 		 */
-		const partialCollection: Collection<Document> | PartialCollection<Document> = {} as any;
+		const partialCollection: any = {};
 
 		const collectionUpdate = connection.then(() => {
 			const collection = mspfaDB!.collection<Document>(name);
@@ -67,7 +65,7 @@ const db = {
 			};
 		}
 
-		return partialCollection;
+		return partialCollection as Collection<Document> | PartialCollection<Document>;
 	}
 };
 

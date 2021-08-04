@@ -6,7 +6,7 @@ This is the official repository for [MS Paint Fan Adventures](https://mspfa.com/
 
 1. Install [Node.js](https://nodejs.org/en/download/) (LTS), our runtime of choice.
 
-2. Install [MongoDB](https://docs.mongodb.com/manual/installation) (version 4.x.x, Community Edition), our database of choice. (MongoDB Compass is not required, so you do not need to install it if the MongoDB installer asks you to.)
+2. Install [MongoDB](https://docs.mongodb.com/manual/installation) (version 5.0.x, Community Edition), our database of choice. (MongoDB Compass is not required, so you do not need to install it if the MongoDB installer asks you to.)
 
 ## Installation
 

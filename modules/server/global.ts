@@ -7,7 +7,9 @@ import messages, { deleteMessageForUser } from 'modules/server/messages';
 
 connection.then(() => {
 	// Set timeouts for any scheduled pages.
-	stories.find!().forEach(updateStorySchedule);
+	stories.find!().forEach(story => {
+		updateStorySchedule(story);
+	});
 
 	const arbitraryInterval = () => {
 		const now = new Date();
