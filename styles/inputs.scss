@@ -67,8 +67,9 @@ input[type=radio] {
 	&:checked::before {
 		content: '';
 		pointer-events: none;
-		width: calc(50% + 2px);
-		height: calc(50% + 2px);
+		width: 50%;
+		height: 50%;
+		padding: 1px;
 		background-color: currentColor;
 		border-radius: 50%;
 	}
