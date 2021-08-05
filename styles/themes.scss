@@ -104,8 +104,3 @@ $button-text-alt-color: (
 	standard: #dddddd,
 	dark: #1a1a1a
 );
-
-$translucent-text-color: ();
-@each $theme, $color in $text-color {
-	$translucent-text-color: map.set($translucent-text-color, $theme, color.scale($color, $alpha: -30%));
-}

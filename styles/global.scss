@@ -66,9 +66,10 @@ summary {
 }
 
 .translucent-text {
-	// This is necessary so `.translucent-text` has priority over `.link` regardless of load order.
-	&, &.link:not(:focus, :active) {
-		@include theme(color, $translucent-text-color);
+	opacity: 0.7;
+
+	&.link:not(:focus, :active) {
+		@include theme(color, $text-color);
 	}
 }
 
