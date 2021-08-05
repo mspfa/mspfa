@@ -3,6 +3,7 @@ import Page from 'components/Page';
 import type { ClientStoryPage, PublicStory } from 'modules/client/stories';
 import Link from 'components/Link';
 import Router, { useRouter } from 'next/router';
+import type { MouseEvent } from 'react';
 import { useState, useEffect, useRef, Fragment, useCallback } from 'react';
 import type { StoryPageID } from 'modules/server/stories';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
@@ -15,6 +16,24 @@ import NavGroup from 'components/Nav/NavGroup';
 import NavItem from 'components/Nav/NavItem';
 import { defaultSettings, getUser } from 'modules/client/users';
 import shouldIgnoreControl from 'modules/client/shouldIgnoreControl';
+
+/** Goes to a page in the `StoryViewer` by page ID. */
+export const goToPage = (pageID: StoryPageID) => {
+	const url = new URL(location.href);
+	url.searchParams.set('p', pageID.toString());
+	Router.push(url, undefined, {
+		shallow: true,
+		scroll: true
+	});
+};
+
+const openSaveGameHelp = () => {
+	new Dialog({
+		id: 'help',
+		title: 'Help',
+		content: 'Save Game\n\nIf you\'re signed in, you can save your spot in the story. Click "Save Game", then when you return to the site, click "Load Game" to return to where you were.\n\nYour saves are stored on your MSPFA account, so you can even save and load between different devices!'
+	});
+};
 
 /**
  * A partial record that maps each page ID to a page ID before it that links to it via `nextPages`.
@@ -84,16 +103,7 @@ const StoryViewer = ({
 	/** The page ID to take the user to when clicking the "Go Back" link. Unless undefined, necessarily indexes a cached page. */
 	const previousPageID = previousPageIDs[pageID];
 
-	const goToPage = useCallback((targetPageID: StoryPageID) => {
-		const url = new URL(location.href);
-		url.searchParams.set('p', targetPageID.toString());
-		Router.push(url, undefined, {
-			shallow: true,
-			scroll: true
-		});
-	}, []);
-
-	/** Goes to one of the pages in `page.nextPages` by its index therein. */
+	/** Goes to one of the pages in `page.nextPages` by its index therein. Returns a boolean for whether it is successful. */
 	const goToNextPage = useCallback((
 		/** The index of the page ID in `page.nextPages` to go to. */
 		nextPageIndex = 0
@@ -111,15 +121,23 @@ const StoryViewer = ({
 					[nextPageID]: page.id
 				});
 			}
-		}
-	}, [page, pages, previousPageIDs, goToPage]);
 
-	const onClickNextPageLink = useCallback((event: MouseEvent & { target: HTMLAnchorElement }) => {
-		goToNextPage(
+			return true;
+		}
+
+		return false;
+	}, [page, pages, previousPageIDs]);
+
+	const onClickNextPageLink = useCallback((event: MouseEvent<HTMLAnchorElement> & { target: HTMLAnchorElement }) => {
+		if (goToNextPage(
 			event.target.dataset.index === undefined
 				? 0
 				: +event.target.dataset.index
-		);
+		)) {
+			event.preventDefault();
+		}
+
+		// If the `goToNextPage` call is unsuccessful, don't `event.preventDefault`, and instead let the clicked link handle the page change.
 	}, [goToNextPage]);
 
 	// This state is a ref to a partial record that maps each cached page ID to an HTML string of its sanitized `content`, as a caching optimization due to the performance cost of BBCode sanitization.
@@ -306,7 +324,7 @@ const StoryViewer = ({
 		return () => {
 			document.removeEventListener('keydown', onKeyDown);
 		};
-	}, [goToNextPage, page, previousPageID, pages, goToPage]);
+	}, [goToNextPage, page, previousPageID, pages]);
 
 	/** Whether the "Go Back" link should be shown. */
 	const showGoBack = !(
@@ -361,7 +379,6 @@ const StoryViewer = ({
 									>
 										<Link
 											shallow
-											scroll
 											href={`/?s=${story.id}&p=${nextPageID}${previewQuery}`}
 											data-index={i}
 											onClick={onClickNextPageLink}
@@ -385,7 +402,6 @@ const StoryViewer = ({
 											<Link
 												key="start-over"
 												shallow
-												scroll
 												href={`/?s=${story.id}&p=1${previewQuery}`}
 											>
 												Start Over
@@ -395,7 +411,6 @@ const StoryViewer = ({
 											<Link
 												key="go-back"
 												shallow
-												scroll
 												href={`/?s=${story.id}&p=${previousPageID}${previewQuery}`}
 											>
 												Go Back
@@ -411,17 +426,7 @@ const StoryViewer = ({
 								Save Game
 							</Link>
 							{' '}
-							<Link
-								onClick={
-									useCallback(() => {
-										new Dialog({
-											id: 'help',
-											title: 'Help',
-											content: 'Save Game\n\nIf you\'re signed in, you can save your spot in the story. Click "Save Game", then when you return to the site, click "Load Game" to return to where you were.\n\nYour saves are stored on your MSPFA account, so you can even save and load between different devices!'
-										});
-									}, [])
-								}
-							>
+							<Link onClick={openSaveGameHelp}>
 								(?)
 							</Link>
 							<Stick />

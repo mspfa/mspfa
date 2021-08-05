@@ -7,9 +7,18 @@ import fs from 'fs-extra';
 import path from 'path';
 import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
-import { useCallback } from 'react';
 import Router from 'next/router';
 import BoxSection from 'components/Box/BoxSection';
+
+const goBack = () => {
+	const { asPath } = Router;
+
+	Router.back();
+
+	if (Router.asPath === asPath) {
+		Router.push('/');
+	}
+};
 
 export type ErrorPageProps = {
 	statusCode: number,
@@ -37,19 +46,7 @@ const ErrorPage = ({ statusCode, imageFilename }: ErrorPageProps) => (
 				</BoxSection>
 			)}
 			<BoxFooter>
-				<Button
-					onClick={
-						useCallback(() => {
-							const { asPath } = Router;
-
-							Router.back();
-
-							if (Router.asPath === asPath) {
-								Router.push('/');
-							}
-						}, [])
-					}
-				>
+				<Button onClick={goBack}>
 					Go Back
 				</Button>
 			</BoxFooter>
