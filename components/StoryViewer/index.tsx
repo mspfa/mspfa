@@ -11,9 +11,7 @@ import { useIsomorphicLayoutEffect } from 'react-use';
 import Stick from 'components/Stick';
 import Delimit from 'components/Delimit';
 import Dialog from 'modules/client/Dialog';
-import { setStoryNavGroup } from 'components/Nav';
-import NavGroup from 'components/Nav/NavGroup';
-import NavItem from 'components/Nav/NavItem';
+import { useNavStoryID } from 'components/Nav';
 import { defaultSettings, getUser } from 'modules/client/users';
 import shouldIgnoreControl from 'modules/client/shouldIgnoreControl';
 
@@ -70,6 +68,8 @@ const StoryViewer = ({
 	pages: initialPages,
 	previousPageIDs: initialPreviousPageIDs
 }: StoryViewerProps) => {
+	useNavStoryID(story.id);
+
 	const router = useRouter();
 	const pageID = (
 		typeof router.query.p === 'string'
@@ -84,19 +84,6 @@ const StoryViewer = ({
 	// If a page ID's value is undefined, then it has not been cached or requested yet.
 	const [pages, setPages] = useState(initialPages);
 	const page = pages[pageID];
-
-	useEffect(() => {
-		setStoryNavGroup(
-			<NavGroup id="story">
-				<NavItem id="story-log" label="Log" href={`/s/${story.id}/log`} />
-				<NavItem id="story-search" label="Search" href={`/s/${story.id}/search`} />
-			</NavGroup>
-		);
-
-		return () => {
-			setStoryNavGroup(null);
-		};
-	}, [story.id]);
 
 	const [previousPageIDs, setPreviousPageIDs] = useState(initialPreviousPageIDs);
 

@@ -37,6 +37,7 @@ import DateField from 'components/DateField';
 import Timestamp from 'components/Timestamp';
 import EditButton from 'components/Button/EditButton';
 import Dialog from 'modules/client/Dialog';
+import { useNavStoryID } from 'components/Nav';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 
@@ -80,6 +81,8 @@ const Component = withErrorPage<ServerSideProps>(({
 	userCache: initialUserCache
 }) => {
 	const [privateStory, setPrivateStory] = useState(initialPrivateStory);
+
+	useNavStoryID(privateStory.id);
 
 	const { cacheUser } = useUserCache();
 	initialUserCache.forEach(cacheUser);

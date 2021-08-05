@@ -34,6 +34,7 @@ import Router, { useRouter } from 'next/router';
 import frameThrottler, { frameThrottlerRequests } from 'modules/client/frameThrottler';
 import shouldIgnoreControl from 'modules/client/shouldIgnoreControl';
 import { addViewportListener, removeViewportListener } from 'modules/client/viewportListener';
+import { useNavStoryID } from 'components/Nav';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -164,6 +165,8 @@ const Component = withErrorPage<ServerSideProps>(({
 }) => {
 	const [privateStory, setPrivateStory] = useState(initialPrivateStory);
 	const [initialPages, setInitialPages] = useState(initialPagesProp);
+
+	useNavStoryID(privateStory.id);
 
 	const formikPropsRef = useRef<FormikProps<Values>>(null!);
 	const formRef = useRef<HTMLFormElement>(null!);
