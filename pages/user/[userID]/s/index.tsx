@@ -8,7 +8,6 @@ import BoxRowSection from 'components/Box/BoxRowSection';
 import BoxRow from 'components/Box/BoxRow';
 import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
-import { useCallback } from 'react';
 import type { APIClient } from 'modules/client/api';
 import api from 'modules/client/api';
 import Dialog from 'modules/client/Dialog';
@@ -33,6 +32,47 @@ const getRandomStoryName = () => (
 		)
 );
 
+const promptNewStory = async () => {
+	const randomStoryName = getRandomStoryName();
+
+	const dialog = new Dialog({
+		id: 'new-story',
+		title: 'New Adventure',
+		initialValues: {
+			title: ''
+		},
+		content: (
+			<InlineRowSection>
+				<BoxRow>What will the title of this new adventure be?</BoxRow>
+				<FieldBoxRow
+					name="title"
+					label="Enter Title"
+					required
+					autoFocus
+					maxLength={50}
+					placeholder={randomStoryName}
+					size={Math.max(20, randomStoryName.length)}
+					autoComplete="off"
+				/>
+			</InlineRowSection>
+		),
+		actions: [
+			{ label: 'Start!', autoFocus: false },
+			'Cancel'
+		]
+	});
+
+	if (!(await dialog)?.submit) {
+		return;
+	}
+
+	const { data: privateStory } = await (api as StoriesAPI).post('/stories', {
+		title: dialog.form!.values.title
+	});
+
+	Router.push(`/s/${privateStory.id}/edit`);
+};
+
 type ServerSideProps = {
 	/** The stories owned by the private user. */
 	privateStories: PrivateStory[]
@@ -56,50 +96,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStories }) => (
 				</BoxRow>
 			</BoxRowSection>
 			<BoxFooter>
-				<Button
-					onClick={
-						useCallback(async () => {
-							const randomStoryName = getRandomStoryName();
-
-							const dialog = new Dialog({
-								id: 'new-story',
-								title: 'New Adventure',
-								initialValues: {
-									title: ''
-								},
-								content: (
-									<InlineRowSection>
-										<BoxRow>What will the title of this new adventure be?</BoxRow>
-										<FieldBoxRow
-											name="title"
-											label="Enter Title"
-											required
-											autoFocus
-											maxLength={50}
-											placeholder={randomStoryName}
-											size={Math.max(20, randomStoryName.length)}
-											autoComplete="off"
-										/>
-									</InlineRowSection>
-								),
-								actions: [
-									{ label: 'Start!', autoFocus: false },
-									'Cancel'
-								]
-							});
-
-							if (!(await dialog)?.submit) {
-								return;
-							}
-
-							const { data: privateStory } = await (api as StoriesAPI).post('/stories', {
-								title: dialog.form!.values.title
-							});
-
-							Router.push(`/s/${privateStory.id}/edit`);
-						}, [])
-					}
-				>
+				<Button onClick={promptNewStory}>
 					New Adventure!
 				</Button>
 			</BoxFooter>

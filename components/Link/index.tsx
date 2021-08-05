@@ -101,7 +101,7 @@ const Link = React.forwardRef<HTMLAnchorElement & HTMLButtonElement, LinkProps>(
 			as={as}
 			prefetch={prefetch ?? false}
 			replace={replace}
-			scroll={scroll}
+			scroll={scroll ?? true}
 			shallow={shallow}
 			locale={locale}
 		>
