@@ -27,82 +27,98 @@
 
 $back-color: (
 	standard: #535353,
-	dark: #434343
+	dark: #434343,
+	felt: #000000
 );
 
 $mid-color: (
 	standard: #c6c6c6,
-	dark: #383838
+	dark: #383838,
+	felt: #082A00
 );
 
 $front-color: (
 	standard: #eeeeee,
-	dark: #242424
+	dark: #242424,
+	felt: #0E4603
 );
 
 $text-color: (
 	standard: #000000,
-	dark: #dadada
+	dark: #dadada,
+	felt: #2CFF4B
 );
 
 $front-alt-color: (
 	standard: #696969,
-	dark: #4f4f4f
+	dark: #4f4f4f,
+	felt: #000000
 );
 
 $text-alt-color: (
 	standard: #f2f2f2,
-	dark: #f2f2f2
+	dark: #f2f2f2,
+	felt: #2CFF4B
 );
 
 $frontest-color: (
 	standard: #ffffff,
-	dark: #1a1a1a
+	dark: #1a1a1a,
+	felt: #000000
 );
 
 $border-color: (
 	standard: #8d8d8d,
-	dark: #404040
+	dark: #404040,
+	felt: #082A00
 );
 
 $border-focus-color: (
 	standard: #000000,
-	dark: #999999
+	dark: #999999,
+	felt: #2CFF4B
 );
 
 $link-color: (
 	standard: #0000ee,
-	dark: #3db8ff
+	dark: #3db8ff,
+	felt: #2CFF4B
 );
 
 $link-visited-color: (
 	standard: #551a8b,
-	dark: #bf7cff
+	dark: #bf7cff,
+	felt: #2CFF4B
 );
 
 $link-active-color: (
 	standard: #ee0000,
-	dark: #ee3333
+	dark: #ee3333,
+	felt: #2CFF4B
 );
 
 $button-color: (
 	standard: #dadada,
-	dark: #474747
+	dark: #474747,
+	felt: #2CFF4B
 );
 
 $button-text-color: (
 	standard: #3e3e3e,
-	dark: #dadada
+	dark: #dadada,
+	felt: #0E4603
 );
 
 $button-alt-color: (
 	standard: #696969,
-	dark: #c0c0c0
+	dark: #c0c0c0,
+	felt: #0E4603
 );
 
 $button-text-alt-color: (
 	standard: #dddddd,
-	dark: #1a1a1a
+	dark: #1a1a1a,
+	felt: #2CFF4B
 );
 
 $translucent-text-color: ();
