@@ -2,7 +2,7 @@ import './styles.module.scss';
 import Page from 'components/Page';
 import type { ClientStoryPage, PublicStory } from 'modules/client/stories';
 import Link from 'components/Link';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { useState, useEffect, useRef, Fragment, useCallback } from 'react';
 import type { StoryPageID } from 'modules/server/stories';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
@@ -13,6 +13,8 @@ import Dialog from 'modules/client/Dialog';
 import { setStoryNavGroup } from 'components/Nav';
 import NavGroup from 'components/Nav/NavGroup';
 import NavItem from 'components/Nav/NavItem';
+import { defaultSettings, getUser } from 'modules/client/users';
+import shouldIgnoreControl from 'modules/client/shouldIgnoreControl';
 
 /**
  * A partial record that maps each page ID to a page ID before it that links to it via `nextPages`.
@@ -81,6 +83,40 @@ const StoryViewer = ({
 
 	/** The page ID to take the user to when clicking the "Go Back" link. Unless undefined, necessarily indexes a cached page. */
 	const previousPageID = previousPageIDs[pageID];
+
+	const goToPage = useCallback((targetPageID: StoryPageID) => {
+		const url = new URL(location.href);
+		url.searchParams.set('p', targetPageID.toString());
+		Router.push(url, undefined, {
+			shallow: true,
+			scroll: true
+		});
+	}, []);
+
+	/** Goes to one of the pages in `page.nextPages` by its index therein. */
+	const goToNextPage = useCallback((
+		/** The index of the page ID in `page.nextPages` to go to. */
+		nextPageIndex = 0
+	) => {
+		const nextPageID = page?.nextPages[nextPageIndex];
+
+		// If the `nextPageIndex` exists in `page.nextPages` and the `nextPageID` exists in `pages`, then go to the `nextPageID`.
+		if (nextPageID && pages[nextPageID] !== null) {
+			goToPage(nextPageID);
+
+			// If it is not already set that the previous page of `nextPageID` is this page, then set it.
+			if (previousPageIDs[nextPageID] !== page.id) {
+				setPreviousPageIDs({
+					...previousPageIDs,
+					[nextPageID]: page.id
+				});
+			}
+		}
+	}, [page, pages, previousPageIDs, goToPage]);
+
+	const onClickNextPageLink = useCallback((event: MouseEvent & { target: HTMLAnchorElement }) => {
+		goToNextPage(+event.target.getAttribute('data-index')!);
+	}, [goToNextPage]);
 
 	// This state is a ref to a partial record that maps each cached page ID to an HTML string of its sanitized `content`, as a caching optimization due to the performance cost of BBCode sanitization.
 	const [pageContents, setPageContents] = useState<Partial<Record<StoryPageID, string>>>({});
@@ -235,6 +271,39 @@ const StoryViewer = ({
 		};
 	}, [pageID]);
 
+	useEffect(() => {
+		const onKeyDown = (event: KeyboardEvent) => {
+			if (shouldIgnoreControl()) {
+				return;
+			}
+
+			const controls = (getUser()?.settings || defaultSettings).controls;
+
+			if (event.code === controls.back) {
+				if (previousPageID) {
+					goToPage(previousPageID);
+				}
+
+				event.preventDefault();
+				return;
+			}
+
+			if (event.code === controls.forward) {
+				if (page && page.nextPages.length === 1) {
+					goToNextPage();
+				}
+
+				event.preventDefault();
+			}
+		};
+
+		document.addEventListener('keydown', onKeyDown);
+
+		return () => {
+			document.removeEventListener('keydown', onKeyDown);
+		};
+	}, [goToNextPage, page, previousPageID, pages, goToPage]);
+
 	/** Whether the "Go Back" link should be shown. */
 	const showGoBack = !(
 		previousPageID === null
@@ -288,7 +357,10 @@ const StoryViewer = ({
 									>
 										<Link
 											shallow
+											scroll
 											href={`/?s=${story.id}&p=${nextPageID}${previewQuery}`}
+											data-index={i}
+											onClick={onClickNextPageLink}
 										>
 											{nextPage.title}
 										</Link>
@@ -309,6 +381,7 @@ const StoryViewer = ({
 											<Link
 												key="start-over"
 												shallow
+												scroll
 												href={`/?s=${story.id}&p=1${previewQuery}`}
 											>
 												Start Over
@@ -318,6 +391,7 @@ const StoryViewer = ({
 											<Link
 												key="go-back"
 												shallow
+												scroll
 												href={`/?s=${story.id}&p=${previousPageID}${previewQuery}`}
 											>
 												Go Back
