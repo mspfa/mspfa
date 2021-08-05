@@ -34,10 +34,12 @@ const Spoiler = ({
 				return;
 			}
 
-			if (event.code === (getUser()?.settings.controls.toggleSpoilers ?? defaultSettings.controls.toggleSpoilers)) {
-				event.preventDefault();
+			const controls = (getUser()?.settings || defaultSettings).controls;
 
+			if (event.code === controls.toggleSpoilers) {
 				setOpen(open => !open);
+
+				event.preventDefault();
 			}
 		};
 
