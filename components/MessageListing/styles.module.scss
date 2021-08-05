@@ -60,12 +60,10 @@
 	}
 }
 
-.button.mark {
-	&-read {
-		background-image: url(/images/icons/envelope-open.png); // Image credit: seymour schlong
-	}
+.mark-read-button .icon {
+	background-image: url(/images/icons/envelope-open.png); // Image credit: seymour schlong
+}
 
-	&-unread {
-		background-image: url(/images/icons/envelope-closed.png); // Image credit: seymour schlong
-	}
+.mark-unread-button .icon {
+	background-image: url(/images/icons/envelope-closed.png); // Image credit: seymour schlong
 }
