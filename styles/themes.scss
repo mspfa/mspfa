@@ -1,6 +1,5 @@
 @use "sass:meta";
 @use "sass:map";
-@use "sass:color";
 
 // Used as a useless default for the `theme` mixin, so that no extra check is necessary for whether the `$function` parameter is set.
 @function return-value($value) {

@@ -6,14 +6,6 @@
 
 @import 'styles/themes';
 
-// Offsets the RGB values by `$offset`.
-@function adjust-color($color, $offset) {
-	@return color.adjust(
-		$color,
-		$red: $offset, $green: $offset, $blue: $offset
-	);
-}
-
 @function elevation-color($color, $lightness: -33%) {
 	@return color.scale($color, $lightness: $lightness);
 }
