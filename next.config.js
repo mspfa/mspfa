@@ -32,9 +32,11 @@ module.exports = {
 				multiple: [
 					// Some scripts which run on both the client and the server contain code which should only run on the client or the server rather than both.
 					{
-						search: isServer
-							? /^[^\n]+ \/\/ @client-only$|\/\/ @client-only {$.*?\/\/ @client-only }$|\/\* @client-only { \*\/.*?\/\* @client-only } \*\//gms
-							: /^[^\n]+ \/\/ @server-only$|\/\/ @server-only {$.*?\/\/ @server-only }$|\/\* @server-only { \*\/.*?\/\* @server-only } \*\//gms,
+						search: (
+							isServer
+								? /^[^\n]+ \/\/ @client-only$|\/\/ @client-only {$.*?\/\/ @client-only }$|\/\* @client-only { \*\/.*?\/\* @client-only } \*\//gms
+								: /^[^\n]+ \/\/ @server-only$|\/\/ @server-only {$.*?\/\/ @server-only }$|\/\* @server-only { \*\/.*?\/\* @server-only } \*\//gms
+						),
 						replace: ''
 					},
 
@@ -43,7 +45,6 @@ module.exports = {
 						search: /^import '(.+\.module\.(?:s?css|sass))';$/gm,
 						replace: (match, matchedPath) => {
 							const variableName = `__styles_${matchedPath.replace(/[^\w]/g, '_')}`;
-
 							return `import ${variableName} from '${matchedPath}'; ${variableName};`;
 						}
 					},
@@ -60,11 +61,9 @@ module.exports = {
 		return config;
 	},
 	poweredByHeader: false,
-	redirects: () => [
-		{
-			source: '/discord',
-			destination: 'https://discord.gg/EC5acgG',
-			permanent: true
-		}
-	]
+	redirects: () => [{
+		source: '/discord',
+		destination: 'https://discord.gg/EC5acgG',
+		permanent: true
+	}]
 };
