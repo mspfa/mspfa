@@ -115,7 +115,11 @@ const StoryViewer = ({
 	}, [page, pages, previousPageIDs, goToPage]);
 
 	const onClickNextPageLink = useCallback((event: MouseEvent & { target: HTMLAnchorElement }) => {
-		goToNextPage(+event.target.getAttribute('data-index')!);
+		goToNextPage(
+			event.target.dataset.index === undefined
+				? 0
+				: +event.target.dataset.index
+		);
 	}, [goToNextPage]);
 
 	// This state is a ref to a partial record that maps each cached page ID to an HTML string of its sanitized `content`, as a caching optimization due to the performance cost of BBCode sanitization.

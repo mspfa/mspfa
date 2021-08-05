@@ -39,7 +39,7 @@ type TagFieldChild<NodeType extends Node = Node> = NodeType & (
 		// It's not really `undefined`, but `undefined` is the next best thing to `undefined | Exclude<string, 'tag-field-tag' | 'tag-field-editable'>`.
 		className?: undefined
 	} | (
-		Element & {
+		HTMLElement & {
 			className: 'tag-field-tag' | 'tag-field-editable'
 		}
 	)
@@ -253,7 +253,7 @@ const TagField = ({
 		);
 
 		if (lastTag) {
-			(lastTag.lastChild as Element).classList[
+			(lastTag.lastChild as HTMLElement).classList[
 				inputRef.current.lastChild!.textContent
 					? 'remove'
 					// Hide the comma if there's nothing after it.
@@ -330,7 +330,7 @@ const TagField = ({
 					}, [updateTagField])
 				}
 				onClick={
-					useCallback((event: MouseEvent<HTMLDivElement> & { target: Element }) => {
+					useCallback((event: MouseEvent<HTMLDivElement> & { target: HTMLElement }) => {
 						if (event.target.classList.contains('tag-field-tag-remove')) {
 							inputRef.current.removeChild(event.target.parentNode!);
 
@@ -347,7 +347,7 @@ const TagField = ({
 					onClick={
 						useCallback((
 							event: MouseEvent<HTMLDivElement> & {
-								target: Element & { parentNode: Element }
+								target: HTMLElement & { parentNode: HTMLElement }
 							}
 						) => {
 							const tag = (
@@ -362,7 +362,7 @@ const TagField = ({
 								return;
 							}
 
-							const tagValue = tag.getAttribute('data-value');
+							const tagValue = tag.dataset.value;
 
 							if (!(tagValue && tagHelp[tagValue])) {
 								return;
