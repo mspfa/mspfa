@@ -1,8 +1,64 @@
 @use 'sass:math';
+@use 'sass:map';
+@use 'styles/general' as *;
+@use 'styles/themes' as *;
 
-@import 'styles/general';
-@import 'styles/buttons';
-@import 'styles/themes';
+// Applies a pixelated 3D depth effect behind the button. Lowers the depth on `:active`.
+@mixin button-depth(
+	$scale: 2px,
+	$border: false
+) {
+	// Include the 3D depth effect in the area of the button that affects the layout.
+	margin-right: 2 * $scale;
+	margin-bottom: 2 * $scale;
+
+	@if $border {
+		// Add room for a border, but don't actually give it a color since that'll already be handled by `::before`.
+		border: $scale solid transparent;
+	}
+
+	&:active:not(:disabled) {
+		// Offset the button on `:active`.
+		left: $scale;
+		top: $scale;
+
+		&::before {
+			// Prevent the button's 3D depth effect or bounding box from moving when `:active`.
+			left: -$scale;
+			top: -$scale;
+		}
+	}
+
+	// The position of the 3D depth effect's two rectangles.
+	$depth-rectangle-positions:
+		$scale $scale,
+		(2 * $scale) (2 * $scale);
+
+	&::before {
+		// Set each rectangle's size to the size of the pseudo-element, subtracting its non-border padding which is set later.
+		background-size: calc(100% - #{2 * $scale}) calc(100% - #{2 * $scale});
+
+		background-position: $depth-rectangle-positions;
+
+		@if $border {
+			// Offset the pseudo-element to start in the position of the border.
+			margin: -$scale;
+
+			// Ensure the button's border and 3D depth effect are part of the button's bounding box.
+			padding: 2 * $scale;
+		} @else {
+			// Ensure the button's 3D depth effect is part of the button's bounding box.
+			padding: $scale;
+		}
+	}
+
+	@if $border {
+		&:not(:active)::before {
+			// Unless the button is `:active`, add one extra rectangle at `0 0` for the border.
+			background-position: 0 0, $depth-rectangle-positions;
+		}
+	}
+}
 
 .button {
 	display: inline-block;
@@ -17,7 +73,8 @@
 	vertical-align: middle;
 	text-decoration: none;
 	flex-shrink: 0;
-	@include styled-button($button-color, $button-text-color);
+	@include theme(background-color, button-color);
+	@include theme(color, button-text-color);
 
 	& + &:not(.icon-button) {
 		margin-left: 1ch;
@@ -31,44 +88,69 @@
 		opacity: 0.5;
 	}
 
-	&:focus:not(:active)::before {
+	&::before, &::after {
 		content: '';
 		position: absolute;
-		pointer-events: none;
 		left: 0;
 		top: 0;
 		width: 100%;
 		height: 100%;
-		// Inherit the button's background color so we can filter it below.
-		background-color: inherit;
+	}
 
-		// An amount of brightness to add to the background color (from 0 to 1).
+	// The unmoving bounding box of the button, the 3D depth effect behind it, and optionally the button's border.
+	// This is a pseudo-element rather than using `box-shadow` and `border` so that its color can be adjusted in runtime (e.g. via `linear-gradient`), making it easier for custom styles to change the colors. Additionally, making it a pseudo-element allows it to be clickable as part of the button.
+	&::before {
+		// The brightness multiplier on the button's color to get the 3D depth effect's color.
+		$brightness: math.div(2, 3);
+		$large-gradient-size: 1000000%;
+
+		// Adds a `background-image` with the appropriate `linear-gradient`s using the specified `$color` argument as the button color.
+		@mixin button-gradient($color) {
+			// In order to darken the button color to get the depth effect's color, we take a gradient from black to the button color and stretch it out so much that we only get one color along the gradient (or two immediately adjacent colors, since there can be dithering).
+			$background-image: linear-gradient(
+				#000000 ($large-gradient-size * -$brightness),
+				$color ($large-gradient-size * (1 - $brightness))
+			);
+			// The two rectangles for the 3D depth effect behind the button, and one extra for if there's a border.
+			background-image: $background-image, $background-image, $background-image;
+		}
+
+		// In case the browser doesn't support CSS variables.
+		@include button-gradient(map.get($standard-theme, button-color));
+		@include button-gradient(var(--button-color));
+
+		background-repeat: no-repeat;
+	}
+
+	// A copy of the button's background, so we can apply styles to it (such as `filter`) without affecting the button's content.
+	&::after {
+		pointer-events: none;
+		background: inherit;
+	}
+
+	&:focus:not(:active)::after {
+		// An amount of brightness to add to the background color (between 0 and 1).
 		$added-brightness: 0.2;
 		// This formula adds a constant amount of brightness independently of the initial brightness. It works. Just trust me; I tested it on Desmos.
 		filter: brightness(math.div(1, 1 - $added-brightness)) invert(1) brightness(1 - $added-brightness) invert(1);
 	}
 
-	&::after {
-		content: '';
-		position: absolute;
-		left: 0;
-		top: 0;
-		width: 100%;
-		height: 100%;
-	}
-
-	&.alt {
-		@include styled-button($button-alt-color, $button-text-alt-color);
-	}
+	@include button-depth($scale: 2px, $border: false);
 
 	&.small {
 		font-size: 1.25em;
 	}
 
-	.icon, &-label {
+	&.alt {
+		--button-color: var(--button-alt-color);
+		--button-text-color: var(--button-text-alt-color);
+	}
+
+	// The button's content (icon or label).
+	& > * {
 		// This is necessary or else `z-index` doesn't do anything.
 		position: relative;
-		// Put the label in front of the `::before`.
+		// Render in front of the `::after` and `::before`.
 		z-index: 1;
 	}
 }
@@ -81,7 +163,7 @@
 	padding: 1px;
 	line-height: 0;
 
-	@include styled-button($scale: 1, $border: true);
+	@include button-depth($scale: 1px, $border: true);
 
 	.button-label {
 		margin-right: 1px;

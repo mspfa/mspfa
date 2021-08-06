@@ -31,8 +31,10 @@ import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import { escapeRegExp } from 'lodash';
 import BoxRow from 'components/Box/BoxRow';
 import Router, { useRouter } from 'next/router';
-import frameThrottler, { frameThrottlerRequests, cancelFrameThrottler } from 'modules/client/frameThrottler';
+import frameThrottler, { frameThrottlerRequests } from 'modules/client/frameThrottler';
 import shouldIgnoreControl from 'modules/client/shouldIgnoreControl';
+import { addViewportListener, removeViewportListener } from 'modules/client/viewportListener';
+import { useNavStoryID } from 'components/Nav';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -55,8 +57,6 @@ export type KeyedClientStoryPage = ClientStoryPage & {
 	/** This page's React key. */
 	[_key]: number
 };
-
-const _updateViewportOrCulledPages = Symbol('updateViewportOrCulledPages');
 
 const defaultGridCullingInfo = {
 	// The default `firstIndex` and `lastIndex` must both be 0 so that exactly one page is rendered, and its size can be used to process culling.
@@ -165,6 +165,8 @@ const Component = withErrorPage<ServerSideProps>(({
 }) => {
 	const [privateStory, setPrivateStory] = useState(initialPrivateStory);
 	const [initialPages, setInitialPages] = useState(initialPagesProp);
+
+	useNavStoryID(privateStory.id);
 
 	const formikPropsRef = useRef<FormikProps<Values>>(null!);
 	const formRef = useRef<HTMLFormElement>(null!);
@@ -1240,15 +1242,6 @@ const Component = withErrorPage<ServerSideProps>(({
 							}
 						};
 
-						/** Calls `updateCulledPages` throttled by `frameThrottler`. */
-						const throttledUpdateCulledPages = () => {
-							// Don't call `frameThrottler` if there is possibly already a pending animation frame request from `throttledUpdateViewport`, since this would then overwrite it and cancel the `updateViewport` call, which includes a call to `updateCulledPages` anyway.
-							if (!frameThrottlerRequests[_updateViewportOrCulledPages]) {
-								frameThrottler(_updateViewportOrCulledPages)
-									.then(updateCulledPages);
-							}
-						};
-
 						/** A function called whenever the viewport changes. */
 						const updateViewport = () => {
 							updateCulledPages();
@@ -1263,55 +1256,28 @@ const Component = withErrorPage<ServerSideProps>(({
 							}
 						};
 
-						/** Calls `updateViewport` throttled by `frameThrottler`. */
-						const throttledUpdateViewport = () => {
-							frameThrottler(_updateViewportOrCulledPages)
-								.then(updateViewport);
+						const _updateViewportOrCulledPages = addViewportListener(updateViewport);
+
+						/** Calls `updateCulledPages` throttled by `frameThrottler`. */
+						const throttledUpdateCulledPages = () => {
+							// Don't call `frameThrottler` if there is possibly already a pending animation frame request from `throttledUpdateViewport`, since this would then overwrite it and cancel the `updateViewport` call, which includes a call to `updateCulledPages` anyway.
+							if (!frameThrottlerRequests[_updateViewportOrCulledPages]) {
+								frameThrottler(_updateViewportOrCulledPages)
+									.then(updateCulledPages);
+							}
 						};
 
-						// Call `updateViewport` synchronously so the user can't see culled pages for a frame.
-						updateViewport();
-
-						document.addEventListener('scroll', throttledUpdateViewport);
-						document.addEventListener('resize', throttledUpdateViewport);
 						// We use `focusin` instead of `focus` because the former bubbles while the latter doesn't, and we want to capture any focus event among the page elements.
 						document.addEventListener('focusin', throttledUpdateCulledPages);
 						// We don't listen to `focusout` because, when `focusout` is dispatched, `document.activeElement` is set to `null`, causing any page element outside the view which the user is attempting to focus to instead be culled.
 						// Also, listening to `focusout` isn't necessary for any pragmatic reason, and not doing so improves performance significantly by updating the culled page elements half as often when frequently changing focus.
 
-						/** A media query which only matches if the current resolution equals the `window.devicePixelRatio` last detected by `listenToPixelRatio`. */
-						let resolutionQuery: MediaQueryList;
-
-						/** Gets the current resolution and calls `changePixelRatio` when it is no longer the current resolution. */
-						const listenToPixelRatio = () => {
-							const dpi = window.devicePixelRatio * 96;
-							resolutionQuery = window.matchMedia(
-								// Allow any resolution in the range between the floor and the ceiling of `dpi` to ensure it works on browsers that have insufficient precision on `devicePixelRatio` or on `resolution` queries.
-								`(min-resolution: ${Math.floor(dpi)}dpi) and (max-resolution: ${Math.ceil(dpi)}dpi)`
-							);
-
-							// Listen for a change in the pixel ratio in order to detect when the browser's zoom level changes.
-							resolutionQuery.addEventListener('change', changePixelRatio, { once: true });
-						};
-
-						/** A function called whenever the pixel ratio changes. */
-						const changePixelRatio = () => {
-							// Listen for further changes in the pixel ratio again.
-							listenToPixelRatio();
-
-							// The pixel ratio has changed, so the viewport has changed.
-							throttledUpdateViewport();
-						};
-
-						listenToPixelRatio();
+						// Call `updateViewport` synchronously so the user can't see culled pages for a frame.
+						updateViewport();
 
 						return () => {
-							cancelFrameThrottler(_updateViewportOrCulledPages);
-
-							document.removeEventListener('scroll', throttledUpdateViewport);
-							document.removeEventListener('resize', throttledUpdateViewport);
+							removeViewportListener(_updateViewportOrCulledPages);
 							document.removeEventListener('focusin', throttledUpdateCulledPages);
-							resolutionQuery.removeEventListener('change', changePixelRatio);
 						};
 					}, [defaultCulledHeight, pageValues.length, viewMode, sortMode, culledPagesRef, gridCullingInfoRef]);
 

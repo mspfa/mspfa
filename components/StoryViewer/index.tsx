@@ -11,9 +11,7 @@ import { useIsomorphicLayoutEffect } from 'react-use';
 import Stick from 'components/Stick';
 import Delimit from 'components/Delimit';
 import Dialog from 'modules/client/Dialog';
-import { setStoryNavGroup } from 'components/Nav';
-import NavGroup from 'components/Nav/NavGroup';
-import NavItem from 'components/Nav/NavItem';
+import { useNavStoryID } from 'components/Nav';
 import { defaultSettings, getUser } from 'modules/client/users';
 import shouldIgnoreControl from 'modules/client/shouldIgnoreControl';
 
@@ -70,6 +68,8 @@ const StoryViewer = ({
 	pages: initialPages,
 	previousPageIDs: initialPreviousPageIDs
 }: StoryViewerProps) => {
+	useNavStoryID(story.id);
+
 	const router = useRouter();
 	const pageID = (
 		typeof router.query.p === 'string'
@@ -84,19 +84,6 @@ const StoryViewer = ({
 	// If a page ID's value is undefined, then it has not been cached or requested yet.
 	const [pages, setPages] = useState(initialPages);
 	const page = pages[pageID];
-
-	useEffect(() => {
-		setStoryNavGroup(
-			<NavGroup id="story">
-				<NavItem id="story-log" label="Log" href={`/s/${story.id}/log`} />
-				<NavItem id="story-search" label="Search" href={`/s/${story.id}/search`} />
-			</NavGroup>
-		);
-
-		return () => {
-			setStoryNavGroup(null);
-		};
-	}, [story.id]);
 
 	const [previousPageIDs, setPreviousPageIDs] = useState(initialPreviousPageIDs);
 
@@ -148,8 +135,12 @@ const StoryViewer = ({
 	}
 
 	// Fetch new pages, cache page BBCode, and preload the BBCode and images of cached pages.
-	// None of this should be done server-side, because anything cached or preloaded server-side would be unnecessary as it would not be sent to the client.
+	// None of this should be done server-side, because caching or preloading anything server-side would be pointless since it wouldn't be sent to the client.
 	useEffect(() => {
+		const pagesToFetch: Array<{
+
+		}> = [];
+
 		/** A partial record mapping each page ID to `true` if `fetchUnknownPages` has already been called on it. */
 		const checkedForUnknownPages: Partial<Record<StoryPageID, true>> = {};
 

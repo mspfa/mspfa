@@ -111,7 +111,9 @@ const Handler: APIHandler<{
 					return;
 				}
 
-				if (pageID !== clientPage.id) {
+				// This `as any` is necessary because of what I believe is a TypeScript bug which I have yet to report or find a report of.
+				// TODO: Report this bug, remove `as any` if it's fixed, or fix my code if it's not actually a bug.
+				if (pageID as any !== clientPage.id) {
 					res.status(400).send({
 						message: `Page ${pageID}'s \`id\` is not set to ${pageID}.`
 					});

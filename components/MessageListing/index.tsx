@@ -342,7 +342,8 @@ const MessageListing = ({
 						href={`/message/new?replyTo=${message.id}`}
 					/>
 					<Button
-						className={`icon${message.read ? ' mark-unread' : ' mark-read'}`}
+						icon
+						className={message.read ? 'mark-unread-button' : 'mark-read-button'}
 						title={message.read ? 'Mark as Unread' : 'Mark as Read'}
 						onClick={toggleRead}
 					/>

@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import Page from 'components/Page';
 import type { PublicUser } from 'modules/client/users';
 import { getUserByUnsafeID, getPublicUser } from 'modules/server/users';
@@ -34,7 +35,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publ
 					</Link>
 				</BoxRow>
 				{!favsPublic && (
-					<BoxRow className="translucent-text">
+					<BoxRow id="favs-public-tip">
 						Only you can see your favorites. If you want others to be able to see, enable public favorites in <Link href={`/user/${publicUser.id}/edit`}>your profile settings</Link>.
 					</BoxRow>
 				)}

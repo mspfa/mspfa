@@ -1,12 +1,6 @@
-@use 'sass:meta';
-
-@import 'styles/general';
-@import 'styles/themes';
-
 #auth-methods {
 	& > :not(:first-child) {
-		border-top: 1px solid;
-		@include theme(border-top-color, $back-color, meta.get-function('half-opacity'));
+		border-top: 1px solid rgba(128, 128, 128, 0.5);
 	}
 
 	&-footer {

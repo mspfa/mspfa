@@ -1,12 +1,11 @@
-@import 'styles/buttons';
-
-// We add the `.button` selector here as well so that these styles have priority over themed button colors.
-.button.auth-button {
+.auth-button {
 	&-google {
-		@include styled-button(#4285f4, #ffffff);
+		--button-color: #4285f4;
+		--button-text-color: #ffffff;
 	}
 
 	&-discord {
-		@include styled-button(#7289da, #ffffff);
+		--button-color: #7289da;
+		--button-text-color: #ffffff;
 	}
 }

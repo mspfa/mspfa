@@ -1,22 +1,18 @@
 import './styles.module.scss';
-import type { IconProps } from 'components/Icon';
 import Icon from 'components/Icon';
+import type { HTMLAttributes } from 'react';
 
-export type PageCountProps = Omit<IconProps, 'title' | 'children'> & {
+export type PageCountProps = Omit<HTMLAttributes<HTMLSpanElement>, 'title' | 'children'> & {
 	children: number
 };
 
 const PageCount = ({ className, children, ...props }: PageCountProps) => (
 	<span
 		className={`page-count${className ? ` ${className}` : ''}`}
+		title={`${children} Page${children === 1 ? '' : 's'}`}
+		{...props}
 	>
-		<Icon
-			className="pages"
-			title={`${children} Page${children === 1 ? '' : 's'}`}
-			{...props}
-		>
-			{children}
-		</Icon>
+		<Icon>{children}</Icon>
 	</span>
 );
 

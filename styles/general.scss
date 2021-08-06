@@ -1,5 +1,3 @@
-@use 'sass:color';
-
 $page-width: 950px;
 
 $monospace: 'Courier New', 'Courier', monospace;
@@ -15,8 +13,4 @@ $sans-serif: Verdana, Arial, Helvetica, sans-serif;
 	@media not screen and (min-width: $page-width) {
 		@content;
 	}
-}
-
-@function half-opacity($color) {
-	@return color.scale($color, $alpha: -50%);
 }

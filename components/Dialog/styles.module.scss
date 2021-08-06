@@ -1,8 +1,4 @@
-@use 'sass:meta';
-@use 'sass:color';
-
-@import 'styles/general';
-@import 'styles/themes';
+@use 'styles/themes' as *;
 
 .dialog {
 	&-container {
@@ -55,22 +51,33 @@ dialog {
 	pointer-events: auto;
 	display: flex;
 	flex-direction: column;
-	position: static;
+	position: relative;
 	padding: 0;
 	max-height: 100%;
 	min-width: 320px;
 	max-width: 880px;
 	color: inherit;
 	background: none;
-	border: 1px solid;
-	// Color the border so it blends with the shadow.
-	@include theme(border-color, $back-color, meta.get-function('half-opacity'));
-
-	@function box-shadow($color) {
-		@return 16px 16px 0 0 half-opacity($color);
-	}
-	// Color the shadow so it blends with the back color.
-	@include theme(box-shadow, $back-color, meta.get-function('box-shadow'));
-
+	border: none;
 	animation: 0.05s step-end dialog-pop;
+
+	// The border and the shadow respectively. These are pseudo-elements rather than using `border` and `box-shadow` so that their colors can be adjusted in runtime (e.g. via `opacity`), making it easier for custom styles to change the colors.
+	&::before, &::after {
+		content: '';
+		pointer-events: none;
+		position: absolute;
+		z-index: -1;
+		width: 100%;
+		height: 100%;
+		padding: 1px;
+		margin: -1px;
+		opacity: 0.5;
+		// Color the border and the shadow so they blend with the background.
+		@include theme(background-color, back-color);
+	}
+
+	&::after {
+		top: 16px;
+		left: 16px;
+	}
 }

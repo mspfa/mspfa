@@ -1,8 +1,6 @@
 // This stylesheet is fine-tuned to be perfectly consistent with MSPA. Be extremely careful when editing it.
-
 @use 'sass:math';
-
-@import 'styles/general';
+@use 'styles/general' as *;
 
 $story-page-min-width: 650px;
 $story-page-padding: 25px;
@@ -57,7 +55,7 @@ $story-page-padding: 25px;
 		font-size: 0.875em;
 
 		&-group {
-			font-size: #{math.div(10, 14)}em;
+			font-size: math.div(10, 14) * 1em;
 
 			&-delimiter::before {
 				content: '             ';

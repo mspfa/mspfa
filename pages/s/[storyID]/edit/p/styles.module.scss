@@ -1,8 +1,7 @@
 @use 'sass:map';
 @use 'sass:color';
-
-@import 'styles/general';
-@import 'styles/themes';
+@use 'styles/general' as *;
+@use 'styles/themes' as *;
 
 #story-editor {
 	&-options {
@@ -56,8 +55,8 @@
 	&-page {
 		& > .box-heading {
 			// Even though these are the default `.box-heading` `background-color` and `color`, non-standard themes may overwrite it, so this is to ensure it keeps the standard gray independently of theme.
-			background-color: map.get($front-alt-color, standard);
-			color: map.get($text-alt-color, standard);
+			background-color: map.get($standard-theme, front-alt-color);
+			color: map.get($standard-theme, text-alt-color);
 		}
 
 		&.published > .box-heading {

@@ -5,9 +5,21 @@ import NavMenu from 'components/Nav/NavMenu';
 import Router, { useRouter } from 'next/router';
 import { signIn, signOut, useUser } from 'modules/client/users';
 import createGlobalState from 'global-react-state';
-import type { ReactNode } from 'react';
+import type { StoryID } from 'modules/server/stories';
+import { useEffect } from 'react';
 
-export const [useStoryNavGroup, setStoryNavGroup] = createGlobalState<ReactNode>(null);
+const [useStoryID, setStoryID] = createGlobalState<StoryID | undefined>(undefined);
+
+/** A hook which sets the nav bar's story ID (adding the "LOGS" and "SEARCH" nav items) as long as the component is mounted. */
+export const useNavStoryID = (storyID: StoryID) => {
+	useEffect(() => {
+		setStoryID(storyID);
+
+		return () => {
+			setStoryID(undefined);
+		};
+	}, [storyID]);
+};
 
 const visitRandomStory = () => {
 	// TODO: Visit random story.
@@ -18,7 +30,7 @@ const visitRandomStory = () => {
 const Nav = () => {
 	const router = useRouter();
 	const user = useUser();
-	const [storyNavGroup] = useStoryNavGroup();
+	const [storyID] = useStoryID();
 
 	const notificationsBubble = 0;
 	let messagesBubble = 0;
@@ -74,7 +86,12 @@ const Nav = () => {
 				<NavItem id="search" label="Explore" href="/search" />
 				<NavItem id="random" label="Mystery" title="Take me to a random adventure!" onClick={visitRandomStory} />
 			</NavGroup>
-			{storyNavGroup}
+			{storyID !== undefined && (
+				<NavGroup id="story">
+					<NavItem id="story-log" label="Log" href={`/s/${storyID}/log`} />
+					<NavItem id="story-search" label="Search" href={`/s/${storyID}/search`} />
+				</NavGroup>
+			)}
 			<NavGroup id="external">
 				{/** Since these are all external links, they should all have `target="_blank"`, since the user's intention with them is generally not going to be to leave the site. */}
 				<NavItem id="discord" label="Discord" href="/discord" target="_blank" />

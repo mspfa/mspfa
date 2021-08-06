@@ -1,143 +1,54 @@
-@use "sass:meta";
 @use "sass:map";
-@use "sass:color";
 
-// Used as a useless default for the `theme` mixin, so that no extra check is necessary for whether the `$function` parameter is set.
-@function return-value($value) {
-	@return $value;
-}
+$themes: (
+	standard: (
+		back-color: #535353,
+		mid-color: #c6c6c6,
+		front-color: #eeeeee,
+		text-color: #000000,
+		front-alt-color: #696969,
+		text-alt-color: #f2f2f2,
+		link-color: #0000ee,
+		link-visited-color: #551a8b,
+		link-active-color: #ee0000,
+		input-color: #ffffff,
+		input-border-color: #8d8d8d,
+		input-focus-border-color: #000000,
+		button-color: #dadada,
+		button-text-color: #3e3e3e,
+		button-alt-color: #696969,
+		button-text-alt-color: #dddddd
+	),
+	dark: (
+		back-color: #434343,
+		mid-color: #383838,
+		front-color: #242424,
+		text-color: #dadada,
+		front-alt-color: #4f4f4f,
+		text-alt-color: #f2f2f2,
+		link-color: #3db8ff,
+		link-visited-color: #bf7cff,
+		link-active-color: #ee3333,
+		input-color: #1a1a1a,
+		input-border-color: #404040,
+		input-focus-border-color: #999999,
+		button-color: #4c4c4c,
+		button-text-color: #dadada,
+		button-alt-color: #c0c0c0,
+		button-text-alt-color: #1a1a1a
+	)
+);
+
+$standard-theme: map.get($themes, standard);
 
 // Lets you set a CSS property which varies in value dependent on the user's theme.
 @mixin theme(
-	// The property to set. Example: `background-color`
+	// The property to set e.g. `background-color`.
 	$property,
-	// The map of theme IDs to values to apply. Example: `(standard: #ff0000)`
-	$values,
-	// An optional function to apply to each value in `$values`, called with arguments `$value, $args...`.
-	$function: meta.get-function('return-value'),
-	$args...
+	// The name of the theme variable to use for this color e.g. `front-color`.
+	$theme-variable
 ) {
-	#{$property}: meta.call($function, map-get($values, standard), $args...);
-	@each $theme, $value in map-remove($values, standard) {
-		.theme-#{$theme} & {
-			#{$property}: meta.call($function, $value, $args...);
-		}
-	}
-}
-
-$back-color: (
-	standard: #535353,
-	dark: #434343,
-	felt: #000000,
-	trickster: #FFD800
-);
-
-$mid-color: (
-	standard: #c6c6c6,
-	dark: #383838,
-	felt: #082A00,
-	trickster: #0019B8
-);
-
-$front-color: (
-	standard: #eeeeee,
-	dark: #242424,
-	felt: #0E4603,
-	trickster: #FF73FD
-);
-
-$text-color: (
-	standard: #000000,
-	dark: #dadada,
-	felt: #2CFF4B,
-	trickster: #F9FD6B
-);
-
-$front-alt-color: (
-	standard: #696969,
-	dark: #4f4f4f,
-	felt: #000000,
-	trickster: #00117E
-);
-
-$text-alt-color: (
-	standard: #f2f2f2,
-	dark: #f2f2f2,
-	felt: #2CFF4B,
-	trickster: #F9FD6B
-);
-
-$frontest-color: (
-	standard: #ffffff,
-	dark: #1a1a1a,
-	felt: #000000,
-	trickster: #000000
-);
-
-$border-color: (
-	standard: #8d8d8d,
-	dark: #404040,
-	felt: #082A00,
-	trickster: #FFD800
-);
-
-$border-focus-color: (
-	standard: #000000,
-	dark: #999999,
-	felt: #2CFF4B,
-	trickster: #F9FD6B
-);
-
-$link-color: (
-	standard: #0000ee,
-	dark: #3db8ff,
-	felt: #2CFF4B,
-	trickster: #000000
-);
-
-$link-visited-color: (
-	standard: #551a8b,
-	dark: #bf7cff,
-	felt: #2CFF4B,
-	trickster: #000000
-);
-
-$link-active-color: (
-	standard: #ee0000,
-	dark: #ee3333,
-	felt: #2CFF4B,
-	trickster: #000000
-);
-
-$button-color: (
-	standard: #dadada,
-	dark: #474747,
-	felt: #2CFF4B,
-	trickster: #FFD800
-);
-
-$button-text-color: (
-	standard: #3e3e3e,
-	dark: #dadada,
-	felt: #0E4603,
-	trickster: #000000
-);
-
-$button-alt-color: (
-	standard: #696969,
-	dark: #c0c0c0,
-	felt: #0E4603,
-	trickster: #000000
-);
-
-$button-text-alt-color: (
-	standard: #dddddd,
-	dark: #1a1a1a,
-	felt: #2CFF4B,
-	trickster: #000000
-);
-
-$translucent-text-color: ();
-@each $theme, $color in $text-color {
-	$translucent-text-color: map.set($translucent-text-color, $theme, color.scale($color, $alpha: -30%));
+	// In case the browser doesn't support CSS variables.
+	#{$property}: map.get($standard-theme, $theme-variable);
+	#{$property}: var(--#{$theme-variable});
 }

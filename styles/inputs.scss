@@ -1,19 +1,18 @@
-@import 'styles/general';
-@import 'styles/themes';
+@use 'styles/themes' as *;
 
 .input-like, input, textarea, select, option {
 	font-size: 0.8333rem;
-	@include theme(background-color, $frontest-color);
+	@include theme(background-color, input-color);
 }
 
 .input-like, input, textarea, select {
 	box-sizing: border-box;
 	border-radius: 0;
 	border: 2px solid;
-	@include theme(border-color, $border-color);
+	@include theme(border-color, input-border-color);
 
 	&:focus {
-		@include theme(border-color, $border-focus-color);
+		@include theme(border-color, input-focus-border-color);
 	}
 }
 
@@ -67,8 +66,9 @@ input[type=radio] {
 	&:checked::before {
 		content: '';
 		pointer-events: none;
-		width: calc(50% + 2px);
-		height: calc(50% + 2px);
+		width: 50%;
+		height: 50%;
+		padding: 1px;
 		background-color: currentColor;
 		border-radius: 50%;
 	}

@@ -1,6 +1,7 @@
-@import 'styles/general';
-@import 'styles/themes';
-@import 'styles/inputs';
+@use 'sass:map';
+@use 'styles/general' as *;
+@use 'styles/themes' as *;
+@use 'styles/inputs' as *;
 
 @font-face {
 	font-family: Homestuck-Regular;
@@ -20,11 +21,27 @@
 	-webkit-focus-ring-color: transparent;
 }
 
+// Load standard theme.
+:root {
+	@each $theme-variable, $value in $standard-theme {
+		--#{$theme-variable}: #{$value};
+	}
+}
+
+// Load all themes other than standard theme.
+@each $theme-id, $theme in map.remove($themes, standard) {
+	.theme-#{$theme-id} {
+		@each $theme-variable, $value in $theme {
+			--#{$theme-variable}: #{$value};
+		}
+	}
+}
+
 body {
 	margin: 0;
 	// This makes the scrollbar not change visibility and offset the page horizontally when changing the page height, for example by toggling tall spoilers on a short page.
 	overflow-y: scroll;
-	@include theme(background-color, $back-color);
+	@include theme(background-color, back-color);
 	word-break: break-word;
 }
 
@@ -37,7 +54,7 @@ select,
 option {
 	font-family: $monospace;
 	font-weight: bold;
-	@include theme(color, $text-color);
+	@include theme(color, text-color);
 }
 
 iframe {
@@ -49,26 +66,27 @@ summary {
 }
 
 .mid {
-	@include theme(background-color, $mid-color);
+	@include theme(background-color, mid-color);
 }
 
 .front {
-	@include theme(background-color, $front-color);
+	@include theme(background-color, front-color);
 }
 
 .front-alt {
-	@include theme(background-color, $front-alt-color);
-	@include theme(color, $text-alt-color);
+	@include theme(background-color, front-alt-color);
+	@include theme(color, text-alt-color);
 }
 
-.frontest, input, textarea, select, option {
-	@include theme(background-color, $frontest-color);
+input, textarea, select, option {
+	@include theme(background-color, input-color);
 }
 
 .translucent-text {
-	// This is necessary so `.translucent-text` has priority over `.link` regardless of load order.
-	&, &.link:not(:focus, :active) {
-		@include theme(color, $translucent-text-color);
+	opacity: 0.7;
+
+	&.link:not(:focus, :active) {
+		@include theme(color, text-color);
 	}
 }
 
