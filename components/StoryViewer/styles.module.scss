@@ -57,7 +57,7 @@ $story-page-padding: 25px;
 		font-size: 0.875em;
 
 		&-group {
-			font-size: #{math.div(10, 14)}em;
+			font-size: math.div(10, 14) * 1em;
 
 			&-delimiter::before {
 				content: '             ';

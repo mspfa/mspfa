@@ -10,6 +10,6 @@
 		$height: 102;
 
 		position: relative;
-		padding-bottom: #{100% * math.div($height, $width)}
+		padding-bottom: math.div($height, $width) * 100%
 	}
 }
