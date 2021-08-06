@@ -137,6 +137,10 @@ const StoryViewer = ({
 	// Fetch new pages, cache page BBCode, and preload the BBCode and images of cached pages.
 	// None of this should be done server-side, because caching or preloading anything server-side would be pointless since it wouldn't be sent to the client.
 	useEffect(() => {
+		const pagesToFetch: Array<{
+
+		}> = [];
+
 		/** A partial record mapping each page ID to `true` if `fetchUnknownPages` has already been called on it. */
 		const checkedForUnknownPages: Partial<Record<StoryPageID, true>> = {};
 

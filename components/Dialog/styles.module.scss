@@ -1,4 +1,4 @@
-@import 'styles/themes';
+@use 'styles/themes' as *;
 
 .dialog {
 	&-container {
@@ -73,7 +73,7 @@ dialog {
 		margin: -1px;
 		opacity: 0.5;
 		// Color the border and the shadow so they blend with the background.
-		@include theme(background-color, $back-color);
+		@include theme(background-color, back-color);
 	}
 
 	&::after {

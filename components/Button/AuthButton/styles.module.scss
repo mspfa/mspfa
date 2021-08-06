@@ -1,4 +1,4 @@
-@import 'styles/button-color';
+@use 'styles/button-color' as *;
 
 // We add the `.button` selector here as well so that these styles have priority over themed button colors.
 .button.auth-button {

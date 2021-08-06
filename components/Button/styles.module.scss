@@ -1,7 +1,6 @@
 @use 'sass:math';
-
-@import 'styles/general';
-@import 'styles/button-color';
+@use 'styles/general' as *;
+@use 'styles/button-color' as *;
 
 // Applies a pixelated 3D depth effect behind the button. Lowers the depth on `:active`.
 @mixin button-depth(
@@ -76,7 +75,7 @@
 	vertical-align: middle;
 	text-decoration: none;
 	flex-shrink: 0;
-	@include button-color($button-color, $button-text-color);
+	@include button-color(button-color, button-text-color);
 
 	& + &:not(.icon-button) {
 		margin-left: 1ch;
@@ -135,7 +134,7 @@
 	}
 
 	&.alt {
-		@include button-color($button-alt-color, $button-text-alt-color);
+		@include button-color(button-alt-color, button-text-alt-color);
 	}
 
 	// The button's content (icon or label).
