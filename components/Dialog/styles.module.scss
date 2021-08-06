@@ -61,7 +61,7 @@ dialog {
 	border: none;
 	animation: 0.05s step-end dialog-pop;
 
-	// The border and the shadow respectively. These are pseudo-elements rather than using `border` and `box-shadow` so that their colors can be adjusted in runtime via `opacity`, making it easier for custom styles to change the colors.
+	// The border and the shadow respectively. These are pseudo-elements rather than using `border` and `box-shadow` so that their colors can be adjusted in runtime (e.g. via `opacity`), making it easier for custom styles to change the colors.
 	&::before, &::after {
 		content: '';
 		pointer-events: none;

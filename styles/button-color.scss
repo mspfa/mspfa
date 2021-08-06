@@ -1,0 +1,30 @@
+@import 'styles/themes';
+
+// Applies styles to color a button.
+@mixin button-color(
+	// A color value or theme map for the background color of the button.
+	$background-color: false,
+	// A color value or theme map for the text color of the button.
+	$color: false
+) {
+	@if $background-color {
+		@if type-of($background-color) != 'map' {
+			$background-color: (standard: $background-color);
+		}
+
+		@include theme(background-color, $background-color);
+
+		&::before {
+			// Set the base color of the button's 3D depth effect.
+			@include theme(color, $background-color);
+		}
+	}
+
+	@if $color {
+		@if type-of($color) != 'map' {
+			$color: (standard: $color);
+		}
+
+		@include theme(color, $color);
+	}
+}
