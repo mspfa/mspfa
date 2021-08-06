@@ -45,10 +45,10 @@ $standard-theme: map.get($themes, standard);
 @mixin theme(
 	// The property to set e.g. `background-color`.
 	$property,
-	// The name of the theme property to use for this color e.g. `front-color`.
-	$theme-property
+	// The name of the theme variable to use for this color e.g. `front-color`.
+	$theme-variable
 ) {
 	// In case the browser doesn't support custom properties.
-	#{$property}: map.get($standard-theme, $theme-property);
-	#{$property}: var(--#{$theme-property});
+	#{$property}: map.get($standard-theme, $theme-variable);
+	#{$property}: var(--#{$theme-variable});
 }

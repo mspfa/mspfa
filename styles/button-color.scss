@@ -2,9 +2,9 @@
 
 // Applies styles to color a button.
 @mixin button-color(
-	// A color value or theme property name for the background color of the button.
+	// A color value or theme variable name for the background color of the button.
 	$background-color: false,
-	// A color value or theme property name for the text color of the button.
+	// A color value or theme variable name for the text color of the button.
 	$color: false
 ) {
 	@if $background-color {

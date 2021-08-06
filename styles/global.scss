@@ -23,16 +23,16 @@
 
 // Load standard theme.
 :root {
-	@each $property, $value in $standard-theme {
-		--#{$property}: #{$value};
+	@each $theme-variable, $value in $standard-theme {
+		--#{$theme-variable}: #{$value};
 	}
 }
 
 // Load all themes other than standard theme.
 @each $theme-id, $theme in map.remove($themes, standard) {
 	.theme-#{$theme-id} {
-		@each $property, $value in $theme {
-			--#{$property}: #{$value};
+		@each $theme-variable, $value in $theme {
+			--#{$theme-variable}: #{$value};
 		}
 	}
 }
