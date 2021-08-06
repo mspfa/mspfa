@@ -110,7 +110,7 @@
 			#000000 ($large-gradient-size * -$brightness),
 			map.get($standard-theme, button-color) ($large-gradient-size * (1 - $brightness))
 		);
-		// In order to dark the `currentColor` for the depth effect's color, we take a gradient from black to the `currentColor` and stretch it out so much that we only get one color along the gradient (or two immediately adjacent colors, since there can be dithering).
+		// In order to darken the button color to get the depth effect's color, we take a gradient from black to the button color and stretch it out so much that we only get one color along the gradient (or two immediately adjacent colors, since there can be dithering).
 		$background-image: linear-gradient(
 			#000000 ($large-gradient-size * -$brightness),
 			var(--button-color) ($large-gradient-size * (1 - $brightness))
