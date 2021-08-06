@@ -104,20 +104,20 @@
 		$brightness: math.div(2, 3);
 		$large-gradient-size: 1000000%;
 
-		// In case the browser doesn't support CSS variables.
-		$background-image: linear-gradient(
-			#000000 ($large-gradient-size * -$brightness),
-			map.get($standard-theme, button-color) ($large-gradient-size * (1 - $brightness))
-		);
-		background-image: $background-image, $background-image, $background-image;
+		// Adds a `background-image` with the appropriate `linear-gradient`s using the specified `$color` argument as the button color.
+		@mixin button-gradient($color) {
+			// In order to darken the button color to get the depth effect's color, we take a gradient from black to the button color and stretch it out so much that we only get one color along the gradient (or two immediately adjacent colors, since there can be dithering).
+			$background-image: linear-gradient(
+				#000000 ($large-gradient-size * -$brightness),
+				var($color) ($large-gradient-size * (1 - $brightness))
+			);
+			// The two rectangles for the 3D depth effect behind the button, and one extra for if there's a border.
+			background-image: $background-image, $background-image, $background-image;
+		}
 
-		// In order to darken the button color to get the depth effect's color, we take a gradient from black to the button color and stretch it out so much that we only get one color along the gradient (or two immediately adjacent colors, since there can be dithering).
-		$background-image: linear-gradient(
-			#000000 ($large-gradient-size * -$brightness),
-			var(--button-color) ($large-gradient-size * (1 - $brightness))
-		);
-		// The two rectangles for the 3D depth effect behind the button, and one extra for if there's a border.
-		background-image: $background-image, $background-image, $background-image;
+		// In case the browser doesn't support CSS variables.
+		@include button-gradient(map.get($standard-theme, button-color));
+		@include button-gradient(var(--button-color));
 
 		background-repeat: no-repeat;
 	}
