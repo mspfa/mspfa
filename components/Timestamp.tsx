@@ -1,6 +1,6 @@
 import { getRelativeTimestamp, getAbsoluteTimestamp, getShortTimestamp } from 'modules/client/dates';
-import { HTMLAttributes, useEffect } from 'react';
-import { useState } from 'react';
+import type { HTMLAttributes } from 'react';
+import { useEffect, useState } from 'react';
 
 export type TimestampProps = Omit<HTMLAttributes<HTMLSpanElement>, 'children'> & {
 	children: Date | number,
