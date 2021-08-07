@@ -15,6 +15,7 @@ export type Mutable<Type> = {
 	-readonly [Key in keyof Type]: Type[Key]
 };
 
+// The purpose of this is to add clarity to whether a given number is an integer or not. Additionally, using this type in an API schema allows integer validation. Please always use this type instead of `number` when applicable.
 /** @asType integer */
 export type integer = number;
 
