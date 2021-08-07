@@ -1,9 +1,10 @@
 import validate from './index.validate';
 import type { APIHandler } from 'modules/server/api';
 import type { ServerStory, ServerStoryPage, StoryPageID } from 'modules/server/stories';
-import { getStoryByUnsafeID, getClientStoryPage, updateStorySchedule } from 'modules/server/stories';
+import { getStoryByUnsafeID, getClientStoryPage, updateStorySchedule, getClientPagesAround } from 'modules/server/stories';
 import { authenticate } from 'modules/server/auth';
 import type { ClientStoryPage, ClientStoryPageRecord } from 'modules/client/stories';
+import { StoryPrivacy } from 'modules/client/stories';
 import invalidPublishedOrder from 'modules/client/invalidPublishedOrder';
 import type { DateNumber, RecursivePartial } from 'modules/types';
 import { Perm } from 'modules/client/perms';
@@ -16,7 +17,9 @@ import type { UpdateFilter } from 'mongodb';
 type PuttableStoryPageKey = 'title' | 'content' | 'nextPages' | 'unlisted' | 'disableControls' | 'commentary' | 'notify';
 
 const Handler: APIHandler<{
-	query: {
+	// This `unknown` is necessary to set because of what I believe is a `vega/ts-json-schema-generator` bug I have yet to report.
+	// TODO: Look into this bug and submit an issue on the GitHub. A fix is critical here, because currently other `query` values are not being validated due to this bug.
+	query: unknown & {
 		storyID: string
 	}
 } & (
@@ -47,13 +50,79 @@ const Handler: APIHandler<{
 			 */
 			pageIDs: StoryPageID[]
 		}
+	} | {
+		method: 'GET',
+		query: {
+			/** Defined if the user wants to include unpublished pages. Undefined if not. */
+			preview?: string,
+			/** The page ID to get the adjacent pages of, within the `PAGE_PRELOAD_DEPTH`. */
+			aroundPageID: string,
+			/** A string of comma-separated page IDs not to send in the response to the client, for example because the client already has them. */
+			excludedPageIDs?: string
+		}
 	}
-), {
-	method: 'PUT',
-	/** A `ClientStoryPageRecord` of the pages which were modified or added. */
-	body: ClientStoryPageRecord
-}> = async (req, res) => {
+), (
+	{
+		method: 'PUT',
+		/** A `ClientStoryPageRecord` of the pages which were modified or added. */
+		body: ClientStoryPageRecord
+	} | {
+		method: 'GET',
+		body: {
+			/** A record which maps page IDs to `ClientStoryPage`s, or `null` if the page does not exist or the user doesn't have access to it. */
+			pages: Record<StoryPageID, ClientStoryPage | null>,
+			previousPageIDs: Record<number, number | null>
+		}
+	}
+)> = async (req, res) => {
 	await validate(req, res);
+
+	const story = await getStoryByUnsafeID(req.query.storyID, res);
+
+	if (req.method === 'GET') {
+		/** Whether the user is in preview mode (which allows accessing unpublished pages) and has permission to be in preview mode. */
+		const previewMode = 'preview' in req.query;
+
+		// Check if the user is trying to do something that requires read perms.
+		if (
+			story.privacy === StoryPrivacy.Private
+			|| previewMode
+		) {
+			const { user } = await authenticate(req, res);
+
+			if (!(
+				user && (
+					story.owner.equals(user._id)
+					|| story.editors.some(userID => userID.equals(user._id))
+					|| user.perms & Perm.sudoRead
+				)
+			)) {
+				res.status(403).send({
+					message: `You do not have permission to ${previewMode ? 'use preview mode in the specified adventure' : 'read the specified adventure'}.`
+				});
+				return;
+			}
+		}
+
+		const { clientPages, clientPreviousPageIDs } = getClientPagesAround(story, +req.query.aroundPageID, previewMode);
+
+		if (req.query.excludedPageIDs) {
+			for (const excludedPageIDString of req.query.excludedPageIDs.split(',')) {
+				const excludedPageID = +excludedPageIDString;
+
+				if (!Number.isNaN(excludedPageID)) {
+					delete clientPages[excludedPageID];
+					delete clientPreviousPageIDs[excludedPageID];
+				}
+			}
+		}
+
+		res.send({
+			pages: clientPages,
+			previousPageIDs: clientPreviousPageIDs as Record<StoryPageID, StoryPageID | null>
+		});
+		return;
+	}
 
 	const { user } = await authenticate(req, res);
 
@@ -63,8 +132,6 @@ const Handler: APIHandler<{
 		});
 		return;
 	}
-
-	const story = await getStoryByUnsafeID(req.query.storyID, res);
 
 	if (!(
 		story.owner.equals(user._id)

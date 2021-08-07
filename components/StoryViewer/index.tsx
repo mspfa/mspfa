@@ -14,6 +14,17 @@ import Dialog from 'modules/client/Dialog';
 import { useNavStoryID } from 'components/Nav';
 import { defaultSettings, getUser } from 'modules/client/users';
 import shouldIgnoreControl from 'modules/client/shouldIgnoreControl';
+import type { APIClient } from 'modules/client/api';
+import api from 'modules/client/api';
+
+type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
+
+/**
+ * The number of next pages to preload ahead of the user's current page.
+ *
+ * For example, if this is 2 and the user is on page 10, then pages 10 to 12 will be preloaded (assuming page 10 only links to page 11 and page 11 only links to page 12).
+ */
+export const PAGE_PRELOAD_DEPTH = 5;
 
 /** Goes to a page in the `StoryViewer` by page ID. */
 export const goToPage = (pageID: StoryPageID) => {
@@ -42,13 +53,6 @@ const openSaveGameHelp = () => {
  */
 export type ClientPreviousPageIDs = Partial<Record<StoryPageID, StoryPageID | null>>;
 
-/**
- * The number of next pages to preload ahead of the user's current page.
- *
- * For example, if this is 2 and the user is on page 10, then pages 10 to 12 will be preloaded (assuming page 10 only links to page 11 and page 11 only links to page 12).
- */
-export const PAGE_PRELOAD_DEPTH = 5;
-
 /** Returns an HTML string of the sanitized `page.content` BBCode. */
 const sanitizePageContent = (page: ClientStoryPage) => sanitizeBBCode(page.content, { html: true });
 
@@ -71,13 +75,13 @@ const StoryViewer = ({
 	useNavStoryID(story.id);
 
 	const router = useRouter();
+	/** Whether the user is in preview mode and should see unpublished pages. */
+	const previewMode = 'preview' in router.query;
 	const pageID = (
 		typeof router.query.p === 'string'
 			? +router.query.p
 			: 1
 	);
-	/** A URL query for whether the user is in preview mode, to be appended to URLs to this story. */
-	const previewQuery = 'preview' in router.query ? '&preview=1' as const : '' as const;
 
 	// This state is record of cached pages.
 	// If a page ID maps to `null`, then the page does not exist to this client, letting it know not to try to request it.
@@ -137,15 +141,16 @@ const StoryViewer = ({
 	// Fetch new pages, cache page BBCode, and preload the BBCode and images of cached pages.
 	// None of this should be done server-side, because caching or preloading anything server-side would be pointless since it wouldn't be sent to the client.
 	useEffect(() => {
-		const pagesToFetch: Array<{
+		/** Whether any pages need to be fetched from the server. */
+		let shouldFetchPages = false;
+		/** All page IDs within the `PAGE_PRELOAD_DEPTH` which should not be fetched since the client already has them. */
+		const excludedPageIDs: StoryPageID[] = [];
 
-		}> = [];
-
-		/** A partial record mapping each page ID to `true` if `fetchUnknownPages` has already been called on it. */
+		/** A partial record mapping each page ID to `true` if `checkForUnknownPages` has already been called on it. */
 		const checkedForUnknownPages: Partial<Record<StoryPageID, true>> = {};
 
 		/** Fetches unknown `previousPageIDs` and `nextPages`, doing the same for their `previousPageIDs` and `nextPages` recursively until the recursion depth reaches the `PAGE_PRELOAD_DEPTH`. */
-		const fetchUnknownPages = (
+		const checkForUnknownPages = (
 			/** The page ID to check the `previousPageIDs` and `nextPages` of. */
 			pageIDToCheck: StoryPageID,
 			/** The recursion depth of this function call. */
@@ -171,31 +176,60 @@ const StoryViewer = ({
 				return;
 			}
 
-			// If this page is within the `PAGE_PRELOAD_DEPTH` but isn't cached, then fetch it and don't continue.
 			if (pageToCheck === undefined) {
-				// TODO: Fetch the `pageIDToCheck`.
-				console.log('fetch', pageIDToCheck);
-
+				// If this page is within the `PAGE_PRELOAD_DEPTH` but isn't cached, then fetch it and don't continue.
+				shouldFetchPages = true;
 				return;
 			}
+
+			// If this point is reached, `pageToCheck` is non-nullable.
+
+			// Since this page is already cached on the client, exclude it from the pages to be fetched.
+			excludedPageIDs.push(pageIDToCheck);
 
 			const previousPageID = previousPageIDs[pageIDToCheck];
 			if (previousPageID === undefined) {
 				// If the `previousPageID` is unknown, fetch it.
-				// TODO: Ask the server with this page's first previous page is (via `?limit=1`).
-				console.log('fetch previous to', pageIDToCheck);
+				shouldFetchPages = true;
 			} else if (previousPageID !== null) {
 				// If the `previousPageID` is known and exists, call this function on it.
-				fetchUnknownPages(previousPageID, depth);
+				checkForUnknownPages(previousPageID, depth);
 			}
 
 			// Iterate over each of this page's `nextPages`.
 			for (const nextPageID of pageToCheck.nextPages) {
-				fetchUnknownPages(nextPageID, depth);
+				checkForUnknownPages(nextPageID, depth);
 			}
 		};
 
-		fetchUnknownPages(pageID);
+		checkForUnknownPages(pageID);
+
+		if (shouldFetchPages as boolean) {
+			(api as StoryPagesAPI).get(`/stories/${story.id}/pages`, {
+				params: {
+					...previewMode && {
+						preview: '1'
+					},
+					aroundPageID: pageID.toString(),
+					excludedPageIDs: excludedPageIDs.join(',')
+				}
+			}).then(({
+				data: {
+					pages: newPages,
+					previousPageIDs: newPreviousPageIDs
+				}
+			}) => {
+				setPages(pages => ({
+					...pages,
+					...newPages
+				}));
+
+				setPreviousPageIDs(previousPageIDs => ({
+					...previousPageIDs,
+					...newPreviousPageIDs
+				}));
+			});
+		}
 
 		let pageContentsChanged = false;
 		const newPageContents = { ...pageContents };
@@ -213,7 +247,7 @@ const StoryViewer = ({
 		if (pageContentsChanged) {
 			setPageContents(newPageContents);
 		}
-	}, [pageID, pages, pageContents, previousPageIDs]);
+	}, [pageID, pages, pageContents, previousPageIDs, story.id, previewMode]);
 
 	const storyPageElementRef = useRef<HTMLDivElement>(null!);
 
@@ -370,7 +404,7 @@ const StoryViewer = ({
 									>
 										<Link
 											shallow
-											href={`/?s=${story.id}&p=${nextPageID}${previewQuery}`}
+											href={`/?s=${story.id}&p=${nextPageID}${previewMode ? '&preview=1' : ''}`}
 											data-index={i}
 											onClick={onClickNextPageLink}
 										>
@@ -393,7 +427,7 @@ const StoryViewer = ({
 											<Link
 												key="start-over"
 												shallow
-												href={`/?s=${story.id}&p=1${previewQuery}`}
+												href={`/?s=${story.id}&p=1${previewMode ? '&preview=1' : ''}`}
 											>
 												Start Over
 											</Link>
@@ -402,7 +436,7 @@ const StoryViewer = ({
 											<Link
 												key="go-back"
 												shallow
-												href={`/?s=${story.id}&p=${previousPageID}${previewQuery}`}
+												href={`/?s=${story.id}&p=${previousPageID}${previewMode ? '&preview=1' : ''}`}
 											>
 												Go Back
 											</Link>

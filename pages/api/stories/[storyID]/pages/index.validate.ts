@@ -10,7 +10,8 @@ export default createValidator({
 			type: 'string',
 			enum: [
 				'PUT',
-				'DELETE'
+				'DELETE',
+				'GET'
 			]
 		}
 	}
@@ -140,8 +141,7 @@ export default createValidator({
 							},
 							required: [
 								'storyID'
-							],
-							additionalProperties: false
+							]
 						},
 						method: {
 							type: 'string',
@@ -184,8 +184,7 @@ export default createValidator({
 							},
 							required: [
 								'storyID'
-							],
-							additionalProperties: false
+							]
 						},
 						method: {
 							type: 'string',
@@ -194,6 +193,32 @@ export default createValidator({
 					},
 					required: [
 						'body',
+						'method',
+						'query'
+					]
+				},
+				{
+					type: 'object',
+					additionalProperties: false,
+					properties: {
+						body: {},
+						query: {
+							type: 'object',
+							properties: {
+								storyID: {
+									type: 'string'
+								}
+							},
+							required: [
+								'storyID'
+							]
+						},
+						method: {
+							type: 'string',
+							const: 'GET'
+						}
+					},
+					required: [
 						'method',
 						'query'
 					]
