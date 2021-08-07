@@ -1,5 +1,5 @@
 import type { ServerStory, StoryID, ServerStoryPage, StoryPageID } from 'modules/server/stories';
-import type { DateNumber } from 'modules/types';
+import type { DateNumber, integer } from 'modules/types';
 
 export enum StoryStatus {
 	Inactive = 0,
@@ -38,7 +38,7 @@ export type PrivateStory = Pick<ServerStory, PrivateServerStoryKey> & {
 	updated: DateNumber,
 	owner: string,
 	editors: string[],
-	pageCount: number
+	pageCount: integer
 };
 
 /** All keys whose values have the same serializable type in both `ServerStory` and `PublicStory`. */
@@ -51,7 +51,7 @@ export type PublicStory = Pick<ServerStory, PublicServerStoryKey> & {
 	updated: DateNumber,
 	owner: string,
 	editors: string[],
-	pageCount: number
+	pageCount: integer
 };
 
 /** All keys whose values have the same serializable type in both `ServerStoryPage` and `ClientStoryPage`. */

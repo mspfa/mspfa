@@ -31,7 +31,7 @@ export default createValidator({
 							uniqueItems: true
 						},
 						position: {
-							type: 'number',
+							$ref: '#/definitions/integer',
 							description: 'The position to insert the pages at.\n\nFor example, position 0 will insert the pages before page 1, position 1 will insert the pages after page 1, position 2 will insert the pages after page 2, and so on.',
 							minimum: 0
 						}
@@ -66,8 +66,11 @@ export default createValidator({
 			]
 		},
 		StoryPageID: {
-			type: 'number',
+			$ref: '#/definitions/integer',
 			minimum: 1
+		},
+		integer: {
+			type: 'integer'
 		}
 	}
 });

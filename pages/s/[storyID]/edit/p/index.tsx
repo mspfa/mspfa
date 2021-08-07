@@ -35,6 +35,7 @@ import frameThrottler, { frameThrottlerRequests } from 'modules/client/frameThro
 import shouldIgnoreControl from 'modules/client/shouldIgnoreControl';
 import { addViewportListener, removeViewportListener } from 'modules/client/viewportListener';
 import { useNavStoryID } from 'components/Nav';
+import type { integer } from 'modules/types';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -55,7 +56,7 @@ export const _key = Symbol('key');
 /** A `ClientStoryPage` with a React key. */
 export type KeyedClientStoryPage = ClientStoryPage & {
 	/** This page's React key. */
-	[_key]: number
+	[_key]: integer
 };
 
 const defaultGridCullingInfo = {
@@ -86,8 +87,8 @@ export const StoryEditorContext = createContext<{
 	setInitialPages: Dispatch<SetStateAction<ClientStoryPageRecord>>,
 	queuedValuesRef: MutableRefObject<Values | undefined>,
 	isSubmitting: boolean,
-	cachedPageHeightsRef: MutableRefObject<Partial<Record<number, number>>>,
-	toggleAdvancedShown: (pageKey: number) => void
+	cachedPageHeightsRef: MutableRefObject<Partial<Record<StoryPageID, number>>>,
+	toggleAdvancedShown: (pageKey: integer) => void
 }>(undefined!);
 
 const calculateGridSizeInfo = (
@@ -156,7 +157,7 @@ type ServerSideProps = {
 	privateStory: PrivateStory,
 	pages: ClientStoryPageRecord
 } | {
-	statusCode: number
+	statusCode: integer
 };
 
 const Component = withErrorPage<ServerSideProps>(({
@@ -512,7 +513,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					}
 
 					// This state is an array of the keys of pages whose advanced section is toggled open.
-					const [advancedShownPageKeys, setAdvancedShownPageKeys] = useState<number[]>([]);
+					const [advancedShownPageKeys, setAdvancedShownPageKeys] = useState<integer[]>([]);
 					/** A ref to the latest value of `advancedShownPageKeys` to reduce unnecessary callback dependencies. */
 					const advancedShownPageKeysRef = useLatest(advancedShownPageKeys);
 
@@ -705,7 +706,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						const lastSelectedPage = formikPropsRef.current.values.pages[selectedPages[selectedPages.length - 1]];
 
 						/** The position to insert the pages at. */
-						let position: number | undefined;
+						let position: integer | undefined;
 
 						const dialog = new Dialog({
 							id: 'move-pages',
@@ -847,7 +848,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					const defaultCulledHeightUnsetRef = useRef(true);
 
 					/** A ref to a partial record that maps each page's key to its cached height when `viewMode === 'list'`. */
-					const cachedPageHeightsRef = useRef<Partial<Record<number, number>>>({});
+					const cachedPageHeightsRef = useRef<Partial<Record<integer, number>>>({});
 					// Keys are used instead of page IDs so that cached heights are preserved correctly when pages are deleted or rearranged.
 
 					// This state is some information useful for culling when `viewMode === 'grid'`.
@@ -1303,7 +1304,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 						const iteratePage = (
 							/** The index of this page in `pageValues`. */
-							i: number
+							i: integer
 						) => {
 							// This is typed as nullable because `i` may not index a real page if there should be no pages in view.
 							const page = pageValues[i] as KeyedClientStoryPage | undefined;
@@ -1413,7 +1414,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					/** Toggles whether a page listing's advanced section is open. */
 					const toggleAdvancedShown = useCallback((
 						/** The key of the page to toggle the advanced section of. */
-						pageKey: number
+						pageKey: integer
 					) => {
 						const pageKeyIndex = advancedShownPageKeysRef.current.indexOf(pageKey);
 						if (pageKeyIndex === -1) {

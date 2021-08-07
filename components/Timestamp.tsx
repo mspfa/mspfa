@@ -1,9 +1,10 @@
 import { getRelativeTimestamp, getAbsoluteTimestamp, getShortTimestamp } from 'modules/client/dates';
+import type { DateNumber } from 'modules/types';
 import type { HTMLAttributes } from 'react';
 import { useEffect, useState } from 'react';
 
 export type TimestampProps = Omit<HTMLAttributes<HTMLSpanElement>, 'children'> & {
-	children: Date | number,
+	children: Date | DateNumber,
 	/** Whether the timestamp should only display a numeric date. */
 	short?: boolean,
 	/** Whether the timestamp should display the date relative to the current date rather than as an absolute date (or have it in the `title` attribute if the timestamp is `short`). */
@@ -13,7 +14,7 @@ export type TimestampProps = Omit<HTMLAttributes<HTMLSpanElement>, 'children'> &
 	 */
 	withTime?: boolean,
 	/** Displays an asterisk after the timestamp with the  */
-	edited?: Date | number
+	edited?: Date | DateNumber
 };
 
 const Timestamp = ({ short, relative, withTime, edited, className, children, ...props }: TimestampProps) => {

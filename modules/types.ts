@@ -15,12 +15,15 @@ export type Mutable<Type> = {
 	-readonly [Key in keyof Type]: Type[Key]
 };
 
+/** @asType integer */
+export type integer = number;
+
 // Outside of this range, `Date`s are invalid.
 /**
  * @minimum -8640000000000000
  * @maximum 8640000000000000
  */
-export type DateNumber = number;
+export type DateNumber = integer;
 
 /** @pattern ^https?:// */
 export type URLString = string;

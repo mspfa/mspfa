@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { APIHandler } from 'modules/server/api';
 import type { AxiosRequestConfig, AxiosInstance, AxiosResponse, AxiosError } from 'axios';
-import type { Method, MethodWithData } from 'modules/types';
+import type { integer, Method, MethodWithData } from 'modules/types';
 import Dialog from 'modules/client/Dialog';
 import { startLoading, stopLoading } from 'components/LoadingIndicator';
 
@@ -54,7 +54,7 @@ export type APIConfig<
 
 const apiExtension = {
 	/** Use this config object in API requests to not reject the request's promise on HTTP error codes < 500. */
-	resolveClientErrors: { validateStatus: (status: number) => status < 500 }
+	resolveClientErrors: { validateStatus: (status: integer) => status < 500 }
 };
 
 /**

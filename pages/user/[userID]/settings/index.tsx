@@ -35,6 +35,7 @@ import BirthdateField from 'components/DateField/BirthdateField';
 import { useDeepCompareEffect } from 'react-use';
 import Timestamp from 'components/Timestamp';
 import EditButton from 'components/Button/EditButton';
+import type { integer } from 'modules/types';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 type AuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;
@@ -76,7 +77,7 @@ const onFormChange = () => {
 type ServerSideProps = {
 	initialPrivateUser: PrivateUser
 } | {
-	statusCode: number
+	statusCode: integer
 };
 
 const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {

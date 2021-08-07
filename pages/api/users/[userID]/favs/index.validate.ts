@@ -55,8 +55,11 @@ export default createValidator({
 			]
 		},
 		StoryID: {
-			type: 'number',
+			$ref: '#/definitions/integer',
 			minimum: 1
+		},
+		integer: {
+			type: 'integer'
 		}
 	}
 });

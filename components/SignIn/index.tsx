@@ -17,6 +17,7 @@ import useThrottledCallback from 'modules/client/useThrottledCallback';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
 import { useIsomorphicLayoutEffect } from 'react-use';
+import type { integer } from 'modules/types';
 
 type EmailTakenAPI = APIClient<typeof import('pages/api/emailTaken').default>;
 
@@ -64,7 +65,7 @@ const emailTest = /^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-
 
 export type SignInProps = {
 	/** 0 if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
-	page: number
+	page: integer
 };
 
 const SignIn = ({ page }: SignInProps) => {

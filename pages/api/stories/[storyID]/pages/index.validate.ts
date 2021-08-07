@@ -226,12 +226,15 @@ export default createValidator({
 			]
 		},
 		DateNumber: {
-			type: 'number',
+			$ref: '#/definitions/integer',
 			minimum: -8640000000000000,
 			maximum: 8640000000000000
 		},
+		integer: {
+			type: 'integer'
+		},
 		StoryPageID: {
-			type: 'number',
+			$ref: '#/definitions/integer',
 			minimum: 1
 		}
 	}

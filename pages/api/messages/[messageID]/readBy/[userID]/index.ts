@@ -3,6 +3,7 @@ import type { APIHandler } from 'modules/server/api';
 import messages, { getMessageByUnsafeID, updateUnreadMessages } from 'modules/server/messages';
 import { Perm } from 'modules/client/perms';
 import { permToGetUserInAPI } from 'modules/server/perms';
+import type { integer } from 'modules/types';
 
 const Handler: APIHandler<{
 	query: {
@@ -13,7 +14,7 @@ const Handler: APIHandler<{
 }, {
 	method: 'DELETE',
 	body: {
-		unreadMessageCount: number
+		unreadMessageCount: integer
 	}
 }> = async (req, res) => {
 	await validate(req, res);

@@ -7,13 +7,14 @@ import api from 'modules/client/api';
 import type { APIClient, APIError } from 'modules/client/api';
 import Dialog from 'modules/client/Dialog';
 import type { StoryID } from 'modules/server/stories';
+import type { integer } from 'modules/types';
 
 type FavsAPI = APIClient<typeof import('pages/api/users/[userID]/favs').default>;
 type FavAPI = APIClient<typeof import('pages/api/users/[userID]/favs/[storyID]').default>;
 
 export type FavButtonProps = Omit<ButtonProps, 'onClick' | 'title' | 'children'> & {
 	storyID: StoryID,
-	children: number
+	children: integer
 };
 
 const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) => {
@@ -54,7 +55,7 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 
 					setLoading(true);
 
-					let newFavCount: number;
+					let newFavCount: integer;
 
 					if (active) {
 						({ data: { favCount: newFavCount } } = await (api as FavAPI).delete(`/users/${user.id}/favs/${storyID}`, {

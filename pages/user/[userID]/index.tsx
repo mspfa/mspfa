@@ -22,13 +22,14 @@ import type { PublicStory } from 'modules/client/stories';
 import List from 'components/List';
 import StoryListing from 'components/StoryListing';
 import Button from 'components/Button';
+import type { integer } from 'modules/types';
 
 type ServerSideProps = {
 	publicUser: PublicUser,
 	publicStories: PublicStory[],
 	favsPublic: boolean
 } | {
-	statusCode: number
+	statusCode: integer
 };
 
 const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, favsPublic }) => {

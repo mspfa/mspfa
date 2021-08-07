@@ -6,6 +6,7 @@ import { authenticate } from 'modules/server/auth';
 import { Perm } from 'modules/client/perms';
 import type { ClientStoryPageRecord } from 'modules/client/stories';
 import invalidPublishedOrder from 'modules/client/invalidPublishedOrder';
+import type { integer } from 'modules/types';
 
 const Handler: APIHandler<{
 	query: {
@@ -26,7 +27,7 @@ const Handler: APIHandler<{
 		 *
 		 * @minimum 0
 		 */
-		position: number
+		position: integer
 	}
 }, {
 	method: 'POST',

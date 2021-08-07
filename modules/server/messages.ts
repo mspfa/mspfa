@@ -5,6 +5,7 @@ import type { ServerUser, ServerUserID } from 'modules/server/users';
 import type { ClientMessage } from 'modules/client/messages';
 import users from 'modules/server/users';
 import type { APIResponse } from 'modules/server/api';
+import type { integer } from 'modules/types';
 
 export type ServerMessageID = ObjectId;
 
@@ -109,7 +110,7 @@ export const updateUnreadMessages = async (userID: ServerUserID) => {
 		await messages.aggregate!([
 			{ $match: { notReadBy: userID } },
 			{ $count: 'unreadMessageCount' }
-		]).next() as { unreadMessageCount: number } | null
+		]).next<{ unreadMessageCount: integer }>()
 	)?.unreadMessageCount || 0;
 
 	await users.updateOne({

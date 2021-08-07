@@ -16,13 +16,14 @@ import List from 'components/List';
 import StoryListing from 'components/StoryListing';
 import { Perm } from 'modules/client/perms';
 import type { Filter } from 'mongodb';
+import type { integer } from 'modules/types';
 
 type ServerSideProps = {
 	publicUser: PublicUser,
 	favsPublic: boolean,
 	publicStories: PublicStory[]
 } | {
-	statusCode: number
+	statusCode: integer
 };
 
 const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publicStories }) => (

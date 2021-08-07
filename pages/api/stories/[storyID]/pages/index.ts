@@ -71,7 +71,7 @@ const Handler: APIHandler<{
 		body: {
 			/** A record which maps page IDs to `ClientStoryPage`s, or `null` if the page does not exist or the user doesn't have access to it. */
 			pages: Record<StoryPageID, ClientStoryPage | null>,
-			previousPageIDs: Record<number, number | null>
+			previousPageIDs: Record<StoryPageID, StoryPageID | null>
 		}
 	}
 )> = async (req, res) => {
@@ -119,6 +119,7 @@ const Handler: APIHandler<{
 
 		res.send({
 			pages: clientPages,
+			// Previous page IDs must be sent to the client because the client has no other way of knowing when a previous page ID is `null`.
 			previousPageIDs: clientPreviousPageIDs as Record<StoryPageID, StoryPageID | null>
 		});
 		return;

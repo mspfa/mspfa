@@ -2,6 +2,7 @@ import createUpdater from 'react-component-updater';
 import type { ReactNode, Key } from 'react';
 import type { FormikProps } from 'formik';
 import Router from 'next/router';
+import type { integer } from 'modules/types';
 
 /** The array of all dialogs. */
 export const dialogs: Array<Dialog<any>> = [];
@@ -34,7 +35,7 @@ export type DialogActionOption = {
 
 export type DialogAction = DialogActionOption & {
 	/** The index of the action in the dialog's `actions`. */
-	index: number,
+	index: integer,
 	onClick: () => void
 };
 
@@ -56,7 +57,7 @@ export type DialogOptions<Values extends Record<string, any> = any> = {
 	 * - `1` puts the dialog above the bottom one.
 	 * - `0` puts the dialog on the bottom.
 	 */
-	index?: number,
+	index?: integer,
 	/** The title of the dialog. */
 	title: Dialog<Values>['title'],
 	/**

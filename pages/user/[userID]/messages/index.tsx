@@ -23,6 +23,7 @@ import Dialog from 'modules/client/Dialog';
 import fs from 'fs-extra';
 import path from 'path';
 import Row from 'components/Row';
+import type { integer } from 'modules/types';
 
 type ServerSideProps = {
 	privateUser: PrivateUser,
@@ -30,7 +31,7 @@ type ServerSideProps = {
 	userCache: PublicUser[],
 	imageFilename: string
 } | {
-	statusCode: number
+	statusCode: integer
 };
 
 const Component = withErrorPage<ServerSideProps>(({

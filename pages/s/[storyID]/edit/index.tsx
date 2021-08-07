@@ -38,6 +38,7 @@ import Timestamp from 'components/Timestamp';
 import EditButton from 'components/Button/EditButton';
 import Dialog from 'modules/client/Dialog';
 import { useNavStoryID } from 'components/Nav';
+import type { integer } from 'modules/types';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 
@@ -73,7 +74,7 @@ type ServerSideProps = {
 	privateStory: PrivateStory,
 	userCache: PublicUser[]
 } | {
-	statusCode: number
+	statusCode: integer
 };
 
 const Component = withErrorPage<ServerSideProps>(({

@@ -25,6 +25,7 @@ import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import BoxRow from 'components/Box/BoxRow';
 import BirthdateField from 'components/DateField/BirthdateField';
 import BBField from 'components/BBCode/BBField';
+import type { integer } from 'modules/types';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 
@@ -48,7 +49,7 @@ type Values = ReturnType<typeof getValuesFromUser>;
 type ServerSideProps = {
 	privateUser: PrivateUser
 } | {
-	statusCode: number
+	statusCode: integer
 };
 
 const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateUser }) => {

@@ -8,7 +8,7 @@ import type { IncomingMessage, ServerResponse } from 'http';
 import users from 'modules/server/users';
 import type { ServerUser, UserSession, AuthMethod } from 'modules/server/users';
 import { OAuth2Client } from 'google-auth-library';
-import type { EmailString } from 'modules/types';
+import type { EmailString, integer } from 'modules/types';
 import type { AuthMethodOptions } from 'modules/client/auth';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -257,11 +257,11 @@ export const verifyPassword = (
 	/** The user-inputted password to verify. */
 	password: string,
 	/**
-	 * A partial record of `VerifyPasswordResult` keys to HTTP status code values.
+	 * A partial record that maps `VerifyPasswordResult` keys to HTTP status code values.
 	 *
 	 * If a value is 0, the corresponding `VerifyPasswordResult` will resolve this promise rather than sending an HTTP error.
 	 */
-	status: Partial<Record<Exclude<VerifyPasswordResult, VerifyPasswordResult.Correct>, number>> = {}
+	status: Partial<Record<Exclude<VerifyPasswordResult, VerifyPasswordResult.Correct>, integer>> = {}
 ) => new Promise<VerifyPasswordResult>(async resolve => {
 	let result = VerifyPasswordResult.NotFound;
 

@@ -11,6 +11,7 @@ import axios from 'axios';
 import { connection, safeObjectID } from 'modules/server/db';
 import { escapeRegExp } from 'lodash';
 import type { Filter } from 'mongodb';
+import type { DateNumber, integer } from 'modules/types';
 
 const Handler: APIHandler<(
 	{
@@ -19,13 +20,13 @@ const Handler: APIHandler<(
 			/** @minLength 1 */
 			captchaToken: string,
 			name: ServerUser['name'],
-			birthdate: number
+			birthdate: DateNumber
 		}
 	} | {
 		method: 'GET',
 		query: {
 			/** How many results to respond with. */
-			limit?: number | string,
+			limit?: integer | string,
 			/** A case-insensitive username search or exact user ID match. */
 			search: ServerUser['name']
 		}

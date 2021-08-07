@@ -52,7 +52,7 @@ export default createValidator({
 					additionalProperties: false,
 					properties: {
 						body: {
-							$ref: '#/definitions/RecursivePartial%3C(alias-2073358172-70263-70404-2073358172-0-212357%3Cdef-alias--1080-1409--0-27641254867758%2Calias--801-1132--0-5358357827294%3E%26structure--1305-1466--1267-1466--1249-1467--1241-1467--1222-1470--1198-1470--1196-1472--1160-1472--1148-1566--1139-5332--1132-5332--1132-5333--0-5358)%3E'
+							$ref: '#/definitions/RecursivePartial%3C(alias-2073358172-70263-70404-2073358172-0-212357%3Cdef-alias--1089-1419--0-27751254867758%2Calias--801-1132--0-5358357827294%3E%26structure--1305-1466--1267-1466--1249-1467--1241-1467--1222-1470--1198-1470--1196-1472--1160-1472--1148-1566--1139-5332--1132-5332--1132-5333--0-5358)%3E'
 						},
 						query: {
 							type: 'object',
@@ -79,7 +79,7 @@ export default createValidator({
 				}
 			]
 		},
-		'RecursivePartial<(alias-2073358172-70263-70404-2073358172-0-212357<def-alias--1080-1409--0-27641254867758,alias--801-1132--0-5358357827294>&structure--1305-1466--1267-1466--1249-1467--1241-1467--1222-1470--1198-1470--1196-1472--1160-1472--1148-1566--1139-5332--1132-5332--1132-5333--0-5358)>': {
+		'RecursivePartial<(alias-2073358172-70263-70404-2073358172-0-212357<def-alias--1089-1419--0-27751254867758,alias--801-1132--0-5358357827294>&structure--1305-1466--1267-1466--1249-1467--1241-1467--1222-1470--1198-1470--1196-1472--1160-1472--1148-1566--1139-5332--1132-5332--1132-5333--0-5358)>': {
 			type: 'object',
 			properties: {
 				title: {
@@ -103,7 +103,7 @@ export default createValidator({
 					}
 				},
 				author: {
-					$ref: '#/definitions/RecursivePartial%3C(structure--2918-2962--2908-2963--1947-3699--1807-3700--0-16893%7Cundefined)%3E'
+					$ref: '#/definitions/RecursivePartial%3C(structure--2937-2981--2927-2982--1958-3720--1818-3721--0-16882%7Cundefined)%3E'
 				},
 				description: {
 					type: 'string',
@@ -161,10 +161,10 @@ export default createValidator({
 					type: 'boolean'
 				},
 				anniversary: {
-					$ref: '#/definitions/RecursivePartial%3Cindexed-type-2073358172-70377-70403-2073358172-70263-70404-2073358172-0-212357%3Cstructure--2258-2601--2120-2602--1947-3699--1807-3700--0-16893%2C(%22year%22%7C%22month%22%7C%22day%22)%3E%3E'
+					$ref: '#/definitions/RecursivePartial%3Cindexed-type-2073358172-70377-70403-2073358172-70263-70404-2073358172-0-212357%3Cstructure--2274-2620--2131-2621--1958-3720--1818-3721--0-16882%2C(%22year%22%7C%22month%22%7C%22day%22)%3E%3E'
 				},
 				script: {
-					$ref: '#/definitions/RecursivePartial%3Cindexed-type-2073358172-70377-70403-2073358172-70263-70404-2073358172-0-212357%3Cstructure--3437-3483--3428-3484--1947-3699--1807-3700--0-16893%2C%22unverified%22%3E%3E'
+					$ref: '#/definitions/RecursivePartial%3Cindexed-type-2073358172-70377-70403-2073358172-70263-70404-2073358172-0-212357%3Cstructure--3458-3504--3449-3505--1958-3720--1818-3721--0-16882%2C%22unverified%22%3E%3E'
 				}
 			},
 			additionalProperties: false
@@ -186,7 +186,7 @@ export default createValidator({
 				2
 			]
 		},
-		'RecursivePartial<(structure--2918-2962--2908-2963--1947-3699--1807-3700--0-16893|undefined)>': {
+		'RecursivePartial<(structure--2937-2981--2927-2982--1958-3720--1818-3721--0-16882|undefined)>': {
 			type: 'object',
 			properties: {
 				name: {
@@ -216,26 +216,29 @@ export default createValidator({
 			maxLength: 50,
 			pattern: '^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$'
 		},
-		'RecursivePartial<indexed-type-2073358172-70377-70403-2073358172-70263-70404-2073358172-0-212357<structure--2258-2601--2120-2602--1947-3699--1807-3700--0-16893,("year"|"month"|"day")>>': {
+		'RecursivePartial<indexed-type-2073358172-70377-70403-2073358172-70263-70404-2073358172-0-212357<structure--2274-2620--2131-2621--1958-3720--1818-3721--0-16882,("year"|"month"|"day")>>': {
 			type: 'object',
 			properties: {
 				year: {
-					type: 'number'
+					$ref: '#/definitions/integer'
 				},
 				month: {
-					type: 'number',
+					$ref: '#/definitions/integer',
 					minimum: 0,
 					maximum: 11
 				},
 				day: {
-					type: 'number',
+					$ref: '#/definitions/integer',
 					description: 'The anniversary\'s day of the month.',
 					minimum: 1
 				}
 			},
 			additionalProperties: false
 		},
-		'RecursivePartial<indexed-type-2073358172-70377-70403-2073358172-70263-70404-2073358172-0-212357<structure--3437-3483--3428-3484--1947-3699--1807-3700--0-16893,"unverified">>': {
+		'integer': {
+			type: 'integer'
+		},
+		'RecursivePartial<indexed-type-2073358172-70377-70403-2073358172-70263-70404-2073358172-0-212357<structure--3458-3504--3449-3505--1958-3720--1818-3721--0-16882,"unverified">>': {
 			type: 'object',
 			properties: {
 				unverified: {

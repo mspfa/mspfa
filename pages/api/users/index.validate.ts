@@ -40,7 +40,7 @@ export default createValidator({
 											maxLength: 32
 										},
 										birthdate: {
-											type: 'number'
+											$ref: '#/definitions/DateNumber'
 										},
 										authMethod: {
 											$ref: '#/definitions/ExternalAuthMethodOptions'
@@ -67,7 +67,7 @@ export default createValidator({
 											maxLength: 32
 										},
 										birthdate: {
-											type: 'number'
+											$ref: '#/definitions/DateNumber'
 										},
 										authMethod: {
 											$ref: '#/definitions/InternalAuthMethodOptions'
@@ -106,9 +106,13 @@ export default createValidator({
 							type: 'object',
 							properties: {
 								limit: {
-									type: [
-										'number',
-										'string'
+									anyOf: [
+										{
+											$ref: '#/definitions/integer'
+										},
+										{
+											type: 'string'
+										}
 									],
 									description: 'How many results to respond with.'
 								},
@@ -135,6 +139,14 @@ export default createValidator({
 					]
 				}
 			]
+		},
+		DateNumber: {
+			$ref: '#/definitions/integer',
+			minimum: -8640000000000000,
+			maximum: 8640000000000000
+		},
+		integer: {
+			type: 'integer'
 		},
 		ExternalAuthMethodOptions: {
 			type: 'object',

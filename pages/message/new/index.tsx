@@ -28,6 +28,7 @@ import { withStatusCode } from 'modules/server/errors';
 import Link from 'components/Link';
 import { safeObjectID } from 'modules/server/db';
 import type { ObjectId } from 'mongodb';
+import type { integer } from 'modules/types';
 
 type MessagesAPI = APIClient<typeof import('pages/api/messages').default>;
 
@@ -50,7 +51,7 @@ type ServerSideProps = {
 	replyTo?: never,
 	toUsers: PublicUser[]
 } | {
-	statusCode: number
+	statusCode: integer
 };
 
 const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {

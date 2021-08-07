@@ -1,6 +1,6 @@
 import db from 'modules/server/db';
 import type { Quirk } from 'modules/client/quirks';
-import type { DateNumber, Mutable, URLString } from 'modules/types';
+import type { DateNumber, integer, Mutable, URLString } from 'modules/types';
 import type { ClientStoryPage, PrivateStory, PublicStory } from 'modules/client/stories';
 import { StoryStatus, StoryPrivacy } from 'modules/client/stories';
 import type { ServerUser, ServerUserID } from 'modules/server/users';
@@ -12,10 +12,10 @@ import type { ClientPreviousPageIDs } from 'components/StoryViewer';
 import { PAGE_PRELOAD_DEPTH } from 'components/StoryViewer';
 
 /** @minimum 1 */
-export type StoryID = number;
+export type StoryID = integer;
 
 /** @minimum 1 */
-export type StoryPageID = number;
+export type StoryPageID = integer;
 
 /**
  * @minLength 1
@@ -62,21 +62,21 @@ export type ServerStory = {
 	/** The date this story will be deleted from the database, or undefined if the story is not scheduled for deletion. */
 	willDelete?: Date,
 	created: Date,
-	// Anniversary dates are stored as an object of `number`s instead of as a `Date` so that they are more efficient to query.
+	// Anniversary dates are stored as an object of numbers instead of as a single `Date` so that they are more efficient to query.
 	anniversary: {
 		// The `year` is only necessary because whether a day is valid depends on the year it's in.
-		year: number,
+		year: integer,
 		/**
 		 * @minimum 0
 		 * @maximum 11
 		 */
-		month: number,
+		month: integer,
 		/**
 		 * The anniversary's day of the month.
 		 *
 		 * @minimum 1
 		 */
-		day: number,
+		day: integer,
 		/** Whether a user has ever changed the anniversary. */
 		changed: boolean
 	},
@@ -110,8 +110,8 @@ export type ServerStory = {
 	 *
 	 * ⚠️ Does not necessarily equal `Object.values(story.pages).length` due to excluding pages which are not public.
 	 */
-	pageCount: number,
-	favCount: number,
+	pageCount: integer,
+	favCount: integer,
 	banner: '' | URLString,
 	style: string,
 	/** Whether the story should ignore the reader's theme setting. */
@@ -310,7 +310,7 @@ export const updateAndSendFavCount = async (
 		await users.aggregate!([
 			{ $match: { favs: storyID } },
 			{ $count: 'favCount' }
-		]).next<{ favCount: number }>()
+		]).next<{ favCount: integer }>()
 	)?.favCount || 0;
 
 	await stories.updateOne({
@@ -439,7 +439,6 @@ export const getClientPagesAround = (
 	pageID: StoryPageID,
 	/** Whether the user is in preview mode (which allows accessing unpublished pages) and has permission to be in preview mode. */
 	previewMode?: boolean,
-	/** The current date number. */
 	now: DateNumber = Date.now()
 ) => {
 	/**

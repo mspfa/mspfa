@@ -4,6 +4,7 @@ import type { InputHTMLAttributes } from 'react';
 import { useMemo, useRef } from 'react';
 import UserField from 'components/UserField';
 import AddUserButton from 'components/UserField/AddUserButton';
+import type { integer } from 'modules/types';
 
 export type UserArrayFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'required' | 'readOnly' | 'autoFocus' | 'className'> & {
 	name: string,
@@ -22,9 +23,9 @@ const UserArrayField = ({
 
 	const [, { value: fieldValue }, { setValue: setFieldValue }] = useField<Array<string | undefined>>(name);
 
-	const { current: userFieldKeys } = useRef<number[]>([]);
+	const { current: userFieldKeys } = useRef<integer[]>([]);
 
-	const getUserFieldKey = (index: number) => {
+	const getUserFieldKey = (index: integer) => {
 		if (index >= userFieldKeys.length) {
 			let i;
 			for (i = 0; userFieldKeys.includes(i); i++) {}

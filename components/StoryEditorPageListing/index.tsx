@@ -39,7 +39,7 @@ export type StoryEditorPageListingProps = {
 	/** The `ClientStoryPage` being edited. */
 	page: KeyedClientStoryPage,
 	/** This page's `published` value in the `initialValues`. */
-	initialPublished: number | undefined,
+	initialPublished: DateNumber | undefined,
 	/** Whether this page's advanced section is toggled open. */
 	advancedShown?: boolean
 };
@@ -176,7 +176,7 @@ const StoryEditorPageListing = React.memo(({
 
 	const savePage = useCallback(async () => {
 		/** The IDs of pages to save. */
-		const pageIDsToSave: number[] = [page.id];
+		const pageIDsToSave: StoryPageID[] = [page.id];
 
 		/** The pages to save. */
 		const pagesToSave: ClientStoryPageRecord = {

@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import type { IncomingMessage } from 'http';
 import type { AnyAPIQuery } from 'modules/client/api';
 import Ajv from 'ajv';
+import type { DateNumber } from 'modules/types';
 
 /** The server-side API request object. */
 export type APIRequest<
@@ -102,7 +103,7 @@ export const createValidator = (methodSchema: Record<string, unknown>, schema: R
 
 export const validateBirthdate = (
 	res: NextApiResponse,
-	birthdate: number
+	birthdate: DateNumber
 ) => new Promise<void>(resolve => {
 	const now = new Date();
 
@@ -126,7 +127,7 @@ export const validateBirthdate = (
 	)) {
 		// The user is over 200 years old, which, as far as I know, is currently impossible.
 		res.status(400).send({
-			message: 'You are too old.\nYou should be dead.'
+			message: 'You are too old.\n\nYou should be dead.'
 		});
 		return;
 	}

@@ -9,6 +9,7 @@ import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
 import Router from 'next/router';
 import BoxSection from 'components/Box/BoxSection';
+import type { integer } from 'modules/types';
 
 const goBack = () => {
 	const { asPath } = Router;
@@ -21,7 +22,7 @@ const goBack = () => {
 };
 
 export type ErrorPageProps = {
-	statusCode: number,
+	statusCode: integer,
 	imageFilename?: never
 } | {
 	statusCode: 403,
@@ -67,7 +68,7 @@ ErrorPage.getInitialProps = ({ res, error }: {
 	res?: ServerResponse,
 	error?: any
 }): ErrorPageProps => {
-	const statusCode: number = res?.statusCode || error?.statusCode || 404;
+	const statusCode: integer = res?.statusCode || error?.statusCode || 404;
 
 	return statusCode === 403 ? {
 		statusCode: 403,

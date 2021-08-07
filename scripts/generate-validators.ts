@@ -7,6 +7,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { exec } from 'child_process';
 import c from 'ansi-colors';
+import type { integer } from 'modules/types';
 
 const run = (command: string) => new Promise(resolve => {
 	exec(command).once('exit', resolve);
@@ -60,7 +61,7 @@ const getMetadata = (
 const initializeValidator = async (
 	/** The TS file to generate a validator for. */
 	sourcePath: string,
-	index: number
+	index: integer
 ) => {
 	const { sourcePathModule, outputPath } = getMetadata(sourcePath);
 
@@ -81,7 +82,7 @@ const initializeValidator = async (
 const generateValidator = async (
 	/** The TS file to generate a validator for. */
 	sourcePath: string,
-	index: number
+	index: integer
 ) => {
 	const { sourcePathModule, outputPath } = getMetadata(sourcePath);
 

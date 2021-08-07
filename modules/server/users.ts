@@ -1,12 +1,12 @@
 import db, { safeObjectID } from 'modules/server/db';
 import type { ObjectId } from 'mongodb';
 import type { achievements } from 'modules/server/achievements';
-import type { URLString, EmailString } from 'modules/types';
+import type { URLString, EmailString, integer } from 'modules/types';
 import type { PrivateUser, PublicUser } from 'modules/client/users';
 import { defaultSettings } from 'modules/client/users';
 import type { UnsafeObjectID } from 'modules/server/db';
 import type { Theme } from 'modules/client/themes';
-import type { StoryID } from 'modules/server/stories';
+import type { StoryID, StoryPageID } from 'modules/server/stories';
 import type { APIResponse } from 'modules/server/api';
 
 export type ServerUserID = ObjectId;
@@ -92,8 +92,8 @@ export type ServerUser = {
 	description: string,
 	icon: '' | URLString,
 	site: '' | URLString,
-	/** An object where each key is a story ID, and its value is a page number of that story. */
-	storySaves: Record<StoryID, number>,
+	/** A record that maps each story ID to the page ID the user has saved in that story. */
+	storySaves: Record<StoryID, StoryPageID>,
 	achievements: Partial<Record<keyof typeof achievements, true>>,
 	/** @uniqueItems true */
 	favs: StoryID[],
@@ -134,13 +134,13 @@ export type ServerUser = {
 	 *
 	 * @minimum 1
 	 */
-	permLevel?: number,
+	permLevel?: integer,
 	/** A bitwise OR of the user's `Perm`s. */
-	perms: number,
+	perms: integer,
 	dev?: true,
 	mod?: true,
 	patron?: true,
-	unreadMessageCount: number
+	unreadMessageCount: integer
 };
 
 /** A `Partial<ServerUser>` used to spread some general properties on newly inserted `ServerUser`s. */

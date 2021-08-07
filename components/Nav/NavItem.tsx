@@ -2,6 +2,7 @@ import React from 'react';
 import type { ReactNode } from 'react';
 import Link from 'components/Link';
 import type { LinkProps } from 'components/Link';
+import type { integer } from 'modules/types';
 
 export type NavItemProps = {
 	/**
@@ -15,7 +16,7 @@ export type NavItemProps = {
 	className?: never,
 	children?: never,
 	/** If true, shows an exclamation point. If a number > 0, shows the number. Otherwise, is hidden. */
-	bubble?: number | boolean
+	bubble?: integer | boolean
 } & LinkProps;
 
 const NavItem = React.forwardRef<HTMLAnchorElement & HTMLButtonElement, NavItemProps>((

@@ -10,6 +10,7 @@ import { withStatusCode } from 'modules/server/errors';
 import type { StoryPageID } from 'modules/server/stories';
 import { getPublicStory, getStoryByUnsafeID, getClientPagesAround } from 'modules/server/stories';
 import users, { getPublicUser } from 'modules/server/users';
+import type { integer } from 'modules/types';
 import dynamic from 'next/dynamic';
 
 const Homepage = dynamic(() => import('components/Homepage'));
@@ -26,7 +27,7 @@ type ServerSideProps = {
 	pages: Record<StoryPageID, ClientStoryPage | null>,
 	previousPageIDs: ClientPreviousPageIDs
 } | {
-	statusCode: number
+	statusCode: integer
 };
 
 const Component = withErrorPage<ServerSideProps>(({

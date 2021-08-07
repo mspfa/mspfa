@@ -4,6 +4,7 @@ import api from 'modules/client/api';
 import type { APIClient, APIError } from 'modules/client/api';
 import { setUser } from 'modules/client/users';
 import type { AuthMethodOptions } from 'modules/client/auth';
+import type { integer } from 'modules/types';
 
 type SessionAPI = APIClient<typeof import('pages/api/session').default>;
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
@@ -33,7 +34,7 @@ export const openSignInDialog = () => {
 /** Sets the sign-in page of the sign-in dialog. Opens the sign-in dialog if it is not already open. */
 export const setSignInPage = (
 	/** 0 if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
-	newSignInPage: number
+	newSignInPage: integer
 ) => {
 	if (signInLoading) {
 		new Dialog({

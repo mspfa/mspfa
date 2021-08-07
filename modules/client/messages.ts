@@ -1,9 +1,10 @@
 import type { ServerMessage } from 'modules/server/messages';
+import type { DateNumber } from 'modules/types';
 
 export type ClientMessage = Pick<ServerMessage, 'subject' | 'content'> & {
 	id: string,
-	sent: number,
-	edited?: number,
+	sent: DateNumber,
+	edited?: DateNumber,
 	from: string,
 	/**
 	 * @minItems 1

@@ -17,6 +17,7 @@ import Dialog from 'modules/client/Dialog';
 import useThrottledCallback from 'modules/client/useThrottledCallback';
 import useMountedRef from 'modules/client/useMountedRef';
 import UserLink from 'components/Link/UserLink';
+import type { integer } from 'modules/types';
 
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
 
@@ -29,7 +30,7 @@ export type UserFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 
 	/** Whether this field is a child of a `UserArrayField`. */
 	inUserArrayField?: boolean,
 	/** The React keys of the user array field's children which include this component. */
-	userArrayFieldKeys?: number[],
+	userArrayFieldKeys?: integer[],
 	/** Whether the value of this field must be unique from other user fields in the parent `UserArrayField`. */
 	unique?: boolean,
 	/** The value of the parent `UserArrayField`. */

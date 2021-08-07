@@ -10,6 +10,7 @@ import type { TagString } from 'modules/server/stories';
 import Label from 'components/Label';
 import Dialog from 'modules/client/Dialog';
 import Link from 'components/Link';
+import type { integer } from 'modules/types';
 
 /** An object that maps `TagString`s to `string`s explaining each tag. */
 const tagHelp: Partial<Record<TagString, string>> = {
@@ -57,7 +58,7 @@ const createTagFieldEditable = () => {
 
 export type TagFieldProps = Pick<TextareaHTMLAttributes<HTMLTextAreaElement>, 'name' | 'id' | 'rows'> & {
 	/** The maximum number of tags allowed. Defaults to 50. */
-	max?: number
+	max?: integer
 };
 
 const TagField = ({

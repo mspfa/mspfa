@@ -28,17 +28,18 @@ import { Form, Formik } from 'formik';
 import { useLeaveConfirmation } from 'modules/client/forms';
 import UserLink from 'components/Link/UserLink';
 import { useIsomorphicLayoutEffect } from 'react-use';
+import type { integer } from 'modules/types';
 
 type MessageAPI = APIClient<typeof import('pages/api/messages/[messageID]').default>;
 type MessageDeletedByAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy').default>;
 
 type ServerSideProps = {
-	unreadMessageCount?: number,
+	unreadMessageCount?: integer,
 	message: ClientMessage,
 	replyTo?: ClientMessage,
 	userCache: PublicUser[]
 } | {
-	statusCode: number
+	statusCode: integer
 };
 
 const Component = withErrorPage<ServerSideProps>(({
@@ -245,7 +246,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		return { props: { statusCode: 403 } };
 	}
 
-	let unreadMessageCount: number | undefined;
+	let unreadMessageCount: integer | undefined;
 
 	// If the message is unread, mark it as read.
 	if (message.notReadBy.some(userID => userID.equals(req.user!._id))) {

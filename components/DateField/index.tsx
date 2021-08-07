@@ -6,6 +6,7 @@ import { useCallback, useState } from 'react';
 import { monthNames, twoDigits } from 'modules/client/dates';
 import { usePrefixedID } from 'modules/client/IDPrefix';
 import { useIsomorphicLayoutEffect } from 'react-use';
+import type { DateNumber, integer } from 'modules/types';
 
 // @client-only {
 const nativeInput = document.createElement('input');
@@ -13,7 +14,7 @@ nativeInput.type = 'number';
 // @client-only }
 
 /** Gets the maximum possible day of the month based on a full year number (e.g. 2001) and a month number (0 to 11). */
-const getMaxDay = (year: number, month: number) => {
+const getMaxDay = (year: integer, month: integer) => {
 	const lastDayOfTheMonth = new Date(0);
 	lastDayOfTheMonth.setFullYear(
 		// Year 2000 is used as a fallback here because 2000 is a leap year, so if the year is invalid, it will allow up to 29 February by default instead of 28.
@@ -43,38 +44,38 @@ export type DateFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 
 	 *
 	 * If this is `NaN`, the value will be controlled internally and without Formik.
 	 */
-	value?: number | string,
+	value?: DateNumber | string,
 	withTime?: boolean,
 	/**
 	 * The default value of the year input.
 	 *
 	 * ⚠️ There is no validation that this is within the bounds of `min` and `max`.
 	 */
-	defaultYear?: number,
+	defaultYear?: integer,
 	/**
 	 * The default value of the month input.
 	 *
 	 * ⚠️ There is no validation that this is within the bounds of `min` and `max`.
 	 */
-	defaultMonth?: number,
+	defaultMonth?: integer,
 	/**
 	 * The default value of the day input.
 	 *
 	 * ⚠️ There is no validation that this is within the bounds of `min` and `max`.
 	 */
-	defaultDay?: number,
+	defaultDay?: integer,
 	/**
 	 * The default value of the hour input.
 	 *
 	 * ⚠️ There is no validation that this is within the bounds of `min` and `max`.
 	 */
-	defaultHour?: number,
+	defaultHour?: integer,
 	/**
 	 * The default value of the minute input.
 	 *
 	 * ⚠️ There is no validation that this is within the bounds of `min` and `max`.
 	 */
-	defaultMinute?: number
+	defaultMinute?: integer
 };
 
 const DateField = ({
@@ -99,7 +100,7 @@ const DateField = ({
 		id = `${idPrefix}field-${toKebabCase(name)}`;
 	}
 
-	const [, { value: fieldValue }, { setValue: setFieldValue }] = useField<number | undefined>(name);
+	const [, { value: fieldValue }, { setValue: setFieldValue }] = useField<DateNumber | undefined>(name);
 
 	const date = (
 		valueProp === undefined

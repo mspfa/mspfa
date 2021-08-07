@@ -4,6 +4,7 @@ import type { UnsafeObjectID } from 'modules/server/db';
 import type { APIRequest, APIResponse } from 'modules/server/api';
 import type { PageRequest } from 'modules/server/pages';
 import { authenticate } from 'modules/server/auth';
+import type { integer } from 'modules/types';
 
 /**
  * Requires a user to have permission to get another user by potentially unsafe ID.
@@ -31,7 +32,7 @@ function permToGetUser(
 	 *
 	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
 	 */
-	perms: number
+	perms: integer
 ): Promise<{
 	user: ServerUser,
 	statusCode?: undefined
@@ -49,13 +50,13 @@ function permToGetUser(
 	 *
 	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
 	 */
-	perms: number
+	perms: integer
 ): Promise<{
 	user: ServerUser,
 	statusCode?: undefined
 } | {
 	user?: undefined,
-	statusCode: number
+	statusCode: integer
 }>;
 
 // This ESLint comment is necessary because the rule wants me to use an arrow function, which does not allow for the overloading used here.
@@ -72,14 +73,14 @@ function permToGetUser(
 	 *
 	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
 	 */
-	perms: number
+	perms: integer
 ) {
 	return new Promise<{
 		user: ServerUser,
 		statusCode?: undefined
 	} | {
 		user?: undefined,
-		statusCode: number
+		statusCode: integer
 	}>(async resolve => {
 		if (!user) {
 			// The client is not authenticated.
@@ -173,7 +174,7 @@ export const permToGetUserInAPI = async <ServerUserID extends UnsafeObjectID = u
 	 *
 	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
 	 */
-	perms: number,
+	perms: integer,
 	...[
 		userID = (req.query as any).userID
 	]: (ServerUserID extends undefined ? [
@@ -210,5 +211,5 @@ export const permToGetUserInPage = async (
 	 *
 	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
 	 */
-	perms: number
+	perms: integer
 ) => permToGetUser(undefined, req.user, id, perms);

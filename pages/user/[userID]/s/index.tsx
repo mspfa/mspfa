@@ -19,6 +19,7 @@ import stories, { getPrivateStory } from 'modules/server/stories';
 import List from 'components/List';
 import StoryListing from 'components/StoryListing';
 import Router from 'next/router';
+import type { integer } from 'modules/types';
 
 type StoriesAPI = APIClient<typeof import('pages/api/stories').default>;
 
@@ -77,7 +78,7 @@ type ServerSideProps = {
 	/** The stories owned by the private user. */
 	privateStories: PrivateStory[]
 } | {
-	statusCode: number
+	statusCode: integer
 };
 
 const Component = withErrorPage<ServerSideProps>(({ privateStories }) => (
