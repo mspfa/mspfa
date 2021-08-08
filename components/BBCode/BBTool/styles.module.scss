@@ -7,3 +7,13 @@
 		background-size: auto 1em;
 	}
 }
+
+// These styles are to counteract the `font-size` of `textarea`s, so the text can be previewed at the normal size of BB text.
+#field-bb-preview {
+	// This is set on the container rather than the `textarea` itself so that relative `style.fontSize`s set on the `textarea` can use this as a reference point.
+	&-container {
+		font-size: 0.875em;
+	}
+
+	font-size: 1em;
+}

@@ -8,14 +8,13 @@ import InlineRowSection from 'components/Box/InlineRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
 import Label from 'components/Label';
 import type { FormikProps } from 'formik';
-import { Field } from 'formik';
 import BoxRow from 'components/Box/BoxRow';
 import Link from 'components/Link';
 import { getChangedValues } from 'modules/client/forms';
 import IDPrefix from 'modules/client/IDPrefix';
 import { useLatest } from 'react-use';
 
-const bbPreview = 'The quick brown fox jumps over the lazy dog.';
+const defaultBBPreview = 'The quick brown fox jumps over the lazy dog.';
 
 const randomColorAttributes = () => ({
 	attributes: `#${`00000${Math.floor(Math.random() * 0x1000000).toString(16)}`.slice(-6)}`
@@ -98,7 +97,6 @@ const tags: Record<string, {
 	},
 	size: {
 		title: 'Font Size',
-		initialValues: { bbPreview },
 		content: ({ values }) => (
 			<InlineRowSection>
 				<FieldBoxRow
@@ -113,12 +111,10 @@ const tags: Record<string, {
 					<Label block htmlFor="field-bb-preview">
 						Preview
 					</Label>
-					{/* This `.bb` container is to give the preview text the correct relative font size. */}
-					<span className="bb">
-						<Field
-							as="textarea"
+					<span id="field-bb-preview-container">
+						<textarea
 							id="field-bb-preview"
-							name="bbPreview"
+							defaultValue={defaultBBPreview}
 							rows={3}
 							style={(
 								typeof values.attributes === 'number'
@@ -133,7 +129,6 @@ const tags: Record<string, {
 	},
 	font: {
 		title: 'Font Family',
-		initialValues: { bbPreview },
 		content: ({ values }) => (
 			<>
 				<InlineRowSection>
@@ -168,13 +163,14 @@ const tags: Record<string, {
 						<Label block htmlFor="field-bb-preview">
 							Preview
 						</Label>
-						<Field
-							as="textarea"
-							id="field-bb-preview"
-							name="bbPreview"
-							rows={3}
-							style={{ fontFamily: values.attributes }}
-						/>
+						<span id="field-bb-preview-container">
+							<textarea
+								id="field-bb-preview"
+								defaultValue={defaultBBPreview}
+								rows={3}
+								style={{ fontFamily: values.attributes }}
+							/>
+						</span>
 					</BoxRow>
 				</InlineRowSection>
 			</>
