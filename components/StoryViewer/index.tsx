@@ -20,11 +20,14 @@ import api from 'modules/client/api';
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 
 /**
- * The number of next pages to preload ahead of the user's current page.
+ * The maximum distance of pages to preload around the user's current page.
  *
- * For example, if this is 2 and the user is on page 10, then pages 10 to 12 will be preloaded (assuming page 10 only links to page 11 and page 11 only links to page 12).
+ * For example, if this is 2 and the user is on page 10, then pages 8 to 12 will be preloaded (assuming page 10 only links to page 11 and page 11 only links to page 12).
  */
 export const PAGE_PRELOAD_DEPTH = 10;
+
+/** The maximum distance of pages to preload images of around the user's current page. */
+export const IMAGE_PRELOAD_DEPTH = 2;
 
 /** Goes to a page in the `StoryViewer` by page ID. */
 export const goToPage = (pageID: StoryPageID) => {
@@ -157,125 +160,156 @@ const StoryViewer = ({
 	useEffect(() => {
 		let unmounted = false;
 
-		// Only consider fetching new pages if new pages around this page aren't already being fetched.
-		if (!fetchingPageIDsRef.current.includes(queriedPageID)) {
-			/** Whether any pages need to be fetched from the server. */
-			let shouldFetchPages = false;
-			/** All page IDs within the `PAGE_PRELOAD_DEPTH` which should not be fetched since the client already has them. */
-			const excludedPageIDs: StoryPageID[] = [];
+		/** Whether any pages need to be fetched from the server if they aren't already being fetched. */
+		let unknownPagesNearby = false;
+		/** All page IDs within the `PAGE_PRELOAD_DEPTH` which should not be fetched since the client already has them. */
+		const nearbyCachedPageIDs: StoryPageID[] = [];
 
-			/** A partial record mapping each page ID to `true` if `checkForUnknownPages` has already been called on it. */
-			const checkedForUnknownPages: Partial<Record<StoryPageID, true>> = {};
+		const preloadResourcesElement = document.getElementById('preload-resources') as HTMLDivElement;
+		// Reset the preloaded images.
+		/** The string to be set into `preloadResourcesElement.style.backgroundImage` to preload images. */
+		let preloadBackgroundImage = '';
 
-			/** Fetches unknown `previousPageIDs` and `nextPages`, doing the same for their `previousPageIDs` and `nextPages` recursively until the recursion depth reaches the `PAGE_PRELOAD_DEPTH`. */
-			const checkForUnknownPages = (
-				/** The page ID to check the `previousPageIDs` and `nextPages` of. */
-				pageIDToCheck: StoryPageID,
-				/** The recursion depth of this function call. */
-				depth = 0
-			) => {
-				// If this page is already checked, then don't continue.
-				if (checkedForUnknownPages[pageIDToCheck]) {
-					return;
-				}
+		/** A partial record mapping each page ID to `true` if `checkAdjacentPages` has already been called on it. */
+		const checkedAdjacentPages: Partial<Record<StoryPageID, true>> = {};
 
-				// Mark this `pageIDToCheck` as checked.
-				checkedForUnknownPages[pageIDToCheck] = true;
-
-				const pageToCheck = pages[pageIDToCheck];
-
-				if (
-					// If this page doesn't exist, don't bother checking it.
-					pageToCheck === null
-					// If this iteration has reached the `PAGE_PRELOAD_DEPTH`, don't iterate any deeper.
-					// The reason it's `depth++` instead of `++depth` (like on the server) is because it needs to go one extra recursion step in order to fetch the pages one step outside the `PAGE_PRELOAD_DEPTH`.
-					|| depth++ > PAGE_PRELOAD_DEPTH
-				) {
-					return;
-				}
-
-				if (pageToCheck === undefined) {
-					// If this page is within the `PAGE_PRELOAD_DEPTH` but isn't cached, then fetch it and don't continue.
-					shouldFetchPages = true;
-					return;
-				}
-
-				// If this point is reached, `pageToCheck` is non-nullable.
-
-				// Since this page is already cached on the client, exclude it from the pages to be fetched.
-				excludedPageIDs.push(pageIDToCheck);
-
-				const previousPageID = previousPageIDs[pageIDToCheck];
-				if (previousPageID === undefined) {
-					// If the `previousPageID` is unknown, fetch it.
-					shouldFetchPages = true;
-				} else if (previousPageID !== null) {
-					// If the `previousPageID` is known and exists, call this function on it.
-					checkForUnknownPages(previousPageID, depth);
-				}
-
-				// Iterate over each of this page's `nextPages`.
-				for (const nextPageID of pageToCheck.nextPages) {
-					checkForUnknownPages(nextPageID, depth);
-				}
-			};
-
-			checkForUnknownPages(queriedPageID);
-
-			if (shouldFetchPages as boolean) {
-				fetchingPageIDsRef.current.push(queriedPageID);
-
-				(api as StoryPagesAPI).get(`/stories/${story.id}/pages`, {
-					params: {
-						...previewMode && {
-							preview: '1'
-						},
-						aroundPageID: queriedPageID.toString(),
-						excludedPageIDs: excludedPageIDs.join(',')
-					}
-				}).then(({
-					data: {
-						pages: newPages,
-						previousPageIDs: newPreviousPageIDs
-					}
-				}) => {
-					if (unmounted) {
-						return;
-					}
-
-					// Ensure this state update will actually cache new pages and won't just create an unnecessary re-render.
-					for (const newPageID of Object.keys(newPages)) {
-						if (!(newPageID in pagesRef.current)) {
-							setPreviousPageIDs(previousPageIDs => ({
-								...newPreviousPageIDs,
-								// We assign the original `previousPageIDs` after the `newPreviousPageIDs` so that any `previousPageIDs` the client already has set are not overwritten.
-								...previousPageIDs
-							}));
-
-							setPages(pages => ({
-								...pages,
-								...newPages
-							}));
-
-							break;
-						}
-					}
-				}).finally(() => {
-					// Remove this `queriedPageID` from the `fetchingPageIDsRef`.
-					fetchingPageIDsRef.current.splice(fetchingPageIDsRef.current.indexOf(queriedPageID), 1);
-				});
+		/** Fetches unknown `previousPageIDs` and `nextPages`, doing the same for their `previousPageIDs` and `nextPages` recursively until the recursion depth reaches the `PAGE_PRELOAD_DEPTH`. */
+		const checkAdjacentPages = (
+			/** The page ID to check the `previousPageIDs` and `nextPages` of. */
+			pageIDToCheck: StoryPageID,
+			/** The recursion depth of this function call. */
+			depth = 0
+		) => {
+			// If this page is already checked, then don't continue.
+			if (checkedAdjacentPages[pageIDToCheck]) {
+				return;
 			}
+
+			// Mark this `pageIDToCheck` as checked.
+			checkedAdjacentPages[pageIDToCheck] = true;
+
+			const pageToCheck = pages[pageIDToCheck];
+
+			if (pageToCheck !== undefined) {
+				nearbyCachedPageIDs.push(pageIDToCheck);
+			}
+
+			if (
+				// If this page doesn't exist, don't bother checking it.
+				pageToCheck === null
+				// If this iteration has reached the `PAGE_PRELOAD_DEPTH`, don't iterate any deeper.
+				|| depth > PAGE_PRELOAD_DEPTH
+			) {
+				return;
+			}
+
+			if (pageToCheck === undefined) {
+				// If this page is within the `PAGE_PRELOAD_DEPTH` but isn't cached, then fetch it and don't continue.
+				unknownPagesNearby = true;
+				return;
+			}
+
+			// If this point is reached, `pageToCheck` is non-nullable.
+
+			// If this page is within the `IMAGE_PRELOAD_DEPTH`, preload its images.
+			if (depth <= IMAGE_PRELOAD_DEPTH) {
+				const imgTagTest = /\[img(?:(?:=(["']?).*?\1)|(?: [\w-]+=(["']?).*?\2)+)?\](.+)\[\/img\]/g;
+				let imgTagMatch;
+				while (imgTagMatch = imgTagTest.exec(pageToCheck.content)) {
+					const imageURL = imgTagMatch[3];
+
+					// Add this image to the preloaded images.
+					// To improve performance, we append to a string to be set all at once into `preloadResourcesElement.style.backgroundImage` rather than appending to `preloadResourcesElement.style.backgroundImage` directly each time.
+					preloadBackgroundImage += `${preloadBackgroundImage ? ', ' : ''}url("${imageURL.replace(/([\\"])/g, '\\$1')}")`;
+				}
+			}
+
+			// The reason we increment `depth` here instead of before the `depth` checks (like on the server) is because it needs to go one extra recursion step in order to fetch the pages one step outside the `PAGE_PRELOAD_DEPTH`.
+			depth++;
+
+			const previousPageID = previousPageIDs[pageIDToCheck];
+			if (previousPageID === undefined) {
+				// If the `previousPageID` is unknown, fetch it.
+				unknownPagesNearby = true;
+			} else if (previousPageID !== null) {
+				// If the `previousPageID` is known and exists, call this function on it.
+				checkAdjacentPages(previousPageID, depth);
+			}
+
+			// Iterate over each of this page's `nextPages`.
+			for (const nextPageID of pageToCheck.nextPages) {
+				checkAdjacentPages(nextPageID, depth);
+			}
+		};
+
+		checkAdjacentPages(queriedPageID);
+
+		// Update the preloaded images.
+		preloadResourcesElement.style.backgroundImage = preloadBackgroundImage;
+
+		if (
+			// Only consider fetching new pages around this page if new pages around this page aren't already being fetched.
+			!fetchingPageIDsRef.current.includes(queriedPageID)
+			&& unknownPagesNearby as boolean
+		) {
+			fetchingPageIDsRef.current.push(queriedPageID);
+
+			(api as StoryPagesAPI).get(`/stories/${story.id}/pages`, {
+				params: {
+					...previewMode && {
+						preview: '1'
+					},
+					aroundPageID: queriedPageID.toString(),
+					// Since these pages are the only ones within the `PAGE_PRELOAD_DEPTH` which are already cached on the client, exclude them from the pages to be fetched.
+					excludedPageIDs: nearbyCachedPageIDs.join(',')
+				}
+			}).then(({
+				data: {
+					pages: newPages,
+					previousPageIDs: newPreviousPageIDs
+				}
+			}) => {
+				if (unmounted) {
+					return;
+				}
+
+				// Ensure this state update will actually cache new pages and won't just create an unnecessary re-render.
+				for (const newPageID of Object.keys(newPages)) {
+					if (!(newPageID in pagesRef.current)) {
+						setPreviousPageIDs(previousPageIDs => ({
+							...newPreviousPageIDs,
+							// We assign the original `previousPageIDs` after the `newPreviousPageIDs` so that any `previousPageIDs` the client already has set are not overwritten.
+							...previousPageIDs
+						}));
+
+						setPages(pages => ({
+							...pages,
+							...newPages
+						}));
+
+						break;
+					}
+				}
+			}).finally(() => {
+				// Remove this `queriedPageID` from the `fetchingPageIDsRef`.
+				fetchingPageIDsRef.current.splice(fetchingPageIDsRef.current.indexOf(queriedPageID), 1);
+			});
 		}
 
 		let pageContentsChanged = false;
 		const newPageContents = { ...pageContents };
 
-		// Iterate through all fetched pages.
-		for (const pageValue of Object.values(pages)) {
-			// If the page exists, cache its BBCode if it is not already cached.
-			if (pageValue && newPageContents[pageValue.id] === undefined) {
-				newPageContents[pageValue.id] = sanitizePageContent(pageValue);
-				pageContentsChanged = true;
+		// Iterate through all nearby cached pages.
+		for (const nearbyPageID of nearbyCachedPageIDs) {
+			const nearbyPage = pages[nearbyPageID];
+
+			// If the page exists, consider preloading its images and caching its BBCode.
+			if (nearbyPage) {
+				// Cache its BBCode if it is not already cached.
+				if (newPageContents[nearbyPage.id] === undefined) {
+					newPageContents[nearbyPage.id] = sanitizePageContent(nearbyPage);
+					pageContentsChanged = true;
+				}
 			}
 		}
 
@@ -286,6 +320,9 @@ const StoryViewer = ({
 
 		return () => {
 			unmounted = true;
+
+			// Reset the preloaded images.
+			preloadResourcesElement.style.backgroundImage = '';
 		};
 	}, [queriedPageID, pages, pageContents, previousPageIDs, story.id, previewMode, pagesRef]);
 

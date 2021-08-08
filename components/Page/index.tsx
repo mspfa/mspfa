@@ -19,8 +19,6 @@ export type PageProps = {
 
 const Page = ({ heading, children, flashyTitle }: PageProps) => (
 	<>
-		{/* This only exists to preload the Homestuck-Regular font so that, later, a fallback font doesn't flicker for a moment while Homestuck-Regular lazy-loads. */}
-		<span id="preload-font" />
 		{/* It is necessary for dialogs to be before the page so that dialog elements are reached first when tabbing. */}
 		<Dialogs />
 		<div id="page">
@@ -35,6 +33,8 @@ const Page = ({ heading, children, flashyTitle }: PageProps) => (
 			<Footer />
 		</div>
 		<LoadingIndicator />
+		{/* This exists to preload certain resources via styles set on it. */}
+		<div id="preload-resources" />
 	</>
 );
 
