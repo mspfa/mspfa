@@ -7,7 +7,7 @@ import type { MouseEvent } from 'react';
 import { useState, useEffect, useRef, Fragment, useCallback } from 'react';
 import type { StoryPageID } from 'modules/server/stories';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
-import { useIsomorphicLayoutEffect } from 'react-use';
+import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 import Stick from 'components/Stick';
 import Delimit from 'components/Delimit';
 import Dialog from 'modules/client/Dialog';
@@ -24,7 +24,7 @@ type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages'
  *
  * For example, if this is 2 and the user is on page 10, then pages 10 to 12 will be preloaded (assuming page 10 only links to page 11 and page 11 only links to page 12).
  */
-export const PAGE_PRELOAD_DEPTH = 5;
+export const PAGE_PRELOAD_DEPTH = 10;
 
 /** Goes to a page in the `StoryViewer` by page ID. */
 export const goToPage = (pageID: StoryPageID) => {
@@ -77,16 +77,24 @@ const StoryViewer = ({
 	const router = useRouter();
 	/** Whether the user is in preview mode and should see unpublished pages. */
 	const previewMode = 'preview' in router.query;
-	const pageID = (
-		typeof router.query.p === 'string'
-			? +router.query.p
-			: 1
-	);
 
 	// This state is record of cached pages.
 	// If a page ID maps to `null`, then the page does not exist to this client, letting it know not to try to request it.
 	// If a page ID's value is undefined, then it has not been cached or requested yet.
 	const [pages, setPages] = useState(initialPages);
+	/** A ref to the latest value of `pages` to avoid race conditions. */
+	const pagesRef = useLatest(pages);
+
+	const queriedPageID = (
+		typeof router.query.p === 'string'
+			? +router.query.p
+			: 1
+	);
+	/** A ref to the last value of `pageID` (or the first if there is no last one). */
+	const pageIDRef = useRef(queriedPageID);
+	// Only change the `pageID` to the new `queriedPageID` if the page it references has finished loading and is now cached.
+	const pageID = queriedPageID in pages ? queriedPageID : pageIDRef.current;
+	pageIDRef.current = pageID;
 	const page = pages[pageID];
 
 	const [previousPageIDs, setPreviousPageIDs] = useState(initialPreviousPageIDs);
@@ -132,101 +140,121 @@ const StoryViewer = ({
 
 	// This state is a ref to a partial record that maps each cached page ID to an HTML string of its sanitized `content`, as a caching optimization due to the performance cost of BBCode sanitization.
 	const [pageContents, setPageContents] = useState<Partial<Record<StoryPageID, string>>>({});
-	// Mutate `pageContents` to load this page's sanitized contents synchronously.
+	// Mutate `pageContents` to load this page's sanitized contents synchronously if necessary.
 	if (page && pageContents[pageID] === undefined) {
 		pageContents[pageID] = sanitizePageContent(page);
 	}
 
+	/** A ref to an array of page IDs which are currently being fetched around. */
+	const fetchingPageIDsRef = useRef<StoryPageID[]>([]);
+
 	// Fetch new pages, cache page BBCode, and preload the BBCode and images of cached pages.
 	// None of this should be done server-side, because caching or preloading anything server-side would be pointless since it wouldn't be sent to the client.
 	useEffect(() => {
-		/** Whether any pages need to be fetched from the server. */
-		let shouldFetchPages = false;
-		/** All page IDs within the `PAGE_PRELOAD_DEPTH` which should not be fetched since the client already has them. */
-		const excludedPageIDs: StoryPageID[] = [];
+		// Only consider fetching new pages if new pages around this page aren't already being fetched.
+		if (!fetchingPageIDsRef.current.includes(queriedPageID)) {
+			/** Whether any pages need to be fetched from the server. */
+			let shouldFetchPages = false;
+			/** All page IDs within the `PAGE_PRELOAD_DEPTH` which should not be fetched since the client already has them. */
+			const excludedPageIDs: StoryPageID[] = [];
 
-		/** A partial record mapping each page ID to `true` if `checkForUnknownPages` has already been called on it. */
-		const checkedForUnknownPages: Partial<Record<StoryPageID, true>> = {};
+			/** A partial record mapping each page ID to `true` if `checkForUnknownPages` has already been called on it. */
+			const checkedForUnknownPages: Partial<Record<StoryPageID, true>> = {};
 
-		/** Fetches unknown `previousPageIDs` and `nextPages`, doing the same for their `previousPageIDs` and `nextPages` recursively until the recursion depth reaches the `PAGE_PRELOAD_DEPTH`. */
-		const checkForUnknownPages = (
-			/** The page ID to check the `previousPageIDs` and `nextPages` of. */
-			pageIDToCheck: StoryPageID,
-			/** The recursion depth of this function call. */
-			depth = 0
-		) => {
-			// If this page is already checked, then don't continue.
-			if (checkedForUnknownPages[pageIDToCheck]) {
-				return;
-			}
-
-			// Mark this `pageIDToCheck` as checked.
-			checkedForUnknownPages[pageIDToCheck] = true;
-
-			const pageToCheck = pages[pageIDToCheck];
-
-			if (
-				// If this page doesn't exist, don't bother checking it.
-				pageToCheck === null
-				// If this iteration has reached the `PAGE_PRELOAD_DEPTH`, don't iterate any deeper.
-				// The reason it's `depth++` instead of `++depth` (like on the server) is because it needs to go one extra recursion step in order to fetch the pages one step outside the `PAGE_PRELOAD_DEPTH`.
-				|| depth++ > PAGE_PRELOAD_DEPTH
-			) {
-				return;
-			}
-
-			if (pageToCheck === undefined) {
-				// If this page is within the `PAGE_PRELOAD_DEPTH` but isn't cached, then fetch it and don't continue.
-				shouldFetchPages = true;
-				console.log('fetch', pageIDToCheck);
-				return;
-			}
-
-			// If this point is reached, `pageToCheck` is non-nullable.
-
-			// Since this page is already cached on the client, exclude it from the pages to be fetched.
-			excludedPageIDs.push(pageIDToCheck);
-
-			const previousPageID = previousPageIDs[pageIDToCheck];
-			if (previousPageID === undefined) {
-				// If the `previousPageID` is unknown, fetch it.
-				shouldFetchPages = true;
-				console.log('fetch previous to', pageIDToCheck);
-			} else if (previousPageID !== null) {
-				// If the `previousPageID` is known and exists, call this function on it.
-				checkForUnknownPages(previousPageID, depth);
-			}
-
-			// Iterate over each of this page's `nextPages`.
-			for (const nextPageID of pageToCheck.nextPages) {
-				checkForUnknownPages(nextPageID, depth);
-			}
-		};
-
-		checkForUnknownPages(pageID);
-
-		if (shouldFetchPages as boolean) {
-			(api as StoryPagesAPI).get(`/stories/${story.id}/pages`, {
-				params: {
-					...previewMode && {
-						preview: '1'
-					},
-					aroundPageID: pageID.toString(),
-					excludedPageIDs: excludedPageIDs.join(',')
+			/** Fetches unknown `previousPageIDs` and `nextPages`, doing the same for their `previousPageIDs` and `nextPages` recursively until the recursion depth reaches the `PAGE_PRELOAD_DEPTH`. */
+			const checkForUnknownPages = (
+				/** The page ID to check the `previousPageIDs` and `nextPages` of. */
+				pageIDToCheck: StoryPageID,
+				/** The recursion depth of this function call. */
+				depth = 0
+			) => {
+				// If this page is already checked, then don't continue.
+				if (checkedForUnknownPages[pageIDToCheck]) {
+					return;
 				}
-			}).then(({
-				data: {
-					pages: newPages,
-					previousPageIDs: newPreviousPageIDs
+
+				// Mark this `pageIDToCheck` as checked.
+				checkedForUnknownPages[pageIDToCheck] = true;
+
+				const pageToCheck = pages[pageIDToCheck];
+
+				if (
+					// If this page doesn't exist, don't bother checking it.
+					pageToCheck === null
+					// If this iteration has reached the `PAGE_PRELOAD_DEPTH`, don't iterate any deeper.
+					// The reason it's `depth++` instead of `++depth` (like on the server) is because it needs to go one extra recursion step in order to fetch the pages one step outside the `PAGE_PRELOAD_DEPTH`.
+					|| depth++ > PAGE_PRELOAD_DEPTH
+				) {
+					return;
 				}
-			}) => {
-				// The reason we use mutate the original states in the below state calls is because otherwise, after the first state is set, the component would re-render and call this effect hook again before setting the second state. The effect hook would then think it has incomplete information that it needs to fetch, since the second state wouldn't be updated yet, causing an unnecessary extra API request to fetch pages it necessarily already has. Synchronously mutating the states both at once, so they are both updated after the first re-render, avoids this.
 
-				setPages(pages => Object.assign(pages, newPages));
+				if (pageToCheck === undefined) {
+					// If this page is within the `PAGE_PRELOAD_DEPTH` but isn't cached, then fetch it and don't continue.
+					shouldFetchPages = true;
+					return;
+				}
 
-				// We assign the original `previousPageIDs` after the `newPreviousPageIDs` rather than before so that any `previousPageIDs` the client already has set are not overwritten.
-				setPreviousPageIDs(previousPageIDs => Object.assign(newPreviousPageIDs, previousPageIDs));
-			});
+				// If this point is reached, `pageToCheck` is non-nullable.
+
+				// Since this page is already cached on the client, exclude it from the pages to be fetched.
+				excludedPageIDs.push(pageIDToCheck);
+
+				const previousPageID = previousPageIDs[pageIDToCheck];
+				if (previousPageID === undefined) {
+					// If the `previousPageID` is unknown, fetch it.
+					shouldFetchPages = true;
+				} else if (previousPageID !== null) {
+					// If the `previousPageID` is known and exists, call this function on it.
+					checkForUnknownPages(previousPageID, depth);
+				}
+
+				// Iterate over each of this page's `nextPages`.
+				for (const nextPageID of pageToCheck.nextPages) {
+					checkForUnknownPages(nextPageID, depth);
+				}
+			};
+
+			checkForUnknownPages(queriedPageID);
+
+			if (shouldFetchPages as boolean) {
+				fetchingPageIDsRef.current.push(queriedPageID);
+
+				(api as StoryPagesAPI).get(`/stories/${story.id}/pages`, {
+					params: {
+						...previewMode && {
+							preview: '1'
+						},
+						aroundPageID: queriedPageID.toString(),
+						excludedPageIDs: excludedPageIDs.join(',')
+					}
+				}).then(({
+					data: {
+						pages: newPages,
+						previousPageIDs: newPreviousPageIDs
+					}
+				}) => {
+					// Ensure this state update will actually cache new pages and won't just create an unnecessary re-render.
+					for (const newPageID of Object.keys(newPages)) {
+						if (!(newPageID in pagesRef.current)) {
+							setPreviousPageIDs(previousPageIDs => ({
+								...newPreviousPageIDs,
+								// We assign the original `previousPageIDs` after the `newPreviousPageIDs` so that any `previousPageIDs` the client already has set are not overwritten.
+								...previousPageIDs
+							}));
+
+							setPages(pages => ({
+								...pages,
+								...newPages
+							}));
+
+							break;
+						}
+					}
+				}).finally(() => {
+					// Remove this `queriedPageID` from the `fetchingPageIDsRef`.
+					fetchingPageIDsRef.current.splice(fetchingPageIDsRef.current.indexOf(queriedPageID), 1);
+				});
+			}
 		}
 
 		let pageContentsChanged = false;
@@ -245,7 +273,7 @@ const StoryViewer = ({
 		if (pageContentsChanged) {
 			setPageContents(newPageContents);
 		}
-	}, [pageID, pages, pageContents, previousPageIDs, story.id, previewMode]);
+	}, [queriedPageID, pages, pageContents, previousPageIDs, story.id, previewMode, pagesRef]);
 
 	const storyPageElementRef = useRef<HTMLDivElement>(null!);
 
