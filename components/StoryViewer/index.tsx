@@ -56,8 +56,12 @@ const openSaveGameHelp = () => {
  */
 export type ClientPreviousPageIDs = Partial<Record<StoryPageID, StoryPageID | null>>;
 
-/** Returns an HTML string of the sanitized `page.content` BBCode. */
-const sanitizePageContent = (page: ClientStoryPage) => sanitizeBBCode(page.content, { html: true });
+/** Returns an object with sanitized sanitized HTML strings of the page's BBCode properties. */
+const sanitizePage = (page: ClientStoryPage) => ({
+	title: sanitizeBBCode(page.title, { html: true }),
+	content: sanitizeBBCode(page.content, { html: true }),
+	commentary: sanitizeBBCode(page.commentary, { html: true })
+});
 
 export type StoryViewerProps = {
 	story: PublicStory,
@@ -145,12 +149,13 @@ const StoryViewer = ({
 		// If the `goToNextPage` call is unsuccessful, don't `event.preventDefault`, and instead let the clicked link handle the page change.
 	}, [goToNextPage]);
 
-	// This state is a ref to a partial record that maps each cached page ID to an HTML string of its sanitized `content`, as a caching optimization due to the performance cost of BBCode sanitization.
-	const [pageContents, setPageContents] = useState<Partial<Record<StoryPageID, string>>>({});
-	// Mutate `pageContents` to load this page's sanitized contents synchronously if necessary.
-	if (page && pageContents[pageID] === undefined) {
-		pageContents[pageID] = sanitizePageContent(page);
+	// This state is a ref to a partial record that maps each cached page ID to an object with sanitized HTML strings of its BBCode properties, as a caching optimization due to the performance cost of BBCode sanitization.
+	const [sanitizedPages, setSanitizedPages] = useState<Partial<Record<StoryPageID, ReturnType<typeof sanitizePage>>>>({});
+	// Mutate `sanitizedPages` to load this page's sanitized contents synchronously if necessary.
+	if (page && !(pageID in sanitizedPages)) {
+		sanitizedPages[pageID] = sanitizePage(page);
 	}
+	const sanitizedPage = sanitizedPages[pageID];
 
 	/** A ref to an array of page IDs which are currently being fetched around. */
 	const fetchingPageIDsRef = useRef<StoryPageID[]>([]);
@@ -165,8 +170,8 @@ const StoryViewer = ({
 		/** All page IDs within the `PAGE_PRELOAD_DEPTH` which should not be fetched since the client already has them. */
 		const nearbyCachedPageIDs: StoryPageID[] = [];
 
-		let pageContentsChanged = false;
-		const newPageContents = { ...pageContents };
+		let sanitizedPagesChanged = false;
+		const newSanitizedPages = { ...sanitizedPages };
 
 		const preloadResourcesElement = document.getElementById('preload-resources') as HTMLDivElement;
 		// Reset the preloaded images.
@@ -215,9 +220,9 @@ const StoryViewer = ({
 			// If this point is reached, `pageToCheck` is non-nullable.
 
 			// Cache this page's BBCode if it isn't already cached.
-			if (newPageContents[pageToCheck.id] === undefined) {
-				newPageContents[pageToCheck.id] = sanitizePageContent(pageToCheck);
-				pageContentsChanged = true;
+			if (!(pageToCheck.id in newSanitizedPages)) {
+				newSanitizedPages[pageToCheck.id] = sanitizePage(pageToCheck);
+				sanitizedPagesChanged = true;
 			}
 
 			// If this page is within the `IMAGE_PRELOAD_DEPTH`, preload its images.
@@ -255,8 +260,8 @@ const StoryViewer = ({
 		checkAdjacentPages(queriedPageID);
 
 		// Update the cache if it changed.
-		if (pageContentsChanged as boolean) {
-			setPageContents(newPageContents);
+		if (sanitizedPagesChanged as boolean) {
+			setSanitizedPages(newSanitizedPages);
 		}
 
 		// Update the preloaded images.
@@ -317,7 +322,7 @@ const StoryViewer = ({
 			// Reset the preloaded images.
 			preloadResourcesElement.style.backgroundImage = '';
 		};
-	}, [queriedPageID, pages, pageContents, previousPageIDs, story.id, previewMode, pagesRef]);
+	}, [queriedPageID, pages, sanitizedPages, previousPageIDs, story.id, previewMode, pagesRef]);
 
 	const storyPageElementRef = useRef<HTMLDivElement>(null!);
 
@@ -436,9 +441,11 @@ const StoryViewer = ({
 						// This key is here to force the inner DOM to reset between different pages.
 						key={pageID}
 					>
-						{page?.title && (
+						{sanitizedPage?.title && (
 							<div className="story-page-title">
-								{page.title}
+								<BBCode alreadySanitized>
+									{sanitizedPage.title}
+								</BBCode>
 							</div>
 						)}
 						<div className="story-page-content">
@@ -456,29 +463,32 @@ const StoryViewer = ({
 							) : (
 								// This page is loaded.
 								<BBCode alreadySanitized>
-									{pageContents[pageID]}
+									{sanitizedPage!.content}
 								</BBCode>
 							)}
 						</div>
 						<div className="story-page-links">
 							{page?.nextPages.map((nextPageID, i) => {
-								const nextPage = pages[nextPageID];
+								const sanitizedNextPage = sanitizedPages[nextPageID];
 
-								// Only render this link if its page exists and isn't loading.
-								return nextPage && (
-									<div
-										key={i}
-										className="story-page-link-container"
-									>
-										<Link
-											shallow
-											href={`/?s=${story.id}&p=${nextPageID}${previewMode ? '&preview=1' : ''}`}
-											data-index={i}
-											onClick={onClickNextPageLink}
-										>
-											{nextPage.title}
-										</Link>
-									</div>
+								// Only render this link if its sanitized page is loaded.
+								return (
+									<Fragment key={i}>
+										{sanitizedNextPage && (
+											<div className="story-page-link-container">
+												<Link
+													shallow
+													href={`/?s=${story.id}&p=${nextPageID}${previewMode ? '&preview=1' : ''}`}
+													data-index={i}
+													onClick={onClickNextPageLink}
+												>
+													<BBCode alreadySanitized>
+														{sanitizedNextPage.title}
+													</BBCode>
+												</Link>
+											</div>
+										)}
+									</Fragment>
 								);
 							})}
 						</div>
