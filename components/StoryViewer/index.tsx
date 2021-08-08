@@ -242,7 +242,7 @@ const StoryViewer = ({
 			// The reason we increment `depth` here instead of before the `depth` checks (like on the server) is because it needs to go one extra recursion step in order to fetch the pages one step outside the `PAGE_PRELOAD_DEPTH`.
 			depth++;
 
-			// Iterate over each of this page's `nextPages`. This should be done before iterating over previous pages so that images on next pages are the first to be preloaded.
+			// Iterate over each of this page's `nextPages`. This should be done before iterating over previous pages so that images on next pages preload before images on previous pages, since the user is more likely to be flipping forward into unloaded pages than backward.
 			for (const nextPageID of pageToCheck.nextPages) {
 				checkAdjacentPages(nextPageID, depth);
 			}
