@@ -512,17 +512,17 @@ export const getClientPagesAround = (
 			return;
 		}
 
+		// Call this function on each of this page's `nextPages`.
+		for (const nextPageID of clientPage.nextPages) {
+			addToClientPages(nextPageID, depth);
+		}
+
 		// Call this function on each of the `previousPageIDsOfThisPage`, if there are any.
 		const previousPageIDsOfThisPage = previousPageIDs[pageID];
 		if (previousPageIDsOfThisPage) {
 			for (const previousPageID of previousPageIDsOfThisPage) {
 				addToClientPages(previousPageID, depth);
 			}
-		}
-
-		// Call this function on each of this page's `nextPages`.
-		for (const nextPageID of clientPage.nextPages) {
-			addToClientPages(nextPageID, depth);
 		}
 	};
 
