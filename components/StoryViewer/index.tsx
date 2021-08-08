@@ -90,7 +90,6 @@ const StoryViewer = ({
 	const page = pages[pageID];
 
 	const [previousPageIDs, setPreviousPageIDs] = useState(initialPreviousPageIDs);
-
 	/** The page ID to take the user to when clicking the "Go Back" link. Unless undefined, necessarily indexes a cached page. */
 	const previousPageID = previousPageIDs[pageID];
 
@@ -101,8 +100,8 @@ const StoryViewer = ({
 	) => {
 		const nextPageID = page?.nextPages[nextPageIndex];
 
-		// If the `nextPageIndex` exists in `page.nextPages` and the `nextPageID` exists in `pages`, then go to the `nextPageID`.
-		if (nextPageID && pages[nextPageID] !== null) {
+		// If the `nextPageIndex` exists in `page.nextPages` and the `nextPageID` is cached in `pages`, then go to the `nextPageID`.
+		if (nextPageID && pages[nextPageID]) {
 			goToPage(nextPageID);
 
 			// If it is not already set that the previous page of `nextPageID` is this page, then set it.
@@ -179,6 +178,7 @@ const StoryViewer = ({
 			if (pageToCheck === undefined) {
 				// If this page is within the `PAGE_PRELOAD_DEPTH` but isn't cached, then fetch it and don't continue.
 				shouldFetchPages = true;
+				console.log('fetch', pageIDToCheck);
 				return;
 			}
 
@@ -191,6 +191,7 @@ const StoryViewer = ({
 			if (previousPageID === undefined) {
 				// If the `previousPageID` is unknown, fetch it.
 				shouldFetchPages = true;
+				console.log('fetch previous to', pageIDToCheck);
 			} else if (previousPageID !== null) {
 				// If the `previousPageID` is known and exists, call this function on it.
 				checkForUnknownPages(previousPageID, depth);
@@ -219,15 +220,12 @@ const StoryViewer = ({
 					previousPageIDs: newPreviousPageIDs
 				}
 			}) => {
-				setPages(pages => ({
-					...pages,
-					...newPages
-				}));
+				// The reason we use mutate the original states in the below state calls is because otherwise, after the first state is set, the component would re-render and call this effect hook again before setting the second state. The effect hook would then think it has incomplete information that it needs to fetch, since the second state wouldn't be updated yet, causing an unnecessary extra API request to fetch pages it necessarily already has. Synchronously mutating the states both at once, so they are both updated after the first re-render, avoids this.
 
-				setPreviousPageIDs(previousPageIDs => ({
-					...previousPageIDs,
-					...newPreviousPageIDs
-				}));
+				setPages(pages => Object.assign(pages, newPages));
+
+				// We assign the original `previousPageIDs` after the `newPreviousPageIDs` rather than before so that any `previousPageIDs` the client already has set are not overwritten.
+				setPreviousPageIDs(previousPageIDs => Object.assign(newPreviousPageIDs, previousPageIDs));
 			});
 		}
 
@@ -336,9 +334,7 @@ const StoryViewer = ({
 			}
 
 			if (event.code === controls.forward) {
-				if (page && page.nextPages.length === 1) {
-					goToNextPage();
-				}
+				goToNextPage();
 
 				event.preventDefault();
 			}
