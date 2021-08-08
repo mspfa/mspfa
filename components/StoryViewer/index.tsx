@@ -16,6 +16,7 @@ import { defaultSettings, getUser } from 'modules/client/users';
 import shouldIgnoreControl from 'modules/client/shouldIgnoreControl';
 import type { APIClient } from 'modules/client/api';
 import api from 'modules/client/api';
+import Button from 'components/Button';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 
@@ -431,7 +432,28 @@ const StoryViewer = ({
 	);
 
 	return (
-		<Page>
+		<Page
+			subFooter={(
+				<>
+					<div id="sub-footer-actions">
+						<Button className="small">Open Info</Button>
+						<Button className="small">Open Comments</Button>
+						<Button className="small">Open News</Button>
+					</div>
+					<div id="sub-footer-sections">
+						<div id="sub-footer-latest-pages" className="sub-footer-section mid">
+							latest pages here (only shows if Info is open, not Comments or News)
+						</div>
+						<div id="sub-footer-content" className="sub-footer-section front">
+							info, comments, or news here (depending on which one is open)
+						</div>
+						<div id="sub-footer-wealth-dungeon" className="sub-footer-section mid">
+							side ad here (hidden on small screens)
+						</div>
+					</div>
+				</>
+			)}
+		>
 			<div className="story-page-container">
 				<div
 					className="story-page front"

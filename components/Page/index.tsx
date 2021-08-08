@@ -14,10 +14,12 @@ export type PageProps = {
 	 * When set, padding is added to the `main` element via `className="padded"`.
 	 */
 	heading?: ReactNode,
-	children: ReactNode
+	children: ReactNode,
+	/** A `ReactNode` between the `footer` and the `#copyright`. */
+	subFooter?: ReactNode
 } & HeaderProps;
 
-const Page = ({ heading, children, withFlashyTitle }: PageProps) => (
+const Page = ({ heading, children, withFlashyTitle, subFooter }: PageProps) => (
 	<>
 		{/* It is necessary for dialogs to be before the page so that dialog elements are reached first when tabbing. */}
 		<Dialogs />
@@ -31,6 +33,11 @@ const Page = ({ heading, children, withFlashyTitle }: PageProps) => (
 				{children}
 			</main>
 			<Footer />
+			{subFooter !== undefined && (
+				<div id="sub-footer">
+					{subFooter}
+				</div>
+			)}
 			<div id="copyright">
 				{`MS Paint Fan Adventures © 2010-${new Date().getFullYear()}`}
 			</div>
