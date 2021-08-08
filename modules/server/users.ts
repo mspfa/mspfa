@@ -102,10 +102,6 @@ export type ServerUser = {
 		emailPublic: boolean,
 		birthdatePublic: boolean,
 		favsPublic: boolean,
-		ads: {
-			side: boolean,
-			matchedContent: boolean
-		},
 		autoOpenSpoilers: boolean,
 		/** This makes the nav bar always stay at the top of the screen when scrolling below it. */
 		stickyNav: boolean,

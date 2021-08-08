@@ -8,7 +8,6 @@ import { preventReloads, withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
 import { Form, Formik, Field } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
-import type { ChangeEvent } from 'react';
 import { getChangedValues, preventLeaveConfirmations, useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
 import BoxColumns from 'components/Box/BoxColumns';
@@ -43,7 +42,6 @@ type PasswordAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods
 type DoesOwnStoriesAPI = APIClient<typeof import('pages/api/users/[userID]/doesOwnStories').default>;
 
 const getSettingsValues = (settings: PrivateUser['settings']) => ({
-	ads: settings.ads,
 	autoOpenSpoilers: settings.autoOpenSpoilers,
 	stickyNav: settings.stickyNav,
 	imageAliasing: settings.imageAliasing,
@@ -228,7 +226,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 				}
 				enableReinitialize
 			>
-				{({ isSubmitting, dirty, values, setFieldValue, setSubmitting, handleChange }) => {
+				{({ isSubmitting, dirty, values, setFieldValue, setSubmitting }) => {
 					useLeaveConfirmation(dirty);
 
 					useEffect(() => {
@@ -239,20 +237,6 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 							setUserMerge({ settings: values.settings });
 						}
 					});
-
-					const interceptAdDisable = useCallback(async (event: ChangeEvent<{ name: string }>) => {
-						if (await Dialog.confirm({
-							id: 'disable-ad',
-							title: 'Disable Ads',
-							content: 'Ads are how we earn money, how we fund the website. By disabling this ad, a fraction of our funds are decreased.\n\nWe\'re okay with that if you don\'t think it\'s worth the unpleasant visual experience, but please first consider the effect of it.',
-							actions: [
-								'I understand the impact of my decision and wish to proceed.',
-								{ label: 'Cancel', autoFocus: true }
-							]
-						})) {
-							setFieldValue(event.target.name, false);
-						}
-					}, [setFieldValue]);
 
 					return (
 						<Form onChange={onFormChange}>
@@ -335,18 +319,6 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										// This setting's label should not use terminology less obscure than "Aliasing", because if its phrasing is less obscure (for example if it were called "Crisp Images" or "Image Sharpening"), it would be easily misinterpretable and lead to misunderstandings about what the setting does, even among users who know what aliasing is, since it wouldn't be called that. With this more obscure but more accurate name, it is much less likely that inaccurate assumptions would be made about the meaning, and users would be more inclined to click the help button for clarity.
 										label="Image Aliasing"
 										help={'Disables anti-aliasing in images on adventure pages (by using nearest-neighbor scaling).\n\nWhat this means is images, when scaled, will tend to have more crisp edges rather than becoming blurry. It disables the browser\'s smooth scaling effect that causes scaled images to blur.'}
-									/>
-									<FieldBoxRow
-										type="checkbox"
-										name="settings.ads.side"
-										label="Side Ad"
-										onChange={values.settings.ads.side ? interceptAdDisable : handleChange}
-									/>
-									<FieldBoxRow
-										type="checkbox"
-										name="settings.ads.matchedContent"
-										label="Matched Content Ad"
-										onChange={values.settings.ads.matchedContent ? interceptAdDisable : handleChange}
 									/>
 								</BoxRowSection>
 								<BoxColumns>

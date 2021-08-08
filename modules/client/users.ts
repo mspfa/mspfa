@@ -41,10 +41,6 @@ export const defaultSettings: PrivateUser['settings'] = {
 	emailPublic: false,
 	birthdatePublic: false,
 	favsPublic: true,
-	ads: {
-		side: true,
-		matchedContent: true
-	},
 	autoOpenSpoilers: false,
 	stickyNav: false,
 	imageAliasing: false,
