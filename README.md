@@ -12,7 +12,7 @@ This is the official repository for [MS Paint Fan Adventures](https://mspfa.com/
 
 1. Clone or download this repository.
 
-2. Open a terminal in the repository's directory].
+2. Open a terminal in the repository's directory.
 
 3. Enter `npm i` to install the project's dependencies.
 
