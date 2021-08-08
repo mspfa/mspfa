@@ -153,28 +153,25 @@ export type BBCodeProps = {
 };
 
 /** A component which parses its `children` string as BBCode. */
-const BBCode = React.forwardRef<HTMLSpanElement, BBCodeProps>(({
+const BBCode = ({
 	html,
 	noBB,
 	alreadySanitized,
 	children: htmlString = ''
-}, ref) => {
-	if (!alreadySanitized) {
+}: BBCodeProps) => {
+	if (htmlString && !alreadySanitized) {
 		htmlString = sanitizeBBCode(htmlString, { html, noBB });
 	}
 
 	return (
-		<span
-			className="bb"
-			ref={ref}
-		>
-			{(noBB && !html
-				// If BBCode and HTML are both disabled, then the `htmlString` should be treated as plain text, so it's more optimized to insert the string as a text node rather than parsing it as HTML.
+		<span className="bb">
+			{(htmlString === '' || (noBB && !html)
+				// If `htmlString` is empty or BBCode and HTML are both disabled, then the `htmlString` can be treated as plain text as an optimization.
 				? htmlString
 				: parse(htmlString, parseOptions)
 			)}
 		</span>
 	);
-});
+};
 
 export default BBCode;
