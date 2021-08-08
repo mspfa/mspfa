@@ -165,6 +165,9 @@ const StoryViewer = ({
 		/** All page IDs within the `PAGE_PRELOAD_DEPTH` which should not be fetched since the client already has them. */
 		const nearbyCachedPageIDs: StoryPageID[] = [];
 
+		let pageContentsChanged = false;
+		const newPageContents = { ...pageContents };
+
 		const preloadResourcesElement = document.getElementById('preload-resources') as HTMLDivElement;
 		// Reset the preloaded images.
 		/** The string to be set into `preloadResourcesElement.style.backgroundImage` to preload images. */
@@ -211,6 +214,12 @@ const StoryViewer = ({
 
 			// If this point is reached, `pageToCheck` is non-nullable.
 
+			// Cache this page's BBCode if it isn't already cached.
+			if (newPageContents[pageToCheck.id] === undefined) {
+				newPageContents[pageToCheck.id] = sanitizePageContent(pageToCheck);
+				pageContentsChanged = true;
+			}
+
 			// If this page is within the `IMAGE_PRELOAD_DEPTH`, preload its images.
 			if (depth <= IMAGE_PRELOAD_DEPTH) {
 				const imgTagTest = /\[img(?:(?:=(["']?).*?\1)|(?: [\w-]+=(["']?).*?\2)+)?\](.+)\[\/img\]/g;
@@ -220,7 +229,8 @@ const StoryViewer = ({
 
 					// Add this image to the preloaded images.
 					// To improve performance, we append to a string to be set all at once into `preloadResourcesElement.style.backgroundImage` rather than appending to `preloadResourcesElement.style.backgroundImage` directly each time.
-					preloadBackgroundImage += `${preloadBackgroundImage ? ', ' : ''}url("${imageURL.replace(/([\\"])/g, '\\$1')}")`;
+					// Quotation marks are necessary around the `imageURL` (as opposed to omitting them or using apostrophes instead) because `encodeURI` doesn't escape parentheses or apostrophes.
+					preloadBackgroundImage += `${preloadBackgroundImage && ', '}url("${encodeURI(imageURL)}")`;
 				}
 			}
 
@@ -243,6 +253,11 @@ const StoryViewer = ({
 		};
 
 		checkAdjacentPages(queriedPageID);
+
+		// Update the cache if it changed.
+		if (pageContentsChanged as boolean) {
+			setPageContents(newPageContents);
+		}
 
 		// Update the preloaded images.
 		preloadResourcesElement.style.backgroundImage = preloadBackgroundImage;
@@ -294,28 +309,6 @@ const StoryViewer = ({
 				// Remove this `queriedPageID` from the `fetchingPageIDsRef`.
 				fetchingPageIDsRef.current.splice(fetchingPageIDsRef.current.indexOf(queriedPageID), 1);
 			});
-		}
-
-		let pageContentsChanged = false;
-		const newPageContents = { ...pageContents };
-
-		// Iterate through all nearby cached pages.
-		for (const nearbyPageID of nearbyCachedPageIDs) {
-			const nearbyPage = pages[nearbyPageID];
-
-			// If the page exists, consider preloading its images and caching its BBCode.
-			if (nearbyPage) {
-				// Cache its BBCode if it is not already cached.
-				if (newPageContents[nearbyPage.id] === undefined) {
-					newPageContents[nearbyPage.id] = sanitizePageContent(nearbyPage);
-					pageContentsChanged = true;
-				}
-			}
-		}
-
-		// Update the cache if it changed.
-		if (pageContentsChanged) {
-			setPageContents(newPageContents);
 		}
 
 		return () => {
