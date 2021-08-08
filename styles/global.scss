@@ -82,17 +82,17 @@ input, textarea, select, option {
 	@include theme(background-color, input-color);
 }
 
+.spaced {
+	& + & {
+		margin-left: 1ch;
+	}
+}
+
 .translucent-text {
 	opacity: 0.7;
 
 	&.link:not(:focus, :active) {
 		@include theme(color, text-color);
-	}
-}
-
-.spaced {
-	& + & {
-		margin-left: 1ch;
 	}
 }
 
