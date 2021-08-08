@@ -155,6 +155,8 @@ const StoryViewer = ({
 	// Fetch new pages, cache page BBCode, and preload the BBCode and images of cached pages.
 	// None of this should be done server-side, because caching or preloading anything server-side would be pointless since it wouldn't be sent to the client.
 	useEffect(() => {
+		let unmounted = false;
+
 		// Only consider fetching new pages if new pages around this page aren't already being fetched.
 		if (!fetchingPageIDsRef.current.includes(queriedPageID)) {
 			/** Whether any pages need to be fetched from the server. */
@@ -237,6 +239,10 @@ const StoryViewer = ({
 						previousPageIDs: newPreviousPageIDs
 					}
 				}) => {
+					if (unmounted) {
+						return;
+					}
+
 					// Ensure this state update will actually cache new pages and won't just create an unnecessary re-render.
 					for (const newPageID of Object.keys(newPages)) {
 						if (!(newPageID in pagesRef.current)) {
@@ -277,6 +283,10 @@ const StoryViewer = ({
 		if (pageContentsChanged) {
 			setPageContents(newPageContents);
 		}
+
+		return () => {
+			unmounted = true;
+		};
 	}, [queriedPageID, pages, pageContents, previousPageIDs, story.id, previewMode, pagesRef]);
 
 	const storyPageElementRef = useRef<HTMLDivElement>(null!);
