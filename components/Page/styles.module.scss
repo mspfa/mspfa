@@ -23,6 +23,7 @@
 
 .mspface-container {
 	display: flex;
+	padding: 2px 0 5px 0;
 }
 
 .mspface {
@@ -30,7 +31,7 @@
 	display: block;
 	// The width and height of the MSPFace images.
 	width: 111px;
-	height: 102px;
+	height: 103px;
 	background-repeat: no-repeat;
 	background-position: center;
 

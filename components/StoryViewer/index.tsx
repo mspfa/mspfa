@@ -43,7 +43,7 @@ const openSaveGameHelp = () => {
 	new Dialog({
 		id: 'help',
 		title: 'Help',
-		content: 'Save Game\n\nIf you\'re signed in, you can save your spot in the story. Click "Save Game", then when you return to the site, click "Load Game" to return to where you were.\n\nYour saves are stored on your MSPFA account, so you can even save and load between different devices!'
+		content: 'Save Game:\n\nIf you\'re signed in, you can save your spot in the story. Click "Save Game", then when you return to the site, click "Load Game" to return to where you were.\n\nYour saves are stored on your MSPFA account, so you can even save and load between different devices!'
 	});
 };
 
