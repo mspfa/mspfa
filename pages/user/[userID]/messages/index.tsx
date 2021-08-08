@@ -146,7 +146,7 @@ const Component = withErrorPage<ServerSideProps>(({
 	);
 
 	return (
-		<Page flashyTitle heading="Messages">
+		<Page withFlashyTitle heading="Messages">
 			<Box>
 				<BoxSection
 					heading={`Your Messages (${listedMessages.length} total, ${unreadCount} unread)`}

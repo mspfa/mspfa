@@ -196,7 +196,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 	}, []);
 
 	return (
-		<Page flashyTitle heading="Settings">
+		<Page withFlashyTitle heading="Settings">
 			<Formik
 				initialValues={initialValues}
 				onSubmit={

@@ -17,12 +17,12 @@ export type PageProps = {
 	children: ReactNode
 } & HeaderProps;
 
-const Page = ({ heading, children, flashyTitle }: PageProps) => (
+const Page = ({ heading, children, withFlashyTitle }: PageProps) => (
 	<>
 		{/* It is necessary for dialogs to be before the page so that dialog elements are reached first when tabbing. */}
 		<Dialogs />
 		<div id="page">
-			<Header flashyTitle={flashyTitle} />
+			<Header withFlashyTitle={withFlashyTitle} />
 			<main className={`mid${heading ? ' padded' : ''}`}>
 				{(heading
 					? <PageHeading>{heading}</PageHeading>

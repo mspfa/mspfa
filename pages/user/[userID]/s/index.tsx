@@ -82,7 +82,7 @@ type ServerSideProps = {
 };
 
 const Component = withErrorPage<ServerSideProps>(({ privateStories }) => (
-	<Page flashyTitle heading="Your Adventures">
+	<Page withFlashyTitle heading="Your Adventures">
 		<Box>
 			<BoxRowSection heading="Adventures">
 				<BoxRow>

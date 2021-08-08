@@ -12,7 +12,7 @@ export type ServerSideProps = {
 };
 
 const Component = ({ imageFilename }: ServerSideProps) => (
-	<Page flashyTitle heading="Terms of Service">
+	<Page withFlashyTitle heading="Terms of Service">
 		<Box>
 			<BoxSection id="terms">
 				<Row>

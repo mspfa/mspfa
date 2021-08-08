@@ -6,10 +6,10 @@ import Link from 'components/Link';
 
 export type HeaderProps = {
 	/** Whether the flashy title should render at the top of the page. */
-	flashyTitle?: boolean
+	withFlashyTitle?: boolean
 };
 
-const Header = ({ flashyTitle }: HeaderProps) => (
+const Header = ({ withFlashyTitle }: HeaderProps) => (
 	<>
 		<header className="front">
 			<div className="mspface-container">
@@ -17,7 +17,7 @@ const Header = ({ flashyTitle }: HeaderProps) => (
 				<WealthDungeon />
 				<Link className="mspface right" href="/" title="MSPFA Home" tabIndex={-1} draggable={false} />
 			</div>
-			{flashyTitle && <FlashyTitle />}
+			{withFlashyTitle && <FlashyTitle />}
 		</header>
 		<Nav />
 	</>

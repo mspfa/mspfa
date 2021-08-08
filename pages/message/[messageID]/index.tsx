@@ -88,7 +88,7 @@ const Component = withErrorPage<ServerSideProps>(({
 	}, []);
 
 	return (
-		<Page flashyTitle heading="Messages">
+		<Page withFlashyTitle heading="Messages">
 			<Formik
 				initialValues={{ content: message.content }}
 				onSubmit={

@@ -30,7 +30,7 @@ export type ErrorPageProps = {
 };
 
 const ErrorPage = ({ statusCode, imageFilename }: ErrorPageProps) => (
-	<Page flashyTitle heading={`Error ${statusCode}`}>
+	<Page withFlashyTitle heading={`Error ${statusCode}`}>
 		<Box id="error-box">
 			{statusCode === 403 && (
 				<BoxSection>

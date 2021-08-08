@@ -1,7 +1,7 @@
 import Page from 'components/Page';
 
 const Homepage = () => (
-	<Page flashyTitle>
+	<Page withFlashyTitle>
 		homepage here<br /><br /><br /><br /><br /><br /><br /><br />
 	</Page>
 );

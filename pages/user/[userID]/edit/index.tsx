@@ -58,7 +58,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 	const initialValues = getValuesFromUser(privateUser);
 
 	return (
-		<Page flashyTitle heading="Edit Profile">
+		<Page withFlashyTitle heading="Edit Profile">
 			<Formik
 				initialValues={initialValues}
 				onSubmit={

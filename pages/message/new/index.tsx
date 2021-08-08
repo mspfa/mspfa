@@ -60,7 +60,7 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 	toUsers?.forEach(cacheUser);
 
 	return (
-		<Page flashyTitle heading="Messages">
+		<Page withFlashyTitle heading="Messages">
 			<Formik<Values>
 				initialValues={{
 					content: '',
