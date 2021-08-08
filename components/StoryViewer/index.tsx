@@ -93,7 +93,11 @@ const StoryViewer = ({
 	/** A ref to the last value of `pageID` (or the first if there is no last one). */
 	const pageIDRef = useRef(queriedPageID);
 	// Only change the `pageID` to the new `queriedPageID` if the page it references has finished loading and is now cached.
-	const pageID = queriedPageID in pages ? queriedPageID : pageIDRef.current;
+	const pageID = (
+		queriedPageID in pages
+			? queriedPageID
+			: pageIDRef.current
+	);
 	pageIDRef.current = pageID;
 	const page = pages[pageID];
 
