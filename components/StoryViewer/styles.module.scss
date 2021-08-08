@@ -29,6 +29,11 @@ $story-page-padding: 25px;
 		text-align: center;
 		padding: 14px 5px;
 		font-size: xx-large;
+
+		.bb {
+			// Overwrite the default smaller font size that `.bb` has.
+			font-size: 1em;
+		}
 	}
 
 	&-content {
