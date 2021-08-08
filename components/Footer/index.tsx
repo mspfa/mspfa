@@ -1,4 +1,3 @@
-import './styles.module.scss';
 import useSWR from 'swr';
 import WealthDungeon from 'components/WealthDungeon';
 
@@ -23,9 +22,6 @@ const Footer = () => {
 					<div className="mspface left" />
 					<WealthDungeon />
 					<div className="mspface right" />
-				</div>
-				<div id="copyright">
-					{`MS Paint Fan Adventures © 2010-${new Date().getFullYear()}`}
 				</div>
 			</footer>
 		</>

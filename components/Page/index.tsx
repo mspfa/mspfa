@@ -31,6 +31,9 @@ const Page = ({ heading, children, withFlashyTitle }: PageProps) => (
 				{children}
 			</main>
 			<Footer />
+			<div id="copyright">
+				{`MS Paint Fan Adventures © 2010-${new Date().getFullYear()}`}
+			</div>
 		</div>
 		<LoadingIndicator />
 		{/* This exists to preload certain resources via styles set on it. */}
