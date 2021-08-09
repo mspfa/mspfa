@@ -107,7 +107,7 @@ export const useUserInApp = (initialUserState: PrivateUser | undefined) => {
 export const [useUserMerge, setUserMerge, getUserMerge] = createGlobalState<RecursivePartial<PrivateUser | undefined>>(undefined);
 
 /** Opens a dialog prompting the user to sign in or sign up. */
-export const signIn = async () => {
+export const promptSignIn = async () => {
 	startLoading();
 	const { openSignInDialog } = await import('modules/client/signIn');
 	stopLoading();
@@ -117,7 +117,7 @@ export const signIn = async () => {
 type SessionAPI = APIClient<typeof import('pages/api/session').default>;
 
 /** Opens a dialog prompting the user to sign out. */
-export const signOut = async () => {
+export const promptSignOut = async () => {
 	if (await Dialog.confirm({
 		id: 'sign-out',
 		title: 'Sign Out',

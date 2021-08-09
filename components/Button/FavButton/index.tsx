@@ -2,7 +2,7 @@ import './styles.module.scss';
 import Button from 'components/Button';
 import type { ButtonProps } from 'components/Button';
 import { useCallback, useState } from 'react';
-import { setUser, signIn, useUser } from 'modules/client/users';
+import { setUser, promptSignIn, useUser } from 'modules/client/users';
 import api from 'modules/client/api';
 import type { APIClient, APIError } from 'modules/client/api';
 import Dialog from 'modules/client/Dialog';
@@ -47,7 +47,7 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 							content: 'Sign in to save your favorites!',
 							actions: ['Sign In', 'Cancel']
 						})) {
-							signIn();
+							promptSignIn();
 						}
 
 						return;

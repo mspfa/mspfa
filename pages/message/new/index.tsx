@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import Page from 'components/Page';
 import type { PublicUser } from 'modules/client/users';
-import { getUser, signIn } from 'modules/client/users';
+import { getUser, promptSignIn } from 'modules/client/users';
 import type { FormikHelpers } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import { useCallback } from 'react';
@@ -87,7 +87,7 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 								content: 'Sign in to send your message!\n\n(Don\'t worry, your message won\'t be lost if you don\'t leave the page.)',
 								actions: ['Sign In', 'Cancel']
 							})) {
-								signIn();
+								promptSignIn();
 							}
 
 							return;
