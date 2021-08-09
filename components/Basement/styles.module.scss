@@ -5,18 +5,16 @@
 	display: flex;
 	align-items: flex-start;
 
-	&-section {
-		&-latest-pages {
-			width: 262px;
-		}
-
-		&-wealth-dungeon {
-			width: 196px;
-		}
-	}
-
 	&-actions {
 		text-align: center;
+	}
+
+	&-latest-pages {
+		width: 262px;
+	}
+
+	&-wealth-dungeon {
+		width: 196px;
 	}
 }
 

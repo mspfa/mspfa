@@ -20,11 +20,11 @@ const Basement = ({ story }: BasementProps) => {
 	return (
 		<div id="basement">
 			{section === 'info' && !mobile && (
-				<div id="basement-section-latest-pages" className="basement-section mid">
+				<div id="basement-latest-pages" className="basement-section mid">
 					latest pages here (only shows if Info is open, not Comments or News)
 				</div>
 			)}
-			<div id="basement-section-main" className="basement-section front">
+			<div id="basement-content" className="basement-section front">
 				<Row id="basement-actions">
 					<Button
 						className="small"
@@ -65,7 +65,7 @@ const Basement = ({ story }: BasementProps) => {
 				</Row>
 			</div>
 			{!mobile && (
-				<div id="basement-section-wealth-dungeon" className="basement-section mid">
+				<div id="basement-wealth-dungeon" className="basement-section mid">
 					side ad here (hidden on small screens)
 				</div>
 			)}
