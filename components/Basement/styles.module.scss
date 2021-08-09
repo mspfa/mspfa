@@ -1,0 +1,49 @@
+@use 'sass:map';
+@use 'styles/themes' as *;
+
+#basement {
+	display: flex;
+	align-items: flex-start;
+
+	&-section {
+		&-latest-pages {
+			width: 262px;
+		}
+
+		&-wealth-dungeon {
+			width: 196px;
+		}
+	}
+
+	&-actions {
+		text-align: center;
+	}
+}
+
+.basement-section {
+	box-sizing: border-box;
+	// Use the standard theme's `front-color` as the default in case the browser doesn't support CSS variables.
+	border: 7px solid map.get($standard-theme, front-color);
+	border-color: var(--front-color);
+	padding: 7px;
+
+	&.mid {
+		flex-shrink: 0;
+
+		&:first-child {
+			border-left: none;
+		}
+
+		&:last-child {
+			border-right: none;
+		}
+	}
+
+	&.front {
+		flex-grow: 1;
+	}
+
+	&:not(:first-child) {
+		margin-left: 12px;
+	}
+}

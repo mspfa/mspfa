@@ -16,8 +16,7 @@ import { defaultSettings, getUser } from 'modules/client/users';
 import shouldIgnoreControl from 'modules/client/shouldIgnoreControl';
 import type { APIClient } from 'modules/client/api';
 import api from 'modules/client/api';
-import Button from 'components/Button';
-import Row from 'components/Row';
+import Basement from 'components/Basement';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 
@@ -435,24 +434,7 @@ const StoryViewer = ({
 	return (
 		<Page
 			basement={(
-				<div id="basement">
-					<div id="basement-section-latest-pages" className="basement-section mid">
-						latest pages here (only shows if Info is open, not Comments or News)
-					</div>
-					<div id="basement-section-main" className="basement-section front">
-						<Row id="basement-actions">
-							<Button className="small" disabled>Info</Button>
-							<Button className="small">Comments</Button>
-							<Button className="small">News</Button>
-						</Row>
-						<Row>
-							info, comments, or news here (depending on which one is open)
-						</Row>
-					</div>
-					<div id="basement-section-wealth-dungeon" className="basement-section mid">
-						side ad here (hidden on small screens)
-					</div>
-				</div>
+				<Basement story={story} />
 			)}
 		>
 			<div className="story-page-container">
