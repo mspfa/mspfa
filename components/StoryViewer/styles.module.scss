@@ -97,14 +97,11 @@ $story-page-padding: 25px;
 }
 
 #sub-footer {
-	&-actions {
-		padding: 12px 0;
-		text-align: center;
-	}
+	display: flex;
+	align-items: flex-start;
 
-	&-sections {
-		display: flex;
-		align-items: flex-start;
+	&-actions {
+		text-align: center;
 	}
 
 	&-latest-pages {
