@@ -9,8 +9,12 @@
 		text-align: center;
 	}
 
-	&-latest-pages {
+	&-sidebar {
 		width: 262px;
+
+		&-content {
+			text-align: center;
+		}
 	}
 
 	&-wealth-dungeon {

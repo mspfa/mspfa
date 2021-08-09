@@ -62,10 +62,10 @@ const getValuesFromStory = (privateStory: PrivateStory) => ({
 	icon: privateStory.icon,
 	banner: privateStory.banner,
 	style: privateStory.style,
-	disableUserTheme: privateStory.disableUserTheme,
 	script: privateStory.script,
 	tags: privateStory.tags,
-	allowComments: privateStory.allowComments
+	allowComments: privateStory.allowComments,
+	sidebarContent: privateStory.sidebarContent
 });
 
 type Values = ReturnType<typeof getValuesFromStory>;
@@ -410,7 +410,7 @@ const Component = withErrorPage<ServerSideProps>(({
 									</BoxColumns>
 									<BoxSection id="story-details" heading="Details">
 										<Row>
-											<TagField rows={4} />
+											<TagField rows={3} />
 										</Row>
 										<Row>
 											<Label block htmlFor="field-description">
@@ -435,40 +435,40 @@ const Component = withErrorPage<ServerSideProps>(({
 												as="textarea"
 												id="field-blurb"
 												name="blurb"
-												rows={4}
+												rows={3}
 												maxLength={2000}
 												placeholder="This can usually be left empty to default to the adventure's description."
 											/>
 										</Row>
 									</BoxSection>
 									<BoxSection id="story-advanced" heading="Advanced" collapsible>
+										<Row>
+											<Label
+												block
+												htmlFor="field-sidebar-content"
+												help="This content will be displayed in the sidebar to the left of your adventure info, below the latest pages."
+											>
+												Sidebar
+											</Label>
+											<BBField
+												name="sidebarContent"
+												rows={6}
+												maxLength={2000}
+												html
+											/>
+										</Row>
 										<Row id="code-fields">
 											<div>
-												<Row>
-													<Label block htmlFor="field-style">
-														Custom Style
-													</Label>
-													<Field
-														as="textarea"
-														id="field-style"
-														name="style"
-														rows={8}
-														placeholder={'Paste SCSS here.\nIf you don\'t know what this is, don\'t worry about it.'}
-													/>
-												</Row>
-												<Row>
-													<Label
-														htmlFor="field-disable-user-theme"
-														help="When enabled, disables the user's theme and forces them to use only the standard theme with your custom stylesheet, so if you have heavy custom styling, you don't have to deal with overwriting different themes."
-													>
-														Disable User's Theme
-													</Label>
-													<Field
-														type="checkbox"
-														id="field-disable-user-theme"
-														name="disableUserTheme"
-													/>
-												</Row>
+												<Label block htmlFor="field-style">
+													Custom Style
+												</Label>
+												<Field
+													as="textarea"
+													id="field-style"
+													name="style"
+													rows={8}
+													placeholder={'Paste SCSS here.\nIf you don\'t know what this is, don\'t worry about it.'}
+												/>
 											</div>
 											<div>
 												<Label block htmlFor="field-style">

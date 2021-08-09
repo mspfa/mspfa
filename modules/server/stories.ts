@@ -114,8 +114,6 @@ export type ServerStory = {
 	favCount: integer,
 	banner: '' | URLString,
 	style: string,
-	/** Whether the story should ignore the reader's theme setting. */
-	disableUserTheme: boolean,
 	script: {
 		unverified: string,
 		verified: string
@@ -126,6 +124,8 @@ export type ServerStory = {
 	 */
 	tags: TagString[],
 	allowComments: boolean,
+	/** @maxLength 2000 */
+	sidebarContent: string,
 	defaultPageTitle: ServerStoryPage['title'],
 	spoilerPresets: SpoilerPreset[],
 	colors: StoryColor[],
@@ -145,13 +145,13 @@ export const defaultStory = {
 	favCount: 0,
 	banner: '',
 	style: '',
-	disableUserTheme: false,
 	script: {
 		unverified: '',
 		verified: ''
 	},
 	tags: [] as never[],
 	allowComments: true,
+	sidebarContent: '',
 	defaultPageTitle: 'Next.',
 	spoilerPresets: [] as never[],
 	colors: [] as never[],
@@ -186,10 +186,10 @@ export const getPrivateStory = (story: ServerStory): PrivateStory => ({
 	favCount: story.favCount,
 	banner: story.banner,
 	style: story.style,
-	disableUserTheme: story.disableUserTheme,
 	script: story.script,
 	tags: story.tags,
 	allowComments: story.allowComments,
+	sidebarContent: story.sidebarContent,
 	defaultPageTitle: story.defaultPageTitle,
 	spoilerPresets: story.spoilerPresets,
 	colors: story.colors,
@@ -216,10 +216,10 @@ export const getPublicStory = (story: ServerStory): PublicStory => ({
 	pageCount: story.pageCount,
 	favCount: story.favCount,
 	style: story.style,
-	disableUserTheme: story.disableUserTheme,
 	script: story.script,
 	tags: story.tags,
 	allowComments: story.allowComments,
+	sidebarContent: story.sidebarContent,
 	colors: story.colors,
 	quirks: story.quirks
 });
