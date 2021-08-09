@@ -434,13 +434,13 @@ const StoryViewer = ({
 
 	return (
 		<Page
-			subFooter={(
-				<>
-					<div id="sub-footer-latest-pages" className="sub-footer-section mid">
+			basement={(
+				<div id="basement">
+					<div id="basement-section-latest-pages" className="basement-section mid">
 						latest pages here (only shows if Info is open, not Comments or News)
 					</div>
-					<div id="sub-footer-content" className="sub-footer-section front">
-						<Row id="sub-footer-actions">
+					<div id="basement-section-main" className="basement-section front">
+						<Row id="basement-actions">
 							<Button className="small" disabled>Info</Button>
 							<Button className="small">Comments</Button>
 							<Button className="small">News</Button>
@@ -449,10 +449,10 @@ const StoryViewer = ({
 							info, comments, or news here (depending on which one is open)
 						</Row>
 					</div>
-					<div id="sub-footer-wealth-dungeon" className="sub-footer-section mid">
+					<div id="basement-section-wealth-dungeon" className="basement-section mid">
 						side ad here (hidden on small screens)
 					</div>
-				</>
+				</div>
 			)}
 		>
 			<div className="story-page-container">

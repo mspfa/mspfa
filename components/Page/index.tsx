@@ -15,11 +15,11 @@ export type PageProps = {
 	 */
 	heading?: ReactNode,
 	children: ReactNode,
-	/** A `ReactNode` between the `footer` and the `#copyright`. */
-	subFooter?: ReactNode
+	/** A `ReactNode` between the `footer` and the `#copyright` elements. */
+	basement?: ReactNode
 } & HeaderProps;
 
-const Page = ({ heading, children, withFlashyTitle, subFooter }: PageProps) => (
+const Page = ({ heading, children, withFlashyTitle, basement }: PageProps) => (
 	<>
 		{/* It is necessary for dialogs to be before the page so that dialog elements are reached first when tabbing. */}
 		<Dialogs />
@@ -33,11 +33,7 @@ const Page = ({ heading, children, withFlashyTitle, subFooter }: PageProps) => (
 				{children}
 			</main>
 			<Footer />
-			{subFooter !== undefined && (
-				<div id="sub-footer">
-					{subFooter}
-				</div>
-			)}
+			{basement}
 			<div id="copyright">
 				{`MS Paint Fan Adventures © 2010-${new Date().getFullYear()}`}
 			</div>

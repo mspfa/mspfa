@@ -96,24 +96,26 @@ $story-page-padding: 25px;
 	}
 }
 
-#sub-footer {
+#basement {
 	display: flex;
 	align-items: flex-start;
+
+	&-section {
+		&-latest-pages {
+			width: 262px;
+		}
+
+		&-wealth-dungeon {
+			width: 196px;
+		}
+	}
 
 	&-actions {
 		text-align: center;
 	}
-
-	&-latest-pages {
-		width: 262px;
-	}
-
-	&-wealth-dungeon {
-		width: 196px;
-	}
 }
 
-.sub-footer-section {
+.basement-section {
 	box-sizing: border-box;
 	// Use the standard theme's `front-color` as the default in case the browser doesn't support CSS variables.
 	border: 7px solid map.get($standard-theme, front-color);
