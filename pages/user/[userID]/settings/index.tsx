@@ -393,7 +393,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 											Save
 										</Button>
 										<Button
-											title="Reset settings to default"
+											title="Reset Settings to Default"
 											disabled={isEqual(values.settings, defaultSettingsValues)}
 											onClick={
 												useCallback(async () => {
