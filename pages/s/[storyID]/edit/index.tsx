@@ -429,11 +429,11 @@ const Component = withErrorPage<ServerSideProps>(({
 												htmlFor="field-sidebar-content"
 												help={'This content is displayed in the sidebar to the left of your adventure info.\n\nUse this for links (typically on images) to your social media, music, credits, or other advertisements. Avoid using the description for that, or else it can show up in the adventure list and create unwanted clutter.\n\nThe max image width in the sidebar is 241.'}
 											>
-												External Links (Sidebar Content)
+												Sidebar (External Links)
 											</Label>
 											<BBField
 												name="sidebarContent"
-												rows={6}
+												rows={4}
 												maxLength={2000}
 												html
 												placeholder={'Instead of putting external links in the description, put them here.\nClick the help button for more info.'}
