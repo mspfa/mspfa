@@ -33,7 +33,14 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 		sanitizeBBCode(story.sidebarContent, { html: true })
 	), [story.sidebarContent]);
 
-	const latestPagesNode = useMemo(() => (
+	// Hide latest pages by default to prevent spoilers from page titles.
+	const [latestPagesShown, setLatestPagesShown] = useState(false);
+
+	const toggleLatestPagesShown = useCallback(() => {
+		setLatestPagesShown(latestPagesShown => !latestPagesShown);
+	}, []);
+
+	const latestPagesNode = useMemo(() => latestPagesShown && (
 		latestPages.map(latestPage => (
 			<div
 				key={latestPage.id}
@@ -60,17 +67,23 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 				</Link>
 			</div>
 		))
-	), [latestPages, previewMode, story.id]);
+	), [latestPagesShown, latestPages, previewMode, story.id]);
 
 	return (
 		<div id="basement">
 			{section === 'info' && (
-				<div id="basement-sidebar" className="basement-section mid">
+				<div id="sidebar" className="basement-section mid">
 					<div className="basement-section-heading translucent-text">
 						Latest Pages
 					</div>
 					<div id="latest-pages">
-						<Label>Latest Pages</Label>
+						<Label className="spaced">Latest Pages</Label>
+						<Link
+							className="spaced translucent-text"
+							onClick={toggleLatestPagesShown}
+						>
+							{latestPagesShown ? '(Hide)' : '(Show)'}
+						</Link>
 						{latestPagesNode}
 					</div>
 					<div id="view-all-pages-link-container">
@@ -79,7 +92,7 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 						</Link>
 					</div>
 					{story.sidebarContent && (
-						<div id="basement-sidebar-content">
+						<div id="sidebar-content">
 							<BBCode alreadySanitized>
 								{sanitizedSidebarContent}
 							</BBCode>

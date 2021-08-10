@@ -426,6 +426,21 @@ const Component = withErrorPage<ServerSideProps>(({
 										<Row>
 											<Label
 												block
+												htmlFor="field-sidebar-content"
+												help={'It is recommended to use this for links (typically on images) to any social media, music, merch, etc. rather than the description.\n\nThis is displayed in the sidebar to the left of your adventure info, below the latest pages.\n\nThe conventional image width is 238, and the maximum is 241.'}
+											>
+												Sidebar
+											</Label>
+											<BBField
+												name="sidebarContent"
+												rows={6}
+												maxLength={2000}
+												html
+											/>
+										</Row>
+										<Row>
+											<Label
+												block
 												htmlFor="field-blurb"
 												help={'This text appears when you click "Show More" under an adventure\'s listing, and the first line of it is used in external embeds of this adventure.\n\nThis is useful if you have excessive content in the description that doesn\'t need to be in the blurb.\n\nThis can usually be left empty to default to the adventure\'s description.'}
 											>
@@ -442,21 +457,6 @@ const Component = withErrorPage<ServerSideProps>(({
 										</Row>
 									</BoxSection>
 									<BoxSection id="story-advanced" heading="Advanced" collapsible>
-										<Row>
-											<Label
-												block
-												htmlFor="field-sidebar-content"
-												help={'This content will be displayed in the sidebar to the left of your adventure info, below the latest pages.\n\nThe conventional width of an image in the sidebar is 238, and the maximum width is 241.'}
-											>
-												Sidebar
-											</Label>
-											<BBField
-												name="sidebarContent"
-												rows={6}
-												maxLength={2000}
-												html
-											/>
-										</Row>
 										<Row id="code-fields">
 											<div>
 												<Label block htmlFor="field-style">

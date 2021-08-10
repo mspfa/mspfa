@@ -16,20 +16,6 @@
 		text-align: center;
 	}
 
-	&-sidebar {
-		width: 262px;
-
-		&-content {
-			text-align: center;
-			margin: 1em 0;
-			font-size: 0.875em;
-
-			* {
-				max-width: 100%;
-			}
-		}
-	}
-
 	&-wealth-dungeon {
 		width: 196px;
 
@@ -93,6 +79,19 @@
 		font-size: 2em;
 		font-family: Homestuck-Regular;
 		text-transform: uppercase;
+	}
+}
+
+#sidebar {
+	width: 262px;
+
+	&-content {
+		text-align: center;
+		font-size: 0.875em;
+
+		* {
+			max-width: 100%;
+		}
 	}
 }
 
