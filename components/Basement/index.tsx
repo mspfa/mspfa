@@ -69,7 +69,7 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 					<div id="latest-pages-heading" className="translucent-text">
 						Latest Pages
 					</div>
-					<div id="latest-pages-container">
+					<div id="latest-pages">
 						<Label>Latest Pages</Label>
 						{latestPagesNode}
 					</div>
