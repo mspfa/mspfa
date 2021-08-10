@@ -1,5 +1,6 @@
 #message {
-	&-info > .box-content {
+	&-info > .box-content,
+	&:not(.editing) &-content .bb {
 		font-size: 0.875em;
 	}
 

@@ -17,6 +17,7 @@
 		&-content {
 			text-align: center;
 			margin: 1em 0;
+			font-size: 0.875em;
 
 			* {
 				max-width: 100%;
@@ -76,10 +77,5 @@
 		&::before, &::after {
 			content: '"';
 		}
-	}
-
-	.bb {
-		// Overwrite the default smaller font size that `.bb` has.
-		font-size: 1em;
 	}
 }

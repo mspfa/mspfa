@@ -123,7 +123,10 @@ const Component = withErrorPage<ServerSideProps>(({
 
 					return (
 						<Form>
-							<Box>
+							<Box
+								id="message"
+								className={editing ? 'editing' : undefined}
+							>
 								<BoxSection
 									id="message-info"
 									heading={message.subject}

@@ -24,13 +24,6 @@ $story-page-padding: 25px;
 		min-width: 100%;
 	}
 
-	&-title, &-links {
-		.bb {
-			// Overwrite the default smaller font size that `.bb` has.
-			font-size: 1em;
-		}
-	}
-
 	&-title {
 		text-align: center;
 		padding: 14px 5px;
@@ -40,6 +33,7 @@ $story-page-padding: 25px;
 	&-content {
 		text-align: center;
 		padding-bottom: 14px;
+		font-size: 0.875em;
 		line-height: 1;
 	}
 

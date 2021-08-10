@@ -30,6 +30,10 @@
 		background-color: #f48e11;
 	}
 
+	&-content {
+		font-size: 0.875em;
+	}
+
 	&:not(.open) .listing-content {
 		position: relative;
 		overflow: hidden;
