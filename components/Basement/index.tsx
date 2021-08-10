@@ -86,11 +86,13 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 						</Link>
 						{latestPagesNode}
 					</div>
-					<div id="view-all-pages-link-container">
-						<Link href={`/s/${story.id}/log`}>
-							View All Pages
-						</Link>
-					</div>
+					{latestPagesShown && (
+						<div id="view-all-pages-link-container">
+							<Link href={`/s/${story.id}/log`}>
+								View All Pages
+							</Link>
+						</div>
+					)}
 					{story.sidebarContent && (
 						<div id="sidebar-content">
 							<BBCode alreadySanitized>
