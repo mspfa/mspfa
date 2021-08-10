@@ -427,7 +427,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											<Label
 												block
 												htmlFor="field-sidebar-content"
-												help={'This content is displayed in the sidebar to the left of your adventure info, below the latest pages.\n\nUse this for links (typically on images) to any social media, music, merch, etc. rather than the description. If you put it in the description instead, it will show up under your adventure\'s listing (on the Explore page for example) and create unwanted clutter.\n\nThe maximum width of an image in the sidebar is 241.'}
+												help={'This content is displayed in the sidebar to the left of your adventure info.\n\nUse this for links (typically on images) to your social media, music, credits, or other advertisements. Avoid using the description for that, or else it can show up in the adventure list and create unwanted clutter.\n\nThe max image width in the sidebar is 241.'}
 											>
 												Sidebar
 											</Label>
