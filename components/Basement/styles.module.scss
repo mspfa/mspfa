@@ -9,7 +9,7 @@
 
 	@include mobile {
 		flex-direction: column-reverse;
-		align-items: stretch;
+		align-items: center;
 	}
 
 	&-actions {
@@ -17,9 +17,7 @@
 	}
 
 	&-sidebar {
-		@include desktop {
-			width: 262px;
-		}
+		width: 262px;
 
 		&-content {
 			text-align: center;
@@ -70,6 +68,8 @@
 
 	&.front {
 		flex-grow: 1;
+		// This stretches the section to fill the width on mobile.
+		width: 100%;
 	}
 
 	&:not(:first-child) {
@@ -81,16 +81,16 @@
 			margin-bottom: 12px;
 		}
 	}
-}
 
-#latest-pages {
 	&-heading {
 		text-align: center;
 		font-size: 2em;
 		font-family: Homestuck-Regular;
 		text-transform: uppercase;
 	}
+}
 
+#latest-pages {
 	font-family: $sans-serif;
 	font-size: math.div(10, 16) * 1em;
 	margin: 1em 0;
