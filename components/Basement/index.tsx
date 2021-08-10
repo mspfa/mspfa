@@ -19,7 +19,7 @@ const Basement = ({ story }: BasementProps) => {
 	const [section, setSection] = useState<'info' | 'comments' | 'news'>('info');
 
 	const sanitizedSidebarContent = useMemo(() => (
-		sanitizeBBCode(story.sidebarContent)
+		sanitizeBBCode(story.sidebarContent, { html: true })
 	), [story.sidebarContent]);
 
 	return (
@@ -29,11 +29,13 @@ const Basement = ({ story }: BasementProps) => {
 					<div id="latest-pages-container">
 						latest pages here (only shows if Info is open, not Comments or News)
 					</div>
-					<p id="basement-sidebar-content">
-						<BBCode alreadySanitized>
-							{sanitizedSidebarContent}
-						</BBCode>
-					</p>
+					{story.sidebarContent && (
+						<p id="basement-sidebar-content">
+							<BBCode alreadySanitized>
+								{sanitizedSidebarContent}
+							</BBCode>
+						</p>
+					)}
 				</div>
 			)}
 			<div id="basement-content" className="basement-section front">
