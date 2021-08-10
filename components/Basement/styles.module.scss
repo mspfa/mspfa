@@ -59,7 +59,11 @@
 
 	&.front {
 		flex-grow: 1;
-		align-self: stretch;
+
+		@include mobile {
+			// Stretch to fill the width of the screen on mobile.
+			align-self: stretch;
+		}
 	}
 
 	&:not(:first-child) {
