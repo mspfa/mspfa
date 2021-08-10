@@ -77,7 +77,9 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 						Latest Pages
 					</div>
 					<div id="latest-pages">
-						<Label className="spaced">Latest Pages</Label>
+						<Label className="spaced">
+							Latest Pages
+						</Label>
 						<Link
 							className="spaced translucent-text"
 							onClick={toggleLatestPagesShown}
