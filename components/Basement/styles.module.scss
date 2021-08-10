@@ -103,17 +103,17 @@
 	padding: 2px;
 }
 
-#view-all-pages-link-container {
-	text-align: center;
-	font-family: $sans-serif;
-	text-transform: uppercase;
-	margin-bottom: 1em;
-}
-
 .latest-pages-listing {
 	& > .link {
 		&::before, &::after {
 			content: '"';
 		}
 	}
+}
+
+#view-all-pages-link-container {
+	text-align: center;
+	font-family: $sans-serif;
+	text-transform: uppercase;
+	margin-bottom: 1em;
 }
