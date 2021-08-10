@@ -47,8 +47,8 @@ export const defaultSettings: PrivateUser['settings'] = {
 	theme: 'standard',
 	style: '',
 	controls: {
-		back: 'ArrowLeft',
-		forward: 'ArrowRight',
+		previousPage: 'ArrowLeft',
+		nextPage: 'ArrowRight',
 		toggleSpoilers: 'Space'
 	},
 	notifications: {

@@ -110,8 +110,8 @@ export type ServerUser = {
 		theme: Theme,
 		style: string,
 		controls: {
-			back: string,
-			forward: string,
+			previousPage: string,
+			nextPage: string,
 			toggleSpoilers: string
 		},
 		notifications: {

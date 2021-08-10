@@ -405,7 +405,7 @@ const StoryViewer = ({
 
 			const controls = (getUser()?.settings || defaultSettings).controls;
 
-			if (event.code === controls.back) {
+			if (event.code === controls.previousPage) {
 				if (previousPageID) {
 					goToPage(previousPageID);
 				}
@@ -414,7 +414,7 @@ const StoryViewer = ({
 				return;
 			}
 
-			if (event.code === controls.forward) {
+			if (event.code === controls.nextPage) {
 				goToNextPage();
 
 				event.preventDefault();

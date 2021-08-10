@@ -224,10 +224,10 @@ export default createValidator({
 		'RecursivePartial<structure--3675-3744--3663-3745--3249-4107--3238-4108--2265-4693--2128-4694--0-7953>': {
 			type: 'object',
 			properties: {
-				back: {
+				previousPage: {
 					type: 'string'
 				},
-				forward: {
+				nextPage: {
 					type: 'string'
 				},
 				toggleSpoilers: {

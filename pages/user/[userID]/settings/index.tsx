@@ -359,11 +359,11 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 								</BoxColumns>
 								<BoxRowSection heading="Controls">
 									<ControlSetting
-										name="settings.controls.back"
+										name="settings.controls.previousPage"
 										label="Previous Page"
 									/>
 									<ControlSetting
-										name="settings.controls.forward"
+										name="settings.controls.nextPage"
 										label="Next Page"
 									/>
 									<ControlSetting
