@@ -358,9 +358,6 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 									</NotificationSettingGroup>
 								</BoxColumns>
 								<BoxRowSection heading="Controls">
-									<BoxRow className="translucent-text">
-										Select a box and press a key. Press escape to remove a control.
-									</BoxRow>
 									<ControlSetting
 										name="settings.controls.back"
 										label="Back"
@@ -403,7 +400,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 													if (await Dialog.confirm({
 														id: 'reset-settings',
 														title: 'Reset Settings',
-														content: 'Are you sure you want to reset your settings to default?\n\nAll changes will be lost.'
+														content: 'Are you sure you want to reset your settings to default?\n\nAll unsaved changes will be lost.'
 													})) {
 														setFieldValue('settings', defaultSettingsValues);
 														onFormChange();
