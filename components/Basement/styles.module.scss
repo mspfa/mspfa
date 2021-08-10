@@ -57,10 +57,20 @@
 	}
 }
 
-#latest-pages-container {
-	font-family: $sans-serif;
-	font-size: math.div(10, 16) * 1em;
-	margin: 1em 0;
+#latest-pages {
+	&-heading {
+		text-align: center;
+		font-size: 2em;
+		font-family: Homestuck-Regular;
+		margin-bottom: 1em;
+		text-transform: uppercase;
+	}
+
+	&-container {
+		font-family: $sans-serif;
+		font-size: math.div(10, 16) * 1em;
+		margin: 1em 0;
+	}
 }
 
 .latest-pages-listing {

@@ -66,6 +66,9 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 		<div id="basement">
 			{section === 'info' && !mobile && (
 				<div id="basement-sidebar" className="basement-section mid">
+					<div id="latest-pages-heading" className="translucent-text">
+						Latest Pages
+					</div>
 					<div id="latest-pages-container">
 						<Label>Latest Pages</Label>
 						{latestPagesNode}
@@ -116,12 +119,12 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 					</Button>
 				</Row>
 				<Row>
-					info, comments, or news here (depending on which one is open)
+					info, comments, or news here
 				</Row>
 			</div>
 			{!mobile && (
 				<div id="basement-wealth-dungeon" className="basement-section mid">
-					side ad here (hidden on small screens)
+					side ad here
 				</div>
 			)}
 		</div>
