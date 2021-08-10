@@ -2,8 +2,7 @@
 	// This prevents spaces from being omitted when wrapping text in labels, which allows space characters at the end of wrapped lines to sometimes line up with the colon.
 	white-space: pre-wrap;
 
-	&.block {
-		display: block;
+	@at-root div#{&} {
 		margin-bottom: 2px;
 	}
 
