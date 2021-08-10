@@ -73,6 +73,11 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 						<Label>Latest Pages</Label>
 						{latestPagesNode}
 					</div>
+					<div id="view-all-pages-link-container">
+						<Link href={`/s/${story.id}/log`}>
+							View All Pages
+						</Link>
+					</div>
 					{story.sidebarContent && (
 						<div id="basement-sidebar-content">
 							<BBCode alreadySanitized>
