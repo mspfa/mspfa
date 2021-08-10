@@ -24,16 +24,16 @@
 .mspface {
 	&-container {
 		display: flex;
+		justify-content: space-between;
 		padding: 2px 0 5px 0;
-		justify-content: center;
 	}
 
 	flex-shrink: 0;
+	background-repeat: no-repeat;
+	background-position: center;
 	// The width and height of the MSPFace images.
 	width: 111px;
 	height: 103px;
-	background-repeat: no-repeat;
-	background-position: center;
 
 	@include mobile {
 		display: none;

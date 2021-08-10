@@ -7,24 +7,22 @@ const Footer = () => {
 	const footer: FooterAPIResponse | undefined = useSWR('/api/images/footer').data;
 
 	return (
-		<>
-			<footer>
-				<div className="mspface-container">
-					{footer && (
-						<style jsx global>
-							{`
+		<footer>
+			<div className="mspface-container">
+				{footer && (
+					<style jsx global>
+						{`
 								footer .mspface {
 									background-image: url(/images/footers/${footer.name});
 								}
 							`}
-						</style>
-					)}
-					<div className="mspface left" />
-					<HorizontalWealthDungeon />
-					<div className="mspface right" />
-				</div>
-			</footer>
-		</>
+					</style>
+				)}
+				<div className="mspface left" />
+				<HorizontalWealthDungeon />
+				<div className="mspface right" />
+			</div>
+		</footer>
 	);
 };
 
