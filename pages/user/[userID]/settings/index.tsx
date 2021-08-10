@@ -360,11 +360,11 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 								<BoxRowSection heading="Controls">
 									<ControlSetting
 										name="settings.controls.back"
-										label="Back"
+										label="Previous Page"
 									/>
 									<ControlSetting
 										name="settings.controls.forward"
-										label="Forward"
+										label="Next Page"
 									/>
 									<ControlSetting
 										name="settings.controls.toggleSpoilers"
