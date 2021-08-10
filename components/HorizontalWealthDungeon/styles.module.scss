@@ -1,0 +1,18 @@
+@use 'sass:math';
+@use 'styles/general' as *;
+
+$width: 728px;
+$height: 103px;
+
+.wealth-dungeon.horizontal {
+	width: $width;
+
+	@media screen and (max-width: $width) {
+		width: 100%;
+	}
+
+	.wealth-spawner-cage {
+		position: relative;
+		padding-bottom: math.div($height, $width) * 100%
+	}
+}

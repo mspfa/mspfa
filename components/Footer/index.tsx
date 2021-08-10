@@ -1,5 +1,5 @@
 import useSWR from 'swr';
-import WealthDungeon from 'components/WealthDungeon';
+import HorizontalWealthDungeon from 'components/HorizontalWealthDungeon';
 
 type FooterAPIResponse = NonNullable<typeof import('pages/api/images/footer').default['Response']>['body'];
 
@@ -20,7 +20,7 @@ const Footer = () => {
 						</style>
 					)}
 					<div className="mspface left" />
-					<WealthDungeon />
+					<HorizontalWealthDungeon />
 					<div className="mspface right" />
 				</div>
 			</footer>

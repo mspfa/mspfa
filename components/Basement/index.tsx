@@ -127,6 +127,12 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 					<div className="basement-section-heading translucent-text">
 						Ads
 					</div>
+					<div className="wealth-spawner-cage">
+						{/* TODO: Insert wealth spawner here. */}
+					</div>
+					<div className="wealth-spawner-cage">
+						{/* TODO: Insert wealth spawner here. */}
+					</div>
 				</div>
 			)}
 		</div>
