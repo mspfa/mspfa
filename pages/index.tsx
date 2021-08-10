@@ -1,3 +1,5 @@
+import type { LatestPages } from 'components/Basement';
+import { MAX_LATEST_PAGES } from 'components/Basement';
 import type { ClientPreviousPageIDs } from 'components/StoryViewer';
 import { uniqBy } from 'lodash';
 import { withErrorPage } from 'modules/client/errors';
@@ -20,12 +22,14 @@ type ServerSideProps = {
 	userCache?: never,
 	publicStory?: never,
 	pages?: never,
-	previousPageIDs?: never
+	previousPageIDs?: never,
+	latestPages?: never
 } | {
 	userCache: PublicUser[],
 	publicStory: PublicStory,
 	pages: Record<StoryPageID, ClientStoryPage | null>,
-	previousPageIDs: ClientPreviousPageIDs
+	previousPageIDs: ClientPreviousPageIDs,
+	latestPages: LatestPages
 } | {
 	statusCode: integer
 };
@@ -34,7 +38,8 @@ const Component = withErrorPage<ServerSideProps>(({
 	userCache: initialUserCache,
 	publicStory,
 	pages,
-	previousPageIDs
+	previousPageIDs,
+	latestPages
 }) => {
 	const { cacheUser } = useUserCache();
 	initialUserCache?.forEach(cacheUser);
@@ -48,6 +53,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					story={publicStory}
 					pages={pages!}
 					previousPageIDs={previousPageIDs!}
+					latestPages={latestPages!}
 				/>
 			)
 			: <Homepage />
@@ -98,6 +104,34 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 
 	const { clientPages, clientPreviousPageIDs } = getClientPagesAround(story, pageID, previewMode);
 
+	/** A record of pages in the adventure's "Latest Pages" section mapping each page's ID to its title. */
+	const latestPages: LatestPages = [];
+
+	for (
+		let latestPageID = (
+			previewMode
+				? Object.values(story.pages).length
+				: story.pageCount
+		);
+		(
+			latestPageID > 0
+			&& latestPages.length < MAX_LATEST_PAGES
+		);
+		latestPageID--
+	) {
+		const latestPage = story.pages[latestPageID];
+
+		if (!latestPage.unlisted || previewMode) {
+			latestPages.push({
+				id: latestPageID,
+				...latestPage.published !== undefined && {
+					published: +latestPage.published
+				},
+				title: latestPage.title
+			});
+		}
+	}
+
 	return {
 		props: {
 			userCache: await users.find!({
@@ -109,7 +143,8 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 			publicStory: getPublicStory(story),
 			pages: clientPages,
 			// The reason this is sent to the client rather than having SSR and the client compute it a second time is as an optimization (and also it's simpler code).
-			previousPageIDs: clientPreviousPageIDs
+			previousPageIDs: clientPreviousPageIDs,
+			latestPages
 		}
 	};
 });

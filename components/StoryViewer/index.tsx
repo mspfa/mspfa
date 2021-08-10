@@ -16,6 +16,7 @@ import { defaultSettings, getUser } from 'modules/client/users';
 import shouldIgnoreControl from 'modules/client/shouldIgnoreControl';
 import type { APIClient } from 'modules/client/api';
 import api from 'modules/client/api';
+import type { LatestPages } from 'components/Basement';
 import Basement from 'components/Basement';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -72,13 +73,15 @@ export type StoryViewerProps = {
 	 * If a page ID maps to `null`, then the page does not exist to the client, letting the client know not to try to request it.
 	 */
 	pages: Partial<Record<StoryPageID, ClientStoryPage | null>>,
-	previousPageIDs: ClientPreviousPageIDs
+	previousPageIDs: ClientPreviousPageIDs,
+	latestPages: LatestPages
 };
 
 const StoryViewer = ({
 	story,
 	pages: initialPages,
-	previousPageIDs: initialPreviousPageIDs
+	previousPageIDs: initialPreviousPageIDs,
+	latestPages
 }: StoryViewerProps) => {
 	useNavStoryID(story.id);
 
@@ -434,7 +437,11 @@ const StoryViewer = ({
 	return (
 		<Page
 			basement={(
-				<Basement story={story} />
+				<Basement
+					story={story}
+					previewMode={previewMode}
+					latestPages={latestPages}
+				/>
 			)}
 		>
 			<div className="story-page-container">
@@ -508,7 +515,7 @@ const StoryViewer = ({
 									<Delimit with={<Stick />}>
 										{pageID !== 1 && (
 											<Link
-												key="start-over"
+												id="link-start-over"
 												shallow
 												href={`/?s=${story.id}&p=1${previewMode ? '&preview=1' : ''}`}
 											>
@@ -517,7 +524,7 @@ const StoryViewer = ({
 										)}
 										{showGoBack && (
 											<Link
-												key="go-back"
+												id="link-go-back"
 												shallow
 												href={`/?s=${story.id}&p=${previousPageID}${previewMode ? '&preview=1' : ''}`}
 											>
@@ -530,19 +537,19 @@ const StoryViewer = ({
 							</>
 						)}
 						<span className="story-page-footer-group">
-							<Link>
+							<Link id="link-save-game">
 								Save Game
 							</Link>
 							{' '}
-							<Link onClick={openSaveGameHelp}>
+							<Link id="link-save-game-help" onClick={openSaveGameHelp}>
 								(?)
 							</Link>
 							<Stick />
-							<Link>
+							<Link id="link-load-game">
 								Load Game
 							</Link>
 							<Stick />
-							<Link>
+							<Link id="link-delete-game">
 								Delete Game Data
 							</Link>
 						</span>

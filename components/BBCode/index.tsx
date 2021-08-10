@@ -60,6 +60,11 @@ export const sanitizeBBCode = (bbString = '', { html, noBB }: {
 	/** Whether to blacklist all BBCode from the sanitized HTML. */
 	noBB?: boolean
 } = {}) => {
+	// Optimize for the common case of the input being empty.
+	if (bbString === '') {
+		return '';
+	}
+
 	/** The resulting HTML string to be sanitized and parsed. */
 	let htmlString = '';
 
@@ -159,7 +164,7 @@ const BBCode = ({
 	alreadySanitized,
 	children: htmlString = ''
 }: BBCodeProps) => {
-	if (htmlString && !alreadySanitized) {
+	if (!alreadySanitized) {
 		htmlString = sanitizeBBCode(htmlString, { html, noBB });
 	}
 

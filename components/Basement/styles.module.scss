@@ -1,4 +1,6 @@
+@use 'sass:math';
 @use 'sass:map';
+@use 'styles/general' as *;
 @use 'styles/themes' as *;
 
 #basement {
@@ -51,5 +53,23 @@
 
 	&:not(:first-child) {
 		margin-left: 12px;
+	}
+}
+
+#latest-pages-container {
+	font-family: $sans-serif;
+	font-size: math.div(10, 16) * 1em;
+}
+
+.latest-pages-listing {
+	& > .link {
+		&::before, &::after {
+			content: '"';
+		}
+	}
+
+	.bb {
+		// Overwrite the default smaller font size that `.bb` has.
+		font-size: 1em;
 	}
 }
