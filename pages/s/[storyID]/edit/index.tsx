@@ -446,7 +446,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											<Label
 												block
 												htmlFor="field-sidebar-content"
-												help={'This content will be displayed in the sidebar to the left of your adventure info, below the latest pages.\n\nThe conventional width of an image in the sidebar is 238px, and the maximum width is 241px.'}
+												help={'This content will be displayed in the sidebar to the left of your adventure info, below the latest pages.\n\nThe conventional width of an image in the sidebar is 238, and the maximum width is 241.'}
 											>
 												Sidebar
 											</Label>
