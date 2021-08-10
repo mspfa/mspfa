@@ -6,10 +6,11 @@ import { useCallback } from 'react';
 import Dialog from 'modules/client/Dialog';
 
 export type HelpButtonProps = Omit<ButtonProps, 'children' | 'onClick' | 'title'> & {
+	subject: ReactNode,
 	children: ReactNode
 };
 
-const HelpButton = ({ className, children, ...props }: HelpButtonProps) => (
+const HelpButton = ({ className, subject, children, ...props }: HelpButtonProps) => (
 	<Button
 		icon
 		className={`help-button${className ? ` ${className}` : ''}`}
@@ -18,10 +19,10 @@ const HelpButton = ({ className, children, ...props }: HelpButtonProps) => (
 			useCallback(() => {
 				new Dialog({
 					id: 'help',
-					title: 'Help',
+					title: <>Help: {subject}</>,
 					content: children
 				});
-			}, [children])
+			}, [children, subject])
 		}
 		{...props}
 	/>

@@ -21,13 +21,17 @@ const Label = ({ block, htmlFor, help, className, children, ...props }: LabelPro
 			className={`label-container${block ? ' block' : ''}${className ? ` ${className}` : ''}`}
 			{...props}
 		>
-			<LabelTag className="label spaced" htmlFor={htmlFor}>
+			<LabelTag
+				className="label spaced"
+				htmlFor={htmlFor}
+			>
 				{children}
 			</LabelTag>
 			{help && (
-				<HelpButton className="spaced">
-					{children}:<br />
-					<br />
+				<HelpButton
+					className="spaced"
+					subject={children}
+				>
 					{help}
 				</HelpButton>
 			)}

@@ -372,8 +372,8 @@ const TagField = ({
 							if (event.target.classList.contains('tag-field-tag-help')) {
 								new Dialog({
 									id: 'help',
-									title: 'Help',
-									content: `Tag: ${tagValue}\n\n${tagHelp[tagValue]}`
+									title: `Help: #${tagValue}`,
+									content: `Use this tag if:\n\n${tagHelp[tagValue]}`
 								});
 							} else if (!fieldValue.includes(tagValue)) {
 								createAndInsertTag(tagValue, inputRef.current.lastChild!);
