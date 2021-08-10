@@ -17,7 +17,7 @@
 	}
 
 	&-wealth-dungeon {
-		width: 196px;
+		width: 175px;
 
 		.wealth-spawner-cage {
 			margin: 1em 0;
@@ -28,7 +28,6 @@
 }
 
 .basement-section {
-	box-sizing: border-box;
 	// Use the standard theme's `front-color` as the default in case the browser doesn't support CSS variables.
 	border: 7px solid map.get($standard-theme, front-color);
 	border-color: var(--front-color);
@@ -60,8 +59,7 @@
 
 	&.front {
 		flex-grow: 1;
-		// This stretches the section to fill the width on mobile.
-		width: 100%;
+		align-self: stretch;
 	}
 
 	&:not(:first-child) {
@@ -83,7 +81,7 @@
 }
 
 #sidebar {
-	width: 262px;
+	width: 241px;
 
 	&-content {
 		text-align: center;
