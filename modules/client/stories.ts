@@ -28,7 +28,7 @@ export const storyPrivacyNames: Record<StoryPrivacy, string> = {
 };
 
 /** All keys whose values have the same serializable type in both `ServerStory` and `PrivateStory`. */
-type PrivateServerStoryKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'blurb' | 'icon' | 'pageCount' | 'favCount' | 'banner' | 'style' | 'script' | 'tags' | 'allowComments' | 'sidebarContent' | 'defaultPageTitle' | 'spoilerPresets' | 'colors' | 'quirks';
+type PrivateServerStoryKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'icon' | 'pageCount' | 'favCount' | 'banner' | 'style' | 'script' | 'tags' | 'allowComments' | 'sidebarContent' | 'defaultPageTitle' | 'spoilerPresets' | 'colors' | 'quirks';
 
 /** A serializable version of `ServerStory` with only the properties that can safely be exposed to any client. */
 export type PrivateStory = Pick<ServerStory, PrivateServerStoryKey> & {
@@ -42,7 +42,7 @@ export type PrivateStory = Pick<ServerStory, PrivateServerStoryKey> & {
 };
 
 /** All keys whose values have the same serializable type in both `ServerStory` and `PublicStory`. */
-type PublicServerStoryKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'blurb' | 'icon' | 'pageCount' | 'favCount' | 'style' | 'script' | 'tags' | 'allowComments' | 'sidebarContent' | 'colors' | 'quirks';
+type PublicServerStoryKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'icon' | 'pageCount' | 'favCount' | 'style' | 'script' | 'tags' | 'allowComments' | 'sidebarContent' | 'colors' | 'quirks';
 
 /** A serializable version of `ServerStory` with only the properties that can safely be exposed to any client. */
 export type PublicStory = Pick<ServerStory, PublicServerStoryKey> & {
@@ -65,9 +65,7 @@ export type ClientStoryPage = Pick<ServerStoryPage, ClientStoryPageKey> & {
 export type ClientStoryPageRecord = Record<StoryPageID, ClientStoryPage>;
 
 export const getBlurb = (story: PublicStory) => (
-	story.blurb || (
-		story.description.length > 500
-			? `${story.description.slice(0, 500)}...`
-			: story.description
-	)
+	story.description.length > 500
+		? `${story.description.slice(0, 500)}...`
+		: story.description
 );

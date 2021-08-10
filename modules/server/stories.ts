@@ -102,8 +102,6 @@ export type ServerStory = {
 	pages: StoryPageRecord,
 	/** @maxLength 2000 */
 	description: string,
-	/** @maxLength 500 */
-	blurb: string,
 	icon: '' | URLString,
 	/**
 	 * The public page count.
@@ -139,7 +137,6 @@ export const defaultStory = {
 	editors: [] as never[],
 	pages: {} as Record<never, never>,
 	description: '',
-	blurb: '',
 	icon: '',
 	pageCount: 0,
 	favCount: 0,
@@ -180,7 +177,6 @@ export const getPrivateStory = (story: ServerStory): PrivateStory => ({
 		author: story.author
 	},
 	description: story.description,
-	blurb: story.blurb,
 	icon: story.icon,
 	pageCount: story.pageCount,
 	favCount: story.favCount,
@@ -211,7 +207,6 @@ export const getPublicStory = (story: ServerStory): PublicStory => ({
 		author: story.author
 	},
 	description: story.description,
-	blurb: story.blurb,
 	icon: story.icon,
 	pageCount: story.pageCount,
 	favCount: story.favCount,

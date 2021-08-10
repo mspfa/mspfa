@@ -14,7 +14,7 @@ import { authenticate } from 'modules/server/auth';
 import overwriteArrays from 'modules/client/overwriteArrays';
 
 /** The keys of all `PrivateStory` properties which the client should be able to `PUT` into their `ServerStory`. */
-type PuttableStoryKey = 'title' | 'status' | 'privacy' | 'owner' | 'editors' | 'author' | 'description' | 'blurb' | 'icon' | 'banner' | 'style' | 'tags' | 'allowComments' | 'sidebarContent' | 'defaultPageTitle';
+type PuttableStoryKey = 'title' | 'status' | 'privacy' | 'owner' | 'editors' | 'author' | 'description' | 'icon' | 'banner' | 'style' | 'tags' | 'allowComments' | 'sidebarContent' | 'defaultPageTitle';
 
 const Handler: APIHandler<{
 	query: {

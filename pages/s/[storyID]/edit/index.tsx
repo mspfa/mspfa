@@ -58,7 +58,6 @@ const getValuesFromStory = (privateStory: PrivateStory) => ({
 		site: ''
 	},
 	description: privateStory.description,
-	blurb: privateStory.blurb,
 	icon: privateStory.icon,
 	banner: privateStory.banner,
 	style: privateStory.style,
@@ -416,11 +415,12 @@ const Component = withErrorPage<ServerSideProps>(({
 											<Label block htmlFor="field-description">
 												Description
 											</Label>
-											<BBField
+											<Field
+												as="textarea"
+												id="field-description"
 												name="description"
-												rows={6}
+												rows={4}
 												maxLength={2000}
-												html
 											/>
 										</Row>
 										<Row>
@@ -429,31 +429,14 @@ const Component = withErrorPage<ServerSideProps>(({
 												htmlFor="field-sidebar-content"
 												help={'This content is displayed in the sidebar to the left of your adventure info.\n\nUse this for links (typically on images) to your social media, music, credits, or other advertisements. Avoid using the description for that, or else it can show up in the adventure list and create unwanted clutter.\n\nThe max image width in the sidebar is 241.'}
 											>
-												Sidebar
+												External Links (Sidebar Content)
 											</Label>
 											<BBField
 												name="sidebarContent"
 												rows={6}
 												maxLength={2000}
 												html
-												placeholder={'Instead of putting social media links in the description, put them here.\nClick the help button for more info.'}
-											/>
-										</Row>
-										<Row>
-											<Label
-												block
-												htmlFor="field-blurb"
-												help={'This text appears when you click "Show More" under an adventure\'s listing, and the first line of it is used in external embeds of this adventure.\n\nThis is useful if you have excessive content in the description that doesn\'t need to be in the blurb.\n\nThis can usually be left empty to default to the adventure\'s description.'}
-											>
-												Blurb
-											</Label>
-											<Field
-												as="textarea"
-												id="field-blurb"
-												name="blurb"
-												rows={3}
-												maxLength={2000}
-												placeholder="This can usually be left empty to default to the adventure's description."
+												placeholder={'Instead of putting external links in the description, put them here.\nClick the help button for more info.'}
 											/>
 										</Row>
 									</BoxSection>
