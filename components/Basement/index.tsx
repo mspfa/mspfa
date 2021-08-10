@@ -64,7 +64,7 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 
 	return (
 		<div id="basement">
-			{section === 'info' && !mobile && (
+			{section === 'info' && (
 				<div id="basement-sidebar" className="basement-section mid">
 					<div id="latest-pages-heading" className="translucent-text">
 						Latest Pages

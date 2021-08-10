@@ -7,12 +7,19 @@
 	display: flex;
 	align-items: flex-start;
 
+	@include mobile {
+		flex-direction: column-reverse;
+		align-items: stretch;
+	}
+
 	&-actions {
 		text-align: center;
 	}
 
 	&-sidebar {
-		width: 262px;
+		@include desktop {
+			width: 262px;
+		}
 
 		&-content {
 			text-align: center;
@@ -41,11 +48,23 @@
 		flex-shrink: 0;
 
 		&:first-child {
-			border-left: none;
+			@include desktop {
+				border-left: none;
+			}
+
+			@include mobile {
+				border-bottom: none;
+			}
 		}
 
 		&:last-child {
-			border-right: none;
+			@include desktop {
+				border-right: none;
+			}
+
+			@include mobile {
+				border-top: none;
+			}
 		}
 	}
 
@@ -54,7 +73,13 @@
 	}
 
 	&:not(:first-child) {
-		margin-left: 12px;
+		@include desktop {
+			margin-left: 12px;
+		}
+
+		@include mobile {
+			margin-bottom: 12px;
+		}
 	}
 }
 
