@@ -16,6 +16,7 @@
 
 		&-content {
 			text-align: center;
+			margin: 1em 0;
 
 			* {
 				max-width: 100%;
@@ -59,6 +60,7 @@
 #latest-pages-container {
 	font-family: $sans-serif;
 	font-size: math.div(10, 16) * 1em;
+	margin: 1em 0;
 }
 
 .latest-pages-listing {

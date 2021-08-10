@@ -71,11 +71,11 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 						{latestPagesNode}
 					</div>
 					{story.sidebarContent && (
-						<p id="basement-sidebar-content">
+						<div id="basement-sidebar-content">
 							<BBCode alreadySanitized>
 								{sanitizedSidebarContent}
 							</BBCode>
-						</p>
+						</div>
 					)}
 				</div>
 			)}
