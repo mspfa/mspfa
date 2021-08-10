@@ -88,7 +88,8 @@
 	&-content {
 		text-align: center;
 		font-size: 0.875em;
-		margin: 2em 0 0.75em 0;
+		// The left and right margins are to be consistent with MSPA's sidebar images being at most 238px wide.
+		margin: 2em 2px 0.75em 1px;
 
 		* {
 			max-width: 100%;
