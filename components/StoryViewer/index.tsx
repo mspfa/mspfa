@@ -284,8 +284,10 @@ const StoryViewer = ({
 						preview: '1'
 					},
 					aroundPageID: queriedPageID.toString(),
-					// Since these pages are the only ones within the `PAGE_PRELOAD_DEPTH` which are already cached on the client, exclude them from the pages to be fetched.
-					excludedPageIDs: nearbyCachedPageIDs.join(',')
+					...nearbyCachedPageIDs.length && {
+						// Since these pages are the only ones within the `PAGE_PRELOAD_DEPTH` which are already cached on the client, exclude them from the pages to be fetched.
+						excludedPageIDs: nearbyCachedPageIDs.join(',')
+					}
 				}
 			}).then(({
 				data: {
