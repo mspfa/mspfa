@@ -67,7 +67,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 					</PageCount>
 				</div>
 				{open && (
-					<div className="listing-section listing-blurb">
+					<div className="listing-section listing-description">
 						<BBCode>{publicStory.description}</BBCode>
 					</div>
 				)}
