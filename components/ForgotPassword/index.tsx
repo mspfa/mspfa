@@ -10,7 +10,7 @@ const ForgotPassword = ({ className }: ForgotPasswordProps) => (
 	<div
 		className={`forgot-password-link-container${className ? ` ${className}` : ''}`}
 	>
-		<Link className="translucent-text">Forgot Password?</Link>
+		<Link className="translucent">Forgot Password?</Link>
 	</div>
 );
 

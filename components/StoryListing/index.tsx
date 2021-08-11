@@ -40,7 +40,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 			</Link>
 			<div className="listing-info">
 				<Link
-					className="listing-title translucent-text"
+					className="listing-title translucent"
 					href={`/?s=${publicStory.id}&p=1`}
 					title={publicStory.title}
 				>

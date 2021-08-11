@@ -19,7 +19,7 @@ window.addEventListener('error', event => {
 						{event.message}
 					</div>
 					<br />
-					<div className="translucent-text">
+					<div className="translucent">
 						{event.error.stack || (
 							`${event.error.message}\n    at ${event.filename}:${event.lineno}${event.colno ? `:${event.colno}` : ''}`
 						)}

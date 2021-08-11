@@ -154,14 +154,14 @@ const SignIn = ({ page }: SignInProps) => {
 		<div id="sign-in-content">
 			{page !== 2 && (
 				<>
-					<div className="translucent-text">
+					<div className="translucent">
 						{page ? 'Sign up with' : 'Sign in with'}
 					</div>
 					<div id="sign-in-methods-external">
 						<AuthButton type="google" onResolve={resolveExternalSignIn} />
 						<AuthButton type="discord" onResolve={resolveExternalSignIn} />
 					</div>
-					<div id="sign-in-divider" className="translucent-text">or</div>
+					<div id="sign-in-divider" className="translucent">or</div>
 				</>
 			)}
 			<InlineRowSection>
@@ -254,7 +254,7 @@ const SignIn = ({ page }: SignInProps) => {
 							checked={signInValues.termsAgreed}
 							onChange={onChange}
 						/>
-						<label htmlFor="sign-in-terms-agreed" className="translucent-text">
+						<label htmlFor="sign-in-terms-agreed" className="translucent">
 							I agree to the <Link href="/terms" target="_blank">terms of service</Link>.
 						</label>
 					</div>
@@ -262,7 +262,7 @@ const SignIn = ({ page }: SignInProps) => {
 			)}
 			{page === 0 && (
 				<div id="sign-up-link-container">
-					<span className="translucent-text">Don't have an account? </span>
+					<span className="translucent">Don't have an account? </span>
 					<Link onClick={startSigningUp}>Sign Up</Link>
 				</div>
 			)}

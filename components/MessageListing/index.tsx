@@ -300,7 +300,7 @@ const MessageListing = ({
 			</Link>
 			<div className="listing-info">
 				<Link
-					className="listing-title translucent-text"
+					className="listing-title translucent"
 					href={`/message/${message.id}`}
 					title={message.subject}
 				>

@@ -82,7 +82,7 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 		<div id="basement">
 			{section === 'info' && (
 				<div id="sidebar" className="basement-section mid">
-					<div className="basement-section-heading translucent-text">
+					<div className="basement-section-heading translucent">
 						Latest Pages
 					</div>
 					<div id="latest-pages">
@@ -90,7 +90,7 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 							Latest Pages
 						</Label>
 						<Link
-							className="spaced translucent-text"
+							className="spaced translucent"
 							onClick={toggleLatestPagesShown}
 						>
 							{latestPagesShown ? '(Hide)' : '(Show)'}
@@ -156,7 +156,7 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 							src={story.icon}
 						/>
 						<div id="story-details">
-							<div id="story-title" className="translucent-text">
+							<div id="story-title" className="translucent">
 								{story.title}
 							</div>
 							<span className="story-status spaced">
@@ -194,7 +194,7 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 			</div>
 			{!mobile && (
 				<div id="basement-wealth-dungeon" className="basement-section mid">
-					<div className="basement-section-heading translucent-text">
+					<div className="basement-section-heading translucent">
 						Ads
 					</div>
 					<div className="wealth-spawner-cage">

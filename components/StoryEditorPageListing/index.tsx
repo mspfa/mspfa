@@ -566,7 +566,7 @@ const StoryEditorPageListing = React.memo(({
 				/>
 			</Row>
 			<Row className="story-editor-page-show-advanced-link-container">
-				<Link className="translucent-text" onClick={togglePageAdvancedShown}>
+				<Link className="translucent" onClick={togglePageAdvancedShown}>
 					{advancedShown ? 'Hide Advanced Options' : 'Show Advanced Options'}
 				</Link>
 			</Row>
