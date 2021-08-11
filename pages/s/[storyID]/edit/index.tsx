@@ -331,7 +331,6 @@ const Component = withErrorPage<ServerSideProps>(({
 													id="story-editor-icon"
 													src={values.icon}
 													alt="Your Adventure's Icon"
-													title="Your Adventure's Icon"
 												/>
 											</BoxRow>
 										</BoxRowSection>

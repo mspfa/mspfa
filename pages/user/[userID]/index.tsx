@@ -50,7 +50,6 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 								id="profile-icon"
 								src={publicUser.icon}
 								alt={`${publicUser.name}'s Icon`}
-								title={`${publicUser.name}'s Icon`}
 							/>
 						</BoxRow>
 						<BoxRow id="profile-actions">

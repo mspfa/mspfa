@@ -20,7 +20,10 @@ const UserFieldOption = ({ publicUser, setValue, disabled }: UserFieldOptionProp
 			}, [publicUser, setValue])
 		}
 	>
-		<IconImage src={publicUser.icon} />
+		<IconImage
+			src={publicUser.icon}
+			alt={`${publicUser.name}'s Icon`}
+		/>
 		<div className="user-field-option-label">
 			<span className="user-field-option-name">{publicUser.name}</span><br />
 			<span className="user-field-option-id">{publicUser.id}</span>

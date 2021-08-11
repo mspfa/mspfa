@@ -115,7 +115,6 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 												id="profile-icon"
 												src={values.icon}
 												alt="Your Profile Icon"
-												title="Your Profile Icon"
 											/>
 										</BoxRow>
 									</BoxRowSection>

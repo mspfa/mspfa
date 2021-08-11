@@ -3,7 +3,9 @@ import React from 'react';
 import type { ImgHTMLAttributes } from 'react';
 
 export type IconImageProps = ImgHTMLAttributes<HTMLImageElement> & {
-	src?: string
+	src?: string,
+	// This attribute is required for accessibility's sake.
+	alt: string
 };
 
 // This is memoized to prevent the randomized wat face from changing every re-render.

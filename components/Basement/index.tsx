@@ -167,6 +167,7 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 						<IconImage
 							id="story-icon"
 							src={story.icon}
+							alt={`${story.title}'s Icon`}
 						/>
 						<div id="story-details">
 							<div id="story-title" className="story-details-section translucent">
