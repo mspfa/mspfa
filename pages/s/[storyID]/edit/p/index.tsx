@@ -1548,6 +1548,9 @@ const Component = withErrorPage<ServerSideProps>(({
 										className="mid"
 										ref={actionsElementRef}
 									>
+										<Button id="story-editor-back-to-top" href="#">
+											Back to Top
+										</Button>
 										<Button
 											disabled={formikPropsRef.current.isSubmitting}
 											onClick={newPage}

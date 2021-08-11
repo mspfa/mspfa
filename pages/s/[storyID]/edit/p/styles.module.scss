@@ -44,6 +44,10 @@
 			z-index: 200;
 			border-bottom: 1px solid rgba(128, 128, 128, 0.5);
 		}
+
+		&:not(.stuck) #story-editor-back-to-top {
+			display: none;
+		}
 	}
 }
 
