@@ -52,7 +52,7 @@ input:-webkit-autofill::first-line,
 textarea,
 select,
 option,
-button {
+.button {
 	font-family: $monospace;
 	font-weight: bold;
 	@include theme(color, text-color);
