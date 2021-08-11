@@ -1,4 +1,3 @@
-import './styles.module.scss';
 import Page from 'components/Page';
 import { getUser, setUser } from 'modules/client/users';
 import type { PrivateUser } from 'modules/client/users';

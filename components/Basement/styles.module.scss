@@ -87,6 +87,11 @@
 #sidebar {
 	width: 241px;
 
+	@include desktop {
+		// Stretch to fill the height of the container on desktop.
+		align-self: stretch;
+	}
+
 	&-content {
 		text-align: center;
 		font-size: 0.875em;

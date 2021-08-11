@@ -8,6 +8,7 @@ import BBCode, { sanitizeBBCode } from 'components/BBCode';
 import Timestamp from 'components/Timestamp';
 import Link from 'components/Link';
 import Label from 'components/Label';
+import IconImage from 'components/IconImage';
 
 /** The maximum number of pages which can be listed under the adventure's "Latest Pages" section. */
 export const MAX_LATEST_PAGES = 45;
@@ -140,9 +141,20 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 						News
 					</Button>
 				</Row>
-				<Row>
-					info, comments, or news here
-				</Row>
+				{section === 'info' ? (
+					<Row>
+						<IconImage src={story.icon} />
+					</Row>
+				) : section === 'comments' ? (
+					<Row>
+						comments here
+					</Row>
+				) : (
+					// If this point is reached, `section === 'news'`.
+					<Row>
+						news here
+					</Row>
+				)}
 			</div>
 			{!mobile && (
 				<div id="basement-wealth-dungeon" className="basement-section mid">

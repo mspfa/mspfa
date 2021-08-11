@@ -1,11 +1,6 @@
 @use 'styles/general' as *;
 
 #story {
-	&-icon {
-		width: 150px;
-		height: 150px;
-	}
-
 	&-misc > .box-content {
 		row-gap: 1em;
 	}
