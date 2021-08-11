@@ -139,9 +139,15 @@ export const sanitizeBBCode = (bbString = '', { html, noBB }: {
 			FORCE_BODY: true,
 			// Disable DOM clobbering protection on output.
 			SANITIZE_DOM: false,
-			[html ? 'ADD_TAGS' : 'ALLOWED_TAGS']: (
-				noBB ? [] : ['mspfa-bb']
-			)
+			...html ? {
+				ADD_TAGS: ['mspfa-bb', 'iframe'],
+				ADD_ATTR: [
+					// Allow certain `iframe` attributes.
+					'allow', 'allowfullscreen', 'allowpaymentrequest', 'csp', 'referrerpolicy', 'sandbox', 'srcdoc', 'frameborder', 'marginheight', 'marginwidth', 'scrolling'
+				]
+			} : {
+				ALLOWED_TAGS: noBB ? [] : ['mspfa-bb']
+			}
 		}
 	);
 };
