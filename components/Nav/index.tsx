@@ -6,13 +6,14 @@ import Router, { useRouter } from 'next/router';
 import { promptSignIn, promptSignOut, useUser } from 'modules/client/users';
 import createGlobalState from 'global-react-state';
 import type { StoryID } from 'modules/server/stories';
-import { useEffect } from 'react';
+import { useIsomorphicLayoutEffect } from 'react-use';
 
 const [useStoryID, setStoryID] = createGlobalState<StoryID | undefined>(undefined);
 
 /** A hook which sets the nav bar's story ID (adding the "LOGS" and "SEARCH" nav items) as long as the component is mounted. */
 export const useNavStoryID = (storyID: StoryID) => {
-	useEffect(() => {
+	// This hook is a layout effect hook rather than a normal effect hook so the nav bar is updated immediately, preventing the user from briefly seeing the outdated nav bar.
+	useIsomorphicLayoutEffect(() => {
 		setStoryID(storyID);
 
 		return () => {
