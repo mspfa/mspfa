@@ -249,6 +249,25 @@ const Component = withErrorPage<ServerSideProps>(({
 						return (
 							<Form>
 								<Box>
+									<BoxSection
+										id="story-editor-options"
+										heading={privateStory.title}
+									>
+										{privateStory.pageCount && (
+											<Button
+												className="small"
+												href={`/?s=${privateStory.id}&p=1`}
+											>
+												View
+											</Button>
+										)}
+										<Button
+											className="small"
+											href={`/s/${privateStory.id}/edit/p`}
+										>
+											Edit Pages
+										</Button>
+									</BoxSection>
 									<BoxColumns>
 										<BoxRowSection id="story-editor-info" heading="Info">
 											<FieldBoxRow
@@ -401,11 +420,6 @@ const Component = withErrorPage<ServerSideProps>(({
 												help={'A direct URL to an image of your adventure\'s anniversary banner. The recommended image size is 950x100.\n\nIf your adventure is public, is ongoing or complete, and has at least 200 favorites, this image will be displayed on the homepage for one week starting on the adventure\'s anniversary date.'}
 												placeholder="Optional"
 											/>
-											<BoxRow>
-												<Button href={`/s/${privateStory.id}/edit/p`}>
-													Edit Pages
-												</Button>
-											</BoxRow>
 										</BoxRowSection>
 									</BoxColumns>
 									<BoxSection id="story-editor-details" heading="Details">

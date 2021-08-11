@@ -1,6 +1,10 @@
 @use 'styles/general' as *;
 
 #story-editor {
+	&-options {
+		text-align: center;
+	}
+
 	&-misc > .box-content {
 		row-gap: 1em;
 	}
