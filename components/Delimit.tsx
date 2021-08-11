@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { Fragment } from 'react';
 
 export type DelimitProps = {
 	children?: JSX.Element | Array<JSX.Element | false | undefined | null | ''>,
 	/** The element to delimit this component's children with. */
-	with: JSX.Element
+	with: ReactNode
 };
 
 /**
