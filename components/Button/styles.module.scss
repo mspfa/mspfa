@@ -74,7 +74,10 @@
 	text-decoration: none;
 	flex-shrink: 0;
 	@include theme(background-color, button-color);
-	@include theme(color, button-text-color);
+
+	&:not(.icon-button) {
+		@include theme(color, button-text-color);
+	}
 
 	& + &:not(.icon-button) {
 		margin-left: 1ch;
