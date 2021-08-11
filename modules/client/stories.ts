@@ -63,9 +63,3 @@ export type ClientStoryPage = Pick<ServerStoryPage, ClientStoryPageKey> & {
 };
 
 export type ClientStoryPageRecord = Record<StoryPageID, ClientStoryPage>;
-
-export const getBlurb = (story: PublicStory) => (
-	story.description.length > 500
-		? `${story.description.slice(0, 500)}...`
-		: story.description
-);

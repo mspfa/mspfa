@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import IconImage from 'components/IconImage';
 import type { PublicStory } from 'modules/client/stories';
-import { storyStatusNames, getBlurb } from 'modules/client/stories';
+import { storyStatusNames } from 'modules/client/stories';
 import Link from 'components/Link';
 import FavButton from 'components/Button/FavButton';
 import EditButton from 'components/Button/EditButton';
@@ -22,8 +22,6 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 	const toggleOpen = useCallback(() => {
 		setOpen(open => !open);
 	}, []);
-
-	const blurb = getBlurb(publicStory);
 
 	return (
 		<div className="listing">
@@ -70,11 +68,11 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 				</div>
 				{open && (
 					<div className="listing-section listing-blurb">
-						<BBCode>{blurb}</BBCode>
+						<BBCode>{publicStory.description}</BBCode>
 					</div>
 				)}
 				<div className="listing-section listing-footer">
-					{blurb && (
+					{publicStory.description && (
 						<Link
 							className="listing-more-link"
 							onClick={toggleOpen}
@@ -82,7 +80,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 							{open ? 'Show Less' : 'Show More'}
 						</Link>
 					)}
-					{blurb && !!publicStory.tags.length && ' - '}
+					{publicStory.description && !!publicStory.tags.length && ' - '}
 					{publicStory.tags.map((tag, i) => (
 						<Fragment key={tag}>
 							{i !== 0 && ' '}
