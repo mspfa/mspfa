@@ -159,26 +159,28 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 							<div id="story-title" className="translucent">
 								{story.title}
 							</div>
-							<span className="story-status spaced">
-								{storyStatusNames[story.status]}
-							</span>
-							{user && (
-								story.owner === user.id
-								|| story.editors.includes(user.id)
-								|| !!(user.perms & Perm.sudoRead)
-							) && (
-								<EditButton
-									className="spaced"
-									href={`/s/${story.id}/edit/p`}
-									title="Edit Adventure"
-								/>
-							)}
-							<FavButton className="spaced" storyID={story.id}>
-								{story.favCount}
-							</FavButton>
-							<PageCount className="spaced">
-								{story.pageCount}
-							</PageCount>
+							<div id="story-stats">
+								<span className="story-status spaced">
+									{storyStatusNames[story.status]}
+								</span>
+								{user && (
+									story.owner === user.id
+									|| story.editors.includes(user.id)
+									|| !!(user.perms & Perm.sudoRead)
+								) && (
+									<EditButton
+										className="spaced"
+										href={`/s/${story.id}/edit/p`}
+										title="Edit Adventure"
+									/>
+								)}
+								<FavButton className="spaced" storyID={story.id}>
+									{story.favCount}
+								</FavButton>
+								<PageCount className="spaced">
+									{story.pageCount}
+								</PageCount>
+							</div>
 						</div>
 					</Row>
 				) : section === 'comments' ? (

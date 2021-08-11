@@ -250,7 +250,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							<Form>
 								<Box>
 									<BoxColumns>
-										<BoxRowSection id="story-info" heading="Info">
+										<BoxRowSection id="story-editor-info" heading="Info">
 											<FieldBoxRow
 												name="title"
 												label="Title"
@@ -309,14 +309,14 @@ const Component = withErrorPage<ServerSideProps>(({
 											/>
 											<BoxRow>
 												<IconImage
-													id="story-icon"
+													id="story-editor-icon"
 													src={values.icon}
 													alt="Your Adventure's Icon"
 													title="Your Adventure's Icon"
 												/>
 											</BoxRow>
 										</BoxRowSection>
-										<BoxRowSection id="story-misc" heading="Misc">
+										<BoxRowSection id="story-editor-misc" heading="Misc">
 											<LabeledBoxRow label="Owner">
 												<UserField
 													name="owner"
@@ -407,7 +407,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											</BoxRow>
 										</BoxRowSection>
 									</BoxColumns>
-									<BoxSection id="story-details" heading="Details">
+									<BoxSection id="story-editor-details" heading="Details">
 										<Row>
 											<TagField rows={3} />
 										</Row>
@@ -440,8 +440,8 @@ const Component = withErrorPage<ServerSideProps>(({
 											/>
 										</Row>
 									</BoxSection>
-									<BoxSection id="story-advanced" heading="Advanced" collapsible>
-										<Row id="code-fields">
+									<BoxSection id="story-editor-advanced" heading="Advanced" collapsible>
+										<Row id="story-editor-code-fields">
 											<div>
 												<Label block htmlFor="field-style">
 													Custom Style
