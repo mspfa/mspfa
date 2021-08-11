@@ -17,6 +17,7 @@ import { useUser } from 'modules/client/users';
 import { Perm } from 'modules/client/perms';
 import UserLink from 'components/Link/UserLink';
 import { uniq } from 'lodash';
+import type { StoryPageID } from 'modules/server/stories';
 
 /** The maximum number of pages which can be listed under the adventure's "Latest Pages" section. */
 export const MAX_LATEST_PAGES = 45;
@@ -26,12 +27,13 @@ export type LatestPages = Array<Pick<ClientStoryPage, 'id' | 'published' | 'titl
 
 export type BasementProps = {
 	story: PublicStory,
+	pageID: StoryPageID,
 	previewMode: boolean,
 	latestPages: LatestPages
 };
 
 /** The area of the `StoryViewer` between the `footer` and `#copyright` elements. */
-const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
+const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) => {
 	const user = useUser();
 
 	// Default to `true` to avoid loading the side ad unnecessarily.
@@ -181,7 +183,7 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 								) && (
 									<EditButton
 										className="spaced"
-										href={`/s/${story.id}/edit/p`}
+										href={`/s/${story.id}/edit/p#p${pageID}`}
 										title="Edit Adventure"
 									/>
 								)}

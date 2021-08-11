@@ -908,7 +908,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 									/** Offsets the inputted `scrollTop` by a certain amount for the user's convenience. */
 									const offsetScrollTop = (scrollTop: number) => {
-										const actionsStyle = window.getComputedStyle(actionsElementRef.current);
+										const actionsStyle = window.getComputedStyle(actionsElementRef.current); // TODO: Fix `actionsElementRef.current === null` when clicking the edit button from the story viewer.
 
 										if (actionsStyle.position === 'sticky') {
 											const actionsRect = actionsElementRef.current.getBoundingClientRect();

@@ -441,6 +441,7 @@ const StoryViewer = ({
 			basement={(
 				<Basement
 					story={story}
+					pageID={pageID}
 					previewMode={previewMode}
 					latestPages={latestPages}
 				/>
