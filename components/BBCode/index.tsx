@@ -142,7 +142,7 @@ export const sanitizeBBCode = (bbString = '', { html, noBB }: {
 			...html ? {
 				ADD_TAGS: ['mspfa-bb', 'iframe'],
 				ADD_ATTR: [
-					// Allow certain `iframe` attributes.
+					// Allow `iframe` attributes.
 					'allow', 'allowfullscreen', 'allowpaymentrequest', 'csp', 'referrerpolicy', 'sandbox', 'srcdoc', 'frameborder', 'marginheight', 'marginwidth', 'scrolling'
 				]
 			} : {
