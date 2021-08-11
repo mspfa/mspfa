@@ -334,18 +334,19 @@ const tags: Record<string, {
 				/>
 				{/* YouTube requires embedded players to have a viewport that is at least 200x200. */}
 				{/* Source: https://developers.google.com/youtube/iframe_api_reference#Requirements */}
+				{/* Also, width and height are required fields here since the `iframe` has no good way of determining a good default size for the video. */}
 				<FieldBoxRow
 					type="number"
 					name="width"
 					label="Width"
-					placeholder="Optional"
+					required
 					min={200}
 				/>
 				<FieldBoxRow
 					type="number"
 					name="height"
 					label="Height"
-					placeholder="Optional"
+					required
 					min={200}
 				/>
 				<FieldBoxRow type="checkbox" name="autoplay" label="Autoplay" />
