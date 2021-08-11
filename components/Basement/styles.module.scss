@@ -138,6 +138,6 @@
 	}
 }
 
-.story-details-section {
-	margin-bottom: 0.25em;
+.story-details-section:not(:last-child) {
+	margin-bottom: 0.5ch;
 }
