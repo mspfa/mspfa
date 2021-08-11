@@ -981,7 +981,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						window.addEventListener('hashchange', updateLocationHash);
 
 						if (!calledUpdateLocationHashRef.current) {
-							// This timeout is necessary to wait for the browser to jump to the location hash first so that `updateLocationHash` can run afterward uninterrupted, and also so `updateCulledPages` can update `defaultCulledHeight`.
+							// This timeout is necessary to wait for the browser to jump to the initial location hash first so that `updateLocationHash` can run afterward uninterrupted, and also so `updateCulledPages` can update `defaultCulledHeight`.
 							setTimeout(updateLocationHash);
 
 							calledUpdateLocationHashRef.current = true;
