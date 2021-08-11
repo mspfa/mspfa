@@ -2,6 +2,7 @@ import './styles.module.scss';
 import Button from 'components/Button';
 import Row from 'components/Row';
 import type { ClientStoryPage, PublicStory } from 'modules/client/stories';
+import { storyStatusNames } from 'modules/client/stories';
 import { useMobile } from 'modules/client/useMobile';
 import { useCallback, useMemo, useState } from 'react';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
@@ -9,6 +10,11 @@ import Timestamp from 'components/Timestamp';
 import Link from 'components/Link';
 import Label from 'components/Label';
 import IconImage from 'components/IconImage';
+import FavButton from 'components/Button/FavButton';
+import PageCount from 'components/Icon/PageCount';
+import EditButton from 'components/Button/EditButton';
+import { useUser } from 'modules/client/users';
+import { Perm } from 'modules/client/perms';
 
 /** The maximum number of pages which can be listed under the adventure's "Latest Pages" section. */
 export const MAX_LATEST_PAGES = 45;
@@ -24,6 +30,8 @@ export type BasementProps = {
 
 /** The area of the `StoryViewer` between the `footer` and `#copyright` elements. */
 const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
+	const user = useUser();
+
 	// Default to `true` to avoid loading the side ad unnecessarily.
 	const mobile = useMobile(true);
 
@@ -142,8 +150,36 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 					</Button>
 				</Row>
 				{section === 'info' ? (
-					<Row>
-						<IconImage src={story.icon} />
+					<Row id="story-info-top">
+						<IconImage
+							id="story-icon"
+							src={story.icon}
+						/>
+						<div id="story-details">
+							<div id="story-title" className="translucent-text">
+								{story.title}
+							</div>
+							<span className="story-status spaced">
+								{storyStatusNames[story.status]}
+							</span>
+							{user && (
+								story.owner === user.id
+								|| story.editors.includes(user.id)
+								|| !!(user.perms & Perm.sudoRead)
+							) && (
+								<EditButton
+									className="spaced"
+									href={`/s/${story.id}/edit/p`}
+									title="Edit Adventure"
+								/>
+							)}
+							<FavButton className="spaced" storyID={story.id}>
+								{story.favCount}
+							</FavButton>
+							<PageCount className="spaced">
+								{story.pageCount}
+							</PageCount>
+						</div>
 					</Row>
 				) : section === 'comments' ? (
 					<Row>

@@ -32,6 +32,7 @@
 	border: 7px solid map.get($standard-theme, front-color);
 	border-color: var(--front-color);
 	padding: 7px;
+	min-height: 650px;
 
 	&.mid {
 		flex-shrink: 0;
@@ -87,16 +88,10 @@
 #sidebar {
 	width: 241px;
 
-	@include desktop {
-		// Stretch to fill the height of the container on desktop.
-		align-self: stretch;
-	}
-
 	&-content {
 		text-align: center;
 		font-size: 0.875em;
-		// The left and right margins are to be consistent with MSPA's sidebar images being at most 238px wide.
-		margin: 2em 2px 0.75em 1px;
+		margin: 2em 0 0.75em 0;
 
 		* {
 			max-width: 100%;
@@ -124,4 +119,22 @@
 	font-family: $sans-serif;
 	text-transform: uppercase;
 	margin-bottom: 1em;
+}
+
+#story {
+	&-info-top {
+		display: flex;
+	}
+
+	&-details {
+		flex-grow: 1;
+		margin-left: 14px;
+	}
+
+	&-title {
+		font-family: Homestuck-Regular;
+		font-size: 2em;
+		line-height: 1;
+		margin-bottom: 0.25em;
+	}
 }
