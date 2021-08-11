@@ -399,6 +399,7 @@ const Component = withErrorPage<ServerSideProps>(({
 												name="banner"
 												label="Banner URL"
 												help={'A direct URL to an image of your adventure\'s anniversary banner. The recommended image size is 950x100.\n\nIf your adventure is public, is ongoing or complete, and has at least 200 favorites, this image will be displayed on the homepage for one week starting on the adventure\'s anniversary date.'}
+												placeholder="Optional"
 											/>
 											<BoxRow>
 												<Button href={`/s/${privateStory.id}/edit/p`}>
