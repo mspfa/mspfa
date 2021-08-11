@@ -122,7 +122,7 @@
 }
 
 #story {
-	&-info-top {
+	&-meta {
 		display: flex;
 	}
 
@@ -135,6 +135,9 @@
 		font-family: Homestuck-Regular;
 		font-size: 2em;
 		line-height: 1;
-		margin-bottom: 0.25em;
 	}
+}
+
+.story-details-section {
+	margin-bottom: 0.25em;
 }

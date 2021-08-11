@@ -4,7 +4,7 @@ import Row from 'components/Row';
 import type { ClientStoryPage, PublicStory } from 'modules/client/stories';
 import { storyStatusNames } from 'modules/client/stories';
 import { useMobile } from 'modules/client/useMobile';
-import { useCallback, useMemo, useState } from 'react';
+import { Fragment, useCallback, useMemo, useState } from 'react';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
 import Timestamp from 'components/Timestamp';
 import Link from 'components/Link';
@@ -15,6 +15,8 @@ import PageCount from 'components/Icon/PageCount';
 import EditButton from 'components/Button/EditButton';
 import { useUser } from 'modules/client/users';
 import { Perm } from 'modules/client/perms';
+import UserLink from 'components/Link/UserLink';
+import { uniq } from 'lodash';
 
 /** The maximum number of pages which can be listed under the adventure's "Latest Pages" section. */
 export const MAX_LATEST_PAGES = 45;
@@ -77,6 +79,15 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 			</div>
 		))
 	), [latestPagesShown, latestPages, previewMode, story.id]);
+
+	const editorLinks = uniq([story.owner, ...story.editors]).map((userID, i) => (
+		<Fragment key={userID}>
+			{i !== 0 && ', '}
+			<UserLink>
+				{userID}
+			</UserLink>
+		</Fragment>
+	));
 
 	return (
 		<div id="basement">
@@ -150,16 +161,16 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 					</Button>
 				</Row>
 				{section === 'info' ? (
-					<Row id="story-info-top">
+					<Row id="story-meta">
 						<IconImage
 							id="story-icon"
 							src={story.icon}
 						/>
 						<div id="story-details">
-							<div id="story-title" className="translucent">
+							<div id="story-title" className="story-details-section translucent">
 								{story.title}
 							</div>
-							<div id="story-stats">
+							<div id="story-stats" className="story-details-section">
 								<span className="story-status spaced">
 									{storyStatusNames[story.status]}
 								</span>
@@ -180,6 +191,14 @@ const Basement = ({ story, previewMode, latestPages }: BasementProps) => {
 								<PageCount className="spaced">
 									{story.pageCount}
 								</PageCount>
+							</div>
+							<div id="story-author-container" className="story-details-section">
+								<Label className="spaced">
+									{`Author${editorLinks.length === 1 ? '' : 's'}`}
+								</Label>
+								<span className="spaced">
+									{editorLinks}
+								</span>
 							</div>
 						</div>
 					</Row>
