@@ -19,10 +19,8 @@ const getMaxDay = (year: integer, month: integer) => {
 	lastDayOfTheMonth.setFullYear(
 		// Year 2000 is used as a fallback here because 2000 is a leap year, so if the year is invalid, it will allow up to 29 February by default instead of 28.
 		Number.isNaN(year) ? 2000 : year,
-
 		// The following month.
 		month + 1,
-
 		// Because days start counting at 1, setting the date to day 0 of the above following month causes the date to wrap around to the last day of this month.
 		0
 	);
