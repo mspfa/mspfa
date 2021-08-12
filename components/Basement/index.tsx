@@ -210,14 +210,6 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 										{editorLinks}
 									</span>
 								</div>
-								<StoryTagLinkContainer>
-									{story.tags.map((tag, i) => (
-										<Fragment key={tag}>
-											{i !== 0 && ' '}
-											<StoryTagLink>{tag}</StoryTagLink>
-										</Fragment>
-									))}
-								</StoryTagLinkContainer>
 							</div>
 						</Row>
 						<Row id="story-description">
@@ -225,6 +217,14 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 								{sanitizedDescription}
 							</BBCode>
 						</Row>
+						<StoryTagLinkContainer>
+							{story.tags.map((tag, i) => (
+								<Fragment key={tag}>
+									{i !== 0 && ' '}
+									<StoryTagLink>{tag}</StoryTagLink>
+								</Fragment>
+							))}
+						</StoryTagLinkContainer>
 					</>
 				) : section === 'comments' ? (
 					<Row>
