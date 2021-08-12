@@ -101,8 +101,8 @@ const Component = withErrorPage<ServerSideProps>(({
 	const editAnniversary = useCallback(async () => {
 		if (!await Dialog.confirm({
 			id: 'edit-anniversary',
-			title: 'Edit Anniversary',
-			content: 'You can only change this adventure\'s anniversary date once.\n\nOnce changed, it cannot be undone.\n\nAre you sure you want to edit the anniversary date?'
+			title: 'Edit Creation Date',
+			content: 'You can only change this adventure\'s creation date once.\n\nOnce changed, it cannot be undone.\n\nAre you sure you want to edit the creation date?'
 		})) {
 			return;
 		}
@@ -389,7 +389,8 @@ const Component = withErrorPage<ServerSideProps>(({
 											/>
 											<LabeledBoxRow
 												htmlFor={editingAnniversary ? 'field-anniversary-year' : ''}
-												label="Anniversary Date"
+												label="Creation Date"
+												help="This date is displayed publicly in your adventure info and used as the date for your anniversary banner."
 											>
 												{editingAnniversary ? (
 													<DateField
@@ -405,7 +406,7 @@ const Component = withErrorPage<ServerSideProps>(({
 														{ownerPerms && !privateStory.anniversary.changed && (
 															<EditButton
 																className="spaced"
-																title="Edit Anniversary"
+																title="Edit Creation Date"
 																onClick={editAnniversary}
 															/>
 														)}

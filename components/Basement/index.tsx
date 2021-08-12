@@ -202,6 +202,14 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 										{story.pageCount}
 									</PageCount>
 								</div>
+								<div id="story-anniversary" className="story-details-section">
+									<Label className="spaced">
+										Created
+									</Label>
+									<Timestamp className="spaced">
+										{story.created}
+									</Timestamp>
+								</div>
 								<div id="story-author-container" className="story-details-section">
 									<Label className="spaced">
 										{`Author${editorLinks.length === 1 ? '' : 's'}`}
