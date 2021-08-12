@@ -18,6 +18,8 @@ import { Perm } from 'modules/client/perms';
 import UserLink from 'components/Link/UserLink';
 import { uniq } from 'lodash';
 import type { StoryPageID } from 'modules/server/stories';
+import StoryTagLinkContainer from 'components/StoryTagLink/StoryTagLinkContainer';
+import StoryTagLink from 'components/StoryTagLink';
 
 /** The maximum number of pages which can be listed under the adventure's "Latest Pages" section. */
 export const MAX_LATEST_PAGES = 45;
@@ -208,6 +210,14 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 										{editorLinks}
 									</span>
 								</div>
+								<StoryTagLinkContainer>
+									{story.tags.map((tag, i) => (
+										<Fragment key={tag}>
+											{i !== 0 && ' '}
+											<StoryTagLink>{tag}</StoryTagLink>
+										</Fragment>
+									))}
+								</StoryTagLinkContainer>
 							</div>
 						</Row>
 						<Row id="story-description">

@@ -1,13 +1,3 @@
 .story-list .listing-description {
 	font-size: 0.875em;
 }
-
-.tag {
-	&.link {
-		text-decoration: none;
-	}
-
-	&:hover, &:focus, &:active {
-		text-decoration: underline;
-	}
-}

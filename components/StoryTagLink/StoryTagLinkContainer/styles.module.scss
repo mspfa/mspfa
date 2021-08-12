@@ -1,0 +1,8 @@
+.story-tag-link-container {
+	font-size: 0.75em;
+	opacity: 0.6;
+
+	.link:not(:focus, :active) {
+		color: inherit;
+	}
+}

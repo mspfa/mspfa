@@ -10,6 +10,8 @@ import { Perm } from 'modules/client/perms';
 import PageCount from 'components/Icon/PageCount';
 import { Fragment, useCallback, useState } from 'react';
 import BBCode from 'components/BBCode';
+import StoryTagLinkContainer from 'components/StoryTagLink/StoryTagLinkContainer';
+import StoryTagLink from 'components/StoryTagLink';
 
 export type StoryListingProps = {
 	children: PublicStory
@@ -71,7 +73,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 						<BBCode>{publicStory.description}</BBCode>
 					</div>
 				)}
-				<div className="listing-section listing-footer">
+				<StoryTagLinkContainer className="listing-section listing-footer">
 					{publicStory.description && (
 						<Link
 							className="listing-more-link"
@@ -84,12 +86,10 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 					{publicStory.tags.map((tag, i) => (
 						<Fragment key={tag}>
 							{i !== 0 && ' '}
-							<Link key={tag} className="tag">
-								{`#${tag}`}
-							</Link>
+							<StoryTagLink>{tag}</StoryTagLink>
 						</Fragment>
 					))}
-				</div>
+				</StoryTagLinkContainer>
 			</div>
 		</div>
 	);
