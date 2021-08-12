@@ -207,7 +207,16 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 										Created
 									</Label>
 									<Timestamp className="spaced">
-										{story.created}
+										{Math.min(
+											// Use the date of `story.anniversary` but the time of `story.created` so that the relative time isn't inaccurate when the date is very recent.
+											new Date(story.created).setFullYear(
+												story.anniversary.year,
+												story.anniversary.month,
+												story.anniversary.day
+											),
+											// Ensure the time of `story.created` isn't in the future in the case that `story.anniversary` is today.
+											Date.now()
+										)}
 									</Timestamp>
 								</div>
 								<div id="story-author-container" className="story-details-section">
