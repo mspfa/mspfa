@@ -46,6 +46,10 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 		sanitizeBBCode(story.sidebarContent, { html: true })
 	), [story.sidebarContent]);
 
+	const sanitizedDescription = useMemo(() => (
+		sanitizeBBCode(story.description, { html: true })
+	), [story.description]);
+
 	// Hide latest pages by default to prevent spoilers from page titles.
 	const [latestPagesShown, setLatestPagesShown] = useState(false);
 
@@ -163,48 +167,55 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 					</Button>
 				</Row>
 				{section === 'info' ? (
-					<Row id="story-meta">
-						<IconImage
-							id="story-icon"
-							src={story.icon}
-							alt={`${story.title}'s Icon`}
-						/>
-						<div id="story-details">
-							<div id="story-title" className="story-details-section translucent">
-								{story.title}
+					<>
+						<Row id="story-meta">
+							<IconImage
+								id="story-icon"
+								src={story.icon}
+								alt={`${story.title}'s Icon`}
+							/>
+							<div id="story-details">
+								<div id="story-title" className="story-details-section translucent">
+									{story.title}
+								</div>
+								<div id="story-stats" className="story-details-section">
+									<span className="story-status spaced">
+										{storyStatusNames[story.status]}
+									</span>
+									{user && (
+										story.owner === user.id
+										|| story.editors.includes(user.id)
+										|| !!(user.perms & Perm.sudoRead)
+									) && (
+										<EditButton
+											className="spaced"
+											href={`/s/${story.id}/edit/p#p${pageID}`}
+											title="Edit Adventure"
+										/>
+									)}
+									<FavButton className="spaced" storyID={story.id}>
+										{story.favCount}
+									</FavButton>
+									<PageCount className="spaced">
+										{story.pageCount}
+									</PageCount>
+								</div>
+								<div id="story-author-container" className="story-details-section">
+									<Label className="spaced">
+										{`Author${editorLinks.length === 1 ? '' : 's'}`}
+									</Label>
+									<span className="spaced">
+										{editorLinks}
+									</span>
+								</div>
 							</div>
-							<div id="story-stats" className="story-details-section">
-								<span className="story-status spaced">
-									{storyStatusNames[story.status]}
-								</span>
-								{user && (
-									story.owner === user.id
-									|| story.editors.includes(user.id)
-									|| !!(user.perms & Perm.sudoRead)
-								) && (
-									<EditButton
-										className="spaced"
-										href={`/s/${story.id}/edit/p#p${pageID}`}
-										title="Edit Adventure"
-									/>
-								)}
-								<FavButton className="spaced" storyID={story.id}>
-									{story.favCount}
-								</FavButton>
-								<PageCount className="spaced">
-									{story.pageCount}
-								</PageCount>
-							</div>
-							<div id="story-author-container" className="story-details-section">
-								<Label className="spaced">
-									{`Author${editorLinks.length === 1 ? '' : 's'}`}
-								</Label>
-								<span className="spaced">
-									{editorLinks}
-								</span>
-							</div>
-						</div>
-					</Row>
+						</Row>
+						<Row id="story-description">
+							<BBCode alreadySanitized>
+								{sanitizedDescription}
+							</BBCode>
+						</Row>
+					</>
 				) : section === 'comments' ? (
 					<Row>
 						comments here
