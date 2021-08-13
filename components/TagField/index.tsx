@@ -31,8 +31,10 @@ const tagHelp: Partial<Record<TagString, string>> = {
 const heightTextArea = document.createElement('textarea'); // @client-only
 
 /** Characters that should be replaced from the tag field before delimiters are processed. */
-const invalidCharacters = /[^a-z0-9-,]/g;
-const tagDelimiters = /[,\s\n]/g;
+const invalidCharacters = /[^a-z0-9-,#\s\n]/g;
+/** Matches a character which would not be matched by `invalidCharacters`. */
+const validCharacter = /^[a-z0-9-,#\s\n]$/i;
+const tagDelimiters = /[,#\s\n]/g;
 const startAndEndHyphens = /^-+|-+$/g;
 
 /** A child node of a tag field element. */
@@ -322,7 +324,7 @@ const TagField = ({
 								|| event.metaKey
 								|| event.altKey
 								// Only let the user enter valid characters for tags.
-								|| /^[a-z0-9-,]$/i.test(event.key)
+								|| validCharacter.test(event.key)
 							)
 						)) {
 							event.preventDefault();
