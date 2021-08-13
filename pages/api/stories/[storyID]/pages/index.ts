@@ -1,16 +1,16 @@
 import validate from './index.validate';
-import type { APIHandler } from 'modules/server/api';
-import type { ServerStory, ServerStoryPage, StoryPageID } from 'modules/server/stories';
-import { getStoryByUnsafeID, getClientStoryPage, updateStorySchedule, getClientPagesAround } from 'modules/server/stories';
-import { authenticate } from 'modules/server/auth';
-import type { ClientStoryPage, ClientStoryPageRecord } from 'modules/client/stories';
-import { StoryPrivacy } from 'modules/client/stories';
-import invalidPublishedOrder from 'modules/client/invalidPublishedOrder';
-import type { DateNumber, RecursivePartial } from 'modules/types';
-import { Perm } from 'modules/client/perms';
-import { flatten } from 'modules/server/db';
+import type { APIHandler } from 'lib/server/api';
+import type { ServerStory, ServerStoryPage, StoryPageID } from 'lib/server/stories';
+import { getStoryByUnsafeID, getClientStoryPage, updateStorySchedule, getClientPagesAround } from 'lib/server/stories';
+import { authenticate } from 'lib/server/auth';
+import type { ClientStoryPage, ClientStoryPageRecord } from 'lib/client/stories';
+import { StoryPrivacy } from 'lib/client/stories';
+import invalidPublishedOrder from 'lib/client/invalidPublishedOrder';
+import type { DateNumber, RecursivePartial } from 'lib/types';
+import { Perm } from 'lib/client/perms';
+import { flatten } from 'lib/server/db';
 import { mergeWith } from 'lodash';
-import overwriteArrays from 'modules/client/overwriteArrays';
+import overwriteArrays from 'lib/client/overwriteArrays';
 import type { UpdateFilter } from 'mongodb';
 
 /** The keys of all `ClientStoryPage` properties which the client should be able to `PUT` into any of their existing `ServerStory['pages']` (except `'published'`). */

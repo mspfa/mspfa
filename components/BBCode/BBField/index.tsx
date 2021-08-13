@@ -6,8 +6,8 @@ import type { BBCodeProps } from 'components/BBCode';
 import BBCode from 'components/BBCode';
 import Spoiler from 'components/Spoiler';
 import { Field, useField } from 'formik';
-import toKebabCase from 'modules/client/toKebabCase';
-import { usePrefixedID } from 'modules/client/IDPrefix';
+import toKebabCase from 'lib/client/toKebabCase';
+import { usePrefixedID } from 'lib/client/IDPrefix';
 
 export const BBFieldContext = React.createContext<{
 	/** A ref to the `BBField`'s text area element. */

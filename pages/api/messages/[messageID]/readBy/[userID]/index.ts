@@ -1,9 +1,9 @@
 import validate from './index.validate';
-import type { APIHandler } from 'modules/server/api';
-import messages, { getMessageByUnsafeID, updateUnreadMessages } from 'modules/server/messages';
-import { Perm } from 'modules/client/perms';
-import { permToGetUserInAPI } from 'modules/server/perms';
-import type { integer } from 'modules/types';
+import type { APIHandler } from 'lib/server/api';
+import messages, { getMessageByUnsafeID, updateUnreadMessages } from 'lib/server/messages';
+import { Perm } from 'lib/client/perms';
+import { permToGetUserInAPI } from 'lib/server/perms';
+import type { integer } from 'lib/types';
 
 const Handler: APIHandler<{
 	query: {

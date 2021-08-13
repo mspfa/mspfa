@@ -3,13 +3,13 @@ import crypto from 'crypto';
 import argon2 from 'argon2';
 import Cookies from 'cookies';
 import { ObjectId } from 'mongodb';
-import type { APIRequest, APIResponse } from 'modules/server/api';
+import type { APIRequest, APIResponse } from 'lib/server/api';
 import type { IncomingMessage, ServerResponse } from 'http';
-import users from 'modules/server/users';
-import type { ServerUser, UserSession, AuthMethod } from 'modules/server/users';
+import users from 'lib/server/users';
+import type { ServerUser, UserSession, AuthMethod } from 'lib/server/users';
 import { OAuth2Client } from 'google-auth-library';
-import type { EmailString, integer } from 'modules/types';
-import type { AuthMethodOptions } from 'modules/client/auth';
+import type { EmailString, integer } from 'lib/types';
+import type { AuthMethodOptions } from 'lib/client/auth';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 

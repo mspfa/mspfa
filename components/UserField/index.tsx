@@ -1,24 +1,24 @@
 import './styles.module.scss';
 import { useFormikContext } from 'formik';
-import toKebabCase from 'modules/client/toKebabCase';
+import toKebabCase from 'lib/client/toKebabCase';
 import type { ChangeEvent, InputHTMLAttributes, ReactNode } from 'react';
 import { useState, useRef, useEffect } from 'react';
-import useFunction from 'modules/client/useFunction';
-import { usePrefixedID } from 'modules/client/IDPrefix';
-import api from 'modules/client/api';
-import type { APIClient } from 'modules/client/api';
-import type { PublicUser } from 'modules/client/users';
+import useFunction from 'lib/client/useFunction';
+import { usePrefixedID } from 'lib/client/IDPrefix';
+import api from 'lib/client/api';
+import type { APIClient } from 'lib/client/api';
+import type { PublicUser } from 'lib/client/users';
 import UserFieldOption from 'components/UserField/UserFieldOption';
 import EditButton from 'components/Button/EditButton';
 import axios from 'axios';
-import { useUserCache } from 'modules/client/UserCache';
+import { useUserCache } from 'lib/client/UserCache';
 import RemoveButton from 'components/Button/RemoveButton';
 import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
-import Dialog from 'modules/client/Dialog';
-import useThrottled from 'modules/client/useThrottled';
-import useMountedRef from 'modules/client/useMountedRef';
+import Dialog from 'lib/client/Dialog';
+import useThrottled from 'lib/client/useThrottled';
+import useMountedRef from 'lib/client/useMountedRef';
 import UserLink from 'components/Link/UserLink';
-import type { integer } from 'modules/types';
+import type { integer } from 'lib/types';
 
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
 

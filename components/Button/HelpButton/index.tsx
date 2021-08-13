@@ -2,8 +2,8 @@ import './styles.module.scss';
 import Button from 'components/Button';
 import type { ButtonProps } from 'components/Button';
 import type { ReactNode } from 'react';
-import useFunction from 'modules/client/useFunction';
-import Dialog from 'modules/client/Dialog';
+import useFunction from 'lib/client/useFunction';
+import Dialog from 'lib/client/Dialog';
 
 export type HelpButtonProps = Omit<ButtonProps, 'children' | 'onClick' | 'title'> & {
 	subject: ReactNode,

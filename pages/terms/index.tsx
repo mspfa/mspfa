@@ -5,7 +5,7 @@ import Page from 'components/Page';
 import fs from 'fs-extra';
 import path from 'path';
 import BoxSection from 'components/Box/BoxSection';
-import type { MyGetServerSideProps } from 'modules/server/pages';
+import type { MyGetServerSideProps } from 'lib/server/pages';
 
 export type ServerSideProps = {
 	imageFilename: string

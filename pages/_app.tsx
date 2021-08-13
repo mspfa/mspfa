@@ -1,22 +1,22 @@
 import 'styles/global.scss';
-import 'modules/client/global'; // @client-only
-import 'modules/server/global'; // @server-only
+import 'lib/client/global'; // @client-only
+import 'lib/server/global'; // @server-only
 import App from 'next/app'; // @server-only
 import type { AppProps, AppContext } from 'next/app';
 import type { NextPageContext } from 'next';
 import Head from 'next/head';
 import { SWRConfig } from 'swr';
-import { authenticate } from 'modules/server/auth'; // @server-only
-import { getPrivateUser } from 'modules/server/users'; // @server-only
-import env from 'modules/client/env';
-import { UserContext, useUserMerge, useUserInApp } from 'modules/client/users';
-import type { PrivateUser } from 'modules/client/users';
-import type { PageRequest } from 'modules/server/pages';
+import { authenticate } from 'lib/server/auth'; // @server-only
+import { getPrivateUser } from 'lib/server/users'; // @server-only
+import env from 'lib/client/env';
+import { UserContext, useUserMerge, useUserInApp } from 'lib/client/users';
+import type { PrivateUser } from 'lib/client/users';
+import type { PageRequest } from 'lib/server/pages';
 import React, { useEffect, useRef } from 'react';
-import { setTheme } from 'modules/client/themes';
+import { setTheme } from 'lib/client/themes';
 import { mergeWith } from 'lodash';
-import UserCache from 'modules/client/UserCache';
-import overwriteArrays from 'modules/client/overwriteArrays';
+import UserCache from 'lib/client/UserCache';
+import overwriteArrays from 'lib/client/overwriteArrays';
 import { useRouter } from 'next/router';
 
 const swrConfig = {

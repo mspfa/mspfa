@@ -1,5 +1,5 @@
 import validate from './index.validate';
-import type { APIHandler } from 'modules/server/api';
+import type { APIHandler } from 'lib/server/api';
 import fs from 'fs-extra';
 import path from 'path';
 

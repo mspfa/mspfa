@@ -1,12 +1,12 @@
 import './styles.module.scss';
 import createGlobalState from 'global-react-state';
-import sanitizeURL from 'modules/client/sanitizeURL';
+import sanitizeURL from 'lib/client/sanitizeURL';
 import Button from 'components/Button';
 import Link from 'components/Link';
 import { useEffect, useRef, useState } from 'react';
-import useFunction from 'modules/client/useFunction';
+import useFunction from 'lib/client/useFunction';
 import axios from 'axios';
-import loadScript from 'modules/client/loadScript';
+import loadScript from 'lib/client/loadScript';
 
 const [useFlashMode, setFlashMode] = createGlobalState<'ask' | 'native' | 'emulate'>('ask');
 

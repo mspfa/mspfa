@@ -1,5 +1,5 @@
-import '../modules/server/env';
-import { connection } from '../modules/server/db';
+import '../lib/server/env';
+import { connection } from '../lib/server/db';
 import c from 'ansi-colors';
 
 console.info(c.blue('Creating database collections...'));

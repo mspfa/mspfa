@@ -1,5 +1,5 @@
-import type { ServerStory, StoryID, ServerStoryPage, StoryPageID } from 'modules/server/stories';
-import type { DateNumber, integer } from 'modules/types';
+import type { ServerStory, StoryID, ServerStoryPage, StoryPageID } from 'lib/server/stories';
+import type { DateNumber, integer } from 'lib/types';
 
 export enum StoryStatus {
 	Inactive = 0,

@@ -3,9 +3,9 @@ import NavGroup from 'components/Nav/NavGroup';
 import NavItem from 'components/Nav/NavItem';
 import NavMenu from 'components/Nav/NavMenu';
 import Router, { useRouter } from 'next/router';
-import { promptSignIn, promptSignOut, useUser } from 'modules/client/users';
+import { promptSignIn, promptSignOut, useUser } from 'lib/client/users';
 import createGlobalState from 'global-react-state';
-import type { StoryID } from 'modules/server/stories';
+import type { StoryID } from 'lib/server/stories';
 import { useIsomorphicLayoutEffect } from 'react-use';
 
 const [useStoryID, setStoryID] = createGlobalState<StoryID | undefined>(undefined);

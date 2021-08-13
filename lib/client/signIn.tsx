@@ -1,10 +1,10 @@
-import Dialog from 'modules/client/Dialog';
+import Dialog from 'lib/client/Dialog';
 import SignIn, { signInValues, resetSignInValues } from 'components/SignIn';
-import api from 'modules/client/api';
-import type { APIClient, APIError } from 'modules/client/api';
-import { setUser } from 'modules/client/users';
-import type { AuthMethodOptions } from 'modules/client/auth';
-import type { integer } from 'modules/types';
+import api from 'lib/client/api';
+import type { APIClient, APIError } from 'lib/client/api';
+import { setUser } from 'lib/client/users';
+import type { AuthMethodOptions } from 'lib/client/auth';
+import type { integer } from 'lib/types';
 
 type SessionAPI = APIClient<typeof import('pages/api/session').default>;
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;

@@ -1,11 +1,11 @@
-import type { ServerUser } from 'modules/server/users';
+import type { ServerUser } from 'lib/server/users';
 import React, { useContext, useState } from 'react';
-import api from 'modules/client/api';
-import type { APIClient } from 'modules/client/api';
+import api from 'lib/client/api';
+import type { APIClient } from 'lib/client/api';
 import { startLoading, stopLoading } from 'components/LoadingIndicator';
-import Dialog from 'modules/client/Dialog';
+import Dialog from 'lib/client/Dialog';
 import createGlobalState from 'global-react-state';
-import type { DateNumber, RecursivePartial } from 'modules/types';
+import type { DateNumber, RecursivePartial } from 'lib/types';
 
 /** All keys whose values have the same serializable type in both `ServerUser` and `PrivateUser`. */
 type PrivateServerUserKey = 'email' | 'unverifiedEmail' | 'name' | 'birthdateChanged' | 'description' | 'icon' | 'site' | 'storySaves' | 'achievements' | 'favs' | 'profileStyle' | 'settings' | 'perms' | 'dev' | 'mod' | 'patron' | 'unreadMessageCount';
@@ -109,7 +109,7 @@ export const [useUserMerge, setUserMerge, getUserMerge] = createGlobalState<Recu
 /** Opens a dialog prompting the user to sign in or sign up. */
 export const promptSignIn = async () => {
 	startLoading();
-	const { openSignInDialog } = await import('modules/client/signIn');
+	const { openSignInDialog } = await import('lib/client/signIn');
 	stopLoading();
 	openSignInDialog();
 };

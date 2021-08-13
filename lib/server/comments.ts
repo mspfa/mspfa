@@ -1,4 +1,4 @@
-import type { ServerUserID } from 'modules/server/users';
+import type { ServerUserID } from 'lib/server/users';
 
 export type Comment = {
 	posted: Date,

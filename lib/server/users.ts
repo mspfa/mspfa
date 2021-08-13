@@ -1,13 +1,13 @@
-import db, { safeObjectID } from 'modules/server/db';
+import db, { safeObjectID } from 'lib/server/db';
 import type { ObjectId } from 'mongodb';
-import type { achievements } from 'modules/server/achievements';
-import type { URLString, EmailString, integer } from 'modules/types';
-import type { PrivateUser, PublicUser } from 'modules/client/users';
-import { defaultSettings } from 'modules/client/users';
-import type { UnsafeObjectID } from 'modules/server/db';
-import type { Theme } from 'modules/client/themes';
-import type { StoryID, StoryPageID } from 'modules/server/stories';
-import type { APIResponse } from 'modules/server/api';
+import type { achievements } from 'lib/server/achievements';
+import type { URLString, EmailString, integer } from 'lib/types';
+import type { PrivateUser, PublicUser } from 'lib/client/users';
+import { defaultSettings } from 'lib/client/users';
+import type { UnsafeObjectID } from 'lib/server/db';
+import type { Theme } from 'lib/client/themes';
+import type { StoryID, StoryPageID } from 'lib/server/stories';
+import type { APIResponse } from 'lib/server/api';
 
 export type ServerUserID = ObjectId;
 

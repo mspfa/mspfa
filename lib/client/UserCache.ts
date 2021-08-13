@@ -1,4 +1,4 @@
-import type { PublicUser } from 'modules/client/users';
+import type { PublicUser } from 'lib/client/users';
 import React, { useContext } from 'react';
 
 const UserCache = React.createContext<Partial<Record<string, PublicUser>>>(undefined!);

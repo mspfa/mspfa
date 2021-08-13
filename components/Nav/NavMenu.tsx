@@ -1,7 +1,7 @@
 import NavItem from 'components/Nav/NavItem';
 import type { NavItemProps } from 'components/Nav/NavItem';
 import React, { useState, useRef } from 'react';
-import useFunction from 'modules/client/useFunction';
+import useFunction from 'lib/client/useFunction';
 import type { MouseEvent } from 'react';
 
 export type NavMenuProps = {

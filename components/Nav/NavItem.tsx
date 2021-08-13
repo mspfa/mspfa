@@ -2,7 +2,7 @@ import React from 'react';
 import type { ReactNode } from 'react';
 import Link from 'components/Link';
 import type { LinkProps } from 'components/Link';
-import type { integer } from 'modules/types';
+import type { integer } from 'lib/types';
 
 export type NavItemProps = {
 	/**

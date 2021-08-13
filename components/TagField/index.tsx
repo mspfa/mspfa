@@ -1,17 +1,17 @@
 import './styles.module.scss';
 import { useFormikContext } from 'formik';
-import toKebabCase from 'modules/client/toKebabCase';
+import toKebabCase from 'lib/client/toKebabCase';
 import type { TextareaHTMLAttributes, KeyboardEvent, MouseEvent } from 'react';
 import React, { useRef, useState } from 'react';
-import useFunction from 'modules/client/useFunction';
-import { usePrefixedID } from 'modules/client/IDPrefix';
+import useFunction from 'lib/client/useFunction';
+import { usePrefixedID } from 'lib/client/IDPrefix';
 import { useIsomorphicLayoutEffect } from 'react-use';
 import { isEqual, uniq } from 'lodash';
-import type { TagString } from 'modules/server/stories';
+import type { TagString } from 'lib/server/stories';
 import Label from 'components/Label';
-import Dialog from 'modules/client/Dialog';
+import Dialog from 'lib/client/Dialog';
 import Link from 'components/Link';
-import type { integer } from 'modules/types';
+import type { integer } from 'lib/types';
 
 /** An object that maps `TagString`s to `string`s explaining each tag. */
 const tagHelp: Partial<Record<TagString, string>> = {

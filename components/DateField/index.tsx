@@ -1,13 +1,13 @@
 import './styles.module.scss';
 import { useField } from 'formik';
-import toKebabCase from 'modules/client/toKebabCase';
+import toKebabCase from 'lib/client/toKebabCase';
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
 import { useState } from 'react';
-import useFunction from 'modules/client/useFunction';
-import { monthNames, twoDigits } from 'modules/client/dates';
-import { usePrefixedID } from 'modules/client/IDPrefix';
+import useFunction from 'lib/client/useFunction';
+import { monthNames, twoDigits } from 'lib/client/dates';
+import { usePrefixedID } from 'lib/client/IDPrefix';
 import { useIsomorphicLayoutEffect } from 'react-use';
-import type { DateNumber, integer } from 'modules/types';
+import type { DateNumber, integer } from 'lib/types';
 
 // @client-only {
 const nativeInput = document.createElement('input');

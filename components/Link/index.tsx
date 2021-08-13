@@ -5,7 +5,7 @@ import NextLink from 'next/link';
 import type { LinkProps as OriginalNextLinkProps } from 'next/link';
 import React from 'react';
 import type { AnchorHTMLAttributes } from 'react';
-import sanitizeURL from 'modules/client/sanitizeURL';
+import sanitizeURL from 'lib/client/sanitizeURL';
 
 // `href` is omitted here because `NextLinkProps` has a more inclusive `href`, accepting URL objects in addition to strings.
 type HTMLAnchorProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>;

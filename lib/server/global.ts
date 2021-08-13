@@ -1,9 +1,9 @@
 // This script is executed once initially on the server.
 
-import users from 'modules/server/users';
-import stories, { unscheduleStory, updateStorySchedule } from 'modules/server/stories';
-import { connection } from 'modules/server/db';
-import messages, { deleteMessageForUser } from 'modules/server/messages';
+import users from 'lib/server/users';
+import stories, { unscheduleStory, updateStorySchedule } from 'lib/server/stories';
+import { connection } from 'lib/server/db';
+import messages, { deleteMessageForUser } from 'lib/server/messages';
 
 connection.then(() => {
 	// Set timeouts for any scheduled pages.

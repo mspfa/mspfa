@@ -1,9 +1,9 @@
 import './styles.module.scss';
 import { useContext, useState } from 'react';
-import useFunction from 'modules/client/useFunction';
+import useFunction from 'lib/client/useFunction';
 import { BBFieldContext } from 'components/BBCode/BBField';
 import Button from 'components/Button';
-import Dialog from 'modules/client/Dialog';
+import Dialog from 'lib/client/Dialog';
 import { videoIDTest } from 'components/BBCode/BBTags';
 import InlineRowSection from 'components/Box/InlineRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
@@ -11,8 +11,8 @@ import Label from 'components/Label';
 import type { FormikProps } from 'formik';
 import BoxRow from 'components/Box/BoxRow';
 import Link from 'components/Link';
-import { getChangedValues } from 'modules/client/forms';
-import IDPrefix from 'modules/client/IDPrefix';
+import { getChangedValues } from 'lib/client/forms';
+import IDPrefix from 'lib/client/IDPrefix';
 import { useLatest } from 'react-use';
 
 const defaultBBPreview = 'The quick brown fox jumps over the lazy dog.';

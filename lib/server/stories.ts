@@ -1,13 +1,13 @@
-import db from 'modules/server/db';
-import type { Quirk } from 'modules/client/quirks';
-import type { DateNumber, integer, Mutable, URLString } from 'modules/types';
-import type { ClientStoryPage, PrivateStory, PublicStory } from 'modules/client/stories';
-import { StoryStatus, StoryPrivacy } from 'modules/client/stories';
-import type { ServerUser, ServerUserID } from 'modules/server/users';
-import users from 'modules/server/users';
-import type { APIResponse } from 'modules/server/api';
+import db from 'lib/server/db';
+import type { Quirk } from 'lib/client/quirks';
+import type { DateNumber, integer, Mutable, URLString } from 'lib/types';
+import type { ClientStoryPage, PrivateStory, PublicStory } from 'lib/client/stories';
+import { StoryStatus, StoryPrivacy } from 'lib/client/stories';
+import type { ServerUser, ServerUserID } from 'lib/server/users';
+import users from 'lib/server/users';
+import type { APIResponse } from 'lib/server/api';
 import type { UpdateFilter } from 'mongodb';
-import type { Comment } from 'modules/server/comments';
+import type { Comment } from 'lib/server/comments';
 import type { ClientPreviousPageIDs } from 'components/StoryViewer';
 import { PAGE_PRELOAD_DEPTH } from 'components/StoryViewer';
 

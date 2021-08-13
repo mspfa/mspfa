@@ -1,10 +1,10 @@
 import validate from './index.validate';
-import type { APIHandler } from 'modules/server/api';
-import type { ServerStory } from 'modules/server/stories';
-import stories, { defaultStory, getPrivateStory } from 'modules/server/stories';
-import { authenticate } from 'modules/server/auth';
-import type { PrivateStory } from 'modules/client/stories';
-import { connection } from 'modules/server/db';
+import type { APIHandler } from 'lib/server/api';
+import type { ServerStory } from 'lib/server/stories';
+import stories, { defaultStory, getPrivateStory } from 'lib/server/stories';
+import { authenticate } from 'lib/server/auth';
+import type { PrivateStory } from 'lib/client/stories';
+import { connection } from 'lib/server/db';
 
 const Handler: APIHandler<{
 	method: 'POST',

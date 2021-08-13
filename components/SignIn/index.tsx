@@ -1,10 +1,10 @@
 import './styles.module.scss';
-import { setSignInPage, resolveExternalSignIn } from 'modules/client/signIn';
+import { setSignInPage, resolveExternalSignIn } from 'lib/client/signIn';
 import Link from 'components/Link';
 import createUpdater from 'react-component-updater';
 import type { ChangeEvent } from 'react';
 import { useState, useRef, useEffect } from 'react';
-import useFunction from 'modules/client/useFunction';
+import useFunction from 'lib/client/useFunction';
 import Captcha from 'components/SignIn/Captcha';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import InlineRowSection from 'components/Box/InlineRowSection';
@@ -13,12 +13,12 @@ import AuthButton from 'components/Button/AuthButton';
 import BirthdateField from 'components/DateField/BirthdateField';
 import { escapeRegExp } from 'lodash';
 import axios from 'axios';
-import useMountedRef from 'modules/client/useMountedRef';
-import useThrottled from 'modules/client/useThrottled';
-import api from 'modules/client/api';
-import type { APIClient } from 'modules/client/api';
+import useMountedRef from 'lib/client/useMountedRef';
+import useThrottled from 'lib/client/useThrottled';
+import api from 'lib/client/api';
+import type { APIClient } from 'lib/client/api';
 import { useIsomorphicLayoutEffect } from 'react-use';
-import type { integer } from 'modules/types';
+import type { integer } from 'lib/types';
 
 type EmailTakenAPI = APIClient<typeof import('pages/api/emailTaken').default>;
 

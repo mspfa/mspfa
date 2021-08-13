@@ -1,10 +1,10 @@
 import './styles.module.scss';
 import React, { useRef } from 'react';
-import useFunction from 'modules/client/useFunction';
-import type { default as DialogClass } from 'modules/client/Dialog';
+import useFunction from 'lib/client/useFunction';
+import type { default as DialogClass } from 'lib/client/Dialog';
 import { Form, Formik } from 'formik';
 import Button from 'components/Button';
-import toKebabCase from 'modules/client/toKebabCase';
+import toKebabCase from 'lib/client/toKebabCase';
 import { useIsomorphicLayoutEffect } from 'react-use';
 
 export type DialogProps = {

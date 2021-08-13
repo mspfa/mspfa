@@ -1,11 +1,11 @@
 import validate from './index.validate';
-import type { APIHandler } from 'modules/server/api';
-import { Perm } from 'modules/client/perms';
-import { permToGetUserInAPI } from 'modules/server/perms';
-import users from 'modules/server/users';
-import type { AuthMethod } from 'modules/server/users';
-import type { AuthMethodOptions, ClientAuthMethod } from 'modules/client/auth';
-import { getAuthMethodInfo } from 'modules/server/auth';
+import type { APIHandler } from 'lib/server/api';
+import { Perm } from 'lib/client/perms';
+import { permToGetUserInAPI } from 'lib/server/perms';
+import users from 'lib/server/users';
+import type { AuthMethod } from 'lib/server/users';
+import type { AuthMethodOptions, ClientAuthMethod } from 'lib/client/auth';
+import { getAuthMethodInfo } from 'lib/server/auth';
 
 const Handler: APIHandler<{
 	query: {

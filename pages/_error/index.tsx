@@ -9,7 +9,7 @@ import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
 import Router from 'next/router';
 import BoxSection from 'components/Box/BoxSection';
-import type { integer } from 'modules/types';
+import type { integer } from 'lib/types';
 
 const goBack = () => {
 	const { asPath } = Router;

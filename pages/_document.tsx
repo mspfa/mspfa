@@ -1,6 +1,6 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import type { DocumentContext, DocumentInitialProps } from 'next/document';
-import type { PageRequest } from 'modules/server/pages';
+import type { PageRequest } from 'lib/server/pages';
 
 type MyDocumentInitialProps = DocumentInitialProps & {
 	req: PageRequest

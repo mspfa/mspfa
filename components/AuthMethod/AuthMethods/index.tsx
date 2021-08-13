@@ -1,14 +1,14 @@
 import './styles.module.scss';
 import Button from 'components/Button';
-import type { PrivateUser } from 'modules/client/users';
+import type { PrivateUser } from 'lib/client/users';
 import { useState } from 'react';
-import useFunction from 'modules/client/useFunction';
+import useFunction from 'lib/client/useFunction';
 import AuthMethod from 'components/AuthMethod';
-import Dialog from 'modules/client/Dialog';
+import Dialog from 'lib/client/Dialog';
 import AuthButton from 'components/Button/AuthButton';
-import api from 'modules/client/api';
-import type { APIClient } from 'modules/client/api';
-import type { AuthMethodOptions, ClientAuthMethod } from 'modules/client/auth';
+import api from 'lib/client/api';
+import type { APIClient } from 'lib/client/api';
+import type { AuthMethodOptions, ClientAuthMethod } from 'lib/client/auth';
 
 type AuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;
 

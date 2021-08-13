@@ -1,6 +1,6 @@
-import type { RecursivePartial } from 'modules/types';
+import type { RecursivePartial } from 'lib/types';
 import { useEffect } from 'react';
-import useFunction from 'modules/client/useFunction';
+import useFunction from 'lib/client/useFunction';
 import Router from 'next/router';
 import { isEqual } from 'lodash';
 

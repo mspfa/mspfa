@@ -1,4 +1,4 @@
-import { useDialogs } from 'modules/client/Dialog';
+import { useDialogs } from 'lib/client/Dialog';
 import Dialog from 'components/Dialog';
 
 /**

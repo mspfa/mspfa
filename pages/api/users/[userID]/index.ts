@@ -1,16 +1,16 @@
 import validate from './index.validate';
-import type { APIHandler } from 'modules/server/api';
-import { validateBirthdate } from 'modules/server/api';
-import type { PrivateUser, PublicUser } from 'modules/client/users';
-import type { RecursivePartial } from 'modules/types';
-import { Perm } from 'modules/client/perms';
-import { permToGetUserInAPI } from 'modules/server/perms';
-import users, { getPrivateUser, getPublicUser, getUserByUnsafeID } from 'modules/server/users';
-import type { ServerUser } from 'modules/server/users';
-import { flatten } from 'modules/server/db';
+import type { APIHandler } from 'lib/server/api';
+import { validateBirthdate } from 'lib/server/api';
+import type { PrivateUser, PublicUser } from 'lib/client/users';
+import type { RecursivePartial } from 'lib/types';
+import { Perm } from 'lib/client/perms';
+import { permToGetUserInAPI } from 'lib/server/perms';
+import users, { getPrivateUser, getPublicUser, getUserByUnsafeID } from 'lib/server/users';
+import type { ServerUser } from 'lib/server/users';
+import { flatten } from 'lib/server/db';
 import { mergeWith } from 'lodash';
-import stories from 'modules/server/stories';
-import overwriteArrays from 'modules/client/overwriteArrays';
+import stories from 'lib/server/stories';
+import overwriteArrays from 'lib/client/overwriteArrays';
 
 /** The keys of all `PrivateUser` properties which the client should be able to `PUT` into their `ServerUser`. */
 type PuttableUserKey = 'birthdate' | 'name' | 'email' | 'description' | 'icon' | 'site' | 'profileStyle' | 'settings';

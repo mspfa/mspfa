@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import Link from 'components/Link';
 import type { ReactNode } from 'react';
-import sanitizeURL from 'modules/client/sanitizeURL';
+import sanitizeURL from 'lib/client/sanitizeURL';
 import withBlock from 'components/BBCode/withBlock';
 import Spoiler from 'components/Spoiler';
 import dynamic from 'next/dynamic';

@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import Icon from 'components/Icon';
 import type { HTMLAttributes } from 'react';
-import type { integer } from 'modules/types';
+import type { integer } from 'lib/types';
 
 export type PageCountProps = Omit<HTMLAttributes<HTMLSpanElement>, 'title' | 'children'> & {
 	children: integer

@@ -1,10 +1,10 @@
-import { getUserByUnsafeID } from 'modules/server/users';
-import type { ServerUser } from 'modules/server/users';
-import type { UnsafeObjectID } from 'modules/server/db';
-import type { APIRequest, APIResponse } from 'modules/server/api';
-import type { PageRequest } from 'modules/server/pages';
-import { authenticate } from 'modules/server/auth';
-import type { integer } from 'modules/types';
+import { getUserByUnsafeID } from 'lib/server/users';
+import type { ServerUser } from 'lib/server/users';
+import type { UnsafeObjectID } from 'lib/server/db';
+import type { APIRequest, APIResponse } from 'lib/server/api';
+import type { PageRequest } from 'lib/server/pages';
+import { authenticate } from 'lib/server/auth';
+import type { integer } from 'lib/types';
 
 /**
  * Requires a user to have permission to get another user by potentially unsafe ID.

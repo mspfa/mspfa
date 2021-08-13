@@ -2,10 +2,10 @@ import { Field, useFormikContext } from 'formik';
 import type { ExclusiveFieldBoxRowProps } from 'components/Box/FieldBoxRow';
 import type { KeyboardEvent } from 'react';
 import { useState, useRef } from 'react';
-import useFunction from 'modules/client/useFunction';
+import useFunction from 'lib/client/useFunction';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
-import { usePrefixedID } from 'modules/client/IDPrefix';
-import toKebabCase from 'modules/client/toKebabCase';
+import { usePrefixedID } from 'lib/client/IDPrefix';
+import toKebabCase from 'lib/client/toKebabCase';
 import EditButton from 'components/Button/EditButton';
 import RemoveButton from 'components/Button/RemoveButton';
 

@@ -1,25 +1,25 @@
 import Page from 'components/Page';
-import { Perm } from 'modules/client/perms';
-import { permToGetUserInPage } from 'modules/server/perms';
-import { withErrorPage } from 'modules/client/errors';
-import { withStatusCode } from 'modules/server/errors';
+import { Perm } from 'lib/client/perms';
+import { permToGetUserInPage } from 'lib/server/perms';
+import { withErrorPage } from 'lib/client/errors';
+import { withStatusCode } from 'lib/server/errors';
 import Box from 'components/Box';
 import BoxRowSection from 'components/Box/BoxRowSection';
 import BoxRow from 'components/Box/BoxRow';
 import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
-import type { APIClient } from 'modules/client/api';
-import api from 'modules/client/api';
-import Dialog from 'modules/client/Dialog';
+import type { APIClient } from 'lib/client/api';
+import api from 'lib/client/api';
+import Dialog from 'lib/client/Dialog';
 import InlineRowSection from 'components/Box/InlineRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
-import randomStoryNames from 'modules/client/randomStoryNames.json';
-import type { PrivateStory } from 'modules/client/stories';
-import stories, { getPrivateStory } from 'modules/server/stories';
+import randomStoryNames from 'lib/client/randomStoryNames.json';
+import type { PrivateStory } from 'lib/client/stories';
+import stories, { getPrivateStory } from 'lib/server/stories';
 import List from 'components/List';
 import StoryListing from 'components/StoryListing';
 import Router from 'next/router';
-import type { integer } from 'modules/types';
+import type { integer } from 'lib/types';
 
 type StoriesAPI = APIClient<typeof import('pages/api/stories').default>;
 

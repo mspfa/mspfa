@@ -1,7 +1,7 @@
 import validate from './index.validate';
-import type { APIHandler } from 'modules/server/api';
-import type { EmailString } from 'modules/types';
-import users from 'modules/server/users';
+import type { APIHandler } from 'lib/server/api';
+import type { EmailString } from 'lib/types';
+import users from 'lib/server/users';
 
 const Handler: APIHandler<{
 	method: 'GET',

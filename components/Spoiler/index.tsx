@@ -1,9 +1,9 @@
 import './styles.module.scss';
-import { defaultSettings, getUser, useUser } from 'modules/client/users';
-import shouldIgnoreControl from 'modules/client/shouldIgnoreControl';
+import { defaultSettings, getUser, useUser } from 'lib/client/users';
+import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
 import type { HTMLAttributes, ReactNode } from 'react';
 import { useState, useEffect } from 'react';
-import useFunction from 'modules/client/useFunction';
+import useFunction from 'lib/client/useFunction';
 
 export type SpoilerProps = HTMLAttributes<HTMLDivElement> & {
 	/** The spoiler button's label when clicking it opens the spoiler. */

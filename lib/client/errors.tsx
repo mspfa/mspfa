@@ -1,4 +1,4 @@
-import { useUser } from 'modules/client/users';
+import { useUser } from 'lib/client/users';
 import Router from 'next/router';
 import { useState } from 'react';
 import dynamic from 'next/dynamic';

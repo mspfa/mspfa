@@ -1,17 +1,17 @@
 import validate from './index.validate';
-import { validateBirthdate } from 'modules/server/api';
-import type { APIHandler } from 'modules/server/api';
+import { validateBirthdate } from 'lib/server/api';
+import type { APIHandler } from 'lib/server/api';
 import type { SessionBody } from 'pages/api/session';
-import { getAuthMethodInfo, createSession } from 'modules/server/auth';
-import users, { defaultUser, getPrivateUser, getPublicUser } from 'modules/server/users';
-import type { ServerUser } from 'modules/server/users';
+import { getAuthMethodInfo, createSession } from 'lib/server/auth';
+import users, { defaultUser, getPrivateUser, getPublicUser } from 'lib/server/users';
+import type { ServerUser } from 'lib/server/users';
 import { ObjectId } from 'mongodb';
-import type { PrivateUser, PublicUser } from 'modules/client/users';
+import type { PrivateUser, PublicUser } from 'lib/client/users';
 import axios from 'axios';
-import { connection, safeObjectID } from 'modules/server/db';
+import { connection, safeObjectID } from 'lib/server/db';
 import { escapeRegExp } from 'lodash';
 import type { Filter } from 'mongodb';
-import type { DateNumber, integer } from 'modules/types';
+import type { DateNumber, integer } from 'lib/types';
 
 const Handler: APIHandler<(
 	{

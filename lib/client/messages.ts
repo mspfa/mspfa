@@ -1,5 +1,5 @@
-import type { ServerMessage } from 'modules/server/messages';
-import type { DateNumber } from 'modules/types';
+import type { ServerMessage } from 'lib/server/messages';
+import type { DateNumber } from 'lib/types';
 
 export type ClientMessage = Pick<ServerMessage, 'subject' | 'content'> & {
 	id: string,

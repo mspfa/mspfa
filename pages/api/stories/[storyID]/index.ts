@@ -1,17 +1,17 @@
 import validate from './index.validate';
-import type { APIHandler } from 'modules/server/api';
-import type { RecursivePartial } from 'modules/types';
-import { Perm } from 'modules/client/perms';
-import type { ServerUserID } from 'modules/server/users';
-import users from 'modules/server/users';
-import { flatten, safeObjectID } from 'modules/server/db';
+import type { APIHandler } from 'lib/server/api';
+import type { RecursivePartial } from 'lib/types';
+import { Perm } from 'lib/client/perms';
+import type { ServerUserID } from 'lib/server/users';
+import users from 'lib/server/users';
+import { flatten, safeObjectID } from 'lib/server/db';
 import { mergeWith, uniqBy } from 'lodash';
-import type { ServerStory } from 'modules/server/stories';
-import stories, { getPrivateStory, getPublicStory, getStoryByUnsafeID } from 'modules/server/stories';
-import type { PrivateStory, PublicStory } from 'modules/client/stories';
-import { StoryPrivacy } from 'modules/client/stories';
-import { authenticate } from 'modules/server/auth';
-import overwriteArrays from 'modules/client/overwriteArrays';
+import type { ServerStory } from 'lib/server/stories';
+import stories, { getPrivateStory, getPublicStory, getStoryByUnsafeID } from 'lib/server/stories';
+import type { PrivateStory, PublicStory } from 'lib/client/stories';
+import { StoryPrivacy } from 'lib/client/stories';
+import { authenticate } from 'lib/server/auth';
+import overwriteArrays from 'lib/client/overwriteArrays';
 
 /** The keys of all `PrivateStory` properties which the client should be able to `PUT` into their `ServerStory`. */
 type PuttableStoryKey = 'title' | 'status' | 'privacy' | 'owner' | 'editors' | 'author' | 'description' | 'icon' | 'banner' | 'style' | 'tags' | 'allowComments' | 'sidebarContent' | 'defaultPageTitle';

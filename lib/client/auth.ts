@@ -1,4 +1,4 @@
-import type { InternalAuthMethod, ExternalAuthMethod } from 'modules/server/users';
+import type { InternalAuthMethod, ExternalAuthMethod } from 'lib/server/users';
 
 export type InternalAuthMethodOptions = Pick<InternalAuthMethod, 'type' | 'value'>;
 export type ExternalAuthMethodOptions = Pick<ExternalAuthMethod, 'type' | 'value'>;

@@ -1,11 +1,11 @@
 import type { ObjectId } from 'mongodb';
-import type { UnsafeObjectID } from 'modules/server/db';
-import db, { safeObjectID } from 'modules/server/db';
-import type { ServerUser, ServerUserID } from 'modules/server/users';
-import type { ClientMessage } from 'modules/client/messages';
-import users from 'modules/server/users';
-import type { APIResponse } from 'modules/server/api';
-import type { integer } from 'modules/types';
+import type { UnsafeObjectID } from 'lib/server/db';
+import db, { safeObjectID } from 'lib/server/db';
+import type { ServerUser, ServerUserID } from 'lib/server/users';
+import type { ClientMessage } from 'lib/client/messages';
+import users from 'lib/server/users';
+import type { APIResponse } from 'lib/server/api';
+import type { integer } from 'lib/types';
 
 export type ServerMessageID = ObjectId;
 

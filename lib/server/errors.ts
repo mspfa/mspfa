@@ -1,4 +1,4 @@
-import type { MyGetServerSideProps } from 'modules/server/pages';
+import type { MyGetServerSideProps } from 'lib/server/pages';
 import ErrorPage from 'pages/_error';
 
 /** Sets `res.statusCode` based on the returned `statusCode` prop. */

@@ -1,4 +1,4 @@
-import env from 'modules/client/env';
+import env from 'lib/client/env';
 import { signInValues, initialSignInValues } from 'components/SignIn';
 import HCaptcha from '@hcaptcha/react-hcaptcha';
 import { useEffect } from 'react';

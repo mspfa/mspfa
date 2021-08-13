@@ -1,30 +1,30 @@
 import './styles.module.scss';
 import Page from 'components/Page';
-import { withErrorPage } from 'modules/client/errors';
-import { withStatusCode } from 'modules/server/errors';
+import { withErrorPage } from 'lib/client/errors';
+import { withStatusCode } from 'lib/server/errors';
 import Box from 'components/Box';
 import BoxSection from 'components/Box/BoxSection';
-import { Perm } from 'modules/client/perms';
-import { permToGetUserInPage } from 'modules/server/perms';
-import messages, { getClientMessage } from 'modules/server/messages';
-import type { ClientMessage } from 'modules/client/messages';
-import type { PublicUser, PrivateUser } from 'modules/client/users';
-import { getUser, setUser } from 'modules/client/users';
-import { useUserCache } from 'modules/client/UserCache';
+import { Perm } from 'lib/client/perms';
+import { permToGetUserInPage } from 'lib/server/perms';
+import messages, { getClientMessage } from 'lib/server/messages';
+import type { ClientMessage } from 'lib/client/messages';
+import type { PublicUser, PrivateUser } from 'lib/client/users';
+import { getUser, setUser } from 'lib/client/users';
+import { useUserCache } from 'lib/client/UserCache';
 import List from 'components/List';
 import { uniqBy } from 'lodash';
-import users, { getPrivateUser, getPublicUser } from 'modules/server/users';
+import users, { getPrivateUser, getPublicUser } from 'lib/server/users';
 import type { ListedMessage } from 'components/MessageListing';
 import MessageListing from 'components/MessageListing';
 import { useEffect, useState } from 'react';
-import useFunction from 'modules/client/useFunction';
+import useFunction from 'lib/client/useFunction';
 import Button from 'components/Button';
 import { useLatest } from 'react-use';
-import Dialog from 'modules/client/Dialog';
+import Dialog from 'lib/client/Dialog';
 import fs from 'fs-extra';
 import path from 'path';
 import Row from 'components/Row';
-import type { integer } from 'modules/types';
+import type { integer } from 'lib/types';
 
 type ServerSideProps = {
 	privateUser: PrivateUser,

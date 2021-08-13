@@ -4,7 +4,7 @@ import type { InputHTMLAttributes } from 'react';
 import { useMemo, useRef } from 'react';
 import UserField from 'components/UserField';
 import AddUserButton from 'components/UserField/AddUserButton';
-import type { integer } from 'modules/types';
+import type { integer } from 'lib/types';
 
 export type UserArrayFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'required' | 'readOnly' | 'autoFocus' | 'className'> & {
 	name: string,

@@ -1,10 +1,10 @@
 import validate from './index.validate';
-import type { APIHandler } from 'modules/server/api';
-import { Perm } from 'modules/client/perms';
-import { permToGetUserInAPI } from 'modules/server/perms';
-import users from 'modules/server/users';
-import type { ServerStory, StoryID } from 'modules/server/stories';
-import { getStoryByUnsafeID, updateAndSendFavCount } from 'modules/server/stories';
+import type { APIHandler } from 'lib/server/api';
+import { Perm } from 'lib/client/perms';
+import { permToGetUserInAPI } from 'lib/server/perms';
+import users from 'lib/server/users';
+import type { ServerStory, StoryID } from 'lib/server/stories';
+import { getStoryByUnsafeID, updateAndSendFavCount } from 'lib/server/stories';
 
 const Handler: APIHandler<{
 	query: {

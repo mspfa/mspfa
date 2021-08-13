@@ -1,12 +1,12 @@
 import validate from './index.validate';
-import type { APIHandler } from 'modules/server/api';
-import type { ServerStoryPage, StoryPageID } from 'modules/server/stories';
-import stories, { getStoryByUnsafeID, getClientStoryPage } from 'modules/server/stories';
-import { authenticate } from 'modules/server/auth';
-import { Perm } from 'modules/client/perms';
-import type { ClientStoryPageRecord } from 'modules/client/stories';
-import invalidPublishedOrder from 'modules/client/invalidPublishedOrder';
-import type { integer } from 'modules/types';
+import type { APIHandler } from 'lib/server/api';
+import type { ServerStoryPage, StoryPageID } from 'lib/server/stories';
+import stories, { getStoryByUnsafeID, getClientStoryPage } from 'lib/server/stories';
+import { authenticate } from 'lib/server/auth';
+import { Perm } from 'lib/client/perms';
+import type { ClientStoryPageRecord } from 'lib/client/stories';
+import invalidPublishedOrder from 'lib/client/invalidPublishedOrder';
+import type { integer } from 'lib/types';
 
 const Handler: APIHandler<{
 	query: {

@@ -1,4 +1,4 @@
-import frameThrottler, { cancelFrameThrottler } from 'modules/client/frameThrottler';
+import frameThrottler, { cancelFrameThrottler } from 'lib/client/frameThrottler';
 
 /** A record which maps each viewport listener key to a function that removes that key's viewport listener. */
 const removeViewportListeners: Record<symbol, () => void> = {};

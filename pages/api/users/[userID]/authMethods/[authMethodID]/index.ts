@@ -1,8 +1,8 @@
 import validate from './index.validate';
-import type { APIHandler } from 'modules/server/api';
-import { Perm } from 'modules/client/perms';
-import { permToGetUserInAPI } from 'modules/server/perms';
-import users from 'modules/server/users';
+import type { APIHandler } from 'lib/server/api';
+import { Perm } from 'lib/client/perms';
+import { permToGetUserInAPI } from 'lib/server/perms';
+import users from 'lib/server/users';
 
 const Handler: APIHandler<{
 	query: {

@@ -1,9 +1,9 @@
 import { Field } from 'formik';
 import type { FieldAttributes } from 'formik';
-import toKebabCase from 'modules/client/toKebabCase';
+import toKebabCase from 'lib/client/toKebabCase';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import type { LabeledBoxRowProps } from 'components/Box/LabeledBoxRow';
-import { usePrefixedID } from 'modules/client/IDPrefix';
+import { usePrefixedID } from 'lib/client/IDPrefix';
 
 export type ExclusiveFieldBoxRowProps = Pick<LabeledBoxRowProps, 'label' | 'help'> & {
 	/**

@@ -1,6 +1,6 @@
 import './styles.module.scss';
-import useFunction from 'modules/client/useFunction';
-import type { PublicUser } from 'modules/client/users';
+import useFunction from 'lib/client/useFunction';
+import type { PublicUser } from 'lib/client/users';
 import IconImage from 'components/IconImage';
 
 export type UserFieldOptionProps = {

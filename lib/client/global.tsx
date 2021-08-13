@@ -1,7 +1,7 @@
 // This script is executed once initially on the client.
 
-import * as MSPFA from 'modules/client/MSPFA';
-import Dialog from 'modules/client/Dialog';
+import * as MSPFA from 'lib/client/MSPFA';
+import Dialog from 'lib/client/Dialog';
 
 (global as any).MSPFA = MSPFA;
 

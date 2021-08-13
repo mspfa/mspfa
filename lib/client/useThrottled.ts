@@ -1,6 +1,6 @@
 import type { DependencyList, MutableRefObject } from 'react';
 import { useRef } from 'react';
-import useFunction from 'modules/client/useFunction';
+import useFunction from 'lib/client/useFunction';
 
 export type ThrottledCallback<CallbackArgs extends unknown[]> = ((...args: CallbackArgs) => void) & {
 	timeoutRef: MutableRefObject<NodeJS.Timeout | undefined>

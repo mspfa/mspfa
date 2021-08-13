@@ -1,7 +1,7 @@
 import validate from './index.validate';
-import type { APIHandler } from 'modules/server/api';
-import { getUserByUnsafeID } from 'modules/server/users';
-import stories from 'modules/server/stories';
+import type { APIHandler } from 'lib/server/api';
+import { getUserByUnsafeID } from 'lib/server/users';
+import stories from 'lib/server/stories';
 
 const Handler: APIHandler<{
 	query: {

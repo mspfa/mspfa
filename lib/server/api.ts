@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { IncomingMessage } from 'http';
-import type { AnyAPIQuery } from 'modules/client/api';
+import type { AnyAPIQuery } from 'lib/client/api';
 import Ajv from 'ajv';
-import type { DateNumber } from 'modules/types';
+import type { DateNumber } from 'lib/types';
 
 /** The server-side API request object. */
 export type APIRequest<

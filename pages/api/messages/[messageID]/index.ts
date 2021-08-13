@@ -1,10 +1,10 @@
 import validate from './index.validate';
-import type { APIHandler } from 'modules/server/api';
-import { authenticate } from 'modules/server/auth';
-import type { ServerMessage } from 'modules/server/messages';
-import messages, { getMessageByUnsafeID, getClientMessage, updateUnreadMessages } from 'modules/server/messages';
-import { Perm } from 'modules/client/perms';
-import type { ClientMessage } from 'modules/client/messages';
+import type { APIHandler } from 'lib/server/api';
+import { authenticate } from 'lib/server/auth';
+import type { ServerMessage } from 'lib/server/messages';
+import messages, { getMessageByUnsafeID, getClientMessage, updateUnreadMessages } from 'lib/server/messages';
+import { Perm } from 'lib/client/perms';
+import type { ClientMessage } from 'lib/client/messages';
 
 const Handler: APIHandler<{
 	query: {

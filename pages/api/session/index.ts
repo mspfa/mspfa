@@ -1,12 +1,12 @@
 import validate from './index.validate';
-import type { APIHandler } from 'modules/server/api';
-import users, { getPrivateUser } from 'modules/server/users';
-import type { ServerUser } from 'modules/server/users';
-import type { ExternalAuthMethodOptions, InternalAuthMethodOptions } from 'modules/client/auth';
-import { authenticate, getAuthMethodInfo, createSession, verifyPassword, VerifyPasswordResult } from 'modules/server/auth';
+import type { APIHandler } from 'lib/server/api';
+import users, { getPrivateUser } from 'lib/server/users';
+import type { ServerUser } from 'lib/server/users';
+import type { ExternalAuthMethodOptions, InternalAuthMethodOptions } from 'lib/client/auth';
+import { authenticate, getAuthMethodInfo, createSession, verifyPassword, VerifyPasswordResult } from 'lib/server/auth';
 import Cookies from 'cookies';
-import type { PrivateUser } from 'modules/client/users';
-import type { EmailString } from 'modules/types';
+import type { PrivateUser } from 'lib/client/users';
+import type { EmailString } from 'lib/types';
 
 export type SessionBody = {
 	authMethod: ExternalAuthMethodOptions,

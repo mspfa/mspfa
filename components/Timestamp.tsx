@@ -1,5 +1,5 @@
-import { getRelativeTimestamp, getAbsoluteTimestamp, getShortTimestamp } from 'modules/client/dates';
-import type { DateNumber } from 'modules/types';
+import { getRelativeTimestamp, getAbsoluteTimestamp, getShortTimestamp } from 'lib/client/dates';
+import type { DateNumber } from 'lib/types';
 import type { HTMLAttributes } from 'react';
 import { useEffect, useState } from 'react';
 

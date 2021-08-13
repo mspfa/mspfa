@@ -1,22 +1,22 @@
 import './styles.module.scss';
 import Page from 'components/Page';
-import type { PublicUser } from 'modules/client/users';
-import { getUserByUnsafeID, getPublicUser } from 'modules/server/users';
-import { withErrorPage } from 'modules/client/errors';
-import { withStatusCode } from 'modules/server/errors';
+import type { PublicUser } from 'lib/client/users';
+import { getUserByUnsafeID, getPublicUser } from 'lib/server/users';
+import { withErrorPage } from 'lib/client/errors';
+import { withStatusCode } from 'lib/server/errors';
 import Box from 'components/Box';
 import BoxSection from 'components/Box/BoxSection';
 import Link from 'components/Link';
 import BoxRow from 'components/Box/BoxRow';
-import type { ServerStory } from 'modules/server/stories';
-import stories, { getPublicStory } from 'modules/server/stories';
-import type { PublicStory } from 'modules/client/stories';
-import { StoryPrivacy } from 'modules/client/stories';
+import type { ServerStory } from 'lib/server/stories';
+import stories, { getPublicStory } from 'lib/server/stories';
+import type { PublicStory } from 'lib/client/stories';
+import { StoryPrivacy } from 'lib/client/stories';
 import List from 'components/List';
 import StoryListing from 'components/StoryListing';
-import { Perm } from 'modules/client/perms';
+import { Perm } from 'lib/client/perms';
 import type { Filter } from 'mongodb';
-import type { integer } from 'modules/types';
+import type { integer } from 'lib/types';
 
 type ServerSideProps = {
 	publicUser: PublicUser,

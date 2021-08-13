@@ -1,4 +1,4 @@
-import type { DateNumber } from 'modules/types';
+import type { DateNumber } from 'lib/types';
 
 /** Returns a boolean for whether it should be disallowed for a page with the first argument's `published` date to be before a page with the second argument's `published` date. */
 const invalidPublishedOrder = (

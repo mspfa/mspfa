@@ -1,5 +1,5 @@
-import type { StoryPageID } from 'modules/server/stories';
-import type { ClientStoryPageRecord } from 'modules/client/stories';
+import type { StoryPageID } from 'lib/server/stories';
+import type { ClientStoryPageRecord } from 'lib/client/stories';
 
 /**
  * Deletes a page from a `ClientStoryPageRecord` by its ID, adjusting all other page IDs in the record accordingly. Returns the new `ClientStoryPageRecord`.

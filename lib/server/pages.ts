@@ -1,7 +1,7 @@
 import type { IncomingMessage } from 'http';
 import type { GetServerSideProps } from 'next';
 import type { MyAppInitialProps } from 'pages/_app';
-import type { ServerUser } from 'modules/server/users';
+import type { ServerUser } from 'lib/server/users';
 
 export type PageRequest = IncomingMessage & {
 	/** The `initialProps` from `pages/_app`'s `getInitialProps`. */

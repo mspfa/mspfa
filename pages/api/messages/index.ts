@@ -1,11 +1,11 @@
 import validate from './index.validate';
-import type { APIHandler } from 'modules/server/api';
-import { authenticate } from 'modules/server/auth';
-import type { ClientMessage } from 'modules/client/messages';
-import type { ServerMessage } from 'modules/server/messages';
-import messages, { updateUnreadMessages, getClientMessage, getMessageByUnsafeID } from 'modules/server/messages';
+import type { APIHandler } from 'lib/server/api';
+import { authenticate } from 'lib/server/auth';
+import type { ClientMessage } from 'lib/client/messages';
+import type { ServerMessage } from 'lib/server/messages';
+import messages, { updateUnreadMessages, getClientMessage, getMessageByUnsafeID } from 'lib/server/messages';
 import { ObjectId } from 'mongodb';
-import { getUserByUnsafeID } from 'modules/server/users';
+import { getUserByUnsafeID } from 'lib/server/users';
 import { uniqBy } from 'lodash';
 
 const Handler: APIHandler<{
