@@ -58,6 +58,10 @@ option,
 	@include theme(color, text-color);
 }
 
+img {
+	flex-shrink: 0;
+}
+
 iframe {
 	border: none;
 }
