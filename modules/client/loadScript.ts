@@ -25,6 +25,7 @@ const loadScript = (
 
 			const script = document.createElement('script');
 			script.src = source;
+			script.async = true;
 			document.head.appendChild(script);
 
 			script.addEventListener('load', event => {
