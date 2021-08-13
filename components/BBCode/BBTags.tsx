@@ -158,6 +158,7 @@ const BBTags: Partial<Record<string, BBTag>> = {
 						? sanitizeURL(children)
 						: undefined
 				}
+				alt=""
 				width={attributes?.width}
 				height={attributes?.height}
 			/>
