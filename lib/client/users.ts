@@ -49,7 +49,7 @@ export const defaultSettings: PrivateUser['settings'] = {
 	controls: {
 		previousPage: 'ArrowLeft',
 		nextPage: 'ArrowRight',
-		toggleSpoilers: 'Space'
+		toggleSpoilers: 'ControlRight'
 	},
 	notifications: {
 		messages: { email: true, site: true },
