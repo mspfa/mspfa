@@ -25,7 +25,7 @@ const UserLink = ({
 			title={`ID: ${userID}`}
 			{...props}
 		>
-			[Deleted User]
+			(Deleted User)
 		</span>
 	);
 };

@@ -295,7 +295,7 @@ const MessageListing = ({
 				<IconImage
 					className="listing-icon"
 					src={fromUser?.icon}
-					alt={fromUser && `${fromUser.name}'s Icon`}
+					alt={fromUser ? `${fromUser.name}'s Icon` : 'Deleted User\'s Icon'}
 				/>
 			</Link>
 			<div className="listing-info">
