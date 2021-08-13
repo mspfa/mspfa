@@ -46,4 +46,4 @@ connection.then(() => {
 	}
 });
 
-export default {};
+export {};
