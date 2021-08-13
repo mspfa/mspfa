@@ -15,6 +15,7 @@
 		"dev": "cross-env NODE_OPTIONS='--inspect' next dev",
 		"generate-validators": "ts-node scripts/generate-validators",
 		"build-start": "npm run build && npm start",
+		"lint": "next lint",
 		"build": "next build",
 		"start": "next start",
 		"db": "mongod",

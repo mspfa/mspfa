@@ -1,16 +1,9 @@
 {
 	"root": true,
-	"env": {
-		"browser": true,
-		"node": true,
-		"es6": true
-	},
 	"extends": [
 		"eslint:recommended",
-		"plugin:react/recommended",
-		"plugin:react-hooks/recommended"
+		"next"
 	],
-	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
 		"ecmaVersion": 2020,
 		"sourceType": "module",
@@ -19,19 +12,9 @@
 		},
 		"project": "tsconfig.json"
 	},
-	"settings": {
-		"react": {
-			"version": "detect"
-		}
-	},
 	"plugins": [
-		"@typescript-eslint",
-		"react",
-		"react-hooks"
+		"@typescript-eslint"
 	],
-	"globals": {
-		"React": "writable"
-	},
 	"rules": {
 		"no-async-promise-executor": "off",
 		"no-cond-assign": "off",
@@ -736,7 +719,8 @@
 						"logical": "parens-new-line",
 						"prop": "parens-new-line"
 					}
-				]
+				],
+				"@next/next/no-img-element": "off"
 			}
 		}
 	]
