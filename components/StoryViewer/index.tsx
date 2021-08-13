@@ -4,8 +4,7 @@ import type { ClientStoryPage, PublicStory } from 'modules/client/stories';
 import Link from 'components/Link';
 import Router, { useRouter } from 'next/router';
 import type { MouseEvent } from 'react';
-import { useState, useEffect, useRef, Fragment } from 'react';
-import useFunction from 'modules/client/useFunction';
+import { useState, useEffect, useRef, Fragment, useCallback } from 'react';
 import type { StoryPageID } from 'modules/server/stories';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
 import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
@@ -118,7 +117,7 @@ const StoryViewer = ({
 	const previousPageID = previousPageIDs[pageID];
 
 	/** Goes to one of the pages in `page.nextPages` by its index therein. Returns a boolean for whether it is successful. */
-	const goToNextPage = useFunction((
+	const goToNextPage = useCallback((
 		/** The index of the page ID in `page.nextPages` to go to. */
 		nextPageIndex = 0
 	) => {
@@ -140,9 +139,9 @@ const StoryViewer = ({
 		}
 
 		return false;
-	});
+	}, [page, pages, previousPageIDs]);
 
-	const onClickNextPageLink = useFunction((event: MouseEvent<HTMLAnchorElement> & { target: HTMLAnchorElement }) => {
+	const onClickNextPageLink = useCallback((event: MouseEvent<HTMLAnchorElement> & { target: HTMLAnchorElement }) => {
 		if (goToNextPage(
 			event.target.dataset.index === undefined
 				? 0
@@ -152,7 +151,7 @@ const StoryViewer = ({
 		}
 
 		// If the `goToNextPage` call is unsuccessful, don't `event.preventDefault`, and instead let the clicked link handle the page change.
-	});
+	}, [goToNextPage]);
 
 	// This state is a ref to a partial record that maps each cached page ID to an object with sanitized HTML strings of its BBCode properties, as a caching optimization due to the performance cost of BBCode sanitization.
 	const [sanitizedPages, setSanitizedPages] = useState<Partial<Record<StoryPageID, ReturnType<typeof sanitizePage>>>>({});

@@ -2,8 +2,7 @@ import './styles.module.scss';
 import { defaultSettings, getUser, useUser } from 'modules/client/users';
 import shouldIgnoreControl from 'modules/client/shouldIgnoreControl';
 import type { HTMLAttributes, ReactNode } from 'react';
-import { useState, useEffect } from 'react';
-import useFunction from 'modules/client/useFunction';
+import { useState, useCallback, useEffect } from 'react';
 
 export type SpoilerProps = HTMLAttributes<HTMLDivElement> & {
 	/** The spoiler button's label when clicking it opens the spoiler. */
@@ -60,9 +59,9 @@ const Spoiler = ({
 				<button
 					type="button"
 					onClick={
-						useFunction(() => {
+						useCallback(() => {
 							setOpen(open => !open);
-						})
+						}, [])
 					}
 				>
 					{open ? closeLabel : openLabel}

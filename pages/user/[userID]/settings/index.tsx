@@ -7,8 +7,7 @@ import { getPrivateUser } from 'modules/server/users';
 import { preventReloads, withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
 import { Form, Formik, Field } from 'formik';
-import { useEffect, useState } from 'react';
-import useFunction from 'modules/client/useFunction';
+import { useCallback, useEffect, useState } from 'react';
 import { getChangedValues, preventLeaveConfirmations, useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
 import BoxColumns from 'components/Box/BoxColumns';
@@ -93,7 +92,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 		setUserMerge(undefined);
 	}, [initialValues]);
 
-	const onClickChangePassword = useFunction(async () => {
+	const onClickChangePassword = useCallback(async () => {
 		const { data: authMethods } = await (api as AuthMethodsAPI).get(`users/${privateUser.id}/authMethods`, {
 			params: {
 				type: 'password'
@@ -165,11 +164,11 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 				content: 'Success! Your password has been changed.'
 			});
 		}
-	});
+	}, [privateUser.id]);
 
 	// The hooks immediately above and below cannot be inline and must be defined in this scope, because this scope is where `privateUser.id` (the dependency of those callbacks) can be checked for updates at a minimal frequency.
 
-	const onClickEditAuthMethods = useFunction(async () => {
+	const onClickEditAuthMethods = useCallback(async () => {
 		const { data: authMethods } = await (api as AuthMethodsAPI).get(`users/${privateUser.id}/authMethods`);
 
 		new Dialog({
@@ -180,11 +179,11 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 				{ label: 'Done', autoFocus: false }
 			]
 		});
-	});
+	}, [privateUser.id]);
 
 	const [editingBirthdate, setEditingBirthdate] = useState(false);
 
-	const editBirthdate = useFunction(async () => {
+	const editBirthdate = useCallback(async () => {
 		if (!await Dialog.confirm({
 			id: 'edit-birthdate',
 			title: 'Edit Birthdate',
@@ -194,14 +193,14 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 		}
 
 		setEditingBirthdate(true);
-	});
+	}, []);
 
 	return (
 		<Page withFlashyTitle heading="Settings">
 			<Formik
 				initialValues={initialValues}
 				onSubmit={
-					useFunction(async (values: Values) => {
+					useCallback(async (values: Values) => {
 						const changedValues = getChangedValues(initialValues, values);
 
 						if (!changedValues) {
@@ -220,7 +219,10 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 						if (getUser()!.id === privateUser.id) {
 							setUser(data);
 						}
-					})
+
+						// This ESLint comment is necessary because the rule incorrectly thinks `initialValues` should be a dependency here, despite that it depends on `privateUser` which is already a dependency.
+						// eslint-disable-next-line react-hooks/exhaustive-deps
+					}, [privateUser])
 				}
 				enableReinitialize
 			>
@@ -394,7 +396,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 											title="Reset Settings to Default"
 											disabled={isEqual(values.settings, defaultSettingsValues)}
 											onClick={
-												useFunction(async () => {
+												useCallback(async () => {
 													if (await Dialog.confirm({
 														id: 'reset-settings',
 														title: 'Reset Settings',
@@ -403,7 +405,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 														setFieldValue('settings', defaultSettingsValues);
 														onFormChange();
 													}
-												})
+												}, [setFieldValue])
 											}
 										>
 											Reset
@@ -413,7 +415,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										<Button
 											disabled={isSubmitting}
 											onClick={
-												useFunction(async () => {
+												useCallback(async () => {
 													setSubmitting(true);
 
 													const { data: doesOwnStories } = await (api as DoesOwnStoriesAPI).get(`users/${privateUser.id}/doesOwnStories`).catch(error => {
@@ -480,7 +482,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 
 													preventLeaveConfirmations();
 													Router.push('/');
-												})
+												}, [setSubmitting])
 											}
 										>
 											Delete Account

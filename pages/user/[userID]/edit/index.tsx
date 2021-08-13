@@ -7,8 +7,7 @@ import { getPrivateUser } from 'modules/server/users';
 import { withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
 import { Field, Form, Formik } from 'formik';
-import { useState } from 'react';
-import useFunction from 'modules/client/useFunction';
+import { useCallback, useState } from 'react';
 import { getChangedValues, useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
 import BoxColumns from 'components/Box/BoxColumns';
@@ -62,7 +61,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 			<Formik
 				initialValues={initialValues}
 				onSubmit={
-					useFunction(async (values: Values) => {
+					useCallback(async (values: Values) => {
 						const changedValues = getChangedValues(initialValues, values);
 
 						if (!changedValues) {
@@ -78,7 +77,10 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 						if (getUser()!.id === privateUser.id) {
 							setUser(data);
 						}
-					})
+
+						// This ESLint comment is necessary because the rule incorrectly thinks `initialValues` should be a dependency here, despite that it depends on `privateUser` which is already a dependency.
+						// eslint-disable-next-line react-hooks/exhaustive-deps
+					}, [privateUser])
 				}
 				enableReinitialize
 			>

@@ -4,7 +4,7 @@ import type { PublicUser } from 'modules/client/users';
 import { getUser, promptSignIn } from 'modules/client/users';
 import type { FormikHelpers } from 'formik';
 import { Field, Form, Formik } from 'formik';
-import useFunction from 'modules/client/useFunction';
+import { useCallback } from 'react';
 import { useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
 import BoxFooter from 'components/Box/BoxFooter';
@@ -74,7 +74,7 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 					}
 				} as Values}
 				onSubmit={
-					useFunction(async (
+					useCallback(async (
 						values: Values,
 						{ setSubmitting, resetForm }: FormikHelpers<Values>
 					) => {
@@ -110,7 +110,7 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 
 						// This needs to be `await`ed so `isSubmitting` remains `true` while the router loads, ensuring `useLeaveConfirmation`'s argument is `false`.
 						await Router.push(`/message/${message.id}`);
-					})
+					}, [replyTo])
 				}
 			>
 				{({ isSubmitting, dirty }) => {

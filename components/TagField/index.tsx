@@ -2,8 +2,7 @@ import './styles.module.scss';
 import { useFormikContext } from 'formik';
 import toKebabCase from 'modules/client/toKebabCase';
 import type { TextareaHTMLAttributes, KeyboardEvent, MouseEvent } from 'react';
-import React, { useRef, useState } from 'react';
-import useFunction from 'modules/client/useFunction';
+import React, { useCallback, useRef, useState } from 'react';
 import { usePrefixedID } from 'modules/client/IDPrefix';
 import { useIsomorphicLayoutEffect } from 'react-use';
 import { isEqual, uniq } from 'lodash';
@@ -127,7 +126,7 @@ const TagField = ({
 		return tag;
 	};
 
-	const updateTagField = useFunction(() => {
+	const updateTagField = useCallback(() => {
 		const allTagValues: TagString[] = [];
 
 		for (let i = 0; i < inputRef.current.childNodes.length; i++) {
@@ -266,7 +265,7 @@ const TagField = ({
 		if (!isEqual(fieldValue, allTagValues)) {
 			setFieldValue(name, allTagValues);
 		}
-	});
+	}, [name, fieldValue, setFieldValue, max]);
 
 	useIsomorphicLayoutEffect(() => {
 		// Determine the element's height based on the `rows` prop.
@@ -280,7 +279,7 @@ const TagField = ({
 		inputRef.current.style.height = `${heightTextArea.offsetHeight}px`;
 
 		inputRef.current.removeChild(heightTextArea);
-	});
+	}, [rows]);
 
 	useIsomorphicLayoutEffect(() => {
 		// Add the tags from `initialValue`.
@@ -297,7 +296,7 @@ const TagField = ({
 		for (const tagValue of initialValue) {
 			createAndInsertTag(tagValue, child);
 		}
-	});
+	}, [initialValue]);
 
 	return (
 		<div className="tag-field">
@@ -314,7 +313,7 @@ const TagField = ({
 				spellCheck={false}
 				onInput={updateTagField}
 				onKeyDown={
-					useFunction((event: KeyboardEvent<HTMLDivElement>) => {
+					useCallback((event: KeyboardEvent<HTMLDivElement>) => {
 						// Don't let the user press `Enter`, because `Enter` has annoying functionality with `contentEditable`, and it is buggy in Firefox.
 						if (event.code === 'Enter' || (
 							event.key.length === 1 && !(
@@ -329,16 +328,16 @@ const TagField = ({
 						}
 
 						setTimeout(updateTagField);
-					})
+					}, [updateTagField])
 				}
 				onClick={
-					useFunction((event: MouseEvent<HTMLDivElement> & { target: HTMLElement }) => {
+					useCallback((event: MouseEvent<HTMLDivElement> & { target: HTMLElement }) => {
 						if (event.target.classList.contains('tag-field-tag-remove')) {
 							inputRef.current.removeChild(event.target.parentNode!);
 
 							updateTagField();
 						}
-					})
+					}, [updateTagField])
 				}
 				ref={inputRef}
 			/>
@@ -347,7 +346,7 @@ const TagField = ({
 				<div
 					className="tag-field-presets input-like"
 					onClick={
-						useFunction((
+						useCallback((
 							event: MouseEvent<HTMLDivElement> & {
 								target: HTMLElement & { parentNode: HTMLElement }
 							}
@@ -380,7 +379,7 @@ const TagField = ({
 								createAndInsertTag(tagValue, inputRef.current.lastChild!);
 								setFieldValue(name, [...fieldValue, tagValue]);
 							}
-						})
+						}, [name, fieldValue, setFieldValue])
 					}
 				>
 					{Object.keys(tagHelp).map(tagValue => (

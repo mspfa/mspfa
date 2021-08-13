@@ -5,7 +5,7 @@ import type { PrivateUser } from 'modules/client/users';
 import type { ClientAuthMethod } from 'modules/client/auth';
 import { authMethodTypeNames } from 'modules/client/auth';
 import type { Dispatch, SetStateAction } from 'react';
-import useFunction from 'modules/client/useFunction';
+import { useCallback } from 'react';
 import type { APIClient } from 'modules/client/api';
 import Dialog from 'modules/client/Dialog';
 
@@ -30,7 +30,7 @@ const AuthMethod = ({ userID, authMethod, authMethods, setAuthMethods }: AuthMet
 				className="small spaced"
 				disabled={authMethods.length === 1}
 				onClick={
-					useFunction(async () => {
+					useCallback(async () => {
 						if (!await Dialog.confirm({
 							id: `confirm-remove-auth-method-${authMethod.id}`,
 							title: 'Remove Sign-In Method',
@@ -55,7 +55,10 @@ const AuthMethod = ({ userID, authMethod, authMethods, setAuthMethods }: AuthMet
 						if (Dialog.getByID('auth-methods')) {
 							setAuthMethods(authMethods.filter(({ id }) => id !== authMethod.id));
 						}
-					})
+
+						// This ESLint comment is necessary because the rule incorrectly thinks `authMethodTypeName` should be a dependency here, despite that it depends on `authMethod` which is already a dependency.
+						// eslint-disable-next-line react-hooks/exhaustive-deps
+					}, [userID, authMethod, authMethods, setAuthMethods])
 				}
 			>
 				Remove

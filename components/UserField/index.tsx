@@ -2,8 +2,7 @@ import './styles.module.scss';
 import { useFormikContext } from 'formik';
 import toKebabCase from 'modules/client/toKebabCase';
 import type { ChangeEvent, InputHTMLAttributes, ReactNode } from 'react';
-import { useState, useRef, useEffect } from 'react';
-import useFunction from 'modules/client/useFunction';
+import { useCallback, useState, useRef, useEffect } from 'react';
 import { usePrefixedID } from 'modules/client/IDPrefix';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
@@ -111,13 +110,13 @@ const UserField = ({
 
 	const updateAutoCompleteRef = useLatest(updateAutoComplete);
 
-	const onChange = useFunction((event: ChangeEvent<HTMLInputElement>) => {
+	const onChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
 		setInputValue(event.target.value);
 
 		updateAutoCompleteRef.current(event.target.value);
-	});
+	}, [updateAutoCompleteRef]);
 
-	const changeValue = useFunction(async (newValue: string | undefined) => {
+	const changeValue = useCallback(async (newValue: string | undefined) => {
 		setValueState(newValue);
 
 		setFieldValue(name, newValue || '');
@@ -126,9 +125,9 @@ const UserField = ({
 		nativeInput.value = newValue || '';
 
 		onChangeProp?.({ target: nativeInput });
-	});
+	}, [name, setFieldValue, onChangeProp]);
 
-	const startEditing = useFunction(async () => {
+	const startEditing = useCallback(async () => {
 		if (confirmEdit && !await Dialog.confirm({
 			id: 'user-field-edit',
 			title: editTitle,
@@ -148,18 +147,18 @@ const UserField = ({
 		updateAutoCompleteRef.current(newInputValue);
 
 		changeValue(undefined);
-	});
+	}, [value, changeValue, inputValue, updateAutoCompleteRef, editTitle, confirmEdit, userCache]);
 
 	const isEditing = !value;
 	const [wasEditing, setWasEditing] = useState(isEditing);
 
-	const onFocus = useFunction(() => {
+	const onFocus = useCallback(() => {
 		if (isEditing) {
 			setOpenAutoComplete(true);
 		}
-	});
+	}, [isEditing]);
 
-	const onBlur = useFunction(() => {
+	const onBlur = useCallback(() => {
 		if (isEditing) {
 			// This timeout is necessary because otherwise, for example when tabbing through auto-complete options, this will run before the next auto-complete option focuses, so the `if` statement would not detect that any option is in focus.
 			setTimeout(() => {
@@ -177,7 +176,7 @@ const UserField = ({
 				}
 			});
 		}
-	});
+	}, [isEditing]);
 
 	useEffect(() => {
 		if (isEditing === wasEditing) {
@@ -216,7 +215,7 @@ const UserField = ({
 		}
 
 		setWasEditing(isEditing);
-	});
+	}, [isEditing, wasEditing, inputValue, autoFocus, updateAutoComplete.timeoutRef]);
 
 	useIsomorphicLayoutEffect(() => {
 		if (isEditing) {
@@ -233,9 +232,9 @@ const UserField = ({
 					: ''
 			);
 		}
-	});
+	}, [isEditing, required, inUserArrayField]);
 
-	const deleteFromArray = useFunction(() => {
+	const deleteFromArray = useCallback(() => {
 		if (required && userArrayFieldValue!.length === 1) {
 			// If the user tries to delete this user from the parent `UserArrayField` while it's `required`, replace it with an empty user field instead.
 			setInputValue('');
@@ -254,7 +253,7 @@ const UserField = ({
 			...arrayFieldValue.slice(0, index),
 			...arrayFieldValue.slice(index + 1, arrayFieldValue.length)
 		]);
-	});
+	}, [required, userArrayFieldValue, name, getFieldMeta, userArrayFieldKeys, setFieldValue, changeValue]);
 
 	return (
 		<div

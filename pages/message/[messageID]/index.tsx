@@ -14,8 +14,7 @@ import { useUser, setUser } from 'modules/client/users';
 import { uniqBy } from 'lodash';
 import { useUserCache } from 'modules/client/UserCache';
 import Link from 'components/Link';
-import { Fragment, useState } from 'react';
-import useFunction from 'modules/client/useFunction';
+import { Fragment, useCallback, useState } from 'react';
 import Timestamp from 'components/Timestamp';
 import Button from 'components/Button';
 import BoxFooter from 'components/Box/BoxFooter';
@@ -68,7 +67,7 @@ const Component = withErrorPage<ServerSideProps>(({
 	const { cacheUser } = useUserCache();
 	initialUserCache.forEach(cacheUser);
 
-	const onClickDelete	= useFunction(async () => {
+	const onClickDelete	= useCallback(async () => {
 		if (!await Dialog.confirm({
 			id: 'delete-message',
 			title: 'Delete Message',
@@ -82,18 +81,18 @@ const Component = withErrorPage<ServerSideProps>(({
 		});
 
 		Router.push(`/user/${user.id}/messages`);
-	});
+	}, [message.id, user.id]);
 
-	const edit = useFunction(() => {
+	const edit = useCallback(() => {
 		setEditing(true);
-	});
+	}, []);
 
 	return (
 		<Page withFlashyTitle heading="Messages">
 			<Formik
 				initialValues={{ content: message.content }}
 				onSubmit={
-					useFunction(async (values: { content: string }) => {
+					useCallback(async (values: { content: string }) => {
 						const { data: newMessage } = await (api as MessageAPI).put(`/messages/${message.id}`, values);
 
 						// Clear the `message` object and assign new properties to it from `newMessage`.
@@ -106,21 +105,21 @@ const Component = withErrorPage<ServerSideProps>(({
 						// It is necessary to mutate the original `message` object instead of using a state because a state would not update when a new `message` prop is passed into the page.
 
 						setEditing(false);
-					})
+					}, [message])
 				}
 				enableReinitialize
 			>
 				{({ dirty, isSubmitting, resetForm }) => {
 					const shouldLeave = useLeaveConfirmation(dirty);
 
-					const cancel = useFunction(() => {
+					const cancel = useCallback(() => {
 						if (shouldLeave()) {
 							// In case the user decides to start editing again, reset the dirty values.
 							resetForm();
 
 							setEditing(false);
 						}
-					});
+					}, [resetForm, shouldLeave]);
 
 					return (
 						<Form>

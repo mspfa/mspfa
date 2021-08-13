@@ -3,8 +3,7 @@ import IconImage from 'components/IconImage';
 import type { ClientMessage } from 'modules/client/messages';
 import Link from 'components/Link';
 import type { ChangeEvent, MutableRefObject } from 'react';
-import { useMemo, useRef, useState } from 'react';
-import useFunction from 'modules/client/useFunction';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
 import { useUserCache } from 'modules/client/UserCache';
 import Timestamp from 'components/Timestamp';
@@ -135,7 +134,7 @@ const MessageListing = ({
 	// We can use an empty object as the initial value of the above ref because the ref's value is then immediately set below.
 
 	const { markRead } = message.ref.current = {
-		markRead: useFunction(async read => {
+		markRead: useCallback(async read => {
 			if (loading || !userIsParticipantRef.current || message.read === read) {
 				return;
 			}
@@ -196,8 +195,8 @@ const MessageListing = ({
 					unreadMessageCount
 				});
 			}
-		}),
-		deleteMessage: useFunction(async () => {
+		}, [message, loading, setMessageRef, user, userIsParticipantRef, userRef]),
+		deleteMessage: useCallback(async () => {
 			if (loading || !userIsParticipantRef.current) {
 				return;
 			}
@@ -230,23 +229,23 @@ const MessageListing = ({
 			}
 
 			removeListingRef.current(message);
-		})
+		}, [loading, message, user, userRef, userIsParticipantRef, removeListingRef])
 	};
 
-	const toggleRead = useFunction(() => {
+	const toggleRead = useCallback(() => {
 		markRead(!message.read);
-	});
+	}, [markRead, message.read]);
 
-	const showMore = useFunction(() => {
+	const showMore = useCallback(() => {
 		setOpen(true);
 		markRead(true);
-	});
+	}, [markRead]);
 
-	const showLess = useFunction(() => {
+	const showLess = useCallback(() => {
 		setOpen(false);
-	});
+	}, []);
 
-	const confirmDeleteMessage = useFunction(async () => {
+	const confirmDeleteMessage = useCallback(async () => {
 		if (loading || !(
 			userIsParticipantRef.current
 			&& await Dialog.confirm({
@@ -267,7 +266,7 @@ const MessageListing = ({
 		}
 
 		message.ref!.current.deleteMessage();
-	});
+	}, [loading, message.subject, userIsParticipantRef, message.ref]);
 
 	return (
 		<div
@@ -279,12 +278,12 @@ const MessageListing = ({
 					type="checkbox"
 					checked={message.selected}
 					onChange={
-						useFunction((event: ChangeEvent<HTMLInputElement>) => {
+						useCallback((event: ChangeEvent<HTMLInputElement>) => {
 							setMessageRef.current({
 								...message,
 								selected: event.target.checked
 							});
-						})
+						}, [setMessageRef, message])
 					}
 				/>
 			</label>

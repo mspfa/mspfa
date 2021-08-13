@@ -2,8 +2,7 @@ import './styles.module.scss';
 import { useField } from 'formik';
 import toKebabCase from 'modules/client/toKebabCase';
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
-import { useState } from 'react';
-import useFunction from 'modules/client/useFunction';
+import { useCallback, useState } from 'react';
 import { monthNames, twoDigits } from 'modules/client/dates';
 import { usePrefixedID } from 'modules/client/IDPrefix';
 import { useIsomorphicLayoutEffect } from 'react-use';
@@ -180,7 +179,7 @@ const DateField = ({
 			: 59
 	);
 
-	const onChange = useFunction((event: ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
+	const onChange = useCallback((event: ChangeEvent<HTMLInputElement & HTMLSelectElement>) => {
 		const targetType = event.target.id.slice(event.target.id.lastIndexOf('-') + 1) as 'year' | 'month' | 'day' | 'hour' | 'minute';
 
 		const newValues = { year, month, day, hour, minute };
@@ -242,13 +241,13 @@ const DateField = ({
 			...event,
 			target: nativeInput
 		});
-	});
+	}, [year, month, day, hour, minute, min, max, minYear, maxYear, withTime, valueProp, name, onChangeProp, setFieldValue]);
 
 	const [renderYearOptions, setRenderYearOptions] = useState(false);
 
 	useIsomorphicLayoutEffect(() => {
 		setRenderYearOptions(true);
-	});
+	}, []);
 
 	return (
 		<>

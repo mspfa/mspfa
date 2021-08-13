@@ -3,8 +3,7 @@ import createGlobalState from 'global-react-state';
 import sanitizeURL from 'modules/client/sanitizeURL';
 import Button from 'components/Button';
 import Link from 'components/Link';
-import { useEffect, useRef, useState } from 'react';
-import useFunction from 'modules/client/useFunction';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import loadScript from 'modules/client/loadScript';
 
@@ -37,9 +36,9 @@ const Flash = ({
 		src = sanitizeURL(src);
 	}
 
-	const retry = useFunction(() => {
+	const retry = useCallback(() => {
 		setError(undefined);
-	});
+	}, []);
 
 	useEffect(() => {
 		if (error) {
@@ -100,7 +99,7 @@ const Flash = ({
 				}
 			};
 		}
-	});
+	}, [flashMode, error, src, width, height]);
 
 	const flashWarningFooter = src ? (
 		<p className="flash-warning-footer">

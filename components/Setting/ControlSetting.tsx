@@ -1,8 +1,7 @@
 import { Field, useFormikContext } from 'formik';
 import type { ExclusiveFieldBoxRowProps } from 'components/Box/FieldBoxRow';
 import type { KeyboardEvent } from 'react';
-import { useState, useRef } from 'react';
-import useFunction from 'modules/client/useFunction';
+import { useCallback, useState, useRef } from 'react';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import { usePrefixedID } from 'modules/client/IDPrefix';
 import toKebabCase from 'modules/client/toKebabCase';
@@ -20,7 +19,7 @@ const ControlSetting = ({ label, name, help }: ControlSettingProps) => {
 
 	const [editing, setEditing] = useState(false);
 
-	const toggleEditing = useFunction(() => {
+	const toggleEditing = useCallback(() => {
 		setEditing(!editing);
 
 		if (!editing) {
@@ -28,7 +27,7 @@ const ControlSetting = ({ label, name, help }: ControlSettingProps) => {
 				fieldRef.current?.focus();
 			});
 		}
-	});
+	}, [editing]);
 
 	return (
 		<LabeledBoxRow
@@ -44,7 +43,7 @@ const ControlSetting = ({ label, name, help }: ControlSettingProps) => {
 				placeholder="(None)"
 				disabled={!editing}
 				onKeyDown={
-					useFunction((event: KeyboardEvent<HTMLInputElement> & { target: HTMLInputElement }) => {
+					useCallback((event: KeyboardEvent<HTMLInputElement> & { target: HTMLInputElement }) => {
 						if (!event.target.disabled) {
 							event.preventDefault();
 
@@ -54,7 +53,7 @@ const ControlSetting = ({ label, name, help }: ControlSettingProps) => {
 
 							setEditing(false);
 						}
-					})
+					}, [name, setFieldValue])
 				}
 				innerRef={fieldRef}
 			/>

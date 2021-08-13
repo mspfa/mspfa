@@ -1,6 +1,6 @@
 import AddButton from 'components/Button/AddButton';
 import type { MutableRefObject } from 'react';
-import useFunction from 'modules/client/useFunction';
+import { useCallback } from 'react';
 
 export type AddUserButtonProps = {
 	value: Array<string | undefined>,
@@ -12,7 +12,7 @@ const AddUserButton = ({ value, setValue, userArrayFieldRef }: AddUserButtonProp
 	<AddButton
 		title="Add User"
 		onClick={
-			useFunction(() => {
+			useCallback(() => {
 				setValue([...value, undefined]);
 
 				// This timeout is necessary to wait for the newly added user field to render.
@@ -25,7 +25,7 @@ const AddUserButton = ({ value, setValue, userArrayFieldRef }: AddUserButtonProp
 						userFieldInputs[userFieldInputs.length - 1].focus();
 					}
 				});
-			})
+			}, [value, setValue, userArrayFieldRef])
 		}
 	/>
 );

@@ -4,8 +4,7 @@ import Row from 'components/Row';
 import type { ClientStoryPage, PublicStory } from 'modules/client/stories';
 import { storyStatusNames } from 'modules/client/stories';
 import { useMobile } from 'modules/client/useMobile';
-import { Fragment, useMemo, useState } from 'react';
-import useFunction from 'modules/client/useFunction';
+import { Fragment, useCallback, useMemo, useState } from 'react';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
 import Timestamp from 'components/Timestamp';
 import Link from 'components/Link';
@@ -56,9 +55,9 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 	// Hide latest pages by default to prevent spoilers from page titles.
 	const [latestPagesShown, setLatestPagesShown] = useState(false);
 
-	const toggleLatestPagesShown = useFunction(() => {
+	const toggleLatestPagesShown = useCallback(() => {
 		setLatestPagesShown(latestPagesShown => !latestPagesShown);
-	});
+	}, []);
 
 	const latestPagesNode = useMemo(() => latestPagesShown && (
 		latestPages.map(latestPage => (
@@ -139,9 +138,9 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 						className="small"
 						disabled={section === 'info'}
 						onClick={
-							useFunction(() => {
+							useCallback(() => {
 								setSection('info');
-							})
+							}, [])
 						}
 					>
 						Info
@@ -150,9 +149,9 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 						className="small"
 						disabled={section === 'comments'}
 						onClick={
-							useFunction(() => {
+							useCallback(() => {
 								setSection('comments');
-							})
+							}, [])
 						}
 					>
 						Comments
@@ -161,9 +160,9 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 						className="small"
 						disabled={section === 'news'}
 						onClick={
-							useFunction(() => {
+							useCallback(() => {
 								setSection('news');
-							})
+							}, [])
 						}
 					>
 						News
