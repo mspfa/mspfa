@@ -1,5 +1,6 @@
 import type { DependencyList, MutableRefObject } from 'react';
-import { useCallback, useRef } from 'react';
+import { useRef } from 'react';
+import useFunction from 'modules/client/useFunction';
 
 export type ThrottledCallback<CallbackArgs extends unknown[]> = ((...args: CallbackArgs) => void) & {
 	timeoutRef: MutableRefObject<NodeJS.Timeout | undefined>
@@ -15,7 +16,7 @@ const useThrottled = <CallbackArgs extends unknown[]>(
 ) => {
 	const timeoutRef = useRef<NodeJS.Timeout>();
 
-	const throttledCallback = useCallback((...args: CallbackArgs) => {
+	const throttledCallback = useFunction((...args: CallbackArgs) => {
 		if (timeoutRef.current) {
 			clearTimeout(timeoutRef.current);
 		}
@@ -25,10 +26,7 @@ const useThrottled = <CallbackArgs extends unknown[]>(
 
 			callback(...args);
 		}, delay);
-
-		// This ESLint comment is necessary because it thinks `callback` should be a dependency even though it is a function which may change every re-render. ESLint cannot possibly know the dependencies of an arbitrary function passed in from outside, so its dependencies should be passed in from outside as well.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [delay, ...deps]) as ThrottledCallback<CallbackArgs>;
+	}) as ThrottledCallback<CallbackArgs>;
 
 	throttledCallback.timeoutRef = timeoutRef;
 

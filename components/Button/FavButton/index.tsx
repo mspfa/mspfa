@@ -1,7 +1,8 @@
 import './styles.module.scss';
 import Button from 'components/Button';
 import type { ButtonProps } from 'components/Button';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
+import useFunction from 'modules/client/useFunction';
 import { setUser, promptSignIn, useUser } from 'modules/client/users';
 import api from 'modules/client/api';
 import type { APIClient, APIError } from 'modules/client/api';
@@ -33,7 +34,7 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 			className={`fav-button${active ? ' active' : ''}${className ? ` ${className}` : ''}`}
 			title={`${favCount} Favorite${favCount === 1 ? '' : 's'}`}
 			onClick={
-				useCallback(async () => {
+				useFunction(async () => {
 					if (loading) {
 						return;
 					}
@@ -99,10 +100,7 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 
 					setFavCount(newFavCount);
 					setLoading(false);
-
-					// This ESLint comment is necessary because the rule incorrectly thinks `active` and `favIndex` should be dependencies here, despite that they depend on `user` which is already a dependency.
-					// eslint-disable-next-line react-hooks/exhaustive-deps
-				}, [user, storyID, loading])
+				})
 			}
 			{...props}
 		>

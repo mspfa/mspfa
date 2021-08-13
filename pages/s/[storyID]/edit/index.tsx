@@ -5,7 +5,8 @@ import { withErrorPage } from 'modules/client/errors';
 import { withStatusCode } from 'modules/server/errors';
 import { Field, Form, Formik } from 'formik';
 import type { ChangeEvent } from 'react';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
+import useFunction from 'modules/client/useFunction';
 import { getChangedValues, useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
 import BoxFooter from 'components/Box/BoxFooter';
@@ -98,7 +99,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 	const [editingAnniversary, setEditingAnniversary] = useState(false);
 
-	const editAnniversary = useCallback(async () => {
+	const editAnniversary = useFunction(async () => {
 		if (!await Dialog.confirm({
 			id: 'edit-anniversary',
 			title: 'Edit Creation Date',
@@ -108,11 +109,11 @@ const Component = withErrorPage<ServerSideProps>(({
 		}
 
 		setEditingAnniversary(true);
-	}, []);
+	});
 
 	const [loadingRestore, setLoadingRestore] = useState(false);
 
-	const restoreStory = useCallback(async () => {
+	const restoreStory = useFunction(async () => {
 		setLoadingRestore(true);
 
 		const { data: newPrivateStory } = await (api as StoryAPI).put(`/stories/${privateStory.id}`, {
@@ -122,9 +123,9 @@ const Component = withErrorPage<ServerSideProps>(({
 		});
 
 		setPrivateStory(newPrivateStory);
-	}, [privateStory.id]);
+	});
 
-	const onSubmit = useCallback(async (values: Values) => {
+	const onSubmit = useFunction(async (values: Values) => {
 		const changedValues = getChangedValues(initialValues, values);
 
 		if (!changedValues) {
@@ -151,10 +152,7 @@ const Component = withErrorPage<ServerSideProps>(({
 		setPrivateStory(newPrivateStory);
 
 		setEditingAnniversary(false);
-
-		// This ESLint comment is necessary because the rule incorrectly thinks `initialValues` should be a dependency here, despite that it depends on `privateStory` which is already a dependency.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [privateStory, initialValues]);
+	});
 
 	const daysUntilDeletion = privateStory.willDelete !== undefined && (
 		Math.round(
@@ -197,7 +195,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 						const [ownerBeforeEdit, setOwnerBeforeEdit] = useState<string | undefined>(values.owner || privateStory.owner);
 
-						const deleteStory = useCallback(async () => {
+						const deleteStory = useFunction(async () => {
 							if (!(
 								shouldLeave()
 								&& await Dialog.confirm({
@@ -244,7 +242,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							setPrivateStory(newPrivateStory);
 
 							setEditingAnniversary(false);
-						}, [shouldLeave, setSubmitting]);
+						});
 
 						return (
 							<Form>
@@ -299,7 +297,7 @@ const Component = withErrorPage<ServerSideProps>(({
 												help={`${storyPrivacyNames[StoryPrivacy.Public]}: Anyone can see this adventure.\n${storyPrivacyNames[StoryPrivacy.Unlisted]}: Only users with this adventure's URL can see this adventure.\n${storyPrivacyNames[StoryPrivacy.Private]}: Only this adventure's owner and editors can see this adventure.`}
 												required
 												onChange={
-													useCallback((event: ChangeEvent<HTMLSelectElement>) => {
+													useFunction((event: ChangeEvent<HTMLSelectElement>) => {
 														handleChange(event);
 
 														if (+event.target.value !== StoryPrivacy.Public) {
@@ -308,7 +306,7 @@ const Component = withErrorPage<ServerSideProps>(({
 															setFieldValue('anniversary', initialValues.anniversary);
 															setFieldValue('banner', initialValues.banner);
 														}
-													}, [handleChange, setFieldValue])
+													})
 												}
 											>
 												{Object.keys(storyPrivacyNames).map(privacy => (
@@ -347,7 +345,7 @@ const Component = withErrorPage<ServerSideProps>(({
 															: undefined
 													}
 													onChange={
-														useCallback((event: { target: HTMLInputElement }) => {
+														useFunction((event: { target: HTMLInputElement }) => {
 															if (
 																// The user finished editing the owner.
 																event.target.value
@@ -365,7 +363,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 																setOwnerBeforeEdit(event.target.value);
 															}
-														}, [ownerBeforeEdit, values.editors, setFieldValue])
+														})
 													}
 												/>
 											</LabeledBoxRow>

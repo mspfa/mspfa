@@ -195,6 +195,10 @@
 			{
 				"selector": "ForInStatement",
 				"message": "`for (const key of Object.keys(object))` is faster than `for (key in object)` (though `for (const value of Object.values(object))` is fastest)."
+			},
+			{
+				"selector": "Identifier[name=useCallback]",
+				"message": "Please use `useFunction` instead of `useCallback`."
 			}
 		],
 		"no-trailing-spaces": [

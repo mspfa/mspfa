@@ -1,5 +1,6 @@
 import './styles.module.scss';
-import { useContext, useCallback, useState } from 'react';
+import { useContext, useState } from 'react';
+import useFunction from 'modules/client/useFunction';
 import { BBFieldContext } from 'components/BBCode/BBField';
 import Button from 'components/Button';
 import Dialog from 'modules/client/Dialog';
@@ -543,7 +544,7 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 			title={tag.title}
 			disabled={disabled}
 			onClick={
-				useCallback(async () => {
+				useFunction(async () => {
 					let children = textAreaRef.current.value.slice(
 						textAreaRef.current.selectionStart,
 						textAreaRef.current.selectionEnd
@@ -657,10 +658,7 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 							textAreaRef.current.selectionEnd = textAreaRef.current.selectionStart + tagProps.children.length;
 						}
 					});
-
-					// This ESLint comment is necessary because the rule incorrectly thinks `tagName` should be a dependency here, despite that it depends on `tag` which is already a dependency.
-					// eslint-disable-next-line react-hooks/exhaustive-deps
-				}, [tag, textAreaRef, setValue])
+				})
 			}
 		/>
 	);

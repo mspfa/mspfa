@@ -16,7 +16,8 @@ import { uniqBy } from 'lodash';
 import users, { getPrivateUser, getPublicUser } from 'modules/server/users';
 import type { ListedMessage } from 'components/MessageListing';
 import MessageListing from 'components/MessageListing';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import useFunction from 'modules/client/useFunction';
 import Button from 'components/Button';
 import { useLatest } from 'react-use';
 import Dialog from 'modules/client/Dialog';
@@ -75,37 +76,37 @@ const Component = withErrorPage<ServerSideProps>(({
 		}
 	}, [unreadCount, privateUser.id]);
 
-	const deselectAll = useCallback(() => {
+	const deselectAll = useFunction(() => {
 		setListedMessages(listedMessages.map(message => ({
 			...message,
 			selected: false
 		})));
-	}, [listedMessages]);
+	});
 
-	const selectAll = useCallback(() => {
+	const selectAll = useFunction(() => {
 		setListedMessages(listedMessages.map(message => ({
 			...message,
 			selected: true
 		})));
-	}, [listedMessages]);
+	});
 
-	const markRead = useCallback(() => {
+	const markRead = useFunction(() => {
 		for (const message of listedMessages) {
 			if (message.selected) {
 				message.ref!.current.markRead(true);
 			}
 		}
-	}, [listedMessages]);
+	});
 
-	const markUnread = useCallback(() => {
+	const markUnread = useFunction(() => {
 		for (const message of listedMessages) {
 			if (message.selected) {
 				message.ref!.current.markRead(false);
 			}
 		}
-	}, [listedMessages]);
+	});
 
-	const deleteMessages = useCallback(async () => {
+	const deleteMessages = useFunction(async () => {
 		if (!await Dialog.confirm({
 			id: 'delete-messages',
 			title: 'Delete Messages',
@@ -119,11 +120,11 @@ const Component = withErrorPage<ServerSideProps>(({
 				message.ref!.current.deleteMessage();
 			}
 		}
-	}, [listedMessages, selectedCount]);
+	});
 
 	// It is necessary that `setMessage` and `removeListing` are refs to fix race conditions due to running them on multiple selected messages simultaneously.
 	const setMessageRef = useLatest(
-		useCallback((message: ListedMessage) => {
+		useFunction((message: ListedMessage) => {
 			const messageIndex = listedMessages.findIndex(({ id }) => id === message.id);
 
 			setListedMessages([
@@ -131,18 +132,18 @@ const Component = withErrorPage<ServerSideProps>(({
 				message,
 				...listedMessages.slice(messageIndex + 1, listedMessages.length)
 			]);
-		}, [listedMessages])
+		})
 	);
 
 	const removeListingRef = useLatest(
-		useCallback((message: ListedMessage) => {
+		useFunction((message: ListedMessage) => {
 			const messageIndex = listedMessages.findIndex(({ id }) => id === message.id);
 
 			setListedMessages([
 				...listedMessages.slice(0, messageIndex),
 				...listedMessages.slice(messageIndex + 1, listedMessages.length)
 			]);
-		}, [listedMessages])
+		})
 	);
 
 	return (

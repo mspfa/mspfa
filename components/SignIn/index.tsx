@@ -3,7 +3,8 @@ import { setSignInPage, resolveExternalSignIn } from 'modules/client/signIn';
 import Link from 'components/Link';
 import createUpdater from 'react-component-updater';
 import type { ChangeEvent } from 'react';
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import useFunction from 'modules/client/useFunction';
 import Captcha from 'components/SignIn/Captcha';
 import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import InlineRowSection from 'components/Box/InlineRowSection';
@@ -95,7 +96,7 @@ const SignIn = ({ page }: SignInProps) => {
 	}, [mountedRef]);
 
 	/** If `page === 1`, queues an update to the `emailTaken` state, possibly via a `checkEmail` call. */
-	const updateEmailTaken = useCallback((email: string) => {
+	const updateEmailTaken = useFunction((email: string) => {
 		// Cancel the last `checkEmail` call, if there is one pending.
 		if (checkEmail.timeoutRef.current) {
 			clearTimeout(checkEmail.timeoutRef.current);
@@ -121,22 +122,22 @@ const SignIn = ({ page }: SignInProps) => {
 		setEmailTaken(undefined);
 
 		checkEmail(email);
-	}, [page, checkEmail]);
+	});
 
-	const onChangeEmail = useCallback((
+	const onChangeEmail = useFunction((
 		event: ChangeEvent<HTMLInputElement & HTMLSelectElement & { name: 'email' }>
 	) => {
 		updateEmailTaken(event.target.value);
 
 		onChange(event);
-	}, [updateEmailTaken]);
+	});
 
 	const emailInputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		// Check if the email is taken in case they already have an email entered but just switched to the sign-up page.
 		updateEmailTaken(signInValues.email);
-	}, [updateEmailTaken]);
+	});
 
 	useIsomorphicLayoutEffect(() => {
 		emailInputRef.current?.setCustomValidity(
@@ -148,7 +149,7 @@ const SignIn = ({ page }: SignInProps) => {
 						: ''
 				: ''
 		);
-	}, [emailTaken, page]);
+	});
 
 	return (
 		<div id="sign-in-content">

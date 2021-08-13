@@ -6,7 +6,8 @@ import { Field } from 'formik';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
 import type { MouseEvent } from 'react';
-import React, { useCallback, useRef, useState, useEffect, useContext } from 'react';
+import React, { useRef, useState, useEffect, useContext } from 'react';
+import useFunction from 'modules/client/useFunction';
 import AddButton from 'components/Button/AddButton';
 import type { KeyedClientStoryPage } from 'pages/s/[storyID]/edit/p';
 import { StoryEditorContext, _key } from 'pages/s/[storyID]/edit/p';
@@ -100,7 +101,7 @@ const StoryEditorPageListing = React.memo(({
 
 	const ref = useRef<HTMLDivElement>(null!);
 
-	const removeNextPage = useCallback((event: MouseEvent<HTMLButtonElement & HTMLAnchorElement> & { target: HTMLButtonElement }) => {
+	const removeNextPage = useFunction((event: MouseEvent<HTMLButtonElement & HTMLAnchorElement> & { target: HTMLButtonElement }) => {
 		// The `parentNode` of this `RemoveButton` will be the `div.story-editor-next-page` element.
 		const nextPageElement = event.target.parentNode as HTMLDivElement;
 
@@ -111,9 +112,9 @@ const StoryEditorPageListing = React.memo(({
 			...page.nextPages.slice(0, nextPageIndex),
 			...page.nextPages.slice(nextPageIndex + 1, page.nextPages.length)
 		]);
-	}, [formikPropsRef, page.id, page.nextPages]);
+	});
 
-	const addNextPage = useCallback(() => {
+	const addNextPage = useFunction(() => {
 		formikPropsRef.current.setFieldValue(`pages.${page.id}.nextPages`, [
 			...page.nextPages,
 			''
@@ -123,12 +124,12 @@ const StoryEditorPageListing = React.memo(({
 		setTimeout(() => {
 			lastNextPageInputRef.current?.focus();
 		});
-	}, [formikPropsRef, page.id, page.nextPages]);
+	});
 
 	const lastNextPageInputRef = useRef<HTMLInputElement>(null);
 
 	/** If an invalid element is found in this page listing, reports its validity and returns `false`. Otherwise, returns `true`. */
-	const reportPageValidity = useCallback((
+	const reportPageValidity = useFunction((
 		/** Whether to only check the validity of advanced options. */
 		onlyAdvanced = false,
 		/** The IDs of pages to report the validity of. */
@@ -163,18 +164,18 @@ const StoryEditorPageListing = React.memo(({
 		}
 
 		return true;
-	}, [page.id]);
+	});
 
-	const togglePageAdvancedShown = useCallback(() => {
+	const togglePageAdvancedShown = useFunction(() => {
 		if (advancedShown && !reportPageValidity(true)) {
 			// Don't let the advanced section be hidden if it contains invalid fields, or else the invalid fields wouldn't be detectable.
 			return;
 		}
 
 		toggleAdvancedShown(page[_key]);
-	}, [advancedShown, reportPageValidity, toggleAdvancedShown, page]);
+	});
 
-	const savePage = useCallback(async () => {
+	const savePage = useFunction(async () => {
 		/** The IDs of pages to save. */
 		const pageIDsToSave: StoryPageID[] = [page.id];
 
@@ -243,9 +244,9 @@ const StoryEditorPageListing = React.memo(({
 		};
 
 		formikPropsRef.current.setSubmitting(false);
-	}, [onServer, page.id, reportPageValidity, storyID, formikPropsRef, setInitialPages, queuedValuesRef]);
+	});
 
-	const publishPage = useCallback(async (event: MouseEvent<HTMLButtonElement & HTMLAnchorElement>) => {
+	const publishPage = useFunction(async (event: MouseEvent<HTMLButtonElement & HTMLAnchorElement>) => {
 		formikPropsRef.current.setSubmitting(true);
 
 		// Ensure that none of the drafts to be published are unsaved.
@@ -393,9 +394,9 @@ const StoryEditorPageListing = React.memo(({
 		};
 
 		formikPropsRef.current.setSubmitting(false);
-	}, [firstDraftID, page.id, storyID, setInitialPages, queuedValuesRef, formikPropsRef]);
+	});
 
-	const unpublishPage = useCallback(async () => {
+	const unpublishPage = useFunction(async () => {
 		formikPropsRef.current.setSubmitting(true);
 
 		if (!await Dialog.confirm({
@@ -451,12 +452,12 @@ const StoryEditorPageListing = React.memo(({
 		};
 
 		formikPropsRef.current.setSubmitting(false);
-	}, [lastNonDraftID, pageStatus, page.id, setInitialPages, storyID, formikPropsRef, queuedValuesRef]);
+	});
 
 	/** A ref to the latest value of `advancedShown` to avoid race conditions. */
 	const advancedShownRef = useLatest(advancedShown);
 
-	const deletePage = useCallback(async () => {
+	const deletePage = useFunction(async () => {
 		formikPropsRef.current.setSubmitting(true);
 
 		if (!await Dialog.confirm({
@@ -504,7 +505,7 @@ const StoryEditorPageListing = React.memo(({
 		}
 
 		formikPropsRef.current.setSubmitting(false);
-	}, [formikPropsRef, page, onServer, storyID, setInitialPages, toggleAdvancedShown, queuedValuesRef, cachedPageHeightsRef, advancedShownRef]);
+	});
 
 	return (
 		<BoxSection

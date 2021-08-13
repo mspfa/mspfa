@@ -1,5 +1,6 @@
 import './styles.module.scss';
-import React, { useCallback, useRef } from 'react';
+import React, { useRef } from 'react';
+import useFunction from 'modules/client/useFunction';
 import type { default as DialogClass } from 'modules/client/Dialog';
 import { Form, Formik } from 'formik';
 import Button from 'components/Button';
@@ -42,13 +43,13 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 		<Formik<any>
 			initialValues={dialog.initialValues}
 			onSubmit={
-				useCallback(() => {
+				useFunction(() => {
 					if (dialog.submitAction) {
 						dialog.submitAction.onClick();
 					} else {
 						dialog.resolve({ submit: true });
 					}
-				}, [dialog])
+				})
 			}
 		>
 			{props => {

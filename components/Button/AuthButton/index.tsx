@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import Button from 'components/Button';
-import { useCallback } from 'react';
+import useFunction from 'modules/client/useFunction';
 import env from 'modules/client/env';
 import Dialog from 'modules/client/Dialog';
 import InlineRowSection from 'components/Box/InlineRowSection';
@@ -160,11 +160,11 @@ const AuthButton = ({ type, onResolve, ...props }: AuthButtonProps) => (
 	<Button
 		className={`auth-button-${toKebabCase(type)}`}
 		onClick={
-			useCallback(async () => {
+			useFunction(async () => {
 				onResolve(await promptAuthMethod[type]());
 
 				await resolveAddAuthMethodDialog();
-			}, [type, onResolve])
+			})
 		}
 		{...props}
 	>
