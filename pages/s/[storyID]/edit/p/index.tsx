@@ -20,7 +20,7 @@ import type { APIClient } from 'modules/client/api';
 import Row from 'components/Row';
 import Label from 'components/Label';
 import api from 'modules/client/api';
-import useThrottledCallback from 'modules/client/useThrottledCallback';
+import useThrottled from 'modules/client/useThrottled';
 import axios from 'axios';
 import StoryEditorPageListing from 'components/StoryEditorPageListing';
 import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
@@ -176,7 +176,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 	const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source>>();
 
-	const changeDefaultPageTitle = useThrottledCallback(async (event: ChangeEvent<HTMLInputElement>) => {
+	const changeDefaultPageTitle = useThrottled(async (event: ChangeEvent<HTMLInputElement>) => {
 		setPrivateStory({
 			...privateStory,
 			defaultPageTitle: event.target.value

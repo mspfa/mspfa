@@ -14,7 +14,7 @@ import { useUserCache } from 'modules/client/UserCache';
 import RemoveButton from 'components/Button/RemoveButton';
 import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 import Dialog from 'modules/client/Dialog';
-import useThrottledCallback from 'modules/client/useThrottledCallback';
+import useThrottled from 'modules/client/useThrottled';
 import useMountedRef from 'modules/client/useMountedRef';
 import UserLink from 'components/Link/UserLink';
 import type { integer } from 'modules/types';
@@ -83,7 +83,7 @@ const UserField = ({
 
 	const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source>>();
 
-	const updateAutoComplete = useThrottledCallback(async (search: string) => {
+	const updateAutoComplete = useThrottled(async (search: string) => {
 		if (search) {
 			cancelTokenSourceRef.current?.cancel();
 			cancelTokenSourceRef.current = axios.CancelToken.source();

@@ -6,7 +6,7 @@ export type ThrottledCallback<CallbackArgs extends unknown[]> = ((...args: Callb
 };
 
 /** Returns a throttled function (with a ref property to its throttle timeout). When attempting to call the throttled function, the callback passed to this hook will only be called a short time (defaulting to 500 ms) after it stops being called. */
-const useThrottledCallback = <CallbackArgs extends unknown[]>(
+const useThrottled = <CallbackArgs extends unknown[]>(
 	/** The function to throttle. */
 	callback: (...args: CallbackArgs) => unknown,
 	deps: DependencyList,
@@ -35,4 +35,4 @@ const useThrottledCallback = <CallbackArgs extends unknown[]>(
 	return throttledCallback;
 };
 
-export default useThrottledCallback;
+export default useThrottled;

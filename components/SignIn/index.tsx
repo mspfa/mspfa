@@ -13,7 +13,7 @@ import BirthdateField from 'components/DateField/BirthdateField';
 import { escapeRegExp } from 'lodash';
 import axios from 'axios';
 import useMountedRef from 'modules/client/useMountedRef';
-import useThrottledCallback from 'modules/client/useThrottledCallback';
+import useThrottled from 'modules/client/useThrottled';
 import api from 'modules/client/api';
 import type { APIClient } from 'modules/client/api';
 import { useIsomorphicLayoutEffect } from 'react-use';
@@ -79,7 +79,7 @@ const SignIn = ({ page }: SignInProps) => {
 	const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source>>();
 
 	/** Asynchronously checks if the `email` is taken and sets the `emailTaken` state accordingly. */
-	const checkEmail = useThrottledCallback(async (email: string) => {
+	const checkEmail = useThrottled(async (email: string) => {
 		cancelTokenSourceRef.current = axios.CancelToken.source();
 
 		const { data: { taken } } = await (api as EmailTakenAPI).get('/emailTaken', {
