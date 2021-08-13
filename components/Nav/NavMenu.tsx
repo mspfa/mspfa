@@ -1,6 +1,7 @@
 import NavItem from 'components/Nav/NavItem';
 import type { NavItemProps } from 'components/Nav/NavItem';
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useRef } from 'react';
+import useFunction from 'modules/client/useFunction';
 import type { MouseEvent } from 'react';
 
 export type NavMenuProps = {
@@ -24,19 +25,19 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 	const menuContainerRef = useRef<HTMLDivElement>(null!);
 
 	/** Handles the focus event bubbled from any element in the menu. */
-	const onFocus = useCallback(() => {
+	const onFocus = useFunction(() => {
 		setForceOpen(true);
-	}, []);
+	});
 
 	/** Handles the blur event bubbled from any element in the menu. */
-	const onBlur = useCallback(() => {
+	const onBlur = useFunction(() => {
 		// This timeout is necessary because otherwise, for example when tabbing through links in the menu, this will run before the next link in the menu focuses, so the `if` statement would not detect that the menu is in focus.
 		setTimeout(() => {
 			if (!menuContainerRef.current.contains(document.activeElement)) {
 				setForceOpen(false);
 			}
 		});
-	}, []);
+	});
 
 	return (
 		<div
@@ -51,13 +52,13 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 				id={id}
 				{...props}
 				onBlur={
-					useCallback(() => {
+					useFunction(() => {
 						// When the menu's label is blurred, it is (obviously) no longer focused from being clicked.
 						setClickedLabel(false);
-					}, [])
+					})
 				}
 				onClick={
-					useCallback((event: MouseEvent) => {
+					useFunction((event: MouseEvent) => {
 						event.preventDefault();
 
 						if (clickedLabel) {
@@ -67,7 +68,7 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 
 						// When the user clicks the label, toggle whether it is clicked.
 						setClickedLabel(!clickedLabel);
-					}, [clickedLabel])
+					})
 				}
 				ref={labelRef}
 			/>

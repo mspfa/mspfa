@@ -1,5 +1,5 @@
 import './styles.module.scss';
-import { useCallback } from 'react';
+import useFunction from 'modules/client/useFunction';
 import type { PublicUser } from 'modules/client/users';
 import IconImage from 'components/IconImage';
 
@@ -15,9 +15,9 @@ const UserFieldOption = ({ publicUser, setValue, disabled }: UserFieldOptionProp
 		className="user-field-option"
 		disabled={disabled}
 		onClick={
-			useCallback(() => {
+			useFunction(() => {
 				setValue(publicUser.id);
-			}, [publicUser, setValue])
+			})
 		}
 	>
 		<IconImage

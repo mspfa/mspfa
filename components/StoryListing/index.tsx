@@ -8,7 +8,8 @@ import EditButton from 'components/Button/EditButton';
 import { useUser } from 'modules/client/users';
 import { Perm } from 'modules/client/perms';
 import PageCount from 'components/Icon/PageCount';
-import { Fragment, useCallback, useState } from 'react';
+import { Fragment, useState } from 'react';
+import useFunction from 'modules/client/useFunction';
 import BBCode from 'components/BBCode';
 import StoryTagLinkContainer from 'components/StoryTagLink/StoryTagLinkContainer';
 import StoryTagLink from 'components/StoryTagLink';
@@ -21,9 +22,9 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 	const user = useUser();
 	const [open, setOpen] = useState(false);
 
-	const toggleOpen = useCallback(() => {
+	const toggleOpen = useFunction(() => {
 		setOpen(open => !open);
-	}, []);
+	});
 
 	return (
 		<div className="listing">

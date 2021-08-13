@@ -1,5 +1,6 @@
 import type { RecursivePartial } from 'modules/types';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
+import useFunction from 'modules/client/useFunction';
 import Router from 'next/router';
 import { isEqual } from 'lodash';
 
@@ -63,7 +64,7 @@ export const useLeaveConfirmation = (
 	/** Whether there are currently unsaved changes which should prompt confirmation. */
 	unsavedChanges: boolean | (() => boolean)
 ) => {
-	const shouldConfirmLeave = useCallback(() => {
+	const shouldConfirmLeave = useFunction(() => {
 		if (leaveConfirmationsToPrevent) {
 			leaveConfirmationsToPrevent--;
 			return false;
@@ -74,12 +75,12 @@ export const useLeaveConfirmation = (
 				? unsavedChanges
 				: unsavedChanges()
 		);
-	}, [unsavedChanges]);
+	});
 
-	const shouldLeave = useCallback(() => (
+	const shouldLeave = useFunction(() => (
 		!shouldConfirmLeave()
 		|| confirm(message)
-	), [shouldConfirmLeave]);
+	));
 
 	useEffect(() => {
 		const onBeforeUnload = (event: BeforeUnloadEvent) => {

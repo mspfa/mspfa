@@ -2,7 +2,7 @@ import './styles.module.scss';
 import Button from 'components/Button';
 import type { ButtonProps } from 'components/Button';
 import type { ReactNode } from 'react';
-import { useCallback } from 'react';
+import useFunction from 'modules/client/useFunction';
 import Dialog from 'modules/client/Dialog';
 
 export type HelpButtonProps = Omit<ButtonProps, 'children' | 'onClick' | 'title'> & {
@@ -16,13 +16,13 @@ const HelpButton = ({ className, subject, children, ...props }: HelpButtonProps)
 		className={`help-button${className ? ` ${className}` : ''}`}
 		title="Help"
 		onClick={
-			useCallback(() => {
+			useFunction(() => {
 				new Dialog({
 					id: 'help',
 					title: <>Help: {subject}</>,
 					content: children
 				});
-			}, [children, subject])
+			})
 		}
 		{...props}
 	/>

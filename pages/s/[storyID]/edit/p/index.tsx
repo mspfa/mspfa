@@ -6,7 +6,8 @@ import { withStatusCode } from 'modules/server/errors';
 import type { FormikProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import type { ChangeEvent, Dispatch, MouseEvent, MutableRefObject, ReactNode, SetStateAction } from 'react';
-import { useCallback, useRef, useState, useEffect, createContext, useMemo } from 'react';
+import { useRef, useState, useEffect, createContext, useMemo } from 'react';
+import useFunction from 'modules/client/useFunction';
 import { getChangedValues, preventLeaveConfirmations, useLeaveConfirmation } from 'modules/client/forms';
 import Box from 'components/Box';
 import Button from 'components/Button';
@@ -194,7 +195,7 @@ const Component = withErrorPage<ServerSideProps>(({
 		cancelTokenSourceRef.current = undefined;
 	}, [privateStory]);
 
-	const onChangeDefaultPageTitle = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+	const onChangeDefaultPageTitle = useFunction((event: ChangeEvent<HTMLInputElement>) => {
 		cancelTokenSourceRef.current?.cancel();
 
 		if (!event.target.reportValidity()) {
@@ -202,9 +203,9 @@ const Component = withErrorPage<ServerSideProps>(({
 		}
 
 		changeDefaultPageTitle(event);
-	}, [changeDefaultPageTitle]);
+	});
 
-	const findAndReplace = useCallback(async () => {
+	const findAndReplace = useFunction(async () => {
 		const dialog = new Dialog({
 			id: 'find-and-replace',
 			title: 'Find and Replace',
@@ -290,14 +291,14 @@ const Component = withErrorPage<ServerSideProps>(({
 								type="checkbox"
 								checked={!values.flags.includes('i')}
 								onChange={
-									useCallback((event: ChangeEvent<HTMLInputElement>) => {
+									useFunction((event: ChangeEvent<HTMLInputElement>) => {
 										setFieldValue(
 											'flags',
 											event.target.checked
 												? values.flags.replace(/i/g, '')
 												: `${values.flags}i`
 										);
-									}, [setFieldValue, values.flags])
+									})
 								}
 							/>
 						</LabeledBoxRow>
@@ -345,9 +346,9 @@ const Component = withErrorPage<ServerSideProps>(({
 				formikPropsRef.current.setFieldValue(`pages.${page.id}.content`, replacedContent);
 			}
 		}
-	}, []);
+	});
 
-	const jumpToPage = useCallback(async () => {
+	const jumpToPage = useFunction(async () => {
 		const dialog = new Dialog({
 			id: 'jump-to-page',
 			title: 'Jump to Page',
@@ -379,9 +380,9 @@ const Component = withErrorPage<ServerSideProps>(({
 
 		location.hash = '';
 		location.hash = `p${dialog.form!.values.pageID}`;
-	}, []);
+	});
 
-	const newPage = useCallback(() => {
+	const newPage = useFunction(() => {
 		const pages = Object.values(formikPropsRef.current.values.pages);
 
 		// Get the ID of a new page being added after the last one.
@@ -412,7 +413,7 @@ const Component = withErrorPage<ServerSideProps>(({
 			// Select the title field of the newly added page.
 			(document.getElementById(`field-pages-${id}-title`) as HTMLInputElement | null)?.select();
 		});
-	}, [privateStory.defaultPageTitle]);
+	});
 
 	return (
 		<Page heading="Edit Adventure">
@@ -421,7 +422,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					pages: initialPages
 				}}
 				onSubmit={
-					useCallback(async values => {
+					useFunction(async values => {
 						const changedValues = getChangedValues(initialPages, values.pages);
 
 						if (!changedValues) {
@@ -441,7 +442,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							...initialPages,
 							...newInitialPages
 						});
-					}, [privateStory.id, initialPages])
+					})
 				}
 				// Even though we have no `validate` function, these three props are necessary to set as a significant performance optimization.
 				validateOnChange={false}
@@ -517,7 +518,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					/** A ref to the latest value of `advancedShownPageKeys` to reduce unnecessary callback dependencies. */
 					const advancedShownPageKeysRef = useLatest(advancedShownPageKeys);
 
-					const onClickPageTile = useCallback((event: MouseEvent<HTMLDivElement> & { target: HTMLDivElement }) => {
+					const onClickPageTile = useFunction((event: MouseEvent<HTMLDivElement> & { target: HTMLDivElement }) => {
 						const pageID = +event.target.id.slice(1);
 
 						const newSelectedPages = [...selectedPages];
@@ -549,18 +550,18 @@ const Component = withErrorPage<ServerSideProps>(({
 						}
 
 						setSelectedPages(newSelectedPages);
-					}, [selectedPages]);
+					});
 
-					const deselectAll = useCallback(() => {
+					const deselectAll = useFunction(() => {
 						setSelectedPages([]);
-					}, []);
+					});
 
-					const selectAll = useCallback(() => {
+					const selectAll = useFunction(() => {
 						setSelectedPages(Object.values(formikPropsRef.current.values.pages).map(({ id }) => id));
-					}, []);
+					});
 
 					/** Mutates `selectedPages` to be sorted in ascending order and returns a user-friendly string describing the ranges of selected pages. */
-					const sortAndGetSelectedPages = useCallback(() => {
+					const sortAndGetSelectedPages = useFunction(() => {
 						/** An array of objects representing closed intervals of selected page IDs. */
 						const selectedPageRanges: Array<{
 							/** The lower bound of this interval. */
@@ -599,9 +600,9 @@ const Component = withErrorPage<ServerSideProps>(({
 									? `${rangeStrings[0]} and ${rangeStrings[1]}`
 									: `${rangeStrings.slice(0, -1).join(', ')}, and ${rangeStrings[rangeStrings.length - 1]}`
 						);
-					}, [selectedPages]);
+					});
 
-					const deleteSelectedPages = useCallback(async () => {
+					const deleteSelectedPages = useFunction(async () => {
 						formikPropsRef.current.setSubmitting(true);
 
 						if (!(
@@ -692,9 +693,9 @@ const Component = withErrorPage<ServerSideProps>(({
 						setInitialPages(newPages);
 
 						formikPropsRef.current.setSubmitting(false);
-					}, [selectedPages, storyID, sortAndGetSelectedPages, advancedShownPageKeysRef]);
+					});
 
-					const moveSelectedPages = useCallback(async () => {
+					const moveSelectedPages = useFunction(async () => {
 						formikPropsRef.current.setSubmitting(true);
 
 						const selectedPagesString = sortAndGetSelectedPages();
@@ -830,7 +831,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						setSelectedPages(selectedPages.map(pageID => changedPageIDs[pageID]));
 
 						formikPropsRef.current.setSubmitting(false);
-					}, [selectedPages, pageValues.length, sortAndGetSelectedPages, storyID]);
+					});
 
 					// When `viewMode === 'list'`, this state is a record that maps page IDs to a boolean of their `culled` prop, or to undefined if the page hasn't been processed by `updateCulledPages` yet.
 					const [culledPages, setCulledPages] = useState<Partial<Record<StoryPageID, boolean>>>({});
@@ -1412,7 +1413,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					}
 
 					/** Toggles whether a page listing's advanced section is open. */
-					const toggleAdvancedShown = useCallback((
+					const toggleAdvancedShown = useFunction((
 						/** The key of the page to toggle the advanced section of. */
 						pageKey: integer
 					) => {
@@ -1430,7 +1431,7 @@ const Component = withErrorPage<ServerSideProps>(({
 								...advancedShownPageKeysRef.current.slice(pageKeyIndex + 1, advancedShownPageKeysRef.current.length)
 							]);
 						}
-					}, [advancedShownPageKeysRef]);
+					});
 
 					/**
 					 * The values to pass into the `value` of the `StoryEditorContext`.
@@ -1484,7 +1485,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											title={`Set View Mode to ${viewMode === 'grid' ? 'List' : 'Grid'}`}
 											disabled={formikPropsRef.current.isSubmitting}
 											onClick={
-												useCallback(() => {
+												useFunction(() => {
 													if (formikPropsRef.current.dirty) {
 														new Dialog({
 															id: 'story-editor-view-mode',
@@ -1496,7 +1497,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 													// Toggle the `viewMode` between `'list'` and `'grid'`.
 													setViewMode(viewMode => viewMode === 'list' ? 'grid' : 'list');
-												}, [])
+												})
 											}
 										>
 											{`View: ${viewMode === 'grid' ? 'Grid' : 'List'}`}
@@ -1530,9 +1531,9 @@ const Component = withErrorPage<ServerSideProps>(({
 											className="spaced"
 											defaultValue={sortMode}
 											onChange={
-												useCallback((event: ChangeEvent<HTMLSelectElement>) => {
+												useFunction((event: ChangeEvent<HTMLSelectElement>) => {
 													setSortMode(event.target.value as 'newest' | 'oldest');
-												}, [])
+												})
 											}
 										>
 											<option value="newest">Newest</option>
