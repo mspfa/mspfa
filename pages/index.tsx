@@ -1,10 +1,9 @@
-import type { LatestPages } from 'components/Basement';
 import { MAX_LATEST_PAGES } from 'components/Basement';
 import type { ClientPreviousPageIDs } from 'components/StoryViewer';
 import { uniqBy } from 'lodash';
 import { withErrorPage } from 'lib/client/errors';
 import { Perm } from 'lib/client/perms';
-import type { ClientStoryPage, PublicStory } from 'lib/client/stories';
+import type { ClientStoryPage, PublicStory, StoryLog } from 'lib/client/stories';
 import { StoryPrivacy } from 'lib/client/stories';
 import { useUserCache } from 'lib/client/UserCache';
 import type { PublicUser } from 'lib/client/users';
@@ -29,7 +28,7 @@ type ServerSideProps = {
 	publicStory: PublicStory,
 	pages: Record<StoryPageID, ClientStoryPage | null>,
 	previousPageIDs: ClientPreviousPageIDs,
-	latestPages: LatestPages
+	latestPages: StoryLog
 } | {
 	statusCode: integer
 };
@@ -105,7 +104,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 	const { clientPages, clientPreviousPageIDs } = getClientPagesAround(story, pageID, previewMode);
 
 	/** A record of pages in the adventure's "Latest Pages" section mapping each page's ID to its title. */
-	const latestPages: LatestPages = [];
+	const latestPages: StoryLog = [];
 
 	for (
 		let latestPageID = (

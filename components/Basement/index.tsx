@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import Button from 'components/Button';
 import Row from 'components/Row';
-import type { ClientStoryPage, PublicStory } from 'lib/client/stories';
+import type { StoryLog, PublicStory } from 'lib/client/stories';
 import { storyStatusNames } from 'lib/client/stories';
 import { useMobile } from 'lib/client/useMobile';
 import { Fragment, useMemo, useState } from 'react';
@@ -25,14 +25,11 @@ import StoryTagLink from 'components/StoryTagLink';
 /** The maximum number of pages which can be listed under the adventure's "Latest Pages" section. */
 export const MAX_LATEST_PAGES = 45;
 
-/** An array of objects, each containing data about one listing in the adventure's "Latest Pages" section.  */
-export type LatestPages = Array<Pick<ClientStoryPage, 'id' | 'published' | 'title'>>;
-
 export type BasementProps = {
 	story: PublicStory,
 	pageID: StoryPageID,
 	previewMode: boolean,
-	latestPages: LatestPages
+	latestPages: StoryLog
 };
 
 /** The area of the `StoryViewer` between the `footer` and `#copyright` elements. */

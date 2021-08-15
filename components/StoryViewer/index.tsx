@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import Page from 'components/Page';
-import type { ClientStoryPage, PublicStory } from 'lib/client/stories';
+import type { ClientStoryPage, PublicStory, StoryLog } from 'lib/client/stories';
 import Link from 'components/Link';
 import Router, { useRouter } from 'next/router';
 import type { MouseEvent } from 'react';
@@ -17,7 +17,6 @@ import { defaultSettings, getUser } from 'lib/client/users';
 import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
-import type { LatestPages } from 'components/Basement';
 import Basement from 'components/Basement';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -75,7 +74,7 @@ export type StoryViewerProps = {
 	 */
 	pages: Partial<Record<StoryPageID, ClientStoryPage | null>>,
 	previousPageIDs: ClientPreviousPageIDs,
-	latestPages: LatestPages
+	latestPages: StoryLog
 };
 
 const StoryViewer = ({
