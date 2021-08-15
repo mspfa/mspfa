@@ -70,10 +70,11 @@ $nav-group-colors: (
 		background-color: inherit;
 		flex-direction: column;
 		padding-bottom: 1px;
+		z-index: 401;
 
 		&-container:hover & {
 			display: flex;
-			z-index: 1;
+			z-index: 402;
 		}
 
 		&-container.force-open & {
