@@ -16,7 +16,7 @@ import { uniqBy } from 'lodash';
 import users, { getPrivateUser, getPublicUser } from 'lib/server/users';
 import type { ListedMessage } from 'components/MessageListing';
 import MessageListing from 'components/MessageListing';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useFunction from 'lib/client/useFunction';
 import Button from 'components/Button';
 import { useLatest } from 'react-use';
@@ -25,6 +25,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import Row from 'components/Row';
 import type { integer } from 'lib/types';
+import useSticky from 'lib/client/useSticky';
 
 type ServerSideProps = {
 	privateUser: PrivateUser,
@@ -50,6 +51,10 @@ const Component = withErrorPage<ServerSideProps>(({
 
 	const { cacheUser } = useUserCache();
 	initialUserCache.forEach(cacheUser);
+
+	/** A ref to the `#messages-actions` element. */
+	const actionsElementRef = useRef<HTMLDivElement>(null!);
+	useSticky(actionsElementRef);
 
 	let selectedCount = 0;
 	let unreadCount = 0;
@@ -152,7 +157,10 @@ const Component = withErrorPage<ServerSideProps>(({
 				<BoxSection
 					heading={`Your Messages (${listedMessages.length} total, ${unreadCount} unread)`}
 				>
-					<div id="messages-actions">
+					<div
+						id="messages-actions"
+						ref={actionsElementRef}
+					>
 						<Button
 							className="small"
 							href="/message/new"
