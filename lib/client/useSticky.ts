@@ -37,7 +37,11 @@ const addStickyElementRef = (stickyElementRefToAdd: RefObject<HTMLElement>) => {
 				}
 			}
 
-			document.documentElement.style.scrollPaddingTop = `${netStickyHeight}px`;
+			document.documentElement.style.scrollPaddingTop = (
+				netStickyHeight
+					? `${netStickyHeight}px`
+					: ''
+			);
 		};
 
 		_viewportListener = addViewportListener(updateViewport);
