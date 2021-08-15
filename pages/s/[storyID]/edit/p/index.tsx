@@ -529,7 +529,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 							// If the user is not holding `ctrl` or `⌘`, deselect all pages outside the target range.
 							if (!(event.ctrlKey || event.metaKey)) {
-								while (newSelectedPages.pop()) {}
+								newSelectedPages.length = 0;
 							}
 
 							// Select all the pages in the range between `lastActivePageIDRef.current` and `pageID` (inclusive).

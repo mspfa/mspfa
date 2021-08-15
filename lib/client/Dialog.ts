@@ -245,10 +245,7 @@ export default class Dialog<Values extends Record<string, any>> extends Promise<
 
 Router.events.on('routeChangeStart', () => {
 	// Remove dialogs without resolution on route change.
-
-	while (dialogs.length) {
-		dialogs.pop();
-	}
+	dialogs.length = 0;
 
 	updateDialogs();
 });
