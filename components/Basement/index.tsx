@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import Button from 'components/Button';
 import Row from 'components/Row';
-import type { StoryLog, PublicStory } from 'lib/client/stories';
+import type { StoryLogListings, PublicStory } from 'lib/client/stories';
 import { storyStatusNames } from 'lib/client/stories';
 import { useMobile } from 'lib/client/useMobile';
 import { Fragment, useMemo, useState } from 'react';
@@ -21,6 +21,7 @@ import { uniq } from 'lodash';
 import type { StoryPageID } from 'lib/server/stories';
 import StoryTagLinkContainer from 'components/StoryTagLink/StoryTagLinkContainer';
 import StoryTagLink from 'components/StoryTagLink';
+import StoryLog from 'components/StoryLog';
 
 /** The maximum number of pages which can be listed under the adventure's "Latest Pages" section. */
 export const MAX_LATEST_PAGES = 45;
@@ -29,7 +30,7 @@ export type BasementProps = {
 	story: PublicStory,
 	pageID: StoryPageID,
 	previewMode: boolean,
-	latestPages: StoryLog
+	latestPages: StoryLogListings
 };
 
 /** The area of the `StoryViewer` between the `footer` and `#copyright` elements. */
@@ -57,35 +58,6 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 		setLatestPagesShown(latestPagesShown => !latestPagesShown);
 	});
 
-	const latestPagesNode = useMemo(() => latestPagesShown && (
-		latestPages.map(latestPage => (
-			<div
-				key={latestPage.id}
-				className="latest-pages-listing"
-			>
-				{latestPage.published === undefined ? (
-					'Draft - '
-				) : (
-					<>
-						<Timestamp short relative>
-							{latestPage.published}
-						</Timestamp>
-						{' - '}
-					</>
-				)}
-				<Link
-					shallow
-					href={`/?s=${story.id}&p=${latestPage.id}${previewMode ? '&preview=1' : ''}`}
-				>
-					<BBCode alreadySanitized>
-						{/* We must `sanitizeBBCode` before passing it in, or else this memo hook would be pointless as the sanitized value wouldn't be memoized. */}
-						{sanitizeBBCode(latestPage.title, { html: true })}
-					</BBCode>
-				</Link>
-			</div>
-		))
-	), [latestPagesShown, latestPages, previewMode, story.id]);
-
 	const editorLinks = uniq([story.owner, ...story.editors]).map((userID, i) => (
 		<Fragment key={userID}>
 			{i !== 0 && ', '}
@@ -102,7 +74,12 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 					<div className="basement-section-heading translucent">
 						Latest Pages
 					</div>
-					<div id="latest-pages">
+					<StoryLog
+						id="latest-pages"
+						story={story}
+						listings={latestPagesShown ? latestPages : undefined}
+						previewMode={previewMode}
+					>
 						<Label className="spaced">
 							Latest Pages
 						</Label>
@@ -112,11 +89,10 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 						>
 							{latestPagesShown ? '(Hide)' : '(Show)'}
 						</Link>
-						{latestPagesNode}
-					</div>
+					</StoryLog>
 					{latestPagesShown && (
 						<div id="view-all-pages-link-container">
-							<Link href={`/s/${story.id}/log`}>
+							<Link href={`/s/${story.id}/log${previewMode ? '?preview=1' : ''}`}>
 								View All Pages
 							</Link>
 						</div>

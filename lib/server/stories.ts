@@ -104,7 +104,7 @@ export type ServerStory = {
 	description: string,
 	icon: '' | URLString,
 	/**
-	 * The public page count.
+	 * The public page count (the ID of the last public page).
 	 *
 	 * ⚠️ Does not necessarily equal `Object.values(story.pages).length` due to excluding pages which are not public.
 	 */

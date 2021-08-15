@@ -3,7 +3,7 @@ import type { ClientPreviousPageIDs } from 'components/StoryViewer';
 import { uniqBy } from 'lodash';
 import { withErrorPage } from 'lib/client/errors';
 import { Perm } from 'lib/client/perms';
-import type { ClientStoryPage, PublicStory, StoryLog } from 'lib/client/stories';
+import type { ClientStoryPage, PublicStory, StoryLogListings } from 'lib/client/stories';
 import { StoryPrivacy } from 'lib/client/stories';
 import { useUserCache } from 'lib/client/UserCache';
 import type { PublicUser } from 'lib/client/users';
@@ -28,7 +28,7 @@ type ServerSideProps = {
 	publicStory: PublicStory,
 	pages: Record<StoryPageID, ClientStoryPage | null>,
 	previousPageIDs: ClientPreviousPageIDs,
-	latestPages: StoryLog
+	latestPages: StoryLogListings
 } | {
 	statusCode: integer
 };
@@ -76,15 +76,19 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		return { props: { statusCode: 404 } };
 	}
 
-	const readPerms = (
-		!!req.user && (
+	/** Whether the user is in preview mode (which allows accessing unpublished pages) and has permission to be in preview mode. */
+	const previewMode = 'preview' in query;
+
+	if ((
+		previewMode
+		|| story.privacy === StoryPrivacy.Private
+	) && !(
+		req.user && (
 			story.owner.equals(req.user._id)
 			|| story.editors.some(userID => userID.equals(req.user!._id))
-			|| !!(req.user.perms & Perm.sudoRead)
+			|| (req.user.perms & Perm.sudoRead)
 		)
-	);
-
-	if (story.privacy === StoryPrivacy.Private && !readPerms) {
+	)) {
 		return { props: { statusCode: 403 } };
 	}
 
@@ -94,17 +98,10 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 			: 1
 	);
 
-	/** Whether the user is in preview mode (which allows accessing unpublished pages) and has permission to be in preview mode. */
-	const previewMode = 'preview' in query;
-	if (previewMode && !readPerms) {
-		// The user does not have permission to be in preview mode.
-		return { props: { statusCode: 403 } };
-	}
-
 	const { clientPages, clientPreviousPageIDs } = getClientPagesAround(story, pageID, previewMode);
 
-	/** A record of pages in the adventure's "Latest Pages" section mapping each page's ID to its title. */
-	const latestPages: StoryLog = [];
+	/** A `StoryLogListings` of pages in the story's "Latest Pages" section. */
+	const latestPages: StoryLogListings = [];
 
 	for (
 		let latestPageID = (

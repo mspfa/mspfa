@@ -65,4 +65,4 @@ export type ClientStoryPage = Pick<ServerStoryPage, ClientStoryPageKey> & {
 export type ClientStoryPageRecord = Record<StoryPageID, ClientStoryPage>;
 
 /** An array of objects, each containing information about one listing in a story's log.  */
-export type StoryLog = Array<Pick<ClientStoryPage, 'id' | 'published' | 'title'>>;
+export type StoryLogListings = Array<Pick<ClientStoryPage, 'id' | 'published' | 'title'>>;

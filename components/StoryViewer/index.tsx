@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import Page from 'components/Page';
-import type { ClientStoryPage, PublicStory, StoryLog } from 'lib/client/stories';
+import type { ClientStoryPage, PublicStory, StoryLogListings } from 'lib/client/stories';
 import Link from 'components/Link';
 import Router, { useRouter } from 'next/router';
 import type { MouseEvent } from 'react';
@@ -74,7 +74,7 @@ export type StoryViewerProps = {
 	 */
 	pages: Partial<Record<StoryPageID, ClientStoryPage | null>>,
 	previousPageIDs: ClientPreviousPageIDs,
-	latestPages: StoryLog
+	latestPages: StoryLogListings
 };
 
 const StoryViewer = ({

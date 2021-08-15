@@ -1457,8 +1457,7 @@ const Component = withErrorPage<ServerSideProps>(({
 														return;
 													}
 
-													// Toggle the `viewMode` between `'list'` and `'grid'`.
-													setViewMode(viewMode => viewMode === 'list' ? 'grid' : 'list');
+													setViewMode(viewMode === 'list' ? 'grid' : 'list');
 												})
 											}
 										>

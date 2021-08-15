@@ -1,0 +1,7 @@
+@use 'sass:math';
+@use 'styles/general' as *;
+
+.story-log {
+	font-family: $sans-serif;
+	font-size: math.div(10, 16) * 1em;
+}
