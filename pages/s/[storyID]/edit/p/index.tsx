@@ -32,15 +32,18 @@ import LabeledBoxRow from 'components/Box/LabeledBoxRow';
 import { escapeRegExp } from 'lodash';
 import BoxRow from 'components/Box/BoxRow';
 import Router, { useRouter } from 'next/router';
-import frameThrottler, { frameThrottlerRequests } from 'lib/client/frameThrottler';
+import frameThrottler from 'lib/client/frameThrottler';
 import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
 import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
 import { useNavStoryID } from 'components/Nav';
 import type { integer } from 'lib/types';
+import useSticky from 'lib/client/useSticky';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 type StoryMovePagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/movePages').default>;
+
+const getScrollPaddingTop = () => +document.documentElement.style.scrollPaddingTop.slice(0, -2);
 
 export type Values = {
 	/** An object mapping page IDs to their respective pages. Since this object has numeric keys, standard JavaScript automatically sorts its properties by lowest first. */
@@ -870,6 +873,10 @@ const Component = withErrorPage<ServerSideProps>(({
 					/** A ref to whether `updateLocationHash` has been called yet and shouldn't be called again without a `hashchange` event. */
 					const calledUpdateLocationHashRef = useRef(false);
 
+					/** A ref to the `#story-editor-actions` element. */
+					const actionsElementRef = useRef<HTMLDivElement>(null!);
+					useSticky(actionsElementRef);
+
 					useEffect(() => {
 						const url = new URL(location.href);
 
@@ -900,36 +907,11 @@ const Component = withErrorPage<ServerSideProps>(({
 								if (
 									pageID > 0
 									&& pageID <= lastPageID
-									// Check if the target location hash is a culled page.
 								) {
 									// Jump to where the target page is if it isn't culled, or where it would be if it weren't culled.
 
 									// We can assert this is non-null because we have verified in that the target page exists, and if a page exists, then at least one page element (though not necessarily the one we're jumping to) must be mounted.
 									const firstPageElement = document.getElementsByClassName('story-editor-page')[0] as HTMLDivElement;
-
-									/** Offsets the inputted `scrollTop` by a certain amount for the user's convenience. */
-									const offsetScrollTop = (scrollTop: number) => {
-										const actionsStyle = window.getComputedStyle(actionsElementRef.current); // TODO: Fix `actionsElementRef.current === null` when clicking the edit button from the story viewer.
-
-										if (actionsStyle.position === 'sticky') {
-											const actionsRect = actionsElementRef.current.getBoundingClientRect();
-											const actionsStyleTop = +actionsStyle.top.slice(0, -2);
-
-											return scrollTop - (
-												// Check if this element is currently stuck to its `style.top`.
-												actionsRect.top === actionsStyleTop
-												// If the actions element isn't stuck, then check if it would be after this function's scroll.
-												|| scrollTop >= document.documentElement.scrollTop + actionsRect.top + actionsRect.height
-													? actionsStyleTop + actionsRect.height
-													: 0
-											) - (
-												// Add an extra 4 pixels if `viewMode === 'list'` because it looks weird having the page listing up against the top of the screen.
-												viewMode === 'list' ? 4 : 0
-											);
-										}
-
-										return scrollTop;
-									};
 
 									if (viewMode === 'list') {
 										let offsetTop = firstPageElement.offsetTop;
@@ -954,7 +936,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											}
 										}
 
-										document.documentElement.scrollTop = offsetScrollTop(offsetTop);
+										document.documentElement.scrollTop = offsetTop - getScrollPaddingTop();
 									} else {
 										// If this point is reached, `viewMode === 'grid'`.
 
@@ -973,7 +955,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											) / pagesPerRow
 										);
 
-										document.documentElement.scrollTop = offsetScrollTop(pageContainer.offsetTop + pageRow * pageHeight);
+										document.documentElement.scrollTop = pageContainer.offsetTop + pageRow * pageHeight - getScrollPaddingTop();
 									}
 								}
 							}
@@ -1058,9 +1040,6 @@ const Component = withErrorPage<ServerSideProps>(({
 							document.removeEventListener('keydown', onKeyDown);
 						};
 					}, [viewMode, sortMode, selectAll, deselectAll, deleteSelectedPages, gridCullingInfoRef, culledPagesRef, defaultCulledHeightRef]);
-
-					/** A ref to the `#story-editor-actions` element. */
-					const actionsElementRef = useRef<HTMLDivElement>(null!);
 
 					// This is a layout effect rather than a normal effect to reduce the time the user can briefly see culled pages.
 					useIsomorphicLayoutEffect(() => {
@@ -1244,29 +1223,12 @@ const Component = withErrorPage<ServerSideProps>(({
 							}
 						};
 
-						/** A function called whenever the viewport changes. */
-						const updateViewport = () => {
-							updateCulledPages();
-
-							const actionsStyle = window.getComputedStyle(actionsElementRef.current);
-							if (actionsStyle.position === 'sticky') {
-								actionsElementRef.current.classList[
-									actionsElementRef.current.getBoundingClientRect().top === +actionsStyle.top.slice(0, -2)
-										? 'add'
-										: 'remove'
-								]('stuck');
-							}
-						};
-
-						const _updateViewportOrCulledPages = addViewportListener(updateViewport);
+						const _updateCulledPages = addViewportListener(updateCulledPages);
 
 						/** Calls `updateCulledPages` throttled by `frameThrottler`. */
 						const throttledUpdateCulledPages = () => {
-							// Don't call `frameThrottler` if there is possibly already a pending animation frame request from `throttledUpdateViewport`, since this would then overwrite it and cancel the `updateViewport` call, which includes a call to `updateCulledPages` anyway.
-							if (!frameThrottlerRequests[_updateViewportOrCulledPages]) {
-								frameThrottler(_updateViewportOrCulledPages)
-									.then(updateCulledPages);
-							}
+							frameThrottler(_updateCulledPages)
+								.then(updateCulledPages);
 						};
 
 						// We use `focusin` instead of `focus` because the former bubbles while the latter doesn't, and we want to capture any focus event among the page elements.
@@ -1274,11 +1236,11 @@ const Component = withErrorPage<ServerSideProps>(({
 						// We don't listen to `focusout` because, when `focusout` is dispatched, `document.activeElement` is set to `null`, causing any page element outside the view which the user is attempting to focus to instead be culled.
 						// Also, listening to `focusout` isn't necessary for any pragmatic reason, and not doing so improves performance significantly by updating the culled page elements half as often when frequently changing focus.
 
-						// Call `updateViewport` synchronously so the user can't see culled pages for a frame.
-						updateViewport();
+						// Call `updateCulledPages` synchronously so the user can't see culled pages for a frame.
+						updateCulledPages();
 
 						return () => {
-							removeViewportListener(_updateViewportOrCulledPages);
+							removeViewportListener(_updateCulledPages);
 							document.removeEventListener('focusin', throttledUpdateCulledPages);
 						};
 					}, [defaultCulledHeight, pageValues.length, viewMode, sortMode, culledPagesRef, gridCullingInfoRef]);

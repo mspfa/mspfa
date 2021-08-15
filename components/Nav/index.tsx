@@ -7,6 +7,8 @@ import { promptSignIn, promptSignOut, useUser } from 'lib/client/users';
 import createGlobalState from 'global-react-state';
 import type { StoryID } from 'lib/server/stories';
 import { useIsomorphicLayoutEffect } from 'react-use';
+import useSticky from 'lib/client/useSticky';
+import { useRef } from 'react';
 
 const [useStoryID, setStoryID] = createGlobalState<StoryID | undefined>(undefined);
 
@@ -44,9 +46,13 @@ const Nav = () => {
 		);
 	}
 
+	const ref = useRef<HTMLElement>(null!);
+	useSticky(ref);
+
 	return (
 		<nav
 			className={user?.settings.stickyNav ? 'sticky' : undefined}
+			ref={ref}
 		>
 			<NavGroup id="primary">
 				<NavItem id="home" label="Home" href="/" />
