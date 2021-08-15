@@ -401,7 +401,7 @@ const StoryViewer = ({
 
 	useEffect(() => {
 		const onKeyDown = (event: KeyboardEvent) => {
-			if (shouldIgnoreControl()) {
+			if (shouldIgnoreControl() || event.ctrlKey || event.altKey || event.metaKey) {
 				return;
 			}
 
