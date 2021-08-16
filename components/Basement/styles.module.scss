@@ -153,6 +153,10 @@
 
 	&-description {
 		font-size: 0.875em;
+
+		* {
+			max-width: 100%;
+		}
 	}
 }
 
