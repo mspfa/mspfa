@@ -108,7 +108,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 	) {
 		const page = story.pages[pageID];
 
-		if (!page.unlisted || previewMode) {
+		if (!page.unlisted) {
 			listings.push({
 				id: pageID,
 				...page.published !== undefined && {

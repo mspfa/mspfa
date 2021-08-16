@@ -117,7 +117,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 	) {
 		const latestPage = story.pages[latestPageID];
 
-		if (!latestPage.unlisted || previewMode) {
+		if (!latestPage.unlisted) {
 			latestPages.push({
 				id: latestPageID,
 				...latestPage.published !== undefined && {
