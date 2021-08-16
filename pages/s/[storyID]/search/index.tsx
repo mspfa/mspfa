@@ -152,6 +152,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, results }) => {
 								name="searchQuery"
 								className="spaced"
 								autoFocus
+								autoComplete="off"
 							/>
 							<Button
 								type="submit"
