@@ -79,7 +79,6 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		return { props: { statusCode: 404 } };
 	}
 
-	/** Whether the user is in preview mode (which allows accessing unpublished pages) and has permission to be in preview mode. */
 	const previewMode = 'preview' in query;
 
 	if ((

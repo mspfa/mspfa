@@ -80,7 +80,6 @@ const Handler: APIHandler<{
 	const story = await getStoryByUnsafeID(req.query.storyID, res);
 
 	if (req.method === 'GET') {
-		/** Whether the user is in preview mode (which allows accessing unpublished pages) and has permission to be in preview mode. */
 		const previewMode = 'preview' in req.query;
 
 		// Check if the user is trying to do something that requires read perms.

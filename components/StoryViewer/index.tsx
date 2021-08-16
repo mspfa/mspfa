@@ -86,7 +86,6 @@ const StoryViewer = ({
 	useNavStoryID(story.id);
 
 	const router = useRouter();
-	/** Whether the user is in preview mode and should see unpublished pages. */
 	const previewMode = 'preview' in router.query;
 
 	// This state is record of cached pages.
