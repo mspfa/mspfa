@@ -78,6 +78,11 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, results }) => {
 					<div id="story-search-results">
 						{results.map(result => {
 							const getNodes = (string: string) => {
+								/**
+								 * The array of nodes for the marked string.
+								 *
+								 * In order to ensure unique keys, each node's key must be the index of the node's content in the original string, and no node can be empty.
+								 */
 								const nodes: ReactNode[] = [];
 
 								const stringToSearch = string.toLowerCase();
