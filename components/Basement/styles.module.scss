@@ -103,14 +103,6 @@
 	padding: 2px;
 }
 
-.latest-pages-listing {
-	& > .link {
-		&::before, &::after {
-			content: '"';
-		}
-	}
-}
-
 #view-all-pages-link-container {
 	text-align: center;
 	font-family: $sans-serif;

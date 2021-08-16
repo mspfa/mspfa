@@ -4,4 +4,10 @@
 .story-log {
 	font-family: $sans-serif;
 	font-size: math.div(10, 16) * 1em;
+
+	&-listing > .link {
+		&::before, &::after {
+			content: '"';
+		}
+	}
 }
