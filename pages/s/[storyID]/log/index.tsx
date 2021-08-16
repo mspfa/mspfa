@@ -13,7 +13,7 @@ import BoxSection from 'components/Box/BoxSection';
 import Link from 'components/Link';
 import { useNavStoryID } from 'components/Nav';
 import { useMemo } from 'react';
-import Router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import useFunction from 'lib/client/useFunction';
 import { preventLeaveConfirmations } from 'lib/client/forms';
 
@@ -57,7 +57,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, listings }) => 
 									const url = new URL(location.href);
 									url.searchParams.set('sort', sortMode === 'newest' ? 'oldest' : 'newest');
 									preventLeaveConfirmations();
-									Router.replace(url, undefined, { shallow: true });
+									router.replace(url, undefined, { shallow: true });
 								})
 							}
 						>
