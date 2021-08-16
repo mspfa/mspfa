@@ -16,7 +16,6 @@ import useFunction from 'lib/client/useFunction';
 import Button from 'components/Button';
 import Label from 'components/Label';
 import { sanitizeBBCode } from 'components/BBCode';
-import Row from 'components/Row';
 import Link from 'components/Link';
 import Timestamp from 'components/Timestamp';
 import type { ReactNode } from 'react';
@@ -99,7 +98,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, results }) => {
 		};
 
 		return (
-			<Row
+			<div
 				key={result.id}
 				className="story-search-result"
 			>
@@ -123,7 +122,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, results }) => {
 				<div className="story-search-result-content">
 					{getNodes(result.content)}
 				</div>
-			</Row>
+			</div>
 		);
 	});
 
@@ -161,9 +160,9 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, results }) => {
 							/>
 						</Form>
 					</Formik>
-					<Row id="story-search-info">
+					<div id="story-search-info">
 						{`${matches} result${matches === 1 ? '' : 's'} in ${results.length} page${results.length === 1 ? '' : 's'}`}
-					</Row>
+					</div>
 					<div id="story-search-results">
 						{resultNodes}
 					</div>
