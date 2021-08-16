@@ -48,9 +48,11 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, results }) => {
 					>
 						<Form id="story-search-form">
 							<Field name="query" className="spaced" autoFocus />
-							<Button type="submit" className="spaced small">
-								Search
-							</Button>
+							<Button
+								type="submit"
+								icon
+								className="search-button spaced"
+							/>
 						</Form>
 					</Formik>
 				</BoxSection>
