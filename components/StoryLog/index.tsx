@@ -36,6 +36,7 @@ const StoryLog = ({ story, listings, children, previewMode, className, ...props 
 					<Link
 						shallow
 						href={`/?s=${story.id}&p=${listing.id}${previewMode ? '&preview=1' : ''}`}
+						title={sanitizeBBCode(listing.title, { noBB: true })}
 					>
 						<BBCode alreadySanitized>
 							{/* We must `sanitizeBBCode` before passing it in, or else this memo hook would be pointless as the sanitized value wouldn't be memoized. */}

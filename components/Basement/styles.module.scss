@@ -101,6 +101,26 @@
 #latest-pages {
 	margin: 1em 0;
 	padding: 2px;
+
+	.story-log {
+		&-listing {
+			display: flex;
+
+			& > .link {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+
+				.bb {
+					white-space: nowrap;
+				}
+			}
+		}
+
+		&-timestamp-container {
+			flex-shrink: 0;
+		}
+	}
 }
 
 #view-all-pages-link-container {
