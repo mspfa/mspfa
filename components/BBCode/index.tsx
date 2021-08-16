@@ -113,7 +113,7 @@ export const sanitizeBBCode = (bbString = '', { html, noBB }: {
 
 			htmlString += '>';
 
-			// Replace the next closing tag. It doesn't matter if it corresponds to the matched opening tag; valid BBCode will have the same number of opening tags as closing tags.
+			// Replace the next closing tag.
 			bbString = bbString.replace(
 				new RegExp(`\\[/${tagName}\\]${
 					// If `BBTag` is a block element, we also want to remove one line break after its closing tag to promote intuitive line breaking behavior for the user.
