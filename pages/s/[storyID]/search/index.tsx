@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import { withErrorPage } from 'lib/client/errors';
 import { Perm } from 'lib/client/perms';
-import type { PublicStory, StoryLogListings } from 'lib/client/stories';
+import type { ClientStoryPage, PublicStory } from 'lib/client/stories';
 import { StoryPrivacy } from 'lib/client/stories';
 import { withStatusCode } from 'lib/server/errors';
 import { getPublicStory, getStoryByUnsafeID } from 'lib/server/stories';
@@ -14,10 +14,19 @@ import { Field, Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
 import useFunction from 'lib/client/useFunction';
 import Button from 'components/Button';
+import Label from 'components/Label';
+import { sanitizeBBCode } from 'components/BBCode';
+import Row from 'components/Row';
+import Link from 'components/Link';
+import Timestamp from 'components/Timestamp';
+import type { ReactNode } from 'react';
+import { Fragment } from 'react';
+
+type StorySearchResults = Array<Pick<ClientStoryPage, 'id' | 'published' | 'title' | 'content'>>;
 
 type ServerSideProps = {
 	publicStory: PublicStory,
-	results: StoryLogListings
+	results: StorySearchResults
 } | {
 	statusCode: integer
 };
@@ -26,28 +35,39 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, results }) => {
 	useNavStoryID(publicStory.id);
 
 	const router = useRouter();
-	const query = (
+
+	const previewMode = 'preview' in router.query;
+
+	const searchQuery = (
 		typeof router.query.query === 'string'
 			? router.query.query
 			: ''
-	);
+	).toLowerCase();
 
 	return (
 		<Page withFlashyTitle heading="Adventure Search">
 			<Box>
 				<BoxSection heading={publicStory.title}>
 					<Formik
-						initialValues={{ query }}
+						initialValues={{ searchQuery }}
 						onSubmit={
-							useFunction((values: { query: string }) => {
+							useFunction((values: { searchQuery: string }) => {
 								const url = new URL(location.href);
-								url.searchParams.set('query', values.query);
+								url.searchParams.set('query', values.searchQuery);
 								router.replace(url);
 							})
 						}
 					>
 						<Form id="story-search-form">
-							<Field name="query" className="spaced" autoFocus />
+							<Label className="spaced" htmlFor="field-search-query">
+								Search
+							</Label>
+							<Field
+								id="field-search-query"
+								name="searchQuery"
+								className="spaced"
+								autoFocus
+							/>
 							<Button
 								type="submit"
 								icon
@@ -55,6 +75,82 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, results }) => {
 							/>
 						</Form>
 					</Formik>
+					<div id="story-search-results">
+						{results.map(result => {
+							const getNodes = (string: string) => {
+								const nodes: ReactNode[] = [];
+
+								const stringToSearch = string.toLowerCase();
+								let index = stringToSearch.indexOf(searchQuery);
+
+								// Ensure this slice won't be empty due to the start of the string equaling the start of the next match.
+								if (index !== 0) {
+									nodes.push(
+										<Fragment key={0}>
+											{(index === -1
+												? string
+												: string.slice(0, index)
+											)}
+										</Fragment>
+									);
+								}
+
+								while (index !== -1) {
+									const endIndex = index + searchQuery.length;
+
+									nodes.push(
+										<mark key={index}>
+											{string.slice(index, endIndex)}
+										</mark>
+									);
+
+									index = stringToSearch.indexOf(searchQuery, endIndex);
+
+									// Ensure this slice won't be empty due to the end of this match equaling the start of the next match.
+									if (endIndex !== index) {
+										nodes.push(
+											<Fragment key={endIndex}>
+												{(index === -1
+													? string.slice(endIndex)
+													: string.slice(endIndex, index)
+												)}
+											</Fragment>
+										);
+									}
+								}
+
+								return nodes;
+							};
+
+							return (
+								<Row
+									key={result.id}
+									className="story-search-result"
+								>
+									<div className="story-search-result-heading">
+										<div className="story-search-result-timestamp-container">
+											{result.published === undefined ? (
+												'Draft'
+											) : (
+												<Timestamp short relative>
+													{result.published}
+												</Timestamp>
+											)}
+										</div>
+										<Link
+											className="story-search-result-title"
+											href={`/?s=${publicStory.id}&p=${result.id}${previewMode ? '&preview=1' : ''}`}
+										>
+											{getNodes(result.title)}
+										</Link>
+									</div>
+									<div className="story-search-result-content">
+										{getNodes(result.content)}
+									</div>
+								</Row>
+							);
+						})}
+					</div>
 				</BoxSection>
 			</Box>
 		</Page>
@@ -85,21 +181,42 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		return { props: { statusCode: 403 } };
 	}
 
-	const results: StoryLogListings = [];
+	const searchQuery = (
+		typeof query.query === 'string'
+			? query.query.toLowerCase()
+			: ''
+	);
 
-	for (
-		let pageID = (
+	const results: StorySearchResults = [];
+
+	if (searchQuery) {
+		const lastPageID = (
 			previewMode
 				? Object.values(story.pages).length
 				: story.pageCount
 		);
-		pageID > 0;
-		pageID--
-	) {
-		const page = story.pages[pageID];
 
-		if (!page.unlisted) {
-			// TODO
+		for (let pageID = 1; pageID <= lastPageID; pageID++) {
+			const page = story.pages[pageID];
+
+			if (!page.unlisted) {
+				const content = sanitizeBBCode(page.content, { noBB: true });
+				const title = sanitizeBBCode(page.title, { noBB: true });
+
+				if (
+					content.toLowerCase().includes(searchQuery)
+					|| title.toLowerCase().includes(searchQuery)
+				) {
+					results.push({
+						id: page.id,
+						...page.published !== undefined && {
+							published: +page.published
+						},
+						title,
+						content
+					});
+				}
+			}
 		}
 	}
 

@@ -5,3 +5,25 @@
 .search-button .icon {
 	background-image: url(/images/icons/search.png); // Image credit: seymour schlong
 }
+
+.story-search-result {
+	margin-top: 2em;
+	text-align: center;
+
+	&-heading {
+		margin-bottom: 2em;
+	}
+
+	&-title {
+		white-space: pre-wrap;
+
+		&::before, &::after {
+			content: '"';
+		}
+	}
+
+	&-content {
+		white-space: pre-wrap;
+		font-size: 0.875em;
+	}
+}
