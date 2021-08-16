@@ -114,6 +114,11 @@
 				.bb {
 					white-space: nowrap;
 				}
+
+				img {
+					max-width: calc(100% - 2ch);
+					max-height: 2em;
+				}
 			}
 		}
 
