@@ -44,10 +44,96 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, results }) => {
 			: ''
 	).toLowerCase();
 
+	let matches = 0;
+
+	const resultNodes = results.map(result => {
+		const getNodes = (string: string) => {
+			/**
+			 * The array of nodes for the marked string.
+			 *
+			 * In order to ensure unique keys, each node's key must be the index of the node's content in the original string, and no node can be empty.
+			 */
+			const nodes: ReactNode[] = [];
+
+			const stringToSearch = string.toLowerCase();
+			let index = stringToSearch.indexOf(searchQuery);
+
+			// Ensure this slice won't be empty due to the start of the string equaling the start of the next match.
+			if (index !== 0) {
+				nodes.push(
+					<Fragment key={0}>
+						{(index === -1
+							? string
+							: string.slice(0, index)
+						)}
+					</Fragment>
+				);
+			}
+
+			while (index !== -1) {
+				const endIndex = index + searchQuery.length;
+
+				nodes.push(
+					<mark key={index}>
+						{string.slice(index, endIndex)}
+					</mark>
+				);
+				matches++;
+
+				index = stringToSearch.indexOf(searchQuery, endIndex);
+
+				// Ensure this slice won't be empty due to the end of this match equaling the start of the next match.
+				if (endIndex !== index) {
+					nodes.push(
+						<Fragment key={endIndex}>
+							{(index === -1
+								? string.slice(endIndex)
+								: string.slice(endIndex, index)
+							)}
+						</Fragment>
+					);
+				}
+			}
+
+			return nodes;
+		};
+
+		return (
+			<Row
+				key={result.id}
+				className="story-search-result"
+			>
+				<div className="story-search-result-heading">
+					<div className="story-search-result-timestamp-container">
+						{result.published === undefined ? (
+							'Draft'
+						) : (
+							<Timestamp short relative>
+								{result.published}
+							</Timestamp>
+						)}
+					</div>
+					<Link
+						className="story-search-result-title"
+						href={`/?s=${publicStory.id}&p=${result.id}${previewMode ? '&preview=1' : ''}`}
+					>
+						{getNodes(result.title)}
+					</Link>
+				</div>
+				<div className="story-search-result-content">
+					{getNodes(result.content)}
+				</div>
+			</Row>
+		);
+	});
+
 	return (
 		<Page withFlashyTitle heading="Adventure Search">
 			<Box>
-				<BoxSection heading={publicStory.title}>
+				<BoxSection
+					id="story-search-section"
+					heading={publicStory.title}
+				>
 					<Formik
 						initialValues={{ searchQuery }}
 						onSubmit={
@@ -75,86 +161,11 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, results }) => {
 							/>
 						</Form>
 					</Formik>
+					<Row id="story-search-info">
+						{`${matches} result${matches === 1 ? '' : 's'} in ${results.length} page${results.length === 1 ? '' : 's'}`}
+					</Row>
 					<div id="story-search-results">
-						{results.map(result => {
-							const getNodes = (string: string) => {
-								/**
-								 * The array of nodes for the marked string.
-								 *
-								 * In order to ensure unique keys, each node's key must be the index of the node's content in the original string, and no node can be empty.
-								 */
-								const nodes: ReactNode[] = [];
-
-								const stringToSearch = string.toLowerCase();
-								let index = stringToSearch.indexOf(searchQuery);
-
-								// Ensure this slice won't be empty due to the start of the string equaling the start of the next match.
-								if (index !== 0) {
-									nodes.push(
-										<Fragment key={0}>
-											{(index === -1
-												? string
-												: string.slice(0, index)
-											)}
-										</Fragment>
-									);
-								}
-
-								while (index !== -1) {
-									const endIndex = index + searchQuery.length;
-
-									nodes.push(
-										<mark key={index}>
-											{string.slice(index, endIndex)}
-										</mark>
-									);
-
-									index = stringToSearch.indexOf(searchQuery, endIndex);
-
-									// Ensure this slice won't be empty due to the end of this match equaling the start of the next match.
-									if (endIndex !== index) {
-										nodes.push(
-											<Fragment key={endIndex}>
-												{(index === -1
-													? string.slice(endIndex)
-													: string.slice(endIndex, index)
-												)}
-											</Fragment>
-										);
-									}
-								}
-
-								return nodes;
-							};
-
-							return (
-								<Row
-									key={result.id}
-									className="story-search-result"
-								>
-									<div className="story-search-result-heading">
-										<div className="story-search-result-timestamp-container">
-											{result.published === undefined ? (
-												'Draft'
-											) : (
-												<Timestamp short relative>
-													{result.published}
-												</Timestamp>
-											)}
-										</div>
-										<Link
-											className="story-search-result-title"
-											href={`/?s=${publicStory.id}&p=${result.id}${previewMode ? '&preview=1' : ''}`}
-										>
-											{getNodes(result.title)}
-										</Link>
-									</div>
-									<div className="story-search-result-content">
-										{getNodes(result.content)}
-									</div>
-								</Row>
-							);
-						})}
+						{resultNodes}
 					</div>
 				</BoxSection>
 			</Box>

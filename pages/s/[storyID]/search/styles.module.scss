@@ -1,5 +1,12 @@
-#story-search-form {
-	text-align: center;
+#story-search {
+	&-section > .box-content {
+		text-align: center;
+	}
+
+	&-info {
+		font-size: 0.875em;
+		font-style: oblique;
+	}
 }
 
 .search-button .icon {
@@ -8,7 +15,6 @@
 
 .story-search-result {
 	margin-top: 2em;
-	text-align: center;
 
 	&-heading {
 		margin-bottom: 2em;
