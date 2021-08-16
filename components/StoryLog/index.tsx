@@ -24,16 +24,15 @@ const StoryLog = ({ story, listings, children, previewMode, className, ...props 
 					key={listing.id}
 					className="story-log-listing"
 				>
-					{listing.published === undefined ? (
-						'Draft - '
-					) : (
-						<>
+					<span className="story-log-timestamp-container">
+						{listing.published === undefined ? (
+							'Draft'
+						) : (
 							<Timestamp short relative>
 								{listing.published}
 							</Timestamp>
-							{' - '}
-						</>
-					)}
+						)}
+					</span>
 					<Link
 						shallow
 						href={`/?s=${story.id}&p=${listing.id}${previewMode ? '&preview=1' : ''}`}
