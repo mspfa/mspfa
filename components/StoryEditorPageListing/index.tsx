@@ -659,7 +659,7 @@ const StoryEditorPageListing = React.memo(({
 					<>
 						<Button
 							href={`/?s=${storyID}&p=${page.id}${pageStatus === 'published' ? '' : '&preview=1'}`}
-							target="_blank"
+							target={pageStatus === 'published' ? undefined : '_blank'}
 							disabled={isSubmitting}
 						>
 							{pageStatus === 'published' ? 'View' : 'Preview'}
