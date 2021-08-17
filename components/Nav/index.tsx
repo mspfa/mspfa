@@ -95,8 +95,16 @@ const Nav = () => {
 			</NavGroup>
 			{storyID !== undefined && (
 				<NavGroup id="story">
-					<NavItem id="story-log" label="Log" href={`/s/${storyID}/log`} />
-					<NavItem id="story-search" label="Search" href={`/s/${storyID}/search`} />
+					<NavItem
+						id="story-log"
+						label="Log"
+						href={`/s/${storyID}/log${'preview' in router.query ? '?preview=1' : ''}`}
+					/>
+					<NavItem
+						id="story-search"
+						label="Search"
+						href={`/s/${storyID}/search${'preview' in router.query ? '?preview=1' : ''}`}
+					/>
 				</NavGroup>
 			)}
 			<NavGroup id="external">
