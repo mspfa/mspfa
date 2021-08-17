@@ -11,7 +11,7 @@
 			"port": 9229,
 			"smartStep": true,
 			"outFiles": [
-				"${workspaceFolder}/.next/**/*.js"
+				"${workspaceFolder}/.next/server/**/*.js"
 			]
 		},
 		{
