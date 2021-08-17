@@ -105,7 +105,8 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 										<FieldBoxRow
 											type="checkbox"
 											name="settings.favsPublic"
-											label="Public Favorites"
+											// "Favorites" is shortened to "Favs" here because fitting the label on one line looks nicer.
+											label="Public Favs"
 											help="Allows others to publicly view your favorite adventures."
 										/>
 										<BoxRow>
