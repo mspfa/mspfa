@@ -17,6 +17,7 @@ import StoryListing from 'components/StoryListing';
 import { Perm } from 'lib/client/perms';
 import type { Filter } from 'mongodb';
 import type { integer } from 'lib/types';
+import Button from 'components/Button';
 
 type ServerSideProps = {
 	publicUser: PublicUser,
@@ -31,9 +32,12 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publ
 		<Box>
 			<BoxSection heading={`${publicUser.name}'s Favorites`}>
 				<BoxRow>
-					<Link href={`/user/${publicUser.id}`}>
+					<Button
+						className="small"
+						href={`/user/${publicUser.id}`}
+					>
 						Back to Profile
-					</Link>
+					</Button>
 				</BoxRow>
 				{!favsPublic && (
 					<BoxRow id="favs-public-tip">
