@@ -41,7 +41,7 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 	const mobile = useMobile(true);
 
 	// This state is the basement section which is currently selected.
-	const [section, setSection] = useState<'info' | 'comments' | 'news'>('info');
+	const [section, setSection] = useState<'news' | 'comments'>('news');
 
 	const sanitizedSidebarContent = useMemo(() => (
 		sanitizeBBCode(story.sidebarContent, { html: true })
@@ -69,7 +69,7 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 
 	return (
 		<div id="basement">
-			{section === 'info' && (
+			{section !== 'comments' && (
 				<div id="sidebar" className="basement-section mid">
 					<div className="basement-section-heading translucent">
 						Latest Pages
@@ -107,17 +107,91 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 				</div>
 			)}
 			<div id="basement-content" className="basement-section front">
+				<Row id="story-meta">
+					<IconImage
+						id="story-icon"
+						src={story.icon}
+						alt={`${story.title}'s Icon`}
+					/>
+					<div id="story-details">
+						<div id="story-title" className="story-details-section translucent">
+							{story.title}
+						</div>
+						<div id="story-stats" className="story-details-section">
+							<span className="story-status spaced">
+								{storyStatusNames[story.status]}
+							</span>
+							{user && (
+								story.owner === user.id
+								|| story.editors.includes(user.id)
+								|| !!(user.perms & Perm.sudoRead)
+							) && (
+								<EditButton
+									className="spaced"
+									href={`/s/${story.id}/edit/p#p${pageID}`}
+									title="Edit Adventure"
+								/>
+							)}
+							<FavButton className="spaced" storyID={story.id}>
+								{story.favCount}
+							</FavButton>
+							<PageCount className="spaced">
+								{story.pageCount}
+							</PageCount>
+						</div>
+						<div id="story-anniversary" className="story-details-section">
+							<Label className="spaced">
+								Created
+							</Label>
+							<Timestamp className="spaced">
+								{Math.min(
+									// Use the date of `story.anniversary` but the time of `story.created` so that the relative time isn't inaccurate when the date is very recent.
+									new Date(story.created).setFullYear(
+										story.anniversary.year,
+										story.anniversary.month,
+										story.anniversary.day
+									),
+									// Ensure the time of `story.created` isn't in the future in the case that `story.anniversary` is today.
+									Date.now()
+								)}
+							</Timestamp>
+						</div>
+						<div id="story-author-container" className="story-details-section">
+							<Label className="spaced">
+								{`Author${editorLinks.length === 1 ? '' : 's'}`}
+							</Label>
+							<span className="spaced">
+								{editorLinks}
+							</span>
+						</div>
+					</div>
+				</Row>
+				<Row id="story-description">
+					<BBCode alreadySanitized>
+						{sanitizedDescription}
+					</BBCode>
+				</Row>
+				<Row id="story-tags">
+					<StoryTagLinkContainer>
+						{story.tags.map((tag, i) => (
+							<Fragment key={tag}>
+								{i !== 0 && ' '}
+								<StoryTagLink>{tag}</StoryTagLink>
+							</Fragment>
+						))}
+					</StoryTagLinkContainer>
+				</Row>
 				<Row id="basement-actions">
 					<Button
 						className="small"
-						disabled={section === 'info'}
+						disabled={section === 'news'}
 						onClick={
 							useFunction(() => {
-								setSection('info');
+								setSection('news');
 							})
 						}
 					>
-						Info
+						News
 					</Button>
 					<Button
 						className="small"
@@ -130,101 +204,15 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 					>
 						Comments
 					</Button>
-					<Button
-						className="small"
-						disabled={section === 'news'}
-						onClick={
-							useFunction(() => {
-								setSection('news');
-							})
-						}
-					>
-						News
-					</Button>
 				</Row>
-				{section === 'info' ? (
-					<>
-						<Row id="story-meta">
-							<IconImage
-								id="story-icon"
-								src={story.icon}
-								alt={`${story.title}'s Icon`}
-							/>
-							<div id="story-details">
-								<div id="story-title" className="story-details-section translucent">
-									{story.title}
-								</div>
-								<div id="story-stats" className="story-details-section">
-									<span className="story-status spaced">
-										{storyStatusNames[story.status]}
-									</span>
-									{user && (
-										story.owner === user.id
-										|| story.editors.includes(user.id)
-										|| !!(user.perms & Perm.sudoRead)
-									) && (
-										<EditButton
-											className="spaced"
-											href={`/s/${story.id}/edit/p#p${pageID}`}
-											title="Edit Adventure"
-										/>
-									)}
-									<FavButton className="spaced" storyID={story.id}>
-										{story.favCount}
-									</FavButton>
-									<PageCount className="spaced">
-										{story.pageCount}
-									</PageCount>
-								</div>
-								<div id="story-anniversary" className="story-details-section">
-									<Label className="spaced">
-										Created
-									</Label>
-									<Timestamp className="spaced">
-										{Math.min(
-											// Use the date of `story.anniversary` but the time of `story.created` so that the relative time isn't inaccurate when the date is very recent.
-											new Date(story.created).setFullYear(
-												story.anniversary.year,
-												story.anniversary.month,
-												story.anniversary.day
-											),
-											// Ensure the time of `story.created` isn't in the future in the case that `story.anniversary` is today.
-											Date.now()
-										)}
-									</Timestamp>
-								</div>
-								<div id="story-author-container" className="story-details-section">
-									<Label className="spaced">
-										{`Author${editorLinks.length === 1 ? '' : 's'}`}
-									</Label>
-									<span className="spaced">
-										{editorLinks}
-									</span>
-								</div>
-							</div>
-						</Row>
-						<Row id="story-description">
-							<BBCode alreadySanitized>
-								{sanitizedDescription}
-							</BBCode>
-						</Row>
-						<StoryTagLinkContainer>
-							{story.tags.map((tag, i) => (
-								<Fragment key={tag}>
-									{i !== 0 && ' '}
-									<StoryTagLink>{tag}</StoryTagLink>
-								</Fragment>
-							))}
-						</StoryTagLinkContainer>
-					</>
-				) : section === 'comments' ? (
-					<Row>
-						comments here
+				{section === 'news' ? (
+					<Row id="story-news">
+						news here
 					</Row>
 				) : (
-					// If this point is reached, `section === 'news'`.
-					<Row>
-						news here
+					// If this point is reached, `section === 'comments'`.
+					<Row id="story-comments">
+						comments here
 					</Row>
 				)}
 			</div>
