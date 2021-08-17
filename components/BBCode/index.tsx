@@ -68,67 +68,133 @@ export const sanitizeBBCode = (bbString = '', { html, noBB }: {
 	/** The resulting HTML string to be sanitized and parsed. */
 	let htmlString = '';
 
-	// Even though we don't use the contents of the second capturing group in this regular expression, it is necessary that it is so specific so a tag with "]" in its attributes does not end early.
-	const openTagTest = /\[([\w-]+)((?:=(["']?)(.*?)\3)|(?: [\w-]+=(["']?).*?\5)+)?\]/;
+	/** A record that maps each BBCode tag name to an ordered array of opening tag matches. */
+	const openTagMatches: Record<string, RegExpExecArray[]> = {};
 
-	let match: RegExpExecArray | null;
+	// Even if we didn't use the attributes matched in this regular expression, it would still be necessary to specifically match them so that a tag with `]` in its attributes does not end early.
+	/** A regular expression which matches opening or closing BBCode tags, for example `[color=red]`, `[/spoiler]`, or `[this-is-not-a-real-tag]`. */
+	const openOrCloseTagTest = /\[(?:([\w-]+)((?:=(["']?)(.*?)\3)|(?: [\w-]+=(["']?).*?\5)+)?|\/([\w-]+))\]/g;
 
-	while (match = openTagTest.exec(bbString)) {
-		const openTag = match[0];
-		const tagName = match[1].toLowerCase();
+	/** The index at the end of the previous match, or of the start of the string if there is no previous match. */
+	let matchEndIndex = 0;
 
-		// Append the slice of the original string from the end of the previous match to the start of this match.
-		htmlString += bbString.slice(0, match.index);
+	let match;
+	while (match = openOrCloseTagTest.exec(bbString)) {
+		/** The full matched tag string, for example `[color=red]`, `[/spoiler]`, or `[this-is-not-a-real-tag]`. */
+		const tag = match[0];
+		/** Whether the matched tag is an opening tag and not a closing tag. */
+		const open = match[6] as string | undefined === undefined;
+		/** The name of the matched tag. */
+		const tagName = match[open ? 1 : 6];
 
-		// Remove everything up to the end of this match from the original string.
-		bbString = bbString.slice(match.index + openTag.length);
+		// Append the slice of the BB string from the end of the previous match to the start of this match.
+		htmlString += bbString.slice(matchEndIndex, match.index);
+
+		matchEndIndex = match.index + tag.length;
 
 		const BBTag = BBTags[tagName];
 
 		if (BBTag) {
-			htmlString += `<mspfa-bb data-name="${tagName}"`;
+			// The matched tag is a real tag.
 
-			const rawAttributesAfterEqualSign: string | undefined = match[4];
+			if (open) {
+				// The matched tag is an opening tag.
 
-			if (rawAttributesAfterEqualSign) {
-				htmlString += ` data-attr="${rawAttributesAfterEqualSign.replace(/"/g, '&quot;')}"`;
+				if (!(tagName in openTagMatches)) {
+					openTagMatches[tagName] = [];
+				}
+				openTagMatches[tagName].push(match);
+
+				// Add the matched tag to the output string, possibly to be replaced later if its respective closing tag is found.
+				htmlString += tag;
 			} else {
-				let rawAttributes: string | undefined = match[2];
+				// The matched tag is a closing tag.
 
-				// Even though we only use the first attribute's capture groups, it is necessary to match additional attributes to prevent the first attribute's capture group from ending early.
-				const attributeTest = /^( ([\w-]+)=(["']?)(.*?)\3)(?: [\w-]+=(["']?).*?\5)*$/;
+				/** The respective opening tag before this matched closing tag. */
+				const openTagMatch = (
+					tagName in openTagMatches
+						? openTagMatches[tagName].pop()
+						: undefined
+				);
+				if (openTagMatch) {
+					// The closing tag has a respective opening tag.
 
-				let attributeMatch: RegExpExecArray | null;
+					/** The converted HTML string of this tag's opening, children, and closing. */
+					let htmlTag = `<mspfa-bb data-name="${tagName}"`;
 
-				while (attributeMatch = attributeTest.exec(rawAttributes)) {
-					const [, rawAttribute, attributeName, , attributeValue] = attributeMatch;
+					/** If the opening tag is in the format `[tag=value]`, this is a string of the `value`. Otherwise, undefined (e.g. if the opening tag is in the format `[tag key=value]`). */
+					const rawAttributesAfterEqualSign = openTagMatch[4] as string | undefined;
 
-					htmlString += ` data-attr-${attributeName}="${attributeValue.replace(/"/g, '&quot;')}"`;
+					if (rawAttributesAfterEqualSign) {
+						htmlTag += ` data-attr="${rawAttributesAfterEqualSign.replace(/"/g, '&quot;')}"`;
+					} else {
+						let rawAttributes = openTagMatch[2];
 
-					// Slice off this attribute from the original string.
-					rawAttributes = rawAttributes.slice(rawAttribute.length);
-					// Slicing off processed portions of the original string is necessary because, otherwise, adding the `g` flag to `attributeTest` would set `attributeTest.lastIndex` to the end of the string after the first iteration, since `attributeTest`'s match includes the end of the string.
+						// Even though we only use the first attribute's capture groups, it is necessary to match additional attributes to prevent the first attribute's capture group from ending early.
+						const attributeTest = /^( ([\w-]+)=(["']?)(.*?)\3)(?: [\w-]+=(["']?).*?\5)*$/;
+
+						let attributeMatch;
+						while (attributeMatch = attributeTest.exec(rawAttributes)) {
+							const [, rawAttribute, attributeName, , attributeValue] = attributeMatch;
+
+							htmlTag += ` data-attr-${attributeName}="${attributeValue.replace(/"/g, '&quot;')}"`;
+
+							// Slice off this attribute from the original string.
+							rawAttributes = rawAttributes.slice(rawAttribute.length);
+							// Slicing off processed portions of the original string is necessary because, otherwise, adding the `g` flag to `attributeTest` would set `attributeTest.lastIndex` to the end of the string after the first iteration, since `attributeTest`'s match includes the end of the string.
+						}
+					}
+
+					htmlTag += '>';
+
+					/** The full open tag string, for example `[color=red]` or `[spoiler]`. */
+					const openTag = openTagMatch[0];
+
+					// Process and append this tag's children.
+					htmlTag += (
+						// Slice from `htmlString` instead of `bbString` because there may already be processed BB tags in this tag's children.
+						htmlString.slice(
+							// The index at end of the opening tag.
+							openTagMatch.index + openTag.length
+							// Since we are closing this tag at the current index, we know the end of the `htmlString` is the end of this tag's children, so the slice should go to the end of the `htmlString`.
+						)
+					);
+
+					// Discard opening BB tags which are still unclosed within this tag's children.
+					for (const matches of Object.values(openTagMatches)) {
+						const lastMatch = matches[matches.length - 1] as RegExpExecArray | undefined;
+						while (lastMatch && lastMatch.index > openTagMatch.index) {
+							matches.pop();
+						}
+					}
+
+					htmlTag += '</mspfa-bb>';
+
+					// If this tag is a block element followed by a line break, skip the line break since there is already a break after block elements naturally. This allows for more intuitive line breaking behavior for the user.
+					if (
+						BBTag.withBlock
+						&& bbString[matchEndIndex] === '\n'
+					) {
+						matchEndIndex++;
+					}
+
+					// Remove this BB tag from the output string and add its processed HTML.
+					htmlString = htmlString.slice(0, openTagMatch.index) + htmlTag;
+				} else {
+					// The closing tag does not have a respective opening tag.
+
+					htmlString += tag;
 				}
 			}
-
-			htmlString += '>';
-
-			// Replace the next closing tag.
-			bbString = bbString.replace(
-				new RegExp(`\\[/${tagName}\\]${
-					// If `BBTag` is a block element, we also want to remove one line break after its closing tag to promote intuitive line breaking behavior for the user.
-					BBTag.withBlock ? '\\n?' : ''
-				}`, 'i'),
-				'</mspfa-bb>'
-			);
-			// The reason it is better to slice off processed portions of the original string is so this replacement doesn't have to scan unnecessary content.
 		} else {
-			htmlString += openTag;
+			// The matched tag is not a real tag.
+
+			htmlString += tag;
 		}
 	}
 
-	// Append the rest of the original string.
-	htmlString += bbString;
+	// Append the rest of the input string.
+	htmlString += bbString.slice(matchEndIndex);
 
 	return DOMPurify.sanitize(
 		htmlString,
