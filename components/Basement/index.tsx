@@ -69,43 +69,41 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 
 	return (
 		<div id="basement">
-			{section !== 'comments' && (
-				<div id="sidebar" className="basement-section mid">
-					<div className="basement-section-heading translucent">
-						Latest Pages
-					</div>
-					<StoryLog
-						id="latest-pages"
-						story={story}
-						listings={latestPagesShown ? latestPages : undefined}
-						previewMode={previewMode}
-					>
-						<Label className="spaced">
-							Latest Pages
-						</Label>
-						<Link
-							className="spaced translucent"
-							onClick={toggleLatestPagesShown}
-						>
-							{latestPagesShown ? '(Hide)' : '(Show)'}
-						</Link>
-					</StoryLog>
-					{latestPagesShown && (
-						<div id="view-all-pages-link-container">
-							<Link href={`/s/${story.id}/log${previewMode ? '?preview=1' : ''}`}>
-								View All Pages
-							</Link>
-						</div>
-					)}
-					{story.sidebarContent && (
-						<div id="sidebar-content">
-							<BBCode alreadySanitized>
-								{sanitizedSidebarContent}
-							</BBCode>
-						</div>
-					)}
+			<div id="sidebar" className="basement-section mid">
+				<div className="basement-section-heading translucent">
+					Latest Pages
 				</div>
-			)}
+				<StoryLog
+					id="latest-pages"
+					story={story}
+					listings={latestPagesShown ? latestPages : undefined}
+					previewMode={previewMode}
+				>
+					<Label className="spaced">
+						Latest Pages
+					</Label>
+					<Link
+						className="spaced translucent"
+						onClick={toggleLatestPagesShown}
+					>
+						{latestPagesShown ? '(Hide)' : '(Show)'}
+					</Link>
+				</StoryLog>
+				{latestPagesShown && (
+					<div id="view-all-pages-link-container">
+						<Link href={`/s/${story.id}/log${previewMode ? '?preview=1' : ''}`}>
+							View All Pages
+						</Link>
+					</div>
+				)}
+				{story.sidebarContent && (
+					<div id="sidebar-content">
+						<BBCode alreadySanitized>
+							{sanitizedSidebarContent}
+						</BBCode>
+					</div>
+				)}
+			</div>
 			<div id="basement-content" className="basement-section front">
 				<Row id="story-meta">
 					<IconImage
