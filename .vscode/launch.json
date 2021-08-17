@@ -9,7 +9,10 @@
 			"type": "node",
 			"request": "attach",
 			"port": 9229,
-			"smartStep": true
+			"smartStep": true,
+			"outFiles": [
+				"${workspaceFolder}/.next/**/*.js"
+			]
 		},
 		{
 			"name": "Chrome",
@@ -18,7 +21,10 @@
 			"port": 9222,
 			"urlFilter": "local*",
 			"webRoot": "${workspaceFolder}",
-			"smartStep": true
+			"smartStep": true,
+			"outFiles": [
+				"${workspaceFolder}/.next/static/chunks/**/*.js"
+			]
 		}
 	],
 	"compounds": [
