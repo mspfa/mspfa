@@ -125,8 +125,20 @@ const BBTags: Partial<Record<string, BBTag>> = {
 	),
 	spoiler: withBlock(({ attributes, children }) => (
 		<Spoiler
-			open={attributes instanceof Object ? attributes.open : undefined}
-			close={attributes instanceof Object ? attributes.close : undefined}
+			show={
+				typeof attributes === 'string'
+					? `Show ${attributes}`
+					: attributes instanceof Object
+						? attributes.show
+						: undefined
+			}
+			hide={
+				typeof attributes === 'string'
+					? `Hide ${attributes}`
+					: attributes instanceof Object
+						? attributes.hide
+						: undefined
+			}
 		>
 			{children}
 		</Spoiler>

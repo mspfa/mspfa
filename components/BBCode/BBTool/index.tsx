@@ -220,32 +220,55 @@ const tags: Record<string, {
 	spoiler: {
 		title: 'Spoiler',
 		initialValues: {
-			open: '',
-			close: ''
+			advancedMode: false,
+			show: '',
+			hide: ''
 		},
-		content: (
+		content: ({ values: { advancedMode } }) => (
 			<InlineRowSection>
+				{!advancedMode && (
+					<FieldBoxRow
+						name="attributes"
+						label="Spoiler Name"
+						help={'The name used in the spoiler\'s button text.\n\nFor example, setting this to "Pesterlog" will make the button say "Show Pesterlog" when the spoiler is closed and "Hide Pesterlog" when the spoiler is open.\n\nThe default spoiler name is "Spoiler".'}
+						autoFocus
+						placeholder="Optional"
+					/>
+				)}
 				<FieldBoxRow
-					name="open"
-					label={'"Show" Button Text'}
-					autoFocus
-					placeholder="Optional"
+					type="checkbox"
+					name="advancedMode"
+					label="Advanced Mode"
 				/>
-				<FieldBoxRow
-					name="close"
-					label={'"Hide" Button Text'}
-					placeholder="Optional"
-				/>
+				{advancedMode && (
+					<>
+						<FieldBoxRow
+							name="show"
+							label={'"Show" Button Text'}
+							help={'The spoiler\'s button text when the spoiler is closed.'}
+							autoFocus
+							placeholder="Optional"
+						/>
+						<FieldBoxRow
+							name="hide"
+							label={'"Hide" Button Text'}
+							help={'The spoiler\'s button text when the spoiler is open.'}
+							placeholder="Optional"
+						/>
+					</>
+				)}
 			</InlineRowSection>
 		),
-		getProps: ({ values: { open, close } }) => ({
+		getProps: ({ values: { attributes, advancedMode, show, hide } }) => ({
 			attributes: (
-				open || close
-					? {
-						...!!open && { open },
-						...!!close && { close }
-					}
-					: undefined
+				advancedMode
+					? show || hide
+						? {
+							...!!show && { show },
+							...!!hide && { hide }
+						}
+						: undefined
+					: attributes || undefined
 			)
 		})
 	},

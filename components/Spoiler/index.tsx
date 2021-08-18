@@ -7,16 +7,16 @@ import useFunction from 'lib/client/useFunction';
 
 export type SpoilerProps = HTMLAttributes<HTMLDivElement> & {
 	/** The spoiler button's label when clicking it opens the spoiler. */
-	open?: ReactNode,
+	show?: ReactNode,
 	/** The spoiler button's label when clicking it closes the spoiler. */
-	close?: ReactNode,
+	hide?: ReactNode,
 	/** Whether the spoiler is initially open. Defaults to the user's `autoOpenSpoilers` setting. */
 	initialOpen?: boolean
 };
 
 const Spoiler = ({
-	open: openLabel = 'Show Spoiler',
-	close: closeLabel = 'Hide Spoiler',
+	show: showLabel = 'Show Spoiler',
+	hide: hideLabel = 'Hide Spoiler',
 	initialOpen,
 	className,
 	children,
@@ -65,7 +65,7 @@ const Spoiler = ({
 						})
 					}
 				>
-					{open ? closeLabel : openLabel}
+					{open ? hideLabel : showLabel}
 				</button>
 			</div>
 			{open && (
