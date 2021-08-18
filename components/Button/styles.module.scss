@@ -131,7 +131,7 @@
 		background: inherit;
 	}
 
-	&:focus:not(:active)::after {
+	&:focus:not(:disabled, :active)::after {
 		// An amount of brightness to add to the background color (between 0 and 1).
 		$added-brightness: 0.2;
 		// This formula adds a constant amount of brightness independently of the initial brightness. It works. Just trust me; I tested it on Desmos.
