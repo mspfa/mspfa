@@ -181,6 +181,11 @@ const BBTags: Partial<Record<string, BBTag>> = {
 			youtubeVideoID = children.match(youTubeVideoIDTest)?.[1];
 		}
 
+		const controls = !(
+			attributes instanceof Object
+			&& attributes.controls === '0'
+		);
+
 		return youtubeVideoID ? (
 			<iframe
 				src={
@@ -221,11 +226,16 @@ const BBTags: Partial<Record<string, BBTag>> = {
 						|| attributes.autoplay === '0'
 					)
 				}
-				controls={!(
-					attributes instanceof Object
-					&& attributes.controls === '0'
-				)}
-				controlsList=""
+				controls={controls}
+				controlsList={
+					controls
+						? (
+							attributes instanceof Object
+								? attributes.controlslist
+								: undefined
+						) ?? 'nodownload'
+						: undefined
+				}
 				loop={
 					attributes instanceof Object && !(
 						attributes.loop === undefined
