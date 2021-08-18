@@ -126,17 +126,12 @@ const Handler: APIHandler<{
 
 	const { user } = await authenticate(req, res);
 
-	if (!user) {
-		res.status(403).send({
-			message: 'You must be signed in to edit an adventure.'
-		});
-		return;
-	}
-
 	if (!(
-		story.owner.equals(user._id)
-		|| story.editors.some(userID => userID.equals(user._id))
-		|| user.perms & Perm.sudoWrite
+		user && (
+			story.owner.equals(user._id)
+			|| story.editors.some(userID => userID.equals(user._id))
+			|| user.perms & Perm.sudoWrite
+		)
 	)) {
 		res.status(403).send({
 			message: 'You do not have permission to edit the specified adventure.'

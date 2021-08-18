@@ -8,7 +8,7 @@ import { connection } from 'lib/server/db';
 
 const Handler: APIHandler<{
 	method: 'POST',
-	body: Pick<ServerStory, 'title'>
+	body: Pick<PrivateStory, 'title'>
 }, {
 	method: 'POST',
 	body: PrivateStory
