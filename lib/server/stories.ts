@@ -49,6 +49,7 @@ export type StoryPageRecord = Record<StoryPageID, ServerStoryPage>;
 export type ServerStoryNewsID = ObjectId;
 
 export type ServerStoryNews = {
+	id: ServerStoryNewsID,
 	posted: Date,
 	edited?: Date,
 	author: ServerUserID,
