@@ -6,10 +6,11 @@ import { StoryStatus, StoryPrivacy } from 'lib/client/stories';
 import type { ServerUser, ServerUserID } from 'lib/server/users';
 import users from 'lib/server/users';
 import type { APIResponse } from 'lib/server/api';
-import type { ObjectId, UpdateFilter } from 'mongodb';
+import type { UpdateFilter } from 'mongodb';
 import type { ServerComment } from 'lib/server/comments';
 import type { ClientPreviousPageIDs } from 'components/StoryViewer';
 import { PAGE_PRELOAD_DEPTH } from 'components/StoryViewer';
+import type { ServerNews } from 'lib/server/news';
 
 /** @minimum 1 */
 export type StoryID = integer;
@@ -45,20 +46,6 @@ export type ServerStoryPage = {
 };
 
 export type StoryPageRecord = Record<StoryPageID, ServerStoryPage>;
-
-export type ServerStoryNewsID = ObjectId;
-
-export type ServerStoryNews = {
-	id: ServerStoryNewsID,
-	posted: Date,
-	edited?: Date,
-	author: ServerUserID,
-	/**
-	 * @minLength 1
-	 * @maxLength 20000
-	 */
-	content: string
-};
 
 export type SpoilerPreset = {
 	open: string,
@@ -138,7 +125,7 @@ export type ServerStory = {
 	allowComments: boolean,
 	/** @maxLength 2000 */
 	sidebarContent: string,
-	news: ServerStoryNews[],
+	news: ServerNews[],
 	defaultPageTitle: ServerStoryPage['title'],
 	spoilerPresets: SpoilerPreset[],
 	colors: StoryColor[],
