@@ -631,7 +631,7 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 						if (tagData.attributes instanceof Object) {
 							for (const key of Object.keys(tagData.attributes)) {
 								const value = tagData.attributes[key];
-								if (value) {
+								if (value !== undefined) {
 									openTag += ` ${key}=${escapeAttribute(value.toString(), true)}`;
 								}
 							}
