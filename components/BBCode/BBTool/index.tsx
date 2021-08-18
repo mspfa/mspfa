@@ -14,6 +14,7 @@ import { getChangedValues } from 'lib/client/forms';
 import IDPrefix from 'lib/client/IDPrefix';
 import { useLatest } from 'react-use';
 import { youTubeVideoIDTest } from '../BBTags';
+import type { integer } from 'lib/types';
 
 const defaultBBPreview = 'The quick brown fox jumps over the lazy dog.';
 
@@ -489,11 +490,11 @@ const tags: Record<string, {
 // The above `tags` must be in the same order as the BB tool icon sheet.
 
 /** The indexes of each tag within the BB tool icon sheet. */
-const tagIndexes = Object.fromEntries(
-	Object.keys(tags).map(
-		(tagName, i) => [tagName, i]
-	)
-);
+const tagIndexes: Record<string, integer> = {};
+const tagNames = Object.keys(tags);
+for (let i = 0; i < tagNames.length; i++) {
+	tagIndexes[tagNames[i]] = i;
+}
 
 /** Escapes a user-inputted attribute value for use in BBCode. */
 const escapeAttribute = (value: string, handleEqualSigns?: boolean) => {
