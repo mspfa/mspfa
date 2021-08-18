@@ -69,7 +69,10 @@ type SanitizeBBCodeOptions = {
 	noBB?: boolean
 };
 
-export const sanitizeBBCode = (bbString = '', { html, noBB }: SanitizeBBCodeOptions = {}) => {
+export const sanitizeBBCode = (
+	bbString = '',
+	{ html, noBB }: SanitizeBBCodeOptions = {}
+) => {
 	// Optimize for the common case of the input being empty.
 	if (bbString === '') {
 		return '';
