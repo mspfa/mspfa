@@ -56,7 +56,10 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 				dialog.form = props;
 
 				return (
-					<Form id={`dialog-container-${idKebab}`} className="dialog-container">
+					<Form
+						id={`dialog-container-${idKebab}`}
+						className="dialog-container"
+					>
 						<dialog
 							id={`dialog-${idKebab}`}
 							open
