@@ -508,7 +508,7 @@ const escapeAttribute = (value: string, handleEqualSigns?: boolean) => {
 
 	if (value[0] === '\'') {
 		if (value.includes('"')) {
-			return `&apos;${value.slice(1)}`;
+			return `&#39;${value.slice(1)}`;
 		}
 
 		return `"${value}"`;
