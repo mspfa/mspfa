@@ -158,8 +158,18 @@
 			max-width: 100%;
 		}
 	}
+
+	&-news {
+		padding-right: 14px;
+	}
 }
 
 .story-details-section:not(:last-child) {
 	margin-bottom: 0.5ch;
+}
+
+#edit-news-tip {
+	font-size: 0.875em;
+	opacity: 0.5;
+	max-width: fit-content;
 }

@@ -22,6 +22,13 @@ import type { StoryPageID } from 'lib/server/stories';
 import StoryTagLinkContainer from 'components/StoryTagLink/StoryTagLinkContainer';
 import StoryTagLink from 'components/StoryTagLink';
 import StoryLog from 'components/StoryLog';
+import Dialog from 'lib/client/Dialog';
+import BBField from 'components/BBCode/BBField';
+import IDPrefix from 'lib/client/IDPrefix';
+import type { APIClient } from 'lib/client/api';
+import api from 'lib/client/api';
+
+type StoryNewsAPI = APIClient<typeof import('pages/api/stories/[storyID]/news').default>;
 
 /** The maximum number of pages which can be listed under the adventure's "Latest Pages" section. */
 export const MAX_LATEST_PAGES = 45;
@@ -66,6 +73,45 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 			</UserLink>
 		</Fragment>
 	));
+
+	const createNewsPost = useFunction(async () => {
+		const dialog = new Dialog({
+			id: 'edit-news',
+			title: 'Create News Post',
+			initialValues: {
+				content: ''
+			},
+			content: (
+				<IDPrefix.Provider value="news">
+					<Row>
+						<Label block htmlFor="news-field-content">
+							Content
+						</Label>
+						<BBField
+							name="content"
+							autoFocus
+							required
+							maxLength={20000}
+							rows={6}
+						/>
+					</Row>
+					<Row id="edit-news-tip">
+						The recommended image width in a news post is 420 pixels.
+					</Row>
+				</IDPrefix.Provider>
+			),
+			actions: [
+				{ label: 'Post!', autoFocus: false },
+				{ label: 'Cancel' }
+			]
+		});
+
+		if (!(await dialog)?.submit) {
+			return;
+		}
+
+		(api as StoryNewsAPI).post(`/stories/${story.id}/news`, dialog.form!.values);
+	});
 
 	return (
 		<div id="basement">
@@ -205,7 +251,14 @@ const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) =>
 				</Row>
 				{section === 'news' ? (
 					<Row id="story-news">
-						news here
+						<Row id="story-news-actions">
+							<Button
+								className="small"
+								onClick={createNewsPost}
+							>
+								Create News Post
+							</Button>
+						</Row>
 					</Row>
 				) : (
 					// If this point is reached, `section === 'comments'`.
