@@ -621,17 +621,21 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 						);
 					}
 
-					const openTag = `[${tagName}${
-						tagProps.attributes
-							? tagProps.attributes instanceof Object
-								? (
-									Object.entries(tagProps.attributes).map(
-										([name, value]) => ` ${name}=${escapeAttribute(value!.toString(), true)}`
-									).join('')
-								)
-								: `=${escapeAttribute(tagProps.attributes.toString())}`
-							: ''
-					}]`;
+					let openTag = `[${tagName}`;
+					if (tagProps.attributes) {
+						if (tagProps.attributes instanceof Object) {
+							for (const key of Object.keys(tagProps.attributes)) {
+								const value = tagProps.attributes[key];
+								if (value) {
+									openTag += ` ${key}=${escapeAttribute(value.toString(), true)}`;
+								}
+							}
+						} else {
+							openTag += `=${escapeAttribute(tagProps.attributes.toString())}`;
+						}
+					}
+					openTag += ']';
+
 					const closeTag = `[/${tagName}]`;
 
 					const selectionStart = textAreaRef.current.selectionStart;
