@@ -62,12 +62,14 @@ type BBTagMatch = RegExpExecArray & {
 	[_htmlIndex]: integer
 };
 
-export const sanitizeBBCode = (bbString = '', { html, noBB }: {
+type SanitizeBBCodeOptions = {
 	/** Whether HTML should be allowed and parsed. */
 	html?: boolean,
 	/** Whether to blacklist all BBCode from the sanitized HTML. */
 	noBB?: boolean
-} = {}) => {
+};
+
+export const sanitizeBBCode = (bbString = '', { html, noBB }: SanitizeBBCodeOptions = {}) => {
 	// Optimize for the common case of the input being empty.
 	if (bbString === '') {
 		return '';
@@ -251,11 +253,7 @@ export const sanitizeBBCode = (bbString = '', { html, noBB }: {
 	);
 };
 
-export type BBCodeProps = {
-	/** Whether HTML should be allowed and parsed. */
-	html?: boolean,
-	/** Whether to blacklist all BBCode. */
-	noBB?: boolean,
+export type BBCodeProps = SanitizeBBCodeOptions & {
 	/** Whether the input has already been sanitized and no sanitization should be performed by this component. */
 	alreadySanitized?: boolean,
 	/** The original input BBCode string. */
