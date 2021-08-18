@@ -497,10 +497,15 @@ for (let i = 0; i < tagNames.length; i++) {
 }
 
 /** Escapes a user-inputted attribute value for use in BBCode. */
-const escapeAttribute = (value: string, handleEqualSigns?: boolean) => {
+const escapeAttribute = (
+	/** The value of the attribute. */
+	value: string,
+	/** Whether equal signs need to be escaped. */
+	escapeEqualSigns?: boolean
+) => {
 	if (
 		value.includes(']')
-		|| (handleEqualSigns && value.includes('='))
+		|| (escapeEqualSigns && value.includes('='))
 	) {
 		if (value.includes('"') && !value.includes('\'')) {
 			return `'${value}'`;
