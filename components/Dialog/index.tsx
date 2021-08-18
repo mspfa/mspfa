@@ -56,23 +56,27 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 				dialog.form = props;
 
 				return (
-					<Form id={`dialog-container-${idKebab}`} className="dialog-container">
+					<Form
+						id={`dialog-container-${idKebab}`}
+						className="dialog-container"
+					>
 						<dialog
 							id={`dialog-${idKebab}`}
+							className="front"
 							open
 							ref={dialogRef}
 						>
 							<div className="dialog-title front-alt">
 								{dialog.title}
 							</div>
-							<div className="dialog-content front">
+							<div className="dialog-content">
 								{(typeof dialog.content === 'function'
 									? dialog.content(props)
 									: dialog.content
 								)}
 							</div>
 							{!!dialog.actions.length && (
-								<div className="dialog-actions front">
+								<div className="dialog-actions">
 									{dialog.actions.map((action, i) => (
 										<Button
 											key={i}
