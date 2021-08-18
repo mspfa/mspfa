@@ -50,7 +50,6 @@ export type BBTag = (
 );
 
 const BBTags: Partial<Record<string, BBTag>> = {
-	html: ({ children }) => <span className="html">{children}</span>,
 	b: ({ children }) => <b>{children}</b>,
 	i: ({ children }) => <i>{children}</i>,
 	u: ({ children }) => <u>{children}</u>,
