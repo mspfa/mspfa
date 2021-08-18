@@ -14,7 +14,7 @@ export const useDialogs = () => {
 	return dialogs;
 };
 
-export type DialogActionOption = {
+export type DialogActionOptions = {
 	/** The label of the action's button. */
 	label: ReactNode,
 	/**
@@ -33,7 +33,7 @@ export type DialogActionOption = {
 	value?: any
 };
 
-export type DialogAction = DialogActionOption & {
+export type DialogAction = DialogActionOptions & {
 	/** The index of the action in the dialog's `actions`. */
 	index: integer,
 	onClick: () => void
@@ -71,9 +71,9 @@ export type DialogOptions<Values extends Record<string, any> = any> = {
 	/**
 	 * The actions which the user can select to close the dialog.
 	 *
-	 * A `value` in this array (such as a string) which isn't a valid `DialogActionOption` is shorthand for `{ label: value }`.
+	 * A `value` in this array (such as a string) which isn't valid `DialogActionOptions` is shorthand for `{ label: value }`.
 	 */
-	actions?: Array<DialogActionOption['label'] | DialogActionOption>
+	actions?: Array<DialogActionOptions['label'] | DialogActionOptions>
 };
 
 export type DialogResult = Partial<DialogAction> | undefined;
