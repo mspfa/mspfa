@@ -93,7 +93,7 @@ export const sanitizeBBCode = (bbString = '', { html, noBB }: {
 		/** Whether the matched tag is an opening tag and not a closing tag. */
 		const open = match[6] as string | undefined === undefined;
 		/** The name of the matched tag. */
-		const tagName = match[open ? 1 : 6];
+		const tagName = match[open ? 1 : 6].toLowerCase();
 
 		// Append the slice of the BB string from the end of the previous match to the start of this match.
 		htmlString += bbString.slice(matchEndIndex, match.index);
