@@ -198,7 +198,7 @@ const BBTags: Partial<Record<string, BBTag>> = {
 						)
 					})}`
 				}
-				// YouTube requires embedded players to have a viewport that is at least 200x200.
+				// YouTube requires embedded players to have a viewport that is at least 200x200 pixels.
 				// Source: https://developers.google.com/youtube/iframe_api_reference#Requirements
 				width={
 					width

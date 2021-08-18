@@ -361,7 +361,7 @@ const tags: Record<string, {
 							</>
 						)}
 					/>
-					{/* YouTube requires embedded players to have a viewport that is at least 200x200. */}
+					{/* YouTube requires embedded players to have a viewport that is at least 200x200 pixels. */}
 					{/* Source: https://developers.google.com/youtube/iframe_api_reference#Requirements */}
 					{/* Also, width and height are required fields here since the `iframe` has no good way of determining a good default size for the video. */}
 					<FieldBoxRow

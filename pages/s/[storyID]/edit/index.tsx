@@ -322,7 +322,7 @@ const Component = withErrorPage<ServerSideProps>(({
 												type="url"
 												name="icon"
 												label="Icon URL"
-												help="A direct URL to an image of your adventure's icon. The recommended image size is 150x150."
+												help="A direct URL to an image of your adventure's icon. The recommended image size is 150x150 pixels."
 											/>
 											<BoxRow>
 												<IconImage
@@ -415,7 +415,7 @@ const Component = withErrorPage<ServerSideProps>(({
 												type="url"
 												name="banner"
 												label="Banner URL"
-												help={'A direct URL to an image of your adventure\'s anniversary banner. The recommended image size is 950x100.\n\nIf your adventure is public, is ongoing or complete, and has at least 200 favorites, this image will be displayed on the homepage for one week starting on the adventure\'s anniversary date.'}
+												help={'A direct URL to an image of your adventure\'s anniversary banner. The recommended image size is 950x100 pixels.\n\nIf your adventure is public, is ongoing or complete, and has at least 200 favorites, this image will be displayed on the homepage for one week starting on the adventure\'s anniversary date.'}
 												placeholder="Optional"
 											/>
 										</BoxRowSection>
@@ -440,7 +440,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											<Label
 												block
 												htmlFor="field-sidebar-content"
-												help={'This content is displayed in the sidebar to the left of your adventure info.\n\nUse this for links (typically on images) to your social media, music, credits, or other advertisements. Avoid using the description for this, or else it can show up in the adventure list and create unwanted clutter.\n\nThe recommend image width in the sidebar is 238.'}
+												help={'This content is displayed in the sidebar to the left of your adventure info.\n\nUse this for links (typically on images) to your social media, music, credits, or other advertisements. Avoid using the description for this, or else it can show up in the adventure list and create unwanted clutter.\n\nThe recommend image width in the sidebar is 238 pixels.'}
 											>
 												Sidebar (External Links)
 											</Label>

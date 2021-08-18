@@ -9,7 +9,7 @@ export type IconImageProps = ImgHTMLAttributes<HTMLImageElement> & {
 };
 
 // This is memoized to prevent the randomized wat face from changing every re-render.
-/** Displays a user-submitted icon image (or a wat face if undefined). Default size is 150x150. */
+/** Displays a user-submitted icon image (or a wat face if undefined). Default size is 150x150 pixels. */
 const IconImage = React.memo(({ src, className, alt, ...props }: IconImageProps) => (
 	<img
 		className={`icon-image${className ? ` ${className}` : ''}`}
