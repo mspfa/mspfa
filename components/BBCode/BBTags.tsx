@@ -213,8 +213,8 @@ const BBTags: Partial<Record<string, BBTag>> = {
 						? children
 						: undefined
 				}
-				width={width || 650}
-				height={height || 450}
+				width={width}
+				height={height}
 				autoPlay={
 					attributes instanceof Object && !(
 						attributes.autoplay === undefined
