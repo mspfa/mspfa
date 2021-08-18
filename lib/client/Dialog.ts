@@ -29,7 +29,7 @@ export type DialogActionOption = {
 	 * If no action has `autoFocus: true`, it will be set by default, either on the action with `submit: true` or on the first action.
 	 */
 	autoFocus?: boolean,
-	/** Do whatever you want with this property. It does nothing by default. */
+	/** This property does nothing by default and can be read from a resolved dialog's result. */
 	value?: any
 };
 
