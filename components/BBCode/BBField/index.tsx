@@ -81,8 +81,7 @@ const BBField = ({ name, html, noBB, ...props }: BBFieldProps) => {
 			/>
 			<Spoiler
 				className="bb-preview"
-				open="Show BBCode Preview"
-				close="Hide BBCode Preview"
+				name="BBCode Preview"
 				initialOpen={false}
 			>
 				<BBCode html={html} noBB={noBB}>
