@@ -221,6 +221,11 @@ const BBTags: Partial<Record<string, BBTag>> = {
 						|| attributes.autoplay === '0'
 					)
 				}
+				controls={!(
+					attributes instanceof Object
+					&& attributes.controls === '0'
+				)}
+				controlsList=""
 				loop={
 					attributes instanceof Object && !(
 						attributes.loop === undefined
