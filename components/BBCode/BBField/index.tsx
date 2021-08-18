@@ -67,7 +67,7 @@ const BBField = ({ name, html, noBB, ...props }: BBFieldProps) => {
 				</span>
 				<span className="bb-tool-group">
 					<BBTool tag="img" />
-					<BBTool tag="youtube" />
+					<BBTool tag="video" />
 					<BBTool tag="iframe" />
 					<BBTool tag="flash" />
 				</span>

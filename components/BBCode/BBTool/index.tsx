@@ -4,7 +4,6 @@ import useFunction from 'lib/client/useFunction';
 import { BBFieldContext } from 'components/BBCode/BBField';
 import Button from 'components/Button';
 import Dialog from 'lib/client/Dialog';
-import { videoIDTest } from 'components/BBCode/BBTags';
 import InlineRowSection from 'components/Box/InlineRowSection';
 import FieldBoxRow from 'components/Box/FieldBoxRow';
 import Label from 'components/Label';
@@ -14,6 +13,7 @@ import Link from 'components/Link';
 import { getChangedValues } from 'lib/client/forms';
 import IDPrefix from 'lib/client/IDPrefix';
 import { useLatest } from 'react-use';
+import { youTubeVideoIDTest } from '../BBTags';
 
 const defaultBBPreview = 'The quick brown fox jumps over the lazy dog.';
 
@@ -305,64 +305,68 @@ const tags: Record<string, {
 		}),
 		selectAfter: true
 	},
-	youtube: {
-		title: 'YouTube Embed',
+	video: {
+		title: 'Video Embed',
 		initialValues: {
 			autoplay: false,
 			controls: true,
 			loop: false
 		},
-		content: (
-			<InlineRowSection>
-				<FieldBoxRow
-					type="text"
-					name="children"
-					label="YouTube Video URL/ID"
-					required
-					autoFocus
-					pattern={videoIDTest.source}
-					autoComplete="off"
-					help={(
-						<>
-							Examples:
-							<ul>
-								<li>https://www.youtube.com/watch?v=7wiNUBaK-6M</li>
-								<li>https://youtu.be/7wiNUBaK-6M</li>
-								<li>7wiNUBaK-6M</li>
-							</ul>
-						</>
-					)}
-				/>
-				{/* YouTube requires embedded players to have a viewport that is at least 200x200. */}
-				{/* Source: https://developers.google.com/youtube/iframe_api_reference#Requirements */}
-				{/* Also, width and height are required fields here since the `iframe` has no good way of determining a good default size for the video. */}
-				<FieldBoxRow
-					type="number"
-					name="width"
-					label="Width"
-					required
-					min={200}
-				/>
-				<FieldBoxRow
-					type="number"
-					name="height"
-					label="Height"
-					required
-					min={200}
-				/>
-				<FieldBoxRow type="checkbox" name="autoplay" label="Autoplay" />
-				<FieldBoxRow type="checkbox" name="controls" label="Show Player Controls" />
-				<FieldBoxRow type="checkbox" name="loop" label="Loop" />
-				<BoxRow>
-					<Link
-						href="https://developers.google.com/youtube/player_parameters#Parameters"
-						target="_blank"
-					>
-						Advanced Attribute List
-					</Link>
-				</BoxRow>
-			</InlineRowSection>
-		),
+		content: ({ values: { children: url } }) => {
+			const urlFromYouTube = youTubeVideoIDTest.test(url);
+
+			return (
+				<InlineRowSection>
+					<FieldBoxRow
+						type="url"
+						name="children"
+						label="Video URL"
+						required
+						autoFocus
+						autoComplete="off"
+						help={(
+							<>
+								Examples:
+								<ul>
+									<li>https://example.com/video.mp4</li>
+									<li>https://www.youtube.com/watch?v=7wiNUBaK-6M</li>
+									<li>https://youtu.be/7wiNUBaK-6M</li>
+								</ul>
+							</>
+						)}
+					/>
+					{/* YouTube requires embedded players to have a viewport that is at least 200x200. */}
+					{/* Source: https://developers.google.com/youtube/iframe_api_reference#Requirements */}
+					{/* Also, width and height are required fields here since the `iframe` has no good way of determining a good default size for the video. */}
+					<FieldBoxRow
+						type="number"
+						name="width"
+						label="Width"
+						required={urlFromYouTube}
+						min={urlFromYouTube ? 200 : 0}
+					/>
+					<FieldBoxRow
+						type="number"
+						name="height"
+						label="Height"
+						required={urlFromYouTube}
+						min={urlFromYouTube ? 200 : 0}
+					/>
+					<FieldBoxRow type="checkbox" name="autoplay" label="Autoplay" />
+					<FieldBoxRow type="checkbox" name="controls" label="Show Controls" />
+					<FieldBoxRow type="checkbox" name="loop" label="Loop" />
+					{/* TODO: Put this in a BBCode guide instead. */}
+					<BoxRow>
+						<Link
+							href="https://developers.google.com/youtube/player_parameters#Parameters"
+							target="_blank"
+						>
+							Advanced YouTube Attribute List
+						</Link>
+					</BoxRow>
+				</InlineRowSection>
+			);
+		},
 		getProps: ({
 			initialValues,
 			values: { children, ...values }

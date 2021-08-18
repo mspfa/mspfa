@@ -11,7 +11,7 @@ const Flash = dynamic(() => import('components/Flash'), {
 });
 
 export const hashlessColorCodeTest = /^([0-9a-f]{3}(?:[0-9a-f]{3}(?:[0-9a-f]{2})?)?)$/i;
-export const videoIDTest = /^(?:(?:https?:\/\/)?(?:www\.)?(?:youtu\.be|youtube\.com)\/(?:.+\/)?(?:(?:.*[?&])v=)?)?([\w-]+)(?:&.+)?$/i;
+export const youTubeVideoIDTest = /^(?:https?:)?\/\/(?:(?:www|m)\.)?(?:youtube\.com|youtu\.be)\/.*(?:v=|\/)([\w-]+).*$/i;
 
 /** Gets `width` and `height` attributes from a string that looks like `${width}x${height}`. */
 const getWidthAndHeight = (attributes: string) => {
@@ -163,7 +163,7 @@ const BBTags: Partial<Record<string, BBTag>> = {
 			/>
 		);
 	},
-	youtube: ({ attributes, children }) => {
+	video: ({ attributes, children }) => {
 		if (typeof attributes === 'string') {
 			attributes = getWidthAndHeight(attributes);
 		}
@@ -175,24 +175,22 @@ const BBTags: Partial<Record<string, BBTag>> = {
 			({ width, height, ...attributes } = attributes);
 		}
 
-		let videoID: string | undefined;
+		let youtubeVideoID: string | undefined;
 
 		if (typeof children === 'string') {
-			videoID = children.match(videoIDTest)?.[1];
+			youtubeVideoID = children.match(youTubeVideoIDTest)?.[1];
 		}
 
-		return (
+		return youtubeVideoID ? (
 			<iframe
 				src={
-					videoID
-						? `https://www.youtube.com/embed/${videoID}?${new URLSearchParams({
-							// By default, disable showing related videos from channels other than the owner of the embedded video.
-							rel: '0',
-							...attributes instanceof Object && (
-								attributes as Record<string, string>
-							)
-						})}`
-						: undefined
+					`https://www.youtube.com/embed/${youtubeVideoID}?${new URLSearchParams({
+						// By default, disable showing related videos from channels other than the owner of the embedded video.
+						rel: '0',
+						...attributes instanceof Object && (
+							attributes as Record<string, string>
+						)
+					})}`
 				}
 				// YouTube requires embedded players to have a viewport that is at least 200x200.
 				// Source: https://developers.google.com/youtube/iframe_api_reference#Requirements
@@ -207,6 +205,28 @@ const BBTags: Partial<Record<string, BBTag>> = {
 						: 450
 				}
 				allowFullScreen
+			/>
+		) : (
+			<video
+				src={
+					typeof children === 'string'
+						? children
+						: undefined
+				}
+				width={width || 650}
+				height={height || 450}
+				autoPlay={
+					attributes instanceof Object && !(
+						attributes.autoplay === undefined
+						|| attributes.autoplay === '0'
+					)
+				}
+				loop={
+					attributes instanceof Object && !(
+						attributes.loop === undefined
+						|| attributes.loop === '0'
+					)
+				}
 			/>
 		);
 	},
@@ -225,8 +245,8 @@ const BBTags: Partial<Record<string, BBTag>> = {
 						? children
 						: undefined
 				)}
-				width={width ? +width : undefined}
-				height={height ? +height : undefined}
+				width={width || undefined}
+				height={height || undefined}
 			/>
 		);
 	},
