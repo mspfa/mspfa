@@ -15,8 +15,8 @@ export type SpoilerProps = HTMLAttributes<HTMLDivElement> & {
 };
 
 const Spoiler = ({
-	open: openLabel = 'Show',
-	close: closeLabel = 'Hide',
+	open: openLabel = 'Show Spoiler',
+	close: closeLabel = 'Hide Spoiler',
 	initialOpen,
 	className,
 	children,
