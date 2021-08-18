@@ -6,18 +6,22 @@ import { useState, useEffect } from 'react';
 import useFunction from 'lib/client/useFunction';
 
 export type SpoilerProps = HTMLAttributes<HTMLDivElement> & {
-	/** The spoiler button's label after "Show" or "Hide". Defaults to `'Spoiler'`. */
+	/**
+	 * The spoiler button's label inserted after "Show" or "Hide".
+	 *
+	 * Defaults to `'Spoiler'`.
+	 */
 	name?: ReactNode,
 	/**
-	 * The spoiler button's label when the spoiler is closed. Defaults to ```
-	 * `Show ${name}`
-	 * ```.
+	 * The spoiler button's label when the spoiler is closed.
+	 *
+	 * Defaults to (effectively) `<>Show {name}</>`.
 	 */
 	show?: ReactNode,
 	/**
-	 * The spoiler button's label when the spoiler is open. Defaults to ```
-	 * `Hide ${name}`
-	 * ```.
+	 * The spoiler button's label when the spoiler is open.
+	 *
+	 * Defaults to (effectively) `<>Hide {name}</>`.
 	 */
 	hide?: ReactNode,
 	/** Whether the spoiler is initially open. Defaults to the user's `autoOpenSpoilers` setting. */
@@ -26,8 +30,18 @@ export type SpoilerProps = HTMLAttributes<HTMLDivElement> & {
 
 const Spoiler = ({
 	name = 'Spoiler',
-	show: showLabel = `Show ${name}`,
-	hide: hideLabel = `Hide ${name}`,
+	show: showLabel = (
+		typeof name === 'string'
+			// Use a string to avoid generating HTML comments.
+			? `Show ${name}`
+			: <>Show {name}</>
+	),
+	hide: hideLabel = (
+		typeof name === 'string'
+			// Use a string to avoid generating HTML comments.
+			? `Hide ${name}`
+			: <>Show {name}</>
+	),
 	initialOpen,
 	className,
 	children,
