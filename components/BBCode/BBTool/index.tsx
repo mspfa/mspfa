@@ -372,6 +372,7 @@ const tags: Record<string, {
 			values: { children, ...values }
 		}) => {
 			const changedValues = getChangedValues(initialValues, values);
+			console.log(initialValues, values);
 
 			return {
 				attributes: changedValues && Object.fromEntries(
@@ -494,7 +495,10 @@ const tagIndexes = Object.fromEntries(
 
 /** Escapes a user-inputted attribute value for use in BBCode. */
 const escapeAttribute = (value: string, handleEqualSigns?: boolean) => {
-	if (value.includes(']') || (handleEqualSigns && value.includes('='))) {
+	if (
+		value.includes(']')
+		|| (handleEqualSigns && value.includes('='))
+	) {
 		if (value.includes('"') && !value.includes('\'')) {
 			return `'${value}'`;
 		}
@@ -554,10 +558,14 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 						textAreaRef.current.selectionEnd
 					);
 
-					const tagProps: NewBBTagProps = {
+					/** Information about this instance of the BB tag, including children, attributes, and other form values. */
+					const tagData: NewBBTagProps = {
 						children,
 						// This needs to initially be an empty string and not `undefined` so that the form's initial values include this property, and any fields with `name="attributes"` are initially Formik-controlled.
-						attributes: ''
+						attributes: '',
+						...tag.initialValues instanceof Function
+							? tag.initialValues(children)
+							: tag.initialValues
 					};
 
 					if (tag.content) {
@@ -577,12 +585,7 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 									)}
 								</IDPrefix.Provider>
 							),
-							initialValues: Object.assign(
-								tagProps,
-								tag.initialValues instanceof Function
-									? tag.initialValues(children)
-									: tag.initialValues
-							),
+							initialValues: { ...tagData },
 							actions: [
 								{ label: 'Okay', autoFocus: false },
 								'Cancel'
@@ -613,7 +616,7 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 						);
 
 						Object.assign(
-							tagProps,
+							tagData,
 							dialog.form!.values,
 							// Spread the updated selection in the `children` value to overwrite the outdated value in the dialog form's values.
 							{ children },
@@ -622,16 +625,16 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 					}
 
 					let openTag = `[${tagName}`;
-					if (tagProps.attributes) {
-						if (tagProps.attributes instanceof Object) {
-							for (const key of Object.keys(tagProps.attributes)) {
-								const value = tagProps.attributes[key];
+					if (tagData.attributes) {
+						if (tagData.attributes instanceof Object) {
+							for (const key of Object.keys(tagData.attributes)) {
+								const value = tagData.attributes[key];
 								if (value) {
 									openTag += ` ${key}=${escapeAttribute(value.toString(), true)}`;
 								}
 							}
 						} else {
-							openTag += `=${escapeAttribute(tagProps.attributes.toString())}`;
+							openTag += `=${escapeAttribute(tagData.attributes.toString())}`;
 						}
 					}
 					openTag += ']';
@@ -643,7 +646,7 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 					setValue(
 						textAreaRef.current.value.slice(0, selectionStart)
 						+ openTag
-						+ tagProps.children
+						+ tagData.children
 						+ closeTag
 						+ textAreaRef.current.value.slice(textAreaRef.current.selectionEnd, textAreaRef.current.value.length)
 					);
@@ -658,12 +661,12 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 							textAreaRef.current.selectionStart = textAreaRef.current.selectionEnd = (
 								selectionStart
 								+ openTag.length
-								+ tagProps.children.length
+								+ tagData.children.length
 								+ closeTag.length
 							);
 						} else {
 							textAreaRef.current.selectionStart = selectionStart + openTag.length;
-							textAreaRef.current.selectionEnd = textAreaRef.current.selectionStart + tagProps.children.length;
+							textAreaRef.current.selectionEnd = textAreaRef.current.selectionStart + tagData.children.length;
 						}
 					});
 				})
