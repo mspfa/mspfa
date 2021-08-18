@@ -100,6 +100,27 @@ export const sanitizeBBCode = (bbString = '', { html, noBB }: {
 
 		matchEndIndex = tagTest.lastIndex;
 
+		if (open && tagName === 'noparse') {
+			const closeTagIndex = bbString.toLowerCase().indexOf('[/noparse]', matchEndIndex);
+
+			// Check if this `noparse` tag has a respective closing tag after it.
+			if (closeTagIndex !== -1) {
+				// Append this tag's children, with HTML escaped.
+				htmlString += (
+					bbString.slice(matchEndIndex, closeTagIndex)
+						.replace(/&/g, '&amp;')
+						.replace(/</g, '&lt;')
+						.replace(/>/g, '&gt;')
+				);
+
+				// Skip to the end of the closing `noparse` tag.
+				matchEndIndex = closeTagIndex + '[/noparse]'.length;
+				tagTest.lastIndex = matchEndIndex;
+
+				continue;
+			}
+		}
+
 		const BBTag = BBTags[tagName];
 
 		if (BBTag) {
@@ -162,7 +183,7 @@ export const sanitizeBBCode = (bbString = '', { html, noBB }: {
 					/** The full open tag string, for example `[color=red]` or `[spoiler]`. */
 					const openTag = openTagMatch[0];
 
-					// Process and append this tag's children.
+					// Append this tag's children.
 					htmlTag += (
 						// Slice from `htmlString` instead of `bbString` because there may already be processed BB tags in this tag's children.
 						htmlString.slice(
