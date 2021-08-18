@@ -128,20 +128,22 @@ export const sanitizeBBCode = (bbString = '', { html, noBB }: {
 					if (rawAttributesAfterEqualSign) {
 						htmlTag += ` data-attr="${rawAttributesAfterEqualSign.replace(/"/g, '&quot;')}"`;
 					} else {
-						let rawAttributes = openTagMatch[2];
+						let rawAttributes = openTagMatch[2] as string | undefined;
 
-						// Even though we only use the first attribute's capture groups, it is necessary to match additional attributes to prevent the first attribute's capture group from ending early.
-						const attributeTest = /^( ([\w-]+)=(["']?)(.*?)\3)(?: [\w-]+=(["']?).*?\5)*$/;
+						if (rawAttributes) {
+							// Even though we only use the first attribute's capture groups, it is necessary to match additional attributes to prevent the first attribute's capture group from ending early.
+							const attributeTest = /^( ([\w-]+)=(["']?)(.*?)\3)(?: [\w-]+=(["']?).*?\5)*$/;
 
-						let attributeMatch;
-						while (attributeMatch = attributeTest.exec(rawAttributes)) {
-							const [, rawAttribute, attributeName, , attributeValue] = attributeMatch;
+							let attributeMatch;
+							while (attributeMatch = attributeTest.exec(rawAttributes)) {
+								const [, rawAttribute, attributeName, , attributeValue] = attributeMatch;
 
-							htmlTag += ` data-attr-${attributeName}="${attributeValue.replace(/"/g, '&quot;')}"`;
+								htmlTag += ` data-attr-${attributeName}="${attributeValue.replace(/"/g, '&quot;')}"`;
 
-							// Slice off this attribute from the original string.
-							rawAttributes = rawAttributes.slice(rawAttribute.length);
-							// Slicing off processed portions of the original string is necessary because, otherwise, adding the `g` flag to `attributeTest` would set `attributeTest.lastIndex` to the end of the string after the first iteration, since `attributeTest`'s match includes the end of the string.
+								// Slice off this attribute from the original string.
+								rawAttributes = rawAttributes.slice(rawAttribute.length);
+								// Slicing off processed portions of the original string is necessary because, otherwise, adding the `g` flag to `attributeTest` would set `attributeTest.lastIndex` to the end of the string after the first iteration, since `attributeTest`'s match includes the end of the string.
+							}
 						}
 					}
 
