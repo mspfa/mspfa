@@ -1,17 +1,12 @@
-.label {
-	&-container {
-		// This prevents breaking immediately before the colon.
-		white-space: nowrap;
+.label-container {
+	// This prevents breaking immediately before the colon.
+	white-space: nowrap;
 
-		@at-root div#{&} {
-			margin-bottom: 2px;
-		}
-
-		&::after {
-			content: ':';
-		}
+	@at-root div#{&} {
+		margin-bottom: 2px;
 	}
 
-	// This prevents spaces from being omitted when wrapping text in labels, which allows space characters at the end of wrapped lines to sometimes line up with the colon, which looks nicer.
-	white-space: pre-wrap;
+	&::after {
+		content: ':';
+	}
 }
