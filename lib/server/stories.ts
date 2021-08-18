@@ -6,8 +6,8 @@ import { StoryStatus, StoryPrivacy } from 'lib/client/stories';
 import type { ServerUser, ServerUserID } from 'lib/server/users';
 import users from 'lib/server/users';
 import type { APIResponse } from 'lib/server/api';
-import type { UpdateFilter } from 'mongodb';
-import type { Comment } from 'lib/server/comments';
+import type { ObjectId, UpdateFilter } from 'mongodb';
+import type { ServerComment } from 'lib/server/comments';
 import type { ClientPreviousPageIDs } from 'components/StoryViewer';
 import { PAGE_PRELOAD_DEPTH } from 'components/StoryViewer';
 
@@ -39,12 +39,25 @@ export type ServerStoryPage = {
 	/** Whether the client's controls should be disabled while this page is rendered. */
 	disableControls: boolean,
 	commentary: string,
-	comments: Comment[],
+	comments: ServerComment[],
 	/** Whether this page was set to notify readers on publish. */
 	notify: boolean
 };
 
 export type StoryPageRecord = Record<StoryPageID, ServerStoryPage>;
+
+export type ServerStoryNewsID = ObjectId;
+
+export type ServerStoryNews = {
+	posted: Date,
+	edited?: Date,
+	author: ServerUserID,
+	/**
+	 * @minLength 1
+	 * @maxLength 20000
+	 */
+	content: string
+};
 
 export type SpoilerPreset = {
 	open: string,
@@ -124,6 +137,7 @@ export type ServerStory = {
 	allowComments: boolean,
 	/** @maxLength 2000 */
 	sidebarContent: string,
+	news: ServerStoryNews[],
 	defaultPageTitle: ServerStoryPage['title'],
 	spoilerPresets: SpoilerPreset[],
 	colors: StoryColor[],
@@ -149,6 +163,7 @@ export const defaultStory = {
 	tags: [] as never[],
 	allowComments: true,
 	sidebarContent: '',
+	news: [] as never[],
 	defaultPageTitle: 'Next.',
 	spoilerPresets: [] as never[],
 	colors: [] as never[],

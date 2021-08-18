@@ -1,4 +1,4 @@
-import type { ServerStory, StoryID, ServerStoryPage, StoryPageID } from 'lib/server/stories';
+import type { ServerStory, StoryID, ServerStoryPage, StoryPageID, ServerStoryNews } from 'lib/server/stories';
 import type { DateNumber, integer } from 'lib/types';
 
 export enum StoryStatus {
@@ -66,3 +66,14 @@ export type ClientStoryPageRecord = Record<StoryPageID, ClientStoryPage>;
 
 /** An array of objects, each containing information about one listing in a story's log.  */
 export type StoryLogListings = Array<Pick<ClientStoryPage, 'id' | 'published' | 'title'>>;
+
+/** All keys whose values have the same serializable type in both `ServerStoryNews` and `ClientStoryNews`. */
+type ClientStoryNewsKey = 'content';
+
+/** A serializable version of `ServerStoryNews` with only the properties that can safely be exposed to any client. */
+export type ClientStoryNews = Pick<ServerStoryNews, ClientStoryNewsKey> & {
+	id: string,
+	posted: DateNumber,
+	edit?: DateNumber,
+	author: string
+};
