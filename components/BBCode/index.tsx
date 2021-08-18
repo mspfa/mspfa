@@ -72,11 +72,11 @@ export const sanitizeBBCode = (bbString = '', { html, noBB }: {
 	const openTagMatches: Record<string, RegExpExecArray[]> = {};
 
 	// Even if we didn't use the attributes matched in this regular expression, it would still be necessary to specifically match them so that a tag with `]` in its attributes does not end early.
-	/** A regular expression which matches opening or closing BBCode tags, for example `[color=red]`, `[/spoiler]`, or `[this-is-not-a-real-tag]`. */
-	const openOrCloseTagTest = /\[(?:([\w-]+)((?:=(["']?)(.*?)\3)|(?: [\w-]+=(["']?).*?\5)+)?|\/([\w-]+))\]/g;
+	/** A regular expression which matches opening or closing BB tags, for example `[color=red]`, `[/spoiler]`, or `[this-is-not-a-real-tag]`. */
+	const tagTest = /\[(?:([\w-]+)((?:=(["']?)(.*?)\3)|(?: [\w-]+=(["']?).*?\5)+)?|\/([\w-]+))\]/g;
 
 	let match;
-	while (match = openOrCloseTagTest.exec(bbString)) {
+	while (match = tagTest.exec(bbString)) {
 		/** The full matched tag string, for example `[color=red]`, `[/spoiler]`, or `[this-is-not-a-real-tag]`. */
 		const tag = match[0];
 		/** Whether the matched tag is an opening tag and not a closing tag. */
@@ -85,7 +85,7 @@ export const sanitizeBBCode = (bbString = '', { html, noBB }: {
 		const tagName = match[open ? 1 : 6];
 
 		// Append the slice of the BB string from the end of the previous match to the start of this match.
-		htmlString += bbString.slice(openOrCloseTagTest.lastIndex, match.index);
+		htmlString += bbString.slice(tagTest.lastIndex, match.index);
 
 		const BBTag = BBTags[tagName];
 
@@ -170,9 +170,9 @@ export const sanitizeBBCode = (bbString = '', { html, noBB }: {
 					// If this tag is a block element followed by a line break, skip the line break since there is already a break after block elements naturally. This allows for more intuitive line breaking behavior for the user.
 					if (
 						BBTag.withBlock
-						&& bbString[openOrCloseTagTest.lastIndex] === '\n'
+						&& bbString[tagTest.lastIndex] === '\n'
 					) {
-						openOrCloseTagTest.lastIndex++;
+						tagTest.lastIndex++;
 					}
 
 					// Remove this BB tag from the output string and add its processed HTML.
@@ -191,7 +191,7 @@ export const sanitizeBBCode = (bbString = '', { html, noBB }: {
 	}
 
 	// Append the rest of the input string.
-	htmlString += bbString.slice(openOrCloseTagTest.lastIndex);
+	htmlString += bbString.slice(tagTest.lastIndex);
 
 	return DOMPurify.sanitize(
 		htmlString,
