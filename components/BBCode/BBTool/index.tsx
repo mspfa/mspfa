@@ -308,6 +308,8 @@ const tags: Record<string, {
 	video: {
 		title: 'Video Embed',
 		initialValues: {
+			width: '',
+			height: '',
 			autoplay: false,
 			controls: true,
 			loop: false
