@@ -82,6 +82,8 @@ const Basement = ({
 		</Fragment>
 	));
 
+	const [newsPosts, setNewsPosts] = useState(initialNewsPosts);
+
 	const createNewsPost = useFunction(async () => {
 		const dialog = new Dialog({
 			id: 'edit-news',
@@ -266,6 +268,26 @@ const Basement = ({
 							>
 								Create News Post
 							</Button>
+						</Row>
+						<Row id="story-news-content">
+							{newsPosts.map(news => (
+								<div
+									key={news.id}
+									className="news-post"
+								>
+									<div className="news-post-heading">
+										{'Posted on '}
+										<Timestamp>{news.posted}</Timestamp>
+										{' by '}
+										<UserLink>{news.author}</UserLink>
+									</div>
+									<div className="news-post-content">
+										<BBCode html>
+											{news.content}
+										</BBCode>
+									</div>
+								</div>
+							))}
 						</Row>
 					</Row>
 				) : (

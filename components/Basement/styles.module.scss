@@ -160,12 +160,34 @@
 	}
 
 	&-news {
-		padding-right: 14px;
+		&-actions {
+			text-align: center;
+		}
+
+		&-content {
+			padding-right: 14px;
+		}
 	}
 }
 
 .story-details-section:not(:last-child) {
 	margin-bottom: 0.5ch;
+}
+
+.news-post {
+	margin-bottom: 5px;
+
+	&-heading {
+		padding-bottom: 3px;
+		border-bottom: 1px solid #8080803e;
+		font-style: oblique;
+	}
+
+	&-content {
+		margin: 17px 0;
+		padding: 3px;
+		font-size: 0.875em;
+	}
 }
 
 #edit-news-tip {
