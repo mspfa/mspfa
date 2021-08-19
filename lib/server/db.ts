@@ -106,7 +106,7 @@ export const safeObjectID = (id: UnsafeObjectID) => {
 export const flatten = (
 	/** The object to flatten. */
 	object: Record<any, unknown>,
-	/** A string to prepend before every key assigned to the object. */
+	/** A string to prepend before every key assigned to the object e.g. `'pages.'`. */
 	keyPrefix = '',
 	/** The object to assign the flattened properties to. Defaults to a new empty object. */
 	flatObject: Record<string, any> = {}
