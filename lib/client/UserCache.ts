@@ -1,5 +1,6 @@
 import type { PublicUser } from 'lib/client/users';
 import React, { useContext } from 'react';
+import useFunction from './useFunction';
 
 const UserCache = React.createContext<Partial<Record<string, PublicUser>>>(undefined!);
 
@@ -14,9 +15,9 @@ export const useUserCache = () => {
 	const userCache = useContext(UserCache);
 
 	/** Sets a `PublicUser` into the user cache. */
-	const cacheUser = (user: PublicUser) => {
+	const cacheUser = useFunction((user: PublicUser) => {
 		userCache[user.id] = user;
-	};
+	});
 
 	return { userCache, cacheUser };
 };
