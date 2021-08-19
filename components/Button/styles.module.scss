@@ -157,8 +157,7 @@
 }
 
 .icon-button {
-	// Setting `font-size` to `1em` is necessary even if the button is empty, so that `1ch` measures the current font size correctly.
-	font-size: 1em;
+	font-size: 1rem;
 	padding: 1px;
 	line-height: 0;
 
