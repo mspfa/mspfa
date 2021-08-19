@@ -53,8 +53,7 @@ textarea,
 select,
 option,
 .button {
-	font-family: $monospace;
-	font-weight: bold;
+	@include theme(font, font);
 	@include theme(color, text-color);
 }
 
@@ -83,8 +82,8 @@ summary {
 }
 
 .front-alt {
-	@include theme(background-color, front-alt-color);
-	@include theme(color, text-alt-color);
+	@include theme(background-color, alt-front-color);
+	@include theme(color, alt-text-color);
 }
 
 input, textarea, select, option {

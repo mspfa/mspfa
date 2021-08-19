@@ -1,3 +1,5 @@
+@use 'styles/themes' as *;
+
 .listing {
 	display: flex;
 
@@ -32,9 +34,8 @@
 
 	&-title {
 		display: block;
+		@include theme(font, heading-font);
 		font-size: 1.5em;
-		font-family: Homestuck-Regular;
-		font-weight: normal;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;

@@ -1,9 +1,9 @@
-@use 'styles/general' as *;
+@use 'styles/themes' as *;
 
 nav {
 	display: flex;
 	justify-content: center;
-	font-family: $sans-serif;
+	@include theme(font, alt-font);
 	font-size: 9px;
 	line-height: 20px;
 	text-transform: uppercase;

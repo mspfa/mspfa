@@ -1,5 +1,8 @@
+@use 'styles/themes' as *;
+
 .page-heading {
-	font-family: Homestuck-Regular;
+	@include theme(font, heading-font);
+	font-weight: bold;
 	text-align: center;
 	font-size: 2em;
 	text-transform: uppercase;

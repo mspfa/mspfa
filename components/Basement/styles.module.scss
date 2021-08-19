@@ -79,8 +79,9 @@
 
 	&-heading {
 		text-align: center;
+		@include theme(font, heading-font);
+		font-weight: bold;
 		font-size: 2em;
-		font-family: Homestuck-Regular;
 		text-transform: uppercase;
 	}
 }
@@ -131,7 +132,7 @@
 
 #view-all-pages-link-container {
 	text-align: center;
-	font-family: $sans-serif;
+	@include theme(font, alt-font);
 	text-transform: uppercase;
 	margin-bottom: 1em;
 }
@@ -147,7 +148,8 @@
 	}
 
 	&-title {
-		font-family: Homestuck-Regular;
+		@include theme(font, heading-font);
+		font-weight: bold;
 		font-size: 2em;
 		line-height: 1;
 	}

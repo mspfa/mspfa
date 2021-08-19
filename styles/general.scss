@@ -1,8 +1,5 @@
 $page-width: 950px;
 
-$monospace: 'Courier New', Courier, monospace;
-$sans-serif: Verdana, Arial, Helvetica, sans-serif;
-
 @mixin desktop {
 	@media screen and (min-width: $page-width) {
 		@content;

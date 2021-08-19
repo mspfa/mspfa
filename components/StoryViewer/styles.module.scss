@@ -1,5 +1,6 @@
 @use 'sass:math';
 @use 'styles/general' as *;
+@use 'styles/themes' as *;
 
 $story-page-min-width: 650px;
 $story-page-padding: 25px;
@@ -39,7 +40,7 @@ $story-page-padding: 25px;
 
 	&-links, &-footer {
 		padding: 17px 0;
-		font-family: $sans-serif;
+		@include theme(font, alt-font);
 		font-weight: normal;
 	}
 

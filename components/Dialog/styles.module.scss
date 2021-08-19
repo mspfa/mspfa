@@ -19,8 +19,7 @@
 
 	&-title {
 		padding: 0.25em 0.5em;
-		font-family: Homestuck-Regular;
-		font-weight: normal;
+		@include theme(font, heading-font);
 		font-size: 1.75em;
 	}
 

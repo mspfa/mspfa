@@ -1,13 +1,16 @@
 @use "sass:map";
 
+// Because custom styles are a thing, in order to avoid the site's built-in styles making false assumptions about the font weight, all fonts set here should use `normal` as the font weight unless it is intended for the font to be universally if not almost universally different.
+// Additionally, all fonts set here should unconditionally use `1em` as the font size, so that all font sizes set or left unset elsewhere can safely assume `1em` as the default font size.
+
 $themes: (
 	standard: (
 		back-color: #535353,
 		mid-color: #c6c6c6,
 		front-color: #eeeeee,
 		text-color: #000000,
-		front-alt-color: #696969,
-		text-alt-color: #f2f2f2,
+		alt-front-color: #696969,
+		alt-text-color: #f2f2f2,
 		link-color: #0000ee,
 		link-visited-color: #551a8b,
 		link-active-color: #ee0000,
@@ -16,16 +19,19 @@ $themes: (
 		input-focus-border-color: #000000,
 		button-color: #dadada,
 		button-text-color: #3e3e3e,
-		button-alt-color: #696969,
-		button-text-alt-color: #dddddd
+		alt-button-color: #696969,
+		alt-button-text-color: #dddddd,
+		font: (bold 1em 'Courier New', Courier, monospace),
+		alt-font: (bold 1em Verdana, Arial, Helvetica, sans-serif),
+		heading-font: normal 1em Homestuck-Regular
 	),
 	dark: (
 		back-color: #434343,
 		mid-color: #383838,
 		front-color: #242424,
 		text-color: #dadada,
-		front-alt-color: #4f4f4f,
-		text-alt-color: #f2f2f2,
+		alt-front-color: #4f4f4f,
+		alt-text-color: #f2f2f2,
 		link-color: #3db8ff,
 		link-visited-color: #bf7cff,
 		link-active-color: #ee3333,
@@ -34,16 +40,16 @@ $themes: (
 		input-focus-border-color: #999999,
 		button-color: #4c4c4c,
 		button-text-color: #dadada,
-		button-alt-color: #526cad,
-		button-text-alt-color: #f3f3f3
+		alt-button-color: #526cad,
+		alt-button-text-color: #f3f3f3
 	),
 	felt: (
 		back-color: #000000,
 		mid-color: #082a00,
 		front-color: #0e4603,
 		text-color: #ffffff,
-		front-alt-color: #e2e2e2,
-		text-alt-color: #000000,
+		alt-front-color: #e2e2e2,
+		alt-text-color: #000000,
 		link-color: #2cff4b,
 		link-visited-color: #2cff4b,
 		link-active-color: #ee3333,
@@ -52,8 +58,8 @@ $themes: (
 		input-focus-border-color: #000000,
 		button-color: #dadada,
 		button-text-color: #3e3e3e,
-		button-alt-color: #696969,
-		button-text-alt-color: #dddddd
+		alt-button-color: #696969,
+		alt-button-text-color: #dddddd
 	)
 );
 

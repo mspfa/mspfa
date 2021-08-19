@@ -1,4 +1,5 @@
 @use 'styles/general' as *;
+@use 'styles/themes' as *;
 
 #preload-resources {
 	position: fixed;
@@ -57,7 +58,7 @@ main {
 #copyright {
 	padding: 0.4em 1.6em;
 	line-height: 1.6em;
+	@include theme(font, alt-font);
 	font-size: x-small;
-	font-family: $sans-serif;
 	text-align: center;
 }
