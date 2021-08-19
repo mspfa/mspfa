@@ -23,6 +23,6 @@ export const getClientNews = (serverNews: ServerNews): ClientNews => ({
 	...serverNews.edited !== undefined && {
 		edited: +serverNews.edited
 	},
-	author: serverNews.id.toString(),
+	author: serverNews.author.toString(),
 	content: serverNews.content
 });
