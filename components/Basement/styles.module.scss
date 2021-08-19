@@ -1,4 +1,5 @@
 @use 'sass:map';
+@use 'sass:math';
 @use 'styles/general' as *;
 @use 'styles/themes' as *;
 
@@ -179,7 +180,7 @@
 
 	&-heading {
 		padding: 3px 0;
-		border-bottom: 1px solid #8080803e;
+		border-bottom: 1px solid rgba(128, 128, 128, 0.245);
 		font-style: oblique;
 	}
 
