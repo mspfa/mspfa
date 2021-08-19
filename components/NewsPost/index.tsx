@@ -5,6 +5,8 @@ import Timestamp from 'components/Timestamp';
 import type { ClientNews } from 'lib/client/news';
 import type { StoryID } from 'lib/server/stories';
 import React from 'react';
+import EditButton from 'components/Button/EditButton';
+import RemoveButton from 'components/Button/RemoveButton';
 
 export type NewsPostProps = {
 	storyID: StoryID,
@@ -16,6 +18,10 @@ const NewsPost = React.memo(({
 	children: newsPost
 }: NewsPostProps) => (
 	<div className="news-post">
+		<div className="news-post-actions">
+			<EditButton />
+			<RemoveButton />
+		</div>
 		<div className="news-post-heading">
 			{'Posted on '}
 			<Timestamp>{newsPost.posted}</Timestamp>
