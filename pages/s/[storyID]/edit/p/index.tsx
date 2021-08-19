@@ -128,10 +128,10 @@ const calculateGridSizeInfo = (
 	/** The number of pixels in `pageContainer`'s potential height which is within view. */
 	const pixelsInView = (
 		pageContainerRect.top < 0
-			? window.innerHeight
-			: pageContainerRect.top > window.innerHeight
+			? document.documentElement.clientHeight
+			: pageContainerRect.top > document.documentElement.clientHeight
 				? 0
-				: window.innerHeight - pageContainerRect.top
+				: document.documentElement.clientHeight - pageContainerRect.top
 	);
 
 	const rowsAboveView = Math.min(
@@ -1083,7 +1083,7 @@ const Component = withErrorPage<ServerSideProps>(({
 									}
 
 									// Compute this value beforehand for performance.
-									const windowInnerHeight = window.innerHeight;
+									const viewportHeight = document.documentElement.clientHeight;
 
 									for (let i = 0; i < pageElements.length; i++) {
 										const pageElement = pageElements[i];
@@ -1141,7 +1141,7 @@ const Component = withErrorPage<ServerSideProps>(({
 													// Whether the bottom of this page would be below the top of the view.
 													offsetTop + pageHeight > scrollTop
 													// Whether the top of this page would be above the bottom of the view.
-													&& offsetTop <= scrollTop + windowInnerHeight
+													&& offsetTop <= scrollTop + viewportHeight
 												)
 											);
 										}
