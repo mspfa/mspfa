@@ -2,7 +2,6 @@
 
 // Because custom styles are a thing, in order to avoid the site's built-in styles making false assumptions about the font weight, all fonts set here should use `normal` as the font weight unless it is intended for the font to be universally if not almost universally different.
 // Additionally, all fonts set here should unconditionally use `1em` as the font size, so that all font sizes set or left unset elsewhere can safely assume `1em` as the default font size.
-
 $themes: (
 	standard: (
 		back-color: #535353,
