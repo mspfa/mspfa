@@ -1,4 +1,4 @@
-export type Theme = 'standard' | 'dark' | 'felt' | 'sbahj' | 'trickster';
+export type Theme = 'standard' | 'dark' | 'felt' | 'sah';
 
 export const setTheme = (theme: Theme = 'standard') => {
 	// @client-only {

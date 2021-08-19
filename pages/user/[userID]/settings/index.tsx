@@ -296,8 +296,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										<option value="standard">Standard</option>
 										<option value="dark">Dark</option>
 										<option value="felt">Felt</option>
-										<option value="sbahj">SBaHJ</option>
-										<option value="trickster">Trickster</option>
+										<option value="sah">Sweet and Hella</option>
 									</FieldBoxRow>
 									<FieldBoxRow
 										type="checkbox"
