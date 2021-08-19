@@ -1,6 +1,5 @@
 @use 'sass:math';
 @use 'sass:map';
-@use 'styles/general' as *;
 @use 'styles/themes' as *;
 
 // Applies a pixelated 3D depth effect behind the button. Lowers the depth on `:active`.

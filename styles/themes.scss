@@ -75,3 +75,19 @@ $standard-theme: map.get($themes, standard);
 	#{$property}: map.get($standard-theme, $theme-variable);
 	#{$property}: var(--#{$theme-variable});
 }
+
+$page-width: 950px;
+
+// Only applies styles when the viewport is large.
+@mixin desktop {
+	@media screen and (min-width: $page-width) {
+		@content;
+	}
+}
+
+// Only applies styles when the viewport is not large.
+@mixin mobile {
+	@media not screen and (min-width: $page-width) {
+		@content;
+	}
+}

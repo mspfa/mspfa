@@ -1,7 +1,5 @@
 @use 'sass:map';
-@use 'styles/general' as *;
 @use 'styles/themes' as *;
-@use 'styles/inputs' as *;
 
 @font-face {
 	font-family: Homestuck-Regular;
@@ -55,6 +53,100 @@ option,
 .button {
 	@include theme(font, font);
 	@include theme(color, text-color);
+}
+
+.input-like, input, textarea, select, option {
+	font-size: 0.8333rem;
+	@include theme(background-color, input-color);
+}
+
+.input-like, input, textarea, select {
+	box-sizing: border-box;
+	border-radius: 0;
+	border: 2px solid;
+	@include theme(border-color, input-border-color);
+
+	&:focus {
+		@include theme(border-color, input-focus-border-color);
+	}
+}
+
+.input-like, input, textarea {
+	padding: 0.15em;
+}
+
+input, textarea, select {
+	&:disabled {
+		cursor: default;
+		opacity: 0.7;
+	}
+}
+
+input, select {
+	height: calc(1.425em + 4px);
+	vertical-align: middle;
+}
+
+input[type=checkbox], input[type=radio] {
+	appearance: none;
+	width: 16px;
+	height: 16px;
+	cursor: pointer;
+	margin: 3px;
+	padding: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	font-size: 13px;
+}
+
+input[type=checkbox]:checked::before {
+	content: '✔';
+	pointer-events: none;
+
+	@supports (mask: none) {
+		width: 100%;
+		height: 100%;
+		background-color: currentColor;
+		mask-image: url(/images/checkmark.svg);
+		mask-repeat: no-repeat;
+		mask-position: center;
+	}
+}
+
+input[type=radio] {
+	border-radius: 50%;
+
+	&:checked::before {
+		content: '';
+		pointer-events: none;
+		width: 50%;
+		height: 50%;
+		padding: 1px;
+		background-color: currentColor;
+		border-radius: 50%;
+	}
+}
+
+textarea {
+	resize: vertical;
+	width: 100%;
+	vertical-align: bottom;
+}
+
+select {
+	cursor: pointer;
+
+	&:invalid {
+		// `select` elements are generally only `:invalid` if a disabled option is selected, so this is effectively the `placeholder` attribute color, because `select`s don't have `placeholder`s.
+		// This color code matches Chrome's default.
+		color: #757575;
+	}
+}
+
+label {
+	cursor: pointer;
 }
 
 img {
