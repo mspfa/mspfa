@@ -32,7 +32,8 @@ export const getTime = (date: Date) => [
  * Example outputs: `'February 4, 2021'`, `'July 15, 1999 at 04:53'`
  */
 export const getAbsoluteTimestamp = (date: Date, withTime?: boolean) => {
-	let timestamp = `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+	// This timestamp format is consistent with MSPA's news timestamps.
+	let timestamp = `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
 
 	if (withTime) {
 		timestamp += ` at ${getTime(date)}`;
