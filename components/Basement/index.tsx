@@ -31,6 +31,7 @@ import type { ClientNews } from 'lib/client/news';
 import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
 import { useUserCache } from 'lib/client/UserCache';
 import frameThrottler from 'lib/client/frameThrottler';
+import NewsPost from 'components/NewsPost';
 
 type StoryNewsAPI = APIClient<typeof import('pages/api/stories/[storyID]/news').default>;
 
@@ -351,23 +352,13 @@ const Basement = ({
 							id="story-news"
 							ref={newsElementRef}
 						>
-							{newsPosts.map(news => (
-								<div
-									key={news.id}
-									className="news-post"
+							{newsPosts.map(newsPost => (
+								<NewsPost
+									key={newsPost.id}
+									storyID={story.id}
 								>
-									<div className="news-post-heading">
-										{'Posted on '}
-										<Timestamp>{news.posted}</Timestamp>
-										{' by '}
-										<UserLink>{news.author}</UserLink>
-									</div>
-									<div className="news-post-content">
-										<BBCode html>
-											{news.content}
-										</BBCode>
-									</div>
-								</div>
+									{newsPost}
+								</NewsPost>
 							))}
 						</Row>
 					</>

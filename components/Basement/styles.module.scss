@@ -175,24 +175,6 @@
 	margin-bottom: 0.5ch;
 }
 
-.news-post {
-	margin-bottom: 2px;
-
-	&-heading {
-		padding: 3px 0;
-		border-bottom: 1px solid rgba(128, 128, 128, 0.245);
-		font-style: italic;
-	}
-
-	&-content {
-		padding: 20px 3px;
-
-		* {
-			max-width: 100%;
-		}
-	}
-}
-
 #edit-news-tip {
 	font-size: 0.875em;
 	opacity: 0.5;
