@@ -1,4 +1,4 @@
-import { MAX_LATEST_PAGES } from 'components/Basement';
+import { MAX_LATEST_PAGES, NEWS_POSTS_PER_REQUEST } from 'components/Basement';
 import type { ClientPreviousPageIDs } from 'components/StoryViewer';
 import { uniqBy } from 'lodash';
 import { withErrorPage } from 'lib/client/errors';
@@ -125,7 +125,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		}
 	}
 
-	const newsPosts = story.news.slice(0, 3);
+	const newsPosts = story.news.slice(0, NEWS_POSTS_PER_REQUEST);
 
 	return {
 		props: {

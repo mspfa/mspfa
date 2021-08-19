@@ -4,7 +4,7 @@ import Row from 'components/Row';
 import type { StoryLogListings, PublicStory } from 'lib/client/stories';
 import { storyStatusNames } from 'lib/client/stories';
 import { useMobile } from 'lib/client/useMobile';
-import { Fragment, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import useFunction from 'lib/client/useFunction';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
 import Timestamp from 'components/Timestamp';
@@ -28,11 +28,17 @@ import IDPrefix from 'lib/client/IDPrefix';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import type { ClientNews } from 'lib/client/news';
+import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
+import { useUserCache } from 'lib/client/UserCache';
+import frameThrottler from 'lib/client/frameThrottler';
 
 type StoryNewsAPI = APIClient<typeof import('pages/api/stories/[storyID]/news').default>;
 
 /** The maximum number of pages which can be listed under the adventure's "Latest Pages" section. */
 export const MAX_LATEST_PAGES = 45;
+
+/** The maximum number of news posts to request each time. */
+export const NEWS_POSTS_PER_REQUEST = 3;
 
 export type BasementProps = {
 	story: PublicStory,
@@ -51,6 +57,8 @@ const Basement = ({
 	newsPosts: initialNewsPosts
 }: BasementProps) => {
 	const user = useUser();
+
+	const { cacheUser } = useUserCache();
 
 	const writePerms = !!user && (
 		story.owner === user.id
@@ -133,6 +141,69 @@ const Basement = ({
 			...newsPosts
 		]);
 	});
+
+	const [notAllNewsLoaded, setNotAllNewsLoaded] = useState(
+		// If the client initially received the maximum amount of news posts, then there may be more. On the other hand, if they received less, then we know we have all of them.
+		initialNewsPosts.length === NEWS_POSTS_PER_REQUEST
+	);
+	/** Whether news is currently being requested. */
+	const newsLoadingRef = useRef(false);
+	const newsElementRef = useRef<HTMLDivElement>(null);
+
+	const checkIfNewsShouldBeFetched = useFunction(async () => {
+		if (newsLoadingRef.current) {
+			return;
+		}
+
+		const newsRect = newsElementRef.current!.getBoundingClientRect();
+		const newsStyle = window.getComputedStyle(newsElementRef.current!);
+		const newsPaddingBottom = +newsStyle.paddingBottom.slice(0, -2);
+		const newsContentBottom = newsRect.bottom - newsPaddingBottom;
+
+		// Check if the user has scrolled below the bottom of the news's content.
+		if (newsContentBottom < document.documentElement.clientHeight) {
+			newsLoadingRef.current = true;
+
+			const { data: { news, userCache } } = await (api as StoryNewsAPI).get(`/stories/${story.id}/news`, {
+				params: {
+					limit: NEWS_POSTS_PER_REQUEST,
+					...newsPosts.length && {
+						before: newsPosts[newsPosts.length - 1].id
+					}
+				}
+			}).finally(() => {
+				newsLoadingRef.current = false;
+			});
+
+			if (news.length < NEWS_POSTS_PER_REQUEST) {
+				setNotAllNewsLoaded(false);
+			}
+
+			if (news.length === 0) {
+				return;
+			}
+
+			userCache.forEach(cacheUser);
+
+			setNewsPosts(newsPosts => [
+				...newsPosts,
+				...news
+			]);
+		}
+	});
+
+	useEffect(() => {
+		if (section === 'news' && notAllNewsLoaded) {
+			const _viewportListener = addViewportListener(checkIfNewsShouldBeFetched);
+			frameThrottler(_viewportListener).then(checkIfNewsShouldBeFetched);
+
+			return () => {
+				removeViewportListener(_viewportListener);
+			};
+		}
+
+		// `newsPosts` must be a dependency here so that updating it calls `checkIfNewsShouldBeFetched` again without needing to change the viewport.
+	}, [checkIfNewsShouldBeFetched, section, notAllNewsLoaded, newsPosts]);
 
 	return (
 		<div id="basement">
@@ -276,7 +347,10 @@ const Basement = ({
 								</Button>
 							</Row>
 						)}
-						<Row id="story-news">
+						<Row
+							id="story-news"
+							ref={newsElementRef}
+						>
 							{newsPosts.map(news => (
 								<div
 									key={news.id}
