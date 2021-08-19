@@ -175,17 +175,16 @@
 }
 
 .news-post {
-	padding-top: 5px;
+	padding-top: 2px;
 
 	&-heading {
-		padding-bottom: 3px;
+		padding: 3px 0;
 		border-bottom: 1px solid #8080803e;
 		font-style: oblique;
 	}
 
 	&-content {
-		margin: 17px 0;
-		padding: 3px;
+		padding: 20px 3px;
 		font-size: 0.875em;
 	}
 }
