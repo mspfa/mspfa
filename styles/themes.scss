@@ -1,7 +1,7 @@
 @use "sass:map";
 
-// Because custom styles are a thing, in order to avoid the site's built-in styles making false assumptions about the font weight, all fonts set here should use `normal` as the font weight unless it is intended for the font to be universally if not almost universally different.
-// Additionally, all fonts set here should unconditionally use `1em` as the font size, so that all font sizes set or left unset elsewhere can safely assume `1em` as the default font size.
+// Because custom styles are a thing, in order to avoid the site's built-in styles making false assumptions about the font weight, all fonts set here should leave the font weight unset (to default to `normal`) unless it is intended for the font to be universally if not almost universally different.
+// Additionally, all fonts set here should unconditionally use `1em` as the font size, so that `1em` can be safely assumed as the default font size when the font size is left unset.
 $themes: (
 	standard: (
 		back-color: #535353,
@@ -22,7 +22,7 @@ $themes: (
 		alt-button-text-color: #dddddd,
 		font: (bold 1em 'Courier New', Courier, monospace),
 		alt-font: (bold 1em Verdana, Arial, Helvetica, sans-serif),
-		heading-font: normal 1em Homestuck-Regular
+		heading-font: 1em Homestuck-Regular
 	),
 	dark: (
 		back-color: #434343,
