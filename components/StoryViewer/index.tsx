@@ -18,6 +18,7 @@ import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import Basement from 'components/Basement';
+import type { ClientNews } from 'lib/client/news';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 
@@ -74,14 +75,15 @@ export type StoryViewerProps = {
 	 */
 	pages: Partial<Record<StoryPageID, ClientStoryPage | null>>,
 	previousPageIDs: ClientPreviousPageIDs,
-	latestPages: StoryLogListings
+	latestPages: StoryLogListings,
+	newsPosts: ClientNews
 };
 
 const StoryViewer = ({
 	story,
 	pages: initialPages,
 	previousPageIDs: initialPreviousPageIDs,
-	latestPages
+	...props
 }: StoryViewerProps) => {
 	useNavStoryID(story.id);
 
@@ -442,7 +444,7 @@ const StoryViewer = ({
 					story={story}
 					pageID={pageID}
 					previewMode={previewMode}
-					latestPages={latestPages}
+					{...props}
 				/>
 			)}
 		>

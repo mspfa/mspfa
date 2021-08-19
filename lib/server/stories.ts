@@ -125,6 +125,7 @@ export type ServerStory = {
 	allowComments: boolean,
 	/** @maxLength 2000 */
 	sidebarContent: string,
+	/** This story's news posts sorted from newest to oldest. */
 	news: ServerNews[],
 	defaultPageTitle: ServerStoryPage['title'],
 	spoilerPresets: SpoilerPreset[],

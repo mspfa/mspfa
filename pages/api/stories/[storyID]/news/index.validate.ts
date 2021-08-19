@@ -8,7 +8,10 @@ export default createValidator({
 	definitions: {
 		RequestMethod: {
 			type: 'string',
-			const: 'POST'
+			enum: [
+				'POST',
+				'GET'
+			]
 		}
 	}
 }, {
@@ -16,44 +19,75 @@ export default createValidator({
 	$ref: '#/definitions/Request',
 	definitions: {
 		Request: {
-			type: 'object',
-			additionalProperties: false,
-			properties: {
-				body: {
+			anyOf: [
+				{
 					type: 'object',
+					additionalProperties: false,
 					properties: {
-						content: {
+						body: {
+							type: 'object',
+							properties: {
+								content: {
+									type: 'string',
+									minLength: 1,
+									maxLength: 20000
+								}
+							},
+							required: [
+								'content'
+							],
+							additionalProperties: false
+						},
+						query: {
+							type: 'object',
+							properties: {
+								storyID: {
+									type: 'string'
+								}
+							},
+							required: [
+								'storyID'
+							],
+							additionalProperties: false
+						},
+						method: {
 							type: 'string',
-							minLength: 1,
-							maxLength: 20000
+							const: 'POST'
 						}
 					},
 					required: [
-						'content'
-					],
-					additionalProperties: false
+						'body',
+						'method',
+						'query'
+					]
 				},
-				query: {
+				{
 					type: 'object',
+					additionalProperties: false,
 					properties: {
-						storyID: {
-							type: 'string'
+						body: {},
+						query: {
+							type: 'object',
+							properties: {
+								storyID: {
+									type: 'string'
+								}
+							},
+							required: [
+								'storyID'
+							],
+							additionalProperties: false
+						},
+						method: {
+							type: 'string',
+							const: 'GET'
 						}
 					},
 					required: [
-						'storyID'
-					],
-					additionalProperties: false
-				},
-				method: {
-					type: 'string',
-					const: 'POST'
+						'method',
+						'query'
+					]
 				}
-			},
-			required: [
-				'body',
-				'method',
-				'query'
 			]
 		}
 	}

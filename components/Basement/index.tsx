@@ -27,6 +27,7 @@ import BBField from 'components/BBCode/BBField';
 import IDPrefix from 'lib/client/IDPrefix';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
+import type { ClientNews } from 'lib/client/news';
 
 type StoryNewsAPI = APIClient<typeof import('pages/api/stories/[storyID]/news').default>;
 
@@ -37,11 +38,18 @@ export type BasementProps = {
 	story: PublicStory,
 	pageID: StoryPageID,
 	previewMode: boolean,
-	latestPages: StoryLogListings
+	latestPages: StoryLogListings,
+	newsPosts: ClientNews[]
 };
 
 /** The area of the `StoryViewer` between the `footer` and `#copyright` elements. */
-const Basement = ({ story, pageID, previewMode, latestPages }: BasementProps) => {
+const Basement = ({
+	story,
+	pageID,
+	previewMode,
+	latestPages,
+	newsPosts: initialNewsPosts
+}: BasementProps) => {
 	const user = useUser();
 
 	// Default to `true` to avoid loading the side ad unnecessarily.
