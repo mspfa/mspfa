@@ -40,12 +40,17 @@
 	}
 }
 
-main.padded {
-	padding: 16px 56px 56px 56px;
+main {
+	// For old browsers.
+	display: block;
 
-	@include mobile {
-		padding-left: 0;
-		padding-right: 0;
+	&.padded {
+		padding: 16px 56px 56px 56px;
+
+		@include mobile {
+			padding-left: 0;
+			padding-right: 0;
+		}
 	}
 }
 
