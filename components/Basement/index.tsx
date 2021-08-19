@@ -52,6 +52,12 @@ const Basement = ({
 }: BasementProps) => {
 	const user = useUser();
 
+	const writePerms = !!user && (
+		story.owner === user.id
+		|| story.editors.includes(user.id)
+		|| !!(user.perms & Perm.sudoWrite)
+	);
+
 	// Default to `true` to avoid loading the side ad unnecessarily.
 	const mobile = useMobile(true);
 
@@ -175,11 +181,7 @@ const Basement = ({
 							<span className="story-status spaced">
 								{storyStatusNames[story.status]}
 							</span>
-							{user && (
-								story.owner === user.id
-								|| story.editors.includes(user.id)
-								|| !!(user.perms & Perm.sudoRead)
-							) && (
+							{writePerms && (
 								<EditButton
 									className="spaced"
 									href={`/s/${story.id}/edit/p#p${pageID}`}
@@ -261,14 +263,16 @@ const Basement = ({
 				</Row>
 				{section === 'news' ? (
 					<Row id="story-news">
-						<Row id="story-news-actions">
-							<Button
-								className="small"
-								onClick={createNewsPost}
-							>
-								Create News Post
-							</Button>
-						</Row>
+						{writePerms && (
+							<Row id="story-news-actions">
+								<Button
+									className="small"
+									onClick={createNewsPost}
+								>
+									Create News Post
+								</Button>
+							</Row>
+						)}
 						<Row id="story-news-content">
 							{newsPosts.map(news => (
 								<div
