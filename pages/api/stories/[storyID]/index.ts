@@ -171,18 +171,26 @@ const Handler: APIHandler<{
 			);
 		}
 
-		await stories.updateOne({
-			_id: story._id
-		}, {
-			...Object.values(storyChanges).length && {
-				$set: flatten(storyChanges)
-			},
-			...willDelete === false && {
-				$unset: {
-					willDelete: true
+		const storyChangesLength = Object.values(storyChanges).length;
+
+		// Only update the database if the update wouldn't be empty.
+		if (
+			storyChangesLength
+			|| willDelete === false
+		) {
+			await stories.updateOne({
+				_id: story._id
+			}, {
+				...storyChangesLength && {
+					$set: flatten(storyChanges)
+				},
+				...willDelete === false && {
+					$unset: {
+						willDelete: true
+					}
 				}
-			}
-		});
+			});
+		}
 
 		mergeWith(story, storyChanges, overwriteArrays);
 	}
