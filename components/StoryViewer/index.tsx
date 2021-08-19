@@ -76,7 +76,7 @@ export type StoryViewerProps = {
 	pages: Partial<Record<StoryPageID, ClientStoryPage | null>>,
 	previousPageIDs: ClientPreviousPageIDs,
 	latestPages: StoryLogListings,
-	newsPosts: ClientNews
+	newsPosts: ClientNews[]
 };
 
 const StoryViewer = ({
