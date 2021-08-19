@@ -232,16 +232,14 @@ const Basement = ({
 						{sanitizedDescription}
 					</BBCode>
 				</Row>
-				<Row id="story-tags">
-					<StoryTagLinkContainer>
-						{story.tags.map((tag, i) => (
-							<Fragment key={tag}>
-								{i !== 0 && ' '}
-								<StoryTagLink>{tag}</StoryTagLink>
-							</Fragment>
-						))}
-					</StoryTagLinkContainer>
-				</Row>
+				<StoryTagLinkContainer id="story-tags" className="row">
+					{story.tags.map((tag, i) => (
+						<Fragment key={tag}>
+							{i !== 0 && ' '}
+							<StoryTagLink>{tag}</StoryTagLink>
+						</Fragment>
+					))}
+				</StoryTagLinkContainer>
 				<Row id="basement-actions">
 					<Button
 						className="small"
@@ -267,7 +265,7 @@ const Basement = ({
 					</Button>
 				</Row>
 				{section === 'news' ? (
-					<Row id="story-news">
+					<>
 						{writePerms && (
 							<Row id="story-news-actions">
 								<Button
@@ -278,7 +276,7 @@ const Basement = ({
 								</Button>
 							</Row>
 						)}
-						<Row id="story-news-content">
+						<Row id="story-news">
 							{newsPosts.map(news => (
 								<div
 									key={news.id}
@@ -298,7 +296,7 @@ const Basement = ({
 								</div>
 							))}
 						</Row>
-					</Row>
+					</>
 				) : (
 					// If this point is reached, `section === 'comments'`.
 					<Row id="story-comments">
