@@ -217,8 +217,7 @@ export default createValidator({
 				'standard',
 				'dark',
 				'felt',
-				'sbahj',
-				'trickster'
+				'sah'
 			]
 		},
 		'RecursivePartial<structure--3639-3717--3627-3718--3213-4080--3202-4081--2229-4666--2092-4667--0-7926>': {

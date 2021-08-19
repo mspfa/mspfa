@@ -47,8 +47,7 @@ export default createValidator({
 							},
 							required: [
 								'storyID'
-							],
-							additionalProperties: false
+							]
 						},
 						method: {
 							type: 'string',
@@ -75,8 +74,7 @@ export default createValidator({
 							},
 							required: [
 								'storyID'
-							],
-							additionalProperties: false
+							]
 						},
 						method: {
 							type: 'string',

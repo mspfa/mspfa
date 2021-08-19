@@ -14,7 +14,8 @@ import users, { getPublicUser } from 'lib/server/users';
 import { uniqBy } from 'lodash';
 
 const Handler: APIHandler<{
-	query: {
+	// TODO: Same as other instance of `query: unknown &`.
+	query: unknown & {
 		storyID: string
 	}
 } & (
