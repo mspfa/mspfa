@@ -144,13 +144,13 @@ const Handler: APIHandler<(
 		|| b.lastSeen - a.lastSeen
 	));
 
-	if (req.query.limit !== undefined) {
-		const limit = +req.query.limit;
+	let limit = req.query.limit ? +req.query.limit : NaN;
 
-		if (!Number.isNaN(limit)) {
-			results = results.slice(0, limit);
-		}
+	if (Number.isNaN(limit) || limit > 50) {
+		limit = 50;
 	}
+
+	results = results.slice(0, limit);
 
 	res.send(results);
 };
