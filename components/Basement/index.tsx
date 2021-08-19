@@ -126,7 +126,9 @@ const Basement = ({
 			return;
 		}
 
-		(api as StoryNewsAPI).post(`/stories/${story.id}/news`, dialog.form!.values);
+		const { data: newsPost } = await (api as StoryNewsAPI).post(`/stories/${story.id}/news`, dialog.form!.values);
+
+		setNewsPosts(newsPosts => [newsPost, ...newsPosts]);
 	});
 
 	return (
