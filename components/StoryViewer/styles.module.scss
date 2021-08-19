@@ -28,6 +28,8 @@ $story-page-padding: 25px;
 	&-title {
 		text-align: center;
 		padding: 14px 5px;
+		// Do not assume the theme's default `font-weight` is `bold`.
+		font-weight: bold;
 		font-size: xx-large;
 	}
 
