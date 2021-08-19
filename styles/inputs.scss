@@ -1,7 +1,7 @@
 @use 'styles/themes' as *;
 
 .input-like, input, textarea, select, option {
-	font-size: 0.8333rem;
+	font-size: 0.8333rem !important;
 	@include theme(background-color, input-color);
 }
 
