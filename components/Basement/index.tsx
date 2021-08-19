@@ -206,6 +206,17 @@ const Basement = ({
 		// `newsPosts` must be a dependency here so that updating it calls `checkIfNewsShouldBeFetched` again without needing to change the viewport.
 	}, [checkIfNewsShouldBeFetched, section, notAllNewsLoaded, newsPosts]);
 
+	const deleteNewsPost = useFunction((newsID: string) => {
+		setNewsPosts(newsPosts => {
+			const newsIndex = newsPosts.findIndex(({ id }) => id === newsID);
+
+			return [
+				...newsPosts.slice(0, newsIndex),
+				...newsPosts.slice(newsIndex + 1, newsPosts.length)
+			];
+		});
+	});
+
 	return (
 		<div id="basement">
 			<div id="sidebar" className="basement-section mid">
@@ -355,7 +366,8 @@ const Basement = ({
 							{newsPosts.map(newsPost => (
 								<NewsPost
 									key={newsPost.id}
-									storyID={story.id}
+									story={story}
+									deleteNewsPost={deleteNewsPost}
 								>
 									{newsPost}
 								</NewsPost>
