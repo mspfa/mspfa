@@ -13,18 +13,23 @@ import useFunction from 'lib/client/useFunction';
 import Dialog from 'lib/client/Dialog';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
+import IDPrefix from 'lib/client/IDPrefix';
+import Label from 'components/Label';
+import BBField from 'components/BBCode/BBField';
 
 type StoryNewsPostAPI = APIClient<typeof import('pages/api/stories/[storyID]/news/[newsID]').default>;
 
 export type NewsPostProps = {
 	story: PublicStory,
 	children: ClientNews,
+	setNewsPost: (newsPost: ClientNews) => void,
 	deleteNewsPost: (newsID: string) => void
 };
 
 const NewsPost = React.memo(({
 	story,
 	children: newsPost,
+	setNewsPost,
 	deleteNewsPost
 }: NewsPostProps) => {
 	const user = useUser();
@@ -33,6 +38,45 @@ const NewsPost = React.memo(({
 		story.owner === user.id
 		|| story.editors.includes(user.id)
 	);
+
+	const promptEdit = useFunction(async () => {
+		const dialog = new Dialog({
+			id: 'edit-news',
+			title: 'Edit News Post',
+			initialValues: {
+				content: newsPost.content
+			},
+			content: (
+				<IDPrefix.Provider value="news">
+					<Label block htmlFor="news-field-content">
+						Content
+					</Label>
+					<BBField
+						name="content"
+						autoFocus
+						required
+						maxLength={20000}
+						rows={6}
+					/>
+				</IDPrefix.Provider>
+			),
+			actions: [
+				{ label: 'Save', autoFocus: false },
+				{ label: 'Cancel' }
+			]
+		});
+
+		if (!(await dialog)?.submit) {
+			return;
+		}
+
+		const { data: newNewsPost } = await (api as StoryNewsPostAPI).put(
+			`/stories/${story.id}/news/${newsPost.id}`,
+			dialog.form!.values
+		);
+
+		setNewsPost(newNewsPost);
+	});
 
 	const promptDelete = useFunction(async () => {
 		if (!await Dialog.confirm({
@@ -57,6 +101,7 @@ const NewsPost = React.memo(({
 				)) && (
 					<EditButton
 						title="Edit News Post"
+						onClick={promptEdit}
 					/>
 				)}
 				{(userIsEditor || (

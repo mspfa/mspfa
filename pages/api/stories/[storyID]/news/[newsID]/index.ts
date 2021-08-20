@@ -7,6 +7,13 @@ import { authenticate } from 'lib/server/auth';
 import type { ClientNews } from 'lib/client/news';
 import { Perm } from 'lib/client/perms';
 import { StoryPrivacy } from 'lib/client/stories';
+import type { RecursivePartial } from 'lib/types';
+import { flatten } from 'lib/server/db';
+import { mergeWith } from 'lodash';
+import overwriteArrays from 'lib/client/overwriteArrays';
+
+/** The keys of all `ClientNews` properties which the client should be able to `PUT` into their `ServerNews`. */
+type PuttableNewsKey = 'content';
 
 const Handler: APIHandler<{
 	query: {
@@ -20,7 +27,7 @@ const Handler: APIHandler<{
 		method: 'DELETE'
 	} | {
 		method: 'PUT',
-		body: any // TODO
+		body: RecursivePartial<Pick<ClientNews, PuttableNewsKey>>
 	}
 ), {
 	method: 'GET',
@@ -103,7 +110,33 @@ const Handler: APIHandler<{
 
 	// If this point is reached, `req.method === 'PUT'`.
 
+	if (!(
+		user && (
+			story.owner.equals(user._id)
+			|| story.editors.some(userID => userID.equals(user._id))
+			|| user.perms & Perm.sudoWrite
+		)
+	)) {
+		res.status(403).send({
+			message: 'You do not have permission to edit news on the specified adventure.'
+		});
+		return;
+	}
 
+	const newsPost = await getNewsPost();
+
+	if (Object.values(req.body).length) {
+		await stories.updateOne({
+			'_id': story._id,
+			'news.id': newsPost.id
+		}, {
+			$set: flatten(req.body, 'news.$.')
+		});
+	}
+
+	mergeWith(newsPost, req.body, overwriteArrays);
+
+	res.send(getClientNews(newsPost));
 };
 
 export default Handler;

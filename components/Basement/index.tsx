@@ -135,7 +135,10 @@ const Basement = ({
 			return;
 		}
 
-		const { data: newsPost } = await (api as StoryNewsAPI).post(`/stories/${story.id}/news`, dialog.form!.values);
+		const { data: newsPost } = await (api as StoryNewsAPI).post(
+			`/stories/${story.id}/news`,
+			dialog.form!.values
+		);
 
 		setNewsPosts(newsPosts => [
 			newsPost,
@@ -212,6 +215,18 @@ const Basement = ({
 
 			return [
 				...newsPosts.slice(0, newsIndex),
+				...newsPosts.slice(newsIndex + 1, newsPosts.length)
+			];
+		});
+	});
+
+	const setNewsPost = useFunction((newsPost: ClientNews) => {
+		setNewsPosts(newsPosts => {
+			const newsIndex = newsPosts.findIndex(({ id }) => id === newsPost.id);
+
+			return [
+				...newsPosts.slice(0, newsIndex),
+				newsPost,
 				...newsPosts.slice(newsIndex + 1, newsPosts.length)
 			];
 		});
@@ -367,6 +382,7 @@ const Basement = ({
 								<NewsPost
 									key={newsPost.id}
 									story={story}
+									setNewsPost={setNewsPost}
 									deleteNewsPost={deleteNewsPost}
 								>
 									{newsPost}
