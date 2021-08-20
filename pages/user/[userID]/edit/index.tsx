@@ -2,7 +2,7 @@ import Page from 'components/Page';
 import { getUser, setUser } from 'lib/client/users';
 import type { PrivateUser } from 'lib/client/users';
 import { Perm } from 'lib/client/perms';
-import { permToGetUserInPage } from 'lib/server/perms';
+import { permToGetUserInPage } from 'lib/server/permToGetUser';
 import { getPrivateUser } from 'lib/server/users';
 import { withErrorPage } from 'lib/client/errors';
 import { withStatusCode } from 'lib/server/errors';

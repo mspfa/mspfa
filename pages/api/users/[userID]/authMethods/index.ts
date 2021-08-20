@@ -1,7 +1,7 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
 import { Perm } from 'lib/client/perms';
-import { permToGetUserInAPI } from 'lib/server/perms';
+import { permToGetUserInAPI } from 'lib/server/permToGetUser';
 import users from 'lib/server/users';
 import type { AuthMethod } from 'lib/server/users';
 import type { AuthMethodOptions, ClientAuthMethod } from 'lib/client/auth';

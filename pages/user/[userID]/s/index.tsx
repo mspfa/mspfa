@@ -1,6 +1,6 @@
 import Page from 'components/Page';
 import { Perm } from 'lib/client/perms';
-import { permToGetUserInPage } from 'lib/server/perms';
+import { permToGetUserInPage } from 'lib/server/permToGetUser';
 import { withErrorPage } from 'lib/client/errors';
 import { withStatusCode } from 'lib/server/errors';
 import Box from 'components/Box';

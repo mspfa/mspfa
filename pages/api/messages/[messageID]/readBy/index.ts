@@ -2,7 +2,7 @@ import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
 import messages, { getMessageByUnsafeID, updateUnreadMessages } from 'lib/server/messages';
 import { Perm } from 'lib/client/perms';
-import { permToGetUserInAPI } from 'lib/server/perms';
+import { permToGetUserInAPI } from 'lib/server/permToGetUser';
 import type { integer } from 'lib/types';
 
 const Handler: APIHandler<{

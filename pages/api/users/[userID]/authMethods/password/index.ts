@@ -2,7 +2,7 @@ import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
 import { verifyPassword } from 'lib/server/auth';
 import { Perm } from 'lib/client/perms';
-import { permToGetUserInAPI } from 'lib/server/perms';
+import { permToGetUserInAPI } from 'lib/server/permToGetUser';
 import users from 'lib/server/users';
 import type { PasswordString } from 'lib/server/users';
 import argon2 from 'argon2';

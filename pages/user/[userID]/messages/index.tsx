@@ -5,7 +5,7 @@ import { withStatusCode } from 'lib/server/errors';
 import Box from 'components/Box';
 import BoxSection from 'components/Box/BoxSection';
 import { Perm } from 'lib/client/perms';
-import { permToGetUserInPage } from 'lib/server/perms';
+import { permToGetUserInPage } from 'lib/server/permToGetUser';
 import messages, { getClientMessage } from 'lib/server/messages';
 import type { ClientMessage } from 'lib/client/messages';
 import type { PublicUser, PrivateUser } from 'lib/client/users';

@@ -1,7 +1,7 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
 import { Perm } from 'lib/client/perms';
-import { permToGetUserInAPI } from 'lib/server/perms';
+import { permToGetUserInAPI } from 'lib/server/permToGetUser';
 import users from 'lib/server/users';
 import type { ServerStory, StoryID } from 'lib/server/stories';
 import { getStoryByUnsafeID, updateAndSendFavCount } from 'lib/server/stories';
