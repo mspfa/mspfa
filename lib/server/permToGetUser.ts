@@ -39,7 +39,7 @@ function permToGetUser(
 }>;
 
 function permToGetUser(
-	/** This request's `APIResponse` object, or `undefined` if no response should be sent on error (e.g. if this is a page and not an API). */
+	/** This request's `APIResponse` object, or `undefined` if no response should be sent on error (i.e. if this is a page and not an API). */
 	res: APIResponse | undefined,
 	/** The user to check the perms of. */
 	user: ServerUser | undefined,
