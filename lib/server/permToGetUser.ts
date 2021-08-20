@@ -28,7 +28,7 @@ function permToGetUser(
 	/** The potentially unsafe user ID of the user to get. */
 	id: UnsafeObjectID,
 	/**
-	 * The perm or binary OR of perms to require.
+	 * The perm or bitwise OR of perms to require.
 	 *
 	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
 	 */
@@ -46,7 +46,7 @@ function permToGetUser(
 	/** The potentially unsafe user ID of the user to get. */
 	id: UnsafeObjectID,
 	/**
-	 * The perm or binary OR of perms to require.
+	 * The perm or bitwise OR of perms to require.
 	 *
 	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
 	 */
@@ -170,7 +170,7 @@ export const permToGetUserInAPI = async <ServerUserID extends UnsafeObjectID = u
 	req: APIRequest<{ query: { userID: ServerUserID } } | {}>,
 	res: APIResponse,
 	/**
-	 * The perm or binary OR of perms to require.
+	 * The perm or bitwise OR of perms to require.
 	 *
 	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
 	 */
@@ -207,7 +207,7 @@ export const permToGetUserInPage = async (
 	/** The potentially unsafe user ID of the user to get. */
 	id: UnsafeObjectID,
 	/**
-	 * The perm or binary OR of perms to require.
+	 * The perm or bitwise OR of perms to require.
 	 *
 	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
 	 */
