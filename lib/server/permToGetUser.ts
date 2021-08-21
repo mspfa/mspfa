@@ -6,23 +6,7 @@ import type { PageRequest } from 'lib/server/pages';
 import { authenticate } from 'lib/server/auth';
 import type { integer } from 'lib/types';
 
-/**
- * Requires a user to have permission to get another user by potentially unsafe ID.
- *
- * Returns a promise which either:
- * * Resolves with an object of the requested user if `user` is the requested user or `user` has at least one of the perms.
- * * Does not resolve and sends an HTTP error response if there is an error and an `APIResponse` is provided.
- * * Resolves with an object of the error's status code if there is an error and no `APIResponse` is provided.
- *
- * Examples:
- * ```
- * const { user } = await permToGetUser(res, authenticatedUser, req.query.userID, Perm.sudoRead);
- * const { user, statusCode } = await permToGetUser(undefined, req.user, params.userID, Perm.sudoWrite | Perm.sudoDelete);
- * ```
- */
-function permToGetUser(
-	/** This request's `APIResponse` object, or `undefined` if no response should be sent on error (i.e. if this is a page and not an API). */
-	res: APIResponse,
+type PermToGetUserRequiredParams = [
 	/** The user to check the perms of. */
 	user: ServerUser | undefined,
 	/** The potentially unsafe user ID of the user to get. */
@@ -33,126 +17,104 @@ function permToGetUser(
 	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
 	 */
 	perms: integer
-): Promise<{
-	user: ServerUser,
-	statusCode?: undefined
-}>;
+];
 
-function permToGetUser(
-	/** This request's `APIResponse` object, or `undefined` if no response should be sent on error (i.e. if this is a page and not an API). */
-	res: APIResponse | undefined,
-	/** The user to check the perms of. */
-	user: ServerUser | undefined,
-	/** The potentially unsafe user ID of the user to get. */
-	id: UnsafeObjectID,
-	/**
-	 * The perm or bitwise OR of perms to require.
-	 *
-	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
-	 */
-	perms: integer
-): Promise<{
+type PermToGetUserReturn<Res> = {
 	user: ServerUser,
-	statusCode?: undefined
-} | {
-	user?: undefined,
-	statusCode: integer
-}>;
-
-// This ESLint comment is necessary because the rule wants me to use an arrow function, which does not allow for the overloading used here.
-// eslint-disable-next-line func-style
-function permToGetUser(
-	/** This request's `APIResponse` object, or `undefined` if no response should be sent on error (i.e. if this is a page and not an API). */
-	res: APIResponse | undefined,
-	/** The user to check the perms of. */
-	user: ServerUser | undefined,
-	/** The potentially unsafe user ID of the user to get. */
-	id: UnsafeObjectID,
-	/**
-	 * The perm or bitwise OR of perms to require.
-	 *
-	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
-	 */
-	perms: integer
-) {
-	return new Promise<{
-		user: ServerUser,
-		statusCode?: undefined
-	} | {
+	statusCode?: never
+} | (
+	undefined extends Res ? {
 		user?: undefined,
 		statusCode: integer
-	}>(async resolve => {
-		if (!user) {
-			// The client is not authenticated.
+	} : never
+);
 
-			if (res) {
-				res.status(403).send({
-					message: 'You are not authenticated.'
-				});
-			} else {
-				resolve({ statusCode: 403 });
-			}
-			return;
+/**
+ * Requires `user` to have permission to get another user by potentially unsafe `id`.
+ *
+ * Returns a promise which either:
+ * * Resolves with an object of the requested user by if the `user` is requesting themself or if `user` has at least one of the specified `perms`.
+ * * Does not resolve and sends an HTTP error response if there is an error and an `APIResponse` is provided.
+ * * Resolves with an object of the error's status code if there is an error and no `APIResponse` is provided.
+ */
+const permToGetUser = <Res extends APIResponse<any> | undefined>(
+	...[user, id, perms, res]: PermToGetUserRequiredParams | [
+		...requiredParams: PermToGetUserRequiredParams,
+		/** This request's `APIResponse` object, or `undefined` if no response should be sent on error (i.e. if this is a page and not an API). */
+		res: Res
+		// It is necessary to use tuple types instead of simply having `res` be an optional parameter, because otherwise `Res` will not always be inferred correctly.
+	]
+) => new Promise<PermToGetUserReturn<Res>>(async resolve => {
+	if (!user) {
+		// The client is not authenticated.
+
+		if (res) {
+			res.status(403).send({
+				message: 'You are not authenticated.'
+			});
+		} else {
+			resolve({ statusCode: 403 } as PermToGetUserReturn<Res>);
 		}
+		return;
+	}
 
-		if (id && user._id.toString() === id.toString()) {
-			// The user is trying to access their own data, which is permitted.
+	if (id && user._id.toString() === id.toString()) {
+		// The user is trying to access their own data, which is permitted.
 
-			resolve({ user });
-			return;
+		resolve({ user });
+		return;
+	}
+
+	if (!user.permLevel) {
+		if (res) {
+			res.status(403).send({
+				message: 'You have no permissions.'
+			});
+		} else {
+			resolve({ statusCode: 403 } as PermToGetUserReturn<Res>);
 		}
+		return;
+	}
 
-		if (!user.permLevel) {
-			if (res) {
-				res.status(403).send({
-					message: 'You have no permissions.'
-				});
-			} else {
-				resolve({ statusCode: 403 });
-			}
-			return;
+	if (!(user.perms & perms)) {
+		// The user does not have one of the `perms`.
+
+		if (res) {
+			res.status(403).send({
+				message: 'You have insufficient permissions.',
+				userPerms: user.perms,
+				requiredPerms: perms
+			});
+		} else {
+			resolve({ statusCode: 403 } as PermToGetUserReturn<Res>);
 		}
+		return;
+	}
 
-		if (!(user.perms & perms)) {
-			// The user does not have one of the `perms`.
+	const requestedUser = await getUserByUnsafeID(id);
 
-			if (res) {
-				res.status(403).send({
-					message: 'You have insufficient permissions.',
-					userPerms: user.perms,
-					requiredPerms: perms
-				});
-			} else {
-				resolve({ statusCode: 403 });
-			}
-			return;
+	if (!requestedUser) {
+		// If `res` is defined, `getUserByUnsafeID` will send an error response and never resolve, so this point would never be reached.
+
+		resolve({ statusCode: 404 } as PermToGetUserReturn<Res>);
+		return;
+	}
+
+	if (requestedUser.permLevel && user.permLevel >= requestedUser.permLevel) {
+		// The user's `permLevel` is not low enough to allow the user to manage the requested user.
+
+		if (res) {
+			res.status(403).send({
+				message: `Your permission level (${user.permLevel}) must be lower than the specified user's permission level (${requestedUser.permLevel}).`
+			});
+		} else {
+			resolve({ statusCode: 403 } as PermToGetUserReturn<Res>);
 		}
+		return;
+	}
 
-		const requestedUser = await getUserByUnsafeID(id, res);
-
-		if (!requestedUser) {
-			// If `res` is defined, `getUserByUnsafeID` will send an error response and never resolve, so this point would never be reached.
-
-			resolve({ statusCode: 404 });
-			return;
-		}
-
-		if (requestedUser.permLevel && user.permLevel >= requestedUser.permLevel) {
-			// The user's `permLevel` is not low enough to allow the user to manage the requested user.
-
-			if (res) {
-				res.status(403).send({
-					message: `Your permission level (${user.permLevel}) must be lower than the specified user's permission level (${requestedUser.permLevel}).`
-				});
-			} else {
-				resolve({ statusCode: 403 });
-			}
-			return;
-		}
-
-		resolve({ user: requestedUser });
-	});
-}
+	resolve({ user: requestedUser });
+});
 
 /**
  * Authenticates the request and requires the authenticated user to have permission to get the user of ID `req.query.userID`, or by the `userID` argument if `req.query.userID` does not exist.
@@ -166,8 +128,8 @@ function permToGetUser(
  * const user = await permToGetUserInAPI(req, res, Perm.sudoWrite, req.body.user);
  * ```
  */
-export const permToGetUserInAPI = async <ServerUserID extends UnsafeObjectID = undefined>(
-	req: APIRequest<{ query: { userID: ServerUserID } } | {}>,
+export const permToGetUserInAPI = async <UserID extends UnsafeObjectID = undefined>(
+	req: APIRequest<{ query: { userID: UserID } } | {}>,
 	res: APIResponse,
 	/**
 	 * The perm or bitwise OR of perms to require.
@@ -177,17 +139,17 @@ export const permToGetUserInAPI = async <ServerUserID extends UnsafeObjectID = u
 	perms: integer,
 	...[
 		userID = (req.query as any).userID
-	]: (ServerUserID extends undefined ? [
+	]: (UserID extends undefined ? [
 		userID: UnsafeObjectID
 	] : [
 		userID?: UnsafeObjectID
 	])
 ) => (
 	(await permToGetUser(
-		res,
 		(await authenticate(req, res)).user,
 		userID,
-		perms
+		perms,
+		res
 	)).user
 );
 
@@ -212,4 +174,4 @@ export const permToGetUserInPage = async (
 	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
 	 */
 	perms: integer
-) => permToGetUser(undefined, req.user, id, perms);
+) => permToGetUser(req.user, id, perms);
