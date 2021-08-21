@@ -230,7 +230,7 @@ const tags: Record<string, {
 					<FieldBoxRow
 						name="attributes"
 						label="Spoiler Name"
-						help={'The name used in the spoiler\'s button text.\n\nFor example, setting this to "Pesterlog" will make the button say "Show Pesterlog" when the spoiler is closed and "Hide Pesterlog" when the spoiler is open.\n\nLeaving this empty causes the button to say "Show" or "Hide" with nothing after it.'}
+						help={'The name used in the spoiler\'s button text.\n\nFor example, setting this to "Pesterlog" makes the button say "Show Pesterlog" when the spoiler is closed and "Hide Pesterlog" when the spoiler is open.\n\nLeaving this empty makes the button say "Show" or "Hide" with nothing after it.'}
 						autoFocus
 						placeholder="Optional"
 					/>
