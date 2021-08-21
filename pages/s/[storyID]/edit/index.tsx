@@ -386,7 +386,7 @@ const Component = withErrorPage<ServerSideProps>(({
 												label="Allow Comments"
 											/>
 											<LabeledBoxRow
-												htmlFor={editingAnniversary ? 'field-anniversary-year' : ''}
+												htmlFor={editingAnniversary ? 'field-anniversary-year' : undefined}
 												label="Creation Date"
 												help="This date is displayed publicly in your adventure info and used as the date for your anniversary banner."
 											>
