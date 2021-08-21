@@ -14,9 +14,9 @@
 	}
 
 	&-code-fields {
-		display: flex;
-
 		@include desktop {
+			display: flex;
+
 			& > * {
 				width: 50%;
 			}
