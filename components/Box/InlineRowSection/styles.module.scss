@@ -1,12 +1,11 @@
 .inline-row-section {
 	display: grid;
-	grid-template-columns: 0fr auto;
+	grid-template-columns: 1fr auto;
 	gap: 1ch;
 	justify-content: center;
 
 	.label-container {
 		justify-self: right;
 		align-self: center;
-		white-space: nowrap;
 	}
 }
