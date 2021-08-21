@@ -18,8 +18,6 @@ const Component = ({ imageFilename }: ServerSideProps) => (
 				<Row>
 					<img
 						src={`/images/terms/${imageFilename}`}
-						width={650}
-						height={450}
 						alt="Artwork for Terms of Service"
 						title={`Artist: ${imageFilename.slice(0, imageFilename.indexOf('.'))}`}
 					/>

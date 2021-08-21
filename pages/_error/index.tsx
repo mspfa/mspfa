@@ -37,8 +37,6 @@ const ErrorPage = ({ statusCode, imageFilename }: ErrorPageProps) => (
 					<Row>
 						<img
 							src={`/images/403/${imageFilename!}`}
-							width={650}
-							height={450}
 							alt="Artwork for Error 403"
 							title={`Artist: ${imageFilename!.slice(0, imageFilename!.indexOf('.'))}`}
 						/>

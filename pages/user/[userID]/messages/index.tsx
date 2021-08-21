@@ -214,8 +214,6 @@ const Component = withErrorPage<ServerSideProps>(({
 							<Row>
 								<img
 									src={`/images/no-messages/${imageFilename}`}
-									width={400}
-									height={250}
 									alt="Artwork for No Messages"
 									title={`Artist: ${imageFilename.slice(0, imageFilename.indexOf('.'))}`}
 								/>
