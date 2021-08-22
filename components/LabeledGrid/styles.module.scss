@@ -7,5 +7,7 @@
 
 	& > .row {
 		text-align: center;
+		grid-column: 1 / -1;
+		margin: 0 !important;
 	}
 }

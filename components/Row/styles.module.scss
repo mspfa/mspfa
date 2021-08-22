@@ -1,6 +1,4 @@
 .row {
-	grid-column: 1 / -1;
-
 	&:not(:last-child) {
 		margin-bottom: 1em;
 	}
