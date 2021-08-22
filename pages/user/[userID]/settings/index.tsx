@@ -15,7 +15,7 @@ import BoxColumns from 'components/Box/BoxColumns';
 import BoxSection from 'components/Box/BoxSection';
 import LabeledGridBoxSection from 'components/Box/LabeledGridBoxSection';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
-import NotificationSettingGroup from 'components/Setting/NotificationSettingGroup';
+import NotificationSettingGrid from 'components/Setting/NotificationSettingGrid';
 import NotificationSetting from 'components/Setting/NotificationSetting';
 import ControlSetting from 'components/Setting/ControlSetting';
 import BoxFooter from 'components/Box/BoxFooter';
@@ -319,40 +319,44 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 									/>
 								</LabeledGridBoxSection>
 								<BoxColumns>
-									<NotificationSettingGroup heading="General Notifications">
-										<NotificationSetting
-											name="settings.notifications.messages"
-											label="Messages"
-											help="Get notified when a user sends you a new private message."
-										/>
-										<NotificationSetting
-											name="settings.notifications.userTags"
-											label="User Tags"
-											help="Get notified when you are tagged in a comment."
-										/>
-										<NotificationSetting
-											name="settings.notifications.commentReplies"
-											label="Replies to Comments"
-											help="Get notified when one of your comments receives a reply."
-										/>
-									</NotificationSettingGroup>
-									<NotificationSettingGroup heading="Default Adventure Notifications">
-										<NotificationSetting
-											name="settings.notifications.storyDefaults.updates"
-											label="Updates"
-											help="Get notified when an adventure publishes new pages."
-										/>
-										<NotificationSetting
-											name="settings.notifications.storyDefaults.news"
-											label="News"
-											help="Get notified when an adventure publishes a news post."
-										/>
-										<NotificationSetting
-											name="settings.notifications.storyDefaults.comments"
-											label="Comments"
-											help="Get notified when an adventure you edit receives a new comment."
-										/>
-									</NotificationSettingGroup>
+									<BoxSection heading="General Notifications">
+										<NotificationSettingGrid>
+											<NotificationSetting
+												name="settings.notifications.messages"
+												label="Messages"
+												help="Get notified when a user sends you a new private message."
+											/>
+											<NotificationSetting
+												name="settings.notifications.userTags"
+												label="User Tags"
+												help="Get notified when you are tagged in a comment."
+											/>
+											<NotificationSetting
+												name="settings.notifications.commentReplies"
+												label="Replies to Comments"
+												help="Get notified when one of your comments receives a reply."
+											/>
+										</NotificationSettingGrid>
+									</BoxSection>
+									<BoxSection heading="Default Adventure Notifications">
+										<NotificationSettingGrid>
+											<NotificationSetting
+												name="settings.notifications.storyDefaults.updates"
+												label="Updates"
+												help="Get notified when an adventure publishes new pages."
+											/>
+											<NotificationSetting
+												name="settings.notifications.storyDefaults.news"
+												label="News"
+												help="Get notified when an adventure publishes a news post."
+											/>
+											<NotificationSetting
+												name="settings.notifications.storyDefaults.comments"
+												label="Comments"
+												help="Get notified when an adventure you edit receives a new comment."
+											/>
+										</NotificationSettingGrid>
+									</BoxSection>
 								</BoxColumns>
 								<LabeledGridBoxSection heading="Controls">
 									<ControlSetting

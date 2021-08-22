@@ -1,0 +1,17 @@
+.notification-setting-grid {
+	grid-template-columns: auto 0fr 0fr;
+	align-items: center;
+
+	&-heading {
+		text-align: center;
+		word-break: normal;
+
+		&:first-child {
+			grid-column: 2;
+		}
+	}
+
+	.grid-row-content {
+		justify-content: center;
+	}
+}

@@ -4,6 +4,7 @@ import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 
 export type NotificationSettingProps = ExclusiveLabeledGridFieldProps;
 
+/** A `LabeledGridRow` for a notification setting in a `NotificationSettingGrid`. */
 const NotificationSetting = ({ label, name, help }: NotificationSettingProps) => (
 	<LabeledGridRow
 		label={label}
