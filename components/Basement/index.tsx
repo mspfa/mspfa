@@ -71,7 +71,7 @@ const Basement = ({
 	const mobile = useMobile(true);
 
 	// This state is the basement section which is currently selected.
-	const [section, setSection] = useState<'news' | 'comments'>('news');
+	const [section, setSection] = useState<'news' | 'comments' | 'options'>('news');
 
 	const sanitizedSidebarContent = useMemo(() => (
 		sanitizeBBCode(story.sidebarContent, { html: true })
@@ -361,6 +361,17 @@ const Basement = ({
 					>
 						Comments
 					</Button>
+					<Button
+						className="small"
+						disabled={section === 'options'}
+						onClick={
+							useFunction(() => {
+								setSection('options');
+							})
+						}
+					>
+						Options
+					</Button>
 				</Row>
 				{section === 'news' ? (
 					<>
@@ -390,10 +401,15 @@ const Basement = ({
 							))}
 						</Row>
 					</>
-				) : (
+				) : section === 'comments' ? (
 					// If this point is reached, `section === 'comments'`.
 					<Row id="story-comments">
 						comments here
+					</Row>
+				) : (
+					// If this point is reached, `section === 'options'`.
+					<Row id="story-options">
+						options here
 					</Row>
 				)}
 			</div>
