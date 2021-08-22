@@ -37,6 +37,11 @@ $story-page-padding: 25px;
 		padding-bottom: 14px;
 		font-size: 0.875em;
 		line-height: 1;
+
+		* {
+			// This is necessary so an effect hook can detect the original width of elements which should be classed with the `panel` class.
+			max-width: none;
+		}
 	}
 
 	&-links, &-footer {
