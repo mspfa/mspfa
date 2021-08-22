@@ -13,12 +13,20 @@ $story-page-container-horizontal-padding: math.div(1200px - 1107px, 2);
 		padding: 7px $story-page-container-horizontal-padding 23px $story-page-container-horizontal-padding;
 	}
 
+	// For browsers that don't support `width: min-content`.
+	// `display: table` conveniently allows the element's width to dynamically adjust on older browsers in the same way `width: min-content` works on newer browsers.
+	display: table;
 	box-sizing: border-box;
 	padding: 0 $story-page-padding;
 	min-width: $story-page-min-width;
 	// For browsers that don't support `min-content`.
 	width: $story-page-min-width;
 	width: min-content;
+
+	@supports (width: min-content) {
+		// We use `display: block` instead of `display: table` because it is no longer necessary when the browser supports `width: min-content`, which not only dynamically adjusts the element's width as `display: table` would, but also makes it easier for custom styles to change various properties while minimizing the need for repetition.
+		display: block;
+	}
 
 	@include mobile {
 		width: 100%;
