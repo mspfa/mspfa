@@ -25,7 +25,7 @@
 	&-container {
 		display: flex;
 		justify-content: space-around;
-		padding: 2px 0 5px 0;
+		padding: 2px 0 5px;
 	}
 
 	flex-shrink: 0;
@@ -45,7 +45,7 @@ main {
 	display: block;
 
 	&.padded {
-		padding: 16px 56px 56px 56px;
+		padding: 16px 56px 56px;
 
 		@include mobile {
 			padding-left: 0;
