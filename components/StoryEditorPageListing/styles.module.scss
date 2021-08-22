@@ -45,8 +45,14 @@
 }
 
 .page-field {
-	&-container-title input {
-		width: 100%;
+	&-container {
+		&-title input {
+			width: 100%;
+		}
+
+		&-content .bb-preview > .spoiler-content {
+			text-align: center;
+		}
 	}
 
 	&-columns {
