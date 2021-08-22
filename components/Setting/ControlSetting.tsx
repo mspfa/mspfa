@@ -11,6 +11,7 @@ import RemoveButton from 'components/Button/RemoveButton';
 
 export type ControlSettingProps = ExclusiveLabeledGridFieldProps;
 
+/** A `LabeledGridRow` containing a `Field` for a control setting. */
 const ControlSetting = ({ label, name, help }: ControlSettingProps) => {
 	const { setFieldValue } = useFormikContext();
 
