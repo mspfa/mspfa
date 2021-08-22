@@ -332,14 +332,16 @@ const Basement = ({
 						{sanitizedDescription}
 					</BBCode>
 				</Row>
-				<StoryTagLinkContainer id="story-tags" className="row">
-					{story.tags.map((tag, i) => (
-						<Fragment key={tag}>
-							{i !== 0 && ' '}
-							<StoryTagLink>{tag}</StoryTagLink>
-						</Fragment>
-					))}
-				</StoryTagLinkContainer>
+				<Row id="story-tags">
+					<StoryTagLinkContainer>
+						{story.tags.map((tag, i) => (
+							<Fragment key={tag}>
+								{i !== 0 && ' '}
+								<StoryTagLink>{tag}</StoryTagLink>
+							</Fragment>
+						))}
+					</StoryTagLinkContainer>
+				</Row>
 				<Row id="basement-actions">
 					<Button
 						className="small"
