@@ -15,7 +15,7 @@ import Link from 'components/Link';
 import BoxFooter from 'components/Box/BoxFooter';
 import IconImage from 'components/IconImage';
 import { Perm } from 'lib/client/perms';
-import GridRow from 'components/LabeledGrid/GridRow';
+import Row from 'components/Row';
 import BBCode from 'components/BBCode';
 import { getPublicStoriesByEditor } from 'lib/server/stories';
 import type { PublicStory } from 'lib/client/stories';
@@ -42,17 +42,17 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 			<Box id="profile">
 				<BoxColumns>
 					<BoxSection id="profile-info" heading="Info">
-						<GridRow id="profile-name">
+						<Row id="profile-name">
 							{publicUser.name}
-						</GridRow>
-						<GridRow id="profile-icon-container">
+						</Row>
+						<Row id="profile-icon-container">
 							<IconImage
 								id="profile-icon"
 								src={publicUser.icon}
 								alt={`${publicUser.name}'s Icon`}
 							/>
-						</GridRow>
-						<GridRow id="profile-actions">
+						</Row>
+						<Row id="profile-actions">
 							{notOwnProfile && (
 								<div>
 									<Link href={`/message/new?to=${publicUser.id}`}>
@@ -74,7 +74,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 									</Link>
 								</div>
 							)}
-						</GridRow>
+						</Row>
 					</BoxSection>
 					<Box id="profile-misc">
 						<LabeledGridBoxSection id="profile-stats" heading="Stats">

@@ -26,7 +26,7 @@ import { escapeRegExp, isEqual } from 'lodash';
 import Dialog from 'lib/client/Dialog';
 import Label from 'components/Label';
 import Router from 'next/router';
-import GridRow from 'components/LabeledGrid/GridRow';
+import Row from 'components/Row';
 import LabeledGrid from 'components/LabeledGrid';
 import ForgotPassword from 'components/ForgotPassword';
 import AuthMethods from 'components/AuthMethod/AuthMethods';
@@ -269,7 +269,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 											</>
 										)}
 									</LabeledGridRow>
-									<GridRow>
+									<Row>
 										{/* This button should remain visible even for those who do not have a password sign-in method, because those users may think they do regardless, and they should be informed that they don't upon clicking this button, to minimize confusion to those users. */}
 										<Button
 											className="small"
@@ -277,15 +277,15 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										>
 											Change Password
 										</Button>
-									</GridRow>
-									<GridRow>
+									</Row>
+									<Row>
 										<Button
 											className="small"
 											onClick={onClickEditAuthMethods}
 										>
 											Edit Sign-In Methods
 										</Button>
-									</GridRow>
+									</Row>
 								</LabeledGridBoxSection>
 								<LabeledGridBoxSection heading="General">
 									<LabeledGridField
@@ -381,7 +381,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 									/>
 								</BoxSection>
 								<BoxFooter>
-									<GridRow>
+									<Row>
 										<Button
 											type="submit"
 											className="alt"
@@ -407,8 +407,8 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										>
 											Reset
 										</Button>
-									</GridRow>
-									<GridRow>
+									</Row>
+									<Row>
 										<Button
 											disabled={isSubmitting}
 											onClick={
@@ -484,7 +484,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										>
 											Delete Account
 										</Button>
-									</GridRow>
+									</Row>
 								</BoxFooter>
 							</Box>
 						</Form>

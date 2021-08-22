@@ -8,7 +8,7 @@ import LabeledGrid from 'components/LabeledGrid';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import Label from 'components/Label';
 import type { FormikProps } from 'formik';
-import GridRow from 'components/LabeledGrid/GridRow';
+import Row from 'components/Row';
 import Link from 'components/Link';
 import { getChangedValues } from 'lib/client/forms';
 import IDPrefix from 'lib/client/IDPrefix';
@@ -109,7 +109,7 @@ const tags: Record<string, {
 					autoFocus
 					min={0}
 				/>
-				<GridRow>
+				<Row>
 					<Label block htmlFor="field-bb-preview">
 						Preview
 					</Label>
@@ -125,7 +125,7 @@ const tags: Record<string, {
 							)}
 						/>
 					</span>
-				</GridRow>
+				</Row>
 			</LabeledGrid>
 		)
 	},
@@ -161,7 +161,7 @@ const tags: Record<string, {
 						label="Alternate Font"
 						required
 					/>
-					<GridRow>
+					<Row>
 						<Label block htmlFor="field-bb-preview">
 							Preview
 						</Label>
@@ -173,7 +173,7 @@ const tags: Record<string, {
 								style={{ fontFamily: values.attributes }}
 							/>
 						</span>
-					</GridRow>
+					</Row>
 				</LabeledGrid>
 			</>
 		)
@@ -382,14 +382,14 @@ const tags: Record<string, {
 					<LabeledGridField type="checkbox" name="controls" label="Show Controls" />
 					<LabeledGridField type="checkbox" name="loop" label="Loop" />
 					{/* TODO: Put this in a BBCode guide instead. */}
-					<GridRow>
+					<Row>
 						<Link
 							href="https://developers.google.com/youtube/player_parameters#Parameters"
 							target="_blank"
 						>
 							Advanced YouTube Attribute List
 						</Link>
-					</GridRow>
+					</Row>
 				</LabeledGrid>
 			);
 		},
@@ -472,9 +472,9 @@ const tags: Record<string, {
 		},
 		content: (
 			<LabeledGrid>
-				<GridRow className="red">
+				<Row className="red">
 					It is highly recommended not to use Flash due to its loss of support. Consider using video or HTML5 instead.
-				</GridRow>
+				</Row>
 				<LabeledGridField
 					type="url"
 					name="children"

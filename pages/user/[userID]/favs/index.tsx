@@ -7,7 +7,7 @@ import { withStatusCode } from 'lib/server/errors';
 import Box from 'components/Box';
 import BoxSection from 'components/Box/BoxSection';
 import Link from 'components/Link';
-import GridRow from 'components/LabeledGrid/GridRow';
+import Row from 'components/Row';
 import type { ServerStory } from 'lib/server/stories';
 import stories, { getPublicStory } from 'lib/server/stories';
 import type { PublicStory } from 'lib/client/stories';
@@ -31,20 +31,20 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publ
 	<Page withFlashyTitle heading="Favorite Adventures">
 		<Box>
 			<BoxSection heading={`${publicUser.name}'s Favorites`}>
-				<GridRow>
+				<Row>
 					<Button
 						className="small"
 						href={`/user/${publicUser.id}`}
 					>
 						Back to Profile
 					</Button>
-				</GridRow>
+				</Row>
 				{!favsPublic && (
-					<GridRow id="favs-public-tip">
+					<Row id="favs-public-tip">
 						Only you can see your favorites. If you want others to be able to see, enable public favorites in <Link href={`/user/${publicUser.id}/edit`}>your profile settings</Link>.
-					</GridRow>
+					</Row>
 				)}
-				<GridRow>
+				<Row>
 					{(publicStories.length
 						? (
 							<List listing={StoryListing}>
@@ -53,7 +53,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publ
 						)
 						: 'This user has no favorite adventures.'
 					)}
-				</GridRow>
+				</Row>
 			</BoxSection>
 		</Box>
 	</Page>

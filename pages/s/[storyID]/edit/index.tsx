@@ -16,7 +16,6 @@ import type { PrivateStory } from 'lib/client/stories';
 import { StoryPrivacy, storyPrivacyNames, storyStatusNames } from 'lib/client/stories';
 import LabeledGridBoxSection from 'components/Box/LabeledGridBoxSection';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
-import GridRow from 'components/LabeledGrid/GridRow';
 import IconImage from 'components/IconImage';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import UserField from 'components/UserField';
@@ -167,10 +166,10 @@ const Component = withErrorPage<ServerSideProps>(({
 				<>
 					<Box>
 						<BoxSection heading="Deleted Adventure">
-							<GridRow>
+							<Row>
 								<i>{privateStory.title}</i>
 								{` will be permanently deleted in ~${daysUntilDeletion} day${daysUntilDeletion === 1 ? '' : 's'}.`}
-							</GridRow>
+							</Row>
 						</BoxSection>
 					</Box>
 					<BoxFooter>
@@ -324,13 +323,13 @@ const Component = withErrorPage<ServerSideProps>(({
 												label="Icon URL"
 												help="A direct URL to an image of your adventure's icon. The recommended image size is 150x150 pixels."
 											/>
-											<GridRow>
+											<Row>
 												<IconImage
 													id="story-editor-icon"
 													src={values.icon}
 													alt="Your Adventure's Icon"
 												/>
-											</GridRow>
+											</Row>
 										</LabeledGridBoxSection>
 										<LabeledGridBoxSection id="story-editor-misc" heading="Misc">
 											<LabeledGridRow label="Owner">

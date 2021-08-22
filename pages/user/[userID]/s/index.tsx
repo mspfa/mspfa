@@ -5,7 +5,7 @@ import { withErrorPage } from 'lib/client/errors';
 import { withStatusCode } from 'lib/server/errors';
 import Box from 'components/Box';
 import LabeledGridBoxSection from 'components/Box/LabeledGridBoxSection';
-import GridRow from 'components/LabeledGrid/GridRow';
+import Row from 'components/Row';
 import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
 import type { APIClient } from 'lib/client/api';
@@ -44,7 +44,7 @@ const promptNewStory = async () => {
 		},
 		content: (
 			<LabeledGrid>
-				<GridRow>What will the title of this new adventure be?</GridRow>
+				<Row>What will the title of this new adventure be?</Row>
 				<LabeledGridField
 					name="title"
 					label="Enter Title"
@@ -85,7 +85,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStories }) => (
 	<Page withFlashyTitle heading="Your Adventures">
 		<Box>
 			<LabeledGridBoxSection heading="Adventures">
-				<GridRow>
+				<Row>
 					{(privateStories.length
 						? (
 							<List listing={StoryListing}>
@@ -94,7 +94,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateStories }) => (
 						)
 						: 'You haven\'t started any adventures yet! Click the button below to begin.'
 					)}
-				</GridRow>
+				</Row>
 			</LabeledGridBoxSection>
 			<BoxFooter>
 				<Button onClick={promptNewStory}>

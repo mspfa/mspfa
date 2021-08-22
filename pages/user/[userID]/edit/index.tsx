@@ -22,7 +22,7 @@ import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import IconImage from 'components/IconImage';
 import Label from 'components/Label';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
-import GridRow from 'components/LabeledGrid/GridRow';
+import Row from 'components/Row';
 import BirthdateField from 'components/DateField/BirthdateField';
 import BBField from 'components/BBCode/BBField';
 import type { integer } from 'lib/types';
@@ -109,13 +109,13 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 											label="Public Favs"
 											help="Allows others to publicly view your favorite adventures."
 										/>
-										<GridRow>
+										<Row>
 											<IconImage
 												id="profile-icon"
 												src={values.icon}
 												alt="Your Profile Icon"
 											/>
-										</GridRow>
+										</Row>
 									</LabeledGridBoxSection>
 									<Box>
 										<LabeledGridBoxSection heading="Stats">

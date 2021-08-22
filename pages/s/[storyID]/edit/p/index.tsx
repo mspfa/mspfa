@@ -30,7 +30,6 @@ import LabeledGrid from 'components/LabeledGrid';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import { escapeRegExp } from 'lodash';
-import GridRow from 'components/LabeledGrid/GridRow';
 import Router, { useRouter } from 'next/router';
 import frameThrottler from 'lib/client/frameThrottler';
 import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
@@ -248,7 +247,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 				return (
 					<LabeledGrid>
-						<GridRow>Finds and replaces text in every page's content.</GridRow>
+						<Row>Finds and replaces text in every page's content.</Row>
 						{values.regex ? (
 							<LabeledGridRow
 								label="Find"
