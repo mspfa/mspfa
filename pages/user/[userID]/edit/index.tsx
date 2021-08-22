@@ -13,16 +13,16 @@ import { getChangedValues, useLeaveConfirmation } from 'lib/client/forms';
 import Box from 'components/Box';
 import BoxColumns from 'components/Box/BoxColumns';
 import BoxSection from 'components/Box/BoxSection';
-import BoxRowSection from 'components/Box/BoxRowSection';
+import LabeledGridBoxSection from 'components/Box/LabeledGridBoxSection';
 import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
 import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
-import FieldBoxRow from 'components/Box/FieldBoxRow';
+import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import IconImage from 'components/IconImage';
 import Label from 'components/Label';
-import LabeledBoxRow from 'components/Box/LabeledBoxRow';
-import BoxRow from 'components/Box/BoxRow';
+import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
+import GridRow from 'components/LabeledGrid/GridRow';
 import BirthdateField from 'components/DateField/BirthdateField';
 import BBField from 'components/BBCode/BBField';
 import type { integer } from 'lib/types';
@@ -89,65 +89,65 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 						<Form>
 							<Box>
 								<BoxColumns>
-									<BoxRowSection heading="Info">
-										<FieldBoxRow
+									<LabeledGridBoxSection heading="Info">
+										<LabeledGridField
 											name="name"
 											label="Username"
 											autoComplete="username"
 											required
 											maxLength={32}
 										/>
-										<FieldBoxRow
+										<LabeledGridField
 											type="url"
 											name="icon"
 											label="Icon URL"
 										/>
-										<FieldBoxRow
+										<LabeledGridField
 											type="checkbox"
 											name="settings.favsPublic"
 											// "Favorites" is shortened to "Favs" here because fitting the label on one line looks nicer.
 											label="Public Favs"
 											help="Allows others to publicly view your favorite adventures."
 										/>
-										<BoxRow>
+										<GridRow>
 											<IconImage
 												id="profile-icon"
 												src={values.icon}
 												alt="Your Profile Icon"
 											/>
-										</BoxRow>
-									</BoxRowSection>
+										</GridRow>
+									</LabeledGridBoxSection>
 									<Box>
-										<BoxRowSection heading="Stats">
-											<LabeledBoxRow htmlFor="field-birthdate-year" label="Birthdate">
+										<LabeledGridBoxSection heading="Stats">
+											<LabeledGridRow htmlFor="field-birthdate-year" label="Birthdate">
 												<BirthdateField required />
-											</LabeledBoxRow>
-											<FieldBoxRow
+											</LabeledGridRow>
+											<LabeledGridField
 												type="checkbox"
 												name="settings.birthdatePublic"
 												label="Public Birthdate"
 												help="Shows your birthdate publicly on your profile."
 											/>
-										</BoxRowSection>
-										<BoxRowSection heading="Contact">
-											<FieldBoxRow
+										</LabeledGridBoxSection>
+										<LabeledGridBoxSection heading="Contact">
+											<LabeledGridField
 												type="email"
 												name="email"
 												label="Email"
 												required
 											/>
-											<FieldBoxRow
+											<LabeledGridField
 												type="checkbox"
 												name="settings.emailPublic"
 												label="Public Email"
 												help="Shows your email publicly on your profile."
 											/>
-											<FieldBoxRow
+											<LabeledGridField
 												type="url"
 												name="site"
 												label="Website"
 											/>
-										</BoxRowSection>
+										</LabeledGridBoxSection>
 									</Box>
 								</BoxColumns>
 								<BoxSection heading="Description">

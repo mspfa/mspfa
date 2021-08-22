@@ -1,15 +1,15 @@
 import { Field, useFormikContext } from 'formik';
-import type { ExclusiveFieldBoxRowProps } from 'components/Box/FieldBoxRow';
+import type { ExclusiveLabeledGridFieldProps } from 'components/LabeledGrid/LabeledGridField';
 import type { KeyboardEvent } from 'react';
 import { useState, useRef } from 'react';
 import useFunction from 'lib/client/useFunction';
-import LabeledBoxRow from 'components/Box/LabeledBoxRow';
+import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import { usePrefixedID } from 'lib/client/IDPrefix';
 import toKebabCase from 'lib/client/toKebabCase';
 import EditButton from 'components/Button/EditButton';
 import RemoveButton from 'components/Button/RemoveButton';
 
-export type ControlSettingProps = ExclusiveFieldBoxRowProps;
+export type ControlSettingProps = ExclusiveLabeledGridFieldProps;
 
 const ControlSetting = ({ label, name, help }: ControlSettingProps) => {
 	const { setFieldValue } = useFormikContext();
@@ -31,7 +31,7 @@ const ControlSetting = ({ label, name, help }: ControlSettingProps) => {
 	});
 
 	return (
-		<LabeledBoxRow
+		<LabeledGridRow
 			label={label}
 			htmlFor={id}
 			help={help}
@@ -71,7 +71,7 @@ const ControlSetting = ({ label, name, help }: ControlSettingProps) => {
 					onClick={toggleEditing}
 				/>
 			)}
-		</LabeledBoxRow>
+		</LabeledGridRow>
 	);
 };
 

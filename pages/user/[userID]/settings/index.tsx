@@ -13,8 +13,8 @@ import { getChangedValues, preventLeaveConfirmations, useLeaveConfirmation } fro
 import Box from 'components/Box';
 import BoxColumns from 'components/Box/BoxColumns';
 import BoxSection from 'components/Box/BoxSection';
-import BoxRowSection from 'components/Box/BoxRowSection';
-import FieldBoxRow from 'components/Box/FieldBoxRow';
+import LabeledGridBoxSection from 'components/Box/LabeledGridBoxSection';
+import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import NotificationSettingGroup from 'components/Setting/NotificationSettingGroup';
 import NotificationSetting from 'components/Setting/NotificationSetting';
 import ControlSetting from 'components/Setting/ControlSetting';
@@ -26,11 +26,11 @@ import { escapeRegExp, isEqual } from 'lodash';
 import Dialog from 'lib/client/Dialog';
 import Label from 'components/Label';
 import Router from 'next/router';
-import BoxRow from 'components/Box/BoxRow';
-import InlineRowSection from 'components/Box/InlineRowSection';
+import GridRow from 'components/LabeledGrid/GridRow';
+import LabeledGrid from 'components/LabeledGrid';
 import ForgotPassword from 'components/ForgotPassword';
 import AuthMethods from 'components/AuthMethod/AuthMethods';
-import LabeledBoxRow from 'components/Box/LabeledBoxRow';
+import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import BirthdateField from 'components/DateField/BirthdateField';
 import { useDeepCompareEffect } from 'react-use';
 import Timestamp from 'components/Timestamp';
@@ -118,8 +118,8 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 				confirmPassword: '' as string
 			},
 			content: ({ values }) => (
-				<InlineRowSection>
-					<FieldBoxRow
+				<LabeledGrid>
+					<LabeledGridField
 						type="password"
 						name="currentPassword"
 						label="Current Password"
@@ -129,7 +129,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 						autoFocus
 					/>
 					<ForgotPassword />
-					<FieldBoxRow
+					<LabeledGridField
 						type="password"
 						name="password"
 						label="New Password"
@@ -137,7 +137,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 						required
 						minLength={8}
 					/>
-					<FieldBoxRow
+					<LabeledGridField
 						type="password"
 						name="confirmPassword"
 						label="Confirm"
@@ -146,7 +146,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 						placeholder="Re-Type Password"
 						pattern={escapeRegExp(values.password)}
 					/>
-				</InlineRowSection>
+				</LabeledGrid>
 			),
 			actions: [
 				{ label: 'Okay', autoFocus: false },
@@ -239,8 +239,8 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 					return (
 						<Form onChange={onFormChange}>
 							<Box>
-								<BoxRowSection heading="Account">
-									<FieldBoxRow
+								<LabeledGridBoxSection heading="Account">
+									<LabeledGridField
 										type="email"
 										name="email"
 										label="Email"
@@ -248,7 +248,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										required
 										maxLength={254}
 									/>
-									<LabeledBoxRow
+									<LabeledGridRow
 										htmlFor={editingBirthdate ? 'field-birthdate-year' : ''}
 										label="Birthdate"
 									>
@@ -268,8 +268,8 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 												)}
 											</>
 										)}
-									</LabeledBoxRow>
-									<BoxRow>
+									</LabeledGridRow>
+									<GridRow>
 										{/* This button should remain visible even for those who do not have a password sign-in method, because those users may think they do regardless, and they should be informed that they don't upon clicking this button, to minimize confusion to those users. */}
 										<Button
 											className="small"
@@ -277,18 +277,18 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										>
 											Change Password
 										</Button>
-									</BoxRow>
-									<BoxRow>
+									</GridRow>
+									<GridRow>
 										<Button
 											className="small"
 											onClick={onClickEditAuthMethods}
 										>
 											Edit Sign-In Methods
 										</Button>
-									</BoxRow>
-								</BoxRowSection>
-								<BoxRowSection heading="General">
-									<FieldBoxRow
+									</GridRow>
+								</LabeledGridBoxSection>
+								<LabeledGridBoxSection heading="General">
+									<LabeledGridField
 										as="select"
 										name="settings.theme"
 										label="Theme"
@@ -297,27 +297,27 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										<option value="dark">Dark</option>
 										<option value="felt">Felt</option>
 										<option value="sah">Sweet and Hella</option>
-									</FieldBoxRow>
-									<FieldBoxRow
+									</LabeledGridField>
+									<LabeledGridField
 										type="checkbox"
 										name="settings.stickyNav"
 										label="Sticky Nav Bar"
 										help="Makes the nav bar stick to the top of your screen when you scroll down instead of scrolling out of the page."
 									/>
-									<FieldBoxRow
+									<LabeledGridField
 										type="checkbox"
 										name="settings.autoOpenSpoilers"
 										label="Auto-Open Spoilers"
 										help="Makes spoilers open by default instead of closed."
 									/>
-									<FieldBoxRow
+									<LabeledGridField
 										type="checkbox"
 										name="settings.imageAliasing"
 										// This setting's label should not use terminology less obscure than "Aliasing", because if its phrasing is less obscure (for example if it were called "Crisp Images" or "Image Sharpening"), it would be easily misinterpretable and lead to misunderstandings about what the setting does, even among users who know what aliasing is, since it wouldn't be called that. With this more obscure but more accurate name, it is much less likely that inaccurate assumptions would be made about the meaning, and users would be more inclined to click the help button for clarity.
 										label="Image Aliasing"
 										help={'Disables anti-aliasing in images on adventure pages (by using nearest-neighbor scaling).\n\nWhat this means is images, when scaled, will tend to have more crisp edges rather than becoming blurry. It disables the browser\'s smooth scaling effect that causes scaled images to blur.'}
 									/>
-								</BoxRowSection>
+								</LabeledGridBoxSection>
 								<BoxColumns>
 									<NotificationSettingGroup heading="General Notifications">
 										<NotificationSetting
@@ -354,7 +354,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										/>
 									</NotificationSettingGroup>
 								</BoxColumns>
-								<BoxRowSection heading="Controls">
+								<LabeledGridBoxSection heading="Controls">
 									<ControlSetting
 										name="settings.controls.previousPage"
 										label="Previous Page"
@@ -367,7 +367,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										name="settings.controls.toggleSpoilers"
 										label="Toggle Spoilers"
 									/>
-								</BoxRowSection>
+								</LabeledGridBoxSection>
 								<BoxSection heading="Advanced" collapsible>
 									<Label block htmlFor="field-style">
 										Custom Site Style
@@ -381,7 +381,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 									/>
 								</BoxSection>
 								<BoxFooter>
-									<BoxRow>
+									<GridRow>
 										<Button
 											type="submit"
 											className="alt"
@@ -407,8 +407,8 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										>
 											Reset
 										</Button>
-									</BoxRow>
-									<BoxRow>
+									</GridRow>
+									<GridRow>
 										<Button
 											disabled={isSubmitting}
 											onClick={
@@ -484,7 +484,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										>
 											Delete Account
 										</Button>
-									</BoxRow>
+									</GridRow>
 								</BoxFooter>
 							</Box>
 						</Form>

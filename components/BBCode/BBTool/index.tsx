@@ -4,11 +4,11 @@ import useFunction from 'lib/client/useFunction';
 import { BBFieldContext } from 'components/BBCode/BBField';
 import Button from 'components/Button';
 import Dialog from 'lib/client/Dialog';
-import InlineRowSection from 'components/Box/InlineRowSection';
-import FieldBoxRow from 'components/Box/FieldBoxRow';
+import LabeledGrid from 'components/LabeledGrid';
+import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import Label from 'components/Label';
 import type { FormikProps } from 'formik';
-import BoxRow from 'components/Box/BoxRow';
+import GridRow from 'components/LabeledGrid/GridRow';
 import Link from 'components/Link';
 import { getChangedValues } from 'lib/client/forms';
 import IDPrefix from 'lib/client/IDPrefix';
@@ -71,37 +71,37 @@ const tags: Record<string, {
 		title: 'Text Color',
 		initialValues: randomColorAttributes,
 		content: (
-			<InlineRowSection>
-				<FieldBoxRow
+			<LabeledGrid>
+				<LabeledGridField
 					type="color"
 					name="attributes"
 					label="Color"
 					required
 					autoFocus
 				/>
-			</InlineRowSection>
+			</LabeledGrid>
 		)
 	},
 	background: {
 		title: 'Text Background Color',
 		initialValues: randomColorAttributes,
 		content: (
-			<InlineRowSection>
-				<FieldBoxRow
+			<LabeledGrid>
+				<LabeledGridField
 					type="color"
 					name="attributes"
 					label="Color"
 					required
 					autoFocus
 				/>
-			</InlineRowSection>
+			</LabeledGrid>
 		)
 	},
 	size: {
 		title: 'Font Size',
 		content: ({ values }) => (
-			<InlineRowSection>
-				<FieldBoxRow
+			<LabeledGrid>
+				<LabeledGridField
 					type="number"
 					name="attributes"
 					label="Percent Size"
@@ -109,7 +109,7 @@ const tags: Record<string, {
 					autoFocus
 					min={0}
 				/>
-				<BoxRow>
+				<GridRow>
 					<Label block htmlFor="field-bb-preview">
 						Preview
 					</Label>
@@ -125,16 +125,16 @@ const tags: Record<string, {
 							)}
 						/>
 					</span>
-				</BoxRow>
-			</InlineRowSection>
+				</GridRow>
+			</LabeledGrid>
 		)
 	},
 	font: {
 		title: 'Font Family',
 		content: ({ values }) => (
 			<>
-				<InlineRowSection>
-					<FieldBoxRow
+				<LabeledGrid>
+					<LabeledGridField
 						as="select"
 						name="attributes"
 						label="Preset Font"
@@ -155,13 +155,13 @@ const tags: Record<string, {
 								{fontFamily}
 							</option>
 						))}
-					</FieldBoxRow>
-					<FieldBoxRow
+					</LabeledGridField>
+					<LabeledGridField
 						name="attributes"
 						label="Alternate Font"
 						required
 					/>
-					<BoxRow>
+					<GridRow>
 						<Label block htmlFor="field-bb-preview">
 							Preview
 						</Label>
@@ -173,8 +173,8 @@ const tags: Record<string, {
 								style={{ fontFamily: values.attributes }}
 							/>
 						</span>
-					</BoxRow>
-				</InlineRowSection>
+					</GridRow>
+				</LabeledGrid>
 			</>
 		)
 	},
@@ -190,8 +190,8 @@ const tags: Record<string, {
 			[children.includes('://') ? 'attributes' : 'children']: children
 		}),
 		content: ({ initialValues }) => (
-			<InlineRowSection>
-				<FieldBoxRow
+			<LabeledGrid>
+				<LabeledGridField
 					type="url"
 					name="attributes"
 					label="URL"
@@ -199,14 +199,14 @@ const tags: Record<string, {
 					autoFocus={!initialValues.attributes}
 					autoComplete="off"
 				/>
-				<FieldBoxRow
+				<LabeledGridField
 					as="textarea"
 					name="children"
 					label="Link Text"
 					placeholder="Optional"
 					autoFocus={!!initialValues.attributes}
 				/>
-			</InlineRowSection>
+			</LabeledGrid>
 		),
 		getProps: ({ values: { attributes, children } }) => {
 			const childrenIsURL = !children || attributes === children;
@@ -225,9 +225,9 @@ const tags: Record<string, {
 			hide: ''
 		},
 		content: ({ values: { advancedMode } }) => (
-			<InlineRowSection>
+			<LabeledGrid>
 				{!advancedMode && (
-					<FieldBoxRow
+					<LabeledGridField
 						name="attributes"
 						label="Spoiler Name"
 						help={'The name used in the spoiler\'s button text.\n\nFor example, setting this to "Pesterlog" makes the button say "Show Pesterlog" when the spoiler is closed and "Hide Pesterlog" when the spoiler is open.\n\nLeaving this empty makes the button say "Show" or "Hide" with nothing after it.'}
@@ -235,21 +235,21 @@ const tags: Record<string, {
 						placeholder="Optional"
 					/>
 				)}
-				<FieldBoxRow
+				<LabeledGridField
 					type="checkbox"
 					name="advancedMode"
 					label="Advanced Mode"
 				/>
 				{advancedMode && (
 					<>
-						<FieldBoxRow
+						<LabeledGridField
 							name="show"
 							label={'"Show" Button Text'}
 							help={'The spoiler\'s button text when the spoiler is closed.'}
 							autoFocus
 							placeholder="Optional"
 						/>
-						<FieldBoxRow
+						<LabeledGridField
 							name="hide"
 							label={'"Hide" Button Text'}
 							help={'The spoiler\'s button text when the spoiler is open.'}
@@ -257,7 +257,7 @@ const tags: Record<string, {
 						/>
 					</>
 				)}
-			</InlineRowSection>
+			</LabeledGrid>
 		),
 		getProps: ({ values: { attributes, advancedMode, show, hide } }) => ({
 			attributes: (
@@ -276,15 +276,15 @@ const tags: Record<string, {
 	alt: {
 		title: 'Hover Text',
 		content: (
-			<InlineRowSection>
-				<FieldBoxRow
+			<LabeledGrid>
+				<LabeledGridField
 					name="attributes"
 					label="Hover Text"
 					required
 					autoFocus
 					autoComplete="off"
 				/>
-			</InlineRowSection>
+			</LabeledGrid>
 		)
 	},
 	img: {
@@ -294,8 +294,8 @@ const tags: Record<string, {
 			height: ''
 		},
 		content: (
-			<InlineRowSection>
-				<FieldBoxRow
+			<LabeledGrid>
+				<LabeledGridField
 					type="url"
 					name="children"
 					label="Image URL"
@@ -304,21 +304,21 @@ const tags: Record<string, {
 					autoComplete="off"
 					help="TODO: Add info on getting image URLs."
 				/>
-				<FieldBoxRow
+				<LabeledGridField
 					type="number"
 					name="width"
 					label="Width"
 					placeholder="Optional"
 					min={0}
 				/>
-				<FieldBoxRow
+				<LabeledGridField
 					type="number"
 					name="height"
 					label="Height"
 					placeholder="Optional"
 					min={0}
 				/>
-			</InlineRowSection>
+			</LabeledGrid>
 		),
 		getProps: ({ values: { width, height, children } }) => ({
 			children,
@@ -342,8 +342,8 @@ const tags: Record<string, {
 			const urlFromYouTube = youTubeVideoIDTest.test(url);
 
 			return (
-				<InlineRowSection>
-					<FieldBoxRow
+				<LabeledGrid>
+					<LabeledGridField
 						type="url"
 						name="children"
 						label="Video URL"
@@ -364,33 +364,33 @@ const tags: Record<string, {
 					{/* YouTube requires embedded players to have a viewport that is at least 200x200 pixels. */}
 					{/* Source: https://developers.google.com/youtube/iframe_api_reference#Requirements */}
 					{/* Also, width and height are required fields here since the `iframe` has no good way of determining a good default size for the video. */}
-					<FieldBoxRow
+					<LabeledGridField
 						type="number"
 						name="width"
 						label="Width"
 						required={urlFromYouTube}
 						min={urlFromYouTube ? 200 : 0}
 					/>
-					<FieldBoxRow
+					<LabeledGridField
 						type="number"
 						name="height"
 						label="Height"
 						required={urlFromYouTube}
 						min={urlFromYouTube ? 200 : 0}
 					/>
-					<FieldBoxRow type="checkbox" name="autoplay" label="Autoplay" />
-					<FieldBoxRow type="checkbox" name="controls" label="Show Controls" />
-					<FieldBoxRow type="checkbox" name="loop" label="Loop" />
+					<LabeledGridField type="checkbox" name="autoplay" label="Autoplay" />
+					<LabeledGridField type="checkbox" name="controls" label="Show Controls" />
+					<LabeledGridField type="checkbox" name="loop" label="Loop" />
 					{/* TODO: Put this in a BBCode guide instead. */}
-					<BoxRow>
+					<GridRow>
 						<Link
 							href="https://developers.google.com/youtube/player_parameters#Parameters"
 							target="_blank"
 						>
 							Advanced YouTube Attribute List
 						</Link>
-					</BoxRow>
-				</InlineRowSection>
+					</GridRow>
+				</LabeledGrid>
 			);
 		},
 		getProps: ({
@@ -423,8 +423,8 @@ const tags: Record<string, {
 			height: 450
 		},
 		content: (
-			<InlineRowSection>
-				<FieldBoxRow
+			<LabeledGrid>
+				<LabeledGridField
 					type="url"
 					name="children"
 					label="HTML File URL"
@@ -439,21 +439,21 @@ const tags: Record<string, {
 						</>
 					)}
 				/>
-				<FieldBoxRow
+				<LabeledGridField
 					type="number"
 					name="width"
 					label="Width"
 					required
 					min={0}
 				/>
-				<FieldBoxRow
+				<LabeledGridField
 					type="number"
 					name="height"
 					label="Height"
 					required
 					min={0}
 				/>
-			</InlineRowSection>
+			</LabeledGrid>
 		),
 		getProps: ({ values: { width, height, children } }) => ({
 			children,
@@ -471,11 +471,11 @@ const tags: Record<string, {
 			height: 450
 		},
 		content: (
-			<InlineRowSection>
-				<BoxRow className="red">
+			<LabeledGrid>
+				<GridRow className="red">
 					It is highly recommended not to use Flash due to its loss of support. Consider using video or HTML5 instead.
-				</BoxRow>
-				<FieldBoxRow
+				</GridRow>
+				<LabeledGridField
 					type="url"
 					name="children"
 					label="SWF File URL"
@@ -483,21 +483,21 @@ const tags: Record<string, {
 					autoFocus
 					autoComplete="off"
 				/>
-				<FieldBoxRow
+				<LabeledGridField
 					type="number"
 					name="width"
 					label="Width"
 					required
 					min={0}
 				/>
-				<FieldBoxRow
+				<LabeledGridField
 					type="number"
 					name="height"
 					label="Height"
 					required
 					min={0}
 				/>
-			</InlineRowSection>
+			</LabeledGrid>
 		),
 		getProps: ({ values: { width, height, children } }) => ({
 			children,

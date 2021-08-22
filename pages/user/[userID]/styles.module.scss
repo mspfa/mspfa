@@ -1,15 +1,12 @@
 @use 'styles/themes' as *;
 
 #profile {
-	.box-row {
-		&-section > .box-content {
-			justify-content: center;
-			column-gap: 2em;
-		}
+	.box-section > .box-section-content {
+		column-gap: 2em;
+	}
 
-		&-label {
-			text-align: left;
-		}
+	.grid-row-label {
+		text-align: left;
 	}
 
 	&-info {
@@ -19,7 +16,7 @@
 			width: 200px;
 		}
 
-		& > .box-content {
+		& > .box-section-content {
 			padding-left: 10px;
 			padding-right: 10px;
 		}

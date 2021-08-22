@@ -5,7 +5,7 @@ import type { ExclusiveLabelProps } from 'components/Label';
 
 type DivPropsWithoutChildren = Omit<HTMLAttributes<HTMLDivElement>, 'children'>;
 
-export type LabeledBoxRowProps = ExclusiveLabelProps & {
+export type LabeledGridRowProps = ExclusiveLabelProps & {
 	/** The content of the row's label. */
 	label: ReactNode,
 	/** Whether this component's children should be inserted directly instead of inside a content element. */
@@ -16,7 +16,7 @@ export type LabeledBoxRowProps = ExclusiveLabelProps & {
 };
 
 /** A row in a grid with a label on the left and content on the right. */
-const LabeledBoxRow = ({
+const LabeledGridRow = ({
 	label,
 	htmlFor,
 	help,
@@ -30,10 +30,10 @@ const LabeledBoxRow = ({
 		...contentProps
 	} = {},
 	children
-}: LabeledBoxRowProps) => (
+}: LabeledGridRowProps) => (
 	<>
 		<Label
-			className={`box-row-label${labelClassName ? ` ${labelClassName}` : ''}`}
+			className={`grid-row-label${labelClassName ? ` ${labelClassName}` : ''}`}
 			htmlFor={htmlFor}
 			help={help}
 			{...labelProps}
@@ -44,7 +44,7 @@ const LabeledBoxRow = ({
 			children
 		) : (
 			<div
-				className={`box-row-content${contentClassName ? ` ${contentClassName}` : ''}`}
+				className={`grid-row-content${contentClassName ? ` ${contentClassName}` : ''}`}
 				{...contentProps}
 			>
 				{children}
@@ -53,4 +53,4 @@ const LabeledBoxRow = ({
 	</>
 );
 
-export default LabeledBoxRow;
+export default LabeledGridRow;

@@ -5,7 +5,7 @@ export type ForgotPasswordProps = {
 	className?: string
 };
 
-/** A "Forgot Password?" link to be placed in a `InlineRowSection`. */
+/** A "Forgot Password?" link to be placed in a `LabeledGrid`. */
 const ForgotPassword = ({ className }: ForgotPasswordProps) => (
 	<div
 		className={`forgot-password-link-container${className ? ` ${className}` : ''}`}

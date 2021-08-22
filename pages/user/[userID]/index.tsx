@@ -8,14 +8,14 @@ import { withStatusCode } from 'lib/server/errors';
 import Box from 'components/Box';
 import BoxColumns from 'components/Box/BoxColumns';
 import BoxSection from 'components/Box/BoxSection';
-import BoxRowSection from 'components/Box/BoxRowSection';
-import LabeledBoxRow from 'components/Box/LabeledBoxRow';
+import LabeledGridBoxSection from 'components/Box/LabeledGridBoxSection';
+import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import Timestamp from 'components/Timestamp';
 import Link from 'components/Link';
 import BoxFooter from 'components/Box/BoxFooter';
 import IconImage from 'components/IconImage';
 import { Perm } from 'lib/client/perms';
-import BoxRow from 'components/Box/BoxRow';
+import GridRow from 'components/LabeledGrid/GridRow';
 import BBCode from 'components/BBCode';
 import { getPublicStoriesByEditor } from 'lib/server/stories';
 import type { PublicStory } from 'lib/client/stories';
@@ -42,17 +42,17 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 			<Box id="profile">
 				<BoxColumns>
 					<BoxSection id="profile-info" heading="Info">
-						<BoxRow id="profile-name">
+						<GridRow id="profile-name">
 							{publicUser.name}
-						</BoxRow>
-						<BoxRow id="profile-icon-container">
+						</GridRow>
+						<GridRow id="profile-icon-container">
 							<IconImage
 								id="profile-icon"
 								src={publicUser.icon}
 								alt={`${publicUser.name}'s Icon`}
 							/>
-						</BoxRow>
-						<BoxRow id="profile-actions">
+						</GridRow>
+						<GridRow id="profile-actions">
 							{notOwnProfile && (
 								<div>
 									<Link href={`/message/new?to=${publicUser.id}`}>
@@ -74,47 +74,47 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 									</Link>
 								</div>
 							)}
-						</BoxRow>
+						</GridRow>
 					</BoxSection>
 					<Box id="profile-misc">
-						<BoxRowSection id="profile-stats" heading="Stats">
-							<LabeledBoxRow label="Last Connection">
+						<LabeledGridBoxSection id="profile-stats" heading="Stats">
+							<LabeledGridRow label="Last Connection">
 								<Timestamp relative withTime>
 									{publicUser.lastSeen}
 								</Timestamp>
-							</LabeledBoxRow>
-							<LabeledBoxRow label="Joined MSPFA">
+							</LabeledGridRow>
+							<LabeledGridRow label="Joined MSPFA">
 								<Timestamp>{publicUser.created}</Timestamp>
-							</LabeledBoxRow>
+							</LabeledGridRow>
 							{publicUser.birthdate && (
-								<LabeledBoxRow label="Birthdate">
+								<LabeledGridRow label="Birthdate">
 									<Timestamp>{publicUser.birthdate}</Timestamp>
-								</LabeledBoxRow>
+								</LabeledGridRow>
 							)}
-						</BoxRowSection>
+						</LabeledGridBoxSection>
 						{(publicUser.email || publicUser.site) && (
-							<BoxRowSection id="profile-contact" heading="Contact">
+							<LabeledGridBoxSection id="profile-contact" heading="Contact">
 								{publicUser.email && (
-									<LabeledBoxRow label="Email">
+									<LabeledGridRow label="Email">
 										<Link
 											href={`mailto:${publicUser.email}`}
 											target="_blank"
 										>
 											{publicUser.email}
 										</Link>
-									</LabeledBoxRow>
+									</LabeledGridRow>
 								)}
 								{publicUser.site && (
-									<LabeledBoxRow label="Website">
+									<LabeledGridRow label="Website">
 										<Link
 											href={publicUser.site}
 											target="_blank"
 										>
 											{publicUser.site}
 										</Link>
-									</LabeledBoxRow>
+									</LabeledGridRow>
 								)}
-							</BoxRowSection>
+							</LabeledGridBoxSection>
 						)}
 					</Box>
 				</BoxColumns>

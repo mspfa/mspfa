@@ -65,7 +65,7 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 							open
 							ref={dialogRef}
 						>
-							<div className="dialog-title front-alt">
+							<div className="dialog-title alt-front">
 								{dialog.title}
 							</div>
 							<div className="dialog-content front">

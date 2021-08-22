@@ -1,11 +1,11 @@
 import { Field } from 'formik';
 import type { FieldAttributes } from 'formik';
 import toKebabCase from 'lib/client/toKebabCase';
-import LabeledBoxRow from 'components/Box/LabeledBoxRow';
-import type { LabeledBoxRowProps } from 'components/Box/LabeledBoxRow';
+import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
+import type { LabeledGridRowProps } from 'components/LabeledGrid/LabeledGridRow';
 import { usePrefixedID } from 'lib/client/IDPrefix';
 
-export type ExclusiveFieldBoxRowProps = Pick<LabeledBoxRowProps, 'label' | 'help'> & {
+export type ExclusiveLabeledGridFieldProps = Pick<LabeledGridRowProps, 'label' | 'help'> & {
 	/**
 	 * The form `Field`'s `name` prop of this setting. Must be unique within the page.
 	 *
@@ -14,32 +14,30 @@ export type ExclusiveFieldBoxRowProps = Pick<LabeledBoxRowProps, 'label' | 'help
 	name: string
 };
 
-export type FieldBoxRowProps = FieldAttributes<unknown> & { id?: never } & ExclusiveFieldBoxRowProps;
+export type LabeledGridFieldProps = FieldAttributes<unknown> & { id?: never } & ExclusiveLabeledGridFieldProps;
 
-/** A `LabeledBoxRow` containing a `Field`. Accepts any props which `Field` accepts. */
-const FieldBoxRow = ({
+/** A `LabeledGridRow` containing a `Field`. Accepts any props which `Field` accepts. */
+const LabeledGridField = ({
 	label,
 	name,
-	type,
 	help,
 	...props
-}: FieldBoxRowProps) => {
+}: LabeledGridFieldProps) => {
 	const id = usePrefixedID(`field-${toKebabCase(name)}`);
 
 	return (
-		<LabeledBoxRow
+		<LabeledGridRow
 			label={label}
 			htmlFor={id}
 			help={help}
 		>
 			<Field
-				type={props.as ? undefined : type}
 				id={id}
 				name={name}
 				{...props}
 			/>
-		</LabeledBoxRow>
+		</LabeledGridRow>
 	);
 };
 
-export default FieldBoxRow;
+export default LabeledGridField;

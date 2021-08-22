@@ -3,8 +3,8 @@ import Button from 'components/Button';
 import useFunction from 'lib/client/useFunction';
 import env from 'lib/client/env';
 import Dialog from 'lib/client/Dialog';
-import InlineRowSection from 'components/Box/InlineRowSection';
-import FieldBoxRow from 'components/Box/FieldBoxRow';
+import LabeledGrid from 'components/LabeledGrid';
+import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import toKebabCase from 'lib/client/toKebabCase';
 import type { ButtonProps } from 'components/Button';
 import type { AuthMethodOptions } from 'lib/client/auth';
@@ -30,8 +30,8 @@ const promptAuthMethod = {
 				confirmPassword: '' as string
 			},
 			content: ({ values }) => (
-				<InlineRowSection>
-					<FieldBoxRow
+				<LabeledGrid>
+					<LabeledGridField
 						type="password"
 						name="password"
 						label="New Password"
@@ -40,7 +40,7 @@ const promptAuthMethod = {
 						minLength={8}
 						autoFocus
 					/>
-					<FieldBoxRow
+					<LabeledGridField
 						type="password"
 						name="confirmPassword"
 						label="Confirm"
@@ -49,7 +49,7 @@ const promptAuthMethod = {
 						placeholder="Re-Type Password"
 						pattern={escapeRegExp(values.password)}
 					/>
-				</InlineRowSection>
+				</LabeledGrid>
 			),
 			actions: [
 				{ label: 'Okay', autoFocus: false },

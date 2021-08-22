@@ -174,7 +174,7 @@ summary {
 	@include theme(background-color, front-color);
 }
 
-.front-alt {
+.alt-front {
 	@include theme(background-color, alt-front-color);
 	@include theme(color, alt-text-color);
 }

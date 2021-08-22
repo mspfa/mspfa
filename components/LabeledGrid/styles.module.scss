@@ -1,0 +1,7 @@
+.labeled-grid {
+	display: grid;
+	grid-template-columns: auto auto;
+	justify-content: center;
+	align-content: start;
+	gap: 1ch;
+}

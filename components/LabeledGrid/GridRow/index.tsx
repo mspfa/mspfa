@@ -2,14 +2,14 @@ import './styles.module.scss';
 import type { RowProps } from 'components/Row';
 import Row from 'components/Row';
 
-export type BoxRowProps = RowProps;
+export type GridRowProps = RowProps;
 
 /** A centered row with one column that spans the full width of the box. */
-const BoxRow = ({ className, ...props }: BoxRowProps) => (
+const GridRow = ({ className, ...props }: GridRowProps) => (
 	<Row
-		className={`box-row${className ? ` ${className}` : ''}`}
+		className={`grid-row${className ? ` ${className}` : ''}`}
 		{...props}
 	/>
 );
 
-export default BoxRow;
+export default GridRow;

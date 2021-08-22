@@ -10,7 +10,7 @@ export type BoxSectionProps = HTMLAttributes<HTMLDivElement> & {
 	customContent?: boolean
 };
 
-/** A `Box` section with a heading and content below it.  */
+/** A `Box` section with a heading and content. Should always be placed in a `Box`. */
 const BoxSection = React.forwardRef<HTMLDivElement, BoxSectionProps>(({
 	heading,
 	className,
@@ -29,14 +29,14 @@ const BoxSection = React.forwardRef<HTMLDivElement, BoxSectionProps>(({
 			ref={ref}
 		>
 			{heading && (
-				<HeadingTag className="box-heading front-alt">
+				<HeadingTag className="box-section-heading alt-front">
 					{heading}
 				</HeadingTag>
 			)}
 			{customContent ? (
 				children
 			) : (
-				<div className="box-content front">
+				<div className="box-section-content front">
 					{children}
 				</div>
 			)}

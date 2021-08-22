@@ -6,8 +6,8 @@ import type { ChangeEvent } from 'react';
 import { useState, useRef, useEffect } from 'react';
 import useFunction from 'lib/client/useFunction';
 import Captcha from 'components/SignIn/Captcha';
-import LabeledBoxRow from 'components/Box/LabeledBoxRow';
-import InlineRowSection from 'components/Box/InlineRowSection';
+import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
+import LabeledGrid from 'components/LabeledGrid';
 import ForgotPassword from 'components/ForgotPassword';
 import AuthButton from 'components/Button/AuthButton';
 import BirthdateField from 'components/DateField/BirthdateField';
@@ -165,10 +165,10 @@ const SignIn = ({ page }: SignInProps) => {
 					<div id="sign-in-divider" className="translucent">or</div>
 				</>
 			)}
-			<InlineRowSection>
+			<LabeledGrid>
 				{page === 2 ? (
 					<>
-						<LabeledBoxRow htmlFor="sign-in-name" label="Username">
+						<LabeledGridRow htmlFor="sign-in-name" label="Username">
 							<input
 								id="sign-in-name"
 								name="name"
@@ -179,19 +179,19 @@ const SignIn = ({ page }: SignInProps) => {
 								value={signInValues.name}
 								onChange={onChange}
 							/>
-						</LabeledBoxRow>
-						<LabeledBoxRow htmlFor="sign-in-birthdate-year" label="Birthdate">
+						</LabeledGridRow>
+						<LabeledGridRow htmlFor="sign-in-birthdate-year" label="Birthdate">
 							<BirthdateField
 								id="sign-in-birthdate"
 								required
 								value={signInValues.birthdate}
 								onChange={onChange}
 							/>
-						</LabeledBoxRow>
+						</LabeledGridRow>
 					</>
 				) : (
 					<>
-						<LabeledBoxRow htmlFor="sign-in-email" label="Email">
+						<LabeledGridRow htmlFor="sign-in-email" label="Email">
 							<input
 								key={page} // This is necessary to re-render this element when `page` changes, or else `autoFocus` will not work correctly.
 								type="email"
@@ -205,13 +205,13 @@ const SignIn = ({ page }: SignInProps) => {
 								onChange={onChangeEmail}
 								ref={emailInputRef}
 							/>
-						</LabeledBoxRow>
+						</LabeledGridRow>
 						{page === 1 && emailTaken && (
 							<div id="sign-up-email-taken" className="red">
 								This email is taken.
 							</div>
 						)}
-						<LabeledBoxRow htmlFor="sign-in-password" label="Password">
+						<LabeledGridRow htmlFor="sign-in-password" label="Password">
 							<input
 								type="password"
 								id="sign-in-password"
@@ -222,11 +222,11 @@ const SignIn = ({ page }: SignInProps) => {
 								value={signInValues.password}
 								onChange={onChange}
 							/>
-						</LabeledBoxRow>
+						</LabeledGridRow>
 						{page === 0 ? (
 							<ForgotPassword />
 						) : (
-							<LabeledBoxRow htmlFor="sign-in-confirm-password" label="Confirm">
+							<LabeledGridRow htmlFor="sign-in-confirm-password" label="Confirm">
 								<input
 									type="password"
 									id="sign-in-confirm-password"
@@ -238,11 +238,11 @@ const SignIn = ({ page }: SignInProps) => {
 									value={signInValues.confirmPassword}
 									onChange={onChange}
 								/>
-							</LabeledBoxRow>
+							</LabeledGridRow>
 						)}
 					</>
 				)}
-			</InlineRowSection>
+			</LabeledGrid>
 			{page === 2 && (
 				<>
 					<Captcha />

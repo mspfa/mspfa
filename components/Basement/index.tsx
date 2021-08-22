@@ -32,6 +32,8 @@ import { addViewportListener, removeViewportListener } from 'lib/client/viewport
 import { useUserCache } from 'lib/client/UserCache';
 import frameThrottler from 'lib/client/frameThrottler';
 import NewsPost from 'components/NewsPost';
+import LabeledGrid from 'components/LabeledGrid';
+import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 
 type StoryNewsAPI = APIClient<typeof import('pages/api/stories/[storyID]/news').default>;
 
@@ -409,7 +411,11 @@ const Basement = ({
 				) : (
 					// If this point is reached, `section === 'options'`.
 					<Row id="story-options">
-						options here
+						<LabeledGrid>
+							<LabeledGridRow label="Show Commentary">
+								<input type="checkbox" />
+							</LabeledGridRow>
+						</LabeledGrid>
 					</Row>
 				)}
 			</div>

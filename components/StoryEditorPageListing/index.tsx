@@ -14,8 +14,8 @@ import { StoryEditorContext, _key } from 'pages/s/[storyID]/edit/p';
 import RemoveButton from 'components/Button/RemoveButton';
 import { isEqual } from 'lodash';
 import Timestamp from 'components/Timestamp';
-import InlineRowSection from 'components/Box/InlineRowSection';
-import FieldBoxRow from 'components/Box/FieldBoxRow';
+import LabeledGrid from 'components/LabeledGrid';
+import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import Button from 'components/Button';
 import type { StoryPageID } from 'lib/server/stories';
 import Dialog from 'lib/client/Dialog';
@@ -617,9 +617,9 @@ const StoryEditorPageListing = React.memo(({
 								</div>
 							</div>
 						</div>
-						<InlineRowSection className="page-field-container-misc">
+						<LabeledGrid className="page-field-container-misc">
 							{page.id !== 1 && (
-								<FieldBoxRow
+								<LabeledGridField
 									type="checkbox"
 									name={`pages.${page.id}.unlisted`}
 									label="Unlisted"
@@ -627,14 +627,14 @@ const StoryEditorPageListing = React.memo(({
 									disabled={isSubmitting}
 								/>
 							)}
-							<FieldBoxRow
+							<LabeledGridField
 								type="checkbox"
 								name={`pages.${page.id}.disableControls`}
 								label="Disable Controls"
 								help={'Disallows users from using MSPFA\'s controls on this page (e.g. left and right arrow keys to navigate between pages).\n\nIt\'s generally only necessary to disable controls if a script or embedded game has custom controls conflicting with MSPFA\'s.'}
 								disabled={isSubmitting}
 							/>
-						</InlineRowSection>
+						</LabeledGrid>
 					</Row>
 					<Row className="page-field-container-content">
 						<Label

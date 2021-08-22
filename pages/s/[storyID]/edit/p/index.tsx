@@ -26,11 +26,11 @@ import axios from 'axios';
 import StoryEditorPageListing from 'components/StoryEditorPageListing';
 import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 import Dialog from 'lib/client/Dialog';
-import InlineRowSection from 'components/Box/InlineRowSection';
-import FieldBoxRow from 'components/Box/FieldBoxRow';
-import LabeledBoxRow from 'components/Box/LabeledBoxRow';
+import LabeledGrid from 'components/LabeledGrid';
+import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
+import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import { escapeRegExp } from 'lodash';
-import BoxRow from 'components/Box/BoxRow';
+import GridRow from 'components/LabeledGrid/GridRow';
 import Router, { useRouter } from 'next/router';
 import frameThrottler from 'lib/client/frameThrottler';
 import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
@@ -247,10 +247,10 @@ const Component = withErrorPage<ServerSideProps>(({
 				}, [values.regex, values.find, values.flags]);
 
 				return (
-					<InlineRowSection>
-						<BoxRow>Finds and replaces text in every page's content.</BoxRow>
+					<LabeledGrid>
+						<GridRow>Finds and replaces text in every page's content.</GridRow>
 						{values.regex ? (
-							<LabeledBoxRow
+							<LabeledGridRow
 								label="Find"
 								htmlFor="field-find"
 							>
@@ -271,9 +271,9 @@ const Component = withErrorPage<ServerSideProps>(({
 									autoComplete="off"
 									innerRef={flagsInputRef}
 								/>
-							</LabeledBoxRow>
+							</LabeledGridRow>
 						) : (
-							<FieldBoxRow
+							<LabeledGridField
 								name="find"
 								label="Find"
 								required
@@ -281,11 +281,11 @@ const Component = withErrorPage<ServerSideProps>(({
 								innerRef={findInputRef as any}
 							/>
 						)}
-						<FieldBoxRow
+						<LabeledGridField
 							name="replace"
 							label="Replace With"
 						/>
-						<LabeledBoxRow
+						<LabeledGridRow
 							label="Case-Sensitive"
 							htmlFor="field-case-sensitive"
 						>
@@ -304,14 +304,14 @@ const Component = withErrorPage<ServerSideProps>(({
 									})
 								}
 							/>
-						</LabeledBoxRow>
-						<FieldBoxRow
+						</LabeledGridRow>
+						<LabeledGridField
 							type="checkbox"
 							name="regex"
 							label="Regex"
 							help={'If you don\'t know what this is, don\'t enable it.\n\nRegex allows for advanced search patterns and replacements.'}
 						/>
-					</InlineRowSection>
+					</LabeledGrid>
 				);
 			},
 			actions: [
@@ -359,8 +359,8 @@ const Component = withErrorPage<ServerSideProps>(({
 				pageID: '' as number | ''
 			},
 			content: (
-				<InlineRowSection>
-					<FieldBoxRow
+				<LabeledGrid>
+					<LabeledGridField
 						type="number"
 						name="pageID"
 						label="Page Number"
@@ -369,7 +369,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						min={1}
 						max={Object.values(formikPropsRef.current.values.pages).length}
 					/>
-				</InlineRowSection>
+				</LabeledGrid>
 			),
 			actions: [
 				{ label: 'Jump!', autoFocus: false },
