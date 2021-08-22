@@ -40,7 +40,7 @@
 		text-overflow: ellipsis;
 
 		.bb {
-			// Disable text wrapping when `:not(.open)` so that `text-overflow: ellipsis;` works.
+			// Disable text wrapping when `:not(.open)` so that `text-overflow: ellipsis` works.
 			white-space: nowrap;
 		}
 	}
