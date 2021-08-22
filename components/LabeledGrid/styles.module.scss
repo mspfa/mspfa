@@ -6,8 +6,8 @@
 	gap: 1ch;
 
 	& > .row {
-		text-align: center;
 		grid-column: 1 / -1;
+		text-align: center;
 		margin: 0 !important;
 	}
 }
