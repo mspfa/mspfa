@@ -3,21 +3,22 @@
 
 $story-page-min-width: 650px;
 $story-page-padding: 25px;
+// This is to mimic the apparent horizontal padding of the page container on http://web.archive.org/web/20141103155157/http://www.mspaintadventures.com/index_hscroll.php?s=6&p=008848.
+$story-page-container-horizontal-padding: math.div(1200px - 1107px, 2);
 
 .story-page {
 	&-container {
 		display: flex;
 		justify-content: center;
-		padding: 7px 0 23px 0;
+		padding: 7px $story-page-container-horizontal-padding 23px $story-page-container-horizontal-padding;
 	}
 
-	// `display: table;` conveniently allows the element's width to dynamically increase to fit its contents exactly the way we want it to.
-	display: table;
 	box-sizing: border-box;
 	padding: 0 $story-page-padding;
-	width: $story-page-min-width;
-	// `min-width` is necessary and must equal `width` because it is used by an effect hook to calculate this element's content width.
 	min-width: $story-page-min-width;
+	// For browsers that don't support `min-content`.
+	width: $story-page-min-width;
+	width: min-content;
 
 	@include mobile {
 		width: 100%;
@@ -85,8 +86,9 @@ $story-page-padding: 25px;
 
 .panel {
 	margin: 0 (-$story-page-padding);
-	// This subtracted constant is to mimic the horizontal padding of the page container on http://web.archive.org/web/20141103155157/http://www.mspaintadventures.com/index_hscroll.php?s=6&p=008848.
-	max-width: $page-width - (1200px - 1107px);
+	// For browsers that don't support `stretch`.
+	max-width: $page-width - 2 * $story-page-container-horizontal-padding;
+	max-width: stretch;
 
 	@include mobile {
 		// For browsers that don't support `vw` which might have a viewport width smaller than `$page-width`.
