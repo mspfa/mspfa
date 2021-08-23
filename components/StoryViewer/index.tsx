@@ -482,7 +482,7 @@ const StoryViewer = ({
 	const mobile = useMobile(true);
 
 	// This state is the basement section which is currently selected.
-	const [section, setSection] = useState<'news' | 'comments' | 'options'>('news');
+	const [basementSection, setBasementSection] = useState<'news' | 'comments' | 'options'>('news');
 
 	const sanitizedSidebarContent = useMemo(() => (
 		sanitizeBBCode(story.sidebarContent, { html: true })
@@ -608,7 +608,7 @@ const StoryViewer = ({
 	});
 
 	useEffect(() => {
-		if (section === 'news' && notAllNewsLoaded) {
+		if (basementSection === 'news' && notAllNewsLoaded) {
 			const _viewportListener = addViewportListener(checkIfNewsShouldBeFetched);
 			frameThrottler(_viewportListener).then(checkIfNewsShouldBeFetched);
 
@@ -618,7 +618,7 @@ const StoryViewer = ({
 		}
 
 		// `newsPosts` must be a dependency here so that updating it calls `checkIfNewsShouldBeFetched` again without needing to change the viewport.
-	}, [checkIfNewsShouldBeFetched, section, notAllNewsLoaded, newsPosts]);
+	}, [checkIfNewsShouldBeFetched, basementSection, notAllNewsLoaded, newsPosts]);
 
 	const deleteNewsPost = useFunction((newsID: string) => {
 		setNewsPosts(newsPosts => {
@@ -762,10 +762,10 @@ const StoryViewer = ({
 						<Row id="basement-actions">
 							<Button
 								className="small"
-								disabled={section === 'news'}
+								disabled={basementSection === 'news'}
 								onClick={
 									useFunction(() => {
-										setSection('news');
+										setBasementSection('news');
 									})
 								}
 							>
@@ -773,10 +773,10 @@ const StoryViewer = ({
 							</Button>
 							<Button
 								className="small"
-								disabled={section === 'comments'}
+								disabled={basementSection === 'comments'}
 								onClick={
 									useFunction(() => {
-										setSection('comments');
+										setBasementSection('comments');
 									})
 								}
 							>
@@ -784,17 +784,17 @@ const StoryViewer = ({
 							</Button>
 							<Button
 								className="small"
-								disabled={section === 'options'}
+								disabled={basementSection === 'options'}
 								onClick={
 									useFunction(() => {
-										setSection('options');
+										setBasementSection('options');
 									})
 								}
 							>
 								Options
 							</Button>
 						</Row>
-						{section === 'news' ? (
+						{basementSection === 'news' ? (
 							<>
 								{writePerms && (
 									<Row id="story-news-actions">
@@ -822,13 +822,12 @@ const StoryViewer = ({
 									))}
 								</Row>
 							</>
-						) : section === 'comments' ? (
-							// If this point is reached, `section === 'comments'`.
+						) : basementSection === 'comments' ? (
 							<Row id="story-comments">
 								comments here
 							</Row>
 						) : (
-							// If this point is reached, `section === 'options'`.
+							// If this point is reached, `basementSection === 'options'`.
 							<Row id="story-options">
 								<LabeledGrid>
 									<LabeledGridRow label="Show Commentary" htmlFor="field-commentary-shown">
