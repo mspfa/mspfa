@@ -19,11 +19,13 @@ export const BBFieldContext = React.createContext<{
 }>(undefined!);
 
 export type BBFieldProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'children' | 'value'> & {
-	name: string
+	name: string,
+	/** Disables the BBCode preview spoiler. */
+	noPreview?: boolean
 } & Omit<BBCodeProps, 'children' | 'alreadySanitized'>;
 
 /** A text area field that accepts BBCode. */
-const BBField = ({ name, html, noBB, ...props }: BBFieldProps) => {
+const BBField = ({ name, html, noBB, noPreview, ...props }: BBFieldProps) => {
 	const [, { value }, { setValue }] = useField<string>(name);
 
 	const textAreaRef = useRef<HTMLTextAreaElement>(null!);
@@ -79,15 +81,22 @@ const BBField = ({ name, html, noBB, ...props }: BBFieldProps) => {
 				innerRef={textAreaRef}
 				{...props}
 			/>
-			<Spoiler
-				className="bb-preview"
-				name="BBCode Preview"
-				initialOpen={false}
-			>
-				<BBCode html={html} noBB={noBB}>
-					{value}
-				</BBCode>
-			</Spoiler>
+			{!noPreview && (
+				<Spoiler
+					className="bb-preview"
+					name="BBCode Preview"
+					initialOpen={false}
+				>
+					<BBCode
+						// This key is here to force the preview to fully reset when the value changes.
+						key={value}
+						html={html}
+						noBB={noBB}
+					>
+						{value}
+					</BBCode>
+				</Spoiler>
+			)}
 		</BBFieldContext.Provider>
 	);
 };

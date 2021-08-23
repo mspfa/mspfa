@@ -579,7 +579,7 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 					backgroundPositionX: `${-tagIndexes[tagName]}em`
 				}
 			}}
-			className={`bb-tool${open ? ' open' : ''}`}
+			className={`bb-tool bb-tool-${tagName}${open ? ' open' : ''}`}
 			title={tag.title}
 			disabled={disabled}
 			onClick={
