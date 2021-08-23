@@ -673,7 +673,7 @@ const StoryViewer = ({
 							</Link>
 						</StoryLog>
 						{latestPagesShown && (
-							<div id="view-all-pages-link-container">
+							<div className="story-log-link-container">
 								<Link href={`/s/${story.id}/log${previewMode ? '?preview=1' : ''}`}>
 									View All Pages
 								</Link>
@@ -688,17 +688,17 @@ const StoryViewer = ({
 						</div>
 					</div>
 					<div className="basement-section basement-content front">
-						<Row id="story-meta">
+						<Row className="story-meta">
 							<IconImage
-								id="story-icon"
+								className="story-icon"
 								src={story.icon}
 								alt={`${story.title}'s Icon`}
 							/>
-							<div id="story-details">
-								<div id="story-title" className="translucent">
+							<div className="story-details">
+								<div className="story-title translucent">
 									{story.title}
 								</div>
-								<div id="story-stats">
+								<div className="story-stats">
 									<span className="story-status spaced">
 										{storyStatusNames[story.status]}
 									</span>
@@ -716,7 +716,7 @@ const StoryViewer = ({
 										{story.pageCount}
 									</PageCount>
 								</div>
-								<div id="story-anniversary">
+								<div className="story-anniversary">
 									<Label className="spaced">
 										Created
 									</Label>
@@ -733,7 +733,7 @@ const StoryViewer = ({
 										)}
 									</Timestamp>
 								</div>
-								<div id="story-author-container">
+								<div className="story-author-container">
 									<Label className="spaced">
 										{`Author${editorLinks.length === 1 ? '' : 's'}`}
 									</Label>
@@ -743,12 +743,12 @@ const StoryViewer = ({
 								</div>
 							</div>
 						</Row>
-						<Row id="story-description">
+						<Row className="story-description">
 							<BBCode alreadySanitized>
 								{sanitizedDescription}
 							</BBCode>
 						</Row>
-						<Row id="story-tags">
+						<Row className="story-tags">
 							<StoryTagLinkContainer>
 								{story.tags.map((tag, i) => (
 									<Fragment key={tag}>
@@ -758,7 +758,7 @@ const StoryViewer = ({
 								))}
 							</StoryTagLinkContainer>
 						</Row>
-						<Row id="basement-actions">
+						<Row className="basement-actions">
 							<Button
 								className="small"
 								disabled={basementSection === 'news'}
@@ -796,7 +796,7 @@ const StoryViewer = ({
 						{basementSection === 'news' ? (
 							<>
 								{writePerms && (
-									<Row id="story-news-actions">
+									<Row className="story-news-actions">
 										<Button
 											className="small"
 											onClick={createNewsPost}
@@ -806,7 +806,7 @@ const StoryViewer = ({
 									</Row>
 								)}
 								<Row
-									id="story-news"
+									className="story-news"
 									ref={newsElementRef}
 								>
 									{newsPosts.map(newsPost => (
@@ -822,12 +822,12 @@ const StoryViewer = ({
 								</Row>
 							</>
 						) : basementSection === 'comments' ? (
-							<Row id="story-comments">
+							<Row className="story-comments">
 								comments here
 							</Row>
 						) : (
 							// If this point is reached, `basementSection === 'options'`.
-							<Row id="story-options">
+							<Row className="story-options">
 								<LabeledGrid>
 									<LabeledGridRow label="Show Commentary" htmlFor="field-commentary-shown">
 										<input
@@ -842,7 +842,7 @@ const StoryViewer = ({
 						)}
 					</div>
 					{!mobile && (
-						<div id="basement-wealth-dungeon" className="basement-section mid">
+						<div className="basement-section basement-wealth-dungeon mid">
 							<div className="basement-section-heading translucent">
 								Ads
 							</div>
@@ -928,7 +928,7 @@ const StoryViewer = ({
 									<Delimit with={<Stick />}>
 										{pageID !== 1 && (
 											<Link
-												id="link-start-over"
+												className="story-link-start-over"
 												shallow
 												href={`/?s=${story.id}&p=1${previewMode ? '&preview=1' : ''}`}
 											>
@@ -937,7 +937,7 @@ const StoryViewer = ({
 										)}
 										{showGoBack && (
 											<Link
-												id="link-go-back"
+												className="story-link-go-back"
 												shallow
 												href={`/?s=${story.id}&p=${previousPageID}${previewMode ? '&preview=1' : ''}`}
 											>
@@ -950,19 +950,19 @@ const StoryViewer = ({
 							</>
 						)}
 						<span className="story-section-footer-group">
-							<Link id="link-save-game">
+							<Link className="story-link-save-game">
 								Save Game
 							</Link>
 							{' '}
-							<Link id="link-save-game-help" onClick={openSaveGameHelp}>
+							<Link className="story-link-save-game-help" onClick={openSaveGameHelp}>
 								(?)
 							</Link>
 							<Stick />
-							<Link id="link-load-game">
+							<Link className="story-link-load-game">
 								Load Game
 							</Link>
 							<Stick />
-							<Link id="link-delete-game">
+							<Link className="story-link-delete-game">
 								Delete Game Data
 							</Link>
 						</span>

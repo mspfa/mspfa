@@ -7,93 +7,135 @@ $story-page-container-horizontal-padding: math.div(1200px - 1107px, 2);
 $story-page-min-width: 650px;
 $story-page-padding: 25px;
 
-.story-section {
-	&-container {
-		display: flex;
-		justify-content: center;
-		padding: 7px $story-page-container-horizontal-padding 23px;
-	}
-
-	// For browsers that don't support `width: min-content`.
-	// `display: table` conveniently allows the element's width to dynamically adjust on older browsers in the same way `width: min-content` works on newer browsers.
-	display: table;
-	box-sizing: border-box;
-	padding: 0 $story-page-padding;
-	min-width: $story-page-min-width;
-	// For browsers that don't support `min-content`.
-	width: $story-page-min-width;
-	width: min-content;
-
-	@supports (width: min-content) {
-		// We use `display: block` instead of `display: table` because it is no longer necessary when the browser supports `width: min-content`, which not only dynamically adjusts the element's width as `display: table` would, but also makes it easier for custom styles to change various properties while minimizing the need for repetition.
-		display: block;
-	}
-
-	@include mobile {
-		width: 100%;
-		min-width: 100%;
-	}
-
-	&-title {
-		text-align: center;
-		padding: 14px 5px;
-		font-size: xx-large;
-		// Do not assume the theme's default `font-weight` is `bold`.
-		font-weight: bold;
-	}
-
-	&-content {
-		font-size: 0.875em;
-		line-height: 1;
-		padding: 17px 0;
-
-		#story-page & {
-			text-align: center;
-			padding: 0 0 14px;
-
-			:not(.panel) {
-				// This is necessary so an effect hook can detect the original width of elements to be classed with the `panel` class.
-				max-width: none;
-			}
+.story {
+	&-section {
+		&-container {
+			display: flex;
+			justify-content: center;
+			padding: 7px $story-page-container-horizontal-padding 23px;
 		}
-	}
 
-	&-links, &-footer {
-		padding: 17px 0;
-		@include theme(font, alt-font);
-		font-weight: normal;
-	}
+		// For browsers that don't support `width: min-content`.
+		// `display: table` conveniently allows the element's width to dynamically adjust on older browsers in the same way `width: min-content` works on newer browsers.
+		display: table;
+		box-sizing: border-box;
+		padding: 0 $story-page-padding;
+		min-width: $story-page-min-width;
+		// For browsers that don't support `min-content`.
+		width: $story-page-min-width;
+		width: min-content;
 
-	&-links {
-		font-size: x-large;
-	}
+		@supports (width: min-content) {
+			// We use `display: block` instead of `display: table` because it is no longer necessary when the browser supports `width: min-content`, which not only dynamically adjusts the element's width as `display: table` would, but also makes it easier for custom styles to change various properties while minimizing the need for repetition.
+			display: block;
+		}
 
-	&-link-container::before {
-		content: '> ';
-	}
+		@include mobile {
+			width: 100%;
+			min-width: 100%;
+		}
 
-	&-footer {
-		font-size: 0.875em;
+		&-title {
+			text-align: center;
+			padding: 14px 5px;
+			font-size: xx-large;
+			// Do not assume the theme's default `font-weight` is `bold`.
+			font-weight: bold;
+		}
 
-		&-group {
-			font-size: math.div(10, 14) * 1em;
+		&-content {
+			font-size: 0.875em;
+			line-height: 1;
+			padding: 17px 0;
 
-			&-delimiter::before {
-				content: '             ';
-				white-space: pre;
+			#story-page & {
+				text-align: center;
+				padding: 0 0 14px;
 
-				@include mobile {
-					content: '';
-					display: block;
-					// Separate the lines apart a bit to prevent mistapping.
-					height: 1.5em;
+				:not(.panel) {
+					// This is necessary so an effect hook can detect the original width of elements to be classed with the `panel` class.
+					max-width: none;
 				}
 			}
 		}
 
-		.link {
-			font-weight: bold;
+		&-links, &-footer {
+			padding: 17px 0;
+			@include theme(font, alt-font);
+			font-weight: normal;
 		}
+
+		&-links {
+			font-size: x-large;
+		}
+
+		&-link-container::before {
+			content: '> ';
+		}
+
+		&-footer {
+			font-size: 0.875em;
+
+			&-group {
+				font-size: math.div(10, 14) * 1em;
+
+				&-delimiter::before {
+					content: '             ';
+					white-space: pre;
+
+					@include mobile {
+						content: '';
+						display: block;
+						// Separate the lines apart a bit to prevent mistapping.
+						height: 1.5em;
+					}
+				}
+			}
+
+			.link {
+				font-weight: bold;
+			}
+		}
+	}
+
+	&-log-link-container {
+		text-align: center;
+		@include theme(font, alt-font);
+		text-transform: uppercase;
+		margin-bottom: 1em;
+	}
+
+	&-meta {
+		display: flex;
+	}
+
+	&-details {
+		flex-grow: 1;
+		margin-left: 14px;
+
+		& > :not(:last-child) {
+			margin-bottom: 0.5ch;
+		}
+	}
+
+	&-title {
+		@include theme(font, heading-font);
+		font-weight: bold;
+		font-size: 2em;
+		line-height: 1;
+	}
+
+	&-description {
+		font-size: 0.875em;
+	}
+
+	&-news {
+		&-actions {
+			text-align: center;
+		}
+
+		padding: 2px 14px 14px 0;
+		font-size: 0.875em;
 	}
 }
 
@@ -118,20 +160,6 @@ $story-page-padding: 25px;
 	@include mobile {
 		flex-direction: column-reverse;
 		align-items: center;
-	}
-
-	&-actions {
-		text-align: center;
-	}
-
-	&-wealth-dungeon {
-		width: 175px;
-
-		.wealth-spawner-cage {
-			margin: 1em 0;
-			height: 600px;
-			text-align: center;
-		}
 	}
 }
 
@@ -232,47 +260,19 @@ $story-page-padding: 25px;
 			margin: 2em 0 0.75em;
 		}
 	}
-}
 
-#view-all-pages-link-container {
-	text-align: center;
-	@include theme(font, alt-font);
-	text-transform: uppercase;
-	margin-bottom: 1em;
-}
-
-#story {
-	&-meta {
-		display: flex;
+	&-actions {
+		text-align: center;
 	}
 
-	&-details {
-		flex-grow: 1;
-		margin-left: 14px;
+	&-wealth-dungeon {
+		width: 175px;
 
-		& > :not(:last-child) {
-			margin-bottom: 0.5ch;
-		}
-	}
-
-	&-title {
-		@include theme(font, heading-font);
-		font-weight: bold;
-		font-size: 2em;
-		line-height: 1;
-	}
-
-	&-description {
-		font-size: 0.875em;
-	}
-
-	&-news {
-		&-actions {
+		.wealth-spawner-cage {
+			margin: 1em 0;
+			height: 600px;
 			text-align: center;
 		}
-
-		padding: 2px 14px 14px 0;
-		font-size: 0.875em;
 	}
 }
 
