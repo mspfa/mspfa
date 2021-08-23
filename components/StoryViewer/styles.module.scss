@@ -249,6 +249,10 @@ $story-page-padding: 25px;
 	&-details {
 		flex-grow: 1;
 		margin-left: 14px;
+
+		& > :not(:last-child) {
+			margin-bottom: 0.5ch;
+		}
 	}
 
 	&-title {
@@ -270,10 +274,6 @@ $story-page-padding: 25px;
 		padding: 2px 14px 14px 0;
 		font-size: 0.875em;
 	}
-}
-
-.story-details-section:not(:last-child) {
-	margin-bottom: 0.5ch;
 }
 
 #edit-news-tip {

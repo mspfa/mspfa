@@ -696,10 +696,10 @@ const StoryViewer = ({
 								alt={`${story.title}'s Icon`}
 							/>
 							<div id="story-details">
-								<div id="story-title" className="story-details-section translucent">
+								<div id="story-title" className="translucent">
 									{story.title}
 								</div>
-								<div id="story-stats" className="story-details-section">
+								<div id="story-stats">
 									<span className="story-status spaced">
 										{storyStatusNames[story.status]}
 									</span>
@@ -717,7 +717,7 @@ const StoryViewer = ({
 										{story.pageCount}
 									</PageCount>
 								</div>
-								<div id="story-anniversary" className="story-details-section">
+								<div id="story-anniversary">
 									<Label className="spaced">
 										Created
 									</Label>
@@ -734,7 +734,7 @@ const StoryViewer = ({
 										)}
 									</Timestamp>
 								</div>
-								<div id="story-author-container" className="story-details-section">
+								<div id="story-author-container">
 									<Label className="spaced">
 										{`Author${editorLinks.length === 1 ? '' : 's'}`}
 									</Label>
