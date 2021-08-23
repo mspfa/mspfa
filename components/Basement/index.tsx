@@ -4,6 +4,7 @@ import Row from 'components/Row';
 import type { StoryLogListings, PublicStory } from 'lib/client/stories';
 import { storyStatusNames } from 'lib/client/stories';
 import { useMobile } from 'lib/client/useMobile';
+import type { ChangeEvent } from 'react';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import useFunction from 'lib/client/useFunction';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
@@ -234,6 +235,12 @@ const Basement = ({
 		});
 	});
 
+	const [commentaryShown, setCommentaryShown] = useState(false);
+
+	const onChangeCommentaryShown = useFunction((event: ChangeEvent<HTMLInputElement>) => {
+		setCommentaryShown(event.target.checked);
+	});
+
 	return (
 		<div id="basement">
 			<div id="sidebar" className="basement-section mid">
@@ -414,8 +421,13 @@ const Basement = ({
 					// If this point is reached, `section === 'options'`.
 					<Row id="story-options">
 						<LabeledGrid>
-							<LabeledGridRow label="Show Commentary">
-								<input type="checkbox" />
+							<LabeledGridRow label="Show Commentary" htmlFor="field-commentary-shown">
+								<input
+									type="checkbox"
+									id="field-commentary-shown"
+									checked={commentaryShown}
+									onChange={onChangeCommentaryShown}
+								/>
 							</LabeledGridRow>
 						</LabeledGrid>
 					</Row>
