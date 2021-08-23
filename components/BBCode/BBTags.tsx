@@ -13,23 +13,6 @@ const Flash = dynamic(() => import('components/Flash'), {
 export const hashlessColorCodeTest = /^([0-9a-f]{3}(?:[0-9a-f]{3}(?:[0-9a-f]{2})?)?)$/i;
 export const youTubeVideoIDTest = /^(?:https?:)?\/\/(?:(?:www|m)\.)?(?:youtube\.com|youtu\.be)\/.*(?:v=|\/)([\w-]+).*$/i;
 
-/** Gets `width` and `height` attributes from a string that looks like `${width}x${height}`. */
-const getWidthAndHeight = (attributes: string) => {
-	const xIndex = attributes.indexOf('x');
-
-	if (xIndex === -1) {
-		return {
-			width: attributes,
-			height: undefined
-		};
-	}
-
-	return {
-		width: attributes.slice(0, xIndex) || undefined,
-		height: attributes.slice(xIndex + 1) || undefined
-	};
-};
-
 export type BBTagProps = {
 	/**
 	 * Examples:
@@ -39,6 +22,39 @@ export type BBTagProps = {
 	 */
 	attributes: undefined | string | Partial<Record<string, string>>,
 	children?: ReactNode
+};
+
+/** Gets a `width` and a `height` from any `attributes`. */
+const getWidthAndHeight = (attributes: BBTagProps['attributes']) => {
+	if (attributes === undefined) {
+		return {
+			width: undefined,
+			height: undefined
+		};
+	}
+
+	if (typeof attributes === 'string') {
+	const xIndex = attributes.indexOf('x');
+
+	if (xIndex === -1) {
+		return {
+				width: +attributes,
+			height: undefined
+		};
+	}
+
+	return {
+			width: +attributes.slice(0, xIndex) || undefined,
+			height: +attributes.slice(xIndex + 1) || undefined
+	};
+	}
+
+	// If this point is reached, `attributes instanceof Object`.
+
+	return {
+		width: attributes.width ? +attributes.width : undefined,
+		height: attributes.height ? +attributes.height : undefined
+};
 };
 
 export type BBTag = (
@@ -147,9 +163,7 @@ const BBTags: Partial<Record<string, BBTag>> = {
 		</span>
 	),
 	img: ({ attributes, children }) => {
-		if (typeof attributes === 'string') {
-			attributes = getWidthAndHeight(attributes);
-		}
+		const { width, height } = getWidthAndHeight(attributes);
 
 		return (
 			<img
@@ -159,21 +173,24 @@ const BBTags: Partial<Record<string, BBTag>> = {
 						: undefined
 				}
 				alt=""
-				width={attributes?.width}
-				height={attributes?.height}
+				width={width}
+				height={height}
 			/>
 		);
 	},
 	video: ({ attributes, children }) => {
-		if (typeof attributes === 'string') {
-			attributes = getWidthAndHeight(attributes);
-		}
+		const { width, height } = getWidthAndHeight(attributes);
 
-		let width: string | undefined;
-		let height: string | undefined;
+		let controls = true;
 
-		if (attributes) {
-			({ width, height, ...attributes } = attributes);
+		if (attributes instanceof Object) {
+			// Delete the `width` and `height` now that they have been destructured so they aren't spread to the YouTube embed params.
+			delete attributes.width;
+			delete attributes.height;
+
+			if (attributes.controls === '0') {
+				controls = false;
+			}
 		}
 
 		let youtubeVideoID: string | undefined;
@@ -181,11 +198,6 @@ const BBTags: Partial<Record<string, BBTag>> = {
 		if (typeof children === 'string') {
 			youtubeVideoID = children.match(youTubeVideoIDTest)?.[1];
 		}
-
-		const controls = !(
-			attributes instanceof Object
-			&& attributes.controls === '0'
-		);
 
 		return youtubeVideoID ? (
 			<iframe
@@ -202,12 +214,12 @@ const BBTags: Partial<Record<string, BBTag>> = {
 				// Source: https://developers.google.com/youtube/iframe_api_reference#Requirements
 				width={
 					width
-						? Math.max(200, +width || 0)
+						? Math.max(200, width || 0)
 						: 650
 				}
 				height={
 					height
-						? Math.max(200, +height || 0)
+						? Math.max(200, height || 0)
 						: 450
 				}
 				allowFullScreen
@@ -247,12 +259,7 @@ const BBTags: Partial<Record<string, BBTag>> = {
 		);
 	},
 	iframe: ({ attributes, children }) => {
-		let width: string | undefined;
-		let height: string | undefined;
-
-		if (typeof attributes === 'string') {
-			({ width, height } = getWidthAndHeight(attributes));
-		}
+		const { width, height } = getWidthAndHeight(attributes);
 
 		return (
 			<iframe
@@ -267,12 +274,7 @@ const BBTags: Partial<Record<string, BBTag>> = {
 		);
 	},
 	flash: ({ attributes, children }) => {
-		let width: string | undefined;
-		let height: string | undefined;
-
-		if (typeof attributes === 'string') {
-			({ width, height } = getWidthAndHeight(attributes));
-		}
+		const { width, height } = getWidthAndHeight(attributes);
 
 		return (
 			<Flash
@@ -281,8 +283,8 @@ const BBTags: Partial<Record<string, BBTag>> = {
 						? children
 						: undefined
 				)}
-				width={width ? +width : undefined}
-				height={height ? +height : undefined}
+				width={width}
+				height={height}
 			/>
 		);
 	}
