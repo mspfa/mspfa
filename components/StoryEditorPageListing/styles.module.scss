@@ -31,7 +31,7 @@
 	}
 
 	&-next-page {
-		&-container > *::before {
+		&-container > ::before {
 			content: '> ';
 		}
 
