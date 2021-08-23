@@ -42,6 +42,9 @@ import { addViewportListener, removeViewportListener } from 'lib/client/viewport
 import frameThrottler from 'lib/client/frameThrottler';
 import LabeledGrid from 'components/LabeledGrid';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
+import type { FormikHelpers } from 'formik';
+import { Form, Formik, Field } from 'formik';
+import { useLeaveConfirmation } from 'lib/client/forms';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 type StoryNewsAPI = APIClient<typeof import('pages/api/stories/[storyID]/news').default>;
@@ -541,7 +544,7 @@ const StoryViewer = ({
 				</IDPrefix.Provider>
 			),
 			actions: [
-				{ label: 'Post!', autoFocus: false },
+				{ label: 'Submit!', autoFocus: false },
 				{ label: 'Cancel' }
 			]
 		});
@@ -651,6 +654,18 @@ const StoryViewer = ({
 
 	const onChangeCommentaryShown = useFunction((event: ChangeEvent<HTMLInputElement>) => {
 		setCommentaryShown(event.target.checked);
+	});
+
+	const onSubmitComment = useFunction((
+		values: { content: string },
+		formikHelpers: FormikHelpers<{ content: string }>
+	) => {
+		console.log(values.content);
+
+		formikHelpers.setFieldValue('content', '');
+
+		// This is necessary for some reason.
+		formikHelpers.setSubmitting(false);
 	});
 
 	return (
@@ -824,9 +839,45 @@ const StoryViewer = ({
 								</Row>
 							</>
 						) : basementSection === 'comments' ? (
-							<Row className="story-comments">
-								comments here
-							</Row>
+							<>
+								<Formik
+									initialValues={{ content: '' }}
+									onSubmit={onSubmitComment}
+								>
+									{function CommentForm({ dirty, isSubmitting }) {
+										useLeaveConfirmation(dirty);
+
+										return (
+											<Form className="row story-comment-form">
+												<Label block htmlFor="comment-field-content">
+													Post a Comment
+												</Label>
+												<Field
+													as="textarea"
+													id="comment-field-content"
+													name="content"
+													required
+													maxLength={2000}
+													rows={3}
+													disabled={isSubmitting}
+												/>
+												<div className="story-comment-form-actions">
+													<Button
+														type="submit"
+														className="small"
+														disabled={isSubmitting}
+													>
+														Submit!
+													</Button>
+												</div>
+											</Form>
+										);
+									}}
+								</Formik>
+								<Row className="story-comments">
+									comments here
+								</Row>
+							</>
 						) : (
 							// If this point is reached, `basementSection === 'options'`.
 							<Row className="story-options">
