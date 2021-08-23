@@ -971,6 +971,15 @@ const StoryViewer = ({
 					</div>
 				</div>
 			</div>
+			{commentaryShown && sanitizedPage?.commentary && (
+				<div className="story-page-container">
+					<div className="story-page story-page-commentary front">
+						<BBCode alreadySanitized>
+							{sanitizedPage.commentary}
+						</BBCode>
+					</div>
+				</div>
+			)}
 		</Page>
 	);
 };
