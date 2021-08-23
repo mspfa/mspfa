@@ -858,9 +858,9 @@ const StoryViewer = ({
 				</div>
 			)}
 		>
-			<div className="story-page-container">
+			<div id="story-page" className="story-section-container">
 				<div
-					className="story-page front"
+					className="story-section front"
 					ref={storyPageElementRef}
 				>
 					<Fragment
@@ -868,13 +868,13 @@ const StoryViewer = ({
 						key={pageID}
 					>
 						{sanitizedPage?.title && (
-							<div className="story-page-title">
+							<div className="story-section-title">
 								<BBCode alreadySanitized>
 									{sanitizedPage.title}
 								</BBCode>
 							</div>
 						)}
-						<div className="story-page-content">
+						<div className="story-section-content">
 							{page === null ? (
 								story.pageCount ? (
 									// This page does not exist.
@@ -893,7 +893,7 @@ const StoryViewer = ({
 								</BBCode>
 							)}
 						</div>
-						<div className="story-page-links">
+						<div className="story-section-links">
 							{page?.nextPages.map((nextPageID, i) => {
 								const sanitizedNextPage = sanitizedPages[nextPageID];
 
@@ -901,7 +901,7 @@ const StoryViewer = ({
 								return (
 									<Fragment key={i}>
 										{sanitizedNextPage && (
-											<div className="story-page-link-container">
+											<div className="story-section-link-container">
 												<Link
 													shallow
 													href={`/?s=${story.id}&p=${nextPageID}${previewMode ? '&preview=1' : ''}`}
@@ -919,13 +919,13 @@ const StoryViewer = ({
 							})}
 						</div>
 					</Fragment>
-					<div className="story-page-footer">
+					<div className="story-section-footer">
 						{(
 							// Only render the group if any of its children would be rendered.
 							pageID !== 1 || showGoBack
 						) && (
 							<>
-								<span className="story-page-footer-group">
+								<span className="story-section-footer-group">
 									<Delimit with={<Stick />}>
 										{pageID !== 1 && (
 											<Link
@@ -947,10 +947,10 @@ const StoryViewer = ({
 										)}
 									</Delimit>
 								</span>
-								<span className="story-page-footer-group-delimiter" />
+								<span className="story-section-footer-group-delimiter" />
 							</>
 						)}
-						<span className="story-page-footer-group">
+						<span className="story-section-footer-group">
 							<Link id="link-save-game">
 								Save Game
 							</Link>
@@ -971,9 +971,9 @@ const StoryViewer = ({
 				</div>
 			</div>
 			{commentaryShown && sanitizedPage?.commentary && (
-				<div className="story-page-container">
-					<div className="story-page front">
-						<div className="story-page-commentary">
+				<div id="story-commentary" className="story-section-container">
+					<div className="story-section front">
+						<div className="story-section-content">
 							<BBCode alreadySanitized>
 								{sanitizedPage.commentary}
 							</BBCode>

@@ -7,7 +7,7 @@ $story-page-container-horizontal-padding: math.div(1200px - 1107px, 2);
 $story-page-min-width: 650px;
 $story-page-padding: 25px;
 
-.story-page {
+.story-section {
 	&-container {
 		display: flex;
 		justify-content: center;
@@ -43,14 +43,18 @@ $story-page-padding: 25px;
 	}
 
 	&-content {
-		text-align: center;
-		padding-bottom: 14px;
 		font-size: 0.875em;
 		line-height: 1;
+		padding: 17px 0;
 
-		* {
-			// This is necessary so an effect hook can detect the original width of elements which should be classed with the `panel` class.
-			max-width: none;
+		#story-page & {
+			text-align: center;
+			padding: 0 0 14px;
+
+			* {
+				// This is necessary so an effect hook can detect the original width of elements which should be classed with the `panel` class.
+				max-width: none;
+			}
 		}
 	}
 
@@ -90,11 +94,6 @@ $story-page-padding: 25px;
 		.link {
 			font-weight: bold;
 		}
-	}
-
-	&-commentary {
-		padding: 17px 0;
-		font-size: 0.875em;
 	}
 }
 
