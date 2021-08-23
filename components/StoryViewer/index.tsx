@@ -484,6 +484,10 @@ const StoryViewer = ({
 	// This state is the basement section which is currently selected.
 	const [basementSection, setBasementSection] = useState<'news' | 'comments' | 'options'>('news');
 
+	const openComments = useFunction(() => {
+		setBasementSection('comments');
+	});
+
 	const sanitizedSidebarContent = useMemo(() => (
 		sanitizeBBCode(story.sidebarContent, { html: true })
 	), [story.sidebarContent]);
@@ -770,17 +774,15 @@ const StoryViewer = ({
 							>
 								News
 							</Button>
-							<Button
-								className="small"
-								disabled={basementSection === 'comments'}
-								onClick={
-									useFunction(() => {
-										setBasementSection('comments');
-									})
-								}
-							>
-								Comments
-							</Button>
+							{story.allowComments && (
+								<Button
+									className="small"
+									disabled={basementSection === 'comments'}
+									onClick={openComments}
+								>
+									Comments
+								</Button>
+							)}
 							<Button
 								className="small"
 								disabled={basementSection === 'options'}
