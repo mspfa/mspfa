@@ -34,19 +34,19 @@ const getWidthAndHeight = (attributes: BBTagProps['attributes']) => {
 	}
 
 	if (typeof attributes === 'string') {
-	const xIndex = attributes.indexOf('x');
+		const xIndex = attributes.indexOf('x');
 
-	if (xIndex === -1) {
-		return {
+		if (xIndex === -1) {
+			return {
 				width: +attributes,
-			height: undefined
-		};
-	}
+				height: undefined
+			};
+		}
 
-	return {
+		return {
 			width: +attributes.slice(0, xIndex) || undefined,
 			height: +attributes.slice(xIndex + 1) || undefined
-	};
+		};
 	}
 
 	// If this point is reached, `attributes instanceof Object`.
@@ -54,7 +54,7 @@ const getWidthAndHeight = (attributes: BBTagProps['attributes']) => {
 	return {
 		width: attributes.width ? +attributes.width : undefined,
 		height: attributes.height ? +attributes.height : undefined
-};
+	};
 };
 
 export type BBTag = (
@@ -287,7 +287,10 @@ const BBTags: Partial<Record<string, BBTag>> = {
 				height={height}
 			/>
 		);
-	}
+	},
+	hscroll: withBlock(({ children }) => (
+		<div className="hscroll">{children}</div>
+	))
 	// TODO: user
 };
 
