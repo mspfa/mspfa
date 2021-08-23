@@ -653,12 +653,11 @@ const StoryViewer = ({
 		<Page
 			basement={(
 				<div id="basement">
-					<div id="sidebar" className="basement-section mid">
+					<div className="basement-section basement-sidebar mid">
 						<div className="basement-section-heading translucent">
 							Latest Pages
 						</div>
 						<StoryLog
-							id="latest-pages"
 							story={story}
 							listings={latestPagesShown ? latestPages : undefined}
 							previewMode={previewMode}
@@ -680,15 +679,15 @@ const StoryViewer = ({
 								</Link>
 							</div>
 						)}
-						{story.sidebarContent && (
-							<div id="sidebar-content">
+						<div className="basement-sidebar-content">
+							{story.sidebarContent && (
 								<BBCode alreadySanitized>
 									{sanitizedSidebarContent}
 								</BBCode>
-							</div>
-						)}
+							)}
+						</div>
 					</div>
-					<div id="basement-content" className="basement-section front">
+					<div className="basement-section basement-content front">
 						<Row id="story-meta">
 							<IconImage
 								id="story-icon"
