@@ -4,7 +4,7 @@ import { permToGetUserInPage } from 'lib/server/permToGetUser';
 import { withErrorPage } from 'lib/client/errors';
 import { withStatusCode } from 'lib/server/errors';
 import Box from 'components/Box';
-import LabeledGridBoxSection from 'components/Box/LabeledGridBoxSection';
+import BoxSection from 'components/Box/BoxSection';
 import Row from 'components/Row';
 import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
@@ -84,18 +84,16 @@ type ServerSideProps = {
 const Component = withErrorPage<ServerSideProps>(({ privateStories }) => (
 	<Page withFlashyTitle heading="Your Adventures">
 		<Box>
-			<LabeledGridBoxSection heading="Adventures">
-				<Row>
-					{(privateStories.length
-						? (
-							<List listing={StoryListing}>
-								{privateStories.sort((a, b) => b.updated - a.updated)}
-							</List>
-						)
-						: 'You haven\'t started any adventures yet! Click the button below to begin.'
-					)}
-				</Row>
-			</LabeledGridBoxSection>
+			<BoxSection heading="Adventures">
+				{(privateStories.length
+					? (
+						<List listing={StoryListing}>
+							{privateStories.sort((a, b) => b.updated - a.updated)}
+						</List>
+					)
+					: 'You haven\'t started any adventures yet! Click the button below to begin.'
+				)}
+			</BoxSection>
 			<BoxFooter>
 				<Button onClick={promptNewStory}>
 					New Adventure!
