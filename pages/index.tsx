@@ -1,4 +1,4 @@
-import { MAX_LATEST_PAGES, NEWS_POSTS_PER_REQUEST } from 'components/Basement';
+import { MAX_LATEST_PAGES, NEWS_POSTS_PER_REQUEST } from 'components/StoryViewer';
 import type { ClientPreviousPageIDs } from 'components/StoryViewer';
 import { uniqBy } from 'lodash';
 import { withErrorPage } from 'lib/client/errors';
