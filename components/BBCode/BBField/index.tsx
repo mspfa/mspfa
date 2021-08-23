@@ -43,31 +43,31 @@ const BBField = ({ name, html, noBB, noPreview, ...props }: BBFieldProps) => {
 			}
 		>
 			<div className="bb-toolbar">
-				<span className="bb-tool-group">
+				<span className="bb-tool-group bb-tool-group-font-primary">
 					<BBTool tag="b" />
 					<BBTool tag="i" />
 					<BBTool tag="u" />
 					<BBTool tag="s" />
 				</span>
-				<span className="bb-tool-group">
+				<span className="bb-tool-group bb-tool-group-font-secondary">
 					<BBTool tag="color" />
 					<BBTool tag="background" />
 					<BBTool tag="size" />
 					<BBTool tag="font" />
 				</span>
-				<span className="bb-tool-group">
+				<span className="bb-tool-group bb-tool-group-align">
 					<BBTool tag="left" />
 					<BBTool tag="center" />
 					<BBTool tag="right" />
 					<BBTool tag="justify" />
 				</span>
-				<span className="bb-tool-group">
+				<span className="bb-tool-group bb-tool-group-utility">
 					<BBTool tag="url" />
 					<BBTool tag="spoiler" />
 					<BBTool tag="chat" />
 					<BBTool tag="alt" />
 				</span>
-				<span className="bb-tool-group">
+				<span className="bb-tool-group bb-tool-group-media">
 					<BBTool tag="img" />
 					<BBTool tag="video" />
 					<BBTool tag="iframe" />
