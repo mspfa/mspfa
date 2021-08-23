@@ -32,8 +32,7 @@
 
 	&-next-page {
 		&-container > *::before {
-			content: '>';
-			margin-right: 1ch;
+			content: '> ';
 		}
 
 		margin-bottom: 2px;

@@ -7,6 +7,7 @@
 		white-space: nowrap;
 
 		&:not(:last-child) {
+			// The spacing must be right margin and not left margin so that wrapped BB tool groups are not indented.
 			margin-right: 1ch;
 		}
 	}
