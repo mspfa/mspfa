@@ -973,10 +973,12 @@ const StoryViewer = ({
 			</div>
 			{commentaryShown && sanitizedPage?.commentary && (
 				<div className="story-page-container">
-					<div className="story-page story-page-commentary front">
-						<BBCode alreadySanitized>
-							{sanitizedPage.commentary}
-						</BBCode>
+					<div className="story-page front">
+						<div className="story-page-commentary">
+							<BBCode alreadySanitized>
+								{sanitizedPage.commentary}
+							</BBCode>
+						</div>
 					</div>
 				</div>
 			)}
