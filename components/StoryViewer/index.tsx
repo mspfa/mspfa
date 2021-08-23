@@ -43,7 +43,7 @@ import frameThrottler from 'lib/client/frameThrottler';
 import LabeledGrid from 'components/LabeledGrid';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import type { FormikHelpers } from 'formik';
-import { Form, Formik, Field } from 'formik';
+import { Form, Formik } from 'formik';
 import { useLeaveConfirmation } from 'lib/client/forms';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -839,7 +839,7 @@ const StoryViewer = ({
 								</Row>
 							</>
 						) : basementSection === 'comments' ? (
-							<>
+							<IDPrefix.Provider value="story-comments">
 								<Formik
 									initialValues={{ content: '' }}
 									onSubmit={onSubmitComment}
@@ -848,20 +848,18 @@ const StoryViewer = ({
 										useLeaveConfirmation(dirty);
 
 										return (
-											<Form className="row story-comment-form">
-												<Label block htmlFor="comment-field-content">
+											<Form className="row story-comments-form">
+												<Label block htmlFor="story-comments-field-content">
 													Post a Comment
 												</Label>
-												<Field
-													as="textarea"
-													id="comment-field-content"
+												<BBField
 													name="content"
 													required
 													maxLength={2000}
 													rows={3}
 													disabled={isSubmitting}
 												/>
-												<div className="story-comment-form-actions">
+												<div className="story-comments-form-actions">
 													<Button
 														type="submit"
 														className="small"
@@ -877,7 +875,7 @@ const StoryViewer = ({
 								<Row className="story-comments">
 									comments here
 								</Row>
-							</>
+							</IDPrefix.Provider>
 						) : (
 							// If this point is reached, `basementSection === 'options'`.
 							<Row className="story-options">
