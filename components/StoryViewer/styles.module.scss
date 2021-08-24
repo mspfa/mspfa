@@ -139,14 +139,14 @@ $story-page-padding: 25px;
 	}
 
 	&-comments-form {
-		.bb-preview,
 		.bb-tool-group-font-secondary,
 		.bb-tool-group-align,
 		.bb-tool-chat,
 		.bb-tool-alt,
 		.bb-tool-video,
 		.bb-tool-iframe,
-		.bb-tool-flash {
+		.bb-tool-flash,
+		.bb-preview {
 			display: none;
 		}
 
