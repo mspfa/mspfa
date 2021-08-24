@@ -138,8 +138,25 @@ $story-page-padding: 25px;
 		font-size: 0.875em;
 	}
 
-	&-comments-form-actions {
-		margin-top: 2px;
+	&-comments-form {
+		.bb-preview,
+		.bb-tool-group-font-secondary,
+		.bb-tool-group-align,
+		.bb-tool-chat,
+		.bb-tool-alt,
+		.bb-tool-video,
+		.bb-tool-iframe,
+		.bb-tool-flash {
+			display: none;
+		}
+
+		.bb-tool-group:not(:last-child) {
+			margin-right: 0;
+		}
+
+		&-actions {
+			margin-top: 2px;
+		}
 	}
 }
 
