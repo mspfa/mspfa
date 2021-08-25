@@ -16,7 +16,7 @@ export const BBFieldContext = React.createContext<{
 	setValue: (value: string) => void,
 	/** Whether changes to the `BBField`'s value should be disallowed. */
 	disabled?: boolean
-}>(undefined!);
+} | undefined>(undefined);
 
 export type BBFieldProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'children' | 'value'> & {
 	name: string

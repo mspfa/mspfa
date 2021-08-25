@@ -1,4 +1,5 @@
 import type { ServerUser } from 'lib/server/users';
+import type { Dispatch, SetStateAction } from 'react';
 import React, { useContext, useState } from 'react';
 import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
@@ -65,7 +66,7 @@ export const defaultSettings: PrivateUser['settings'] = {
 } as const;
 
 export const UserContext = React.createContext<PrivateUser | undefined>(undefined);
-// Using a React context is necessary here so the user data can be used server-side.
+// Using a React context is necessary here so the user data can be safely used server-side.
 
 /**
  * Re-renders the component when the current authenticated user changes (or signs in/out).
@@ -77,7 +78,7 @@ export const UserContext = React.createContext<PrivateUser | undefined>(undefine
 export const useUser = () => useContext(UserContext);
 
 let globalUserState: PrivateUser | undefined;
-let globalSetUserState: React.Dispatch<React.SetStateAction<PrivateUser | undefined>> | undefined;
+let globalSetUserState: Dispatch<SetStateAction<PrivateUser | undefined>> | undefined;
 
 /**
  * Gets the current authenticated user.

@@ -6,7 +6,7 @@ import { withStatusCode } from 'lib/server/errors';
 import type { FormikProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import type { ChangeEvent, Dispatch, MouseEvent, MutableRefObject, ReactNode, SetStateAction } from 'react';
-import { useRef, useState, useEffect, createContext, useMemo } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import useFunction from 'lib/client/useFunction';
 import { getChangedValues, preventLeaveConfirmations, useLeaveConfirmation } from 'lib/client/forms';
 import Box from 'components/Box';
@@ -82,7 +82,7 @@ const defaultGridCullingInfo = {
 	paddingBottom: 0
 };
 
-export const StoryEditorContext = createContext<{
+export const StoryEditorContext = React.createContext<{
 	storyID: StoryID,
 	firstDraftID: StoryPageID | undefined,
 	lastNonDraftID: StoryPageID | undefined,
@@ -92,7 +92,7 @@ export const StoryEditorContext = createContext<{
 	isSubmitting: boolean,
 	cachedPageHeightsRef: MutableRefObject<Partial<Record<StoryPageID, number>>>,
 	toggleAdvancedShown: (pageKey: integer) => void
-}>(undefined!);
+} | undefined>(undefined);
 
 const calculateGridSizeInfo = (
 	formikPropsRef: MutableRefObject<FormikProps<Values>>,

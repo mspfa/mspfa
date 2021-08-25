@@ -565,7 +565,7 @@ export type BBToolProps = {
 const BBTool = ({ tag: tagName }: BBToolProps) => {
 	const tag = tags[tagName];
 
-	const { textAreaRef, setValue, disabled } = useContext(BBFieldContext);
+	const { textAreaRef, setValue, disabled } = useContext(BBFieldContext)!;
 	/** A ref to the latest value of `disabled` to avoid race conditions. */
 	const disabledRef = useLatest(disabled);
 

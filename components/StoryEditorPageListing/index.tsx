@@ -62,7 +62,7 @@ const StoryEditorPageListing = React.memo(({
 		isSubmitting,
 		cachedPageHeightsRef,
 		toggleAdvancedShown
-	} = useContext(StoryEditorContext);
+	} = useContext(StoryEditorContext)!;
 
 	/** Whether this page exists on the server. */
 	const onServer = page.id in formikPropsRef.current.initialValues.pages;
