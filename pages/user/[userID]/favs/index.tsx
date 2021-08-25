@@ -30,7 +30,10 @@ type ServerSideProps = {
 const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publicStories }) => (
 	<Page withFlashyTitle heading="Favorite Adventures">
 		<Box>
-			<BoxSection heading={`${publicUser.name}'s Favorites`}>
+			<BoxSection
+				id="favs-section"
+				heading={`${publicUser.name}'s Favorites`}
+			>
 				<Row>
 					<Button
 						className="small"
@@ -40,8 +43,10 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publ
 					</Button>
 				</Row>
 				{!favsPublic && (
-					<Row id="favs-public-tip">
-						Only you can see your favorites. If you want others to be able to see, enable public favorites in <Link href={`/user/${publicUser.id}/edit`}>your profile settings</Link>.
+					<Row>
+						<span id="favs-public-tip">
+							Only you can see your favorites. If you want others to be able to see, enable public favorites in <Link href={`/user/${publicUser.id}/edit`}>your profile settings</Link>.
+						</span>
 					</Row>
 				)}
 				<Row>

@@ -1,4 +1,10 @@
-#favs-public-tip {
-	opacity: 0.5;
-	font-size: 0.875em;
+#favs {
+	&-section > .box-section-content > .row {
+		text-align: center;
+	}
+
+	&-public-tip {
+		opacity: 0.5;
+		font-size: 0.875em;
+	}
 }
