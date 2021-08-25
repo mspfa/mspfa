@@ -3,7 +3,7 @@ import Page from 'components/Page';
 import type { ClientStoryPage, PublicStory, StoryLogListings } from 'lib/client/stories';
 import Link from 'components/Link';
 import Router, { useRouter } from 'next/router';
-import type { Dispatch, MouseEvent, ReactNode, SetStateAction } from 'react';
+import type { Dispatch, MouseEvent, SetStateAction } from 'react';
 import React, { useState, useEffect, useRef, Fragment, useMemo } from 'react';
 import useFunction from 'lib/client/useFunction';
 import type { StoryPageID } from 'lib/server/stories';
@@ -85,7 +85,7 @@ export const PreviewModeContext = React.createContext(false);
 
 export const PageIDContext = React.createContext<StoryPageID | undefined>(undefined);
 
-export const CommentaryShownContext = React.createContext<readonly [
+export const CommentaryShownContext = React.createContext<[
 	commentaryShown: boolean,
 	setCommentaryShown: Dispatch<SetStateAction<boolean>>
 ] | undefined>(undefined);
@@ -450,24 +450,8 @@ const StoryViewer = (props: StoryViewerProps) => {
 	);
 
 	const [commentaryShown, setCommentaryShown] = useState(false);
-	const commentaryState = useMemo(
-		() => [commentaryShown, setCommentaryShown] as const,
-		[commentaryShown, setCommentaryShown]
-	);
 
-	const provideContexts = (children: ReactNode) => (
-		<StoryViewerContext.Provider value={props}>
-			<PreviewModeContext.Provider value={previewMode}>
-				<PageIDContext.Provider value={pageID}>
-					<CommentaryShownContext.Provider value={commentaryState}>
-						{children}
-					</CommentaryShownContext.Provider>
-				</PageIDContext.Provider>
-			</PreviewModeContext.Provider>
-		</StoryViewerContext.Provider>
-	);
-
-	return provideContexts(
+	const pageComponent = (
 		<Page basement={<Basement />}>
 			<div id="story-page" className="story-section-container">
 				<div
@@ -593,6 +577,25 @@ const StoryViewer = (props: StoryViewerProps) => {
 				</div>
 			)}
 		</Page>
+	);
+
+	return (
+		<StoryViewerContext.Provider value={props}>
+			<PreviewModeContext.Provider value={previewMode}>
+				<PageIDContext.Provider value={pageID}>
+					<CommentaryShownContext.Provider
+						value={
+							useMemo(
+								() => [commentaryShown, setCommentaryShown],
+								[commentaryShown, setCommentaryShown]
+							)
+						}
+					>
+						{pageComponent}
+					</CommentaryShownContext.Provider>
+				</PageIDContext.Provider>
+			</PreviewModeContext.Provider>
+		</StoryViewerContext.Provider>
 	);
 };
 
