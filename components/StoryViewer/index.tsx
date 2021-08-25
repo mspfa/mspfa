@@ -3,7 +3,7 @@ import Page from 'components/Page';
 import type { ClientStoryPage, PublicStory, StoryLogListings } from 'lib/client/stories';
 import Link from 'components/Link';
 import Router, { useRouter } from 'next/router';
-import type { Dispatch, MouseEvent, SetStateAction } from 'react';
+import type { Dispatch, MouseEvent, ReactNode, SetStateAction } from 'react';
 import React, { useState, useEffect, useRef, Fragment, useMemo } from 'react';
 import useFunction from 'lib/client/useFunction';
 import type { StoryPageID } from 'lib/server/stories';
@@ -85,7 +85,7 @@ export const PreviewModeContext = React.createContext(false);
 
 export const PageIDContext = React.createContext<StoryPageID | undefined>(undefined);
 
-export const CommentaryShownContext = React.createContext<[
+export const CommentaryShownContext = React.createContext<readonly [
 	commentaryShown: boolean,
 	setCommentaryShown: Dispatch<SetStateAction<boolean>>
 ] | undefined>(undefined);
@@ -450,148 +450,149 @@ const StoryViewer = (props: StoryViewerProps) => {
 	);
 
 	const [commentaryShown, setCommentaryShown] = useState(false);
+	const commentaryState = useMemo(
+		() => [commentaryShown, setCommentaryShown] as const,
+		[commentaryShown, setCommentaryShown]
+	);
 
-	return (
+	const provideContexts = (children: ReactNode) => (
 		<StoryViewerContext.Provider value={props}>
 			<PreviewModeContext.Provider value={previewMode}>
 				<PageIDContext.Provider value={pageID}>
-					<CommentaryShownContext.Provider
-						value={
-							useMemo(
-								() => [commentaryShown, setCommentaryShown],
-								[commentaryShown, setCommentaryShown]
-							)
-						}
-					>
-						<Page basement={<Basement />}>
-							<div id="story-page" className="story-section-container">
-								<div
-									className="story-section front"
-									ref={storyPageElementRef}
-								>
-									<Fragment
-										// This key is here to force the inner DOM to reset between different pages.
-										key={pageID}
-									>
-										{sanitizedPage?.title && (
-											<div className="story-section-title">
-												<BBCode alreadySanitized>
-													{sanitizedPage.title}
-												</BBCode>
-											</div>
-										)}
-										<div className="story-section-content">
-											{page === null ? (
-												story.pageCount ? (
-													// This page does not exist.
-													<>This page does not exist.</>
-												) : (
-													// This story has no pages.
-													<>This adventure has no pages.</>
-												)
-											) : page === undefined ? (
-												// This page has not loaded yet.
-												null
-											) : (
-												// This page is loaded.
-												<BBCode alreadySanitized>
-													{sanitizedPage!.content}
-												</BBCode>
-											)}
-										</div>
-										<div className="story-section-links">
-											{page?.nextPages.map((nextPageID, i) => {
-												const sanitizedNextPage = sanitizedPages[nextPageID];
-
-												// Only render this link if its sanitized page is loaded.
-												return (
-													<Fragment key={i}>
-														{sanitizedNextPage && (
-															<div className="story-section-link-container">
-																<Link
-																	shallow
-																	href={`/?s=${story.id}&p=${nextPageID}${previewMode ? '&preview=1' : ''}`}
-																	data-index={i}
-																	onClick={onClickNextPageLink}
-																>
-																	<BBCode alreadySanitized>
-																		{sanitizedNextPage.title}
-																	</BBCode>
-																</Link>
-															</div>
-														)}
-													</Fragment>
-												);
-											})}
-										</div>
-									</Fragment>
-									<div className="story-section-footer">
-										{(
-											// Only render the group if any of its children would be rendered.
-											pageID !== 1 || showGoBack
-										) && (
-											<>
-												<span className="story-section-footer-group">
-													<Delimit with={<Stick />}>
-														{pageID !== 1 && (
-															<Link
-																className="story-link-start-over"
-																shallow
-																href={`/?s=${story.id}&p=1${previewMode ? '&preview=1' : ''}`}
-															>
-																Start Over
-															</Link>
-														)}
-														{showGoBack && (
-															<Link
-																className="story-link-go-back"
-																shallow
-																href={`/?s=${story.id}&p=${previousPageID}${previewMode ? '&preview=1' : ''}`}
-															>
-																Go Back
-															</Link>
-														)}
-													</Delimit>
-												</span>
-												<span className="story-section-footer-group-delimiter" />
-											</>
-										)}
-										<span className="story-section-footer-group">
-											<Link className="story-link-save-game">
-												Save Game
-											</Link>
-											{' '}
-											<Link className="story-link-save-game-help" onClick={openSaveGameHelp}>
-												(?)
-											</Link>
-											<Stick />
-											<Link className="story-link-load-game">
-												Load Game
-											</Link>
-											<Stick />
-											<Link className="story-link-delete-game">
-												Delete Game Data
-											</Link>
-										</span>
-									</div>
-								</div>
-							</div>
-							{commentaryShown && sanitizedPage?.commentary && (
-								<div id="story-commentary" className="story-section-container">
-									<div className="story-section front">
-										<div className="story-section-content">
-											<BBCode alreadySanitized>
-												{sanitizedPage.commentary}
-											</BBCode>
-										</div>
-									</div>
-								</div>
-							)}
-						</Page>
+					<CommentaryShownContext.Provider value={commentaryState}>
+						{children}
 					</CommentaryShownContext.Provider>
 				</PageIDContext.Provider>
 			</PreviewModeContext.Provider>
 		</StoryViewerContext.Provider>
+	);
+
+	return provideContexts(
+		<Page basement={<Basement />}>
+			<div id="story-page" className="story-section-container">
+				<div
+					className="story-section front"
+					ref={storyPageElementRef}
+				>
+					<Fragment
+						// This key is here to force the inner DOM to reset between different pages.
+						key={pageID}
+					>
+						{sanitizedPage?.title && (
+							<div className="story-section-title">
+								<BBCode alreadySanitized>
+									{sanitizedPage.title}
+								</BBCode>
+							</div>
+						)}
+						<div className="story-section-content">
+							{page === null ? (
+								story.pageCount ? (
+									// This page does not exist.
+									<>This page does not exist.</>
+								) : (
+									// This story has no pages.
+									<>This adventure has no pages.</>
+								)
+							) : page === undefined ? (
+								// This page has not loaded yet.
+								null
+							) : (
+								// This page is loaded.
+								<BBCode alreadySanitized>
+									{sanitizedPage!.content}
+								</BBCode>
+							)}
+						</div>
+						<div className="story-section-links">
+							{page?.nextPages.map((nextPageID, i) => {
+								const sanitizedNextPage = sanitizedPages[nextPageID];
+
+								// Only render this link if its sanitized page is loaded.
+								return (
+									<Fragment key={i}>
+										{sanitizedNextPage && (
+											<div className="story-section-link-container">
+												<Link
+													shallow
+													href={`/?s=${story.id}&p=${nextPageID}${previewMode ? '&preview=1' : ''}`}
+													data-index={i}
+													onClick={onClickNextPageLink}
+												>
+													<BBCode alreadySanitized>
+														{sanitizedNextPage.title}
+													</BBCode>
+												</Link>
+											</div>
+										)}
+									</Fragment>
+								);
+							})}
+						</div>
+					</Fragment>
+					<div className="story-section-footer">
+						{(
+							// Only render the group if any of its children would be rendered.
+							pageID !== 1 || showGoBack
+						) && (
+							<>
+								<span className="story-section-footer-group">
+									<Delimit with={<Stick />}>
+										{pageID !== 1 && (
+											<Link
+												className="story-link-start-over"
+												shallow
+												href={`/?s=${story.id}&p=1${previewMode ? '&preview=1' : ''}`}
+											>
+												Start Over
+											</Link>
+										)}
+										{showGoBack && (
+											<Link
+												className="story-link-go-back"
+												shallow
+												href={`/?s=${story.id}&p=${previousPageID}${previewMode ? '&preview=1' : ''}`}
+											>
+												Go Back
+											</Link>
+										)}
+									</Delimit>
+								</span>
+								<span className="story-section-footer-group-delimiter" />
+							</>
+						)}
+						<span className="story-section-footer-group">
+							<Link className="story-link-save-game">
+								Save Game
+							</Link>
+							{' '}
+							<Link className="story-link-save-game-help" onClick={openSaveGameHelp}>
+								(?)
+							</Link>
+							<Stick />
+							<Link className="story-link-load-game">
+								Load Game
+							</Link>
+							<Stick />
+							<Link className="story-link-delete-game">
+								Delete Game Data
+							</Link>
+						</span>
+					</div>
+				</div>
+			</div>
+			{commentaryShown && sanitizedPage?.commentary && (
+				<div id="story-commentary" className="story-section-container">
+					<div className="story-section front">
+						<div className="story-section-content">
+							<BBCode alreadySanitized>
+								{sanitizedPage.commentary}
+							</BBCode>
+						</div>
+					</div>
+				</div>
+			)}
+		</Page>
 	);
 };
 
