@@ -49,16 +49,24 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publ
 						</span>
 					</Row>
 				)}
-				<Row>
-					{(publicStories.length
-						? (
-							<List listing={StoryListing}>
-								{publicStories}
-							</List>
-						)
-						: 'This user has no favorite adventures.'
-					)}
-				</Row>
+				{publicStories.length ? (
+					<Row>
+						<List listing={StoryListing}>
+							{publicStories}
+						</List>
+					</Row>
+				) : (
+					<>
+						<Row>
+							<img
+								src={`/images/no-favs/${'imageFilename'}`}
+								alt="Artwork for No Favorites"
+								title={`Artist: ${'imageFilename'.slice(0, 'imageFilename'.indexOf('.'))}`}
+							/>
+						</Row>
+						<Row>This user has no favorite adventures.</Row>
+					</>
+				)}
 			</BoxSection>
 		</Box>
 	</Page>
