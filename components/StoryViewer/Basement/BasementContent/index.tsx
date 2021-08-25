@@ -22,7 +22,7 @@ import { storyStatusNames } from 'lib/client/stories';
 import useFunction from 'lib/client/useFunction';
 import type { ChangeEvent } from 'react';
 import React, { Fragment, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { CommentaryContext, PageIDContext, StoryViewerContext } from 'components/StoryViewer';
+import { CommentaryShownContext, PageIDContext, StoryViewerContext } from 'components/StoryViewer';
 import { useUser } from 'lib/client/users';
 import { Perm } from 'lib/client/perms';
 import UserLink from 'components/Link/UserLink';
@@ -48,7 +48,7 @@ const BasementContent = () => {
 
 	const pageID = useContext(PageIDContext);
 
-	const { commentaryShown, setCommentaryShown } = useContext(CommentaryContext)!;
+	const [commentaryShown, setCommentaryShown] = useContext(CommentaryShownContext)!;
 
 	const onChangeCommentaryShown = useFunction((event: ChangeEvent<HTMLInputElement>) => {
 		setCommentaryShown(event.target.checked);

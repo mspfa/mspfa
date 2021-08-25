@@ -85,10 +85,10 @@ export const PreviewModeContext = React.createContext(false);
 
 export const PageIDContext = React.createContext<StoryPageID | undefined>(undefined);
 
-export const CommentaryContext = React.createContext<{
+export const CommentaryShownContext = React.createContext<[
 	commentaryShown: boolean,
 	setCommentaryShown: Dispatch<SetStateAction<boolean>>
-} | undefined>(undefined);
+] | undefined>(undefined);
 
 const StoryViewer = (props: StoryViewerProps) => {
 	const {
@@ -455,10 +455,10 @@ const StoryViewer = (props: StoryViewerProps) => {
 		<StoryViewerContext.Provider value={props}>
 			<PreviewModeContext.Provider value={previewMode}>
 				<PageIDContext.Provider value={pageID}>
-					<CommentaryContext.Provider
+					<CommentaryShownContext.Provider
 						value={
 							useMemo(
-								() => ({ commentaryShown, setCommentaryShown }),
+								() => [commentaryShown, setCommentaryShown],
 								[commentaryShown, setCommentaryShown]
 							)
 						}
@@ -588,7 +588,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 								</div>
 							)}
 						</Page>
-					</CommentaryContext.Provider>
+					</CommentaryShownContext.Provider>
 				</PageIDContext.Provider>
 			</PreviewModeContext.Provider>
 		</StoryViewerContext.Provider>
