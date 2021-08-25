@@ -1,39 +1,34 @@
-import { MAX_LATEST_PAGES, NEWS_POSTS_PER_REQUEST } from 'components/StoryViewer';
-import type { ClientPreviousPageIDs } from 'components/StoryViewer';
+import { MAX_LATEST_PAGES } from 'components/StoryViewer/Basement/BasementSidebar';
+import { NEWS_POSTS_PER_REQUEST } from 'components/StoryViewer/Basement/BasementContent';
+import type { StoryViewerProps } from 'components/StoryViewer';
 import { uniqBy } from 'lodash';
 import { withErrorPage } from 'lib/client/errors';
 import { Perm } from 'lib/client/perms';
-import type { ClientStoryPage, PublicStory, StoryLogListings } from 'lib/client/stories';
+import type { StoryLogListings } from 'lib/client/stories';
 import { StoryPrivacy } from 'lib/client/stories';
 import { useUserCache } from 'lib/client/UserCache';
 import type { PublicUser } from 'lib/client/users';
 import { withStatusCode } from 'lib/server/errors';
-import type { StoryPageID } from 'lib/server/stories';
 import { getPublicStory, getStoryByUnsafeID, getClientPagesAround } from 'lib/server/stories';
 import users, { getPublicUser } from 'lib/server/users';
 import type { integer } from 'lib/types';
 import dynamic from 'next/dynamic';
-import type { ClientNews } from 'lib/client/news';
 import { getClientNews } from 'lib/server/news';
 
 const Homepage = dynamic(() => import('components/Homepage'));
 const StoryViewer = dynamic(() => import('components/StoryViewer'));
 
-type ServerSideProps = {
-	userCache?: never,
-	story?: never,
-	pages?: never,
-	previousPageIDs?: never,
-	latestPages?: never,
-	newsPosts?: never
-} | {
-	userCache: PublicUser[],
-	story: PublicStory,
-	pages: Record<StoryPageID, ClientStoryPage | null>,
-	previousPageIDs: ClientPreviousPageIDs,
-	latestPages: StoryLogListings,
-	newsPosts: ClientNews[]
-} | {
+type ServerSideProps = (
+	// When the user is viewing the homepage.
+	Partial<Record<keyof StoryViewerProps, never>> & {
+		userCache?: never
+	}
+) | (
+	// When the user is viewing a story.
+	StoryViewerProps & {
+		userCache: PublicUser[]
+	}
+) | {
 	statusCode: integer
 };
 
