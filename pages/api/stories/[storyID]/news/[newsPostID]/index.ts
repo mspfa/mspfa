@@ -18,7 +18,7 @@ type PuttableNewsKey = 'content';
 const Handler: APIHandler<{
 	query: {
 		storyID: string,
-		newsID: string
+		newsPostID: string
 	}
 } & (
 	{
@@ -44,7 +44,7 @@ const Handler: APIHandler<{
 
 	/** Gets and returns the requested news post. If the news post doesn't exist, responds with an error and never resolves. */
 	const getNewsPost = () => new Promise<ServerNews>(resolve => {
-		const newsPost = story.news.find(({ id }) => id.toString() === req.query.newsID);
+		const newsPost = story.news.find(({ id }) => id.toString() === req.query.newsPostID);
 
 		if (!newsPost) {
 			res.status(404).send({
