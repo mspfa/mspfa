@@ -42,7 +42,7 @@ const Handler: APIHandler<{
 
 	const story = await getStoryByUnsafeID(req.query.storyID, res);
 
-	/** Gets and returns the requested news post. If the news post doesn't exist, responds with an error and never resolves. */
+	/** Gets the requested news post. If the news post doesn't exist, responds with an error and never resolves. */
 	const getNewsPost = () => new Promise<ServerNewsPost>(resolve => {
 		const newsPost = story.news.find(({ id }) => id.toString() === req.query.newsPostID);
 
