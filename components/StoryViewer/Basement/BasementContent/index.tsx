@@ -1,4 +1,3 @@
-import './styles.module.scss';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
 import Button from 'components/Button';
 import EditButton from 'components/Button/EditButton';
