@@ -13,7 +13,7 @@ import { mergeWith } from 'lodash';
 import overwriteArrays from 'lib/client/overwriteArrays';
 
 /** The keys of all `ClientNewsPost` properties which the client should be able to `PUT` into their `ServerNewsPost`. */
-type PuttableNewsKey = 'content';
+type PuttableNewsPostKey = 'content';
 
 const Handler: APIHandler<{
 	query: {
@@ -27,7 +27,7 @@ const Handler: APIHandler<{
 		method: 'DELETE'
 	} | {
 		method: 'PUT',
-		body: RecursivePartial<Pick<ClientNewsPost, PuttableNewsKey>>
+		body: RecursivePartial<Pick<ClientNewsPost, PuttableNewsPostKey>>
 	}
 ), {
 	method: 'GET',
