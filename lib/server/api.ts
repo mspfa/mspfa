@@ -24,7 +24,9 @@ export type APIResponse<
 	NextApiResponse<(
 		Response extends { body: {} }
 			? ErrorResponseBody | Response['body']
-			: any
+			// When `Response` does not extend `{ body: {} }`, there is no response body, so this must be `never`.
+			// Additionally, this should not be `any` or `unknown` so that, in the event that one of the possible body types does not extend `{}`, the other ones that do won't all join to become `any` or `unknown`.
+			: never
 	)>
 );
 
