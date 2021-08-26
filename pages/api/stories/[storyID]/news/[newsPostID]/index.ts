@@ -68,7 +68,7 @@ const Handler: APIHandler<{
 				)
 			)) {
 				res.status(403).send({
-					message: 'You do not have permission to access the news of the specified adventure.'
+					message: 'You do not have permission to access the specified adventure.'
 				});
 				return;
 			}

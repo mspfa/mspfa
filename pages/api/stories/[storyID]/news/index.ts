@@ -27,7 +27,7 @@ const Handler: APIHandler<{
 		query: {
 			/** How many results to respond with. */
 			limit?: integer | string,
-			/** Filter the results to only include news posted before the news with this ID. */
+			/** Filter the results to only include news posted before the news post with this ID. */
 			before?: string
 		}
 	}
@@ -57,7 +57,7 @@ const Handler: APIHandler<{
 				)
 			)) {
 				res.status(403).send({
-					message: 'You do not have permission to access the news of the specified adventure.'
+					message: 'You do not have permission to access the specified adventure.'
 				});
 				return;
 			}
