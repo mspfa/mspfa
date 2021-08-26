@@ -1,71 +1,33 @@
 import './styles.module.scss';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
-import BBField from 'components/BBCode/BBField';
 import Button from 'components/Button';
 import EditButton from 'components/Button/EditButton';
 import FavButton from 'components/Button/FavButton';
 import PageCount from 'components/Icon/PageCount';
 import IconImage from 'components/IconImage';
 import Label from 'components/Label';
-import LabeledGrid from 'components/LabeledGrid';
-import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
-import NewsPost from 'components/NewsPost';
 import Row from 'components/Row';
 import StoryTagLink from 'components/StoryTagLink';
 import StoryTagLinkContainer from 'components/StoryTagLink/StoryTagLinkContainer';
 import Timestamp from 'components/Timestamp';
-import type { FormikHelpers } from 'formik';
-import { Formik, Form } from 'formik';
-import { useLeaveConfirmation } from 'lib/client/forms';
-import IDPrefix from 'lib/client/IDPrefix';
 import { storyStatusNames } from 'lib/client/stories';
 import useFunction from 'lib/client/useFunction';
-import type { ChangeEvent } from 'react';
-import React, { Fragment, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { CommentaryShownContext, PageIDContext, StoryViewerContext } from 'components/StoryViewer';
+import React, { Fragment, useContext, useMemo, useState } from 'react';
+import { PageIDContext, StoryViewerContext } from 'components/StoryViewer';
 import { useUser } from 'lib/client/users';
 import { Perm } from 'lib/client/perms';
 import UserLink from 'components/Link/UserLink';
 import { uniq } from 'lodash';
-import Dialog from 'lib/client/Dialog';
-import type { APIClient } from 'lib/client/api';
-import frameThrottler from 'lib/client/frameThrottler';
-import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
-import type { ClientNews } from 'lib/client/news';
-import { useUserCache } from 'lib/client/UserCache';
-import api from 'lib/client/api';
-
-type StoryNewsAPI = APIClient<typeof import('pages/api/stories/[storyID]/news').default>;
-
-/** The maximum number of news posts to request each time. */
-export const NEWS_POSTS_PER_REQUEST = 3;
+import StoryNews from 'components/StoryViewer/Basement/BasementContent/StoryNews';
+import StoryComments from 'components/StoryViewer/Basement/BasementContent/StoryComments';
+import StoryOptions from 'components/StoryViewer/Basement/BasementContent/StoryOptions';
 
 const BasementContent = React.memo(() => {
-	const {
-		story,
-		newsPosts: initialNewsPosts
-	} = useContext(StoryViewerContext)!;
+	const { story } = useContext(StoryViewerContext)!;
 
 	const pageID = useContext(PageIDContext);
 
-	const [commentaryShown, setCommentaryShown] = useContext(CommentaryShownContext)!;
-
-	const onChangeCommentaryShown = useFunction((event: ChangeEvent<HTMLInputElement>) => {
-		setCommentaryShown(event.target.checked);
-	});
-
-	const { cacheUser } = useUserCache();
-
-	// This state is the basement section which is currently open.
-	const [basementSection, setBasementSection] = useState<'news' | 'comments' | 'options'>('news');
-
 	const user = useUser();
-
-	const writePerms = !!user && (
-		story.owner === user.id
-		|| story.editors.includes(user.id)
-		|| !!(user.perms & Perm.sudoWrite)
-	);
 
 	const editorLinks = uniq([story.owner, ...story.editors]).map((userID, i) => (
 		<Fragment key={userID}>
@@ -76,156 +38,11 @@ const BasementContent = React.memo(() => {
 		</Fragment>
 	));
 
-	const sanitizedDescription = useMemo(() => (
-		sanitizeBBCode(story.description, { html: true })
-	), [story.description]);
-
-	const [newsPosts, setNewsPosts] = useState(initialNewsPosts);
-
-	const createNewsPost = useFunction(async () => {
-		const dialog = new Dialog({
-			id: 'edit-news',
-			title: 'Create News Post',
-			initialValues: {
-				content: ''
-			},
-			content: (
-				<IDPrefix.Provider value="news">
-					<Row>
-						<Label block htmlFor="news-field-content">
-							Content
-						</Label>
-						<BBField
-							name="content"
-							autoFocus
-							required
-							maxLength={20000}
-							rows={6}
-						/>
-					</Row>
-					<Row id="edit-news-tip">
-						The recommended image width in a news post is 420 pixels.
-					</Row>
-				</IDPrefix.Provider>
-			),
-			actions: [
-				{ label: 'Submit!', autoFocus: false },
-				{ label: 'Cancel' }
-			]
-		});
-
-		if (!(await dialog)?.submit) {
-			return;
-		}
-
-		const { data: newsPost } = await (api as StoryNewsAPI).post(
-			`/stories/${story.id}/news`,
-			dialog.form!.values
-		);
-
-		setNewsPosts(newsPosts => [
-			newsPost,
-			...newsPosts
-		]);
-	});
-
-	const [notAllNewsLoaded, setNotAllNewsLoaded] = useState(
-		// If the client initially received the maximum amount of news posts, then there may be more. On the other hand, if they received less, then we know we have all of them.
-		initialNewsPosts.length === NEWS_POSTS_PER_REQUEST
-	);
-	/** Whether news is currently being requested. */
-	const newsLoadingRef = useRef(false);
-	const newsElementRef = useRef<HTMLDivElement>(null);
-
-	const checkIfNewsShouldBeFetched = useFunction(async () => {
-		if (newsLoadingRef.current) {
-			return;
-		}
-
-		const newsRect = newsElementRef.current!.getBoundingClientRect();
-		const newsStyle = window.getComputedStyle(newsElementRef.current!);
-		const newsPaddingBottom = +newsStyle.paddingBottom.slice(0, -2);
-		const newsContentBottom = newsRect.bottom - newsPaddingBottom;
-
-		// Check if the user has scrolled below the bottom of the news's content.
-		if (newsContentBottom < document.documentElement.clientHeight) {
-			newsLoadingRef.current = true;
-
-			const { data: { news, userCache } } = await (api as StoryNewsAPI).get(`/stories/${story.id}/news`, {
-				params: {
-					limit: NEWS_POSTS_PER_REQUEST,
-					...newsPosts.length && {
-						before: newsPosts[newsPosts.length - 1].id
-					}
-				}
-			}).finally(() => {
-				newsLoadingRef.current = false;
-			});
-
-			if (news.length < NEWS_POSTS_PER_REQUEST) {
-				setNotAllNewsLoaded(false);
-			}
-
-			if (news.length === 0) {
-				return;
-			}
-
-			userCache.forEach(cacheUser);
-
-			setNewsPosts(newsPosts => [
-				...newsPosts,
-				...news
-			]);
-		}
-	});
-
-	useEffect(() => {
-		if (basementSection === 'news' && notAllNewsLoaded) {
-			const _viewportListener = addViewportListener(checkIfNewsShouldBeFetched);
-			frameThrottler(_viewportListener).then(checkIfNewsShouldBeFetched);
-
-			return () => {
-				removeViewportListener(_viewportListener);
-			};
-		}
-
-		// `newsPosts` must be a dependency here so that updating it calls `checkIfNewsShouldBeFetched` again without needing to change the viewport.
-	}, [checkIfNewsShouldBeFetched, basementSection, notAllNewsLoaded, newsPosts]);
-
-	const deleteNewsPost = useFunction((newsID: string) => {
-		setNewsPosts(newsPosts => {
-			const newsIndex = newsPosts.findIndex(({ id }) => id === newsID);
-
-			return [
-				...newsPosts.slice(0, newsIndex),
-				...newsPosts.slice(newsIndex + 1, newsPosts.length)
-			];
-		});
-	});
-
-	const setNewsPost = useFunction((newsPost: ClientNews) => {
-		setNewsPosts(newsPosts => {
-			const newsIndex = newsPosts.findIndex(({ id }) => id === newsPost.id);
-
-			return [
-				...newsPosts.slice(0, newsIndex),
-				newsPost,
-				...newsPosts.slice(newsIndex + 1, newsPosts.length)
-			];
-		});
-	});
+	// This state is the basement content section which is currently open.
+	const [openSection, setOpenSection] = useState<'news' | 'comments' | 'options'>('news');
 
 	const openComments = useFunction(() => {
-		setBasementSection('comments');
-	});
-
-	const onSubmitComment = useFunction(async (
-		values: { content: string },
-		formikHelpers: FormikHelpers<{ content: string }>
-	) => {
-		console.log(values.content);
-
-		formikHelpers.setFieldValue('content', '');
+		setOpenSection('comments');
 	});
 
 	return (
@@ -244,7 +61,11 @@ const BasementContent = React.memo(() => {
 						<span className="story-status spaced">
 							{storyStatusNames[story.status]}
 						</span>
-						{writePerms && (
+						{user && (
+							story.owner === user.id
+							|| story.editors.includes(user.id)
+							|| !!(user.perms & Perm.sudoWrite)
+						) && (
 							<EditButton
 								className="spaced"
 								href={`/s/${story.id}/edit/p#p${pageID}`}
@@ -287,7 +108,11 @@ const BasementContent = React.memo(() => {
 			</Row>
 			<Row className="story-description">
 				<BBCode alreadySanitized>
-					{sanitizedDescription}
+					{
+						useMemo(() => (
+							sanitizeBBCode(story.description, { html: true })
+						), [story.description])
+					}
 				</BBCode>
 			</Row>
 			<Row className="story-tags">
@@ -303,10 +128,10 @@ const BasementContent = React.memo(() => {
 			<Row className="basement-actions">
 				<Button
 					className="small"
-					disabled={basementSection === 'news'}
+					disabled={openSection === 'news'}
 					onClick={
 						useFunction(() => {
-							setBasementSection('news');
+							setOpenSection('news');
 						})
 					}
 				>
@@ -315,7 +140,7 @@ const BasementContent = React.memo(() => {
 				{story.allowComments && (
 					<Button
 						className="small"
-						disabled={basementSection === 'comments'}
+						disabled={openSection === 'comments'}
 						onClick={openComments}
 					>
 						Comments
@@ -323,96 +148,23 @@ const BasementContent = React.memo(() => {
 				)}
 				<Button
 					className="small"
-					disabled={basementSection === 'options'}
+					disabled={openSection === 'options'}
 					onClick={
 						useFunction(() => {
-							setBasementSection('options');
+							setOpenSection('options');
 						})
 					}
 				>
 					Options
 				</Button>
 			</Row>
-			{basementSection === 'news' ? (
-				<>
-					{writePerms && (
-						<Row className="story-news-actions">
-							<Button
-								className="small"
-								onClick={createNewsPost}
-							>
-								Create News Post
-							</Button>
-						</Row>
-					)}
-					<Row
-						className="story-news"
-						ref={newsElementRef}
-					>
-						{newsPosts.map(newsPost => (
-							<NewsPost
-								key={newsPost.id}
-								story={story}
-								setNewsPost={setNewsPost}
-								deleteNewsPost={deleteNewsPost}
-							>
-								{newsPost}
-							</NewsPost>
-						))}
-					</Row>
-				</>
-			) : basementSection === 'comments' ? (
-				<IDPrefix.Provider value="story-comments">
-					<Formik
-						initialValues={{ content: '' }}
-						onSubmit={onSubmitComment}
-					>
-						{function CommentForm({ dirty, isSubmitting }) {
-							useLeaveConfirmation(dirty);
-
-							return (
-								<Form className="row story-comments-form">
-									<Label block htmlFor="story-comments-field-content">
-										Post a Comment
-									</Label>
-									<BBField
-										name="content"
-										required
-										maxLength={2000}
-										rows={3}
-										disabled={isSubmitting}
-									/>
-									<div className="story-comments-form-actions">
-										<Button
-											type="submit"
-											className="small"
-											disabled={isSubmitting}
-										>
-											Submit!
-										</Button>
-									</div>
-								</Form>
-							);
-						}}
-					</Formik>
-					<Row className="story-comments">
-						comments here
-					</Row>
-				</IDPrefix.Provider>
+			{openSection === 'news' ? (
+				<StoryNews />
+			) : openSection === 'comments' ? (
+				<StoryComments />
 			) : (
-				// If this point is reached, `basementSection === 'options'`.
-				<Row className="story-options">
-					<LabeledGrid>
-						<LabeledGridRow label="Show Commentary" htmlFor="field-commentary-shown">
-							<input
-								type="checkbox"
-								id="field-commentary-shown"
-								checked={commentaryShown}
-								onChange={onChangeCommentaryShown}
-							/>
-						</LabeledGridRow>
-					</LabeledGrid>
-				</Row>
+				// If this point is reached, `openSection === 'options'`.
+				<StoryOptions />
 			)}
 		</div>
 	);

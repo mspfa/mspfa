@@ -1,5 +1,5 @@
 import { MAX_LATEST_PAGES } from 'components/StoryViewer/Basement/BasementSidebar';
-import { NEWS_POSTS_PER_REQUEST } from 'components/StoryViewer/Basement/BasementContent';
+import { NEWS_POSTS_PER_REQUEST } from 'components/StoryViewer/Basement/BasementContent/StoryNews';
 import type { StoryViewerProps } from 'components/StoryViewer';
 import { uniqBy } from 'lodash';
 import { withErrorPage } from 'lib/client/errors';
