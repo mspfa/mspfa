@@ -13,7 +13,7 @@ import Link from 'components/Link';
 import { getChangedValues } from 'lib/client/forms';
 import IDPrefix from 'lib/client/IDPrefix';
 import { useLatest } from 'react-use';
-import { youTubeVideoIDTest } from '../BBTags';
+import { youTubeVideoIDTest } from 'components/BBCode/BBTags';
 import type { integer } from 'lib/types';
 
 const defaultBBPreview = 'The quick brown fox jumps over the lazy dog.';
