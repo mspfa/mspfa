@@ -17,7 +17,7 @@ import IDPrefix from 'lib/client/IDPrefix';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
 
-type StoryNewsPostAPI = APIClient<typeof import('pages/api/stories/[storyID]/news/[newsID]').default>;
+type StoryNewsPostAPI = APIClient<typeof import('pages/api/stories/[storyID]/news/[newsPostID]').default>;
 
 export type NewsPostProps = {
 	story: PublicStory,
