@@ -74,7 +74,7 @@ const Handler: APIHandler<{
 			}
 		}
 
-		res.send(await getNewsPost());
+		res.send(getClientNewsPost(await getNewsPost()));
 		return;
 	}
 
