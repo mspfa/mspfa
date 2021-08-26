@@ -13,7 +13,7 @@ import { getPublicStory, getStoryByUnsafeID, getClientPagesAround } from 'lib/se
 import users, { getPublicUser } from 'lib/server/users';
 import type { integer } from 'lib/types';
 import dynamic from 'next/dynamic';
-import { getClientNews } from 'lib/server/news';
+import { getClientNewsPost } from 'lib/server/news';
 
 const Homepage = dynamic(() => import('components/Homepage'));
 const StoryViewer = dynamic(() => import('components/StoryViewer'));
@@ -139,7 +139,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 			// The reason this is sent to the client rather than having SSR and the client compute it a second time is as an optimization (and also it's simpler code).
 			previousPageIDs: clientPreviousPageIDs,
 			latestPages,
-			newsPosts: newsPosts.map(getClientNews)
+			newsPosts: newsPosts.map(getClientNewsPost)
 		}
 	};
 });

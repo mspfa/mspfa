@@ -10,7 +10,7 @@ import api from 'lib/client/api';
 import Dialog from 'lib/client/Dialog';
 import frameThrottler from 'lib/client/frameThrottler';
 import IDPrefix from 'lib/client/IDPrefix';
-import type { ClientNews } from 'lib/client/news';
+import type { ClientNewsPost } from 'lib/client/news';
 import { Perm } from 'lib/client/perms';
 import useFunction from 'lib/client/useFunction';
 import { useUserCache } from 'lib/client/UserCache';
@@ -157,7 +157,7 @@ const StoryNews = React.memo(() => {
 		});
 	});
 
-	const setNewsPost = useFunction((newsPost: ClientNews) => {
+	const setNewsPost = useFunction((newsPost: ClientNewsPost) => {
 		setNewsPosts(newsPosts => {
 			const newsIndex = newsPosts.findIndex(({ id }) => id === newsPost.id);
 

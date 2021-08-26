@@ -1,11 +1,11 @@
 import type { ObjectId } from 'mongodb';
 import type { ServerUserID } from 'lib/server/users';
-import type { ClientNews } from 'lib/client/news';
+import type { ClientNewsPost } from 'lib/client/news';
 
-export type ServerNewsID = ObjectId;
+export type ServerNewsPostID = ObjectId;
 
-export type ServerNews = {
-	id: ServerNewsID,
+export type ServerNewsPost = {
+	id: ServerNewsPostID,
 	posted: Date,
 	edited?: Date,
 	author: ServerUserID,
@@ -16,8 +16,8 @@ export type ServerNews = {
 	content: string
 };
 
-/** Converts a `ServerNews` to a `ClientNews`. */
-export const getClientNews = (serverNews: ServerNews): ClientNews => ({
+/** Converts a `ServerNewsPost` to a `ClientNewsPost`. */
+export const getClientNewsPost = (serverNews: ServerNewsPost): ClientNewsPost => ({
 	id: serverNews.id.toString(),
 	posted: +serverNews.posted,
 	...serverNews.edited !== undefined && {

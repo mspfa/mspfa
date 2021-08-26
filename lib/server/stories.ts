@@ -10,7 +10,7 @@ import type { UpdateFilter } from 'mongodb';
 import type { ServerComment } from 'lib/server/comments';
 import type { ClientPreviousPageIDs } from 'components/StoryViewer';
 import { PAGE_PRELOAD_DEPTH } from 'components/StoryViewer';
-import type { ServerNews } from 'lib/server/news';
+import type { ServerNewsPost } from 'lib/server/news';
 
 /** @minimum 1 */
 export type StoryID = integer;
@@ -126,7 +126,7 @@ export type ServerStory = {
 	/** @maxLength 2000 */
 	sidebarContent: string,
 	/** This story's news posts sorted from newest to oldest. */
-	news: ServerNews[],
+	news: ServerNewsPost[],
 	defaultPageTitle: ServerStoryPage['title'],
 	spoilerPresets: SpoilerPreset[],
 	colors: StoryColor[],

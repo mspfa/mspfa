@@ -17,7 +17,7 @@ import { defaultSettings, getUser } from 'lib/client/users';
 import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
-import type { ClientNews } from 'lib/client/news';
+import type { ClientNewsPost } from 'lib/client/news';
 import Basement from 'components/StoryViewer/Basement';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -76,7 +76,7 @@ export type StoryViewerProps = {
 	pages: Partial<Record<StoryPageID, ClientStoryPage | null>>,
 	previousPageIDs: ClientPreviousPageIDs,
 	latestPages: StoryLogListings,
-	newsPosts: ClientNews[]
+	newsPosts: ClientNewsPost[]
 };
 
 export const StoryViewerContext = React.createContext<StoryViewerProps | undefined>(undefined);

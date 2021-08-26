@@ -2,7 +2,7 @@ import './styles.module.scss';
 import BBCode from 'components/BBCode';
 import UserLink from 'components/Link/UserLink';
 import Timestamp from 'components/Timestamp';
-import type { ClientNews } from 'lib/client/news';
+import type { ClientNewsPost } from 'lib/client/news';
 import React from 'react';
 import EditButton from 'components/Button/EditButton';
 import RemoveButton from 'components/Button/RemoveButton';
@@ -21,8 +21,8 @@ type StoryNewsPostAPI = APIClient<typeof import('pages/api/stories/[storyID]/new
 
 export type NewsPostProps = {
 	story: PublicStory,
-	children: ClientNews,
-	setNewsPost: (newsPost: ClientNews) => void,
+	children: ClientNewsPost,
+	setNewsPost: (newsPost: ClientNewsPost) => void,
 	deleteNewsPost: (newsID: string) => void
 };
 

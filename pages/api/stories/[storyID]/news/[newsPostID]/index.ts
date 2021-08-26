@@ -1,10 +1,10 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
-import type { ServerNews } from 'lib/server/news';
-import { getClientNews } from 'lib/server/news';
+import type { ServerNewsPost } from 'lib/server/news';
+import { getClientNewsPost } from 'lib/server/news';
 import stories, { getStoryByUnsafeID } from 'lib/server/stories';
 import { authenticate } from 'lib/server/auth';
-import type { ClientNews } from 'lib/client/news';
+import type { ClientNewsPost } from 'lib/client/news';
 import { Perm } from 'lib/client/perms';
 import { StoryPrivacy } from 'lib/client/stories';
 import type { RecursivePartial } from 'lib/types';
@@ -12,7 +12,7 @@ import { flatten } from 'lib/server/db';
 import { mergeWith } from 'lodash';
 import overwriteArrays from 'lib/client/overwriteArrays';
 
-/** The keys of all `ClientNews` properties which the client should be able to `PUT` into their `ServerNews`. */
+/** The keys of all `ClientNewsPost` properties which the client should be able to `PUT` into their `ServerNewsPost`. */
 type PuttableNewsKey = 'content';
 
 const Handler: APIHandler<{
@@ -27,23 +27,23 @@ const Handler: APIHandler<{
 		method: 'DELETE'
 	} | {
 		method: 'PUT',
-		body: RecursivePartial<Pick<ClientNews, PuttableNewsKey>>
+		body: RecursivePartial<Pick<ClientNewsPost, PuttableNewsKey>>
 	}
 ), {
 	method: 'GET',
-	body: ClientNews
+	body: ClientNewsPost
 } | {
 	method: 'DELETE'
 } | {
 	method: 'PUT',
-	body: ClientNews
+	body: ClientNewsPost
 }> = async (req, res) => {
 	await validate(req, res);
 
 	const story = await getStoryByUnsafeID(req.query.storyID, res);
 
 	/** Gets and returns the requested news post. If the news post doesn't exist, responds with an error and never resolves. */
-	const getNewsPost = () => new Promise<ServerNews>(resolve => {
+	const getNewsPost = () => new Promise<ServerNewsPost>(resolve => {
 		const newsPost = story.news.find(({ id }) => id.toString() === req.query.newsPostID);
 
 		if (!newsPost) {
@@ -136,7 +136,7 @@ const Handler: APIHandler<{
 
 	mergeWith(newsPost, req.body, overwriteArrays);
 
-	res.send(getClientNews(newsPost));
+	res.send(getClientNewsPost(newsPost));
 };
 
 export default Handler;

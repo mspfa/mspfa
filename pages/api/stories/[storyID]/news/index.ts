@@ -1,10 +1,10 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
-import type { ServerNews } from 'lib/server/news';
-import { getClientNews } from 'lib/server/news';
+import type { ServerNewsPost } from 'lib/server/news';
+import { getClientNewsPost } from 'lib/server/news';
 import stories, { getStoryByUnsafeID } from 'lib/server/stories';
 import { authenticate } from 'lib/server/auth';
-import type { ClientNews } from 'lib/client/news';
+import type { ClientNewsPost } from 'lib/client/news';
 import { Perm } from 'lib/client/perms';
 import { ObjectId } from 'mongodb';
 import type { integer } from 'lib/types';
@@ -21,7 +21,7 @@ const Handler: APIHandler<{
 } & (
 	{
 		method: 'POST',
-		body: Pick<ClientNews, 'content'>
+		body: Pick<ClientNewsPost, 'content'>
 	} | {
 		method: 'GET',
 		query: {
@@ -33,11 +33,11 @@ const Handler: APIHandler<{
 	}
 ), {
 	method: 'POST',
-	body: ClientNews
+	body: ClientNewsPost
 } | {
 	method: 'GET',
 	body: {
-		news: ClientNews[],
+		news: ClientNewsPost[],
 		userCache: PublicUser[]
 	}
 }> = async (req, res) => {
@@ -80,7 +80,7 @@ const Handler: APIHandler<{
 		const newsPosts = story.news.slice(startIndex, startIndex + limit);
 
 		res.send({
-			news: newsPosts.map(getClientNews),
+			news: newsPosts.map(getClientNewsPost),
 			userCache: await users.find!({
 				_id: {
 					$in: uniqBy(newsPosts.map(({ author }) => author), String)
@@ -106,7 +106,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	const serverNews: ServerNews = {
+	const serverNews: ServerNewsPost = {
 		id: new ObjectId(),
 		posted: new Date(),
 		author: user._id,
@@ -125,7 +125,7 @@ const Handler: APIHandler<{
 		}
 	});
 
-	res.status(201).send(getClientNews(serverNews));
+	res.status(201).send(getClientNewsPost(serverNews));
 };
 
 export default Handler;
