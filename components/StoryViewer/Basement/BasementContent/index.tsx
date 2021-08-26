@@ -219,16 +219,13 @@ const BasementContent = () => {
 		setBasementSection('comments');
 	});
 
-	const onSubmitComment = useFunction((
+	const onSubmitComment = useFunction(async (
 		values: { content: string },
 		formikHelpers: FormikHelpers<{ content: string }>
 	) => {
 		console.log(values.content);
 
 		formikHelpers.setFieldValue('content', '');
-
-		// This is necessary for some reason.
-		formikHelpers.setSubmitting(false);
 	});
 
 	return (
