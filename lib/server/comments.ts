@@ -1,6 +1,7 @@
 import type { ObjectId } from 'mongodb';
 import type { ServerUserID } from 'lib/server/users';
 import type { ClientComment } from 'lib/client/comments';
+import type { StoryPageID } from 'lib/server/stories';
 
 export type ServerCommentID = ObjectId;
 
@@ -21,8 +22,13 @@ export type ServerComment = {
 };
 
 /** Converts a `ServerComment` to a `ClientComment`. */
-export const getClientComment = (serverComment: ServerComment): ClientComment => ({
+export const getClientComment = (
+	serverComment: ServerComment,
+	/** The page ID which the comment is on. */
+	pageID: StoryPageID
+): ClientComment => ({
 	id: serverComment.id.toString(),
+	pageID,
 	posted: +serverComment.posted,
 	...serverComment.edited !== undefined && {
 		edited: +serverComment.edited
