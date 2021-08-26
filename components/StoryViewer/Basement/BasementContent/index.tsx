@@ -40,7 +40,7 @@ type StoryNewsAPI = APIClient<typeof import('pages/api/stories/[storyID]/news').
 /** The maximum number of news posts to request each time. */
 export const NEWS_POSTS_PER_REQUEST = 3;
 
-const BasementContent = () => {
+const BasementContent = React.memo(() => {
 	const {
 		story,
 		newsPosts: initialNewsPosts
@@ -416,6 +416,6 @@ const BasementContent = () => {
 			)}
 		</div>
 	);
-};
+});
 
 export default BasementContent;

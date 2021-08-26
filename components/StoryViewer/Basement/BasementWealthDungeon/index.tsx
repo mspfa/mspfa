@@ -1,6 +1,7 @@
 import './styles.module.scss';
+import React from 'react';
 
-const BasementWealthDungeon = () => (
+const BasementWealthDungeon = React.memo(() => (
 	<div className="basement-section basement-wealth-dungeon mid">
 		<div className="basement-section-heading translucent">
 			Ads
@@ -12,6 +13,6 @@ const BasementWealthDungeon = () => (
 			{/* TODO: Insert wealth spawner here. */}
 		</div>
 	</div>
-);
+));
 
 export default BasementWealthDungeon;

@@ -80,11 +80,8 @@ export type StoryViewerProps = {
 };
 
 export const StoryViewerContext = React.createContext<StoryViewerProps | undefined>(undefined);
-
 export const PreviewModeContext = React.createContext(false);
-
 export const PageIDContext = React.createContext<StoryPageID | undefined>(undefined);
-
 export const CommentaryShownContext = React.createContext<[
 	commentaryShown: boolean,
 	setCommentaryShown: Dispatch<SetStateAction<boolean>>
