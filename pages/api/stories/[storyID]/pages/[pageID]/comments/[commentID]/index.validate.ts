@@ -32,13 +32,17 @@ export default createValidator({
 								storyID: {
 									type: 'string'
 								},
-								newsPostID: {
+								pageID: {
+									type: 'string'
+								},
+								commentID: {
 									type: 'string'
 								}
 							},
 							required: [
 								'storyID',
-								'newsPostID'
+								'pageID',
+								'commentID'
 							],
 							additionalProperties: false
 						},
@@ -63,13 +67,17 @@ export default createValidator({
 								storyID: {
 									type: 'string'
 								},
-								newsPostID: {
+								pageID: {
+									type: 'string'
+								},
+								commentID: {
 									type: 'string'
 								}
 							},
 							required: [
 								'storyID',
-								'newsPostID'
+								'pageID',
+								'commentID'
 							],
 							additionalProperties: false
 						},
@@ -88,7 +96,7 @@ export default createValidator({
 					additionalProperties: false,
 					properties: {
 						body: {
-							$ref: '#/definitions/RecursivePartial%3Calias-731470504-70263-70404-731470504-0-212510%3Cdef-alias--244-510--0-510572081278%2Calias-stID%5D_index.ts-645-805-stID%5D_index.ts-0-33891324991638%3E%3E'
+							$ref: '#/definitions/RecursivePartial%3Calias-731470504-70263-70404-731470504-0-212510%3Cdef-alias--308-637--0-6371413154152%2Calias-1603872257-713-870-1603872257-0-4301659861602%3E%3E'
 						},
 						query: {
 							type: 'object',
@@ -96,13 +104,17 @@ export default createValidator({
 								storyID: {
 									type: 'string'
 								},
-								newsPostID: {
+								pageID: {
+									type: 'string'
+								},
+								commentID: {
 									type: 'string'
 								}
 							},
 							required: [
 								'storyID',
-								'newsPostID'
+								'pageID',
+								'commentID'
 							],
 							additionalProperties: false
 						},
@@ -119,13 +131,13 @@ export default createValidator({
 				}
 			]
 		},
-		'RecursivePartial<alias-731470504-70263-70404-731470504-0-212510<def-alias--244-510--0-510572081278,alias-stID]_index.ts-645-805-stID]_index.ts-0-33891324991638>>': {
+		'RecursivePartial<alias-731470504-70263-70404-731470504-0-212510<def-alias--308-637--0-6371413154152,alias-1603872257-713-870-1603872257-0-4301659861602>>': {
 			type: 'object',
 			properties: {
 				content: {
 					type: 'string',
 					minLength: 1,
-					maxLength: 20000
+					maxLength: 2000
 				}
 			},
 			additionalProperties: false
