@@ -19,7 +19,7 @@ export default createValidator({
 	$schema: 'http://json-schema.org/draft-07/schema#',
 	$ref: '#/definitions/Request',
 	definitions: {
-		Request: {
+		'Request': {
 			anyOf: [
 				{
 					type: 'object',
@@ -32,13 +32,13 @@ export default createValidator({
 								storyID: {
 									type: 'string'
 								},
-								newsID: {
+								newsPostID: {
 									type: 'string'
 								}
 							},
 							required: [
 								'storyID',
-								'newsID'
+								'newsPostID'
 							],
 							additionalProperties: false
 						},
@@ -63,13 +63,13 @@ export default createValidator({
 								storyID: {
 									type: 'string'
 								},
-								newsID: {
+								newsPostID: {
 									type: 'string'
 								}
 							},
 							required: [
 								'storyID',
-								'newsID'
+								'newsPostID'
 							],
 							additionalProperties: false
 						},
@@ -87,20 +87,22 @@ export default createValidator({
 					type: 'object',
 					additionalProperties: false,
 					properties: {
-						body: {},
+						body: {
+							$ref: '#/definitions/RecursivePartial%3Calias-731470504-70263-70404-731470504-0-212510%3Cdef-alias--244-510--0-510572081278%2Calias-stID%5D_index.ts-645-805-stID%5D_index.ts-0-34011324991638%3E%3E'
+						},
 						query: {
 							type: 'object',
 							properties: {
 								storyID: {
 									type: 'string'
 								},
-								newsID: {
+								newsPostID: {
 									type: 'string'
 								}
 							},
 							required: [
 								'storyID',
-								'newsID'
+								'newsPostID'
 							],
 							additionalProperties: false
 						},
@@ -116,6 +118,17 @@ export default createValidator({
 					]
 				}
 			]
+		},
+		'RecursivePartial<alias-731470504-70263-70404-731470504-0-212510<def-alias--244-510--0-510572081278,alias-stID]_index.ts-645-805-stID]_index.ts-0-34011324991638>>': {
+			type: 'object',
+			properties: {
+				content: {
+					type: 'string',
+					minLength: 1,
+					maxLength: 20000
+				}
+			},
+			additionalProperties: false
 		}
 	}
 });
