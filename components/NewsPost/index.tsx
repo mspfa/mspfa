@@ -62,7 +62,7 @@ const NewsPost = React.memo(({
 			),
 			actions: [
 				{ label: 'Save', autoFocus: false },
-				{ label: 'Cancel' }
+				'Cancel'
 			]
 		});
 

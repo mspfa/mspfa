@@ -63,7 +63,7 @@ const StoryNews = React.memo(() => {
 			),
 			actions: [
 				{ label: 'Submit!', autoFocus: false },
-				{ label: 'Cancel' }
+				'Cancel'
 			]
 		});
 
