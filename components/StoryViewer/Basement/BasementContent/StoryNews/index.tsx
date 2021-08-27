@@ -86,7 +86,7 @@ const StoryNews = React.memo(() => {
 		// If the client initially received the maximum amount of news posts, then there may be more. On the other hand, if they received less, then we know we have all of them.
 		initialNewsPosts.length === NEWS_POSTS_PER_REQUEST
 	);
-	/** Whether news is currently being requested. */
+	/** A ref to whether news is currently being requested. */
 	const newsLoadingRef = useRef(false);
 	const newsElementRef = useRef<HTMLDivElement>(null);
 
