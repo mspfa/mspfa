@@ -100,7 +100,7 @@ const StoryNews = React.memo(() => {
 		const newsPaddingBottom = +newsStyle.paddingBottom.slice(0, -2);
 		const newsContentBottom = newsRect.bottom - newsPaddingBottom;
 
-		// Check if the user has scrolled below the bottom of the news's content.
+		// Check if the user has scrolled below the bottom of the news area's content.
 		if (newsContentBottom < document.documentElement.clientHeight) {
 			newsLoadingRef.current = true;
 
