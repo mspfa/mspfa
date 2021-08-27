@@ -105,7 +105,12 @@ const StoryNews = React.memo(() => {
 			newsLoadingRef.current = true;
 
 			// Fetch more news.
-			const { data: { news, userCache } } = await (api as StoryNewsAPI).get(`/stories/${story.id}/news`, {
+			const {
+				data: {
+					news: newNewsPosts,
+					userCache: newUserCache
+				}
+			} = await (api as StoryNewsAPI).get(`/stories/${story.id}/news`, {
 				params: {
 					limit: NEWS_POSTS_PER_REQUEST,
 					...newsPosts.length && {
@@ -116,19 +121,19 @@ const StoryNews = React.memo(() => {
 				newsLoadingRef.current = false;
 			});
 
-			if (news.length < NEWS_POSTS_PER_REQUEST) {
+			if (newNewsPosts.length < NEWS_POSTS_PER_REQUEST) {
 				setNotAllNewsLoaded(false);
 			}
 
-			if (news.length === 0) {
+			if (newNewsPosts.length === 0) {
 				return;
 			}
 
-			userCache.forEach(cacheUser);
+			newUserCache.forEach(cacheUser);
 
 			setNewsPosts(newsPosts => [
 				...newsPosts,
-				...news
+				...newNewsPosts
 			]);
 		}
 	});
