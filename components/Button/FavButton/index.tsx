@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import Button from 'components/Button';
 import type { ButtonProps } from 'components/Button';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import useFunction from 'lib/client/useFunction';
 import { setUser, promptSignIn, useUser } from 'lib/client/users';
 import api from 'lib/client/api';
@@ -20,13 +20,16 @@ export type FavButtonProps = Omit<ButtonProps, 'onClick' | 'title' | 'children'>
 
 const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) => {
 	const user = useUser();
-	const [loading, setLoading] = useState(false);
+
 	const [favCount, setFavCount] = useState(children);
 
 	const favIndex = user?.favs.indexOf(storyID);
 
 	/** Whether the user has the story favorited. */
 	const active = favIndex !== undefined && favIndex !== -1;
+
+	/** A ref to whether a request to favorite or unfavorite is currently loading. */
+	const loadingRef = useRef(false);
 
 	return (
 		<Button
@@ -35,7 +38,7 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 			title={`${favCount} Favorite${favCount === 1 ? '' : 's'}`}
 			onClick={
 				useFunction(async () => {
-					if (loading) {
+					if (loadingRef.current) {
 						return;
 					}
 
@@ -54,7 +57,7 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 						return;
 					}
 
-					setLoading(true);
+					loadingRef.current = true;
 
 					let newFavCount: integer;
 
@@ -74,7 +77,7 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 
 							return Promise.reject(error);
 						}).finally(() => {
-							setLoading(false);
+							loadingRef.current = false;
 						}));
 
 						user.favs.splice(favIndex, 1);
@@ -95,7 +98,7 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 
 							return Promise.reject(error);
 						}).finally(() => {
-							setLoading(false);
+							loadingRef.current = false;
 						}));
 
 						user.favs.push(storyID);
