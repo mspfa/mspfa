@@ -73,6 +73,8 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 							}
 
 							return Promise.reject(error);
+						}).finally(() => {
+							setLoading(false);
 						}));
 
 						user.favs.splice(favIndex, 1);
@@ -92,6 +94,8 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 							}
 
 							return Promise.reject(error);
+						}).finally(() => {
+							setLoading(false);
 						}));
 
 						user.favs.push(storyID);
@@ -99,7 +103,6 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 					}
 
 					setFavCount(newFavCount);
-					setLoading(false);
 				})
 			}
 			{...props}
