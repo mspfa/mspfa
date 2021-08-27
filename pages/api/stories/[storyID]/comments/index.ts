@@ -93,6 +93,18 @@ const Handler: APIHandler<{
 	}
 
 	let comments: ServerComment[] = [];
+	/** A record mapping the ID of each comment to the ID of the page it's on. */
+	const commentPageIDs: Record<string, StoryPageID> = {};
+
+	/** Adds a comment to `comments` and `commentPageIDs`. */
+	const addComment = (
+		comment: ServerComment,
+		/** The ID of the page that the comment is on. */
+		pageID: StoryPageID
+	) => {
+		comments.push(comment);
+		commentPageIDs[comment.id.toString()] = pageID;
+	};
 
 	if (sort === 'pageID') {
 		// Append the exact number of requested results in sorted order to begin with.
@@ -105,11 +117,9 @@ const Handler: APIHandler<{
 		for (let i = fromPageID; i >= 1; i--) {
 			const page = story.pages[i];
 
-			for (let j = 0; j < page.comments.length; j++) {
-				const comment = page.comments[j];
-
+			for (const comment of page.comments) {
 				if (shouldPush) {
-					comments.push(comment);
+					addComment(comment, page.id);
 
 					// If we have enough comments, stop iterating.
 					if (comments.length >= limit) {
@@ -131,7 +141,9 @@ const Handler: APIHandler<{
 		for (let i = 1; i <= fromPageID; i++) {
 			const page = story.pages[i];
 
-			comments.push(...page.comments);
+			for (const comment of page.comments) {
+				addComment(comment, page.id);
+			}
 		}
 
 		const startIndex = (
@@ -149,12 +161,17 @@ const Handler: APIHandler<{
 				: sort === 'oldest'
 					? +b.posted - +a.posted
 					// If this point is reached, `sort === 'rating'`.
-					: a.likes.length - b.likes.length
+					: (
+						(a.likes.length - a.dislikes.length) - (b.likes.length - b.dislikes.length)
+						|| +a.posted - +b.posted
+					)
 		)).slice(startIndex, startIndex + limit);
 	}
 
 	res.send({
-		comments: comments.map(getClientComment),
+		comments: comments.map(comment => (
+			getClientComment(comment, commentPageIDs[comment.id.toString()])
+		)),
 		userCache: await users.find!({
 			_id: {
 				$in: uniqBy(comments.map(({ author }) => author), String)
