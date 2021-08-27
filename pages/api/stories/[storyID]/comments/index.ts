@@ -163,6 +163,7 @@ const Handler: APIHandler<{
 					// If this point is reached, `sort === 'rating'`.
 					: (
 						(a.likes.length - a.dislikes.length) - (b.likes.length - b.dislikes.length)
+						// Sort by newest if both comments' ratings are the same.
 						|| +a.posted - +b.posted
 					)
 		)).slice(startIndex, startIndex + limit);
