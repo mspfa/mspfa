@@ -1,0 +1,32 @@
+@use 'styles/themes' as *;
+
+.comment {
+	margin-bottom: 2px;
+	position: relative;
+	font-size: 0.875em;
+
+	&-actions {
+		position: absolute;
+		right: 0;
+
+		@include desktop {
+			.comment:not(:hover) & {
+				display: none;
+			}
+		}
+
+		.button {
+			margin: 0.25em 0.25em 0 0;
+		}
+	}
+
+	&-heading {
+		padding: 3px 0;
+		border-bottom: 1px solid rgba(128, 128, 128, 0.245);
+		font-style: italic;
+	}
+
+	&-content {
+		padding: 20px 3px;
+	}
+}

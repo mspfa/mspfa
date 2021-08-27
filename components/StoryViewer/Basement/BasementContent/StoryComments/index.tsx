@@ -1,6 +1,7 @@
 import './styles.module.scss';
 import BBField from 'components/BBCode/BBField';
 import Button from 'components/Button';
+import Comment from 'components/Comment';
 import Label from 'components/Label';
 import Row from 'components/Row';
 import { PageIDContext, StoryViewerContext } from 'components/StoryViewer';
@@ -195,7 +196,16 @@ const StoryComments = React.memo(() => {
 				className="story-comments"
 				ref={commentsElementRef}
 			>
-				{}
+				{comments.map(comment => (
+					<Comment
+						key={comment.id}
+						story={story}
+						setComment={setComment}
+						deleteComment={deleteComment}
+					>
+						{comment}
+					</Comment>
+				))}
 			</Row>
 		</IDPrefix.Provider>
 	);
