@@ -26,6 +26,17 @@ export default createValidator({
 						storyID: {
 							type: 'string'
 						},
+						fromPageID: {
+							anyOf: [
+								{
+									$ref: '#/definitions/StoryPageID'
+								},
+								{
+									type: 'string'
+								}
+							],
+							description: 'The page ID which comments are being requested from.'
+						},
 						limit: {
 							anyOf: [
 								{
@@ -39,11 +50,21 @@ export default createValidator({
 						},
 						before: {
 							type: 'string',
-							description: 'Filter the results to only include news posted before the news post with this ID.'
+							description: 'Filter the results to only include comments posted before the comment with this ID.'
+						},
+						sort: {
+							type: 'string',
+							enum: [
+								'pageID',
+								'newest',
+								'oldest',
+								'rating'
+							]
 						}
 					},
 					required: [
-						'storyID'
+						'storyID',
+						'fromPageID'
 					],
 					additionalProperties: false
 				},
@@ -56,6 +77,10 @@ export default createValidator({
 				'method',
 				'query'
 			]
+		},
+		StoryPageID: {
+			$ref: '#/definitions/integer',
+			minimum: 1
 		},
 		integer: {
 			type: 'integer'
