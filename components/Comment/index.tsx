@@ -16,6 +16,9 @@ import api from 'lib/client/api';
 import IDPrefix from 'lib/client/IDPrefix';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
+import Link from 'components/Link';
+import IconImage from 'components/IconImage';
+import { useUserCache } from 'lib/client/UserCache';
 
 type StoryPageCommentAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]').default>;
 
@@ -34,7 +37,13 @@ const Comment = React.memo(({
 }: CommentProps) => {
 	const user = useUser();
 
+	const { userCache } = useUserCache();
+
+	/** Whether the authenticated user is the author of this comment. */
 	const userIsAuthor = !!user && user.id === comment.author;
+
+	/** The user which is the author of this comment. */
+	const authorUser = userCache[comment.author];
 
 	const promptEdit = useFunction(async () => {
 		const dialog = new Dialog({
@@ -89,38 +98,52 @@ const Comment = React.memo(({
 		deleteComment(comment.id);
 	});
 
+	const IconContainer = authorUser ? Link : 'div';
+
 	return (
 		<div className="comment">
-			<div className="comment-actions">
-				{(userIsAuthor || (
-					user
-					&& !!(user.perms & Perm.sudoWrite)
-				)) && (
-					<EditButton
-						title="Edit Comment"
-						onClick={promptEdit}
-					/>
-				)}
-				{(userIsAuthor || (
-					user
-					&& !!(user.perms & Perm.sudoDelete)
-				)) && (
-					<RemoveButton
-						title="Delete Comment"
-						onClick={promptDelete}
-					/>
-				)}
-			</div>
-			<div className="comment-heading">
-				{'Posted on '}
-				<Timestamp>{comment.posted}</Timestamp>
-				{' by '}
-				<UserLink>{comment.author}</UserLink>
-			</div>
-			<div className="comment-content">
-				<BBCode html>
-					{comment.content}
-				</BBCode>
+			<IconContainer
+				className="comment-icon-container"
+				href={authorUser && `/user/${authorUser.id}`}
+			>
+				<IconImage
+					className="comment-icon"
+					src={authorUser?.icon}
+					alt={authorUser ? `${authorUser.name}'s Icon` : 'Deleted User\'s Icon'}
+				/>
+			</IconContainer>
+			<div className="comment-info">
+				<div className="comment-actions">
+					{(userIsAuthor || (
+						user
+						&& !!(user.perms & Perm.sudoWrite)
+					)) && (
+						<EditButton
+							title="Edit Comment"
+							onClick={promptEdit}
+						/>
+					)}
+					{(userIsAuthor || (
+						user
+						&& !!(user.perms & Perm.sudoDelete)
+					)) && (
+						<RemoveButton
+							title="Delete Comment"
+							onClick={promptDelete}
+						/>
+					)}
+				</div>
+				<div className="comment-heading">
+					<UserLink>{comment.author}</UserLink>
+					<Timestamp relative withTime>
+						{comment.posted}
+					</Timestamp>
+				</div>
+				<div className="comment-content">
+					<BBCode html>
+						{comment.content}
+					</BBCode>
+				</div>
 			</div>
 		</div>
 	);

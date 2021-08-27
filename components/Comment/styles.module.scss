@@ -1,9 +1,23 @@
 @use 'styles/themes' as *;
 
 .comment {
-	margin-bottom: 2px;
+	display: flex;
+	margin-bottom: 1ch;
 	position: relative;
 	font-size: 0.875em;
+
+	&-icon {
+		&-container {
+			display: inline-block;
+			flex-shrink: 0;
+			margin-right: 1ch;
+			width: 3em;
+			height: 3em;
+		}
+
+		width: 100%;
+		height: 100%;
+	}
 
 	&-actions {
 		position: absolute;
@@ -20,13 +34,12 @@
 		}
 	}
 
-	&-heading {
-		padding: 3px 0;
-		border-bottom: 1px solid rgba(128, 128, 128, 0.245);
-		font-style: italic;
+	&-heading .timestamp {
+		margin-left: 1ch;
+		opacity: 0.5;
 	}
 
 	&-content {
-		padding: 20px 3px;
+		padding: 4px 0;
 	}
 }
