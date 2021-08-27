@@ -6,6 +6,10 @@
 	position: relative;
 	font-size: 0.875em;
 
+	&-info {
+		flex-grow: 1;
+	}
+
 	&-icon {
 		&-container {
 			display: inline-block;
