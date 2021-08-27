@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import BBField from 'components/BBCode/BBField';
 import Button from 'components/Button';
 import Label from 'components/Label';
