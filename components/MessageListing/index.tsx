@@ -17,6 +17,7 @@ import Dialog from 'lib/client/Dialog';
 import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 import ReplyButton from 'components/Button/ReplyButton';
 import UserLink from 'components/Link/UserLink';
+import InconspicuousDiv from 'components/InconspicuousDiv';
 
 type MessageReadByAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy').default>;
 type MessageReadByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy/[userID]').default>;
@@ -327,14 +328,14 @@ const MessageListing = ({
 					</BBCode>
 				</div>
 				{moreLinkVisible && (
-					<div className="listing-section listing-footer">
+					<InconspicuousDiv className="listing-section listing-footer">
 						<Link
 							className="listing-more-link"
 							onClick={open ? showLess : showMore}
 						>
 							{open ? 'Show Less' : 'Show More'}
 						</Link>
-					</div>
+					</InconspicuousDiv>
 				)}
 			</div>
 			{userIsParticipantRef.current && (

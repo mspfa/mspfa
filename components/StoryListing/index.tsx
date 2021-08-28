@@ -11,7 +11,7 @@ import PageCount from 'components/Icon/PageCount';
 import { Fragment, useState } from 'react';
 import useFunction from 'lib/client/useFunction';
 import BBCode from 'components/BBCode';
-import StoryTagLinkContainer from 'components/StoryTagLink/StoryTagLinkContainer';
+import InconspicuousDiv from 'components/InconspicuousDiv';
 import StoryTagLink from 'components/StoryTagLink';
 
 export type StoryListingProps = {
@@ -74,7 +74,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 						<BBCode>{publicStory.description}</BBCode>
 					</div>
 				)}
-				<StoryTagLinkContainer className="listing-section listing-footer">
+				<InconspicuousDiv className="listing-section listing-footer">
 					{publicStory.description && (
 						<Link
 							className="listing-more-link"
@@ -90,7 +90,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 							<StoryTagLink>{tag}</StoryTagLink>
 						</Fragment>
 					))}
-				</StoryTagLinkContainer>
+				</InconspicuousDiv>
 			</div>
 		</div>
 	);

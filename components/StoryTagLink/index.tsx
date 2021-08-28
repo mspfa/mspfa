@@ -5,7 +5,7 @@ export type StoryTagLinkProps = {
 	children: string
 };
 
-/** A link for a story's tag. Should always be directly inside a `StoryTagLinkContainer`. */
+/** A link for a story's tag. Should always be directly inside an `InconspicuousDiv`. */
 const StoryTagLink = ({ children }: StoryTagLinkProps) => (
 	<Link className="story-tag-link">
 		{`#${children}`}

@@ -7,7 +7,7 @@ import IconImage from 'components/IconImage';
 import Label from 'components/Label';
 import Row from 'components/Row';
 import StoryTagLink from 'components/StoryTagLink';
-import StoryTagLinkContainer from 'components/StoryTagLink/StoryTagLinkContainer';
+import InconspicuousDiv from 'components/InconspicuousDiv';
 import Timestamp from 'components/Timestamp';
 import { storyStatusNames } from 'lib/client/stories';
 import useFunction from 'lib/client/useFunction';
@@ -115,14 +115,14 @@ const BasementContent = React.memo(() => {
 				</BBCode>
 			</Row>
 			<Row className="story-tags">
-				<StoryTagLinkContainer>
+				<InconspicuousDiv>
 					{story.tags.map((tag, i) => (
 						<Fragment key={tag}>
 							{i !== 0 && ' '}
 							<StoryTagLink>{tag}</StoryTagLink>
 						</Fragment>
 					))}
-				</StoryTagLinkContainer>
+				</InconspicuousDiv>
 			</Row>
 			<Row className="basement-actions">
 				<Button
