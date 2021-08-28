@@ -1,20 +1,26 @@
-.story-comments-form {
-	.bb-tool-group-font-secondary,
-	.bb-tool-group-align,
-	.bb-tool-chat,
-	.bb-tool-alt,
-	.bb-tool-video,
-	.bb-tool-iframe,
-	.bb-tool-flash,
-	.bb-preview {
-		display: none;
+.story-comment {
+	&-form {
+		.bb-tool-group-font-secondary,
+		.bb-tool-group-align,
+		.bb-tool-chat,
+		.bb-tool-alt,
+		.bb-tool-video,
+		.bb-tool-iframe,
+		.bb-tool-flash,
+		.bb-preview {
+			display: none;
+		}
+
+		.bb-tool-group:not(:last-child) {
+			margin-right: 0;
+		}
+
+		&-actions {
+			margin-top: 2px;
+		}
 	}
 
-	.bb-tool-group:not(:last-child) {
-		margin-right: 0;
-	}
-
-	&-actions {
-		margin-top: 2px;
+	&-option {
+		font-size: 0.875em;
 	}
 }

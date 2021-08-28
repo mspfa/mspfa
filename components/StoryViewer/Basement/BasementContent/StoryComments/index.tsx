@@ -18,7 +18,9 @@ import useFunction from 'lib/client/useFunction';
 import { useUserCache } from 'lib/client/UserCache';
 import { promptSignIn, useUser } from 'lib/client/users';
 import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
+import type { ChangeEvent } from 'react';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import type { StoryCommentsSortMode } from 'pages/api/stories/[storyID]/comments';
 
 type StoryCommentsAPI = APIClient<typeof import('pages/api/stories/[storyID]/comments').default>;
 type StoryPageCommentsAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments').default>;
@@ -41,6 +43,8 @@ const StoryComments = React.memo(() => {
 	/** A ref to whether comments are currently being requested. */
 	const loadingCommentsRef = useRef(false);
 	const commentsElementRef = useRef<HTMLDivElement>(null!);
+
+	const [sortMode, setSortMode] = useState<StoryCommentsSortMode>('pageID');
 
 	const checkIfCommentsShouldBeFetched = useFunction(async () => {
 		if (loadingCommentsRef.current) {
@@ -68,7 +72,8 @@ const StoryComments = React.memo(() => {
 					limit: COMMENTS_PER_REQUEST,
 					...comments.length && {
 						before: comments[comments.length - 1].id
-					}
+					},
+					sort: sortMode
 				}
 			}).finally(() => {
 				loadingCommentsRef.current = false;
@@ -102,7 +107,7 @@ const StoryComments = React.memo(() => {
 		}
 
 		// `comments` must be a dependency here so that updating it calls `checkIfCommentsShouldBeFetched` again without needing to change the viewport.
-	}, [checkIfCommentsShouldBeFetched, notAllCommentsLoaded, comments]);
+	}, [comments, notAllCommentsLoaded, checkIfCommentsShouldBeFetched]);
 
 	const deleteComment = useFunction((commentsID: string) => {
 		setComments(comments => {
@@ -128,7 +133,7 @@ const StoryComments = React.memo(() => {
 	});
 
 	return (
-		<IDPrefix.Provider value="story-comments">
+		<IDPrefix.Provider value="story-comment">
 			<Formik
 				initialValues={{ content: '' }}
 				onSubmit={
@@ -168,8 +173,8 @@ const StoryComments = React.memo(() => {
 					useLeaveConfirmation(dirty);
 
 					return (
-						<Form className="row story-comments-form">
-							<Label block htmlFor="story-comments-field-content">
+						<Form className="row story-comment-form">
+							<Label block htmlFor="story-comment-field-content">
 								Post a Comment
 							</Label>
 							<BBField
@@ -179,7 +184,7 @@ const StoryComments = React.memo(() => {
 								rows={3}
 								disabled={isSubmitting}
 							/>
-							<div className="story-comments-form-actions">
+							<div className="story-comment-form-actions">
 								<Button
 									type="submit"
 									className="small"
@@ -192,6 +197,30 @@ const StoryComments = React.memo(() => {
 					);
 				}}
 			</Formik>
+			<Row className="story-comment-options">
+				<div className="story-comment-option">
+					<Label className="spaced" htmlFor="story-comment-field-sort-mode">
+						Sort By
+					</Label>
+					<select
+						id="story-comment-field-sort-mode"
+						className="spaced"
+						value={sortMode}
+						onChange={
+							useFunction((event: ChangeEvent<HTMLSelectElement>) => {
+								setSortMode(event.target.value as StoryCommentsSortMode);
+								setComments([]);
+								setNotAllCommentsLoaded(true);
+							})
+						}
+					>
+						<option value="pageID">Page Number</option>
+						<option value="newest">Newest</option>
+						<option value="oldest">Oldest</option>
+						<option value="liked">Rating</option>
+					</select>
+				</div>
+			</Row>
 			<Row
 				className="story-comments"
 				ref={commentsElementRef}

@@ -14,6 +14,8 @@ import users, { getPublicUser } from 'lib/server/users';
 import { uniqBy } from 'lodash';
 import { ObjectId } from 'mongodb';
 
+export type StoryCommentsSortMode = 'pageID' | 'newest' | 'oldest' | 'liked';
+
 const Handler: APIHandler<{
 	method: 'GET',
 	query: {
@@ -24,7 +26,7 @@ const Handler: APIHandler<{
 		limit?: integer | string,
 		/** Filter the results to only include comments posted before the comment with this ID. */
 		before?: string,
-		sort?: 'pageID' | 'newest' | 'oldest' | 'rating'
+		sort?: StoryCommentsSortMode
 	}
 }, {
 	method: 'GET',
@@ -157,14 +159,19 @@ const Handler: APIHandler<{
 		// Sort and limit.
 		comments = comments.sort((a, b) => (
 			sort === 'newest'
-				? +a.posted - +b.posted
+				? +b.posted - +a.posted
 				: sort === 'oldest'
-					? +b.posted - +a.posted
-					// If this point is reached, `sort === 'rating'`.
+					? +a.posted - +b.posted
+					// If this point is reached, `sort === 'liked'`.
 					: (
-						(a.likes.length - a.dislikes.length) - (b.likes.length - b.dislikes.length)
-						// Sort by newest if both comments' ratings are the same.
-						|| +a.posted - +b.posted
+						// Sort by net rating (like count minus dislike count).
+						(b.likes.length - b.dislikes.length) - (a.likes.length - a.dislikes.length)
+						// Sort by like count if they have the same net rating.
+						|| b.likes.length - a.likes.length
+						// Sort by page ID if they have the same net rating and like count.
+						|| commentPageIDs[b.id.toString()] - commentPageIDs[a.id.toString()]
+						// Sort by newest if they have the same net rating, like count, and page ID.
+						|| +b.posted - +a.posted
 					)
 		)).slice(startIndex, startIndex + limit);
 	}

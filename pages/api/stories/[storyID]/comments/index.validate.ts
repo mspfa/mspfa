@@ -53,13 +53,7 @@ export default createValidator({
 							description: 'Filter the results to only include comments posted before the comment with this ID.'
 						},
 						sort: {
-							type: 'string',
-							enum: [
-								'pageID',
-								'newest',
-								'oldest',
-								'rating'
-							]
+							$ref: '#/definitions/StoryCommentsSortMode'
 						}
 					},
 					required: [
@@ -84,6 +78,15 @@ export default createValidator({
 		},
 		integer: {
 			type: 'integer'
+		},
+		StoryCommentsSortMode: {
+			type: 'string',
+			enum: [
+				'pageID',
+				'newest',
+				'oldest',
+				'liked'
+			]
 		}
 	}
 });
