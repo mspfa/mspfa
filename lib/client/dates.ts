@@ -36,7 +36,7 @@ export const getAbsoluteTimestamp = (date: Date, withTime?: boolean) => {
 	let timestamp = `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
 
 	if (withTime) {
-		timestamp += ` at ${getTime(date)}`;
+		timestamp += `, ${getTime(date)}`;
 	}
 
 	return timestamp;
