@@ -46,6 +46,12 @@ const StoryComments = React.memo(() => {
 
 	const [sortMode, setSortMode] = useState<StoryCommentsSortMode>('pageID');
 
+	/** Empties the `comments` so they can be loaded again. */
+	const resetComments = () => {
+		setComments([]);
+		setNotAllCommentsLoaded(true);
+	};
+
 	const checkIfCommentsShouldBeFetched = useFunction(async () => {
 		if (loadingCommentsRef.current) {
 			return;
@@ -163,8 +169,7 @@ const StoryComments = React.memo(() => {
 						// Reset the sort mode to default so the new comment appears at the top.
 						setSortMode('pageID');
 						// Refresh comments in case any other new ones were added.
-						setComments([]);
-						setNotAllCommentsLoaded(true);
+						resetComments();
 
 						formikHelpers.setFieldValue('content', '');
 					})
@@ -210,8 +215,7 @@ const StoryComments = React.memo(() => {
 						onChange={
 							useFunction((event: ChangeEvent<HTMLSelectElement>) => {
 								setSortMode(event.target.value as StoryCommentsSortMode);
-								setComments([]);
-								setNotAllCommentsLoaded(true);
+								resetComments();
 							})
 						}
 					>
