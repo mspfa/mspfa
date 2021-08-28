@@ -200,8 +200,10 @@ export const sanitizeBBCode = (
 
 					// Discard opening BB tags which are still unclosed within this tag's children.
 					for (const matches of Object.values(openTagMatches)) {
-						const lastMatch = matches[matches.length - 1] as BBTagMatch | undefined;
-						while (lastMatch && lastMatch.index > openTagMatch.index) {
+						while (
+							matches.length
+							&& matches[matches.length - 1].index > openTagMatch.index
+						) {
 							matches.pop();
 						}
 					}
