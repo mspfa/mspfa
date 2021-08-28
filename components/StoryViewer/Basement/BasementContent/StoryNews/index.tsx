@@ -88,15 +88,15 @@ const StoryNews = React.memo(() => {
 	);
 	/** A ref to whether news is currently being requested. */
 	const newsLoadingRef = useRef(false);
-	const newsElementRef = useRef<HTMLDivElement>(null);
+	const newsElementRef = useRef<HTMLDivElement>(null!);
 
 	const checkIfNewsShouldBeFetched = useFunction(async () => {
 		if (newsLoadingRef.current) {
 			return;
 		}
 
-		const newsRect = newsElementRef.current!.getBoundingClientRect();
-		const newsStyle = window.getComputedStyle(newsElementRef.current!);
+		const newsRect = newsElementRef.current.getBoundingClientRect();
+		const newsStyle = window.getComputedStyle(newsElementRef.current);
 		const newsPaddingBottom = +newsStyle.paddingBottom.slice(0, -2);
 		const newsContentBottom = newsRect.bottom - newsPaddingBottom;
 

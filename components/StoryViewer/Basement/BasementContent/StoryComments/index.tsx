@@ -40,15 +40,15 @@ const StoryComments = React.memo(() => {
 	const [notAllCommentsLoaded, setNotAllCommentsLoaded] = useState(true);
 	/** A ref to whether comments are currently being requested. */
 	const loadingCommentsRef = useRef(false);
-	const commentsElementRef = useRef<HTMLDivElement>(null);
+	const commentsElementRef = useRef<HTMLDivElement>(null!);
 
 	const checkIfCommentsShouldBeFetched = useFunction(async () => {
 		if (loadingCommentsRef.current) {
 			return;
 		}
 
-		const commentsRect = commentsElementRef.current!.getBoundingClientRect();
-		const commentsStyle = window.getComputedStyle(commentsElementRef.current!);
+		const commentsRect = commentsElementRef.current.getBoundingClientRect();
+		const commentsStyle = window.getComputedStyle(commentsElementRef.current);
 		const commentsPaddingBottom = +commentsStyle.paddingBottom.slice(0, -2);
 		const commentsContentBottom = commentsRect.bottom - commentsPaddingBottom;
 
