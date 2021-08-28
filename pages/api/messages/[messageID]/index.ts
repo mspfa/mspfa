@@ -15,7 +15,7 @@ const Handler: APIHandler<{
 		method: 'DELETE'
 	} | {
 		method: 'PUT',
-		body: Partial<Pick<ServerMessage, 'content'>>
+		body: Partial<Pick<ClientMessage, 'content'>>
 	}
 ), {
 	method: 'PUT',
