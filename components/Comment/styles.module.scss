@@ -41,10 +41,35 @@
 	&-heading {
 		margin-bottom: 4px;
 
+		& > :not(:first-child) {
+			margin-left: 1ch;
+		}
+
 		.timestamp {
-			margin-left: 1em;
 			opacity: 0.5;
-			font-size: 0.875em;
+			font-size: 0.85em;
+		}
+	}
+
+	&-page-link {
+		opacity: 0.75;
+		text-decoration: none;
+		font-size: 0.85em;
+
+		&:not(:focus, :active) {
+			color: currentColor;
+		}
+
+		&:hover, &:focus, &:active {
+			text-decoration: underline;
+		}
+
+		&::before {
+			content: '(on page ';
+		}
+
+		&::after {
+			content: ')';
 		}
 	}
 }

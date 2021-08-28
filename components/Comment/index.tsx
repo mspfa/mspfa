@@ -134,7 +134,16 @@ const Comment = React.memo(({
 					)}
 				</div>
 				<div className="comment-heading">
-					<UserLink>{comment.author}</UserLink>
+					<UserLink className="comment-user-name">
+						{comment.author}
+					</UserLink>
+					<Link
+						className="comment-page-link"
+						href={`/?s=${story.id}&p=${comment.pageID}`}
+						shallow
+					>
+						{comment.pageID}
+					</Link>
 					<Timestamp relative withTime>
 						{comment.posted}
 					</Timestamp>
