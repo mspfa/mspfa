@@ -317,9 +317,15 @@ const TagField = ({
 				onInput={updateTagField}
 				onKeyDown={
 					useFunction((event: KeyboardEvent<HTMLDivElement>) => {
+						// Ignore tabs, leaving the browser to handle them.
+						if (event.code === 'Tab') {
+							return;
+						}
+
 						// Don't let the user press `Enter`, because `Enter` has annoying functionality with `contentEditable`, and it is buggy in Firefox.
 						if (event.code === 'Enter' || (
 							event.key.length === 1 && !(
+								// Don't prevent keyboard shortcuts.
 								event.ctrlKey
 								|| event.metaKey
 								|| event.altKey
