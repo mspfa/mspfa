@@ -314,6 +314,7 @@ const MessageListing = ({
 					{' - '}
 					<Timestamp
 						relative
+						withTime
 						edited={message.edited}
 					>
 						{message.sent}
