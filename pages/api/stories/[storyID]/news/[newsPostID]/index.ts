@@ -9,8 +9,6 @@ import { Perm } from 'lib/client/perms';
 import { StoryPrivacy } from 'lib/client/stories';
 import type { RecursivePartial } from 'lib/types';
 import { flatten } from 'lib/server/db';
-import { mergeWith } from 'lodash';
-import overwriteArrays from 'lib/client/overwriteArrays';
 
 /** The keys of all `ClientNewsPost` properties which the client should be able to `PUT` into their `ServerNewsPost`. */
 type PuttableNewsPostKey = 'content';
@@ -125,16 +123,19 @@ const Handler: APIHandler<{
 
 	const newsPost = await getNewsPost();
 
-	if (Object.values(req.body).length) {
-		await stories.updateOne({
-			'_id': story._id,
-			'news.id': newsPost.id
-		}, {
-			$set: flatten(req.body, 'news.$.')
-		});
-	}
+	const newsPostMerge: Partial<ServerNewsPost> = {
+		...req.body,
+		edited: new Date()
+	};
 
-	mergeWith(newsPost, req.body, overwriteArrays);
+	Object.assign(newsPost, newsPostMerge);
+
+	await stories.updateOne({
+		'_id': story._id,
+		'news.id': newsPost.id
+	}, {
+		$set: flatten(newsPostMerge, 'news.$.')
+	});
 
 	res.send(getClientNewsPost(newsPost));
 };

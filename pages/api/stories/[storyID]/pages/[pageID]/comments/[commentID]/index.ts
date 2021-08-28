@@ -10,8 +10,6 @@ import { Perm } from 'lib/client/perms';
 import { StoryPrivacy } from 'lib/client/stories';
 import type { RecursivePartial } from 'lib/types';
 import { flatten } from 'lib/server/db';
-import { mergeWith } from 'lodash';
-import overwriteArrays from 'lib/client/overwriteArrays';
 
 /** The keys of all `ClientComment` properties which the client should be able to `PUT` into their `ServerComment`. */
 type PuttableCommentKey = 'content';
@@ -163,16 +161,19 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	if (Object.values(req.body).length) {
-		await stories.updateOne({
-			_id: story._id,
-			[`pages.${page.id}.comments.id`]: comment.id
-		}, {
-			$set: flatten(req.body, `pages.${page.id}.comments.$.`)
-		});
-	}
+	const commentMerge: Partial<ServerComment> = {
+		...req.body,
+		edited: new Date()
+	};
 
-	mergeWith(comment, req.body, overwriteArrays);
+	Object.assign(comment, commentMerge);
+
+	await stories.updateOne({
+		_id: story._id,
+		[`pages.${page.id}.comments.id`]: comment.id
+	}, {
+		$set: flatten(commentMerge, `pages.${page.id}.comments.$.`)
+	});
 
 	res.send(getClientComment(comment, page.id));
 };
