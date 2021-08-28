@@ -156,14 +156,15 @@ const StoryComments = React.memo(() => {
 							return;
 						}
 
-						const { data: comment } = await (api as StoryPageCommentsAPI).post(`/stories/${story.id}/pages/${pageID}/comments`, {
+						await (api as StoryPageCommentsAPI).post(`/stories/${story.id}/pages/${pageID}/comments`, {
 							content: values.content
 						});
 
-						setComments(comments => [
-							comment,
-							...comments
-						]);
+						// Reset the sort mode to default so the new comment appears at the top.
+						setSortMode('pageID');
+						// Refresh comments in case any other new ones were added.
+						setComments([]);
+						setNotAllCommentsLoaded(true);
 
 						formikHelpers.setFieldValue('content', '');
 					})
