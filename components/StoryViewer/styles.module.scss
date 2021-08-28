@@ -12,6 +12,11 @@ $story-page-padding: 25px;
 			display: flex;
 			justify-content: center;
 			padding: 7px $story-page-container-horizontal-padding 23px;
+
+			@include mobile {
+				padding-left: 0;
+				padding-right: 0;
+			}
 		}
 
 		// For browsers that don't support `width: min-content`.
