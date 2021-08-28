@@ -144,7 +144,11 @@ const Comment = React.memo(({
 					>
 						{comment.pageID}
 					</Link>
-					<Timestamp relative withTime>
+					<Timestamp
+						relative
+						withTime
+						edited={comment.edited}
+					>
 						{comment.posted}
 					</Timestamp>
 				</div>
