@@ -308,7 +308,7 @@ const MessageListing = ({
 				>
 					{message.subject}
 				</Link>
-				<div className="listing-section listing-info">
+				<div className="listing-section listing-details">
 					{'From '}
 					<UserLink>{message.from}</UserLink>
 					{' - '}

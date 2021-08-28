@@ -47,7 +47,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 				>
 					{publicStory.title}
 				</Link>
-				<div className="listing-section listing-info">
+				<div className="listing-section listing-details">
 					<span className="listing-status spaced">
 						{storyStatusNames[publicStory.status]}
 					</span>
