@@ -2,7 +2,7 @@
 
 .comment {
 	display: flex;
-	margin-bottom: 1ch;
+	margin-bottom: 1em;
 	position: relative;
 	font-size: 0.875em;
 
@@ -38,12 +38,12 @@
 		}
 	}
 
-	&-heading .timestamp {
-		margin-left: 1ch;
-		opacity: 0.5;
-	}
+	&-heading {
+		margin-bottom: 4px;
 
-	&-content {
-		padding: 4px 0;
+		.timestamp {
+			margin-left: 1ch;
+			opacity: 0.5;
+		}
 	}
 }
