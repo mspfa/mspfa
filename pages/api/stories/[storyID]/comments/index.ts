@@ -148,14 +148,6 @@ const Handler: APIHandler<{
 			}
 		}
 
-		const startIndex = (
-			req.query.before
-				? comments.findIndex(
-					({ id }) => id.toString() === req.query.before
-				) + 1
-				: 0
-		);
-
 		// Sort and limit.
 		comments = comments.sort((a, b) => (
 			sort === 'newest'
@@ -173,7 +165,17 @@ const Handler: APIHandler<{
 						// Sort by newest if they have the same net rating, like count, and page ID.
 						|| +b.posted - +a.posted
 					)
-		)).slice(startIndex, startIndex + limit);
+		));
+
+		const startIndex = (
+			req.query.before
+				? comments.findIndex(
+					({ id }) => id.toString() === req.query.before
+				) + 1
+				: 0
+		);
+
+		comments = comments.slice(startIndex, startIndex + limit);
 	}
 
 	res.send({
