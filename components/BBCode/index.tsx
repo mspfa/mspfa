@@ -119,8 +119,7 @@ export const sanitizeBBCode = (
 				);
 
 				// Skip to the end of the closing `noparse` tag.
-				matchEndIndex = closeTagIndex + '[/noparse]'.length;
-				tagTest.lastIndex = matchEndIndex;
+				matchEndIndex = tagTest.lastIndex = closeTagIndex + '[/noparse]'.length;
 
 				continue;
 			}
