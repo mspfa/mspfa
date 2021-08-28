@@ -1,9 +1,6 @@
 // This script is executed once initially on the client.
 
-import * as MSPFA from 'lib/client/MSPFA';
 import Dialog from 'lib/client/Dialog';
-
-(global as any).MSPFA = MSPFA;
 
 window.addEventListener('error', event => {
 	if (/bot/i.test(navigator.userAgent)) {
