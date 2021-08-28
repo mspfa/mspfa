@@ -109,20 +109,21 @@ const Handler: APIHandler<{
 			return;
 		}
 
+		const { page, comment } = await getPageAndComment();
+
 		if (!(
 			user && (
-				story.owner.equals(user._id)
+				comment.author.equals(user._id)
+				|| story.owner.equals(user._id)
 				|| story.editors.some(userID => userID.equals(user._id))
 				|| user.perms & Perm.sudoDelete
 			)
 		)) {
 			res.status(403).send({
-				message: 'You do not have permission to delete comments on the specified adventure.'
+				message: 'You do not have permission to delete the specified comment.'
 			});
 			return;
 		}
-
-		const { page, comment } = await getPageAndComment();
 
 		await stories.updateOne({
 			_id: story._id
