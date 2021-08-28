@@ -102,7 +102,6 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
 
 	const initialProps: MyAppInitialProps = {
 		env: {
-			NODE_ENV: process.env.NODE_ENV,
 			HCAPTCHA_SITE_KEY: process.env.HCAPTCHA_SITE_KEY,
 			GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
 			DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID
