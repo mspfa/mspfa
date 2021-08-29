@@ -1,6 +1,7 @@
 import './styles.module.scss';
 import Page from 'components/Page';
-import { PublicUser, useUser } from 'lib/client/users';
+import type { PublicUser } from 'lib/client/users';
+import { useUser } from 'lib/client/users';
 import { getUserByUnsafeID, getPublicUser } from 'lib/server/users';
 import { withErrorPage } from 'lib/client/errors';
 import { withStatusCode } from 'lib/server/errors';
@@ -18,16 +19,19 @@ import { Perm } from 'lib/client/perms';
 import type { Filter } from 'mongodb';
 import type { integer } from 'lib/types';
 import Button from 'components/Button';
+import fs from 'fs-extra';
+import path from 'path';
 
 type ServerSideProps = {
 	publicUser: PublicUser,
 	favsPublic: boolean,
-	publicStories: PublicStory[]
+	publicStories: PublicStory[],
+	imageFilename?: string
 } | {
 	statusCode: integer
 };
 
-const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publicStories }) => {
+const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publicStories, imageFilename }) => {
 	const user = useUser();
 
 	return (
@@ -62,9 +66,9 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publ
 						<>
 							<Row>
 								<img
-									src={`/images/no-favs/${'imageFilename'}`}
+									src={`/images/no-favs/${imageFilename!}`}
 									alt="Artwork for No Favorites"
-									title={`Artist: ${'imageFilename'.slice(0, 'imageFilename'.indexOf('.'))}`}
+									title={`Artist: ${imageFilename!.slice(0, imageFilename!.indexOf('.'))}`}
 								/>
 							</Row>
 							<Row>
@@ -82,6 +86,14 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publ
 });
 
 export default Component;
+
+// @server-only {
+const imageFilenames = (
+	fs.readdirSync(
+		path.join(process.cwd(), 'public/images/no-favs')
+	)
+).filter(filename => /\.(?:png|gif)$/i.test(filename));
+// @server-only }
 
 export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, params }) => {
 	const userFromParams = await getUserByUnsafeID(params.userID);
@@ -118,36 +130,41 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		)
 	};
 
+	const publicStories = await stories.find!(
+		req.user
+			? req.user.perms & Perm.sudoRead
+				? favsFilter
+				: {
+					$and: [favsFilter, {
+						$or: [privacyFilter, {
+							$and: [{
+								privacy: (
+									readPerms
+										// If the user is viewing their own favorites page, they can already see unlisted adventures via `privacyFilter`.
+										? StoryPrivacy.Private
+										: { $in: [StoryPrivacy.Unlisted, StoryPrivacy.Private] }
+								)
+							}, {
+								// Only show unlisted/private adventures which the user owns or edits.
+								$or: [
+									{ owner: req.user._id },
+									{ editors: req.user._id }
+								]
+							}]
+						}]
+					}]
+				}
+			: Object.assign(favsFilter, privacyFilter)
+	).map(getPublicStory).toArray();
+
 	return {
 		props: {
 			publicUser: getPublicUser(userFromParams),
 			favsPublic: userFromParams.settings.favsPublic,
-			publicStories: await stories.find!(
-				req.user
-					? req.user.perms & Perm.sudoRead
-						? favsFilter
-						: {
-							$and: [favsFilter, {
-								$or: [privacyFilter, {
-									$and: [{
-										privacy: (
-											readPerms
-												// If the user is viewing their own favorites page, they can already see unlisted adventures via `privacyFilter`.
-												? StoryPrivacy.Private
-												: { $in: [StoryPrivacy.Unlisted, StoryPrivacy.Private] }
-										)
-									}, {
-										// Only show unlisted/private adventures which the user owns or edits.
-										$or: [
-											{ owner: req.user._id },
-											{ editors: req.user._id }
-										]
-									}]
-								}]
-							}]
-						}
-					: Object.assign(favsFilter, privacyFilter)
-			).map(getPublicStory).toArray()
+			publicStories,
+			...publicStories.length === 0 && {
+				imageFilename: imageFilenames[Math.floor(Math.random() * imageFilenames.length)]
+			}
 		}
 	};
 });
