@@ -19,6 +19,7 @@ import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
 import { useIsomorphicLayoutEffect } from 'react-use';
 import type { integer } from 'lib/types';
+import Row from 'components/Row';
 
 type EmailTakenAPI = APIClient<typeof import('pages/api/emailTaken').default>;
 
@@ -155,14 +156,16 @@ const SignIn = ({ page }: SignInProps) => {
 		<div id="sign-in-content">
 			{page !== 2 && (
 				<>
-					<div className="translucent">
+					<Row className="translucent">
 						{page ? 'Sign up with' : 'Sign in with'}
-					</div>
-					<div id="sign-in-methods-external">
+					</Row>
+					<Row id="sign-in-methods-external">
 						<AuthButton type="google" onResolve={resolveExternalSignIn} />
 						<AuthButton type="discord" onResolve={resolveExternalSignIn} />
-					</div>
-					<div id="sign-in-divider" className="translucent">or</div>
+					</Row>
+					<Row className="translucent">
+						or
+					</Row>
 				</>
 			)}
 			<LabeledGrid>
@@ -245,27 +248,31 @@ const SignIn = ({ page }: SignInProps) => {
 			</LabeledGrid>
 			{page === 2 && (
 				<>
-					<Captcha />
-					<div id="terms-agreed-container">
-						<input
-							type="checkbox"
-							id="sign-in-terms-agreed"
-							name="termsAgreed"
-							required
-							checked={signInValues.termsAgreed}
-							onChange={onChange}
-						/>
-						<label htmlFor="sign-in-terms-agreed" className="translucent">
-							I agree to the <Link href="/terms" target="_blank">terms of service</Link>.
+					<Row>
+						<Captcha />
+					</Row>
+					<Row id="terms-agreed-container">
+						<label>
+							<input
+								type="checkbox"
+								name="termsAgreed"
+								className="spaced"
+								required
+								checked={signInValues.termsAgreed}
+								onChange={onChange}
+							/>
+							<span className="spaced translucent">
+								I agree to the <Link href="/terms" target="_blank">terms of service</Link>.
+							</span>
 						</label>
-					</div>
+					</Row>
 				</>
 			)}
 			{page === 0 && (
-				<div id="sign-up-link-container">
+				<Row id="sign-up-link-container">
 					<span className="translucent">Don't have an account? </span>
-					<Link onClick={startSigningUp}>Sign Up</Link>
-				</div>
+					<Link onClick={startSigningUp}>Sign up!</Link>
+				</Row>
 			)}
 		</div>
 	);
