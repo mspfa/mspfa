@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import NavItem from 'components/Nav/NavItem';
 import type { NavItemProps } from 'components/Nav/NavItem';
 import React, { useState, useRef } from 'react';

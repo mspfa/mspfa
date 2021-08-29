@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import React from 'react';
 import type { ReactNode } from 'react';
 import Link from 'components/Link';
@@ -29,16 +30,16 @@ const NavItem = React.forwardRef<HTMLAnchorElement & HTMLButtonElement, NavItemP
 		{...props}
 		ref={ref}
 	>
-		<span className="nav-label">
+		<span className="nav-item-label">
 			{label}
 		</span>
-		{
-			bubble ? (
-				<div className="bubble">
-					{bubble === true ? '!' : bubble}
-				</div>
-			) : undefined
-		}
+		{bubble ? (
+			<div className="nav-item-bubble">
+				{bubble === true ? '!' : bubble}
+			</div>
+		) : (
+			undefined
+		)}
 	</Link>
 ));
 

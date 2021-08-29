@@ -5,7 +5,7 @@ import createUpdater from 'react-component-updater';
 import type { ChangeEvent } from 'react';
 import { useState, useRef, useEffect } from 'react';
 import useFunction from 'lib/client/useFunction';
-import Captcha from 'components/SignIn/Captcha';
+import Captcha from 'components/Captcha';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import LabeledGrid from 'components/LabeledGrid';
 import ForgotPassword from 'components/ForgotPassword';

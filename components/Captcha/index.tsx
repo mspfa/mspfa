@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import env from 'lib/client/env';
 import { signInValues, initialSignInValues } from 'components/SignIn';
 import HCaptcha from '@hcaptcha/react-hcaptcha';

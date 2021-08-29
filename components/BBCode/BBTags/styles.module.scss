@@ -1,0 +1,17 @@
+@use 'sass:math';
+
+.chat {
+	border: 1px dashed #808080;
+	padding: (math.div(15, 14) * 1em) (math.div(25, 14) * 1em);
+}
+
+.hscroll {
+	overflow: auto;
+	border: 1px solid transparent;
+	padding-right: 5px;
+	text-align: left;
+
+	* {
+		max-width: none;
+	}
+}

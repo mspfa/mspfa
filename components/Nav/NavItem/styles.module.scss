@@ -1,0 +1,45 @@
+.nav-item {
+	display: inline-block;
+	position: relative;
+
+	&:focus {
+		color: #b0b0b0 !important;
+	}
+
+	.nav-menu & {
+		display: flex;
+		padding: 0 10px 0 5px;
+
+		&:hover {
+			background-color: rgba(128, 128, 128, 0.5);
+		}
+	}
+
+	&-bubble {
+		display: inline-block;
+		position: absolute;
+		line-height: 14px;
+		padding: 0 3px;
+		color: #ffffff;
+		background-color: #ff0000;
+		border: 1px solid #ffffff;
+
+		// Bubbles on nav menu labels.
+		.nav-menu-container > .nav-item > & {
+			left: calc(100% - 3px);
+			bottom: calc(100% - 3px);
+		}
+
+		// Hide bubbles on labels of open nav menus.
+		.nav-menu-container:hover > .nav-item > &,
+		.nav-menu-container.force-open > .nav-item > & {
+			display: none;
+		}
+
+		// Bubbles on labels in nav menus.
+		.nav-menu & {
+			align-self: center;
+			left: calc(100% - 5px);
+		}
+	}
+}

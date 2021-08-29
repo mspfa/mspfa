@@ -1,0 +1,31 @@
+$nav-group-colors: (
+	primary: #ffffff,
+	secondary: #29ff4a,
+	story: #39d5f6,
+	external: #f7f72a,
+	boring: #ffb529
+);
+
+.nav-group {
+	background-color: inherit;
+
+	&:not(:first-child)::before {
+		content: '';
+		display: inline-block;
+		width: 16px;
+		height: 100%;
+		background-image: url(/images/candy-heart.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		vertical-align: bottom;
+		padding: 0 8px;
+	}
+}
+
+#nav-group {
+	@each $id, $color in $nav-group-colors {
+		&-#{$id} .nav-item {
+			color: $color;
+		}
+	}
+}
