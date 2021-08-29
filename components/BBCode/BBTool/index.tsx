@@ -523,12 +523,12 @@ for (let i = 0; i < tagNames.length; i++) {
 const escapeAttribute = (
 	/** The value of the attribute. */
 	value: string,
-	/** Whether equal signs need to be escaped. */
-	escapeEqualSigns?: boolean
+	/** Whether it's possible that the tag could be interpreted as having multiple attributes, and thus equal signs and extra quotation marks and apostrophes need to be escaped. */
+	possiblyMultipleAttributes?: boolean
 ) => {
 	if (
 		value.includes(']')
-		|| (escapeEqualSigns && value.includes('='))
+		|| (possiblyMultipleAttributes && value.includes('='))
 	) {
 		if (value.includes('"') && !value.includes('\'')) {
 			return `'${value}'`;
@@ -537,7 +537,11 @@ const escapeAttribute = (
 		return `"${value.replace(/"/g, '&quot;')}"`;
 	}
 
-	if (value[0] === '"') {
+	if (value[0] === '"' && (
+		// If there are possibly multiple attributes, the first character being `"` or `'` still needs to be escaped even if the last character isn't `"` or `'`, because otherwise, for example, `[spoiler show="' hide='"]` would be misinterpreted by the BBCode parser as having one attribute rather than two.
+		possiblyMultipleAttributes
+		|| value[value.length - 1] === '"'
+	)) {
 		if (value.includes('\'')) {
 			return `&quot;${value.slice(1)}`;
 		}
@@ -545,7 +549,10 @@ const escapeAttribute = (
 		return `'${value}'`;
 	}
 
-	if (value[0] === '\'') {
+	if (value[0] === '\'' && (
+		possiblyMultipleAttributes
+		|| value[value.length - 1] === '\''
+	)) {
 		if (value.includes('"')) {
 			return `&#39;${value.slice(1)}`;
 		}
