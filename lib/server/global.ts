@@ -19,7 +19,9 @@ connection.then(() => {
 				$lte: now
 			}
 		}).forEach(user => {
-			messages.find!({ notDeletedBy: user._id }).forEach(message => {
+			messages.find!({
+				notDeletedBy: user._id
+			}).forEach(message => {
 				deleteMessageForUser(user._id, message);
 			});
 
