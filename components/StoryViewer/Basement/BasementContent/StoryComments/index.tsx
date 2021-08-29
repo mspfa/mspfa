@@ -53,13 +53,17 @@ const StoryComments = React.memo(() => {
 	};
 
 	const previousPageIDRef = useRef(pageID);
-	if (previousPageIDRef.current !== pageID) {
-		// The `pageID` has changed.
 
-		resetComments();
+	// Reset comments whenever the page changes.
+	useEffect(() => {
+		if (previousPageIDRef.current !== pageID) {
+			// The `pageID` has changed.
 
-		previousPageIDRef.current = pageID;
-	}
+			resetComments();
+
+			previousPageIDRef.current = pageID;
+		}
+	}, [pageID]);
 
 	const checkIfCommentsShouldBeFetched = useFunction(async () => {
 		if (loadingCommentsRef.current) {
