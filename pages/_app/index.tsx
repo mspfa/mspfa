@@ -1,13 +1,12 @@
 import './styles.scss';
-import 'lib/client/global'; // @client-only
 import 'lib/server/global'; // @server-only
 import App from 'next/app'; // @server-only
+import { authenticate } from 'lib/server/auth'; // @server-only
+import { getPrivateUser } from 'lib/server/users'; // @server-only
 import type { AppProps, AppContext } from 'next/app';
 import type { NextPageContext } from 'next';
 import Head from 'next/head';
 import { SWRConfig } from 'swr';
-import { authenticate } from 'lib/server/auth'; // @server-only
-import { getPrivateUser } from 'lib/server/users'; // @server-only
 import env from 'lib/client/env';
 import { UserContext, useUserMerge, useUserInApp } from 'lib/client/users';
 import type { PrivateUser } from 'lib/client/users';
@@ -18,12 +17,7 @@ import { mergeWith } from 'lodash';
 import UserCache from 'lib/client/UserCache';
 import overwriteArrays from 'lib/client/overwriteArrays';
 import { useRouter } from 'next/router';
-
-const swrConfig = {
-	revalidateOnMount: true,
-	revalidateOnFocus: false,
-	revalidateOnReconnect: false
-} as const;
+import Dialog from 'lib/client/Dialog';
 
 export type MyAppInitialProps = {
 	env: Partial<typeof process.env>,
@@ -60,11 +54,47 @@ const MyApp = ({
 		setTheme(theme);
 	}, [theme]);
 
+	// Display an error dialog when an uncaught error occurs.
+	useEffect(() => {
+		const onError = (event: ErrorEvent) => {
+			if (event.filename.startsWith(`${location.origin}/`)) {
+				new Dialog({
+					title: 'Uncaught Error',
+					content: (
+						<>
+							<div className="red">
+								{event.message}
+							</div>
+							<br />
+							<div className="translucent">
+								{event.error.stack || (
+									`${event.error.message}\n    at ${event.filename}:${event.lineno}${event.colno ? `:${event.colno}` : ''}`
+								)}
+							</div>
+						</>
+					)
+				});
+			}
+		};
+
+		window.addEventListener('error', onError);
+
+		return () => {
+			window.removeEventListener('error', onError);
+		};
+	}, []);
+
 	const router = useRouter();
 	const asPathQueryIndex = router.asPath.indexOf('?');
 
 	return (
-		<SWRConfig value={swrConfig}>
+		<SWRConfig
+			value={{
+				revalidateOnMount: true,
+				revalidateOnFocus: false,
+				revalidateOnReconnect: false
+			}}
+		>
 			<UserContext.Provider value={mergedUser}>
 				<UserCache.Provider value={userCache}>
 					<Head>
