@@ -68,10 +68,9 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publ
 								/>
 							</Row>
 							<Row>
-								{publicUser.id === user?.id ? (
-									'You have no favorite adventures.'
-								) : (
-									'This user has no favorite adventures.'
+								{(publicUser.id === user?.id
+									? 'You have no favorite adventures.'
+									: 'This user has no favorite adventures.'
 								)}
 							</Row>
 						</>
