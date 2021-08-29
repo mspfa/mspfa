@@ -1,14 +1,14 @@
 import './styles.module.scss';
 import React, { useRef } from 'react';
 import useFunction from 'lib/client/useFunction';
-import type { default as DialogClass } from 'lib/client/Dialog';
+import type Dialog from 'lib/client/Dialog';
 import { Form, Formik } from 'formik';
 import Button from 'components/Button';
 import toKebabCase from 'lib/client/toKebabCase';
 import { useIsomorphicLayoutEffect } from 'react-use';
 
-export type DialogProps = {
-	dialog: DialogClass<any>
+export type DialogContainerProps = {
+	dialog: Dialog<any>
 };
 
 /**
@@ -16,7 +16,7 @@ export type DialogProps = {
  *
  * ⚠️ This should never be rendered anywhere but in the `Dialogs` component's direct children.
  */
-const Dialog = React.memo(({ dialog }: DialogProps) => {
+const DialogContainer = React.memo(({ dialog }: DialogContainerProps) => {
 	const idKebab = toKebabCase(dialog.id.toString());
 
 	const dialogRef = useRef<HTMLElement>(null!);
@@ -97,4 +97,4 @@ const Dialog = React.memo(({ dialog }: DialogProps) => {
 	);
 });
 
-export default Dialog;
+export default DialogContainer;

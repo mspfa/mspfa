@@ -1,5 +1,5 @@
 import { useDialogs } from 'lib/client/Dialog';
-import Dialog from 'components/Dialog';
+import DialogContainer from 'components/Dialogs/DialogContainer';
 import { useEffect } from 'react';
 
 /**
@@ -30,7 +30,7 @@ const Dialogs = () => {
 	return (
 		<div id="dialogs">
 			{dialogs.map(dialog => (
-				<Dialog
+				<DialogContainer
 					key={dialog.id}
 					dialog={dialog}
 				/>
