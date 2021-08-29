@@ -190,6 +190,12 @@ const StoryNews = React.memo(() => {
 					</Button>
 				</Row>
 			)}
+			{newsPosts.length === 0 && (
+				// This can only appear to users with write perms on the story, since the `StoryNews` component is not rendered to users without perms when there are no news posts.
+				<Row className="story-news-tip translucent">
+					Since you have no news posts, your news section is hidden from readers.
+				</Row>
+			)}
 			<Row
 				className="story-news"
 				ref={newsElementRef}
