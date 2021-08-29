@@ -1,4 +1,4 @@
-import 'styles/global.scss';
+import './styles.scss';
 import 'lib/client/global'; // @client-only
 import 'lib/server/global'; // @server-only
 import App from 'next/app'; // @server-only

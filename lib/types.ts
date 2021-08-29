@@ -1,4 +1,4 @@
-// This file is for general types that don't really fit under a single scope.
+// This file is for general types that don't really fit under another particular module.
 
 import type { ObjectId } from 'mongodb';
 

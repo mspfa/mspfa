@@ -1,5 +1,5 @@
 @use 'sass:math';
-@use 'styles/themes' as *;
+@use 'lib/styles/themes' as *;
 
 .story-log {
 	@include theme(font, alt-font);

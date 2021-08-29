@@ -1,6 +1,6 @@
 @use 'sass:math';
 @use 'sass:map';
-@use 'styles/themes' as *;
+@use 'lib/styles/themes' as *;
 
 // Applies a pixelated 3D depth effect behind the button. Lowers the depth on `:active`.
 @mixin button-depth(
