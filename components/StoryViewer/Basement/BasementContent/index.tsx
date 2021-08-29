@@ -22,7 +22,10 @@ import StoryComments from 'components/StoryViewer/Basement/BasementContent/Story
 import StoryOptions from 'components/StoryViewer/Basement/BasementContent/StoryOptions';
 
 const BasementContent = React.memo(() => {
-	const { story } = useContext(StoryViewerContext)!;
+	const {
+		story,
+		newsPosts: initialNewsPosts
+	} = useContext(StoryViewerContext)!;
 
 	const pageID = useContext(PageIDContext);
 
@@ -37,8 +40,22 @@ const BasementContent = React.memo(() => {
 		</Fragment>
 	));
 
+	const showNews = initialNewsPosts.length !== 0 || (
+		user && (
+			story.owner === user.id
+			|| story.editors.includes(user.id)
+			|| !!(user.perms & Perm.sudoWrite)
+		)
+	);
+
 	// This state is the basement content section which is currently open.
-	const [openSection, setOpenSection] = useState<'news' | 'comments' | 'options'>('news');
+	const [openSection, setOpenSection] = useState<undefined | 'news' | 'comments' | 'options'>(
+		showNews ? 'news' : undefined
+	);
+
+	const openNews = useFunction(() => {
+		setOpenSection('news');
+	});
 
 	const openComments = useFunction(() => {
 		setOpenSection('comments');
@@ -125,17 +142,15 @@ const BasementContent = React.memo(() => {
 				</InconspicuousDiv>
 			</Row>
 			<Row className="basement-actions">
-				<Button
-					className="small"
-					disabled={openSection === 'news'}
-					onClick={
-						useFunction(() => {
-							setOpenSection('news');
-						})
-					}
-				>
-					News
-				</Button>
+				{showNews && (
+					<Button
+						className="small"
+						disabled={openSection === 'news'}
+						onClick={openNews}
+					>
+						News
+					</Button>
+				)}
 				{story.allowComments && (
 					<Button
 						className="small"
@@ -161,8 +176,7 @@ const BasementContent = React.memo(() => {
 				<StoryNews />
 			) : openSection === 'comments' ? (
 				<StoryComments />
-			) : (
-				// If this point is reached, `openSection === 'options'`.
+			) : openSection === 'options' && (
 				<StoryOptions />
 			)}
 		</div>
