@@ -21,11 +21,10 @@ import useFunction from 'lib/client/useFunction';
 import Button from 'components/Button';
 import { useLatest } from 'react-use';
 import Dialog from 'lib/client/Dialog';
-import fs from 'fs-extra';
-import path from 'path';
 import Row from 'components/Row';
 import type { integer } from 'lib/types';
 import useSticky from 'lib/client/useSticky';
+import getRandomImageFilename from 'lib/server/getRandomImageFilename';
 
 type ServerSideProps = {
 	privateUser: PrivateUser,
@@ -237,14 +236,6 @@ const Component = withErrorPage<ServerSideProps>(({
 
 export default Component;
 
-// @server-only {
-const imageFilenames = (
-	fs.readdirSync(
-		path.join(process.cwd(), 'public/images/no-messages')
-	)
-).filter(filename => /\.(?:png|gif)$/i.test(filename));
-// @server-only }
-
 export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, params }) => {
 	const { user, statusCode } = await permToGetUserInPage(req, params.userID, Perm.sudoRead);
 
@@ -273,7 +264,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 					willDelete: { $exists: false }
 				}).map(getPublicUser).toArray()
 			),
-			imageFilename: imageFilenames[Math.floor(Math.random() * imageFilenames.length)]
+			imageFilename: await getRandomImageFilename('public/images/no-messages')
 		}
 	};
 });

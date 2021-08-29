@@ -3,13 +3,12 @@ import Box from 'components/Box';
 import Row from 'components/Row';
 import Page from 'components/Page';
 import type { ServerResponse } from 'http';
-import fs from 'fs-extra';
-import path from 'path';
 import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
 import Router from 'next/router';
 import BoxSection from 'components/Box/BoxSection';
 import type { integer } from 'lib/types';
+import getRandomImageFilename from 'lib/server/getRandomImageFilename';
 
 const goBack = () => {
 	const { asPath } = Router;
@@ -54,26 +53,20 @@ const ErrorPage = ({ statusCode, imageFilename }: ErrorPageProps) => (
 );
 
 // @server-only {
-const imageFilenames = (
-	fs.readdirSync(
-		path.join(process.cwd(), 'public/images/403')
-	)
-).filter(filename => /\.(?:png|gif)$/i.test(filename));
-// @server-only }
-
 // Pass the status code from Next to `ErrorPage`'s props.
-ErrorPage.getInitialProps = ({ res, error }: {
+ErrorPage.getInitialProps = async ({ res, error }: {
 	res?: ServerResponse,
 	error?: any
-}): ErrorPageProps => {
+}): Promise<ErrorPageProps> => {
 	const statusCode: integer = res?.statusCode || error?.statusCode || 404;
 
 	return statusCode === 403 ? {
 		statusCode: 403,
-		imageFilename: imageFilenames[Math.floor(Math.random() * imageFilenames.length)]
+		imageFilename: await getRandomImageFilename('public/images/403')
 	} : {
 		statusCode
 	};
 };
+// @server-only }
 
 export default ErrorPage;

@@ -12,7 +12,7 @@ export const withStatusCode = <
 			props.res.statusCode = serverSideProps.props.statusCode;
 		}
 
-		const errorPageProps = ErrorPage.getInitialProps(props);
+		const errorPageProps = await ErrorPage.getInitialProps(props);
 
 		if (errorPageProps.statusCode >= 400) {
 			Object.assign(serverSideProps.props, errorPageProps);

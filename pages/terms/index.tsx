@@ -2,10 +2,9 @@ import './styles.module.scss';
 import Box from 'components/Box';
 import Row from 'components/Row';
 import Page from 'components/Page';
-import fs from 'fs-extra';
-import path from 'path';
 import BoxSection from 'components/Box/BoxSection';
 import type { MyGetServerSideProps } from 'lib/server/pages';
+import getRandomImageFilename from 'lib/server/getRandomImageFilename';
 
 export type ServerSideProps = {
 	imageFilename: string
@@ -37,16 +36,8 @@ const Component = ({ imageFilename }: ServerSideProps) => (
 
 export default Component;
 
-// @server-only {
-const imageFilenames = (
-	fs.readdirSync(
-		path.join(process.cwd(), 'public/images/terms')
-	)
-).filter(filename => /\.(?:png|gif)$/i.test(filename));
-// @server-only }
-
 export const getServerSideProps: MyGetServerSideProps<ServerSideProps> = async () => ({
 	props: {
-		imageFilename: imageFilenames[Math.floor(Math.random() * imageFilenames.length)]
+		imageFilename: await getRandomImageFilename('public/images/terms')
 	}
 });

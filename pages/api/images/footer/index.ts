@@ -1,12 +1,6 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
-import fs from 'fs-extra';
-import path from 'path';
-
-/** The array of footer image filenames. */
-const footers = (fs.readdirSync(
-	path.join(process.cwd(), 'public/images/footers')
-)).filter(filename => /\.(?:png|gif)$/i.test(filename));
+import getRandomImageFilename from 'lib/server/getRandomImageFilename';
 
 const Handler: APIHandler<{
 	method: 'GET'
@@ -16,7 +10,7 @@ const Handler: APIHandler<{
 	await validate(req, res);
 
 	res.send({
-		name: footers[Math.floor(Math.random() * footers.length)]
+		name: await getRandomImageFilename('public/images/footers')
 	});
 };
 

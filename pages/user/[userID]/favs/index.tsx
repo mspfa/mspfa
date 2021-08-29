@@ -19,8 +19,7 @@ import { Perm } from 'lib/client/perms';
 import type { Filter } from 'mongodb';
 import type { integer } from 'lib/types';
 import Button from 'components/Button';
-import fs from 'fs-extra';
-import path from 'path';
+import getRandomImageFilename from 'lib/server/getRandomImageFilename';
 
 type ServerSideProps = {
 	publicUser: PublicUser,
@@ -86,14 +85,6 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publ
 });
 
 export default Component;
-
-// @server-only {
-const imageFilenames = (
-	fs.readdirSync(
-		path.join(process.cwd(), 'public/images/no-favs')
-	)
-).filter(filename => /\.(?:png|gif)$/i.test(filename));
-// @server-only }
 
 export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, params }) => {
 	const userFromParams = await getUserByUnsafeID(params.userID);
@@ -163,7 +154,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 			favsPublic: userFromParams.settings.favsPublic,
 			publicStories,
 			...publicStories.length === 0 && {
-				imageFilename: imageFilenames[Math.floor(Math.random() * imageFilenames.length)]
+				imageFilename: await getRandomImageFilename('public/images/no-favs')
 			}
 		}
 	};
