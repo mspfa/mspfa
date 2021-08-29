@@ -8,6 +8,14 @@ import type { BBTagProps } from 'components/BBCode/BBTags';
 import React from 'react';
 import type { integer } from 'lib/types';
 
+/** Replaces all `&` with `&amp;`, `<` with `&lt;`, and `>` with `&gt;`. */
+export const escapeHTMLTags = (string: string) => (
+	string
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+);
+
 const parseOptions: HTMLReactParserOptions = {
 	replace: domNode => {
 		if (
@@ -63,15 +71,21 @@ type BBTagMatch = RegExpExecArray & {
 };
 
 type SanitizeBBCodeOptions = {
-	/** Whether HTML should be allowed and parsed. */
+	/** Whether HTML tags should be allowed and parsed rather than stripped from the string. */
 	html?: boolean,
 	/** Whether to blacklist all BBCode from the sanitized HTML. */
-	noBB?: boolean
+	noBB?: boolean,
+	/**
+	 * Whether to escape HTML into plain text by replacing all inputted `&` with `&amp;`, `<` with `&lt;`, and `>` with `&gt;`.
+	 *
+	 * Does not escape HTML inside BB tags, since that would make certain attribute values impossible. For example, `[spoiler show="&quot;'&quot;"][/spoiler]` would be replaced with `[spoiler show="&amp;quot;'&amp;quot;"][/spoiler]`, which isn't what the user intended.
+	 */
+	escapeHTML?: boolean
 };
 
 export const sanitizeBBCode = (
 	bbString = '',
-	{ html, noBB }: SanitizeBBCodeOptions = {}
+	{ html, noBB, escapeHTML }: SanitizeBBCodeOptions = {}
 ) => {
 	// Optimize for the common case of the input being empty.
 	if (bbString === '') {
@@ -80,6 +94,13 @@ export const sanitizeBBCode = (
 
 	/** The resulting HTML string to be sanitized and parsed. */
 	let htmlString = '';
+
+	/** Gets a slice of the input `bbString` and appends it to the output `htmlString`, escaping the slice first if `escapeHTML` is `true`. */
+	const appendSlice = (start: integer, end?: integer) => {
+		const slice = bbString.slice(start, end);
+
+		htmlString += escapeHTML ? escapeHTMLTags(slice) : slice;
+	};
 
 	/** A record that maps each BBCode tag name to an ordered array of opening tag matches. */
 	const openTagMatches: Record<string, BBTagMatch[]> = {};
@@ -101,7 +122,7 @@ export const sanitizeBBCode = (
 		const tagName = match[open ? 1 : 6].toLowerCase();
 
 		// Append the slice of the BB string from the end of the previous match to the start of this match.
-		htmlString += bbString.slice(matchEndIndex, match.index);
+		appendSlice(matchEndIndex, match.index);
 
 		matchEndIndex = tagTest.lastIndex;
 
@@ -110,12 +131,9 @@ export const sanitizeBBCode = (
 
 			// Check if this `noparse` tag has a respective closing tag after it.
 			if (closeTagIndex !== -1) {
-				// Append this tag's children, with HTML escaped.
-				htmlString += (
+				// Append this tag's children, with HTML tags escaped.
+				htmlString += escapeHTMLTags(
 					bbString.slice(matchEndIndex, closeTagIndex)
-						.replace(/&/g, '&amp;')
-						.replace(/</g, '&lt;')
-						.replace(/>/g, '&gt;')
 				);
 
 				// Skip to the end of the closing `noparse` tag.
@@ -233,7 +251,7 @@ export const sanitizeBBCode = (
 	}
 
 	// Append the rest of the input string.
-	htmlString += bbString.slice(matchEndIndex);
+	appendSlice(matchEndIndex);
 
 	return DOMPurify.sanitize(
 		htmlString,
@@ -268,17 +286,18 @@ export type BBCodeProps = SanitizeBBCodeOptions & {
 const BBCode = ({
 	html,
 	noBB,
+	escapeHTML,
 	alreadySanitized,
 	children: htmlString = ''
 }: BBCodeProps) => {
 	if (!alreadySanitized) {
-		htmlString = sanitizeBBCode(htmlString, { html, noBB });
+		htmlString = sanitizeBBCode(htmlString, { html, noBB, escapeHTML });
 	}
 
 	return (
 		<span className="bb">
 			{(htmlString === '' || (noBB && !html)
-				// If `htmlString` is empty or BBCode and HTML are both disabled, then the `htmlString` can be treated as plain text as an optimization.
+				// If `htmlString` is empty or BBCode and HTML are both disabled, then the sanitized `htmlString` can be treated as plain text as an optimization.
 				? htmlString
 				: parse(htmlString, parseOptions)
 			)}

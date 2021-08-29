@@ -153,7 +153,7 @@ const Comment = React.memo(({
 					</Timestamp>
 				</div>
 				<div className="comment-content">
-					<BBCode html>
+					<BBCode escapeHTML>
 						{comment.content}
 					</BBCode>
 				</div>
