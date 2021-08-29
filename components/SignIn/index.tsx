@@ -138,7 +138,9 @@ const SignIn = ({ page }: SignInProps) => {
 	useEffect(() => {
 		// Check if the email is taken in case they already have an email entered but just switched to the sign-up page.
 		updateEmailTaken(signInValues.email);
-	}, [updateEmailTaken]);
+
+		// `page` should be a dependency here so `updateEmailTaken` runs again each time the `page` changes.
+	}, [page, updateEmailTaken]);
 
 	useIsomorphicLayoutEffect(() => {
 		emailInputRef.current?.setCustomValidity(
