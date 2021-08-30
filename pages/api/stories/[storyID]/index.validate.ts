@@ -103,7 +103,7 @@ export default createValidator({
 					}
 				},
 				author: {
-					$ref: '#/definitions/RecursivePartial%3C(structure--2968-3012--2958-3013--1989-3785--1849-3786--0-16902%7Cundefined)%3E'
+					$ref: '#/definitions/RecursivePartial%3C(structure--2968-3012--2958-3013--1989-3785--1849-3786--0-16911%7Cundefined)%3E'
 				},
 				description: {
 					type: 'string',
@@ -157,10 +157,10 @@ export default createValidator({
 					type: 'boolean'
 				},
 				anniversary: {
-					$ref: '#/definitions/RecursivePartial%3Cindexed-type-731470504-70377-70403-731470504-70263-70404-731470504-0-212510%3Cstructure--2305-2651--2162-2652--1989-3785--1849-3786--0-16902%2C(%22year%22%7C%22month%22%7C%22day%22)%3E%3E'
+					$ref: '#/definitions/RecursivePartial%3Cindexed-type-731470504-70377-70403-731470504-70263-70404-731470504-0-212510%3Cstructure--2305-2651--2162-2652--1989-3785--1849-3786--0-16911%2C(%22year%22%7C%22month%22%7C%22day%22)%3E%3E'
 				},
 				script: {
-					$ref: '#/definitions/RecursivePartial%3Cindexed-type-731470504-70377-70403-731470504-70263-70404-731470504-0-212510%3Cstructure--3387-3433--3378-3434--1989-3785--1849-3786--0-16902%2C%22unverified%22%3E%3E'
+					$ref: '#/definitions/RecursivePartial%3Cindexed-type-731470504-70377-70403-731470504-70263-70404-731470504-0-212510%3Cstructure--3387-3433--3378-3434--1989-3785--1849-3786--0-16911%2C%22unverified%22%3E%3E'
 				}
 			},
 			additionalProperties: false
@@ -182,7 +182,7 @@ export default createValidator({
 				2
 			]
 		},
-		'RecursivePartial<(structure--2968-3012--2958-3013--1989-3785--1849-3786--0-16902|undefined)>': {
+		'RecursivePartial<(structure--2968-3012--2958-3013--1989-3785--1849-3786--0-16911|undefined)>': {
 			type: 'object',
 			properties: {
 				name: {
@@ -212,7 +212,7 @@ export default createValidator({
 			maxLength: 50,
 			pattern: '^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$'
 		},
-		'RecursivePartial<indexed-type-731470504-70377-70403-731470504-70263-70404-731470504-0-212510<structure--2305-2651--2162-2652--1989-3785--1849-3786--0-16902,("year"|"month"|"day")>>': {
+		'RecursivePartial<indexed-type-731470504-70377-70403-731470504-70263-70404-731470504-0-212510<structure--2305-2651--2162-2652--1989-3785--1849-3786--0-16911,("year"|"month"|"day")>>': {
 			type: 'object',
 			properties: {
 				year: {
@@ -234,7 +234,7 @@ export default createValidator({
 		'integer': {
 			type: 'integer'
 		},
-		'RecursivePartial<indexed-type-731470504-70377-70403-731470504-70263-70404-731470504-0-212510<structure--3387-3433--3378-3434--1989-3785--1849-3786--0-16902,"unverified">>': {
+		'RecursivePartial<indexed-type-731470504-70377-70403-731470504-70263-70404-731470504-0-212510<structure--3387-3433--3378-3434--1989-3785--1849-3786--0-16911,"unverified">>': {
 			type: 'object',
 			properties: {
 				unverified: {

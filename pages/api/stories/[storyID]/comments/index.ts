@@ -37,9 +37,9 @@ const Handler: APIHandler<{
 }> = async (req, res) => {
 	await validate(req, res);
 
-	const { user } = await authenticate(req, res);
-
 	const story = await getStoryByUnsafeID(req.query.storyID, res);
+
+	const { user } = await authenticate(req, res);
 
 	if (story.privacy === StoryPrivacy.Private && !(
 		user && (
@@ -85,7 +85,7 @@ const Handler: APIHandler<{
 		try {
 			beforeCommentID = new ObjectId(req.query.before);
 		} catch {
-			res.status(422).send({
+			res.status(400).send({
 				message: 'The comment ID in the specified `before` query is invalid.'
 			});
 			return;

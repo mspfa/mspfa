@@ -40,8 +40,6 @@ const Handler: APIHandler<{
 }> = async (req, res) => {
 	await validate(req, res);
 
-	const { user } = await authenticate(req, res);
-
 	const story = await getStoryByUnsafeID(req.query.storyID, res);
 
 	/** Gets the requested page and comment. If comments are disabled or the page or comment doesn't exist, responds with an error and never resolves. */
@@ -69,6 +67,8 @@ const Handler: APIHandler<{
 
 		resolve({ page, comment });
 	});
+
+	const { user } = await authenticate(req, res);
 
 	if (req.method === 'GET') {
 		if (story.privacy === StoryPrivacy.Private && !(
