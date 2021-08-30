@@ -40,6 +40,8 @@ const Handler: APIHandler<{
 }> = async (req, res) => {
 	await validate(req, res);
 
+	const { user } = await authenticate(req, res);
+
 	const story = await getStoryByUnsafeID(req.query.storyID, res);
 
 	/** Gets the requested page and comment. If comments are disabled or the page or comment doesn't exist, responds with an error and never resolves. */
@@ -69,21 +71,17 @@ const Handler: APIHandler<{
 	});
 
 	if (req.method === 'GET') {
-		if (story.privacy === StoryPrivacy.Private) {
-			const { user } = await authenticate(req, res);
-
-			if (!(
-				user && (
-					story.owner.equals(user._id)
-					|| story.editors.some(userID => userID.equals(user._id))
-					|| user.perms & Perm.sudoRead
-				)
-			)) {
-				res.status(403).send({
-					message: 'You do not have permission to access the specified adventure.'
-				});
-				return;
-			}
+		if (story.privacy === StoryPrivacy.Private && !(
+			user && (
+				story.owner.equals(user._id)
+				|| story.editors.some(userID => userID.equals(user._id))
+				|| user.perms & Perm.sudoRead
+			)
+		)) {
+			res.status(403).send({
+				message: 'You do not have permission to access the specified adventure.'
+			});
+			return;
 		}
 
 		if (!story.allowComments) {
@@ -95,11 +93,9 @@ const Handler: APIHandler<{
 
 		const { page, comment } = await getPageAndComment();
 
-		res.send(getClientComment(comment, page.id));
+		res.send(getClientComment(comment, page.id, user));
 		return;
 	}
-
-	const { user } = await authenticate(req, res);
 
 	if (req.method === 'DELETE') {
 		if (!story.allowComments) {
@@ -176,7 +172,7 @@ const Handler: APIHandler<{
 		$set: flatten(commentMerge, `pages.${page.id}.comments.$.`)
 	});
 
-	res.send(getClientComment(comment, page.id));
+	res.send(getClientComment(comment, page.id, user));
 };
 
 export default Handler;

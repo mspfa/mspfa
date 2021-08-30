@@ -1,5 +1,5 @@
 import type { ObjectId } from 'mongodb';
-import type { ServerUserID } from 'lib/server/users';
+import type { ServerUser, ServerUserID } from 'lib/server/users';
 import type { ClientComment } from 'lib/client/comments';
 import type { StoryPageID } from 'lib/server/stories';
 
@@ -25,7 +25,9 @@ export type ServerComment = {
 export const getClientComment = (
 	serverComment: ServerComment,
 	/** The page ID which the comment is on. */
-	pageID: StoryPageID
+	pageID: StoryPageID,
+	/** The user accessing this comment, or undefined if there is no authenticated user. */
+	user: ServerUser | undefined
 ): ClientComment => ({
 	id: serverComment.id.toString(),
 	pageID,
@@ -36,5 +38,14 @@ export const getClientComment = (
 	author: serverComment.author.toString(),
 	content: serverComment.content,
 	likeCount: serverComment.likes.length,
-	dislikeCount: serverComment.dislikes.length
+	dislikeCount: serverComment.dislikes.length,
+	...user && {
+		userRating: (
+			serverComment.likes.some(userID => userID.equals(user._id))
+				? 1
+				: serverComment.dislikes.some(userID => userID.equals(user._id))
+					? -1
+					: 0
+		)
+	}
 });

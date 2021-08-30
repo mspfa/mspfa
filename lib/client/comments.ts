@@ -13,5 +13,7 @@ export type ClientComment = Pick<ServerComment, ClientCommentKey> & {
 	edited?: DateNumber,
 	author: string,
 	likeCount: integer,
-	dislikeCount: integer
+	dislikeCount: integer,
+	/** `1` if the user liked the comment, `-1` if they disliked the comment, or `0` if they haven't rated the comment. Undefined if there is no user. */
+	userRating?: -1 | 0 | 1
 };

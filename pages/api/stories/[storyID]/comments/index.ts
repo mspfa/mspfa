@@ -37,23 +37,21 @@ const Handler: APIHandler<{
 }> = async (req, res) => {
 	await validate(req, res);
 
+	const { user } = await authenticate(req, res);
+
 	const story = await getStoryByUnsafeID(req.query.storyID, res);
 
-	if (story.privacy === StoryPrivacy.Private) {
-		const { user } = await authenticate(req, res);
-
-		if (!(
-			user && (
-				story.owner.equals(user._id)
-				|| story.editors.some(userID => userID.equals(user._id))
-				|| user.perms & Perm.sudoRead
-			)
-		)) {
-			res.status(403).send({
-				message: 'You do not have permission to access the specified adventure.'
-			});
-			return;
-		}
+	if (story.privacy === StoryPrivacy.Private && !(
+		user && (
+			story.owner.equals(user._id)
+			|| story.editors.some(userID => userID.equals(user._id))
+			|| user.perms & Perm.sudoRead
+		)
+	)) {
+		res.status(403).send({
+			message: 'You do not have permission to access the specified adventure.'
+		});
+		return;
 	}
 
 	if (!story.allowComments) {
@@ -180,7 +178,11 @@ const Handler: APIHandler<{
 
 	res.send({
 		comments: comments.map(comment => (
-			getClientComment(comment, commentPageIDs[comment.id.toString()])
+			getClientComment(
+				comment,
+				commentPageIDs[comment.id.toString()],
+				user
+			)
 		)),
 		userCache: await users.find!({
 			_id: {

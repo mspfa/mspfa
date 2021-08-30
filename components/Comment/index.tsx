@@ -141,12 +141,16 @@ const Comment = React.memo(({
 					</BBCode>
 				</div>
 				<div className="comment-actions">
-					<span className="comment-likes spaced front">
+					<span
+						className={`comment-likes spaced front${comment.userRating === 1 ? ' active' : ''}`}
+					>
 						<Icon>
 							{comment.likeCount}
 						</Icon>
 					</span>
-					<span className="comment-dislikes spaced front">
+					<span
+						className={`comment-dislikes spaced front${comment.userRating === -1 ? ' active' : ''}`}
+					>
 						<Icon>
 							{comment.dislikeCount}
 						</Icon>

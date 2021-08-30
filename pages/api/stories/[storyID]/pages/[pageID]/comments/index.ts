@@ -82,7 +82,7 @@ const Handler: APIHandler<{
 		}
 	});
 
-	res.status(201).send(getClientComment(serverComment, page.id));
+	res.status(201).send(getClientComment(serverComment, page.id, user));
 };
 
 export default Handler;
