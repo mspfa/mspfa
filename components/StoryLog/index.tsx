@@ -34,8 +34,8 @@ const StoryLog = ({ story, listings, children, previewMode, className, ...props 
 						)}
 					</span>
 					<Link
-						shallow
 						href={`/?s=${story.id}&p=${listing.id}${previewMode ? '&preview=1' : ''}`}
+						shallow
 						title={sanitizeBBCode(listing.title, { noBB: true })}
 					>
 						<BBCode alreadySanitized>

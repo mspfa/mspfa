@@ -495,8 +495,8 @@ const StoryViewer = (props: StoryViewerProps) => {
 										{sanitizedNextPage && (
 											<div className="story-section-link-container">
 												<Link
-													shallow
 													href={`/?s=${story.id}&p=${nextPageID}${previewMode ? '&preview=1' : ''}`}
+													shallow
 													data-index={i}
 													onClick={onClickNextPageLink}
 												>
@@ -522,8 +522,8 @@ const StoryViewer = (props: StoryViewerProps) => {
 										{pageID !== 1 && (
 											<Link
 												className="story-link-start-over"
-												shallow
 												href={`/?s=${story.id}&p=1${previewMode ? '&preview=1' : ''}`}
+												shallow
 											>
 												Start Over
 											</Link>
@@ -531,8 +531,8 @@ const StoryViewer = (props: StoryViewerProps) => {
 										{showGoBack && (
 											<Link
 												className="story-link-go-back"
-												shallow
 												href={`/?s=${story.id}&p=${previousPageID}${previewMode ? '&preview=1' : ''}`}
+												shallow
 											>
 												Go Back
 											</Link>
