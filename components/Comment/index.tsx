@@ -4,7 +4,7 @@ import UserLink from 'components/Link/UserLink';
 import Timestamp from 'components/Timestamp';
 import type { ClientComment } from 'lib/client/comments';
 import React from 'react';
-import { useUser } from 'lib/client/users';
+import { promptSignIn, useUser } from 'lib/client/users';
 import type { PublicStory } from 'lib/client/stories';
 import { Perm } from 'lib/client/perms';
 import useFunction from 'lib/client/useFunction';
@@ -21,6 +21,7 @@ import OptionsButton from 'components/Button/OptionsButton';
 import Icon from 'components/Icon';
 
 type StoryPageCommentAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]').default>;
+type StoryPageCommentRatingAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]/ratings/[userID]').default>;
 
 export type CommentProps = {
 	story: PublicStory,
@@ -98,6 +99,27 @@ const Comment = React.memo(({
 		deleteComment(comment.id);
 	});
 
+	const rateComment = useFunction(async (rating: NonNullable<ClientComment['userRating']>) => {
+		if (!user) {
+			if (await Dialog.confirm({
+				id: 'rate-comment',
+				title: 'Comment',
+				content: 'Sign in to rate comments!',
+				actions: ['Sign In', 'Cancel']
+			})) {
+				promptSignIn();
+			}
+
+			return;
+		}
+
+		const { data: newComment } = await (api as StoryPageCommentRatingAPI).put(`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}/ratings/${user.id}`, {
+			rating
+		});
+
+		setComment(newComment);
+	});
+
 	const IconContainer = authorUser ? Link : 'div';
 
 	return (
@@ -141,20 +163,32 @@ const Comment = React.memo(({
 					</BBCode>
 				</div>
 				<div className="comment-actions">
-					<span
-						className={`comment-likes spaced front${comment.userRating === 1 ? ' active' : ''}`}
+					<button
+						className={`like-button spaced${comment.userRating === 1 ? ' active' : ''}`}
+						title="Like"
+						onClick={
+							useFunction(() => {
+								rateComment(1);
+							})
+						}
 					>
 						<Icon>
 							{comment.likeCount}
 						</Icon>
-					</span>
-					<span
-						className={`comment-dislikes spaced front${comment.userRating === -1 ? ' active' : ''}`}
+					</button>
+					<button
+						className={`dislike-button spaced${comment.userRating === -1 ? ' active' : ''}`}
+						title="Dislike"
+						onClick={
+							useFunction(() => {
+								rateComment(-1);
+							})
+						}
 					>
 						<Icon>
 							{comment.dislikeCount}
 						</Icon>
-					</span>
+					</button>
 				</div>
 			</div>
 		</div>

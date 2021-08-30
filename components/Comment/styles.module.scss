@@ -77,8 +77,20 @@
 		& > * {
 			cursor: pointer;
 
-			&:not(.active) {
+			// Undo the `button` styles.
+			padding: 0;
+			text-align: left;
+			background: none;
+			border: none;
+			font: inherit;
+			color: inherit;
+
+			&:not(.active, :focus, :active) {
 				opacity: 0.5;
+
+				&:hover {
+					opacity: 0.75;
+				}
 			}
 		}
 
@@ -86,20 +98,20 @@
 			margin-right: 3px;
 		}
 	}
+}
 
-	&-likes .icon {
-		background-image: url(/images/icons/like-gray.png); // Image credit: seymour schlong
-	}
+.like-button .icon {
+	background-image: url(/images/icons/like-gray.png); // Image credit: seymour schlong
+}
 
-	&-likes.active .icon {
-		background-image: url(/images/icons/like.png); // Image credit: seymour schlong
-	}
+.like-button.active .icon {
+	background-image: url(/images/icons/like.png); // Image credit: seymour schlong
+}
 
-	&-dislikes .icon {
-		background-image: url(/images/icons/dislike-gray.png); // Image credit: seymour schlong
-	}
+.dislike-button .icon {
+	background-image: url(/images/icons/dislike-gray.png); // Image credit: seymour schlong
+}
 
-	&-dislikes.active .icon {
-		background-image: url(/images/icons/dislike.png); // Image credit: seymour schlong
-	}
+.dislike-button.active .icon {
+	background-image: url(/images/icons/dislike.png); // Image credit: seymour schlong
 }
