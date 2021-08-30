@@ -161,8 +161,6 @@ const StoryComments = React.memo(() => {
 						formikHelpers: FormikHelpers<{ content: string }>
 					) => {
 						if (!user) {
-							// If `user` is undefined, this component cannot posibly be `active`, which means the user is trying to add a favorite without being signed in.
-
 							if (await Dialog.confirm({
 								id: 'post-comment',
 								title: 'Comment',
