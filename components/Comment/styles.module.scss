@@ -23,14 +23,6 @@
 		height: 100%;
 	}
 
-	&-actions {
-		margin-top: 4px;
-
-		.button:not(:first-child) {
-			margin-left: 2px;
-		}
-	}
-
 	&-heading {
 		margin-bottom: 4px;
 
@@ -41,19 +33,6 @@
 		.timestamp {
 			opacity: 0.5;
 			font-size: 0.85em;
-		}
-	}
-
-	&-options-container {
-		position: absolute;
-		top: -2px;
-		right: 0;
-		vertical-align: middle;
-
-		@include desktop {
-			.comment:not(:hover) & {
-				display: none;
-			}
 		}
 	}
 
@@ -76,6 +55,27 @@
 
 		&::after {
 			content: ')';
+		}
+	}
+
+	&-options-container {
+		position: absolute;
+		top: -2px;
+		right: 0;
+		vertical-align: middle;
+
+		@include desktop {
+			.comment:not(:hover) & {
+				display: none;
+			}
+		}
+	}
+
+	&-actions {
+		margin-top: 4px;
+
+		.button:not(:first-child) {
+			margin-left: 2px;
 		}
 	}
 }
