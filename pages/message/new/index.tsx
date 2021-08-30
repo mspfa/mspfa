@@ -105,9 +105,6 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 							content: values.content
 						});
 
-						// After the message is sent, reset the form so its state doesn't get messed up if the user comes back to the page through their browser's history.
-						resetForm();
-
 						// This needs to be `await`ed so `isSubmitting` remains `true` while the router loads, ensuring `useLeaveConfirmation`'s argument is `false`.
 						await Router.push(`/message/${message.id}`);
 					})
@@ -130,7 +127,7 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 													name="to"
 													required
 													unique
-													autoFocus={!toUsers.length}
+													autoFocus={toUsers.length === 0}
 												/>
 											</div>
 											<div className="field-container">
@@ -143,7 +140,7 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 													required
 													maxLength={50}
 													autoComplete="off"
-													autoFocus={!!toUsers.length}
+													autoFocus={toUsers.length !== 0}
 												/>
 											</div>
 										</>
@@ -169,7 +166,7 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 											required
 											rows={16}
 											maxLength={20000}
-											autoFocus={!!replyTo}
+											autoFocus={replyTo !== undefined}
 										/>
 									</div>
 								</BoxSection>
