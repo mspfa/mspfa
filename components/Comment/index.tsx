@@ -99,7 +99,7 @@ const Comment = React.memo(({
 		deleteComment(comment.id);
 	});
 
-	const rateComment = useFunction(async (rating: NonNullable<ClientComment['userRating']>) => {
+	const toggleRating = useFunction(async (rating: NonNullable<ClientComment['userRating']>) => {
 		if (!user) {
 			if (await Dialog.confirm({
 				id: 'rate-comment',
@@ -114,7 +114,7 @@ const Comment = React.memo(({
 		}
 
 		const { data: newComment } = await (api as StoryPageCommentRatingAPI).put(`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}/ratings/${user.id}`, {
-			rating
+			rating: comment.userRating === rating ? 0 : rating
 		});
 
 		setComment(newComment);
@@ -168,7 +168,7 @@ const Comment = React.memo(({
 						title="Like"
 						onClick={
 							useFunction(() => {
-								rateComment(1);
+								toggleRating(1);
 							})
 						}
 					>
@@ -181,7 +181,7 @@ const Comment = React.memo(({
 						title="Dislike"
 						onClick={
 							useFunction(() => {
-								rateComment(-1);
+								toggleRating(-1);
 							})
 						}
 					>
