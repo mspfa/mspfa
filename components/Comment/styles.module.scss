@@ -94,7 +94,7 @@
 		font: inherit;
 		color: inherit;
 
-		&:not(:disabled) {
+		&:enabled {
 			cursor: pointer;
 
 			&:hover {

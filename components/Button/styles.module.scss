@@ -16,7 +16,7 @@
 		border: $scale solid transparent;
 	}
 
-	&:active:not(:disabled) {
+	&:enabled:active {
 		// Offset the button on `:active`.
 		left: $scale;
 		top: $scale;
@@ -83,6 +83,13 @@
 
 	&:enabled {
 		cursor: pointer;
+
+		&:focus:not(:active)::after {
+			// An amount of brightness to add to the background color (between 0 and 1).
+			$added-brightness: 0.2;
+			// This filter function composition adds a constant amount of brightness independently of the initial brightness..
+			filter: brightness(math.div(1, 1 - $added-brightness)) invert(1) brightness(1 - $added-brightness) invert(1);
+		}
 	}
 
 	&:disabled {
@@ -127,13 +134,6 @@
 	&::after {
 		pointer-events: none;
 		background: inherit;
-	}
-
-	&:focus:not(:disabled, :active)::after {
-		// An amount of brightness to add to the background color (between 0 and 1).
-		$added-brightness: 0.2;
-		// This formula adds a constant amount of brightness independently of the initial brightness. It works. Just trust me; I tested it on Desmos.
-		filter: brightness(math.div(1, 1 - $added-brightness)) invert(1) brightness(1 - $added-brightness) invert(1);
 	}
 
 	@include button-depth($scale: 2px, $border: false);
