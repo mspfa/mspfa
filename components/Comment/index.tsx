@@ -3,7 +3,7 @@ import BBCode from 'components/BBCode';
 import UserLink from 'components/Link/UserLink';
 import Timestamp from 'components/Timestamp';
 import type { ClientComment } from 'lib/client/comments';
-import React, { useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 import { promptSignIn, useUser } from 'lib/client/users';
 import type { PublicStory } from 'lib/client/stories';
 import { Perm } from 'lib/client/perms';
@@ -19,6 +19,7 @@ import IconImage from 'components/IconImage';
 import { useUserCache } from 'lib/client/UserCache';
 import OptionsButton from 'components/Button/OptionsButton';
 import Icon from 'components/Icon';
+import { PreviewModeContext } from 'components/StoryViewer';
 
 type StoryPageCommentAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]').default>;
 type StoryPageCommentRatingAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]/ratings/[userID]').default>;
@@ -39,6 +40,8 @@ const Comment = React.memo(({
 	const user = useUser();
 
 	const { userCache } = useUserCache();
+
+	const previewMode = useContext(PreviewModeContext)!;
 
 	/** Whether the authenticated user is the author of this comment. */
 	const userIsAuthor = !!user && user.id === comment.author;
@@ -152,7 +155,7 @@ const Comment = React.memo(({
 					</UserLink>
 					<Link
 						className="comment-page-link"
-						href={`/?s=${story.id}&p=${comment.pageID}`}
+						href={`/?s=${story.id}&p=${comment.pageID}${previewMode ? '&preview=1' : ''}`}
 						shallow
 					>
 						{comment.pageID}
