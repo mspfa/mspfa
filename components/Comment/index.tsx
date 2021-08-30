@@ -228,8 +228,11 @@ const Comment = React.memo(({
 					</BBCode>
 				</div>
 				<div className="comment-actions">
+					<Link className="comment-reply-button translucent">
+						Reply
+					</Link>
 					<button
-						className={`rate-button like-button${comment.userRating === 1 ? ' active' : ''}`}
+						className={`comment-rating-button like-button${comment.userRating === 1 ? ' active' : ''}`}
 						disabled={user?.id === comment.author}
 						title="Like"
 						onClick={
@@ -243,7 +246,7 @@ const Comment = React.memo(({
 						</Icon>
 					</button>
 					<button
-						className={`rate-button dislike-button${comment.userRating === -1 ? ' active' : ''}`}
+						className={`comment-rating-button dislike-button${comment.userRating === -1 ? ' active' : ''}`}
 						disabled={user?.id === comment.author}
 						title="Dislike"
 						onClick={

@@ -77,29 +77,33 @@
 		& > :not(:first-child) {
 			margin-left: 1ch;
 		}
-	}
-}
 
-.rate-button {
-	opacity: 0.5;
-
-	// Undo the `button` styles.
-	padding: 0;
-	text-align: left;
-	background: none;
-	border: none;
-	font: inherit;
-	color: inherit;
-
-	&:not(:disabled) {
-		cursor: pointer;
-
-		&:hover {
-			opacity: 0.75;
+		.link {
+			font-size: 0.85em;
 		}
+	}
 
-		&.active, &:focus, &:active {
-			opacity: 1;
+	&-rating-button {
+		opacity: 0.5;
+
+		// Undo the `button` styles.
+		padding: 0;
+		text-align: left;
+		background: none;
+		border: none;
+		font: inherit;
+		color: inherit;
+
+		&:not(:disabled) {
+			cursor: pointer;
+
+			&:hover {
+				opacity: 0.75;
+			}
+
+			&.active, &:focus, &:active {
+				opacity: 1;
+			}
 		}
 	}
 }
