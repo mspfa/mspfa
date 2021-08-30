@@ -73,9 +73,14 @@
 
 	&-actions {
 		margin-top: 0.5em;
+		line-height: 0;
 
 		& > :not(:first-child) {
 			margin-left: 1em;
+		}
+
+		& > * {
+			vertical-align: middle;
 		}
 
 		.link {
