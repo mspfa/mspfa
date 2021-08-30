@@ -34,7 +34,6 @@ const BasementSidebar = React.memo(() => {
 			<StoryLog
 				story={story}
 				listings={latestPagesShown ? latestPages : undefined}
-				previewMode={previewMode}
 			>
 				<Label className="spaced">
 					Latest Pages
