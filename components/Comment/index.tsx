@@ -112,7 +112,6 @@ const Comment = React.memo(({
 				</div>
 				<span className="comment-options-container">
 					<OptionsButton
-						className="comment-options-button"
 						onClick={
 							useFunction(async () => {
 								const actions: DialogOptions['actions'] = [
