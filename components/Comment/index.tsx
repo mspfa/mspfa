@@ -228,37 +228,39 @@ const Comment = React.memo(({
 					</BBCode>
 				</div>
 				<div className="comment-actions">
+					<span className="comment-ratings">
+						<button
+							className={`comment-rating-button like-button${comment.userRating === 1 ? ' active' : ''}`}
+							disabled={user?.id === comment.author}
+							title="Like"
+							onClick={
+								useFunction(() => {
+									toggleRating(1);
+								})
+							}
+						>
+							<Icon>
+								{comment.likeCount}
+							</Icon>
+						</button>
+						<button
+							className={`comment-rating-button dislike-button${comment.userRating === -1 ? ' active' : ''}`}
+							disabled={user?.id === comment.author}
+							title="Dislike"
+							onClick={
+								useFunction(() => {
+									toggleRating(-1);
+								})
+							}
+						>
+							<Icon>
+								{comment.dislikeCount}
+							</Icon>
+						</button>
+					</span>
 					<Link className="comment-reply-button translucent">
 						Reply
 					</Link>
-					<button
-						className={`comment-rating-button like-button${comment.userRating === 1 ? ' active' : ''}`}
-						disabled={user?.id === comment.author}
-						title="Like"
-						onClick={
-							useFunction(() => {
-								toggleRating(1);
-							})
-						}
-					>
-						<Icon>
-							{comment.likeCount}
-						</Icon>
-					</button>
-					<button
-						className={`comment-rating-button dislike-button${comment.userRating === -1 ? ' active' : ''}`}
-						disabled={user?.id === comment.author}
-						title="Dislike"
-						onClick={
-							useFunction(() => {
-								toggleRating(-1);
-							})
-						}
-					>
-						<Icon>
-							{comment.dislikeCount}
-						</Icon>
-					</button>
 				</div>
 			</div>
 		</div>

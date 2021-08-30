@@ -75,12 +75,16 @@
 		margin-top: 0.5em;
 
 		& > :not(:first-child) {
-			margin-left: 1ch;
+			margin-left: 1em;
 		}
 
 		.link {
 			font-size: 0.85em;
 		}
+	}
+
+	&-ratings > :not(:first-child) {
+		margin-left: 1ch;
 	}
 
 	&-rating-button {
