@@ -4,8 +4,6 @@ import UserLink from 'components/Link/UserLink';
 import Timestamp from 'components/Timestamp';
 import type { ClientComment } from 'lib/client/comments';
 import React from 'react';
-import EditButton from 'components/Button/EditButton';
-import RemoveButton from 'components/Button/RemoveButton';
 import { useUser } from 'lib/client/users';
 import type { PublicStory } from 'lib/client/stories';
 import { Perm } from 'lib/client/perms';
@@ -19,6 +17,8 @@ import BBField from 'components/BBCode/BBField';
 import Link from 'components/Link';
 import IconImage from 'components/IconImage';
 import { useUserCache } from 'lib/client/UserCache';
+import Button from 'components/Button';
+import OptionsButton from 'components/Button/OptionsButton';
 
 type StoryPageCommentAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]').default>;
 
@@ -113,26 +113,6 @@ const Comment = React.memo(({
 				/>
 			</IconContainer>
 			<div className="comment-info">
-				<div className="comment-actions">
-					{(userIsAuthor || (
-						user
-						&& !!(user.perms & Perm.sudoWrite)
-					)) && (
-						<EditButton
-							title="Edit Comment"
-							onClick={promptEdit}
-						/>
-					)}
-					{(userIsAuthor || (
-						user
-						&& !!(user.perms & Perm.sudoDelete)
-					)) && (
-						<RemoveButton
-							title="Delete Comment"
-							onClick={promptDelete}
-						/>
-					)}
-				</div>
 				<div className="comment-heading">
 					<UserLink className="comment-user-name">
 						{comment.author}
@@ -152,10 +132,27 @@ const Comment = React.memo(({
 						{comment.posted}
 					</Timestamp>
 				</div>
+				<span className="comment-options-container">
+					<OptionsButton className="comment-options-button" />
+				</span>
 				<div className="comment-content">
 					<BBCode escapeHTML>
 						{comment.content}
 					</BBCode>
+				</div>
+				<div className="comment-actions">
+					<Button
+						icon
+						className="like-button"
+					>
+						{comment.likeCount}
+					</Button>
+					<Button
+						icon
+						className="dislike-button"
+					>
+						{comment.dislikeCount}
+					</Button>
 				</div>
 			</div>
 		</div>

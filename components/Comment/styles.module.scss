@@ -24,17 +24,10 @@
 	}
 
 	&-actions {
-		position: absolute;
-		right: 0;
+		margin-top: 4px;
 
-		@include desktop {
-			.comment:not(:hover) & {
-				display: none;
-			}
-		}
-
-		.button {
-			margin: 0.25em 0.25em 0 0;
+		.button:not(:first-child) {
+			margin-left: 2px;
 		}
 	}
 
@@ -48,6 +41,19 @@
 		.timestamp {
 			opacity: 0.5;
 			font-size: 0.85em;
+		}
+	}
+
+	&-options-container {
+		position: absolute;
+		top: -2px;
+		right: 0;
+		vertical-align: middle;
+
+		@include desktop {
+			.comment:not(:hover) & {
+				display: none;
+			}
 		}
 	}
 
@@ -72,4 +78,12 @@
 			content: ')';
 		}
 	}
+}
+
+.like-button .icon {
+	background-image: url(/images/icons/like-gray.png); // Image credit: seymour schlong
+}
+
+.dislike-button .icon {
+	background-image: url(/images/icons/dislike-gray.png); // Image credit: seymour schlong
 }
