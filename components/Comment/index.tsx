@@ -124,11 +124,11 @@ const Comment = React.memo(({
 
 		const { data: newComment } = await (api as StoryPageCommentRatingAPI).put(`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}/ratings/${user.id}`, {
 			rating: comment.userRating === rating ? 0 : rating
+		}).finally(() => {
+			ratingLoadingRef.current = false;
 		});
 
 		setComment(newComment);
-
-		ratingLoadingRef.current = false;
 	});
 
 	const IconContainer = authorUser ? Link : 'div';
