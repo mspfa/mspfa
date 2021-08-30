@@ -1,12 +1,13 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
 import { getClientComment } from 'lib/server/comments';
-import type { ServerStoryPage } from 'lib/server/stories';
+import type { ServerStory, ServerStoryPage } from 'lib/server/stories';
 import stories, { getStoryByUnsafeID } from 'lib/server/stories';
 import { authenticate } from 'lib/server/auth';
 import type { ClientComment } from 'lib/client/comments';
 import { Perm } from 'lib/client/perms';
 import { StoryPrivacy } from 'lib/client/stories';
+import type { UpdateFilter } from 'mongodb';
 import { ObjectId } from 'mongodb';
 
 const Handler: APIHandler<{
@@ -102,29 +103,43 @@ const Handler: APIHandler<{
 	const clientComment = getClientComment(comment, page.id, user);
 
 	/** Maps `1` to `'likes'` and `-1` to `'dislikes'`. */
-	const ratingNumberToString = (rating: -1 | 1) => (
+	const getServerRatingKey = (rating: -1 | 1) => (
 		rating === 1 ? 'likes' : 'dislikes'
+	);
+
+	/** Maps `1` to `'likeCount'` and `-1` to `'dislikeCount'`. */
+	const getClientRatingKey = (rating: -1 | 1) => (
+		rating === 1 ? 'likeCount' : 'dislikeCount'
 	);
 
 	// Only update the comment if the specified rating is not already set on the comment.
 	if (req.body.rating !== clientComment.userRating) {
+		const update: UpdateFilter<ServerStory> = {};
+
+		// Remove the user's initial rating if they have one.
+		if (clientComment.userRating) {
+			update.$pull = {
+				[`pages.${page.id}.comments.$.${getServerRatingKey(clientComment.userRating)}`]: userID
+			};
+
+			clientComment[getClientRatingKey(clientComment.userRating)]--;
+		}
+
+		// Add the user's requested rating if they have one.
+		if (req.body.rating) {
+			update.$push = {
+				[`pages.${page.id}.comments.$.${getServerRatingKey(req.body.rating)}`]: userID
+			};
+
+			clientComment[getClientRatingKey(req.body.rating)]++;
+		}
+
 		await stories.updateOne({
 			_id: story._id,
 			[`pages.${page.id}.comments.id`]: comment.id
-		}, {
-			// Remove the user's initial rating if they have one.
-			...clientComment.userRating && {
-				$pull: {
-					[`pages.${page.id}.comments.$.${ratingNumberToString(clientComment.userRating)}`]: userID
-				}
-			},
-			// Add the user's requested rating if they have one.
-			...req.body.rating && {
-				$push: {
-					[`pages.${page.id}.comments.$.${ratingNumberToString(req.body.rating)}`]: userID
-				}
-			}
-		});
+		}, update);
+
+		clientComment.userRating = req.body.rating;
 	}
 
 	res.send(clientComment);
