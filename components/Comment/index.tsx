@@ -116,28 +116,35 @@ const Comment = React.memo(({
 						onClick={
 							useFunction(async () => {
 								const actions: DialogOptions['actions'] = [
-									{ value: 'report', label: 'Report' },
 									'Cancel'
 								];
 
-								if (user && (
-									user.id === comment.author
-									|| story.owner === user.id
-									|| story.editors.includes(user.id)
-									|| user.perms & Perm.sudoDelete
-								)) {
+								if (!(user && user.id === comment.author)) {
 									actions.unshift(
-										{ value: 'delete', label: 'Delete' }
+										{ value: 'report', label: 'Report' }
 									);
 								}
 
-								if (user && (
-									user.id === comment.author
-									|| user.perms & Perm.sudoWrite
-								)) {
-									actions.unshift(
-										{ value: 'edit', label: 'Edit' }
-									);
+								if (user) {
+									if (
+										user.id === comment.author
+										|| story.owner === user.id
+										|| story.editors.includes(user.id)
+										|| user.perms & Perm.sudoDelete
+									) {
+										actions.unshift(
+											{ value: 'delete', label: 'Delete' }
+										);
+									}
+
+									if (
+										user.id === comment.author
+										|| user.perms & Perm.sudoWrite
+									) {
+										actions.unshift(
+											{ value: 'edit', label: 'Edit' }
+										);
+									}
 								}
 
 								const result = await new Dialog({
