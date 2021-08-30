@@ -309,7 +309,7 @@ export const updateAndSendFavCount = async (
 		await users.aggregate!([
 			{ $match: { favs: storyID } },
 			{ $count: 'favCount' }
-		]).next<{ favCount: integer }>()
+		]).next() as { favCount: integer } | null
 	)?.favCount || 0;
 
 	await stories.updateOne({

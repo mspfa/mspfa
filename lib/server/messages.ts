@@ -110,7 +110,7 @@ export const updateUnreadMessages = async (userID: ServerUserID) => {
 		await messages.aggregate!([
 			{ $match: { notReadBy: userID } },
 			{ $count: 'unreadMessageCount' }
-		]).next<{ unreadMessageCount: integer }>()
+		]).next() as { unreadMessageCount: integer } | null
 	)?.unreadMessageCount || 0;
 
 	await users.updateOne({
