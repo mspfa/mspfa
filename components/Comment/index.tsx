@@ -3,7 +3,7 @@ import BBCode from 'components/BBCode';
 import UserLink from 'components/Link/UserLink';
 import Timestamp from 'components/Timestamp';
 import type { ClientComment } from 'lib/client/comments';
-import React from 'react';
+import React, { useRef } from 'react';
 import { promptSignIn, useUser } from 'lib/client/users';
 import type { PublicStory } from 'lib/client/stories';
 import { Perm } from 'lib/client/perms';
@@ -99,7 +99,14 @@ const Comment = React.memo(({
 		deleteComment(comment.id);
 	});
 
+	/** A ref to whether a rating request is currently loading and no new ones should be made. */
+	const ratingLoadingRef = useRef(false);
+
 	const toggleRating = useFunction(async (rating: NonNullable<ClientComment['userRating']>) => {
+		if (ratingLoadingRef.current) {
+			return;
+		}
+
 		if (!user) {
 			if (await Dialog.confirm({
 				id: 'rate-comment',
@@ -113,11 +120,15 @@ const Comment = React.memo(({
 			return;
 		}
 
+		ratingLoadingRef.current = true;
+
 		const { data: newComment } = await (api as StoryPageCommentRatingAPI).put(`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}/ratings/${user.id}`, {
 			rating: comment.userRating === rating ? 0 : rating
 		});
 
 		setComment(newComment);
+
+		ratingLoadingRef.current = false;
 	});
 
 	const IconContainer = authorUser ? Link : 'div';
