@@ -72,18 +72,35 @@
 	}
 
 	&-actions {
-		margin-top: 4px;
+		margin-top: 0.5em;
 
-		.button:not(:first-child) {
-			margin-left: 2px;
+		& > * {
+			cursor: pointer;
+
+			&:not(.active) {
+				opacity: 0.5;
+			}
+		}
+
+		.icon {
+			font-size: 1rem;
+			margin-right: 3px;
 		}
 	}
-}
 
-.like-button .icon {
-	background-image: url(/images/icons/like-gray.png); // Image credit: seymour schlong
-}
+	&-likes .icon {
+		background-image: url(/images/icons/like-gray.png); // Image credit: seymour schlong
+	}
 
-.dislike-button .icon {
-	background-image: url(/images/icons/dislike-gray.png); // Image credit: seymour schlong
+	&-likes.active .icon {
+		background-image: url(/images/icons/like.png); // Image credit: seymour schlong
+	}
+
+	&-dislikes .icon {
+		background-image: url(/images/icons/dislike-gray.png); // Image credit: seymour schlong
+	}
+
+	&-dislikes.active .icon {
+		background-image: url(/images/icons/dislike.png); // Image credit: seymour schlong
+	}
 }

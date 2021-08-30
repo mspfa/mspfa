@@ -17,8 +17,8 @@ import BBField from 'components/BBCode/BBField';
 import Link from 'components/Link';
 import IconImage from 'components/IconImage';
 import { useUserCache } from 'lib/client/UserCache';
-import Button from 'components/Button';
 import OptionsButton from 'components/Button/OptionsButton';
+import Icon from 'components/Icon';
 
 type StoryPageCommentAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]').default>;
 
@@ -141,18 +141,16 @@ const Comment = React.memo(({
 					</BBCode>
 				</div>
 				<div className="comment-actions">
-					<Button
-						icon
-						className="like-button"
-					>
-						{comment.likeCount}
-					</Button>
-					<Button
-						icon
-						className="dislike-button"
-					>
-						{comment.dislikeCount}
-					</Button>
+					<span className="comment-likes spaced front">
+						<Icon>
+							{comment.likeCount}
+						</Icon>
+					</span>
+					<span className="comment-dislikes spaced front">
+						<Icon>
+							{comment.dislikeCount}
+						</Icon>
+					</span>
 				</div>
 			</div>
 		</div>
