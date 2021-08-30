@@ -186,7 +186,7 @@ const StoryComments = React.memo(() => {
 					})
 				}
 			>
-				{function StoryCommentsForm({ dirty, isSubmitting }) {
+				{function StoryCommentForm({ dirty, isSubmitting }) {
 					useLeaveConfirmation(dirty);
 
 					return (
