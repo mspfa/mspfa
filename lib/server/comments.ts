@@ -22,13 +22,13 @@ export type ServerComment = {
 };
 
 /** Converts a `ServerComment` to a `ClientComment`. */
-export const getClientComment = (
+export const getClientComment = <User extends ServerUser | undefined>(
 	serverComment: ServerComment,
 	/** The page ID which the comment is on. */
 	pageID: StoryPageID,
 	/** The user accessing this comment, or undefined if there is no authenticated user. */
-	user: ServerUser | undefined
-): ClientComment => ({
+	user: User
+): ClientComment<User> => ({
 	id: serverComment.id.toString(),
 	pageID,
 	posted: +serverComment.posted,
@@ -47,5 +47,9 @@ export const getClientComment = (
 					? -1
 					: 0
 		)
-	}
+	} as (
+		User extends ServerUser ? {
+			userRating: NonNullable<ClientComment['userRating']>
+		} : never
+	)
 });
