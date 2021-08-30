@@ -175,7 +175,8 @@ const Comment = React.memo(({
 				</div>
 				<div className="comment-actions">
 					<button
-						className={`like-button spaced${comment.userRating === 1 ? ' active' : ''}`}
+						className={`rate-button like-button${comment.userRating === 1 ? ' active' : ''}`}
+						disabled={user?.id === comment.author}
 						title="Like"
 						onClick={
 							useFunction(() => {
@@ -188,7 +189,8 @@ const Comment = React.memo(({
 						</Icon>
 					</button>
 					<button
-						className={`dislike-button spaced${comment.userRating === -1 ? ' active' : ''}`}
+						className={`rate-button dislike-button${comment.userRating === -1 ? ' active' : ''}`}
+						disabled={user?.id === comment.author}
 						title="Dislike"
 						onClick={
 							useFunction(() => {

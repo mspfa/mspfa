@@ -74,44 +74,56 @@
 	&-actions {
 		margin-top: 0.5em;
 
-		& > * {
-			cursor: pointer;
-
-			// Undo the `button` styles.
-			padding: 0;
-			text-align: left;
-			background: none;
-			border: none;
-			font: inherit;
-			color: inherit;
-
-			&:not(.active, :focus, :active) {
-				opacity: 0.5;
-
-				&:hover {
-					opacity: 0.75;
-				}
-			}
-		}
-
-		.icon {
-			margin-right: 3px;
+		& > :not(:first-child) {
+			margin-left: 1ch;
 		}
 	}
 }
 
-.like-button .icon {
-	background-image: url(/images/icons/like-gray.png); // Image credit: seymour schlong
+.rate-button {
+	opacity: 0.5;
+
+	// Undo the `button` styles.
+	padding: 0;
+	text-align: left;
+	background: none;
+	border: none;
+	font: inherit;
+	color: inherit;
+
+	&:not(:disabled) {
+		cursor: pointer;
+
+		&:hover {
+			opacity: 0.75;
+		}
+
+		&.active, &:focus, &:active {
+			opacity: 1;
+		}
+	}
+
+	.icon {
+		margin-right: 3px;
+	}
 }
 
-.like-button.active .icon {
-	background-image: url(/images/icons/like.png); // Image credit: seymour schlong
+.like-button {
+	.icon {
+		background-image: url(/images/icons/like-gray.png); // Image credit: seymour schlong
+	}
+
+	&.active .icon {
+		background-image: url(/images/icons/like.png); // Image credit: seymour schlong
+	}
 }
 
-.dislike-button .icon {
-	background-image: url(/images/icons/dislike-gray.png); // Image credit: seymour schlong
-}
+.dislike-button {
+	.icon {
+		background-image: url(/images/icons/dislike-gray.png); // Image credit: seymour schlong
+	}
 
-.dislike-button.active .icon {
-	background-image: url(/images/icons/dislike.png); // Image credit: seymour schlong
+	&.active .icon {
+		background-image: url(/images/icons/dislike.png); // Image credit: seymour schlong
+	}
 }
