@@ -37,8 +37,8 @@ import DateField from 'components/DateField';
 import Timestamp from 'components/Timestamp';
 import EditButton from 'components/Button/EditButton';
 import Dialog from 'lib/client/Dialog';
-import { useNavStoryID } from 'components/Nav';
 import type { integer } from 'lib/types';
+import StoryIDContext from 'lib/client/StoryIDContext';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 
@@ -81,8 +81,6 @@ const Component = withErrorPage<ServerSideProps>(({
 	userCache: initialUserCache
 }) => {
 	const [privateStory, setPrivateStory] = useState(initialPrivateStory);
-
-	useNavStoryID(privateStory.id);
 
 	const { cacheUser } = useUserCache();
 	initialUserCache.forEach(cacheUser);
@@ -160,7 +158,7 @@ const Component = withErrorPage<ServerSideProps>(({
 		)
 	);
 
-	return (
+	const pageComponent = (
 		<Page heading="Edit Adventure">
 			{privateStory.willDelete ? (
 				<>
@@ -504,6 +502,12 @@ const Component = withErrorPage<ServerSideProps>(({
 				</Formik>
 			)}
 		</Page>
+	);
+
+	return (
+		<StoryIDContext.Provider value={privateStory.id}>
+			{pageComponent}
+		</StoryIDContext.Provider>
 	);
 });
 

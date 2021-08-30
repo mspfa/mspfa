@@ -34,9 +34,9 @@ import Router, { useRouter } from 'next/router';
 import frameThrottler from 'lib/client/frameThrottler';
 import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
 import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
-import { useNavStoryID } from 'components/Nav';
 import type { integer } from 'lib/types';
 import useSticky from 'lib/client/useSticky';
+import StoryIDContext from 'lib/client/StoryIDContext';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -169,8 +169,6 @@ const Component = withErrorPage<ServerSideProps>(({
 }) => {
 	const [privateStory, setPrivateStory] = useState(initialPrivateStory);
 	const [initialPages, setInitialPages] = useState(initialPagesProp);
-
-	useNavStoryID(privateStory.id);
 
 	const formikPropsRef = useRef<FormikProps<Values>>(null!);
 	const formRef = useRef<HTMLFormElement>(null!);
@@ -417,7 +415,7 @@ const Component = withErrorPage<ServerSideProps>(({
 		});
 	});
 
-	return (
+	const pageComponent = (
 		<Page heading="Edit Adventure">
 			<Formik<Values>
 				initialValues={{
@@ -1590,6 +1588,12 @@ const Component = withErrorPage<ServerSideProps>(({
 				}}
 			</Formik>
 		</Page>
+	);
+
+	return (
+		<StoryIDContext.Provider value={privateStory.id}>
+			{pageComponent}
+		</StoryIDContext.Provider>
 	);
 });
 

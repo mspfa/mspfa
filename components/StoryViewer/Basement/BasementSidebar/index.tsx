@@ -1,11 +1,12 @@
 import './styles.module.scss';
 import StoryLog from 'components/StoryLog';
 import React, { useContext, useMemo, useState } from 'react';
-import { PreviewModeContext, StoryViewerContext } from 'components/StoryViewer';
+import { StoryViewerContext } from 'components/StoryViewer';
 import Label from 'components/Label';
 import Link from 'components/Link';
 import BBCode, { sanitizeBBCode } from 'components/BBCode';
 import useFunction from 'lib/client/useFunction';
+import PreviewModeContext from 'lib/client/PreviewModeContext';
 
 /** The maximum number of pages which can be listed under the adventure's "Latest Pages" section. */
 export const MAX_LATEST_PAGES = 45;
@@ -13,7 +14,7 @@ export const MAX_LATEST_PAGES = 45;
 const BasementSidebar = React.memo(() => {
 	const { story, latestPages } = useContext(StoryViewerContext)!;
 
-	const previewMode = useContext(PreviewModeContext)!;
+	const previewMode = useContext(PreviewModeContext);
 
 	const sanitizedSidebarContent = useMemo(() => (
 		sanitizeBBCode(story.sidebarContent, { html: true })

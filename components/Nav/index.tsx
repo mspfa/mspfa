@@ -4,25 +4,10 @@ import NavItem from 'components/Nav/NavItem';
 import NavMenu from 'components/Nav/NavMenu';
 import Router, { useRouter } from 'next/router';
 import { promptSignIn, promptSignOut, useUser } from 'lib/client/users';
-import createGlobalState from 'global-react-state';
-import type { StoryID } from 'lib/server/stories';
-import { useIsomorphicLayoutEffect } from 'react-use';
 import useSticky from 'lib/client/useSticky';
-import { useRef } from 'react';
-
-const [useStoryID, setStoryID] = createGlobalState<StoryID | undefined>(undefined);
-
-/** A hook which sets the nav bar's story ID (adding the "LOGS" and "SEARCH" nav items) as long as the component is mounted. */
-export const useNavStoryID = (storyID: StoryID) => {
-	// This hook is a layout effect hook rather than a normal effect hook so the nav bar is updated immediately, preventing the user from briefly seeing the outdated nav bar.
-	useIsomorphicLayoutEffect(() => {
-		setStoryID(storyID);
-
-		return () => {
-			setStoryID(undefined);
-		};
-	}, [storyID]);
-};
+import { useContext, useRef } from 'react';
+import StoryIDContext from 'lib/client/StoryIDContext';
+import PreviewModeContext from 'lib/client/PreviewModeContext';
 
 const visitRandomStory = () => {
 	// TODO: Visit random story.
@@ -32,8 +17,8 @@ const visitRandomStory = () => {
 
 const Nav = () => {
 	const router = useRouter();
+
 	const user = useUser();
-	const [storyID] = useStoryID();
 
 	const notificationsBubble = 0;
 	let messagesBubble = 0;
@@ -48,6 +33,9 @@ const Nav = () => {
 
 	const ref = useRef<HTMLElement>(null!);
 	useSticky(ref);
+
+	const storyID = useContext(StoryIDContext);
+	const previewMode = useContext(PreviewModeContext);
 
 	return (
 		<nav
@@ -98,12 +86,12 @@ const Nav = () => {
 					<NavItem
 						id="story-log"
 						label="Log"
-						href={`/s/${storyID}/log${'preview' in router.query ? '?preview=1' : ''}`}
+						href={`/s/${storyID}/log${previewMode ? '?preview=1' : ''}`}
 					/>
 					<NavItem
 						id="story-search"
 						label="Search"
-						href={`/s/${storyID}/search${'preview' in router.query ? '?preview=1' : ''}`}
+						href={`/s/${storyID}/search${previewMode ? '?preview=1' : ''}`}
 					/>
 				</NavGroup>
 			)}

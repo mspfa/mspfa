@@ -11,11 +11,12 @@ import Page from 'components/Page';
 import Box from 'components/Box';
 import BoxSection from 'components/Box/BoxSection';
 import Link from 'components/Link';
-import { useNavStoryID } from 'components/Nav';
 import { useMemo } from 'react';
 import { useRouter } from 'next/router';
 import useFunction from 'lib/client/useFunction';
 import { preventLeaveConfirmations } from 'lib/client/forms';
+import PreviewModeContext from 'lib/client/PreviewModeContext';
+import StoryIDContext from 'lib/client/StoryIDContext';
 
 type ServerSideProps = {
 	publicStory: PublicStory,
@@ -25,8 +26,6 @@ type ServerSideProps = {
 };
 
 const Component = withErrorPage<ServerSideProps>(({ publicStory, listings }) => {
-	useNavStoryID(publicStory.id);
-
 	const router = useRouter();
 
 	const sortMode = (
@@ -42,7 +41,9 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, listings }) => 
 			: [...listings].reverse()
 	), [listings, sortMode]);
 
-	return (
+	const previewMode = 'preview' in router.query;
+
+	const pageComponent = (
 		<Page withFlashyTitle heading="Adventure Log">
 			<Box>
 				<BoxSection heading={publicStory.title}>
@@ -67,6 +68,14 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, listings }) => 
 				</BoxSection>
 			</Box>
 		</Page>
+	);
+
+	return (
+		<StoryIDContext.Provider value={publicStory.id}>
+			<PreviewModeContext.Provider value={previewMode}>
+				{pageComponent}
+			</PreviewModeContext.Provider>
+		</StoryIDContext.Provider>
 	);
 });
 

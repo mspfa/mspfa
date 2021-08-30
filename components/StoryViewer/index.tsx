@@ -12,13 +12,15 @@ import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 import Stick from 'components/Stick';
 import Delimit from 'components/Delimit';
 import Dialog from 'lib/client/Dialog';
-import { useNavStoryID } from 'components/Nav';
 import { defaultSettings, getUser } from 'lib/client/users';
 import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import type { ClientNewsPost } from 'lib/client/news';
 import Basement from 'components/StoryViewer/Basement';
+import PreviewModeContext from 'lib/client/PreviewModeContext';
+import StoryPageLink from 'components/StoryPageLink';
+import StoryIDContext from 'lib/client/StoryIDContext';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 
@@ -79,8 +81,9 @@ export type StoryViewerProps = {
 	newsPosts: ClientNewsPost[]
 };
 
+/** A React context of the initial `StoryViewerProps`. */
 export const StoryViewerContext = React.createContext<StoryViewerProps | undefined>(undefined);
-export const PreviewModeContext = React.createContext(false);
+/** A React context for the ID of the page currently being viewed in the `StoryViewer`. */
 export const PageIDContext = React.createContext<StoryPageID | undefined>(undefined);
 export const CommentaryShownContext = React.createContext<[
 	commentaryShown: boolean,
@@ -93,8 +96,6 @@ const StoryViewer = (props: StoryViewerProps) => {
 		pages: initialPages,
 		previousPageIDs: initialPreviousPageIDs
 	} = props;
-
-	useNavStoryID(story.id);
 
 	const router = useRouter();
 	const previewMode = 'preview' in router.query;
@@ -494,16 +495,15 @@ const StoryViewer = (props: StoryViewerProps) => {
 									<Fragment key={i}>
 										{sanitizedNextPage && (
 											<div className="story-section-link-container">
-												<Link
-													href={`/?s=${story.id}&p=${nextPageID}${previewMode ? '&preview=1' : ''}`}
-													shallow
+												<StoryPageLink
+													pageID={nextPageID}
 													data-index={i}
 													onClick={onClickNextPageLink}
 												>
 													<BBCode alreadySanitized>
 														{sanitizedNextPage.title}
 													</BBCode>
-												</Link>
+												</StoryPageLink>
 											</div>
 										)}
 									</Fragment>
@@ -520,22 +520,20 @@ const StoryViewer = (props: StoryViewerProps) => {
 								<span className="story-section-footer-group">
 									<Delimit with={<Stick />}>
 										{pageID !== 1 && (
-											<Link
+											<StoryPageLink
 												className="story-link-start-over"
-												href={`/?s=${story.id}&p=1${previewMode ? '&preview=1' : ''}`}
-												shallow
+												pageID={1}
 											>
 												Start Over
-											</Link>
+											</StoryPageLink>
 										)}
 										{showGoBack && (
-											<Link
+											<StoryPageLink
 												className="story-link-go-back"
-												href={`/?s=${story.id}&p=${previousPageID}${previewMode ? '&preview=1' : ''}`}
-												shallow
+												pageID={previousPageID}
 											>
 												Go Back
-											</Link>
+											</StoryPageLink>
 										)}
 									</Delimit>
 								</span>
@@ -577,22 +575,24 @@ const StoryViewer = (props: StoryViewerProps) => {
 	);
 
 	return (
-		<StoryViewerContext.Provider value={props}>
+		<StoryIDContext.Provider value={story.id}>
 			<PreviewModeContext.Provider value={previewMode}>
-				<PageIDContext.Provider value={pageID}>
-					<CommentaryShownContext.Provider
-						value={
-							useMemo(
-								() => [commentaryShown, setCommentaryShown],
-								[commentaryShown, setCommentaryShown]
-							)
-						}
-					>
-						{pageComponent}
-					</CommentaryShownContext.Provider>
-				</PageIDContext.Provider>
+				<StoryViewerContext.Provider value={props}>
+					<PageIDContext.Provider value={pageID}>
+						<CommentaryShownContext.Provider
+							value={
+								useMemo(
+									() => [commentaryShown, setCommentaryShown],
+									[commentaryShown, setCommentaryShown]
+								)
+							}
+						>
+							{pageComponent}
+						</CommentaryShownContext.Provider>
+					</PageIDContext.Provider>
+				</StoryViewerContext.Provider>
 			</PreviewModeContext.Provider>
-		</StoryViewerContext.Provider>
+		</StoryIDContext.Provider>
 	);
 };
 

@@ -9,17 +9,18 @@ import type { integer } from 'lib/types';
 import Page from 'components/Page';
 import Box from 'components/Box';
 import BoxSection from 'components/Box/BoxSection';
-import { useNavStoryID } from 'components/Nav';
 import { Field, Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
 import useFunction from 'lib/client/useFunction';
 import Button from 'components/Button';
 import Label from 'components/Label';
 import { sanitizeBBCode } from 'components/BBCode';
-import Link from 'components/Link';
 import Timestamp from 'components/Timestamp';
 import type { ReactNode } from 'react';
 import { Fragment } from 'react';
+import StoryPageLink from 'components/StoryPageLink';
+import PreviewModeContext from 'lib/client/PreviewModeContext';
+import StoryIDContext from 'lib/client/StoryIDContext';
 
 type StorySearchResults = Array<Pick<ClientStoryPage, 'id' | 'published' | 'title' | 'content'>>;
 
@@ -31,17 +32,15 @@ type ServerSideProps = {
 };
 
 const Component = withErrorPage<ServerSideProps>(({ publicStory, results }) => {
-	useNavStoryID(publicStory.id);
-
 	const router = useRouter();
-
-	const previewMode = 'preview' in router.query;
 
 	const searchQuery = (
 		typeof router.query.query === 'string'
 			? router.query.query
 			: ''
 	).toLowerCase();
+
+	const previewMode = 'preview' in router.query;
 
 	let matches = 0;
 
@@ -112,12 +111,12 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, results }) => {
 							</Timestamp>
 						)}
 					</div>
-					<Link
+					<StoryPageLink
 						className="story-search-result-title"
-						href={`/?s=${publicStory.id}&p=${result.id}${previewMode ? '&preview=1' : ''}`}
+						pageID={result.id}
 					>
 						{getNodes(result.title)}
-					</Link>
+					</StoryPageLink>
 				</div>
 				<div className="story-search-result-content">
 					{getNodes(result.content)}
@@ -126,7 +125,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, results }) => {
 		);
 	});
 
-	return (
+	const pageComponent = (
 		<Page withFlashyTitle heading="Adventure Search">
 			<Box>
 				<BoxSection
@@ -170,6 +169,14 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, results }) => {
 				</BoxSection>
 			</Box>
 		</Page>
+	);
+
+	return (
+		<StoryIDContext.Provider value={publicStory.id}>
+			<PreviewModeContext.Provider value={previewMode}>
+				{pageComponent}
+			</PreviewModeContext.Provider>
+		</StoryIDContext.Provider>
 	);
 });
 
