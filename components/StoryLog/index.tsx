@@ -14,7 +14,6 @@ export type StoryLogProps = {
 
 const StoryLog = ({ story, listings, children, className, ...props }: StoryLogProps) => {
 	const router = useRouter();
-
 	const previewMode = 'preview' in router.query;
 
 	return (
