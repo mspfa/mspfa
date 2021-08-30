@@ -8,6 +8,7 @@ import { promptSignIn, useUser } from 'lib/client/users';
 import type { PublicStory } from 'lib/client/stories';
 import { Perm } from 'lib/client/perms';
 import useFunction from 'lib/client/useFunction';
+import type { DialogOptions } from 'lib/client/Dialog';
 import Dialog from 'lib/client/Dialog';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
@@ -41,64 +42,8 @@ const Comment = React.memo(({
 
 	const { userCache } = useUserCache();
 
-	/** Whether the authenticated user is the author of this comment. */
-	const userIsAuthor = !!user && user.id === comment.author;
-
 	/** The user which is the author of this comment. */
 	const authorUser = userCache[comment.author];
-
-	const promptEdit = useFunction(async () => {
-		const dialog = new Dialog({
-			id: 'edit-comment',
-			title: 'Edit Comment',
-			initialValues: {
-				content: comment.content
-			},
-			content: (
-				<IDPrefix.Provider value="comment">
-					<Label block htmlFor="comment-field-content">
-						Content
-					</Label>
-					<BBField
-						name="content"
-						autoFocus
-						required
-						maxLength={20000}
-						rows={6}
-					/>
-				</IDPrefix.Provider>
-			),
-			actions: [
-				{ label: 'Save', autoFocus: false },
-				'Cancel'
-			]
-		});
-
-		if (!(await dialog)?.submit) {
-			return;
-		}
-
-		const { data: newComment } = await (api as StoryPageCommentAPI).put(
-			`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}`,
-			dialog.form!.values
-		);
-
-		setComment(newComment);
-	});
-
-	const promptDelete = useFunction(async () => {
-		if (!await Dialog.confirm({
-			id: 'edit-comment',
-			title: 'Delete Comment',
-			content: 'Are you sure you want to delete this comment?\n\nThis cannot be undone.'
-		})) {
-			return;
-		}
-
-		await (api as StoryPageCommentAPI).delete(`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}`);
-
-		deleteComment(comment.id);
-	});
 
 	/** A ref to whether a rating request is currently loading and no new ones should be made. */
 	const ratingLoadingRef = useRef(false);
@@ -166,7 +111,109 @@ const Comment = React.memo(({
 					</Timestamp>
 				</div>
 				<span className="comment-options-container">
-					<OptionsButton className="comment-options-button" />
+					<OptionsButton
+						className="comment-options-button"
+						onClick={
+							useFunction(async () => {
+								const actions: DialogOptions['actions'] = [
+									{ value: 'report', label: 'Report' },
+									'Cancel'
+								];
+
+								if (user && (
+									user.id === comment.author
+									|| story.owner === user.id
+									|| story.editors.includes(user.id)
+									|| user.perms & Perm.sudoDelete
+								)) {
+									actions.unshift(
+										{ value: 'delete', label: 'Delete' }
+									);
+								}
+
+								if (user && (
+									user.id === comment.author
+									|| user.perms & Perm.sudoWrite
+								)) {
+									actions.unshift(
+										{ value: 'edit', label: 'Edit' }
+									);
+								}
+
+								const result = await new Dialog({
+									id: 'comment-options',
+									title: 'Comment Options',
+									content: 'What will you do with this comment?',
+									actions
+								});
+
+								if (!result) {
+									return;
+								}
+
+								if (result.value === 'edit') {
+									const dialog = new Dialog({
+										id: 'edit-comment',
+										title: 'Edit Comment',
+										initialValues: {
+											content: comment.content
+										},
+										content: (
+											<IDPrefix.Provider value="comment">
+												<Label block htmlFor="comment-field-content">
+													Content
+												</Label>
+												<BBField
+													name="content"
+													autoFocus
+													required
+													maxLength={20000}
+													rows={6}
+												/>
+											</IDPrefix.Provider>
+										),
+										actions: [
+											{ label: 'Save', autoFocus: false },
+											'Cancel'
+										]
+									});
+
+									if (!(await dialog)?.submit) {
+										return;
+									}
+
+									const { data: newComment } = await (api as StoryPageCommentAPI).put(
+										`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}`,
+										dialog.form!.values
+									);
+
+									setComment(newComment);
+
+									return;
+								}
+
+								if (result.value === 'delete') {
+									if (!await Dialog.confirm({
+										id: 'edit-comment',
+										title: 'Delete Comment',
+										content: 'Are you sure you want to delete this comment?\n\nThis cannot be undone.'
+									})) {
+										return;
+									}
+
+									await (api as StoryPageCommentAPI).delete(`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}`);
+
+									deleteComment(comment.id);
+
+									return;
+								}
+
+								if (result.value === 'report') {
+									// TODO: Report this comment.
+								}
+							})
+						}
+					/>
 				</span>
 				<div className="comment-content">
 					<BBCode escapeHTML>
