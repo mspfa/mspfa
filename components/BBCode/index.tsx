@@ -108,6 +108,7 @@ export const sanitizeBBCode = (
 			slice
 				.replace(/^ | $/gm, '&nbsp;')
 				// The above replacement should occur before the below replacement to potentially reduce the number of outputted non-breaking spaces when there are multiple inputted spaces at the beginning or end of a line. For example, `'  .  '` would output `'&nbsp; . &nbsp;'` rather than `'&nbsp;&nbsp;. &nbsp;'`.
+				// Not that it matters much. But might as well.
 				.replace(/ {2}/g, ' &nbsp;')
 		);
 
