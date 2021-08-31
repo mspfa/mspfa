@@ -93,7 +93,16 @@ const Comment = React.memo(({
 	const IconContainer = authorUser ? Link : 'div';
 
 	return (
-		<div className="comment">
+		<div
+			className={
+				`comment${
+					story.owner === comment.author
+					|| story.editors.includes(comment.author)
+						? ' by-editor'
+						: ''
+				} by-${comment.author} comment-${comment.id}`
+			}
+		>
 			<IconContainer
 				className="comment-icon-container"
 				href={authorUser && `/user/${authorUser.id}`}
