@@ -106,8 +106,9 @@ export const sanitizeBBCode = (
 		// Prevent collapsing whitespace. (Whitespace at the end of a wrapped line should still be collapsed.)
 		slice = (
 			slice
-				.replace(/ {2}/g, ' &nbsp;')
 				.replace(/^ | $/gm, '&nbsp;')
+				// The above replacement should occur before the below replacement to potentially reduce the number of outputted non-breaking spaces when there are multiple inputted spaces at the beginning or end of a line. For example, `'  .  '` would output `'&nbsp; . &nbsp;'` rather than `'&nbsp;&nbsp;. &nbsp;'`.
+				.replace(/ {2}/g, ' &nbsp;')
 		);
 
 		htmlString += slice;
