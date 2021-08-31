@@ -95,11 +95,22 @@ export const sanitizeBBCode = (
 	/** The resulting HTML string to be sanitized and parsed. */
 	let htmlString = '';
 
-	/** Gets a slice of the input `bbString` and appends it to the output `htmlString`, escaping the slice first if `escapeHTML` is `true`. */
+	/** Gets a slice of the input `bbString` and appends it to the output `htmlString`, escaping the slice first if `escapeHTML` is `true`, and replacing some spaces with non-breaking spaces. */
 	const appendSlice = (start: integer, end?: integer) => {
-		const slice = bbString.slice(start, end);
+		let slice = bbString.slice(start, end);
 
-		htmlString += escapeHTML ? escapeHTMLTags(slice) : slice;
+		if (escapeHTML) {
+			slice = escapeHTMLTags(slice);
+		}
+
+		// Prevent collapsing whitespace. (Whitespace at the end of a wrapped line should still be collapsed.)
+		slice = (
+			slice
+				.replace(/ {2}/g, ' &nbsp;')
+				.replace(/^ | $/gm, '&nbsp;')
+		);
+
+		htmlString += slice;
 	};
 
 	/** A record that maps each BBCode tag name to an ordered array of opening tag matches. */
