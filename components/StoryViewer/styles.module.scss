@@ -49,7 +49,6 @@ $story-page-padding: 25px;
 
 		&-content {
 			font-size: 0.875em;
-			line-height: 1;
 			padding: 17px 0;
 
 			#story-page & {
@@ -126,7 +125,6 @@ $story-page-padding: 25px;
 		@include theme(font, heading-font);
 		font-weight: bold;
 		font-size: 2em;
-		line-height: 1;
 	}
 
 	&-description {
