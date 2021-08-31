@@ -3,7 +3,7 @@ import BBCode from 'components/BBCode';
 import UserLink from 'components/Link/UserLink';
 import Timestamp from 'components/Timestamp';
 import type { ClientComment } from 'lib/client/comments';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { promptSignIn, useUser } from 'lib/client/users';
 import type { PublicStory } from 'lib/client/stories';
 import { Perm } from 'lib/client/perms';
@@ -21,6 +21,9 @@ import { useUserCache } from 'lib/client/UserCache';
 import OptionsButton from 'components/Button/OptionsButton';
 import Icon from 'components/Icon';
 import StoryPageLink from 'components/StoryPageLink';
+import { Field, Form, Formik } from 'formik';
+import { useLeaveConfirmation } from 'lib/client/forms';
+import Button from 'components/Button';
 
 type StoryPageCommentAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]').default>;
 type StoryPageCommentRatingAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]/ratings/[userID]').default>;
@@ -75,6 +78,16 @@ const Comment = React.memo(({
 		});
 
 		setComment(newComment);
+	});
+
+	const [replying, setReplying] = useState(false);
+
+	const replyContentFieldRef = useRef<HTMLTextAreaElement>(null);
+
+	const onSubmitReply = useFunction(async (values: { content: string }) => {
+		console.log(values.content);
+
+		setReplying(false);
 	});
 
 	const IconContainer = authorUser ? Link : 'div';
@@ -257,10 +270,75 @@ const Comment = React.memo(({
 							</Icon>
 						</button>
 					</span>
-					<Link className="comment-reply-button translucent">
+					<Link
+						className="comment-reply-button translucent"
+						onClick={
+							useFunction(() => {
+								if (replying) {
+									replyContentFieldRef.current!.focus();
+								} else {
+									setReplying(true);
+								}
+							})
+						}
+					>
 						Reply
 					</Link>
 				</div>
+				{replying && (
+					<Formik
+						initialValues={{
+							content: ''
+						}}
+						onSubmit={onSubmitReply}
+					>
+						{function CommentReplyForm({ dirty, isSubmitting }) {
+							useLeaveConfirmation(dirty);
+
+							return (
+								<Form className="comment-reply-form">
+									<Label
+										block
+										htmlFor={`comment-${comment.id}-reply-field-content`}
+									>
+										Post a Reply
+									</Label>
+									<Field
+										as="textarea"
+										id={`comment-${comment.id}-reply-field-content`}
+										name="content"
+										required
+										maxLength={2000}
+										rows={3}
+										disabled={isSubmitting}
+										autoFocus
+										innerRef={replyContentFieldRef}
+									/>
+									<div className="comment-reply-form-actions">
+										<Button
+											type="submit"
+											className="small"
+											disabled={isSubmitting}
+										>
+											Submit!
+										</Button>
+										<Button
+											className="small"
+											disabled={isSubmitting}
+											onClick={
+												useFunction(() => {
+													setReplying(false);
+												})
+											}
+										>
+											Cancel
+										</Button>
+									</div>
+								</Form>
+							);
+						}}
+					</Formik>
+				)}
 			</div>
 		</div>
 	);
