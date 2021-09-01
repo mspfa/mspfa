@@ -1,7 +1,7 @@
 #message {
 	&-info > .box-section-content,
-	&:not(.editing) &-content .bb {
-		font-size: 0.875em;
+	&:not(.editing) &-content {
+		font-size: 0.875rem;
 	}
 
 	&-actions {

@@ -2,7 +2,7 @@
 	padding: 0;
 
 	.icon {
-		font-size: 1.375em;
+		font-size: 1.375rem;
 		background-image: url(/images/bb-toolbar.png);
 		background-size: auto 1em;
 	}
@@ -12,7 +12,7 @@
 #field-bb-preview {
 	// This is set on the container rather than the `textarea` itself so that relative `style.fontSize`s set on the `textarea` can use this as a reference point.
 	&-container {
-		font-size: 0.875em;
+		font-size: 0.875rem;
 	}
 
 	font-size: 1em;

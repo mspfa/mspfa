@@ -3,7 +3,7 @@
 
 .story-log {
 	@include theme(font, alt-font);
-	font-size: math.div(10, 16) * 1em;
+	font-size: math.div(10, 16) * 1rem;
 
 	&-timestamp-container::after {
 		content: ' - ';

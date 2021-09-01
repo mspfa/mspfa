@@ -83,6 +83,7 @@
 					white-space: nowrap;
 
 					.bb {
+						// Disable text wrapping so that `text-overflow: ellipsis` works.
 						white-space: nowrap;
 					}
 

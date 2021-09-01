@@ -56,7 +56,7 @@ main {
 
 #copyright {
 	padding: 0.4em 1.6em;
-	line-height: 1.6em;
+	line-height: 1.6;
 	@include theme(font, alt-font);
 	font-size: x-small;
 	text-align: center;

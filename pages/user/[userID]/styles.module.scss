@@ -24,14 +24,14 @@
 	}
 
 	&-actions {
-		font-size: 0.875em;
+		font-size: 0.875rem;
 
 		& > :not(:first-child) {
 			margin-top: 0.25em;
 		}
 	}
 
-	&-description .bb {
-		font-size: 0.875em;
+	&-description {
+		font-size: 0.875rem;
 	}
 }

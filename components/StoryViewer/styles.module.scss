@@ -48,7 +48,7 @@ $story-page-padding: 25px;
 		}
 
 		&-content {
-			font-size: 0.875em;
+			font-size: 0.875rem;
 			padding: 17px 0;
 
 			#story-page & {
@@ -77,10 +77,10 @@ $story-page-padding: 25px;
 		}
 
 		&-footer {
-			font-size: 0.875em;
+			font-size: 0.875rem;
 
 			&-group {
-				font-size: math.div(10, 14) * 1em;
+				font-size: math.div(10, 14) * 1rem;
 
 				&-delimiter::before {
 					content: '             ';
@@ -128,7 +128,7 @@ $story-page-padding: 25px;
 	}
 
 	&-description {
-		font-size: 0.875em;
+		font-size: 0.875rem;
 	}
 }
 
