@@ -100,6 +100,10 @@ const Comment = React.memo(({
 					|| story.editors.includes(comment.author)
 						? ' by-editor'
 						: ''
+				}${
+					user?.id === comment.author
+						? ' by-self'
+						: ''
 				} by-${comment.author} comment-${comment.id}`
 			}
 		>
