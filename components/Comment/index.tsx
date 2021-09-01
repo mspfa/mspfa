@@ -251,7 +251,7 @@ const Comment = React.memo(({
 				<div className="comment-actions">
 					<span className="comment-ratings">
 						<button
-							className={`comment-rating-button like-button${comment.userRating === 1 ? ' active' : ''}`}
+							className={`comment-action comment-rating-button like-button${comment.userRating === 1 ? ' active' : ''}`}
 							disabled={user?.id === comment.author}
 							title="Like"
 							onClick={
@@ -265,7 +265,7 @@ const Comment = React.memo(({
 							</Icon>
 						</button>
 						<button
-							className={`comment-rating-button dislike-button${comment.userRating === -1 ? ' active' : ''}`}
+							className={`comment-action comment-rating-button dislike-button${comment.userRating === -1 ? ' active' : ''}`}
 							disabled={user?.id === comment.author}
 							title="Dislike"
 							onClick={
@@ -280,7 +280,7 @@ const Comment = React.memo(({
 						</button>
 					</span>
 					<Link
-						className="comment-reply-button translucent"
+						className="comment-action comment-reply-button translucent"
 						onClick={
 							useFunction(() => {
 								if (replying) {

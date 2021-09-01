@@ -88,13 +88,24 @@
 		}
 	}
 
+	&-action {
+		opacity: 0.5;
+		cursor: pointer;
+
+		&:hover {
+			opacity: 0.75;
+		}
+
+		&.active, &:focus, &:active {
+			opacity: 1;
+		}
+	}
+
 	&-ratings > :not(:first-child) {
 		margin-left: 1ch;
 	}
 
 	&-rating-button {
-		opacity: 0.5;
-
 		// Undo the `button` styles.
 		padding: 0;
 		text-align: left;
@@ -102,18 +113,6 @@
 		border: none;
 		font: inherit;
 		color: inherit;
-
-		&:enabled {
-			cursor: pointer;
-
-			&:hover {
-				opacity: 0.75;
-			}
-
-			&.active, &:focus, &:active {
-				opacity: 1;
-			}
-		}
 	}
 
 	&-reply-form {
