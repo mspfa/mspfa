@@ -93,7 +93,15 @@ const NewsPost = React.memo(({
 	});
 
 	return (
-		<div className={`news-post by-${newsPost.author}`}>
+		<div
+			className={
+				`news-post${
+					user?.id === newsPost.author
+						? ' by-self'
+						: ''
+				} by-${newsPost.author}`
+			}
+		>
 			<div className="news-post-actions">
 				{(userIsEditor || (
 					user
