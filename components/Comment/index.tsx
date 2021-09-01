@@ -261,7 +261,7 @@ const Comment = React.memo(({
 							}
 						>
 							<Icon>
-								{comment.likeCount}
+								{comment.likeCount !== 0 && comment.likeCount}
 							</Icon>
 						</button>
 						<button
@@ -275,7 +275,7 @@ const Comment = React.memo(({
 							}
 						>
 							<Icon>
-								{comment.dislikeCount}
+								{comment.dislikeCount !== 0 && comment.dislikeCount}
 							</Icon>
 						</button>
 					</span>
