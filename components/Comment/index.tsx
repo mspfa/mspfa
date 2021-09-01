@@ -59,12 +59,22 @@ const Comment = React.memo(({
 		if (!user) {
 			if (await Dialog.confirm({
 				id: 'rate-comment',
-				title: 'Comment',
+				title: 'Rate Comment',
 				content: 'Sign in to rate comments!',
 				actions: ['Sign In', 'Cancel']
 			})) {
 				promptSignIn();
 			}
+
+			return;
+		}
+
+		if (user.id === comment.author) {
+			new Dialog({
+				id: 'rate-comment',
+				title: 'Rate Comment',
+				content: 'You can\'t rate your own comments!'
+			});
 
 			return;
 		}
@@ -256,7 +266,6 @@ const Comment = React.memo(({
 					<span className="comment-ratings">
 						<button
 							className={`comment-action comment-rating-button like-button${comment.userRating === 1 ? ' active' : ''}`}
-							disabled={user?.id === comment.author}
 							title="Like"
 							onClick={
 								useFunction(() => {
@@ -270,7 +279,6 @@ const Comment = React.memo(({
 						</button>
 						<button
 							className={`comment-action comment-rating-button dislike-button${comment.userRating === -1 ? ' active' : ''}`}
-							disabled={user?.id === comment.author}
 							title="Dislike"
 							onClick={
 								useFunction(() => {
