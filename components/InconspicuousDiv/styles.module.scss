@@ -2,7 +2,7 @@
 	font-size: 0.75rem;
 	opacity: 0.6;
 
-	.link:not(:focus, :active) {
+	.link:not(:focus):not(:active) {
 		color: inherit;
 	}
 }

@@ -192,7 +192,7 @@ input, textarea, select, option {
 .translucent {
 	opacity: 0.7;
 
-	&.link:not(:focus, :active) {
+	&.link:not(:focus):not(:active) {
 		@include theme(color, text-color);
 	}
 }

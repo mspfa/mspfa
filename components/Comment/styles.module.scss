@@ -41,7 +41,7 @@
 		text-decoration: none;
 		font-size: 0.85em;
 
-		&:not(:focus, :active) {
+		&:not(:focus):not(:active) {
 			color: currentColor;
 		}
 

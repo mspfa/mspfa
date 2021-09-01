@@ -3,7 +3,7 @@
 		margin-bottom: 1em;
 	}
 
-	&:not(:first-child, & + &) {
+	&:not(:first-child):not(& + &) {
 		margin-top: 1em;
 	}
 }
