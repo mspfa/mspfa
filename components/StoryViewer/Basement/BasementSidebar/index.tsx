@@ -33,7 +33,6 @@ const BasementSidebar = React.memo(() => {
 				Latest Pages
 			</div>
 			<StoryLog
-				story={story}
 				listings={latestPagesShown ? latestPages : undefined}
 			>
 				<Label className="spaced">
