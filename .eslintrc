@@ -19,6 +19,12 @@
 	"rules": {
 		"no-async-promise-executor": "off",
 		"no-cond-assign": "off",
+		"no-constant-condition": [
+			"error",
+			{
+				"checkLoops": false
+			}
+		],
 		"no-control-regex": "off",
 		"no-debugger": "warn",
 		"no-empty": "off",
