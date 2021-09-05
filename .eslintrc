@@ -377,7 +377,7 @@
 		"react/no-unused-state": "warn",
 		"react/no-will-update-set-state": "error",
 		"react/prefer-stateless-function": "error",
-		"react/prop-types": "off", // This is off because we have TypeScript to handle this.
+		"react/prop-types": "off",
 		"react/self-closing-comp": [
 			"warn",
 			{
