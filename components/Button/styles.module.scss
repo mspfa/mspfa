@@ -2,6 +2,8 @@
 @use 'sass:map';
 @use 'lib/styles/themes' as *;
 
+// We must use `:not(:disabled)` instead of `:enabled` since `:enabled` cannot select `a.button`s.
+
 // Applies a pixelated 3D depth effect behind the button. Lowers the depth on `:active`.
 @mixin button-depth(
 	$scale: 2px,
@@ -16,7 +18,7 @@
 		border: $scale solid transparent;
 	}
 
-	&:enabled:active {
+	&:active:not(:disabled) {
 		// Offset the button on `:active`.
 		left: $scale;
 		top: $scale;
@@ -81,7 +83,7 @@
 		margin-left: 1ch;
 	}
 
-	&:enabled {
+	&:not(:disabled) {
 		cursor: pointer;
 
 		&:focus:not(:active)::after {
