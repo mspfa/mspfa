@@ -341,25 +341,25 @@ const StoryViewer = (props: StoryViewerProps) => {
 		};
 	}, [queriedPageID, pages, sanitizedPages, previousPageIDs, story.id, previewMode, pagesRef]);
 
-	const storyPageElementRef = useRef<HTMLDivElement>(null!);
+	const storySectionElementRef = useRef<HTMLDivElement>(null!);
 
 	// Add the `panel` class to any media elements large enough to be considered a panel.
 	// This is a layout effect rather than a normal effect so that media is not briefly visible at the wrong size.
 	useIsomorphicLayoutEffect(() => {
-		const storyPageElementStyle = window.getComputedStyle(storyPageElementRef.current);
+		const storySectionElementStyle = window.getComputedStyle(storySectionElementRef.current);
 
-		/** The content width of the `#story-page` element. */
-		const storyPageContentWidth = (
-			+storyPageElementStyle.minWidth.slice(0, -2)
-			- +storyPageElementStyle.paddingLeft.slice(0, -2)
-			- +storyPageElementStyle.paddingRight.slice(0, -2)
+		/** The content width of the story section. */
+		const storySectionContentWidth = (
+			+storySectionElementStyle.minWidth.slice(0, -2)
+			- +storySectionElementStyle.paddingLeft.slice(0, -2)
+			- +storySectionElementStyle.paddingRight.slice(0, -2)
 		);
 
-		/** Adds or removes the `panel` class to an inputted element based on its size relative to the `#story-page` element. */
+		/** Adds or removes the `panel` class to an inputted element based on its size relative to the story section. */
 		const classifyPotentialPanel = (element: HTMLElement) => {
 			element.classList[
-				element.getBoundingClientRect().width > storyPageContentWidth
-					// If and only if the element is wider than the content width of the `#story-page` element, this element should have the `panel` class.
+				element.getBoundingClientRect().width > storySectionContentWidth
+					// If and only if the element is wider than the content width of the story section, this element should have the `panel` class.
 					? 'add'
 					: 'remove'
 			]('panel');
@@ -374,7 +374,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 		};
 
 		for (const tagName of ['img', 'video', 'iframe', 'canvas', 'object'] as const) {
-			for (const element of storyPageElementRef.current.getElementsByTagName(tagName)) {
+			for (const element of storySectionElementRef.current.getElementsByTagName(tagName)) {
 				// Clasify this element in case it's already loaded or it already has a set size.
 				classifyPotentialPanel(element);
 
@@ -454,7 +454,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 			<div id="story-page" className="story-section-container">
 				<div
 					className="story-section front"
-					ref={storyPageElementRef}
+					ref={storySectionElementRef}
 				>
 					<Fragment
 						// This key is here to force the inner DOM to reset between different pages.
