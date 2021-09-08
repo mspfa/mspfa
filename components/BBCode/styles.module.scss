@@ -1,4 +1,4 @@
 .bb {
-	// We don't use `pre-wrap` because it doesn't collapse whitespace at the end of a wrapped line.
+	// We don't use `pre-wrap` because it doesn't collapse whitespace at the end of a wrapped line, leading centered text to be shifted slightly to the left.
 	white-space: pre-line;
 }
