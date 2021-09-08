@@ -47,10 +47,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, listings }) => 
 		<Page withFlashyTitle heading="Adventure Log">
 			<Box>
 				<BoxSection heading={publicStory.title}>
-					<StoryLog
-						story={publicStory}
-						listings={sortedListings}
-					>
+					<StoryLog listings={sortedListings}>
 						<Link
 							id="story-log-sort-link"
 							onClick={
