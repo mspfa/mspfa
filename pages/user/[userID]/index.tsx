@@ -38,13 +38,13 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 	const notOwnProfile = user?.id !== publicUser.id;
 
 	return (
-		<Page withFlashyTitle heading="Profile">
+		<Page
+			withFlashyTitle
+			heading={publicUser.name}
+		>
 			<Box id="profile">
 				<BoxColumns>
 					<BoxSection id="profile-info" heading="Info">
-						<Row id="profile-name">
-							{publicUser.name}
-						</Row>
 						<Row id="profile-icon-container">
 							<IconImage
 								id="profile-icon"
