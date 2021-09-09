@@ -187,7 +187,7 @@ const tags: Record<string, {
 		initialValues: children => ({
 			attributes: '',
 			children: '',
-			[children.includes('://') ? 'attributes' : 'children']: children
+			[/^(?:\w+:)?\/\//.test(children) ? 'attributes' : 'children']: children
 		}),
 		content: ({ initialValues }) => (
 			<LabeledGrid>
