@@ -248,7 +248,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										id="story-editor-options"
 										heading={privateStory.title}
 									>
-										{privateStory.pageCount && (
+										{privateStory.pageCount !== 0 && (
 											<Button
 												className="small"
 												href={`/?s=${privateStory.id}&p=1`}
