@@ -28,7 +28,7 @@ export const storyPrivacyNames: Record<StoryPrivacy, string> = {
 };
 
 /** All keys whose values have the same serializable type in both `ServerStory` and `PrivateStory`. */
-type PrivateServerStoryKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'icon' | 'pageCount' | 'favCount' | 'banner' | 'style' | 'script' | 'tags' | 'allowComments' | 'sidebarContent' | 'defaultPageTitle' | 'spoilerPresets' | 'colors' | 'quirks';
+type PrivateServerStoryKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'icon' | 'pageCount' | 'favCount' | 'banner' | 'style' | 'script' | 'tags' | 'allowComments' | 'sidebarContent' | 'defaultPageTitle' | 'colors' | 'quirks';
 
 /** A serializable version of `ServerStory` with only the properties that can safely be exposed to any client. */
 export type PrivateStory = Pick<ServerStory, PrivateServerStoryKey> & {

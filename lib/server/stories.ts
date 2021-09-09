@@ -47,11 +47,6 @@ export type ServerStoryPage = {
 
 export type StoryPageRecord = Record<StoryPageID, ServerStoryPage>;
 
-export type SpoilerPreset = {
-	open: string,
-	close: string
-};
-
 export type StoryColor = {
 	value: string,
 	name: string
@@ -128,7 +123,6 @@ export type ServerStory = {
 	/** This story's news posts sorted from newest to oldest. */
 	news: ServerNewsPost[],
 	defaultPageTitle: ServerStoryPage['title'],
-	spoilerPresets: SpoilerPreset[],
 	colors: StoryColor[],
 	quirks: Quirk[]
 };
@@ -154,7 +148,6 @@ export const defaultStory = {
 	sidebarContent: '',
 	news: [] as never[],
 	defaultPageTitle: 'Next.',
-	spoilerPresets: [] as never[],
 	colors: [] as never[],
 	quirks: [] as never[]
 } as const;
@@ -191,7 +184,6 @@ export const getPrivateStory = (story: ServerStory): PrivateStory => ({
 	allowComments: story.allowComments,
 	sidebarContent: story.sidebarContent,
 	defaultPageTitle: story.defaultPageTitle,
-	spoilerPresets: story.spoilerPresets,
 	colors: story.colors,
 	quirks: story.quirks
 });
