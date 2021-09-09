@@ -119,7 +119,12 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 					</Box>
 				</BoxColumns>
 				{publicUser.description && (
-					<BoxSection id="profile-description" heading="Description">
+					<BoxSection
+						id="profile-description"
+						heading="Description"
+						collapsible
+						open
+					>
 						<BBCode html>{publicUser.description}</BBCode>
 					</BoxSection>
 				)}
