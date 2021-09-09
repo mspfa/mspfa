@@ -53,6 +53,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, results }) => {
 			 */
 			const nodes: ReactNode[] = [];
 
+			// TODO: Accommodate the fact that `toLowerCase` can change a string's length, causing indexes in `stringToSearch` not to match up with indexes in `string`.
 			const stringToSearch = string.toLowerCase();
 			let index = stringToSearch.indexOf(searchQuery);
 
