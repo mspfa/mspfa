@@ -322,16 +322,17 @@ const TagField = ({
 							return;
 						}
 
-						// Don't let the user press `Enter`, because `Enter` has annoying functionality with `contentEditable`, and it is buggy in Firefox.
-						if (event.code === 'Enter' || (
-							event.key.length === 1 && !(
-								// Don't prevent keyboard shortcuts.
-								event.ctrlKey
-								|| event.metaKey
-								|| event.altKey
-								// Only let the user enter valid characters for tags.
-								|| validCharacter.test(event.key)
-							)
+						if (event.code === 'Enter') {
+							// When the user presses `Enter`, insert a line break character so it can be detected consistently by `updateTagField` between different browsers.
+							inputRef.current.appendChild(document.createTextNode('\n'));
+							event.preventDefault();
+						} else if (event.key.length === 1 && !(
+							// Don't prevent keyboard shortcuts.
+							event.ctrlKey
+							|| event.metaKey
+							|| event.altKey
+							// Only let the user enter valid characters for tags.
+							|| validCharacter.test(event.key)
 						)) {
 							event.preventDefault();
 						}
