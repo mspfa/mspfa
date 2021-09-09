@@ -12,7 +12,7 @@ import Box from 'components/Box';
 import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
 import { getPrivateStory, getStoryByUnsafeID } from 'lib/server/stories';
-import type { PrivateStory } from 'lib/client/stories';
+import type { PrivateStory, StoryStatus } from 'lib/client/stories';
 import { StoryPrivacy, storyPrivacyNames, storyStatusNames } from 'lib/client/stories';
 import LabeledGridBoxSection from 'components/Box/LabeledGridBoxSection';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
@@ -283,7 +283,7 @@ const Component = withErrorPage<ServerSideProps>(({
 														key={status}
 														value={status}
 													>
-														{(storyStatusNames as any)[status]}
+														{storyStatusNames[status as unknown as StoryStatus]}
 													</option>
 												))}
 											</LabeledGridField>

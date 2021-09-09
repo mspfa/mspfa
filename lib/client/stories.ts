@@ -2,17 +2,17 @@ import type { ServerStory, StoryID, ServerStoryPage, StoryPageID } from 'lib/ser
 import type { DateNumber, integer } from 'lib/types';
 
 export enum StoryStatus {
-	Inactive = 0,
-	Ongoing,
+	Ongoing = 0,
 	Complete,
-	Discontinued
+	Discontinued,
+	Inactive
 }
 
 export const storyStatusNames: Record<StoryStatus, string> = {
-	[StoryStatus.Inactive]: 'Inactive',
 	[StoryStatus.Ongoing]: 'Ongoing',
 	[StoryStatus.Complete]: 'Complete',
-	[StoryStatus.Discontinued]: 'Discontinued'
+	[StoryStatus.Discontinued]: 'Discontinued',
+	[StoryStatus.Inactive]: 'Inactive'
 };
 
 export enum StoryPrivacy {
