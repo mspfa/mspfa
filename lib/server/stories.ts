@@ -280,9 +280,14 @@ export const getStoryByUnsafeID = <Res extends APIResponse<any> | undefined>(
 	resolve(story);
 });
 
+/** Gets all the stories owned or edited by a user. */
 export const getPublicStoriesByEditor = async (editor: ServerUser) => (
 	stories.find!({
-		editors: editor._id,
+		$or: [{
+			owner: editor._id
+		}, {
+			editors: editor._id
+		}],
 		privacy: StoryPrivacy.Public,
 		willDelete: { $exists: false }
 	}).map(getPublicStory).toArray()
