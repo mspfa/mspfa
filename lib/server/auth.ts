@@ -259,7 +259,7 @@ export const verifyPassword = (
 	/**
 	 * A partial record that maps `VerifyPasswordResult` keys to HTTP status code values.
 	 *
-	 * If a value is 0, the corresponding `VerifyPasswordResult` will resolve this promise rather than sending an HTTP error.
+	 * If a status code value is 0, its corresponding `VerifyPasswordResult` key will resolve this promise rather than sending an HTTP error.
 	 */
 	status: Partial<Record<Exclude<VerifyPasswordResult, VerifyPasswordResult.Correct>, integer>> = {}
 ) => new Promise<VerifyPasswordResult>(async resolve => {
