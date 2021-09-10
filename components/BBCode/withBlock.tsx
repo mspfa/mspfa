@@ -1,18 +1,38 @@
 import type { BBTag, BBTagProps } from 'components/BBCode/BBTags';
 import type { ReactNode } from 'react';
 
+const trimStartLineBreaks = (string: string) => {
+	while (string[0] === '\n') {
+		string = string.slice(1);
+	}
+
+	return string;
+};
+
+const trimEndLineBreaks = (string: string) => {
+	for (
+		let endIndex = string.length - 1;
+		string[endIndex] === '\n';
+		endIndex--
+	) {
+		string = string.slice(0, -1);
+	}
+
+	return string;
+};
+
 const trimLineBreaks = (node: ReactNode) => {
 	if (Array.isArray(node)) {
 		if (typeof node[0] === 'string') {
-			node[0] = node[0].replace(/^\n+/, '');
+			node[0] = trimStartLineBreaks(node[0]);
 		}
 
 		const lastNode = node[node.length - 1];
 		if (typeof lastNode === 'string') {
-			node[node.length - 1] = lastNode.replace(/\n+$/, '');
+			node[node.length - 1] = trimEndLineBreaks(lastNode);
 		}
 	} else if (typeof node === 'string') {
-		node = node.replace(/^\n+|\n+$/g, '');
+		node = trimEndLineBreaks(trimStartLineBreaks(node));
 	}
 
 	return node;

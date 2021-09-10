@@ -3,6 +3,7 @@ import type { IncomingMessage } from 'http';
 import type { AnyAPIQuery } from 'lib/client/api';
 import Ajv from 'ajv';
 import type { DateNumber } from 'lib/types';
+import replaceAll from 'lib/client/replaceAll';
 
 /** The server-side API request object. */
 export type APIRequest<
@@ -84,7 +85,7 @@ export const createValidator = (methodSchema: Record<string, unknown>, schema: R
 					let errorMessage = error.message!;
 					// Filter out unhelpful error messages.
 					if (!errorMessage.includes('schema')) {
-						errorMessage = `${error.instancePath.slice(1).replace(/\//g, '.')}: ${errorMessage}`;
+						errorMessage = `${replaceAll(error.instancePath.slice(1), '/', '.')}: ${errorMessage}`;
 						if (!errorMessages.includes(errorMessage)) {
 							errorMessages.push(errorMessage);
 						}

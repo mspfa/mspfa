@@ -15,6 +15,7 @@ import IDPrefix from 'lib/client/IDPrefix';
 import { useLatest } from 'react-use';
 import { youTubeVideoIDTest } from 'components/BBCode/BBTags';
 import type { integer } from 'lib/types';
+import replaceAll from 'lib/client/replaceAll';
 
 const defaultBBPreview = 'The quick brown fox jumps over the lazy dog.';
 
@@ -534,7 +535,7 @@ const escapeAttribute = (
 			return `'${value}'`;
 		}
 
-		return `"${value.replace(/"/g, '&quot;')}"`;
+		return `"${replaceAll(value, '"', '&quot;')}"`;
 	}
 
 	if (value[0] === '"' && (

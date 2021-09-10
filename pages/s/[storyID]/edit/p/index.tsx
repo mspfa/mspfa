@@ -37,6 +37,7 @@ import { addViewportListener, removeViewportListener } from 'lib/client/viewport
 import type { integer } from 'lib/types';
 import useSticky from 'lib/client/useSticky';
 import StoryIDContext from 'lib/client/StoryIDContext';
+import replaceAll from 'lib/client/replaceAll';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -295,7 +296,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										setFieldValue(
 											'flags',
 											event.target.checked
-												? values.flags.replace(/i/g, '')
+												? replaceAll(values.flags, 'i', '')
 												: `${values.flags}i`
 										);
 									})
