@@ -21,7 +21,9 @@ export type SpoilerProps = HTMLAttributes<HTMLDivElement> & {
 	 */
 	hide?: ReactNode,
 	/** Whether the spoiler is initially open. Defaults to the user's `autoOpenSpoilers` setting. */
-	initialOpen?: boolean
+	defaultOpen?: boolean,
+	/** Whether this spoiler should be toggled when the control to toggle spoilers is used. */
+	listenToControl?: boolean
 };
 
 const Spoiler = ({
@@ -42,39 +44,42 @@ const Spoiler = ({
 				? <>Hide {name}</>
 				: 'Hide'
 	),
-	initialOpen,
+	defaultOpen,
+	listenToControl,
 	className,
 	children,
 	...props
 }: SpoilerProps) => {
 	const user = useUser();
 	const [open, setOpen] = useState(
-		initialOpen
+		defaultOpen
 		?? user?.settings.autoOpenSpoilers
 		?? defaultSettings.autoOpenSpoilers
 	);
 
 	useEffect(() => {
-		const onKeyDown = (event: KeyboardEvent) => {
-			if (shouldIgnoreControl()) {
-				return;
-			}
+		if (listenToControl) {
+			const onKeyDown = (event: KeyboardEvent) => {
+				if (shouldIgnoreControl()) {
+					return;
+				}
 
-			const controls = (getUser()?.settings || defaultSettings).controls;
+				const controls = (getUser()?.settings || defaultSettings).controls;
 
-			if (event.code === controls.toggleSpoilers) {
-				setOpen(open => !open);
+				if (event.code === controls.toggleSpoilers) {
+					setOpen(open => !open);
 
-				event.preventDefault();
-			}
-		};
+					event.preventDefault();
+				}
+			};
 
-		document.addEventListener('keydown', onKeyDown);
+			document.addEventListener('keydown', onKeyDown);
 
-		return () => {
-			document.removeEventListener('keydown', onKeyDown);
-		};
-	}, []);
+			return () => {
+				document.removeEventListener('keydown', onKeyDown);
+			};
+		}
+	}, [listenToControl]);
 
 	return (
 		<div

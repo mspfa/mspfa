@@ -144,6 +144,7 @@ const BBTags: Partial<Record<string, BBTag>> = {
 			name={typeof attributes === 'string' ? attributes : undefined}
 			show={attributes instanceof Object ? attributes.show : undefined}
 			hide={attributes instanceof Object ? attributes.hide : undefined}
+			listenToControl
 		>
 			{children}
 		</Spoiler>

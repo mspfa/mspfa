@@ -82,7 +82,7 @@ const BBField = ({ name, html, noBB, ...props }: BBFieldProps) => {
 			<Spoiler
 				className="bb-preview"
 				name="BBCode Preview"
-				initialOpen={false}
+				defaultOpen={false}
 			>
 				<BBCode
 					// This key is here to force the preview to fully reset when the value changes.
