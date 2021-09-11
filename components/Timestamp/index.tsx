@@ -5,15 +5,13 @@ import { useEffect, useState } from 'react';
 
 export type TimestampProps = Omit<HTMLAttributes<HTMLSpanElement>, 'children'> & {
 	children: Date | DateNumber,
-	/** Whether the timestamp should only display a numeric date. */
+	/** Whether to only display a numeric date. */
 	short?: boolean,
-	/** Whether the timestamp should display the date relative to the current date rather than as an absolute date (or have it in the `title` attribute if the timestamp is `short`). */
+	/** Whether to display the date relative to the current date rather than as an absolute date (or have it in the `title` attribute if the timestamp is `short`). */
 	relative?: boolean,
-	/**
-	 * Whether the timestamp should display the time of day (or have it in the `title` attribute if the timestamp is `short` or `relative` (but not both)).
-	 */
+	/** Whether to display the time of day (or have it in the `title` attribute if the timestamp is `short` or `relative` (but not both)). */
 	withTime?: boolean,
-	/** Displays an asterisk after the timestamp with the  */
+	/** Displays an asterisk after the timestamp which shows an edit date on hover. */
 	edited?: Date | DateNumber
 };
 
@@ -44,8 +42,9 @@ const Timestamp = ({ short, relative, withTime, edited, className, children, ...
 				className={`timestamp${className ? ` ${className}` : ''}`}
 				{...props}
 			>
-				<span
+				<time
 					className="timestamp-content"
+					dateTime={date.toISOString()}
 					title={(
 						short
 							? relative
@@ -64,12 +63,13 @@ const Timestamp = ({ short, relative, withTime, edited, className, children, ...
 								? getRelativeTimestamp(date)
 								: getAbsoluteTimestamp(date, withTime)
 					)}
-				</span>
+				</time>
 				{dateEdited && (
-					<span
+					<time
 						className="timestamp-edited"
+						dateTime={dateEdited.toISOString()}
 						title={
-							`Edited: ${relative
+							`Edited ${relative
 								? getRelativeTimestamp(dateEdited)
 								: getAbsoluteTimestamp(dateEdited, withTime)
 							} (${relative
@@ -80,7 +80,7 @@ const Timestamp = ({ short, relative, withTime, edited, className, children, ...
 						suppressHydrationWarning
 					>
 						*
-					</span>
+					</time>
 				)}
 			</span>
 		</>
