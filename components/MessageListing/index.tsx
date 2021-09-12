@@ -2,10 +2,11 @@ import './styles.module.scss';
 import IconImage from 'components/IconImage';
 import type { ClientMessage } from 'lib/client/messages';
 import Link from 'components/Link';
-import type { ChangeEvent, MutableRefObject } from 'react';
+import type { ChangeEvent, MutableRefObject, ReactNode } from 'react';
 import { useMemo, useRef, useState } from 'react';
 import useFunction from 'lib/client/useFunction';
-import BBCode, { sanitizeBBCode } from 'components/BBCode';
+import BBCode from 'components/BBCode';
+import parseBBCode from 'lib/client/parseBBCode';
 import { useUserCache } from 'lib/client/UserCache';
 import Timestamp from 'components/Timestamp';
 import { setUser, useUser } from 'lib/client/users';
@@ -62,42 +63,39 @@ const MessageListing = ({
 
 	const [open, setOpen] = useState(false);
 
-	const plainContent = useMemo(() => {
-		const fullPlainContent = sanitizeBBCode(message.content, { removeBBTags: true });
+	const partialContent = useMemo(() => {
+		const plainContent = parseBBCode(message.content, { removeBBTags: true });
 
-		const lineBreakIndex = fullPlainContent.indexOf('\n');
+		const lineBreakIndex = plainContent.indexOf('\n');
 		return (
 			lineBreakIndex === -1
-				? fullPlainContent
+				? plainContent
 				// Slice off everything after the first line.
-				: fullPlainContent.slice(0, lineBreakIndex)
+				: plainContent.slice(0, lineBreakIndex)
 		);
 	}, [message.content]);
-	const [richContent, setRichContent] = useState<string>();
+	const [fullContent, setFullContent] = useState<ReactNode>();
 
-	// This state is whether the message's content is rich, or whether it is not completely visible due to overflowing its container.
+	// This state is whether the message's `partialContent` is not equal to its `fullContent`.
 	const [moreLinkVisible, setMoreLinkVisible] = useState(false);
 	const listingRef = useRef<HTMLDivElement>(null!);
 	const contentRef = useRef<HTMLDivElement>(null!);
 
 	useIsomorphicLayoutEffect(() => {
-		const newRichContent = sanitizeBBCode(message.content);
-		setRichContent(newRichContent);
+		const newFullContent = parseBBCode(message.content);
+		setFullContent(newFullContent);
 
-		if (plainContent !== newRichContent) {
+		if (partialContent !== newFullContent) {
 			setMoreLinkVisible(true);
 		}
-
-		// This ESLint comment is necessary because the rule incorrectly thinks `plainContent` should be a dependency here, despite that it depends on `message.content` which is already a dependency.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [message.content]);
+	}, [message.content, partialContent]);
 
 	useIsomorphicLayoutEffect(() => {
 		if (
 			// Check that this message's rich content has loaded via the previous effect hook.
-			richContent !== undefined
+			fullContent !== undefined
 			// Check that this message's content is plain text.
-			&& plainContent === richContent
+			&& partialContent === fullContent
 		) {
 			const onResize = () => {
 				if (open) {
@@ -124,9 +122,9 @@ const MessageListing = ({
 		}
 
 		// `message.content` should be a dependency here because the widths of `contentRef.current` depend on it and are referenced in this hook.
-		// This ESLint comment is necessary because the rule incorrectly thinks `plainContent` should be a dependency here, despite that it depends on `message.content` which is already a dependency.
+		// This ESLint comment is necessary because the rule incorrectly thinks `partialContent` should be a dependency here, despite that it depends on `message.content` which is already a dependency.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [richContent, message.content, open]);
+	}, [fullContent, message.content, open]);
 
 	// This state is whether no actions should be performed on the message due to it currently loading.
 	const [loading, setLoading] = useState(false);
@@ -324,9 +322,13 @@ const MessageListing = ({
 					className="listing-section listing-content"
 					ref={contentRef}
 				>
-					<BBCode>
-						{open ? richContent : plainContent}
-					</BBCode>
+					{open ? (
+						<BBCode alreadyParsed>
+							{fullContent}
+						</BBCode>
+					) : (
+						<BBCode>{partialContent}</BBCode>
+					)}
 				</div>
 				{moreLinkVisible && (
 					<InconspicuousDiv className="listing-section listing-footer">

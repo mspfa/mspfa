@@ -1,4 +1,4 @@
-import BBCode, { sanitizeBBCode } from 'components/BBCode';
+import BBCode from 'components/BBCode';
 import Button from 'components/Button';
 import EditButton from 'components/Button/EditButton';
 import FavButton from 'components/Button/FavButton';
@@ -11,7 +11,7 @@ import InconspicuousDiv from 'components/InconspicuousDiv';
 import Timestamp from 'components/Timestamp';
 import { storyStatusNames } from 'lib/client/stories';
 import useFunction from 'lib/client/useFunction';
-import React, { Fragment, useContext, useMemo, useState } from 'react';
+import React, { Fragment, useContext, useState } from 'react';
 import { PageIDContext, StoryViewerContext } from 'components/StoryViewer';
 import { useUser } from 'lib/client/users';
 import { Perm } from 'lib/client/perms';
@@ -123,12 +123,8 @@ const BasementContent = React.memo(() => {
 				</div>
 			</Row>
 			<Row className="story-description">
-				<BBCode alreadyParsed>
-					{
-						useMemo(() => (
-							sanitizeBBCode(story.description, { keepHTMLTags: true })
-						), [story.description])
-					}
+				<BBCode keepHTMLTags>
+					{story.description}
 				</BBCode>
 			</Row>
 			<Row className="story-tags">

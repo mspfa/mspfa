@@ -1,10 +1,10 @@
 import './styles.module.scss';
 import StoryLog from 'components/StoryLog';
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { StoryViewerContext } from 'components/StoryViewer';
 import Label from 'components/Label';
 import Link from 'components/Link';
-import BBCode, { sanitizeBBCode } from 'components/BBCode';
+import BBCode from 'components/BBCode';
 import useFunction from 'lib/client/useFunction';
 import PreviewModeContext from 'lib/client/PreviewModeContext';
 
@@ -15,10 +15,6 @@ const BasementSidebar = React.memo(() => {
 	const { story, latestPages } = useContext(StoryViewerContext)!;
 
 	const previewMode = useContext(PreviewModeContext);
-
-	const sanitizedSidebarContent = useMemo(() => (
-		sanitizeBBCode(story.sidebarContent, { keepHTMLTags: true })
-	), [story.sidebarContent]);
 
 	// Hide latest pages by default to prevent spoilers from page titles.
 	const [latestPagesShown, setLatestPagesShown] = useState(false);
@@ -53,11 +49,9 @@ const BasementSidebar = React.memo(() => {
 				</div>
 			)}
 			<div className="basement-sidebar-content">
-				{story.sidebarContent && (
-					<BBCode alreadyParsed>
-						{sanitizedSidebarContent}
-					</BBCode>
-				)}
+				<BBCode keepHTMLTags>
+					{story.sidebarContent}
+				</BBCode>
 			</div>
 		</div>
 	);

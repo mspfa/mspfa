@@ -7,7 +7,7 @@ import type { Dispatch, MouseEvent, SetStateAction } from 'react';
 import React, { useState, useEffect, useRef, Fragment, useMemo } from 'react';
 import useFunction from 'lib/client/useFunction';
 import type { StoryPageID } from 'lib/server/stories';
-import BBCode, { sanitizeBBCode } from 'components/BBCode';
+import BBCode from 'components/BBCode';
 import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 import Stick from 'components/Stick';
 import Delimit from 'components/Delimit';
@@ -60,13 +60,6 @@ const openSaveGameHelp = () => {
  * For example, if page 6 maps to page 5, that means page 5 has 6 is its `nextPages`, and clicking "Go Back" on page 6 will take the user to page 5.
  */
 export type ClientPreviousPageIDs = Partial<Record<StoryPageID, StoryPageID | null>>;
-
-/** Returns an object with sanitized sanitized HTML strings of the page's BBCode properties. */
-const sanitizePage = (page: ClientStoryPage) => ({
-	title: sanitizeBBCode(page.title, { keepHTMLTags: true }),
-	content: sanitizeBBCode(page.content, { keepHTMLTags: true }),
-	commentary: sanitizeBBCode(page.commentary, { keepHTMLTags: true })
-});
 
 export type StoryViewerProps = {
 	story: PublicStory,
@@ -164,18 +157,10 @@ const StoryViewer = (props: StoryViewerProps) => {
 		// If the `goToNextPage` call is unsuccessful, don't `event.preventDefault`, and instead let the clicked link handle the page change.
 	});
 
-	// This state is a ref to a partial record that maps each cached page ID to an object with sanitized HTML strings of its BBCode properties, as a caching optimization due to the performance cost of BBCode sanitization.
-	const [sanitizedPages, setSanitizedPages] = useState<Partial<Record<StoryPageID, ReturnType<typeof sanitizePage>>>>({});
-	// Mutate `sanitizedPages` to load this page's sanitized contents synchronously if necessary.
-	if (page && !(pageID in sanitizedPages)) {
-		sanitizedPages[pageID] = sanitizePage(page);
-	}
-	const sanitizedPage = sanitizedPages[pageID];
-
 	/** A ref to an array of page IDs which are currently being fetched around. */
 	const fetchingPageIDsRef = useRef<StoryPageID[]>([]);
 
-	// Fetch new pages, cache page BBCode, and preload the BBCode and images of cached pages.
+	// Fetch and cache new pages, and preload their images.
 	// None of this should be done server-side, because caching or preloading anything server-side would be pointless since it wouldn't be sent to the client.
 	useEffect(() => {
 		let unmounted = false;
@@ -184,9 +169,6 @@ const StoryViewer = (props: StoryViewerProps) => {
 		let unknownPagesNearby = false;
 		/** All page IDs within the `PAGE_PRELOAD_DEPTH` which should not be fetched since the client already has them. */
 		const nearbyCachedPageIDs: StoryPageID[] = [];
-
-		let sanitizedPagesChanged = false;
-		const newSanitizedPages = { ...sanitizedPages };
 
 		const preloadResourcesElement = document.getElementById('preload-resources') as HTMLDivElement;
 		// Reset the preloaded images.
@@ -234,14 +216,9 @@ const StoryViewer = (props: StoryViewerProps) => {
 
 			// If this point is reached, `pageToCheck` is non-nullable.
 
-			// Cache this page's BBCode if it isn't already cached.
-			if (!(pageToCheck.id in newSanitizedPages)) {
-				newSanitizedPages[pageToCheck.id] = sanitizePage(pageToCheck);
-				sanitizedPagesChanged = true;
-			}
-
 			// If this page is within the `IMAGE_PRELOAD_DEPTH`, preload its images.
 			if (depth <= IMAGE_PRELOAD_DEPTH) {
+				// TODO: Fix ReDoS.
 				const imgTagTest = /\[img(?:(?:=(["']?).*?\1)|(?: [\w-]+=(["']?).*?\2)+)?\](.+)\[\/img\]/g;
 				let imgTagMatch;
 				while (imgTagMatch = imgTagTest.exec(pageToCheck.content)) {
@@ -274,11 +251,6 @@ const StoryViewer = (props: StoryViewerProps) => {
 
 		checkAdjacentPages(queriedPageID);
 
-		// Update the cache if it changed.
-		if (sanitizedPagesChanged as boolean) {
-			setSanitizedPages(newSanitizedPages);
-		}
-
 		// Update the preloaded images.
 		preloadResourcesElement.style.backgroundImage = preloadBackgroundImage;
 
@@ -310,8 +282,8 @@ const StoryViewer = (props: StoryViewerProps) => {
 					return;
 				}
 
-				// Ensure this state update will actually cache new pages and won't just create an unnecessary re-render.
 				for (const newPageID of Object.keys(newPages)) {
+					// Ensure this state update will actually cache a new page and won't just create an unnecessary re-render.
 					if (!(newPageID in pagesRef.current)) {
 						setPreviousPageIDs(previousPageIDs => ({
 							...newPreviousPageIDs,
@@ -339,7 +311,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 			// Reset the preloaded images.
 			preloadResourcesElement.style.backgroundImage = '';
 		};
-	}, [queriedPageID, pages, sanitizedPages, previousPageIDs, story.id, previewMode, pagesRef]);
+	}, [queriedPageID, pages, previousPageIDs, story.id, previewMode, pagesRef]);
 
 	const storySectionElementRef = useRef<HTMLDivElement>(null!);
 
@@ -460,10 +432,10 @@ const StoryViewer = (props: StoryViewerProps) => {
 						// This key is here to force the inner DOM to reset between different pages.
 						key={pageID}
 					>
-						{sanitizedPage?.title && (
+						{page?.title && (
 							<div className="story-section-title">
-								<BBCode alreadyParsed>
-									{sanitizedPage.title}
+								<BBCode keepHTMLTags>
+									{page.title}
 								</BBCode>
 							</div>
 						)}
@@ -481,27 +453,27 @@ const StoryViewer = (props: StoryViewerProps) => {
 								null
 							) : (
 								// This page is loaded.
-								<BBCode alreadyParsed>
-									{sanitizedPage!.content}
+								<BBCode keepHTMLTags>
+									{page.content}
 								</BBCode>
 							)}
 						</div>
 						<div className="story-section-links">
 							{page?.nextPages.map((nextPageID, i) => {
-								const sanitizedNextPage = sanitizedPages[nextPageID];
+								const nextPage = pages[nextPageID];
 
-								// Only render this link if its sanitized page is loaded.
+								// Only render this link if the page it links to is loaded.
 								return (
 									<Fragment key={i}>
-										{sanitizedNextPage && (
+										{nextPage && (
 											<div className="story-section-link-container">
 												<StoryPageLink
 													pageID={nextPageID}
 													data-index={i}
 													onClick={onClickNextPageLink}
 												>
-													<BBCode alreadyParsed>
-														{sanitizedNextPage.title}
+													<BBCode keepHTMLTags>
+														{nextPage.title}
 													</BBCode>
 												</StoryPageLink>
 											</div>
@@ -560,12 +532,12 @@ const StoryViewer = (props: StoryViewerProps) => {
 					</div>
 				</div>
 			</div>
-			{commentaryShown && sanitizedPage?.commentary && (
+			{commentaryShown && page?.commentary && (
 				<div id="story-commentary" className="story-section-container">
 					<div className="story-section front">
 						<div className="story-section-content">
-							<BBCode alreadyParsed>
-								{sanitizedPage.commentary}
+							<BBCode keepHTMLTags>
+								{page.commentary}
 							</BBCode>
 						</div>
 					</div>

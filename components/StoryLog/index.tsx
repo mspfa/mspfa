@@ -1,5 +1,6 @@
 import './styles.module.scss';
-import BBCode, { sanitizeBBCode } from 'components/BBCode';
+import BBCode from 'components/BBCode';
+import parseBBCode from 'lib/client/parseBBCode';
 import Timestamp from 'components/Timestamp';
 import type { StoryLogListings } from 'lib/client/stories';
 import type { HTMLAttributes } from 'react';
@@ -33,11 +34,10 @@ const StoryLog = ({ listings, children, className, ...props }: StoryLogProps) =>
 					</span>
 					<StoryPageLink
 						pageID={listing.id}
-						title={sanitizeBBCode(listing.title, { removeBBTags: true })}
+						title={parseBBCode(listing.title, { removeBBTags: true })}
 					>
-						<BBCode alreadyParsed>
-							{/* We must `sanitizeBBCode` before passing it in, or else this memo hook would be pointless as the sanitized value wouldn't be memoized. */}
-							{sanitizeBBCode(listing.title, { keepHTMLTags: true })}
+						<BBCode keepHTMLTags>
+							{listing.title}
 						</BBCode>
 					</StoryPageLink>
 				</div>

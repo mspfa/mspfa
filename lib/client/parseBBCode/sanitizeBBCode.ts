@@ -1,13 +1,13 @@
 import DOMPurify from 'dompurify';
 import escapeHTMLTags from 'lib/client/escapeHTMLTags';
 
-export type SanitizeBBCodeOptions = {
+export type SanitizeBBCodeOptions<KeepHTMLTags extends boolean | undefined = boolean | undefined> = {
 	/**
 	 * Whether to keep sanitized HTML tags in the input rather than stripping all HTML tags and keeping only their children.
 	 *
 	 * Does nothing if the `escapeHTML` option is `true`.
 	 */
-	keepHTMLTags?: boolean,
+	keepHTMLTags?: KeepHTMLTags,
 	/**
 	 * Whether to escape HTML into plain text by replacing all inputted `&` with `&amp;`, `<` with `&lt;`, and `>` with `&gt;`.
 	 *
@@ -17,9 +17,9 @@ export type SanitizeBBCodeOptions = {
 };
 
 /** Sanitizes unsafe HTML in the input string. Returns a `Node` of the sanitized HTML. */
-const sanitizeBBCode = (
+const sanitizeBBCode = <KeepHTMLTags extends boolean | undefined = undefined>(
 	bbString = '',
-	{ keepHTMLTags, escapeHTML }: SanitizeBBCodeOptions = {}
+	{ keepHTMLTags, escapeHTML }: SanitizeBBCodeOptions<KeepHTMLTags> = {}
 ) => {
 	// Optimize for the common case of the input not containing HTML.
 	if (!bbString.includes('<')) {

@@ -30,9 +30,9 @@ type BBTagMatch = RegExpExecArray & {
 	[_htmlIndex]: integer
 };
 
-export type ParseBBCodeInNodeOptions = {
+export type ParseBBCodeInNodeOptions<RemoveBBTags extends boolean | undefined = boolean | undefined> = {
 	/** Whether to strip all BB tags from the input and keep only their children. */
-	removeBBTags?: boolean
+	removeBBTags?: RemoveBBTags
 };
 
 /**
@@ -40,19 +40,28 @@ export type ParseBBCodeInNodeOptions = {
  *
  * ⚠️ Assumes the input is already sanitized.
  */
-const parseBBCodeInNode = (
+const parseBBCodeInNode = <
+	KeepHTMLTags extends boolean | undefined = undefined,
+	RemoveBBTags extends boolean | undefined = undefined
+>(
 	node: string | DocumentFragment | Element | Text,
-	options: ParseBBCodeInNodeOptions,
+	options: ParseBBCodeInNodeOptions<RemoveBBTags>,
 	key: Key = 0
-): ReactNode => {
+): (
+	KeepHTMLTags extends true
+		? ReactNode
+		: RemoveBBTags extends true
+			? string
+			: ReactNode
+) => {
 	if (typeof node === 'string') {
 		// TODO
-		return;
+		return null as any;
 	}
 
 	// TODO: Remove this.
 	if (isTextNode(node)) {
-		return;
+		return null as any;
 	}
 
 	const children: ReactNodeArray = [];
@@ -74,12 +83,14 @@ const parseBBCodeInNode = (
 	}
 
 	if (isDocumentFragmentNode(node)) {
-		return children;
+		return children as any;
 	}
 
 	const TagName: any = (
 		isSVGElement(node)
+			// `SVGElement`s have case-sensitive tag names, so their case must not be modified.
 			? node.nodeName
+			// `HTMLElement`s have uppercase tag names, so they must be converted to lowercase.
 			: node.nodeName.toLowerCase()
 	);
 
@@ -90,7 +101,7 @@ const parseBBCodeInNode = (
 		>
 			{children}
 		</TagName>
-	);
+	) as any;
 };
 
 export default parseBBCodeInNode;

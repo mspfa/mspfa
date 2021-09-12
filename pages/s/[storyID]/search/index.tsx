@@ -14,7 +14,7 @@ import { useRouter } from 'next/router';
 import useFunction from 'lib/client/useFunction';
 import Button from 'components/Button';
 import Label from 'components/Label';
-import { sanitizeBBCode } from 'components/BBCode';
+import parseBBCode from 'lib/client/parseBBCode';
 import Timestamp from 'components/Timestamp';
 import type { ReactNode } from 'react';
 import { Fragment } from 'react';
@@ -224,8 +224,8 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 			const page = story.pages[pageID];
 
 			if (!page.unlisted) {
-				const content = sanitizeBBCode(page.content, { removeBBTags: true });
-				const title = sanitizeBBCode(page.title, { removeBBTags: true });
+				const content = parseBBCode(page.content, { removeBBTags: true });
+				const title = parseBBCode(page.title, { removeBBTags: true });
 
 				if (
 					content.toLowerCase().includes(searchQuery)
