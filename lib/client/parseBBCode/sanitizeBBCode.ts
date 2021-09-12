@@ -1,4 +1,4 @@
-import DOMPurify from 'dompurify';
+import DOMPurify from 'isomorphic-dompurify';
 import escapeHTMLTags from 'lib/client/escapeHTMLTags';
 
 export type SanitizeBBCodeOptions<KeepHTMLTags extends boolean | undefined = boolean | undefined> = {
