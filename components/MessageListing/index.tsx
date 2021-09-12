@@ -322,13 +322,9 @@ const MessageListing = ({
 					className="listing-section listing-content"
 					ref={contentRef}
 				>
-					{open ? (
-						<BBCode alreadyParsed>
-							{fullContent}
-						</BBCode>
-					) : (
-						<BBCode>{partialContent}</BBCode>
-					)}
+					<BBCode alreadyParsed>
+						{open ? fullContent : partialContent}
+					</BBCode>
 				</div>
 				{moreLinkVisible && (
 					<InconspicuousDiv className="listing-section listing-footer">
