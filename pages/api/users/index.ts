@@ -135,11 +135,13 @@ const Handler: APIHandler<(
 		};
 	}
 
+	const lowercaseSearch = req.query.search.toLowerCase();
+
 	let results = (
 		await users.find!(filter).map(getPublicUser).toArray()
 	).sort((a, b) => (
 		// Sort by lowest search index first.
-		a.name.indexOf(req.query.search) - b.name.indexOf(req.query.search)
+		a.name.toLowerCase().indexOf(lowercaseSearch) - b.name.toLowerCase().indexOf(lowercaseSearch)
 		// If search indexes are equal, sort by last seen first.
 		|| b.lastSeen - a.lastSeen
 	));
