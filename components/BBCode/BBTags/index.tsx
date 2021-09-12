@@ -5,6 +5,7 @@ import sanitizeURL from 'lib/client/sanitizeURL';
 import withBlock from 'components/BBCode/withBlock';
 import Spoiler from 'components/Spoiler';
 import dynamic from 'next/dynamic';
+import { IFRAME_SANDBOX } from 'lib/client/parseBBCode/sanitizeBBCode';
 
 const Flash = dynamic(() => import('components/Flash'), {
 	ssr: false
@@ -271,6 +272,9 @@ const BBTags: Partial<Record<string, BBTag>> = {
 				)}
 				width={width || undefined}
 				height={height || undefined}
+				// Allow media to go full-screen.
+				allowFullScreen
+				sandbox={IFRAME_SANDBOX}
 			/>
 		);
 	},

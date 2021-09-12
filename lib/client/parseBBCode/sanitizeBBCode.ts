@@ -1,6 +1,29 @@
 import DOMPurify from 'isomorphic-dompurify';
 import escapeHTMLTags from 'lib/client/escapeHTMLTags';
 
+/** The enforced `sandbox` attribute of any BBCode/HTML `iframe`. */
+// `allow-downloads` is NOT here because the user may think the download comes from us and is trustworthy, and there is little reason for an embed to need to download anything. If necessary, download could occur from a separate window instead.
+// `allow-forms` is NOT here because, although forms can a useful thing to be able to embed (such as for external suggestion boxes), they can also be used for phishing. Legitimate use cases for forms can generally use an external link rather than an embedded frame.
+// `allow-modals` is here because they are convenient to code and are mostly harmless.
+// `allow-pointer-lock` is here because it is mostly harmless and allows for games that require cursor restriction (such as first-person games).
+// `allow-popups` is here so links can open in a new tab, for example to open an animation's credits or a social media link.
+// `allow-popups-to-escape-sandbox` is here because some embeds (e.g. a Discord embed) link to external pages that needs to not be sandboxed.
+// `allow-same-origin` is here because many embeds require the ability to send HTTP requests in order to work.
+// `allow-scripts` is here to allow HTML5 animations and games to run.
+// `allow-top-navigation` is NOT here in order to prevent phishing pages from being opened without the user's knowledge/interaction.
+// `allow-top-navigation-by-user-activation` so an embed can link to another page of the adventure.
+export const IFRAME_SANDBOX = 'allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation';
+
+const isIFrameElement = (element: Element): element is HTMLIFrameElement => (
+	element.nodeName === 'IFRAME'
+);
+
+DOMPurify.addHook('afterSanitizeAttributes', element => {
+	if (isIFrameElement(element)) {
+		element.setAttribute('sandbox', IFRAME_SANDBOX);
+	}
+});
+
 export type SanitizeBBCodeOptions<KeepHTMLTags extends boolean | undefined = boolean | undefined> = {
 	/**
 	 * Whether to keep sanitized HTML tags in the input rather than stripping all HTML tags and keeping only their children.
@@ -42,14 +65,13 @@ const sanitizeBBCode = <KeepHTMLTags extends boolean | undefined = undefined>(
 		SANITIZE_DOM: false,
 		...keepHTMLTags ? {
 			ADD_TAGS: [
-				// `iframe`s are disallowed by default because of phishing and clickjacking.
-				// TODO: Ensure `iframe`s are safe. See https://github.com/cure53/DOMPurify/issues/566.
+				// Allow `iframe`s (as opposed to requiring use of the `iframe` BB tag) because many external embed codes use them.
 				'iframe'
-				// `'#comment'` is not listed here since React does not even have the ability to directly render comment nodes.
+				// `'#comment'` is not whitelisted since React currently does not have the ability to directly render comment nodes. Additionally, there are some mXSS attacks associated with them which I cannot be confident SSR avoids. See https://github.com/cure53/DOMPurify/issues/565.
 			],
 			ADD_ATTR: [
-				// Allow `iframe` attributes.
-				'allow', 'allowfullscreen', 'allowpaymentrequest', 'csp', 'referrerpolicy', 'sandbox', 'srcdoc', 'frameborder', 'marginheight', 'marginwidth', 'scrolling'
+				// Allow some `iframe` attributes.
+				'srcdoc'
 			]
 		} : {
 			ALLOWED_TAGS: []
