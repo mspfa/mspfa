@@ -3,7 +3,7 @@ import escapeHTMLTags from 'lib/client/escapeHTMLTags';
 
 /** The enforced `sandbox` attribute of any BBCode/HTML `iframe`. */
 // `allow-downloads` is NOT here because the user may think the download comes from us and is trustworthy, and there is little reason for an embed to need to download anything. If necessary, download could occur from a separate window instead.
-// `allow-forms` is NOT here because, although forms can a useful thing to be able to embed (such as for external suggestion boxes), they can also be used for phishing. Legitimate use cases for forms can generally use an external link rather than an embedded frame.
+// `allow-forms` is here because forms can be useful to be able to embed (such as for external suggestion boxes), and although they can be used for phishing, there is no reason to restrict them since `allow-same-origin` and `allow-scripts` are enabled, enabling scripts to send HTTP requests anyway.
 // `allow-modals` is here because they are convenient to code and are mostly harmless.
 // `allow-pointer-lock` is here because it is mostly harmless and allows for games that require cursor restriction (such as first-person games).
 // `allow-popups` is here so links can open in a new tab, for example to open an animation's credits or a social media link.
@@ -11,8 +11,8 @@ import escapeHTMLTags from 'lib/client/escapeHTMLTags';
 // `allow-same-origin` is here because many embeds require the ability to send HTTP requests in order to work.
 // `allow-scripts` is here to allow HTML5 animations and games to run.
 // `allow-top-navigation` is NOT here in order to prevent phishing pages from being opened without the user's knowledge/interaction.
-// `allow-top-navigation-by-user-activation` so an embed can link to another page of the adventure.
-export const IFRAME_SANDBOX = 'allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation';
+// `allow-top-navigation-by-user-activation` is here so an embed can link to another page of the adventure.
+export const IFRAME_SANDBOX = 'allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation';
 
 const isIFrameElement = (element: Element): element is HTMLIFrameElement => (
 	element.nodeName === 'IFRAME'
