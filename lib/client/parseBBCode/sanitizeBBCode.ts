@@ -71,7 +71,9 @@ const sanitizeBBCode = <KeepHTMLTags extends boolean | undefined = undefined>(
 			],
 			ADD_ATTR: [
 				// Allow some `iframe` attributes.
-				'srcdoc'
+				// `referrerpolicy` is not here because that would allow `referrerpolicy="unsafe-url"`.
+				// `sandbox` is not here because we enforce our own `sandbox` attribute on `iframe`s.
+				'allow', 'allowfullscreen', 'csp', 'srcdoc', 'frameborder', 'marginheight', 'marginwidth', 'scrolling'
 			]
 		} : {
 			ALLOWED_TAGS: []
