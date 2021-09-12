@@ -86,7 +86,7 @@ const BBField = ({ name, keepHTMLTags, removeBBTags, ...props }: BBFieldProps) =
 			>
 				<BBCode
 					// This key is here to force the preview to fully reset when the value changes.
-					// key={value}
+					key={value}
 					keepHTMLTags={keepHTMLTags}
 					removeBBTags={removeBBTags}
 				>
