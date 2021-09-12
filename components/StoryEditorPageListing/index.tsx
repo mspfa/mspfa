@@ -562,7 +562,7 @@ const StoryEditorPageListing = React.memo(({
 				<BBField
 					name={`pages.${page.id}.content`}
 					rows={6}
-					html
+					keepHTMLTags
 					disabled={isSubmitting}
 				/>
 			</Row>

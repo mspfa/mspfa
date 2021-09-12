@@ -17,7 +17,7 @@ const BasementSidebar = React.memo(() => {
 	const previewMode = useContext(PreviewModeContext);
 
 	const sanitizedSidebarContent = useMemo(() => (
-		sanitizeBBCode(story.sidebarContent, { html: true })
+		sanitizeBBCode(story.sidebarContent, { keepHTMLTags: true })
 	), [story.sidebarContent]);
 
 	// Hide latest pages by default to prevent spoilers from page titles.
@@ -54,7 +54,7 @@ const BasementSidebar = React.memo(() => {
 			)}
 			<div className="basement-sidebar-content">
 				{story.sidebarContent && (
-					<BBCode alreadySanitized>
+					<BBCode alreadyParsed>
 						{sanitizedSidebarContent}
 					</BBCode>
 				)}

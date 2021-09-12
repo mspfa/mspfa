@@ -224,8 +224,8 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 			const page = story.pages[pageID];
 
 			if (!page.unlisted) {
-				const content = sanitizeBBCode(page.content, { noBB: true });
-				const title = sanitizeBBCode(page.title, { noBB: true });
+				const content = sanitizeBBCode(page.content, { removeBBTags: true });
+				const title = sanitizeBBCode(page.title, { removeBBTags: true });
 
 				if (
 					content.toLowerCase().includes(searchQuery)

@@ -445,7 +445,7 @@ const Component = withErrorPage<ServerSideProps>(({
 												name="sidebarContent"
 												rows={4}
 												maxLength={2000}
-												html
+												keepHTMLTags
 												placeholder={'Instead of putting external links in the description, put them here.\nClick the help button for more info.'}
 											/>
 										</Row>

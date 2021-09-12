@@ -129,7 +129,7 @@ const NewsPost = React.memo(({
 				<UserLink>{newsPost.author}</UserLink>
 			</div>
 			<div className="news-post-content">
-				<BBCode html>
+				<BBCode keepHTMLTags>
 					{newsPost.content}
 				</BBCode>
 			</div>

@@ -125,7 +125,9 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 						collapsible
 						open
 					>
-						<BBCode html>{publicUser.description}</BBCode>
+						<BBCode keepHTMLTags>
+							{publicUser.description}
+						</BBCode>
 					</BoxSection>
 				)}
 				{!!publicStories.length && (

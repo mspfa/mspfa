@@ -15,6 +15,7 @@ import IDPrefix from 'lib/client/IDPrefix';
 import { useLatest } from 'react-use';
 import { youTubeVideoIDTest } from 'components/BBCode/BBTags';
 import type { integer } from 'lib/types';
+import escapeHTMLTags from 'lib/client/escapeHTMLTags';
 import replaceAll from 'lib/client/replaceAll';
 
 const defaultBBPreview = 'The quick brown fox jumps over the lazy dog.';
@@ -527,6 +528,9 @@ const escapeAttribute = (
 	/** Whether it's possible that the tag could be interpreted as having multiple attributes, and thus equal signs and extra quotation marks and apostrophes need to be escaped. */
 	possiblyMultipleAttributes?: boolean
 ) => {
+	// Escape angle brackets, since HTML is parsed before BBCode and could otherwise be parsed in the middle of a BB tag's attribute.
+	value = escapeHTMLTags(value);
+
 	if (
 		value.includes(']')
 		|| (possiblyMultipleAttributes && value.includes('='))

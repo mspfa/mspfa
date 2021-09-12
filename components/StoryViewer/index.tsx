@@ -63,9 +63,9 @@ export type ClientPreviousPageIDs = Partial<Record<StoryPageID, StoryPageID | nu
 
 /** Returns an object with sanitized sanitized HTML strings of the page's BBCode properties. */
 const sanitizePage = (page: ClientStoryPage) => ({
-	title: sanitizeBBCode(page.title, { html: true }),
-	content: sanitizeBBCode(page.content, { html: true }),
-	commentary: sanitizeBBCode(page.commentary, { html: true })
+	title: sanitizeBBCode(page.title, { keepHTMLTags: true }),
+	content: sanitizeBBCode(page.content, { keepHTMLTags: true }),
+	commentary: sanitizeBBCode(page.commentary, { keepHTMLTags: true })
 });
 
 export type StoryViewerProps = {
@@ -462,7 +462,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 					>
 						{sanitizedPage?.title && (
 							<div className="story-section-title">
-								<BBCode alreadySanitized>
+								<BBCode alreadyParsed>
 									{sanitizedPage.title}
 								</BBCode>
 							</div>
@@ -481,7 +481,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 								null
 							) : (
 								// This page is loaded.
-								<BBCode alreadySanitized>
+								<BBCode alreadyParsed>
 									{sanitizedPage!.content}
 								</BBCode>
 							)}
@@ -500,7 +500,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 													data-index={i}
 													onClick={onClickNextPageLink}
 												>
-													<BBCode alreadySanitized>
+													<BBCode alreadyParsed>
 														{sanitizedNextPage.title}
 													</BBCode>
 												</StoryPageLink>
@@ -564,7 +564,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 				<div id="story-commentary" className="story-section-container">
 					<div className="story-section front">
 						<div className="story-section-content">
-							<BBCode alreadySanitized>
+							<BBCode alreadyParsed>
 								{sanitizedPage.commentary}
 							</BBCode>
 						</div>

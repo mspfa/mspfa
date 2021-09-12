@@ -33,11 +33,11 @@ const StoryLog = ({ listings, children, className, ...props }: StoryLogProps) =>
 					</span>
 					<StoryPageLink
 						pageID={listing.id}
-						title={sanitizeBBCode(listing.title, { noBB: true })}
+						title={sanitizeBBCode(listing.title, { removeBBTags: true })}
 					>
-						<BBCode alreadySanitized>
+						<BBCode alreadyParsed>
 							{/* We must `sanitizeBBCode` before passing it in, or else this memo hook would be pointless as the sanitized value wouldn't be memoized. */}
-							{sanitizeBBCode(listing.title, { html: true })}
+							{sanitizeBBCode(listing.title, { keepHTMLTags: true })}
 						</BBCode>
 					</StoryPageLink>
 				</div>

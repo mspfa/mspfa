@@ -123,10 +123,10 @@ const BasementContent = React.memo(() => {
 				</div>
 			</Row>
 			<Row className="story-description">
-				<BBCode alreadySanitized>
+				<BBCode alreadyParsed>
 					{
 						useMemo(() => (
-							sanitizeBBCode(story.description, { html: true })
+							sanitizeBBCode(story.description, { keepHTMLTags: true })
 						), [story.description])
 					}
 				</BBCode>

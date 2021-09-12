@@ -20,10 +20,10 @@ export const BBFieldContext = React.createContext<{
 
 export type BBFieldProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'children' | 'value'> & {
 	name: string
-} & Omit<BBCodeProps, 'children' | 'alreadySanitized'>;
+} & Omit<BBCodeProps, 'children' | 'alreadyParsed'>;
 
 /** A text area field that accepts BBCode. */
-const BBField = ({ name, html, noBB, ...props }: BBFieldProps) => {
+const BBField = ({ name, keepHTMLTags, removeBBTags, ...props }: BBFieldProps) => {
 	const [, { value }, { setValue }] = useField<string>(name);
 
 	const textAreaRef = useRef<HTMLTextAreaElement>(null!);
@@ -86,9 +86,9 @@ const BBField = ({ name, html, noBB, ...props }: BBFieldProps) => {
 			>
 				<BBCode
 					// This key is here to force the preview to fully reset when the value changes.
-					key={value}
-					html={html}
-					noBB={noBB}
+					// key={value}
+					keepHTMLTags={keepHTMLTags}
+					removeBBTags={removeBBTags}
 				>
 					{value}
 				</BBCode>

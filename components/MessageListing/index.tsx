@@ -63,7 +63,7 @@ const MessageListing = ({
 	const [open, setOpen] = useState(false);
 
 	const plainContent = useMemo(() => {
-		const fullPlainContent = sanitizeBBCode(message.content, { noBB: true });
+		const fullPlainContent = sanitizeBBCode(message.content, { removeBBTags: true });
 
 		const lineBreakIndex = fullPlainContent.indexOf('\n');
 		return (
