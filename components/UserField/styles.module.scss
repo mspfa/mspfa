@@ -23,6 +23,11 @@
 		.user-field.open-auto-complete > & {
 			display: block;
 		}
+
+		// This fixes the width of the auto-complete being too small due to `max-width: 100%`.
+		&, & * {
+			max-width: none;
+		}
 	}
 
 	&-actions {
