@@ -55,11 +55,11 @@ const parseBBCodeInNode = <
 			: ReactNode
 ) => {
 	if (typeof node === 'string') {
-		return node as any;
+		return node;
 	}
 
 	if (isTextNode(node)) {
-		return node.nodeValue as any;
+		return node.nodeValue!;
 	}
 
 	const children: ReactNodeArray = [];
