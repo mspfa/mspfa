@@ -8,10 +8,20 @@ const isElementNode = (node: Node): node is Element => (
 	node.nodeType === 1
 );
 
-/** Returns whether `element instanceof SVGElement`. */
-const isSVGElement = (element: Element): element is SVGElement => (
-	'ownerSVGElement' in element
-);
+/** Returns whether `element instanceof HTMLElement`. */
+const isHTMLElement = (element: Element): element is HTMLElement => {
+	if (element.ownerDocument.defaultView) {
+		return element instanceof element.ownerDocument.defaultView.HTMLElement;
+	}
+
+	let prototype = element;
+	while (prototype = Object.getPrototypeOf(prototype)) {
+		if (prototype.constructor.name === 'HTMLElement') {
+			return true;
+		}
+	}
+	return false;
+};
 
 /** Returns whether `node instanceof Text`. */
 const isTextNode = (node: Node): node is Text => (
@@ -85,11 +95,11 @@ const parseBBCodeInNode = <
 	}
 
 	const TagName: any = (
-		isSVGElement(node)
-			// `SVGElement`s have case-sensitive tag names, so their case must not be modified.
-			? node.nodeName
-			// `HTMLElement`s have uppercase tag names, so they must be converted to lowercase.
-			: node.nodeName.toLowerCase()
+		isHTMLElement(node)
+			// `HTMLElement`s have uppercase tag names, and React requires them to be lowercase.
+			? node.nodeName.toLowerCase()
+			// Other `Element`s (such as `SVGElement`s) may have case-sensitive tag names, so their case must not be modified.
+			: node.nodeName
 	);
 
 	return (
