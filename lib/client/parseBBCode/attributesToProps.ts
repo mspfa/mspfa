@@ -15,10 +15,10 @@ const attributesToProps = (element: Element) => {
 		} else if (propName === 'style') {
 			props.style = {};
 
-			const { style } = (element as Element & { style: CSSStyleDeclaration });
+			const elementStyle = (element as Element & { style: CSSStyleDeclaration }).style;
 
-			for (let j = 0; j < style.length; j++) {
-				const styleName = style[j];
+			for (let j = 0; j < elementStyle.length; j++) {
+				const styleName = elementStyle[j];
 
 				let stylePropName = (
 					// Names of CSS variable properties should not be converted to camel case.
@@ -51,8 +51,13 @@ const attributesToProps = (element: Element) => {
 					stylePropName += styleName.slice(matchEndIndex);
 				}
 
-				props.style[stylePropName] = style.getPropertyValue(styleName);
+				props.style[stylePropName] = elementStyle.getPropertyValue(styleName);
 			}
+
+			// This is necessary because different environments may have different ways of deserializing the `style` attribute to a `CSSStyleDeclaration`.
+			// For example, JSDOM deserializes `margin: 2px;` into `{ margin: '2px' }`, while Chrome 92 deserializes it into `{ 'margin-top': '2px', 'margin-right': '2px', 'margin-bottom': '2px', 'margin-left': '2px' }`.
+			// We could parse `element.getAttribute('style')` here with our own consistent implementation instead of depending on the environment's inconsistent implementation of `CSSStyleDeclaration`, but that would be much more complicated (due to escaped special characters and special characters in strings) and less performant, while providing no functional difference.
+			props.suppressHydrationWarning = true;
 		} else {
 			props[propName] = attribute.value;
 		}
