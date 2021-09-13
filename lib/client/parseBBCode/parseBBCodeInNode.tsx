@@ -24,7 +24,7 @@ const isHTMLElement = (element: Element): element is HTMLElement => {
 };
 
 /** Returns whether `node instanceof Text`. */
-const isTextNode = (node: Node): node is Text => (
+const isTextNode = (node: Node): node is Text & { nodeValue: string } => (
 	node.nodeType === 3
 );
 
@@ -69,7 +69,7 @@ const parseBBCodeInNode = <
 	}
 
 	if (isTextNode(node)) {
-		return node.nodeValue!;
+		return node.nodeValue;
 	}
 
 	const childrenArray: ReactNodeArray = [];
@@ -79,7 +79,7 @@ const parseBBCodeInNode = <
 		const childNode = node.childNodes[i] as Element | Text;
 
 		if (isTextNode(childNode)) {
-			const childNodeValue = childNode.nodeValue!;
+			const childNodeValue = childNode.nodeValue;
 
 			// We're able to push the string without wrapping it in a fragment with a key because strings don't need React keys.
 			childrenArray.push(childNodeValue);
