@@ -1,6 +1,6 @@
 import BBTags from 'components/BBCode/BBTags';
 import type { integer } from 'lib/types';
-import { Fragment, Key, ReactNode, ReactNodeArray } from 'react';
+import type { Key, ReactNode, ReactNodeArray } from 'react';
 import attributesToProps from 'lib/client/parseBBCode/attributesToProps';
 
 /** Returns whether `node instanceof Element`. */
@@ -81,11 +81,8 @@ const parseBBCodeInNode = <
 		if (isTextNode(childNode)) {
 			const childNodeValue = childNode.nodeValue!;
 
-			childrenArray.push(
-				<Fragment key={i}>
-					{childNodeValue}
-				</Fragment>
-			);
+			// We're able to push the string without wrapping it in a fragment with a key because strings don't need React keys.
+			childrenArray.push(childNodeValue);
 		} else {
 			// If this point is reached, `childNode instanceof Element`.
 			childrenArray.push(
@@ -95,9 +92,11 @@ const parseBBCodeInNode = <
 	}
 
 	const children = (
-		childrenArray.length === 1
-			? childrenArray[0]
-			: childrenArray
+		childrenArray.length === 0
+			? null
+			: childrenArray.length === 1
+				? childrenArray[0]
+				: childrenArray
 	);
 
 	if (isDocumentFragmentNode(node)) {
