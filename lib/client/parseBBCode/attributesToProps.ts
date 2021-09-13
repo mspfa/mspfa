@@ -32,6 +32,13 @@ const attributesToProps = (element: Element) => {
 					let matchIndex;
 					/** The index at the end of the previously matched hyphen (or character after it), or of the start of the string if there is no previous match. */
 					let matchEndIndex = 0;
+
+					// `-ms-` must remain lowercase (e.g. `-ms-transform` -> `msTransform`), despite that `-webkit-`, `-moz-`, and `-o-` become capitalized (e.g. `-webkit-transform` -> `WebkitTransform`).
+					if (styleName.startsWith('-ms-')) {
+						stylePropName += 'ms';
+						matchEndIndex = '-ms'.length;
+					}
+
 					while ((
 						matchIndex = styleName.indexOf('-', matchEndIndex)
 					) !== -1) {
