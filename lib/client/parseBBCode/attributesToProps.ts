@@ -1,11 +1,11 @@
-import { possibleStandardNames, booleanProps } from 'lib/client/parseBBCode/reactPropInfo';
+import { reactPropNames, booleanProps } from 'lib/client/parseBBCode/reactPropInfo';
 
 const attributesToProps = (element: Element) => {
 	const props: Record<string, string | boolean | Record<string, string>> = {};
 
 	for (let i = 0; i < element.attributes.length; i++) {
 		const attribute = element.attributes[i];
-		const propName = possibleStandardNames[attribute.name] || attribute.name;
+		const propName = reactPropNames[attribute.name] || attribute.name;
 
 		// Be sure to handle any reserved props which would pass through the sanitizer: https://github.com/facebook/react/blob/5890e0e692d1c39eddde0110bd0d123409f31dd3/packages/react-dom/src/shared/DOMProperty.js#L236
 		// Currently, the only reserved prop that passes through the sanitizer is `style`.
