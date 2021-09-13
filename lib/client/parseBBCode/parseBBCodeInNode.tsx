@@ -1,6 +1,6 @@
 import BBTags from 'components/BBCode/BBTags';
 import type { integer } from 'lib/types';
-import type { Key, ReactNode, ReactNodeArray } from 'react';
+import { Fragment, Key, ReactNode, ReactNodeArray } from 'react';
 import attributesToProps from 'lib/client/parseBBCode/attributesToProps';
 
 /** Returns whether `node instanceof Element`. */
@@ -72,7 +72,7 @@ const parseBBCodeInNode = <
 		return node.nodeValue!;
 	}
 
-	const children: ReactNodeArray = [];
+	const childrenArray: ReactNodeArray = [];
 
 	for (let i = 0; i < node.childNodes.length; i++) {
 		// We can assert this because any `ChildNode` is necessarily an `Element | Text | Comment`, and `Comment`s are sanitized out.
@@ -81,14 +81,24 @@ const parseBBCodeInNode = <
 		if (isTextNode(childNode)) {
 			const childNodeValue = childNode.nodeValue!;
 
-			children.push(childNodeValue);
+			childrenArray.push(
+				<Fragment key={i}>
+					{childNodeValue}
+				</Fragment>
+			);
 		} else {
 			// If this point is reached, `childNode instanceof Element`.
-			children.push(
+			childrenArray.push(
 				parseBBCodeInNode(childNode, options, i)
 			);
 		}
 	}
+
+	const children = (
+		childrenArray.length === 1
+			? childrenArray[0]
+			: childrenArray
+	);
 
 	if (isDocumentFragmentNode(node)) {
 		return children as any;
