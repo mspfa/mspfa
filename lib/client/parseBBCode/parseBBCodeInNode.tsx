@@ -79,10 +79,18 @@ const parseBBCodeInNode = <
 		const childNode = node.childNodes[i] as Element | Text;
 
 		if (isTextNode(childNode)) {
-			const childNodeValue = childNode.nodeValue;
-
-			// We're able to push the string without wrapping it in a fragment with a key because strings don't need React keys.
-			childrenArray.push(childNodeValue);
+			if (
+				// Check if there is a previously pushed node.
+				i > 0
+				// Check if the previously pushed node is a string.
+				&& typeof childrenArray[childrenArray.length - 1] === 'string'
+			) {
+				// If the previously pushed node is also a string, merge this one into it.
+				childrenArray[childrenArray.length - 1] += childNode.nodeValue;
+			} else {
+				// We're able to push the string without wrapping it in a fragment with a key because strings don't need React keys.
+				childrenArray.push(childNode.nodeValue);
+			}
 		} else {
 			// If this point is reached, `childNode instanceof Element`.
 			childrenArray.push(
