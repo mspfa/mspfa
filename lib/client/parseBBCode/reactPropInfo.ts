@@ -22,6 +22,8 @@ export const reactPropNames: Partial<Record<string, string>> = {
 	'cellpadding': 'cellPadding',
 	'cellspacing': 'cellSpacing',
 	'charset': 'charSet',
+	// `checked` maps to `defaultChecked` because otherwise re-renders would prevent a checkbox from changing value.
+	'checked': 'defaultChecked',
 	'class': 'className',
 	'classid': 'classID',
 	'colspan': 'colSpan',
@@ -69,6 +71,8 @@ export const reactPropNames: Partial<Record<string, string>> = {
 	'srcset': 'srcSet',
 	'tabindex': 'tabIndex',
 	'usemap': 'useMap',
+	// `value` maps to `defaultValue` because otherwise re-renders would prevent an input from changing value.
+	'value': 'defaultValue',
 
 	// SVG attributes.
 	'accent-height': 'accentHeight',
@@ -188,8 +192,9 @@ export const booleanProps: Readonly<Partial<Record<string, true>>> = {
 	reversed: true,
 	scoped: true,
 	seamless: true,
+	// We use `defaultChecked` instead of `checked` since `reactPropNames.checked === 'defaultChecked'`.
+	defaultChecked: true,
 	itemScope: true,
-	checked: true,
 	multiple: true,
 	muted: true,
 	selected: true

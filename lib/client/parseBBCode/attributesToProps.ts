@@ -8,7 +8,7 @@ const attributesToProps = (element: Element) => {
 		const propName = reactPropNames[attribute.name] || attribute.name;
 
 		// Be sure to handle any reserved props which would pass through the sanitizer: https://github.com/facebook/react/blob/5890e0e692d1c39eddde0110bd0d123409f31dd3/packages/react-dom/src/shared/DOMProperty.js#L236
-		// Currently, the only reserved prop that passes through the sanitizer is `style`.
+		// Currently, the only reserved props that pass through the sanitizer are `defaultChecked`, `defaultValue`, and `style`.
 
 		if (booleanProps[propName]) {
 			props[propName] = true;
