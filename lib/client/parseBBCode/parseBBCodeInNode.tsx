@@ -33,6 +33,11 @@ const isDocumentFragmentNode = (node: Node): node is DocumentFragment => (
 	node.nodeType === 11
 );
 
+/** Returns whether `element instanceof HTMLTextAreaElement`. */
+const isHTMLTextAreaElement = (element: Element): element is HTMLTextAreaElement => (
+	element.nodeName === 'TEXTAREA'
+);
+
 /** A key of an opening tag match array that maps to the index of the opening tag in the output `htmlString`. */
 const _htmlIndex = Symbol('htmlIndex');
 
@@ -88,7 +93,7 @@ const parseBBCodeInNode = <
 				// If the previously pushed node is also a string, merge this one into it.
 				childrenArray[childrenArray.length - 1] += childNode.nodeValue!;
 			} else {
-				// We're able to push the string without wrapping it in a fragment with a key because strings don't need React keys.
+				// We're able to push the string without wrapping it in a fragment with a `key` because strings don't need React keys.
 				childrenArray.push(childNode.nodeValue);
 			}
 		} else {
@@ -99,7 +104,7 @@ const parseBBCodeInNode = <
 		}
 	}
 
-	const children = (
+	let children = (
 		childrenArray.length === 0
 			? undefined
 			: childrenArray.length === 1
@@ -119,10 +124,19 @@ const parseBBCodeInNode = <
 			: node.nodeName
 	);
 
+	const props = attributesToProps(node);
+
+	// If this is a `textarea`, move its `children` to its `defaultValue`.
+	if (isHTMLTextAreaElement(node)) {
+		// We can assert `children as string` because `DOMParser` parses every `textarea`'s children as only a text node.
+		props.defaultValue = node.value;
+		children = undefined;
+	}
+
 	return (
 		<TagName
 			key={key}
-			{...attributesToProps(node)}
+			{...props}
 		>
 			{children}
 		</TagName>
