@@ -231,7 +231,12 @@
 		],
 		"operator-linebreak": [
 			"error",
-			"before"
+			"before",
+			{
+				"overrides": {
+					"=": "none"
+				}
+			}
 		],
 		"prefer-exponentiation-operator": "error",
 		"prefer-object-spread": "error",
