@@ -126,9 +126,9 @@ const parseBBCodeInNode = <
 
 	const props = attributesToProps(node);
 
-	// If this is a `textarea`, move its `children` to its `defaultValue`.
+	// If this is a `textarea`, move set its `defaultValue` and not its `children`.
+	// TODO: Don't parse its `children` in the first place.
 	if (isHTMLTextAreaElement(node)) {
-		// We can assert `children as string` because `DOMParser` parses every `textarea`'s children as only a text node.
 		props.defaultValue = node.value;
 		children = undefined;
 	}
