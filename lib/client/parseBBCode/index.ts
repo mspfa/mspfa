@@ -1,13 +1,13 @@
 import processNoparseTags from 'lib/client/parseBBCode/processNoparseTags';
 import type { SanitizeBBCodeOptions } from 'lib/client/parseBBCode/sanitizeBBCode';
 import sanitizeBBCode from 'lib/client/parseBBCode/sanitizeBBCode';
-import type { ParseBBCodeInNodeOptions } from 'lib/client/parseBBCode/parseBBCodeInNode';
-import parseBBCodeInNode from 'lib/client/parseBBCode/parseBBCodeInNode';
+import type { ParseNodeOptions } from 'lib/client/parseBBCode/parseNode';
+import parseNode from 'lib/client/parseBBCode/parseNode';
 
 export type ParseBBCodeOptions<
 	KeepHTMLTags extends boolean | undefined = boolean | undefined,
 	RemoveBBTags extends boolean | undefined = boolean | undefined
-> = SanitizeBBCodeOptions<KeepHTMLTags> & ParseBBCodeInNodeOptions<RemoveBBTags>;
+> = SanitizeBBCodeOptions<KeepHTMLTags> & ParseNodeOptions<RemoveBBTags>;
 
 /** Sanitizes and parses a string containing HTML and BBCode. Returns a `ReactNode` of the parsed BBCode. */
 const parseBBCode = <
@@ -22,7 +22,7 @@ const parseBBCode = <
 		return '';
 	}
 
-	return parseBBCodeInNode<KeepHTMLTags, RemoveBBTags>(
+	return parseNode<KeepHTMLTags, RemoveBBTags>(
 		sanitizeBBCode(
 			// `noparse` tags must be processed before sanitization occurs to avoid the sanitizer transforming HTML that should be escaped in `noparse` tags.
 			processNoparseTags(bbString),

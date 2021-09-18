@@ -1,7 +1,7 @@
-import BBTags from 'components/BBCode/BBTags';
 import type { integer } from 'lib/types';
 import type { Key, ReactNode, ReactNodeArray } from 'react';
 import attributesToProps from 'lib/client/parseBBCode/attributesToProps';
+import BBTags from 'components/BBCode/BBTags';
 
 /** Returns whether `node instanceof Element`. */
 const isElementNode = (node: Node): node is Element => (
@@ -33,9 +33,9 @@ const isDocumentFragmentNode = (node: Node): node is DocumentFragment => (
 	node.nodeType === 11
 );
 
-/** Returns whether `element instanceof HTMLTextAreaElement`. */
-const isHTMLTextAreaElement = (element: Element): element is HTMLTextAreaElement => (
-	element.nodeName === 'TEXTAREA'
+/** Returns whether `node instanceof HTMLTextAreaElement`. */
+const isHTMLTextAreaElement = (node: Node): node is HTMLTextAreaElement => (
+	node.nodeName === 'TEXTAREA'
 );
 
 /** A key of an opening tag match array that maps to the index of the opening tag in the output `htmlString`. */
@@ -45,22 +45,22 @@ type BBTagMatch = RegExpExecArray & {
 	[_htmlIndex]: integer
 };
 
-export type ParseBBCodeInNodeOptions<RemoveBBTags extends boolean | undefined = boolean | undefined> = {
+export type ParseNodeOptions<RemoveBBTags extends boolean | undefined = boolean | undefined> = {
 	/** Whether to strip all BB tags from the input and keep only their children. */
 	removeBBTags?: RemoveBBTags
 };
 
 /**
- * Parses BBCode in the inputted string or child text nodes.
+ * Returns a `ReactNode` representation of the input, with the inputted string or child nodes parsed as BBCode recursively.
  *
  * ⚠️ Assumes the input is already sanitized.
  */
-const parseBBCodeInNode = <
+const parseNode = <
 	KeepHTMLTags extends boolean | undefined = undefined,
 	RemoveBBTags extends boolean | undefined = undefined
 >(
 	node: string | DocumentFragment | Element | Text,
-	options: ParseBBCodeInNodeOptions<RemoveBBTags>,
+	options: ParseNodeOptions<RemoveBBTags>,
 	key: Key = 0
 ): (
 	KeepHTMLTags extends true
@@ -77,43 +77,46 @@ const parseBBCodeInNode = <
 		return node.nodeValue!;
 	}
 
-	const childrenArray: ReactNodeArray = [];
+	/** Returns a `Node`'s children as a `ReactNode` with parsed BBCode. */
+	const parseNodeChildren = () => {
+		const childrenArray: ReactNodeArray = [];
 
-	for (let i = 0; i < node.childNodes.length; i++) {
-		// We can assert this because any `ChildNode` is necessarily an `Element | Text | Comment`, and `Comment`s are sanitized out.
-		const childNode = node.childNodes[i] as Element | Text;
+		for (let i = 0; i < node.childNodes.length; i++) {
+			// We can assert this because any `ChildNode` is necessarily an `Element | Text | Comment`, and `Comment`s are sanitized out.
+			const childNode = node.childNodes[i] as Element | Text;
 
-		if (isTextNode(childNode)) {
-			if (
-				// Check if there is a previously pushed node.
-				i > 0
-				// Check if the previously pushed node is a string.
-				&& typeof childrenArray[childrenArray.length - 1] === 'string'
-			) {
-				// If the previously pushed node is also a string, merge this one into it.
-				childrenArray[childrenArray.length - 1] += childNode.nodeValue!;
+			if (isTextNode(childNode)) {
+				if (
+					// Check if there is a previously pushed node.
+					i > 0
+					// Check if the previously pushed node is a string.
+					&& typeof childrenArray[childrenArray.length - 1] === 'string'
+				) {
+					// If the previously pushed node is also a string, merge this one into it.
+					childrenArray[childrenArray.length - 1] += childNode.nodeValue!;
+				} else {
+					// We're able to push the string without wrapping it in a fragment with a `key` because strings don't need React keys.
+					childrenArray.push(childNode.nodeValue);
+				}
 			} else {
-				// We're able to push the string without wrapping it in a fragment with a `key` because strings don't need React keys.
-				childrenArray.push(childNode.nodeValue);
+				// If this point is reached, `childNode instanceof Element`.
+				childrenArray.push(
+					parseNode(childNode, options, i)
+				);
 			}
-		} else {
-			// If this point is reached, `childNode instanceof Element`.
-			childrenArray.push(
-				parseBBCodeInNode(childNode, options, i)
-			);
 		}
-	}
 
-	let children = (
-		childrenArray.length === 0
-			? undefined
-			: childrenArray.length === 1
-				? childrenArray[0]
-				: childrenArray
-	);
+		return (
+			childrenArray.length === 0
+				? undefined
+				: childrenArray.length === 1
+					? childrenArray[0]
+					: childrenArray
+		);
+	};
 
 	if (isDocumentFragmentNode(node)) {
-		return children as any;
+		return parseNodeChildren() as any;
 	}
 
 	const TagName: any = (
@@ -124,23 +127,24 @@ const parseBBCodeInNode = <
 			: node.nodeName
 	);
 
-	const props = attributesToProps(node);
+	const props: ReturnType<typeof attributesToProps> & {
+		children?: ReactNode
+	} = attributesToProps(node);
 
-	// If this is a `textarea`, set its `defaultValue` and not its `children`.
-	// TODO: Don't parse its `children` in the first place.
 	if (isHTMLTextAreaElement(node)) {
+		// If this is a `textarea`, set its `defaultValue` instead of parsing its `children`.
 		props.defaultValue = node.value;
-		children = undefined;
+	} else {
+		// Otherwise, set its `children`.
+		props.children = parseNodeChildren();
 	}
 
 	return (
 		<TagName
 			key={key}
 			{...props}
-		>
-			{children}
-		</TagName>
+		/>
 	) as any;
 };
 
-export default parseBBCodeInNode;
+export default parseNode;
