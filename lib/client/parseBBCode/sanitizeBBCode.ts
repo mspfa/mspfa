@@ -7,7 +7,7 @@ import escapeHTMLTags from 'lib/client/escapeHTMLTags';
 // `allow-modals` is here because they are convenient to code and are mostly harmless.
 // `allow-pointer-lock` is here because it is mostly harmless and allows for games that require cursor restriction (such as first-person games).
 // `allow-popups` is here so links can open in a new tab, for example to open an animation's credits or a social media link.
-// `allow-popups-to-escape-sandbox` is here because some embeds (e.g. a Discord embed) link to external pages that needs to not be sandboxed.
+// `allow-popups-to-escape-sandbox` is here because some embeds (e.g. a Discord embed) link to external pages that need to not be sandboxed.
 // `allow-same-origin` is here because many embeds require the ability to send HTTP requests in order to work.
 // `allow-scripts` is here to allow HTML5 animations and games to run.
 // `allow-top-navigation` is NOT here in order to prevent phishing pages from being opened without the user's knowledge/interaction.
@@ -65,13 +65,18 @@ const sanitizeBBCode = <KeepHTMLTags extends boolean | undefined = undefined>(
 		SANITIZE_DOM: false,
 		...keepHTMLTags ? {
 			ADD_TAGS: [
-				// Allow `iframe`s (as opposed to requiring use of the `iframe` BB tag) because many external embed codes use them.
+				// `iframe`s are disallowed by default for a number of reasons, but they are necessary for us to whitelist because of the necessity of using external embed codes and embedding games and animations.
+				// Source: https://stackoverflow.com/a/9428051/5657274
 				'iframe'
-				// `'#comment'` is not whitelisted since React currently does not have the ability to directly render comment nodes. Additionally, there are some mXSS attacks associated with them which I cannot be confident SSR avoids. See https://github.com/cure53/DOMPurify/issues/565.
+				// `'#comment'` is not whitelisted since React currently does not have the ability to directly render comment nodes. Additionally, there are some mXSS attacks associated with them which I cannot be confident SSR avoids.
+				// Source: https://github.com/cure53/DOMPurify/issues/565#issuecomment-917585708
 			],
 			ADD_ATTR: [
-				// Allow some `iframe` attributes.
-				// `referrerpolicy` is not here because that would allow `referrerpolicy="unsafe-url"`.
+				// `autofocus` is not whitelisted by default because it can be used for attacks that steal focus without the user's knowledge. As far as I'm aware, this is not a significant issue for us, and `autofocus` is useful enough to be worth whitelisting.
+				// Source: https://github.com/cure53/DOMPurify/issues/570#issuecomment-920642910
+				'autofocus',
+				// Since we whitelist `iframe`s, also whitelist some of their attributes.
+				// `referrerpolicy` is not here because that would allow for things like `referrerpolicy="unsafe-url"`.
 				// `sandbox` is not here because we enforce our own `sandbox` attribute on `iframe`s.
 				'allow', 'allowfullscreen', 'csp', 'srcdoc', 'frameborder', 'marginheight', 'marginwidth', 'scrolling'
 			]
