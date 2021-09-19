@@ -1,12 +1,16 @@
 import type { integer } from 'lib/types';
 import type { Key, ReactNode, ReactNodeArray } from 'react';
 import attributesToProps from 'lib/client/parseBBCode/attributesToProps';
+import type { BBTagProps } from 'components/BBCode/BBTags';
 import BBTags from 'components/BBCode/BBTags';
 
-/** Returns whether `node instanceof Element`. */
-const isElementNode = (node: Node): node is Element => (
-	node.nodeType === 1
-);
+// We use char codes instead of 1-character strings in many cases because it's generally faster in the V8 engine (which is what the server runs on).
+const SPACE_CHAR_CODE = 32;
+const FORWARD_SLASH_CHAR_CODE = 47;
+const EQUAL_SIGN_CHAR_CODE = 61;
+const LEFT_SQUARE_BRACKET_CHAR_CODE = 93;
+const LOWERCASE_A_CHAR_CODE = 97;
+const LOWERCASE_Z_CHAR_CODE = 122;
 
 /** Returns whether `element instanceof HTMLElement`. */
 const isHTMLElement = (element: Element): element is HTMLElement => {
@@ -38,13 +42,6 @@ const isHTMLTextAreaElement = (node: Node): node is HTMLTextAreaElement => (
 	node.nodeName === 'TEXTAREA'
 );
 
-/** A key of an opening tag match array that maps to the index of the opening tag in the output `htmlString`. */
-const _htmlIndex = Symbol('htmlIndex');
-
-type BBTagMatch = RegExpExecArray & {
-	[_htmlIndex]: integer
-};
-
 export type ParseNodeOptions<RemoveBBTags extends boolean | undefined = boolean | undefined> = {
 	/** Whether to strip all BB tags from the input and keep only their children. */
 	removeBBTags?: RemoveBBTags
@@ -59,7 +56,7 @@ const parseNode = <
 	KeepHTMLTags extends boolean | undefined = undefined,
 	RemoveBBTags extends boolean | undefined = undefined
 >(
-	node: string | DocumentFragment | Element | Text,
+	node: string | DocumentFragment | Element,
 	options: ParseNodeOptions<RemoveBBTags>,
 	key: Key = 0
 ): (
@@ -69,12 +66,151 @@ const parseNode = <
 			? string
 			: ReactNode
 ) => {
-	if (typeof node === 'string') {
-		return node;
-	}
+	/** Parses a string as partial BBCode. (It's partial if this string is from only one of the `node`'s child text nodes, and other child text nodes contain the rest of the BBCode.) */
+	const parseString = (
+		/** The string to parse BBCode within. */
+		string: string,
+		/** The index of this child in its parent's children, or 0 if this string is not a child. Defaults to 0. */
+		index: integer = 0
+	) => {
+		let openBracketIndex;
+		/** The index at the end of the previous match, or of the start of the string if there is no previous match. */
+		let matchEndIndex = 0;
 
-	if (isTextNode(node)) {
-		return node.nodeValue!;
+		while ((
+			openBracketIndex = string.indexOf('[', matchEndIndex)
+		) !== -1) {
+			matchEndIndex = openBracketIndex + 1;
+
+			/** The index of the next closing bracket. Does not necessarily correspond to this tag's opening bracket, for example if it's escaped or inside a quoted attribute. */
+			let closeBracketIndex = string.indexOf(']', matchEndIndex);
+
+			if (closeBracketIndex === -1) {
+				// If there are no more closing brackets after this opening bracket, then there are no more valid BB tags, so stop searching for them.
+				break;
+			}
+
+			/** Whether this tag is a closing tag (e.g. `[/tag]`) rather than an opening tag (e.g. `[tag]`). */
+			let isClosingTag = false;
+
+			/** The lowercase name of this tag (e.g. `'tag'` if the tag is `[Tag example=1]`.) */
+			let tagName = '';
+
+			/** Equal to `string.charCodeAt(matchEndIndex)`. */
+			let charCodeAtMatchEndIndex = string.charCodeAt(matchEndIndex);
+
+			if (charCodeAtMatchEndIndex === FORWARD_SLASH_CHAR_CODE) {
+				isClosingTag = true;
+
+				// Move past the forward slash.
+				matchEndIndex++;
+
+				charCodeAtMatchEndIndex = string.charCodeAt(matchEndIndex);
+			}
+
+			// There is no need to be concerned about this loop reaching the end of the string before it `break`s, because we've already verified above that there is another `]` character which it can break on before it reaches the end of the string.
+			while (true) {
+				// Turn on the bit in the char code that converts letters to lowercase.
+				const lowerCaseCharCode = charCodeAtMatchEndIndex | 0b100000;
+
+				if (
+					lowerCaseCharCode < LOWERCASE_A_CHAR_CODE
+					|| lowerCaseCharCode > LOWERCASE_Z_CHAR_CODE
+				) {
+					// This isn't a letter, so end the tag name.
+					break;
+				}
+
+				// This is a letter, so add it to the tag name.
+				tagName += String.fromCharCode(lowerCaseCharCode);
+
+				// Prepare to check the next character.
+				matchEndIndex++;
+				charCodeAtMatchEndIndex = string.charCodeAt(matchEndIndex);
+			}
+
+			// TODO: Handle `noparse` tags.
+
+			if (!(tagName && BBTags.hasOwnProperty(tagName))) {
+				// This tag name does not represent a real BB tag.
+				continue;
+			}
+
+			if (isClosingTag) {
+				// Check if the closing bracket isn't immediately after the tag name.
+				if (matchEndIndex !== closeBracketIndex) {
+					// This closing tag is invalid as it does not end in a closing bracket.
+					continue;
+				}
+
+				// Move past the closing bracket.
+				matchEndIndex++;
+
+				// TODO: Handle this valid closing tag.
+			} else {
+				// This is an opening tag.
+
+				let attributes: BBTagProps['attributes'];
+
+				// Check the character immediately after the tag name.
+				if (matchEndIndex === closeBracketIndex) {
+					// This tag closes immediately after the tag name. Move past the closing bracket.
+					matchEndIndex++;
+				} else if (charCodeAtMatchEndIndex === EQUAL_SIGN_CHAR_CODE) {
+					// Parse this tag's attribute.
+
+					// Move past the equal sign.
+					matchEndIndex++;
+
+					const charAfterEqualSign = string[matchEndIndex];
+
+					if (charAfterEqualSign === '"' || charAfterEqualSign === '\'') {
+						// Move past the quotation mark or apostrophe.
+						matchEndIndex++;
+
+						const attributeValueEndIndex = string.indexOf(charAfterEqualSign, matchEndIndex);
+
+						// Expect there to be a closing bracket immediately after the attribute ends.
+						closeBracketIndex = attributeValueEndIndex + 1;
+
+						if (
+							// Check if this tag's attribute has an opening delimiter but no closing delimiter.
+							attributeValueEndIndex === -1
+							// Check if this tag doesn't close immediately after its attribute ends.
+							|| string.charCodeAt(closeBracketIndex) !== LEFT_SQUARE_BRACKET_CHAR_CODE
+						) {
+							// This tag's attribute is invalid.
+							continue;
+						}
+
+						attributes = string.slice(matchEndIndex, attributeValueEndIndex);
+					} else {
+						attributes = string.slice(matchEndIndex, closeBracketIndex);
+					}
+
+					// Move past the attribute and the closing bracket immediately following it.
+					matchEndIndex = closeBracketIndex + 1;
+				} else if (charCodeAtMatchEndIndex === SPACE_CHAR_CODE) {
+					// Parse this tag's attributes.
+
+					attributes = {};
+
+					// TODO
+				} else {
+					// The character immediately following the tag name is invalid.
+					continue;
+				}
+
+				console.log(tagName, attributes);
+
+				// TODO: Handle this valid opening tag.
+			}
+		}
+	};
+
+	if (typeof node === 'string') {
+		parseString(node);
+		return node;
 	}
 
 	/** Returns a `Node`'s children as a `ReactNode` with parsed BBCode. */
