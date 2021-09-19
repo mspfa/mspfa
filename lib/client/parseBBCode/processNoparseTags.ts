@@ -78,7 +78,7 @@ const processNoparseTags = (initialBBString: string) => {
 			noparseChildren = escapeHTMLTags(noparseChildren);
 			// Escape HTML attributes in case this `noparse` tag is inside an HTML or BBCode attribute.
 			noparseChildren = replaceAll(noparseChildren, '"', '&quot;');
-			noparseChildren = replaceAll(noparseChildren, '\'', '&apos;');
+			noparseChildren = replaceAll(noparseChildren, '\'', '&#39;');
 			// Escape BBCode tags.
 			noparseChildren = replaceAll(noparseChildren, '[', '&lsqb;');
 			noparseChildren = replaceAll(noparseChildren, ']', '&rsqb;');
