@@ -1,5 +1,6 @@
 import { reactPropNames, booleanProps } from 'lib/client/parseBBCode/reactPropInfo';
 
+/** Takes an `Element` and returns an object of the React props determined from its attributes. */
 const attributesToProps = (element: Element) => {
 	const props: Record<string, string | boolean | Record<string, string>> = {};
 
