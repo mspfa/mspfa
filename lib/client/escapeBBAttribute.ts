@@ -13,7 +13,7 @@ const escapeBBAttribute = (
 
 	if (
 		value.includes(']')
-		|| (possiblyMultipleAttributes && value.includes('='))
+		|| (possiblyMultipleAttributes && value.includes(' '))
 	) {
 		if (value.includes('"') && !value.includes('\'')) {
 			return `'${value}'`;
