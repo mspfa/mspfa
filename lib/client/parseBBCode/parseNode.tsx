@@ -146,7 +146,9 @@ const parseNode = <
 				// Move past the closing bracket.
 				matchEndIndex++;
 
-				// TODO: Handle this valid closing tag.
+				// This closing tag is valid.
+
+				// TODO: Handle it.
 			} else {
 				// This is an opening tag.
 
@@ -201,9 +203,9 @@ const parseNode = <
 					continue;
 				}
 
-				console.log(tagName, attributes);
+				// This opening tag is valid.
 
-				// TODO: Handle this valid opening tag.
+				// TODO: Handle it.
 			}
 		}
 	};
