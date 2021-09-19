@@ -522,7 +522,7 @@ for (let i = 0; i < tagNames.length; i++) {
 }
 
 /** Escapes a user-inputted attribute value for use in BBCode. */
-const escapeAttribute = (
+const escapeBBAttribute = (
 	/** The value of the attribute. */
 	value: string,
 	/** Whether it's possible that the tag could be interpreted as having multiple attributes, and thus equal signs and extra quotation marks and apostrophes need to be escaped. */
@@ -673,11 +673,11 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 							for (const key of Object.keys(tagData.attributes)) {
 								const value = tagData.attributes[key];
 								if (value !== undefined) {
-									openTag += ` ${key}=${escapeAttribute(value.toString(), true)}`;
+									openTag += ` ${key}=${escapeBBAttribute(value.toString(), true)}`;
 								}
 							}
 						} else {
-							openTag += `=${escapeAttribute(tagData.attributes.toString())}`;
+							openTag += `=${escapeBBAttribute(tagData.attributes.toString())}`;
 						}
 					}
 					openTag += ']';
