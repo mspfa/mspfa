@@ -66,7 +66,7 @@ export type BBTag = (
 	}
 );
 
-/** A mapping from lowercase BB tag names to their respective React components. */
+/** A mapping from lowercase BB tag names to their corresponding React components. */
 const BBTags: Partial<Record<string, BBTag>> = {
 	b: ({ children }) => <b>{children}</b>,
 	i: ({ children }) => <i>{children}</i>,

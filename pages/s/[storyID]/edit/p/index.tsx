@@ -46,7 +46,7 @@ type StoryMovePagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/mo
 const getScrollPaddingTop = () => +document.documentElement.style.scrollPaddingTop.slice(0, -2);
 
 export type Values = {
-	/** An object mapping page IDs to their respective pages. Since this object has numeric keys, standard JavaScript automatically sorts its properties by lowest first. */
+	/** An object mapping page IDs to their corresponding pages. Since this object has numeric keys, standard JavaScript automatically sorts its properties by lowest first. */
 	pages: ClientStoryPageRecord
 };
 
