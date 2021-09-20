@@ -6,9 +6,13 @@ import BBTags from 'components/BBCode/BBTags';
 
 // We use char codes instead of 1-character strings in many cases because it's generally faster in the V8 engine (which is what the server runs on).
 const SPACE_CHAR_CODE = 32;
+const HYPHEN_CHAR_CODE = 45;
 const FORWARD_SLASH_CHAR_CODE = 47;
+const ZERO_CHAR_CODE = 48;
+const NINE_CHAR_CODE = 57;
 const EQUAL_SIGN_CHAR_CODE = 61;
-const LEFT_SQUARE_BRACKET_CHAR_CODE = 93;
+const RIGHT_SQUARE_BRACKET_CHAR_CODE = 93;
+const UNDERSCORE_CHAR_CODE = 95;
 const LOWERCASE_A_CHAR_CODE = 97;
 const LOWERCASE_Z_CHAR_CODE = 122;
 
@@ -71,12 +75,13 @@ const parseNode = <
 		/** The string to parse BBCode within. */
 		string: string,
 		/** The index of this child in its parent's children, or 0 if this string is not a child. Defaults to 0. */
-		index: integer = 0
+		childIndex: integer = 0
 	) => {
 		let openBracketIndex;
 		/** The index at the end of the previous match, or of the start of the string if there is no previous match. */
 		let matchEndIndex = 0;
 
+		findingTags:
 		while ((
 			openBracketIndex = string.indexOf('[', matchEndIndex)
 		) !== -1) {
@@ -111,18 +116,18 @@ const parseNode = <
 			// There is no need to be concerned about this loop reaching the end of the string before it `break`s, because we've already verified above that there is another `]` character which it can break on before it reaches the end of the string.
 			while (true) {
 				// Turn on the bit in the char code that converts letters to lowercase.
-				const lowerCaseCharCode = charCodeAtMatchEndIndex | 0b100000;
+				const lowercaseCharCode = charCodeAtMatchEndIndex | 0b100000;
 
 				if (
-					lowerCaseCharCode < LOWERCASE_A_CHAR_CODE
-					|| lowerCaseCharCode > LOWERCASE_Z_CHAR_CODE
+					lowercaseCharCode < LOWERCASE_A_CHAR_CODE
+					|| lowercaseCharCode > LOWERCASE_Z_CHAR_CODE
 				) {
 					// This isn't a letter, so end the tag name.
 					break;
 				}
 
-				// This is a letter, so add it to the tag name.
-				tagName += String.fromCharCode(lowerCaseCharCode);
+				// Add this letter (converted to lowercase) to the tag name.
+				tagName += String.fromCharCode(lowercaseCharCode);
 
 				// Prepare to check the next character.
 				matchEndIndex++;
@@ -179,7 +184,7 @@ const parseNode = <
 							// Check if this tag's attribute has an opening delimiter but no closing delimiter.
 							attributeValueEndIndex === -1
 							// Check if this tag doesn't close immediately after its attribute ends.
-							|| string.charCodeAt(closeBracketIndex) !== LEFT_SQUARE_BRACKET_CHAR_CODE
+							|| string.charCodeAt(closeBracketIndex) !== RIGHT_SQUARE_BRACKET_CHAR_CODE
 						) {
 							// This tag's attribute is invalid.
 							continue;
@@ -197,7 +202,131 @@ const parseNode = <
 
 					attributes = {};
 
-					// TODO
+					while (true) {
+						// Move past the space before the attribute.
+						matchEndIndex++;
+
+						let attributeName = '';
+
+						// Parse the attribute's name.
+						while (true) {
+							charCodeAtMatchEndIndex = string.charCodeAt(matchEndIndex);
+
+							if (
+								charCodeAtMatchEndIndex === HYPHEN_CHAR_CODE
+								|| charCodeAtMatchEndIndex === UNDERSCORE_CHAR_CODE
+								|| (charCodeAtMatchEndIndex >= ZERO_CHAR_CODE && charCodeAtMatchEndIndex <= NINE_CHAR_CODE)
+							) {
+								// Add this hyphen, underscore, or digit to the attribute name.
+								attributeName += String.fromCharCode(charCodeAtMatchEndIndex);
+							} else {
+								// Turn on the bit in the char code that converts letters to lowercase.
+								const lowercaseCharCode = charCodeAtMatchEndIndex | 0b100000;
+
+								if (
+									lowercaseCharCode < LOWERCASE_A_CHAR_CODE
+									|| lowercaseCharCode > LOWERCASE_Z_CHAR_CODE
+								) {
+									// This isn't a hyphen, underscore, digit, or letter, so end the attribute name.
+									break;
+								}
+
+								// Add this letter (converted to lowercase) to the attribute name.
+								attributeName += String.fromCharCode(lowercaseCharCode);
+							}
+
+							// Prepare to check the next character.
+							matchEndIndex++;
+						}
+
+						if (charCodeAtMatchEndIndex !== EQUAL_SIGN_CHAR_CODE) {
+							// If any attribute is missing an equal sign immediately after its name, this tag is invalid.
+							continue findingTags;
+						}
+
+						// Move past the equal sign.
+						matchEndIndex++;
+
+						if (attributeName.length === 0) {
+							// If any attribute is missing a name before the equal sign, this tag is invalid.
+							continue findingTags;
+						}
+
+						// Parse the attribute's value.
+
+						const charAfterEqualSign = string[matchEndIndex];
+
+						if (charAfterEqualSign === '"' || charAfterEqualSign === '\'') {
+							// Move past the quotation mark or apostrophe.
+							matchEndIndex++;
+
+							const attributeValueEndIndex = string.indexOf(charAfterEqualSign, matchEndIndex);
+
+							if (attributeValueEndIndex === -1) {
+								// If any attribute has an opening delimiter but no closing delimiter, this tag is invalid.
+								continue findingTags;
+							}
+
+							attributes[attributeName] = string.slice(matchEndIndex, attributeValueEndIndex);
+
+							// Move past the attribute value and the quotation mark or apostrophe immediately following it.
+							matchEndIndex = attributeValueEndIndex + 1;
+
+							charCodeAtMatchEndIndex = string.charCodeAt(matchEndIndex);
+
+							if (!(
+								charCodeAtMatchEndIndex === SPACE_CHAR_CODE
+								|| charCodeAtMatchEndIndex === RIGHT_SQUARE_BRACKET_CHAR_CODE
+							)) {
+								// If the character immediately after this attribute is not a space or a closing bracket, this tag is invalid.
+								continue findingTags;
+							}
+						} else {
+							// This attribute is unquoted, so try to end its value at the next nearest space or closing bracket.
+
+							// Look for a closing bracket before looking for space, since we can stop parsing immediately if we don't find one.
+							closeBracketIndex = string.indexOf(']', matchEndIndex);
+
+							if (closeBracketIndex === -1) {
+								// If there is no closing bracket anywhere after this attribute, this tag is invalid.
+								continue findingTags;
+							}
+
+							const spaceIndex = string.indexOf(' ', matchEndIndex);
+
+							let attributeValueEndIndex;
+
+							[
+								attributeValueEndIndex,
+								// This is set for after the `matchEndIndex` will be moved past the attribute value.
+								charCodeAtMatchEndIndex
+							] = (
+								spaceIndex === -1
+								|| closeBracketIndex < spaceIndex
+									// If there is no space or the closing bracket is earlier than the space, end the attribute value at the closing bracket.
+									? [closeBracketIndex, RIGHT_SQUARE_BRACKET_CHAR_CODE]
+									// Otherwise, end the attribute value at the space.
+									: [spaceIndex, SPACE_CHAR_CODE]
+							);
+
+							attributes[attributeName] = string.slice(matchEndIndex, attributeValueEndIndex);
+
+							// Move past the attribute value.
+							matchEndIndex = attributeValueEndIndex;
+						}
+
+						// If this point is reached, `charCodeAtMatchEndIndex` (the character immediately after the attribute) must equal either `SPACE_CHAR_CODE` or `RIGHT_SQUARE_BRACKET_CHAR_CODE`.
+
+						if (charCodeAtMatchEndIndex === RIGHT_SQUARE_BRACKET_CHAR_CODE) {
+							// Move past the closing bracket.
+							matchEndIndex++;
+
+							// Finish parsing attributes.
+							break;
+						}
+
+						// `charCodeAtMatchEndIndex === SPACE_CHAR_CODE`, so keep parsing attributes.
+					}
 				} else {
 					// The character immediately following the tag name is invalid.
 					continue;
