@@ -69,7 +69,7 @@ const Timestamp = ({ short, relative, withTime, edited, className, children, ...
 						className="timestamp-edited"
 						dateTime={dateEdited.toISOString()}
 						title={
-							`Edited ${relative
+							`Edited: ${relative
 								? getRelativeTimestamp(dateEdited)
 								: getAbsoluteTimestamp(dateEdited, withTime)
 							} (${relative
