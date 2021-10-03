@@ -46,6 +46,11 @@ const isHTMLTextAreaElement = (node: Node): node is HTMLTextAreaElement => (
 	node.nodeName === 'TEXTAREA'
 );
 
+/** Returns whether `node instanceof HTMLStyleElement`. */
+const isHTMLStyleElement = (node: Node): node is HTMLStyleElement => (
+	node.nodeName === 'STYLE'
+);
+
 export type ParseNodeOptions<RemoveBBTags extends boolean | undefined = boolean | undefined> = {
 	/** Whether to strip all BB tags from the input and keep only their children. */
 	removeBBTags?: RemoveBBTags
@@ -367,6 +372,7 @@ const parseNode = <
 				}
 			} else {
 				// If this point is reached, `childNode instanceof Element`.
+
 				childrenArray.push(
 					parseNode(childNode, options, i)
 				);
@@ -386,7 +392,7 @@ const parseNode = <
 		return parseNodeChildren() as any;
 	}
 
-	const TagName: any = (
+	const TagName = (
 		isHTMLElement(node)
 			// `HTMLElement`s have uppercase tag names, and React requires them to be lowercase.
 			? node.nodeName.toLowerCase()
@@ -398,7 +404,10 @@ const parseNode = <
 		children?: ReactNode
 	} = attributesToProps(node);
 
-	if (isHTMLTextAreaElement(node)) {
+	if (isHTMLStyleElement(node)) {
+		// If this is a `style` element, set its `children` to the plain string of its contents instead of parsing it.
+		props.children = node.innerHTML;
+	} else if (isHTMLTextAreaElement(node)) {
 		// If this is a `textarea`, set its `defaultValue` instead of parsing its `children`.
 		props.defaultValue = node.value;
 	} else {
