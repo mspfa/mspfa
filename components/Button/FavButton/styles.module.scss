@@ -1,9 +1,9 @@
 .fav-button {
 	&.active .icon {
-		background-image: url(/images/icons/heart.png);
+		background-image: url(/images/icons/heart.png); // Image credit: seymour schlong
 	}
 
 	&:not(.active) .icon {
-		background-image: url(/images/icons/heart-gray.png);
+		background-image: url(/images/icons/heart-gray.png); // Image credit: seymour schlong
 	}
 }
