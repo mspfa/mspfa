@@ -21,7 +21,7 @@ export type BBTagProps = {
 	 * * The BBCode `[xyz=123]` would cause this to equal `"123"`.
 	 * * The BBCode `[xyz a=1 b="2"]` would cause this to equal `{ a: "1", b: "2" }`.
 	 */
-	attributes: undefined | string | Partial<Record<string, string>>,
+	attributes: undefined | string | Record<string, string>,
 	children?: ReactNode
 };
 
@@ -208,9 +208,7 @@ const BBTags: Partial<Record<string, BBTag>> = {
 					`https://www.youtube.com/embed/${youtubeVideoID}?${new URLSearchParams({
 						// By default, disable showing related videos from channels other than the owner of the embedded video.
 						rel: '0',
-						...attributes instanceof Object && (
-							attributes as Record<string, string>
-						)
+						...attributes instanceof Object && attributes
 					})}`
 				}
 				// YouTube requires embedded players to have a viewport that is at least 200x200 pixels.
@@ -238,7 +236,7 @@ const BBTags: Partial<Record<string, BBTag>> = {
 				height={height}
 				autoPlay={
 					attributes instanceof Object && !(
-						attributes.autoplay === undefined
+						'autoplay' in attributes
 						|| attributes.autoplay === '0'
 					)
 				}
@@ -254,7 +252,7 @@ const BBTags: Partial<Record<string, BBTag>> = {
 				}
 				loop={
 					attributes instanceof Object && !(
-						attributes.loop === undefined
+						'loop' in attributes
 						|| attributes.loop === '0'
 					)
 				}
