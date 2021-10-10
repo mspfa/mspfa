@@ -829,7 +829,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							...newInitialPages
 						});
 
-						setSelectedPages(selectedPages.map(pageID => changedPageIDs[pageID]));
+						setSelectedPages(selectedPages.map(pageID => changedPageIDs[pageID] || pageID));
 
 						formikPropsRef.current.setSubmitting(false);
 					});
