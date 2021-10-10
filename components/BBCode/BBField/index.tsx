@@ -23,7 +23,7 @@ export type BBFieldProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'ch
 } & ParseBBCodeOptions;
 
 /** A text area field that accepts BBCode. */
-const BBField = ({ name, keepHTMLTags, removeBBTags, ...props }: BBFieldProps) => {
+const BBField = ({ name, keepHTMLTags, escapeHTML, removeBBTags, ...props }: BBFieldProps) => {
 	const [, { value }, { setValue }] = useField<string>(name);
 
 	const textAreaRef = useRef<HTMLTextAreaElement>(null!);
@@ -88,6 +88,7 @@ const BBField = ({ name, keepHTMLTags, removeBBTags, ...props }: BBFieldProps) =
 					// This key is here to force the preview to fully reset when the value changes.
 					key={value}
 					keepHTMLTags={keepHTMLTags}
+					escapeHTML={escapeHTML}
 					removeBBTags={removeBBTags}
 				>
 					{value}

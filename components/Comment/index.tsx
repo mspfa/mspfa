@@ -211,6 +211,7 @@ const Comment = React.memo(({
 													required
 													maxLength={20000}
 													rows={6}
+													escapeHTML
 												/>
 											</IDPrefix.Provider>
 										),
