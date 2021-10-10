@@ -95,9 +95,12 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 				if (parsedItem.closed) {
 					// This is a valid opening BB tag.
 
-					openingBBTagData = parsedItem;
+					// Only process this opening tag if the `removeBBTags` option is disabled.
+					if (!this.options.removeBBTags) {
+						openingBBTagData = parsedItem;
 
-					childrenStack.push([]);
+						childrenStack.push([]);
+					}
 				} else {
 					// This opening BB tag is invalid, so just treat it as plain text.
 					mergeStringToEndOfArray(childrenStack[childrenStack.length - 1], parsedItem.string);
@@ -225,12 +228,14 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 
 				tagEndIndex = matchEndIndex;
 
-				const closingBBTagData: ClosingBBTagData = {
-					bbTagDataType: 'closing'
-				};
+				// Push this closing tag's data, but only if the `removeBBTags` option is disabled.
+				if (!this.options.removeBBTags) {
+					const closingBBTagData: ClosingBBTagData = {
+						bbTagDataType: 'closing'
+					};
 
-				// Push this closing tag's data.
-				this.parsedItems.push(closingBBTagData);
+					this.parsedItems.push(closingBBTagData);
+				}
 
 				// Set the respective opening tag as closed.
 				(this.parsedItems[openingBBTagDataIndex] as OpeningBBTagData).closed = true;
