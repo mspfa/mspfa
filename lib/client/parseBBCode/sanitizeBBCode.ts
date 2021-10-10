@@ -1,5 +1,4 @@
 import DOMPurify from 'isomorphic-dompurify';
-import escapeHTMLTags from 'lib/client/escapeHTMLTags';
 
 /** The enforced `sandbox` attribute of any BBCode/HTML `iframe`. */
 // `allow-downloads` is NOT here because the user may think the download comes from us and is trustworthy, and there is little reason for an embed to need to download anything. If necessary, download could occur from a separate window instead.
@@ -39,18 +38,17 @@ export type SanitizeBBCodeOptions = {
 	escapeHTML?: boolean
 };
 
-/** Sanitizes unsafe HTML in the input string. Returns a `Node` of the sanitized HTML. */
+/** Sanitizes unsafe HTML in the input string. Returns a `string | DocumentFragment` of the sanitized HTML. */
 const sanitizeBBCode = (
 	bbString = '',
 	{ keepHTMLTags, escapeHTML }: SanitizeBBCodeOptions = {}
 ) => {
-	// Optimize for the common case of the input not containing HTML.
-	if (!bbString.includes('<')) {
+	if (
+		escapeHTML
+		// Optimize for the common case of the input not containing HTML.
+		|| !bbString.includes('<')
+	) {
 		return bbString;
-	}
-
-	if (escapeHTML) {
-		return escapeHTMLTags(bbString);
 	}
 
 	return DOMPurify.sanitize(bbString, {
