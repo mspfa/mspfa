@@ -24,13 +24,13 @@ DOMPurify.addHook('afterSanitizeAttributes', element => {
 	}
 });
 
-export type SanitizeBBCodeOptions<KeepHTMLTags extends boolean | undefined = boolean | undefined> = {
+export type SanitizeBBCodeOptions = {
 	/**
 	 * Whether to keep sanitized HTML tags in the input rather than stripping all HTML tags and keeping only their children.
 	 *
 	 * Does nothing if the `escapeHTML` option is `true`.
 	 */
-	keepHTMLTags?: KeepHTMLTags,
+	keepHTMLTags?: boolean,
 	/**
 	 * Whether to escape HTML into plain text by replacing all inputted `&` with `&amp;`, `<` with `&lt;`, and `>` with `&gt;`.
 	 *
@@ -40,9 +40,9 @@ export type SanitizeBBCodeOptions<KeepHTMLTags extends boolean | undefined = boo
 };
 
 /** Sanitizes unsafe HTML in the input string. Returns a `Node` of the sanitized HTML. */
-const sanitizeBBCode = <KeepHTMLTags extends boolean | undefined = undefined>(
+const sanitizeBBCode = (
 	bbString = '',
-	{ keepHTMLTags, escapeHTML }: SanitizeBBCodeOptions<KeepHTMLTags> = {}
+	{ keepHTMLTags, escapeHTML }: SanitizeBBCodeOptions = {}
 ) => {
 	// Optimize for the common case of the input not containing HTML.
 	if (!bbString.includes('<')) {
