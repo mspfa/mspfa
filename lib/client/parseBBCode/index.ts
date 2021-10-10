@@ -22,7 +22,7 @@ const parseBBCode = <
 		return '';
 	}
 
-	return parseNode<KeepHTMLTags, RemoveBBTags>(
+	return parseNode<RemoveBBTags>(
 		sanitizeBBCode(
 			// `noparse` tags must be processed before sanitization occurs to avoid the sanitizer transforming HTML that should be escaped in `noparse` tags.
 			processNoparseTags(bbString),
