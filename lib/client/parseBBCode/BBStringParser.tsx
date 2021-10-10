@@ -4,21 +4,6 @@ import type { ReactNode } from 'react';
 import type { ParseNodeOptions } from 'lib/client/parseBBCode/parseNode';
 import BBTags from 'components/BBCode/BBTags';
 
-/** Pushes a string to the specified array, or concatenates it onto the array's last item if the last item is already a string. */
-const mergeStringToEndOfArray = (array: unknown[], string: string) => {
-	if (
-		// Check if there is a last item.
-		array.length
-		// Check if the last item is a string.
-		&& typeof array[array.length - 1] === 'string'
-	) {
-		// If the last item is also a string, merge this one into it.
-		array[array.length - 1] += string;
-	} else {
-		array.push(string);
-	}
-};
-
 // We use char codes instead of 1-character strings in many cases because it's generally faster in the V8 engine (which is what the server runs on).
 const LINE_BREAK_CHAR_CODE = 10;
 const SPACE_CHAR_CODE = 32;
@@ -64,7 +49,7 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 	/**
 	 * An array of parsed `ReactNode`s, `OpeningBBTagData`, and `ClosingBBTagData` in the same order that they appear in the input.
 	 *
-	 * The React `key` of any element in this array should be set to its index in this array.
+	 * The React `key` of any element parsed from this array should be set to its index in this array.
 	 */
 	parsedItems: Array<JSX.Element | string | OpeningBBTagData | ClosingBBTagData>;
 	/**
@@ -91,11 +76,28 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 		 */
 		const childrenStack: ReactNode[][] = [rootChildren];
 
+		/** Pushes the specified string to the array on the top of the `childrenStack`, or concatenates it onto the array's last item if the last item is already a string. */
+		const pushString = (string: string) => {
+			const children = childrenStack[childrenStack.length - 1];
+
+			if (
+				// Check if there is a last item.
+				children.length
+				// Check if the last item is a string.
+				&& typeof children[children.length - 1] === 'string'
+			) {
+				// If the last item is also a string, merge this one into it.
+				children[children.length - 1] += string;
+			} else {
+				children.push(string);
+			}
+		};
+
 		for (let i = 0; i < this.parsedItems.length; i++) {
 			const parsedItem = this.parsedItems[i];
 
 			if (typeof parsedItem === 'string') {
-				mergeStringToEndOfArray(childrenStack[childrenStack.length - 1], parsedItem);
+				pushString(parsedItem);
 			} else if (isOpeningBBTagData(parsedItem)) {
 				if (parsedItem.closed) {
 					// This is a valid opening BB tag.
@@ -106,7 +108,7 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 					}
 				} else {
 					// This opening BB tag is invalid, so just treat it as plain text.
-					mergeStringToEndOfArray(childrenStack[childrenStack.length - 1], parsedItem.string);
+					pushString(parsedItem.string);
 				}
 			} else if (isClosingBBTagData(parsedItem)) {
 				// This is a valid closing BB tag, and `this.options.removeBBTags` is necessarily disabled since `parsePartialBBString` doesn't push `ClosingBBTagData` when that option is enabled.
@@ -116,9 +118,7 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 				/** We can assert this as non-nullable because the only case in which it's nullable is if the tag name is invalid, which has already been verified not to be the case. */
 				const BBTag = BBTags[parsedItem.openingBBTagData.tagName]!;
 
-				const parentChildren = childrenStack[childrenStack.length - 1];
-
-				parentChildren.push(
+				childrenStack[childrenStack.length - 1].push(
 					<BBTag
 						key={i}
 						attributes={parsedItem.openingBBTagData.attributes}

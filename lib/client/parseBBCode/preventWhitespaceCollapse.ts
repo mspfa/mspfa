@@ -6,13 +6,17 @@ import replaceAll from 'lib/client/replaceAll';
  * This does not prevent collapsing whitespace at the end of a wrapped line. That should still be collapsed.
  */
 const preventWhitespaceCollapse = (string: string) => {
+	// `\u00a0` is the non-breaking space character.
+
 	if (string[0] === ' ') {
-		string = `&nbsp;${string.slice(1)}`;
+		string = `\u00a0${string.slice(1)}`;
 	}
+
 	if (string[string.length - 1] === ' ') {
-		string = `${string.slice(0, -1)}&nbsp;`;
+		string = `${string.slice(0, -1)}\u00a0`;
 	}
-	string = replaceAll(string, '  ', ' &nbsp;');
+
+	string = replaceAll(string, '  ', ' \u00a0');
 };
 
 export default preventWhitespaceCollapse;
