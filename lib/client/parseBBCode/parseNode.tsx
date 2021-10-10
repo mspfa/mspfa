@@ -83,7 +83,7 @@ const parseNode = <
 				// If this point is reached, `childNode instanceof Element`.
 
 				parser.parsedItems.push(
-					parseNode(childNode, options, i)
+					parseNode(childNode, options, parser.parsedItems.length)
 				);
 			}
 		}

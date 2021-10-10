@@ -60,7 +60,11 @@ const isClosingBBTagData = (object: {}): object is ClosingBBTagData => (
 
 export default class BBStringParser<RemoveBBTags extends boolean | undefined = undefined> {
 	options: ParseNodeOptions<RemoveBBTags>;
-	/** An array of parsed `ReactNode`s, `OpeningBBTagData`, and `ClosingBBTagData` in the same order that they appear in the input. */
+	/**
+	 * An array of parsed `ReactNode`s, `OpeningBBTagData`, and `ClosingBBTagData` in the same order that they appear in the input.
+	 *
+	 * The React `key` of any element in this array should be set to its index in this array.
+	 */
 	parsedItems: Array<JSX.Element | string | OpeningBBTagData | ClosingBBTagData>;
 	/**
 	 * A mapping from each parsed BB tag's name (lowercase) to an array of integers which index that BB tag's unclosed instances of `OpeningBBTagData` in `parsedItems`.
@@ -115,7 +119,7 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 
 				parentChildren.push(
 					<BBTag
-						key={parentChildren.length}
+						key={i}
 						attributes={parsedItem.openingBBTagData.attributes}
 					>
 						{children}
