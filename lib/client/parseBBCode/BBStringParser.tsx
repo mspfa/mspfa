@@ -245,6 +245,29 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 					this.parsedItems.push(closingBBTagData);
 				}
 
+				// When a tag is closed, discard all the unclosed opening tags inside it.
+				const unclosedBBTagNames = Object.keys(this.unclosedBBTagIndexes);
+				for (let i = 0; i < unclosedBBTagNames.length; i++) {
+					const unclosedBBTagName = unclosedBBTagNames[i];
+
+					if (unclosedBBTagName === tagName) {
+						// Don't check for unclosed tags with the same name as this closing tag inside it, since the opening tag to be closed by any closing tag is always the last one, so there can't be any more after it.
+						continue;
+					}
+
+					const unclosedBBTagIndexes = this.unclosedBBTagIndexes[unclosedBBTagName]!;
+
+					while (
+						// Check if this tag name has a last unclosed opening tag.
+						unclosedBBTagIndexes.length
+						// Check if this tag name's last unclosed opening tag is inside the tag being closed.
+						&& unclosedBBTagIndexes[unclosedBBTagIndexes.length - 1] > openingBBTagDataIndex
+					) {
+						// Discard it.
+						unclosedBBTagIndexes.pop();
+					}
+				}
+
 				// Set the respective opening tag as closed.
 				openingBBTagData.closed = true;
 			} else {
