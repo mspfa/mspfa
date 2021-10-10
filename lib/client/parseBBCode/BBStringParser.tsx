@@ -20,6 +20,7 @@ const mergeStringToEndOfArray = (array: unknown[], string: string) => {
 };
 
 // We use char codes instead of 1-character strings in many cases because it's generally faster in the V8 engine (which is what the server runs on).
+const LINE_BREAK_CHAR_CODE = 10;
 const SPACE_CHAR_CODE = 32;
 const HYPHEN_CHAR_CODE = 45;
 const FORWARD_SLASH_CHAR_CODE = 47;
@@ -228,6 +229,15 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 				}
 
 				// This closing tag is valid.
+
+				charCodeAtMatchEndIndex = string.charCodeAt(matchEndIndex);
+				if (
+					BBTags[tagName]!.withBlock
+					&& charCodeAtMatchEndIndex === LINE_BREAK_CHAR_CODE
+				) {
+					// If this tag is a block element followed by a line break, skip the line break since there is already a break after block elements naturally. This allows for more intuitive line breaking behavior for the user.
+					matchEndIndex++;
+				}
 
 				/** This closing tag's respective `OpeningBBTagData`. */
 				const openingBBTagData = this.parsedItems[openingBBTagDataIndex] as OpeningBBTagData;
