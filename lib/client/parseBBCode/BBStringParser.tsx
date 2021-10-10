@@ -3,6 +3,7 @@ import type { integer } from 'lib/types';
 import type { ReactNode } from 'react';
 import type { ParseNodeOptions } from 'lib/client/parseBBCode/parseNode';
 import BBTags from 'components/BBCode/BBTags';
+import preventWhitespaceCollapse from 'lib/client/parseBBCode/preventWhitespaceCollapse';
 
 // We use char codes instead of 1-character strings in many cases because it's generally faster in the V8 engine (which is what the server runs on).
 const LINE_BREAK_CHAR_CODE = 10;
@@ -79,6 +80,8 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 		/** Pushes the specified string to the array on the top of the `childrenStack`, or concatenates it onto the array's last item if the last item is already a string. */
 		const pushString = (string: string) => {
 			const children = childrenStack[childrenStack.length - 1];
+
+			string = preventWhitespaceCollapse(string);
 
 			if (
 				// Check if there is a last item.

@@ -16,7 +16,12 @@ const preventWhitespaceCollapse = (string: string) => {
 		string = `${string.slice(0, -1)}\u00a0`;
 	}
 
+	string = replaceAll(string, ' \n', '\u00a0\n');
+	string = replaceAll(string, '\n ', '\n\u00a0');
+
 	string = replaceAll(string, '  ', ' \u00a0');
+
+	return string;
 };
 
 export default preventWhitespaceCollapse;
