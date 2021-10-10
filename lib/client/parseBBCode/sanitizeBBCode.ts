@@ -46,7 +46,10 @@ const sanitizeBBCode = (
 	if (
 		escapeHTML
 		// Optimize for the common case of the input not containing HTML.
-		|| !bbString.includes('<')
+		|| !(
+			bbString.includes('<')
+			|| (bbString.includes('&') && bbString.includes(';'))
+		)
 	) {
 		return bbString;
 	}
