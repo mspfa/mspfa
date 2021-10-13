@@ -38,9 +38,9 @@ import EditButton from 'components/Button/EditButton';
 import type { integer } from 'lib/types';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
-type AuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;
-type PasswordAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods/password').default>;
-type DoesOwnStoriesAPI = APIClient<typeof import('pages/api/users/[userID]/doesOwnStories').default>;
+type UserAuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;
+type UserPasswordAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods/password').default>;
+type UserDoesOwnStoriesAPI = APIClient<typeof import('pages/api/users/[userID]/doesOwnStories').default>;
 
 const getSettingsValues = (settings: PrivateUser['settings']) => ({
 	autoOpenSpoilers: settings.autoOpenSpoilers,
@@ -94,7 +94,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 	}, [initialValues]);
 
 	const onClickChangePassword = useFunction(async () => {
-		const { data: authMethods } = await (api as AuthMethodsAPI).get(`users/${privateUser.id}/authMethods`, {
+		const { data: authMethods } = await (api as UserAuthMethodsAPI).get(`users/${privateUser.id}/authMethods`, {
 			params: {
 				type: 'password'
 			}
@@ -155,7 +155,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 		});
 
 		if ((await changePasswordDialog)?.submit) {
-			await (api as PasswordAPI).put(`/users/${privateUser.id}/authMethods/password`, {
+			await (api as UserPasswordAPI).put(`/users/${privateUser.id}/authMethods/password`, {
 				currentPassword: changePasswordDialog.form!.values.currentPassword,
 				newPassword: changePasswordDialog.form!.values.password
 			});
@@ -170,7 +170,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 	// The hooks immediately above and below cannot be inline and must be defined in this scope, because this scope is where `privateUser.id` (the dependency of those callbacks) can be checked for updates at a minimal frequency.
 
 	const onClickEditAuthMethods = useFunction(async () => {
-		const { data: authMethods } = await (api as AuthMethodsAPI).get(`users/${privateUser.id}/authMethods`);
+		const { data: authMethods } = await (api as UserAuthMethodsAPI).get(`users/${privateUser.id}/authMethods`);
 
 		new Dialog({
 			id: 'auth-methods',
@@ -419,7 +419,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 												useFunction(async () => {
 													setSubmitting(true);
 
-													const { data: doesOwnStories } = await (api as DoesOwnStoriesAPI).get(`users/${privateUser.id}/doesOwnStories`).catch(error => {
+													const { data: doesOwnStories } = await (api as UserDoesOwnStoriesAPI).get(`users/${privateUser.id}/doesOwnStories`).catch(error => {
 														setSubmitting(false);
 														return Promise.reject(error);
 													});
