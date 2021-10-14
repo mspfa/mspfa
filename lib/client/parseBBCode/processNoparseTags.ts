@@ -96,12 +96,15 @@ const processNoparseTags = (initialBBString: string) => {
 		bbString = initialBBString;
 	}
 
+	// Escape any remaining invalid instances of the substring `[noparse]` so that the non-escaped substring `[noparse]` (case-sensitive) can now be used to mark where escaped characters are.
+	bbString = replaceAll(bbString, '[noparse]', '&lsqb;noparse]');
+
 	// Optimize by only running the HTML entity regular expression if there are possibly any HTML entities in the string.
-	// I don't care to support the HTML entity variants which omit the trailing semicolon (e.g. `&quot`). If someone wants to escape a character, they should just put the semicolon.
+	// It isn't worth supporting the HTML entity variants which omit the trailing semicolon (e.g. `&quot`). If someone wants to escape a character, they should just put the semicolon.
 	if (bbString.includes('&') && bbString.includes(';')) {
-		// Save information about where all the HTML entities are (i.e. where special characters should be ignored by the BBCode parser) by wrapping each HTML entity in a `noparse` tag, because, after the HTML is parsed, we would otherwise have no way of knowing which characters were originally escaped as HTML entities.
-		// Even if some strings which aren't valid HTML entities are matched by this, it shouldn't cause any issues.
-		bbString = bbString.replace(/(&(?:[a-z0-9]+?|#(?:[0-9]+?|x[0-9a-f]+?));)/gi, '[noparse]$1[/noparse]');
+		// Preserve information about where all the HTML entities are (i.e. where special characters should be ignored by the BBCode parser) by marking each HTML entity with the string `[noparse]` before it, because, after the HTML is parsed, the BBCode parser would otherwise have no way of knowing which characters were originally intended to be escaped as HTML entities.
+		// Even if some invalid HTML entities are matched by this, it shouldn't cause any issues.
+		bbString = bbString.replace(/(&(?:[a-z0-9]+?|#(?:[0-9]+?|x[0-9a-f]+?));)/gi, '[noparse]$1');
 	}
 
 	return bbString;

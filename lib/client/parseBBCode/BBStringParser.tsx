@@ -147,18 +147,55 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 	}
 
 	/** Parses a string as BBCode, partially processing unmatched BB tags, and pushes the result to the parser's parsed items. */
-	parsePartialBBString(string: string) {
+	parsePartialBBString(stringWithEscapeMarkers: string) {
+		let string = '';
+
+		/** A record whose keys are indexes of `string` which should be ignored as special characters. */
+		const escapedIndexes: Record<integer, true> = {};
+
+		/** The index of this match of an escape marker. */
+		let escapeMarkerIndex;
+		/** The index at the end of the previous match, or of the start of the string if there is no previous match. */
+		let matchEndIndex = 0;
+
+		while ((
+			escapeMarkerIndex = stringWithEscapeMarkers.indexOf('[noparse]', matchEndIndex)
+		) !== -1) {
+			// Append the slice of the input string from the end of the previous escape marker to the start of this one.
+			string += stringWithEscapeMarkers.slice(matchEndIndex, escapeMarkerIndex);
+
+			// Add this escape marker's corresponding index in the `string` to the `escapedIndexes`.
+			escapedIndexes[string.length] = true;
+
+			matchEndIndex = escapeMarkerIndex + '[noparse]'.length;
+
+			if (matchEndIndex < stringWithEscapeMarkers.length) {
+				// Skip a character after this escape marker in case this match is an instance of `[noparse][noparse]`, in which case the latter `[noparse]` should be escaped by the former one rather than being interpreted as another escape marker. Skipping a character skips the `[` of the latter `[noparse]` so it can't matched in the next iteration.
+				string += stringWithEscapeMarkers[matchEndIndex];
+				matchEndIndex++;
+			}
+		}
+
+		// Append the rest of the input string.
+		string += stringWithEscapeMarkers.slice(matchEndIndex);
+
+		console.log(stringWithEscapeMarkers, escapedIndexes);
+
 		let openBracketIndex;
 		/** The index at the end of the last valid BB tag, or of the start of the string if there is no last valid BB tag. */
 		let tagEndIndex = 0;
-		/** The index at the end of the previous match, or of the start of the string if there is no previous match. */
-		let matchEndIndex = 0;
+		matchEndIndex = 0;
 
 		findingTags:
 		while ((
 			openBracketIndex = string.indexOf('[', matchEndIndex)
 		) !== -1) {
 			matchEndIndex = openBracketIndex + 1;
+
+			if (openBracketIndex in escapedIndexes) {
+				// If the opening bracket is escaped, this tag is invalid.
+				continue;
+			}
 
 			/** The index of the next closing bracket. Does not necessarily correspond to this tag's opening bracket, for example if it's escaped or inside a quoted attribute. */
 			let closeBracketIndex = string.indexOf(']', matchEndIndex);
@@ -178,6 +215,11 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 			let charCodeAtMatchEndIndex = string.charCodeAt(matchEndIndex);
 
 			if (charCodeAtMatchEndIndex === FORWARD_SLASH_CHAR_CODE) {
+				if (matchEndIndex in escapedIndexes) {
+					// If the forward slash is escaped, this tag is invalid.
+					continue;
+				}
+
 				isClosingTag = true;
 
 				// Move past the forward slash.
@@ -186,8 +228,13 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 				charCodeAtMatchEndIndex = string.charCodeAt(matchEndIndex);
 			}
 
-			// There is no need to be concerned about this loop reaching the end of the string before it `break`s, because we've already verified above that there is another `]` character which it can break on before it reaches the end of the string.
+			// There is no need to be concerned about this loop reaching the end of the string before it breaks, because we've already verified above that there is another `]` character which it can break on before it reaches the end of the string.
 			while (true) {
+				if (matchEndIndex in escapedIndexes) {
+					// If any character in or immediately after the tag name is escaped, this tag is invalid.
+					continue findingTags;
+				}
+
 				// Turn on the bit in the char code that converts letters to lowercase.
 				const lowercaseCharCode = charCodeAtMatchEndIndex | 0b100000;
 
@@ -206,8 +253,6 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 				matchEndIndex++;
 				charCodeAtMatchEndIndex = string.charCodeAt(matchEndIndex);
 			}
-
-			// TODO: Handle `noparse` tags.
 
 			if (!(tagName && BBTags.hasOwnProperty(tagName))) {
 				// This tag name does not represent a real BB tag.
@@ -303,32 +348,53 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 					matchEndIndex++;
 
 					const charAfterEqualSign = string[matchEndIndex];
-
-					if (charAfterEqualSign === '"' || charAfterEqualSign === '\'') {
-						// Move past the quotation mark or apostrophe.
+					if (
+						(charAfterEqualSign === '"' || charAfterEqualSign === '\'')
+						// Ensure the opening delimiter is not escaped.
+						&& !(matchEndIndex in escapedIndexes)
+					) {
+						// Move past the opening delimiter.
 						matchEndIndex++;
 
-						const attributeValueEndIndex = string.indexOf(charAfterEqualSign, matchEndIndex);
+						let attributeValueEndIndex = string.indexOf(charAfterEqualSign, matchEndIndex);
+
+						while (attributeValueEndIndex in escapedIndexes) {
+							// Find a closing delimiter which isn't escaped.
+							attributeValueEndIndex = string.indexOf(charAfterEqualSign, attributeValueEndIndex + 1);
+						}
+
+						if (attributeValueEndIndex === -1) {
+							// This tag's attribute has an opening delimiter but no closing delimiter, so this tag is invalid.
+							continue;
+						}
 
 						// Expect there to be a closing bracket immediately after the attribute ends.
 						closeBracketIndex = attributeValueEndIndex + 1;
 
 						if (
-							// Check if this tag's attribute has an opening delimiter but no closing delimiter.
-							attributeValueEndIndex === -1
-							// Check if this tag doesn't close immediately after its attribute ends.
+							closeBracketIndex in escapedIndexes
 							|| string.charCodeAt(closeBracketIndex) !== RIGHT_SQUARE_BRACKET_CHAR_CODE
 						) {
-							// This tag's attribute is invalid.
+							// This tag's attribute doesn't have a non-escaped closing bracket immediately after it, so this tag is invalid.
 							continue;
 						}
 
 						attributes = string.slice(matchEndIndex, attributeValueEndIndex);
 					} else {
+						while (closeBracketIndex in escapedIndexes) {
+							// Find a closing bracket which isn't escaped.
+							closeBracketIndex = string.indexOf(']', closeBracketIndex + 1);
+						}
+
+						if (closeBracketIndex === -1) {
+							// If there are no more non-escaped closing brackets, then there are no more valid BB tags, so stop searching for them.
+							break;
+						}
+
 						attributes = string.slice(matchEndIndex, closeBracketIndex);
 					}
 
-					// Move past the attribute and the closing bracket immediately following it.
+					// Move past the attribute and the closing bracket immediately after it.
 					matchEndIndex = closeBracketIndex + 1;
 				} else if (charCodeAtMatchEndIndex === SPACE_CHAR_CODE) {
 					// Parse this tag's attributes.
@@ -343,6 +409,11 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 
 						// Parse the attribute's name.
 						while (true) {
+							if (matchEndIndex in escapedIndexes) {
+								// If any character in or immediately after the attribute's name is escaped, this tag is invalid.
+								continue findingTags;
+							}
+
 							charCodeAtMatchEndIndex = string.charCodeAt(matchEndIndex);
 
 							if (
@@ -388,12 +459,20 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 						// Parse the attribute's value.
 
 						const charAfterEqualSign = string[matchEndIndex];
-
-						if (charAfterEqualSign === '"' || charAfterEqualSign === '\'') {
-							// Move past the quotation mark or apostrophe.
+						if (
+							(charAfterEqualSign === '"' || charAfterEqualSign === '\'')
+							// Ensure the opening delimiter is not escaped.
+							&& !(matchEndIndex in escapedIndexes)
+						) {
+							// Move past the opening delimiter.
 							matchEndIndex++;
 
-							const attributeValueEndIndex = string.indexOf(charAfterEqualSign, matchEndIndex);
+							let attributeValueEndIndex = string.indexOf(charAfterEqualSign, matchEndIndex);
+
+							while (attributeValueEndIndex in escapedIndexes) {
+								// Find a closing delimiter which isn't escaped.
+								attributeValueEndIndex = string.indexOf(charAfterEqualSign, attributeValueEndIndex + 1);
+							}
 
 							if (attributeValueEndIndex === -1) {
 								// If any attribute has an opening delimiter but no closing delimiter, this tag is invalid.
@@ -402,8 +481,13 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 
 							attributes[attributeName] = string.slice(matchEndIndex, attributeValueEndIndex);
 
-							// Move past the attribute value and the quotation mark or apostrophe immediately following it.
+							// Move past the attribute value and the closing delimiter immediately after it.
 							matchEndIndex = attributeValueEndIndex + 1;
+
+							if (matchEndIndex in escapedIndexes) {
+								// If the character immediately after any attribute's closing delimiter is escaped, this tag is invalid.
+								continue findingTags;
+							}
 
 							charCodeAtMatchEndIndex = string.charCodeAt(matchEndIndex);
 
@@ -415,17 +499,31 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 								continue findingTags;
 							}
 						} else {
-							// This attribute is unquoted, so try to end its value at the next nearest space or closing bracket.
+							// This attribute is unquoted, so try to end its value at the next space or closing bracket.
 
-							// Look for a closing bracket before looking for space, since we can stop parsing immediately if we don't find one.
-							closeBracketIndex = string.indexOf(']', matchEndIndex);
+							// This part of the algorithm can definitely be optimized by looking for non-escaped spaces and closing brackets at the same time, repeatedly moving forward the left-most index of the two until a non-escaped character is found. For example, currently, ` &rsqb;&rsqb;&rsqb;&rsqb;]` causes this part of the algorithm to iterate over all five square brackets before even trying to check for the space, even though it could theoretically tell the space is first by comparing only the first space and the first square bracket.
 
-							if (closeBracketIndex === -1) {
-								// If there is no closing bracket anywhere after this attribute, this tag is invalid.
-								continue findingTags;
+							// If the `closeBracketIndex` found previously is before the beginning of this attribute, find a new one after the beginning of this attribute.
+							if (closeBracketIndex < matchEndIndex) {
+								closeBracketIndex = string.indexOf(']', matchEndIndex);
 							}
 
-							const spaceIndex = string.indexOf(' ', matchEndIndex);
+							while (closeBracketIndex in escapedIndexes) {
+								// Find a closing bracket which isn't escaped.
+								closeBracketIndex = string.indexOf(']', closeBracketIndex + 1);
+							}
+
+							if (closeBracketIndex === -1) {
+								// If there are no more non-escaped closing brackets, then there are no more valid BB tags, so stop searching for them.
+								break findingTags;
+							}
+
+							let spaceIndex = string.indexOf(' ', matchEndIndex);
+
+							while (spaceIndex in escapedIndexes) {
+								// Find a space which isn't escaped.
+								spaceIndex = string.indexOf(' ', spaceIndex + 1);
+							}
 
 							let attributeValueEndIndex;
 
@@ -448,7 +546,7 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 							matchEndIndex = attributeValueEndIndex;
 						}
 
-						// If this point is reached, `charCodeAtMatchEndIndex` (the character immediately after the attribute) must equal either `SPACE_CHAR_CODE` or `RIGHT_SQUARE_BRACKET_CHAR_CODE`.
+						// `charCodeAtMatchEndIndex` (the character immediately after the attribute) equals either `SPACE_CHAR_CODE` or `RIGHT_SQUARE_BRACKET_CHAR_CODE`.
 
 						if (charCodeAtMatchEndIndex === RIGHT_SQUARE_BRACKET_CHAR_CODE) {
 							// Move past the closing bracket.
@@ -461,7 +559,7 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 						// `charCodeAtMatchEndIndex === SPACE_CHAR_CODE`, so keep parsing attributes.
 					}
 				} else {
-					// The character immediately following the tag name is invalid.
+					// The character immediately after the tag name is invalid.
 					continue;
 				}
 
