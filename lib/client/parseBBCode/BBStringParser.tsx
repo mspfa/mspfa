@@ -179,8 +179,6 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 		// Append the rest of the input string.
 		string += stringWithEscapeMarkers.slice(matchEndIndex);
 
-		console.log(stringWithEscapeMarkers, escapedIndexes);
-
 		let openBracketIndex;
 		/** The index at the end of the last valid BB tag, or of the start of the string if there is no last valid BB tag. */
 		let tagEndIndex = 0;
