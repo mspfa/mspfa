@@ -46,10 +46,7 @@ const sanitizeBBCode = (
 	if (
 		escapeHTML
 		// Optimize for the common case of the input not containing HTML.
-		|| !(
-			bbString.includes('<')
-			|| (bbString.includes('&') && bbString.includes(';'))
-		)
+		|| !(bbString.includes('<') || bbString.includes('&'))
 	) {
 		return bbString;
 	}
@@ -69,7 +66,7 @@ const sanitizeBBCode = (
 				// `iframe`s are disallowed by default for a number of reasons, but they are necessary for us to whitelist because of the necessity of using external embed codes and embedding games and animations.
 				// Source: https://stackoverflow.com/a/9428051/5657274
 				'iframe'
-				// `'#comment'` is not whitelisted since React currently does not have the ability to directly render comment nodes. Additionally, there are some mXSS attacks associated with them which I cannot be confident SSR avoids.
+				// `#comment` is not whitelisted since React currently does not have the ability to directly render comment nodes. Additionally, there are some mXSS attacks associated with them which I cannot be confident don't apply to us.
 				// Source: https://github.com/cure53/DOMPurify/issues/565#issuecomment-917585708
 			],
 			ADD_ATTR: [

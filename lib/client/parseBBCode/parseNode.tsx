@@ -1,6 +1,7 @@
 import type { Key, ReactNode } from 'react';
 import attributesToProps from 'lib/client/parseBBCode/attributesToProps';
 import BBStringParser from 'lib/client/parseBBCode/BBStringParser';
+import unmarkHTMLEntities from 'lib/client/parseBBCode/unmarkHTMLEntities';
 
 /** Returns whether `element instanceof HTMLElement`. */
 const isHTMLElement = (element: Element): element is HTMLElement => {
@@ -108,13 +109,13 @@ const parseNode = <
 	} = attributesToProps(node);
 
 	if (isHTMLStyleElement(node)) {
-		// If this is a `style` element, set its `children` to the plain string of its contents instead of parsing it.
-		props.children = node.innerHTML;
+		// If this is a `style` element, set its `children` to the plain string of its contents instead of parsing it as BBCode.
+		props.children = unmarkHTMLEntities(node.innerHTML);
 	} else if (isHTMLTextAreaElement(node)) {
-		// If this is a `textarea`, set its `defaultValue` instead of parsing its `children`.
-		props.defaultValue = node.value;
+		// If this is a `textarea`, set its `defaultValue` instead of parsing its `children` as BBCode.
+		props.defaultValue = unmarkHTMLEntities(node.value);
 	} else {
-		// Otherwise, set its `children`.
+		// Otherwise, parse its `children` as BBCode.
 		props.children = parseNodeChildren();
 	}
 

@@ -3,6 +3,7 @@ import type { SanitizeBBCodeOptions } from 'lib/client/parseBBCode/sanitizeBBCod
 import sanitizeBBCode from 'lib/client/parseBBCode/sanitizeBBCode';
 import type { ParseNodeOptions } from 'lib/client/parseBBCode/parseNode';
 import parseNode from 'lib/client/parseBBCode/parseNode';
+import markHTMLEntities from 'lib/client/parseBBCode/markHTMLEntities';
 
 export type ParseBBCodeOptions<RemoveBBTags extends boolean | undefined = boolean | undefined> = (
 	SanitizeBBCodeOptions & ParseNodeOptions<RemoveBBTags>
@@ -20,8 +21,12 @@ const parseBBCode = <RemoveBBTags extends boolean | undefined = undefined>(
 
 	return parseNode(
 		sanitizeBBCode(
-			// `noparse` tags must be processed before sanitization occurs to avoid the sanitizer transforming HTML that should be escaped in `noparse` tags.
-			processNoparseTags(bbString),
+			// HTML entities must be marked before sanitization occurs because all the information about the string's HTML entities is lost after sanitization as the sanitizer parses HTML entities into plain text.
+			markHTMLEntities(
+				// `noparse` tags must be processed before sanitization occurs to avoid the sanitizer transforming HTML that should be escaped in `noparse` tags.
+				// `noparse` tags must also be processed before marking HTML entities because `noparse` tags create more HTML entities which would need to be marked.
+				processNoparseTags(bbString)
+			),
 			sanitizeOptions
 		),
 		{ removeBBTags }

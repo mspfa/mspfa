@@ -147,37 +147,38 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 	}
 
 	/** Parses a string as BBCode, partially processing unmatched BB tags, and pushes the result to the parser's parsed items. */
-	parsePartialBBString(stringWithEscapeMarkers: string) {
+	parsePartialBBString(stringWithEscapes: string) {
 		let string = '';
 
 		/** A record whose keys are indexes of `string` which should be ignored as special characters. */
 		const escapedIndexes: Record<integer, true> = {};
 
-		/** The index of this match of an escape marker. */
-		let escapeMarkerIndex;
+		/** The index of this match of an escape character in `stringWithEscapes`. */
+		let escapeIndex;
 		/** The index at the end of the previous match, or of the start of the string if there is no previous match. */
 		let matchEndIndex = 0;
 
 		while ((
-			escapeMarkerIndex = stringWithEscapeMarkers.indexOf('[noparse]', matchEndIndex)
+			escapeIndex = stringWithEscapes.indexOf('\\', matchEndIndex)
 		) !== -1) {
-			// Append the slice of the input string from the end of the previous escape marker to the start of this one.
-			string += stringWithEscapeMarkers.slice(matchEndIndex, escapeMarkerIndex);
+			// Append the slice of the input string from the end of the previous escape character to the start of this one.
+			string += stringWithEscapes.slice(matchEndIndex, escapeIndex);
 
-			// Add this escape marker's corresponding index in the `string` to the `escapedIndexes`.
+			// Add this escape character's corresponding index in the `string` to the `escapedIndexes`.
 			escapedIndexes[string.length] = true;
 
-			matchEndIndex = escapeMarkerIndex + '[noparse]'.length;
+			// Move past the escape character.
+			matchEndIndex = escapeIndex + 1;
 
-			if (matchEndIndex < stringWithEscapeMarkers.length) {
-				// Skip a character after this escape marker in case this match is an instance of `[noparse][noparse]`, in which case the latter `[noparse]` should be escaped by the former one rather than being interpreted as another escape marker. Skipping a character skips the `[` of the latter `[noparse]` so it can't matched in the next iteration.
-				string += stringWithEscapeMarkers[matchEndIndex];
+			if (matchEndIndex < stringWithEscapes.length) {
+				// Skip a character after this escape character in case this match is an instance of `\\` (two consecutive escape characters), in which case the latter `\` should be escaped by the former one rather than being interpreted as another escape character. Skipping a character skips the latter `\` so it can't matched in the next iteration.
+				string += stringWithEscapes[matchEndIndex];
 				matchEndIndex++;
 			}
 		}
 
 		// Append the rest of the input string.
-		string += stringWithEscapeMarkers.slice(matchEndIndex);
+		string += stringWithEscapes.slice(matchEndIndex);
 
 		let openBracketIndex;
 		/** The index at the end of the last valid BB tag, or of the start of the string if there is no last valid BB tag. */
