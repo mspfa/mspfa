@@ -399,7 +399,6 @@ const tags: Record<string, {
 			values: { children, ...values }
 		}) => {
 			const changedValues = getChangedValues(initialValues, values);
-			console.log(initialValues, values);
 
 			return {
 				attributes: changedValues && Object.fromEntries(
