@@ -59,8 +59,6 @@ const sanitizeBBCode = (
 		ALLOW_UNKNOWN_PROTOCOLS: true,
 		// Any elements outside DOMPurify's internal `body` tag do not get returned by the sanitizer, so this prevents the browser from trying to move some elements out of that internal `body` tag.
 		FORCE_BODY: true,
-		// Disable DOM clobbering protection on output.
-		SANITIZE_DOM: false,
 		...keepHTMLTags ? {
 			ADD_TAGS: [
 				// `iframe`s are disallowed by default for a number of reasons, but they are necessary for us to whitelist because of the necessity of using external embed codes and embedding games and animations.
