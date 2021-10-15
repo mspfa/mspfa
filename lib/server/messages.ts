@@ -107,10 +107,10 @@ export const getMessageByUnsafeID = <Res extends APIResponse<any> | undefined>(
 /** Updates the specified user's `unreadMessageCount`. Returns the new `unreadMessageCount` value. */
 export const updateUnreadMessages = async (userID: ServerUserID) => {
 	const unreadMessageCount = (
-		await messages.aggregate!([
+		await messages.aggregate!<{ unreadMessageCount: integer }>([
 			{ $match: { notReadBy: userID } },
 			{ $count: 'unreadMessageCount' }
-		]).next() as { unreadMessageCount: integer } | null
+		]).next()
 	)?.unreadMessageCount || 0;
 
 	await users.updateOne({

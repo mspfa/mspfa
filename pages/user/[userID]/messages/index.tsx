@@ -6,6 +6,7 @@ import Box from 'components/Box';
 import BoxSection from 'components/Box/BoxSection';
 import { Perm } from 'lib/client/perms';
 import { permToGetUserInPage } from 'lib/server/permToGetUser';
+import type { ServerMessage } from 'lib/server/messages';
 import messages, { getClientMessage } from 'lib/server/messages';
 import type { ClientMessage } from 'lib/client/messages';
 import type { PublicUser, PrivateUser } from 'lib/client/users';
@@ -243,7 +244,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		return { props: { statusCode } };
 	}
 
-	const serverMessages = await messages.aggregate!([
+	const serverMessages = await messages.aggregate!<ServerMessage>([
 		// Find messages sent to this user.
 		{ $match: { notDeletedBy: user!._id } },
 		// Sort by newest first.

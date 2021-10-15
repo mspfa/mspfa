@@ -31,7 +31,7 @@ const Handler: APIHandler<{
 	const storyID = 1 + (
 		(
 			// The story with the largest ID.
-			await stories.aggregate!([
+			await stories.aggregate!<ServerStory>([
 				{ $sort: { _id: -1 } },
 				{ $limit: 1 }
 			]).next()
