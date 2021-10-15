@@ -134,13 +134,13 @@ export const getRelativeTimestamp = (dateThen: Date) => {
 		return preposeTimestamp(`${months} month${months === 1 ? '' : 's'}`, future);
 	}
 
-	const years = fullYearNow - fullYearThen + (
-		monthNow < monthThen
-			// If the month of the year now is lower than the month of the year then, the difference in years is one too high.
-			? -1
-			: 0
-	);
-	const moreMonths = months - 12 * years;
+	let years = fullYearNow - fullYearThen;
+	let moreMonths = months - 12 * years;
+	if (moreMonths < 0) {
+		// If `moreMonths < 0` (e.g. due to the present month being earlier in the year or the present day being earlier in the same month), the difference in years is one too high.
+		years--;
+		moreMonths += 12;
+	}
 
 	return preposeTimestamp(`${years} year${years === 1 ? '' : 's'}${moreMonths ? `, ${moreMonths} month${moreMonths === 1 ? '' : 's'}` : ''}`, future);
 };
