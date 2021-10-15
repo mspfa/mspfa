@@ -76,7 +76,7 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 				onSubmit={
 					useFunction(async (
 						values: Values,
-						{ setSubmitting, resetForm }: FormikHelpers<Values>
+						{ setSubmitting }: FormikHelpers<Values>
 					) => {
 						if (!getUser()) {
 							setSubmitting(false);
