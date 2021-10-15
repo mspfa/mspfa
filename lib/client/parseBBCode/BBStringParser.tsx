@@ -500,8 +500,6 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 						} else {
 							// This attribute is unquoted, so try to end its value at the next space or closing bracket.
 
-							// This part of the algorithm can definitely be optimized by looking for non-escaped spaces and closing brackets at the same time, repeatedly moving forward the left-most index of the two until a non-escaped character is found. For example, currently, ` &rsqb;&rsqb;&rsqb;&rsqb;]` causes this part of the algorithm to iterate over all five square brackets before even trying to check for the space, even though it could theoretically tell the space is first by comparing only the first space and the first square bracket.
-
 							// If the `closeBracketIndex` found previously is before the beginning of this attribute, find a new one after the beginning of this attribute.
 							if (closeBracketIndex < matchEndIndex) {
 								closeBracketIndex = string.indexOf(']', matchEndIndex);
