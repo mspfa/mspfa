@@ -432,7 +432,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 						// This key is here to force the inner DOM to reset between different pages.
 						key={pageID}
 					>
-						{page?.title && (
+						{page && (
 							<div className="story-section-title">
 								<BBCode keepHTMLTags>
 									{page.title}
