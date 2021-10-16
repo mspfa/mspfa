@@ -457,6 +457,8 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 
 						// Parse the attribute's value.
 
+						let spaceIndex;
+
 						const charAfterEqualSign = string[matchEndIndex];
 						if (
 							(charAfterEqualSign === '"' || charAfterEqualSign === '\'')
@@ -491,51 +493,62 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 							charCodeAtMatchEndIndex = string.charCodeAt(matchEndIndex);
 
 							if (!(
-								charCodeAtMatchEndIndex === SPACE_CHAR_CODE
-								|| charCodeAtMatchEndIndex === RIGHT_SQUARE_BRACKET_CHAR_CODE
+								charCodeAtMatchEndIndex === RIGHT_SQUARE_BRACKET_CHAR_CODE
+								|| charCodeAtMatchEndIndex === SPACE_CHAR_CODE
 							)) {
-								// If the character immediately after this attribute is not a space or a closing bracket, this tag is invalid.
+								// If the character immediately after this attribute is not a closing bracket or space, this tag is invalid.
 								continue findingTags;
 							}
 						} else {
-							// This attribute is unquoted, so try to end its value at the next space or closing bracket.
+							// This attribute is unquoted, so try to end its value at the next closing bracket or space.
 
-							// If the `closeBracketIndex` found previously is before the beginning of this attribute, find a new one after the beginning of this attribute.
+							// If the `closeBracketIndex` found previously is before the start of this attribute, find a new one after the start of this attribute.
 							if (closeBracketIndex < matchEndIndex) {
 								closeBracketIndex = string.indexOf(']', matchEndIndex);
+
+								if (closeBracketIndex === -1) {
+									// If there are no more closing brackets, then there are no more valid BB tags, so stop searching for them.
+									break findingTags;
+								}
 							}
 
-							while (closeBracketIndex in escapedIndexes) {
-								// Find a closing bracket which isn't escaped.
-								closeBracketIndex = string.indexOf(']', closeBracketIndex + 1);
-							}
-
-							if (closeBracketIndex === -1) {
-								// If there are no more non-escaped closing brackets, then there are no more valid BB tags, so stop searching for them.
-								break findingTags;
-							}
-
-							let spaceIndex = string.indexOf(' ', matchEndIndex);
-
-							while (spaceIndex in escapedIndexes) {
-								// Find a space which isn't escaped.
-								spaceIndex = string.indexOf(' ', spaceIndex + 1);
+							// If there is no `spaceIndex` found previously or the `spaceIndex` found previously is before the start of this attribute, find a new one after the start of this attribute.
+							if (spaceIndex === undefined || spaceIndex < matchEndIndex) {
+								spaceIndex = string.indexOf(' ', matchEndIndex);
 							}
 
 							let attributeValueEndIndex;
 
-							[
-								attributeValueEndIndex,
-								// This is set for after the `matchEndIndex` will be moved past the attribute value.
-								charCodeAtMatchEndIndex
-							] = (
-								spaceIndex === -1
-								|| closeBracketIndex < spaceIndex
-									// If there is no space or the closing bracket is earlier than the space, end the attribute value at the closing bracket.
-									? [closeBracketIndex, RIGHT_SQUARE_BRACKET_CHAR_CODE]
-									// Otherwise, end the attribute value at the space.
-									: [spaceIndex, SPACE_CHAR_CODE]
-							);
+							// Find the next non-escaped closing bracket or space.
+							while (true) {
+								// Check if there is no space or the closing bracket is before the space.
+								if (spaceIndex === -1 || closeBracketIndex < spaceIndex) {
+									if (closeBracketIndex in escapedIndexes) {
+										// Find a closing bracket which isn't escaped.
+										closeBracketIndex = string.indexOf(']', closeBracketIndex + 1);
+
+										if (closeBracketIndex === -1) {
+											// If there are no more closing brackets, then there are no more valid BB tags, so stop searching for them.
+											break findingTags;
+										}
+									} else {
+										// A non-escaped closing bracket has been found first, so end the attribute's value at the closing bracket.
+										attributeValueEndIndex = closeBracketIndex;
+										// This is set for after the `matchEndIndex` will be moved past the attribute value.
+										charCodeAtMatchEndIndex = RIGHT_SQUARE_BRACKET_CHAR_CODE;
+										break;
+									}
+								} else if (spaceIndex in escapedIndexes) {
+									// Find a space which isn't escaped.
+									spaceIndex = string.indexOf(' ', spaceIndex + 1);
+								} else {
+									// A non-escaped space has been found first, so end the attribute's value at the space.
+									attributeValueEndIndex = spaceIndex;
+									// This is set for after the `matchEndIndex` will be moved past the attribute value.
+									charCodeAtMatchEndIndex = SPACE_CHAR_CODE;
+									break;
+								}
+							}
 
 							attributes[attributeName] = string.slice(matchEndIndex, attributeValueEndIndex);
 
