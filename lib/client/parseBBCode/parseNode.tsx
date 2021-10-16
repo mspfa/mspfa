@@ -28,16 +28,6 @@ const isDocumentFragmentNode = (node: Node): node is DocumentFragment => (
 	node.nodeType === 11
 );
 
-/** Returns whether `node instanceof HTMLTextAreaElement`. */
-const isHTMLTextAreaElement = (node: Node): node is HTMLTextAreaElement => (
-	node.nodeName === 'TEXTAREA'
-);
-
-/** Returns whether `node instanceof HTMLStyleElement`. */
-const isHTMLStyleElement = (node: Node): node is HTMLStyleElement => (
-	node.nodeName === 'STYLE'
-);
-
 export type ParseNodeOptions<RemoveBBTags extends boolean | undefined = boolean | undefined> = {
 	/** Whether to strip all BB tags from the input and keep only their children. */
 	removeBBTags?: RemoveBBTags
@@ -108,12 +98,12 @@ const parseNode = <
 		children?: ReactNode
 	} = attributesToProps(node);
 
-	if (isHTMLStyleElement(node)) {
+	if (node.nodeName === 'STYLE') {
 		// If this is a `style` element, set its `children` to the plain string of its contents instead of parsing it as BBCode.
 		props.children = unmarkHTMLEntities(node.innerHTML);
-	} else if (isHTMLTextAreaElement(node)) {
+	} else if (node.nodeName === 'TEXTAREA') {
 		// If this is a `textarea`, set its `defaultValue` instead of parsing its `children` as BBCode.
-		props.defaultValue = unmarkHTMLEntities(node.value);
+		props.defaultValue = unmarkHTMLEntities((node as HTMLTextAreaElement).value);
 	} else {
 		// Otherwise, parse its `children` as BBCode.
 		props.children = parseNodeChildren();
