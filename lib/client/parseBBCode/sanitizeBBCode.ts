@@ -13,12 +13,8 @@ import DOMPurify from 'isomorphic-dompurify';
 // `allow-top-navigation-by-user-activation` is here so an embed can link to another page of the adventure.
 export const IFRAME_SANDBOX = 'allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation';
 
-const isIFrameElement = (element: Element): element is HTMLIFrameElement => (
-	element.nodeName === 'IFRAME'
-);
-
 DOMPurify.addHook('afterSanitizeAttributes', element => {
-	if (isIFrameElement(element)) {
+	if (element.nodeName === 'IFRAME') {
 		element.setAttribute('sandbox', IFRAME_SANDBOX);
 	}
 });
