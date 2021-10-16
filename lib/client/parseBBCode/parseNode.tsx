@@ -2,6 +2,7 @@ import type { Key, ReactNode } from 'react';
 import attributesToProps from 'lib/client/parseBBCode/attributesToProps';
 import BBStringParser from 'lib/client/parseBBCode/BBStringParser';
 import unmarkHTMLEntities from 'lib/client/parseBBCode/unmarkHTMLEntities';
+import type { integer } from 'lib/types';
 
 /** Returns whether `element instanceof HTMLElement`. */
 const isHTMLElement = (element: Element): element is HTMLElement => {
@@ -44,6 +45,7 @@ const parseNode = <
 >(
 	node: NodeType,
 	options: ParseNodeOptions<RemoveBBTags>,
+	depth: integer = 0,
 	key: Key = 0
 ): (
 	NodeType extends Element
@@ -57,7 +59,7 @@ const parseNode = <
 
 		parser.parsePartialBBString(node);
 
-		return parser.getReactNode() as any;
+		return parser.getReactNode(depth) as any;
 	}
 
 	/** Returns `node.childNodes` parsed into a `ReactNode` with parsed BBCode. */
@@ -73,13 +75,11 @@ const parseNode = <
 			} else {
 				// If this point is reached, `childNode instanceof Element`.
 
-				parser.parsedItems.push(
-					parseNode(childNode, options, parser.parsedItems.length)
-				);
+				parser.nodes.push(childNode);
 			}
 		}
 
-		return parser.getReactNode();
+		return parser.getReactNode(depth + 1);
 	};
 
 	if (isDocumentFragmentNode(node)) {

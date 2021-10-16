@@ -4,6 +4,10 @@ import type { ReactNode } from 'react';
 import type { ParseNodeOptions } from 'lib/client/parseBBCode/parseNode';
 import BBTags from 'components/BBCode/BBTags';
 import preventWhitespaceCollapse from 'lib/client/parseBBCode/preventWhitespaceCollapse';
+import parseNode from 'lib/client/parseBBCode/parseNode';
+
+// We enforce a maximum node depth mainly for the sake of performance.
+export const MAX_BB_PARSER_NODE_DEPTH = 384;
 
 // We use char codes instead of 1-character strings in many cases because it's generally faster in the V8 engine (which is what the server runs on).
 const LINE_BREAK_CHAR_CODE = 10;
@@ -48,13 +52,13 @@ const isClosingBBTagData = (object: {}): object is ClosingBBTagData => (
 export default class BBStringParser<RemoveBBTags extends boolean | undefined = undefined> {
 	options: ParseNodeOptions<RemoveBBTags>;
 	/**
-	 * An array of parsed `ReactNode`s, `OpeningBBTagData`, and `ClosingBBTagData` in the same order that they appear in the input.
+	 * An array of `string`s, `OpeningBBTagData`, `ClosingBBTagData`, and `Element`s to be parsed, in the same order that they appear in the input.
 	 *
 	 * The React `key` of any element parsed from this array should be set to its index in this array.
 	 */
-	parsedItems: Array<JSX.Element | string | OpeningBBTagData | ClosingBBTagData>;
+	nodes: Array<string | OpeningBBTagData | ClosingBBTagData | Element>;
 	/**
-	 * A mapping from each parsed BB tag's name (lowercase) to an array of integers which index that BB tag's unclosed instances of `OpeningBBTagData` in `parsedItems`.
+	 * A mapping from each parsed BB tag's name (lowercase) to an array of integers which index that BB tag's unclosed instances of `OpeningBBTagData` in `nodes`.
 	 *
 	 * Each array of indexes is sorted from least to greatest.
 	 */
@@ -62,12 +66,12 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 
 	constructor(options: ParseNodeOptions<RemoveBBTags>) {
 		this.options = options;
-		this.parsedItems = [];
+		this.nodes = [];
 		this.unclosedBBTagIndexes = {};
 	}
 
-	/** Generates a `ReactNode` from the parser's parsed items. */
-	getReactNode(): RemoveBBTags extends true ? string : ReactNode {
+	/** Generates a `ReactNode` from the parser's nodes. */
+	getReactNode(depth: integer = 0): RemoveBBTags extends true ? string : ReactNode {
 		const rootChildren: ReactNode[] = [];
 
 		/**
@@ -96,43 +100,65 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 			}
 		};
 
-		for (let i = 0; i < this.parsedItems.length; i++) {
-			const parsedItem = this.parsedItems[i];
+		for (let i = 0; i < this.nodes.length; i++) {
+			const node = this.nodes[i];
 
-			if (typeof parsedItem === 'string') {
-				pushString(parsedItem);
-			} else if (isOpeningBBTagData(parsedItem)) {
-				if (parsedItem.closed) {
+			if (typeof node === 'string') {
+				pushString(node);
+			} else if (isOpeningBBTagData(node)) {
+				if (node.closed) {
 					// This is a valid opening BB tag.
 
 					// Only process this opening tag if the `removeBBTags` option is disabled.
 					if (!this.options.removeBBTags) {
+						if (depth > MAX_BB_PARSER_NODE_DEPTH) {
+							// Since we've reached the max depth, skip past this tag and everything inside it.
+							while (true) {
+								const skippedNode = this.nodes[++i];
+								if (
+									isClosingBBTagData(skippedNode)
+									&& skippedNode.openingBBTagData === node
+								) {
+									// Stop skipping when we find the respective closing tag.
+									break;
+								}
+							}
+							continue;
+						}
+
 						childrenStack.push([]);
+						depth++;
 					}
 				} else {
 					// This opening BB tag is invalid, so just treat it as plain text.
-					pushString(parsedItem.string);
+					pushString(node.string);
 				}
-			} else if (isClosingBBTagData(parsedItem)) {
+			} else if (isClosingBBTagData(node)) {
 				// This is a valid closing BB tag, and `this.options.removeBBTags` is necessarily disabled since `parsePartialBBString` doesn't push `ClosingBBTagData` when that option is enabled.
 
 				const children = childrenStack.pop();
+				depth--;
 
 				/** We can assert this as non-nullable because the only case in which it's nullable is if the tag name is invalid, which has already been verified not to be the case. */
-				const BBTag = BBTags[parsedItem.openingBBTagData.tagName]!;
-
+				const BBTag = BBTags[node.openingBBTagData.tagName]!;
 				childrenStack[childrenStack.length - 1].push(
 					<BBTag
 						key={i}
-						attributes={parsedItem.openingBBTagData.attributes}
+						attributes={node.openingBBTagData.attributes}
 					>
 						{children}
 					</BBTag>
 				);
 			} else {
-				// `parsedItem` is a `JSX.Element`.
+				// `node` is an `Element`.
 
-				childrenStack[childrenStack.length - 1].push(parsedItem);
+				if (depth > MAX_BB_PARSER_NODE_DEPTH) {
+					continue;
+				}
+
+				childrenStack[childrenStack.length - 1].push(
+					parseNode(node, this.options, depth, i)
+				);
 			}
 		}
 
@@ -146,7 +172,7 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 		// We can assert the above return type because, if `this.options.removeBBTags`, `rootChildren` can't contain any parsed BB tags since any they would be removed. It can only contain a single merged string.
 	}
 
-	/** Parses a string as BBCode, partially processing unmatched BB tags, and pushes the result to the parser's parsed items. */
+	/** Parses a string as BBCode, partially processing unmatched BB tags, and pushes the result to the parser's nodes. */
 	parsePartialBBString(stringWithEscapes: string) {
 		let string = '';
 
@@ -287,10 +313,10 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 				}
 
 				/** This closing tag's respective `OpeningBBTagData`. */
-				const openingBBTagData = this.parsedItems[openingBBTagDataIndex] as OpeningBBTagData;
+				const openingBBTagData = this.nodes[openingBBTagDataIndex] as OpeningBBTagData;
 
 				// Push the slice of the string from the end of the last tag to the start of this one.
-				this.parsedItems.push(
+				this.nodes.push(
 					string.slice(tagEndIndex, openBracketIndex)
 				);
 
@@ -303,7 +329,7 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 						openingBBTagData
 					};
 
-					this.parsedItems.push(closingBBTagData);
+					this.nodes.push(closingBBTagData);
 				}
 
 				// When a tag is closed, discard all the unclosed opening tags inside it.
@@ -576,7 +602,7 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 				// This opening tag is valid.
 
 				// Push the slice of the string from the end of the last tag to the start of this one.
-				this.parsedItems.push(
+				this.nodes.push(
 					string.slice(tagEndIndex, openBracketIndex)
 				);
 
@@ -591,20 +617,20 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 				};
 
 				// Push this opening tag's data.
-				this.parsedItems.push(openingBBTagData);
+				this.nodes.push(openingBBTagData);
 
 				// Create the `unclosedBBTagIndexes` array for this tag name if it doesn't already exist.
 				if (!(tagName in this.unclosedBBTagIndexes)) {
 					this.unclosedBBTagIndexes[tagName] = [];
 				}
 
-				// Push this opening tag's index in `parsedItems` to the `unclosedBBTagIndexes` array for this tag name.
-				this.unclosedBBTagIndexes[tagName]!.push(this.parsedItems.length - 1);
+				// Push this opening tag's index in `nodes` to the `unclosedBBTagIndexes` array for this tag name.
+				this.unclosedBBTagIndexes[tagName]!.push(this.nodes.length - 1);
 			}
 		}
 
 		// Push the rest of the string.
-		this.parsedItems.push(
+		this.nodes.push(
 			string.slice(tagEndIndex)
 		);
 	}
