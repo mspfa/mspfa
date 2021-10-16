@@ -8,7 +8,7 @@ import { startLoading, stopLoading } from 'components/LoadingIndicator';
 // @client-only {
 window.addEventListener('unhandledrejection', (
 	event: Omit<PromiseRejectionEvent, 'reason'> & {
-		// In reality, `reason` is `unknown`, but using `reason: unknown` here would necessitate ruining the JS logic.
+		// In reality, `reason` is `unknown`, but using `reason: unknown` here would necessitate muddying the JS logic.
 		reason: ({ apiError?: boolean } & AxiosError<unknown>) | undefined
 	}
 ) => {
@@ -100,6 +100,10 @@ const onReject = async (error: APIError) => {
 api.interceptors.request.use(
 	value => {
 		startLoading();
+
+		if (value.data !== undefined) {
+			value.headers['Content-Type'] = 'application/json';
+		}
 
 		return value;
 	},
