@@ -72,7 +72,7 @@ export const createValidator = (methodSchema: Record<string, unknown>, schema: R
 
 			const valid = validate({
 				method: req.method,
-				body: req.body ? req.body : undefined,
+				body: req.body,
 				query: req.query
 			});
 
