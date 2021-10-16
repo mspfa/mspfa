@@ -218,7 +218,7 @@ const StoryEditorPageListing = React.memo(({
 
 		formikPropsRef.current.setSubmitting(true);
 
-		const { data: newInitialPages } = await (api as StoryPagesAPI).put(`/stories/${storyID}/pages`, changedValues as any).catch(error => {
+		const { data: newInitialPages } = await (api as StoryPagesAPI).patch(`/stories/${storyID}/pages`, changedValues as any).catch(error => {
 			formikPropsRef.current.setSubmitting(false);
 
 			return Promise.reject(error);
@@ -368,7 +368,7 @@ const StoryEditorPageListing = React.memo(({
 			pageChanges[pageID] = { published };
 		}
 
-		const { data: newInitialPages } = await (api as StoryPagesAPI).put(`/stories/${storyID}/pages`, pageChanges).catch(error => {
+		const { data: newInitialPages } = await (api as StoryPagesAPI).patch(`/stories/${storyID}/pages`, pageChanges).catch(error => {
 			formikPropsRef.current.setSubmitting(false);
 
 			return Promise.reject(error);
@@ -426,7 +426,7 @@ const StoryEditorPageListing = React.memo(({
 			newPages[pageID] = newPage;
 		}
 
-		const { data: newInitialPages } = await (api as StoryPagesAPI).put(`/stories/${storyID}/pages`, pageChanges).catch(error => {
+		const { data: newInitialPages } = await (api as StoryPagesAPI).patch(`/stories/${storyID}/pages`, pageChanges).catch(error => {
 			formikPropsRef.current.setSubmitting(false);
 
 			return Promise.reject(error);

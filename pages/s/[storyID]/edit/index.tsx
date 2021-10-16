@@ -113,7 +113,7 @@ const Component = withErrorPage<ServerSideProps>(({
 	const restoreStory = useFunction(async () => {
 		setLoadingRestore(true);
 
-		const { data: newPrivateStory } = await (api as StoryAPI).put(`/stories/${privateStory.id}`, {
+		const { data: newPrivateStory } = await (api as StoryAPI).patch(`/stories/${privateStory.id}`, {
 			willDelete: false
 		}).finally(() => {
 			setLoadingRestore(false);
@@ -135,7 +135,7 @@ const Component = withErrorPage<ServerSideProps>(({
 				: new Date(changedValues.anniversary)
 		);
 
-		const { data: newPrivateStory } = await (api as StoryAPI).put(`/stories/${privateStory.id}`, {
+		const { data: newPrivateStory } = await (api as StoryAPI).patch(`/stories/${privateStory.id}`, {
 			...changedValues,
 			anniversary: anniversaryDate && {
 				year: anniversaryDate.getFullYear(),
@@ -230,7 +230,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 							setSubmitting(true);
 
-							const { data: newPrivateStory } = await (api as StoryAPI).put(`stories/${privateStory.id}`, {
+							const { data: newPrivateStory } = await (api as StoryAPI).patch(`stories/${privateStory.id}`, {
 								willDelete: true
 							}).finally(() => {
 								setSubmitting(false);

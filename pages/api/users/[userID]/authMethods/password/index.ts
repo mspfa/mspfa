@@ -11,7 +11,7 @@ const Handler: APIHandler<{
 	query: {
 		userID: string
 	},
-	method: 'PUT',
+	method: 'PATCH',
 	body: {
 		currentPassword: PasswordString,
 		newPassword: PasswordString

@@ -9,7 +9,7 @@ export default createValidator({
 		RequestMethod: {
 			type: 'string',
 			enum: [
-				'PUT',
+				'PATCH',
 				'DELETE',
 				'GET'
 			]
@@ -145,7 +145,7 @@ export default createValidator({
 						},
 						method: {
 							type: 'string',
-							const: 'PUT'
+							const: 'PATCH'
 						}
 					},
 					required: [

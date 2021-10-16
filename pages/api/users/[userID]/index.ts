@@ -12,8 +12,8 @@ import { mergeWith } from 'lodash';
 import stories from 'lib/server/stories';
 import overwriteArrays from 'lib/client/overwriteArrays';
 
-/** The keys of all `PrivateUser` properties which the client should be able to `PUT` into their `ServerUser`. */
-type PuttableUserKey = 'birthdate' | 'name' | 'email' | 'description' | 'icon' | 'site' | 'profileStyle' | 'settings';
+/** The keys of all `PrivateUser` properties which the client should be able to `PATCH` into their `ServerUser`. */
+type WritableUserKey = 'birthdate' | 'name' | 'email' | 'description' | 'icon' | 'site' | 'profileStyle' | 'settings';
 
 const Handler: APIHandler<{
 	query: {
@@ -25,15 +25,15 @@ const Handler: APIHandler<{
 	} | {
 		method: 'DELETE'
 	} | {
-		method: 'PUT',
-		body: RecursivePartial<Pick<PrivateUser, PuttableUserKey>>
+		method: 'PATCH',
+		body: RecursivePartial<Pick<PrivateUser, WritableUserKey>>
 	}
 ), (
 	{
 		method: 'GET',
 		body: PublicUser
 	} | {
-		method: 'PUT',
+		method: 'PATCH',
 		body: PrivateUser
 	}
 )> = async (req, res) => {
@@ -46,7 +46,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	if (req.method === 'PUT') {
+	if (req.method === 'PATCH') {
 		const user = await permToGetUserInAPI(req, res, Perm.sudoWrite);
 
 		if (Object.values(req.body).length) {

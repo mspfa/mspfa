@@ -94,7 +94,7 @@ const Component = withErrorPage<ServerSideProps>(({
 				initialValues={{ content: message.content }}
 				onSubmit={
 					useFunction(async (values: { content: string }) => {
-						const { data: newMessage } = await (api as MessageAPI).put(`/messages/${message.id}`, values);
+						const { data: newMessage } = await (api as MessageAPI).patch(`/messages/${message.id}`, values);
 
 						// Clear the `message` object and assign new properties to it from `newMessage`.
 						for (const key of Object.keys(message)) {

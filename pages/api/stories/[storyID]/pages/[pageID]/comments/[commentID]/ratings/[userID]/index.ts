@@ -18,9 +18,7 @@ const Handler: APIHandler<{
 		userID: string
 	},
 	method: 'PUT',
-	body: {
-		rating: NonNullable<ClientComment['userRating']>
-	}
+	body: NonNullable<ClientComment['userRating']>
 }, {
 	method: 'PUT',
 	body: ClientComment
@@ -113,7 +111,7 @@ const Handler: APIHandler<{
 	);
 
 	// Only update the comment if the specified rating is not already set on the comment.
-	if (req.body.rating !== clientComment.userRating) {
+	if (req.body !== clientComment.userRating) {
 		const update: UpdateFilter<ServerStory> = {};
 
 		// Remove the user's initial rating if they have one.
@@ -126,12 +124,12 @@ const Handler: APIHandler<{
 		}
 
 		// Add the user's requested rating if they have one.
-		if (req.body.rating) {
+		if (req.body) {
 			update.$push = {
-				[`pages.${page.id}.comments.$.${getServerRatingKey(req.body.rating)}`]: userID
+				[`pages.${page.id}.comments.$.${getServerRatingKey(req.body)}`]: userID
 			};
 
-			clientComment[getClientRatingKey(req.body.rating)]++;
+			clientComment[getClientRatingKey(req.body)]++;
 		}
 
 		await stories.updateOne({
@@ -139,7 +137,7 @@ const Handler: APIHandler<{
 			[`pages.${page.id}.comments.id`]: comment.id
 		}, update);
 
-		clientComment.userRating = req.body.rating;
+		clientComment.userRating = req.body;
 	}
 
 	res.send(clientComment);

@@ -13,8 +13,8 @@ import { mergeWith } from 'lodash';
 import overwriteArrays from 'lib/client/overwriteArrays';
 import type { UpdateFilter } from 'mongodb';
 
-/** The keys of all `ClientStoryPage` properties which the client should be able to `PUT` into any of their existing `ServerStory['pages']` (except `'published'`). */
-type PuttableStoryPageKey = 'title' | 'content' | 'nextPages' | 'unlisted' | 'disableControls' | 'commentary' | 'notify';
+/** The keys of all `ClientStoryPage` properties which the client should be able to `PATCH` into any of their existing `ServerStory['pages']` (except `'published'`). */
+type WritableStoryPageKey = 'title' | 'content' | 'nextPages' | 'unlisted' | 'disableControls' | 'commentary' | 'notify';
 
 const Handler: APIHandler<{
 	// This `unknown` is necessary to set because of what I believe is a `vega/ts-json-schema-generator` bug I have yet to report.
@@ -24,7 +24,7 @@ const Handler: APIHandler<{
 	}
 } & (
 	{
-		method: 'PUT',
+		method: 'PATCH',
 		/** A record of `ClientStoryPage`s (some of which are partial) to add or change. */
 		body: Record<(
 			// The ID of the page to add or change.
@@ -35,7 +35,7 @@ const Handler: APIHandler<{
 				// A new page being added (includes `id`).
 				Omit<ClientStoryPage, 'published'>
 				// Changes to an existing page (excludes `id`).
-				| RecursivePartial<Pick<ClientStoryPage, PuttableStoryPageKey>>
+				| RecursivePartial<Pick<ClientStoryPage, WritableStoryPageKey>>
 			) & {
 				published?: DateNumber | null
 			}
@@ -63,7 +63,7 @@ const Handler: APIHandler<{
 	}
 ), (
 	{
-		method: 'PUT',
+		method: 'PATCH',
 		/** A `ClientStoryPageRecord` of the pages which were modified or added. */
 		body: ClientStoryPageRecord
 	} | {
@@ -142,7 +142,7 @@ const Handler: APIHandler<{
 	const $set: Record<string, unknown> = {};
 	const $unset: Record<string, true> = {};
 
-	if (req.method === 'PUT') {
+	if (req.method === 'PATCH') {
 		const newClientPages: ClientStoryPageRecord = {};
 
 		// Store `Date.now()` into a variable so it is not a different value each time, helping avoid inconsistencies.

@@ -81,9 +81,10 @@ const Comment = React.memo(({
 
 		ratingLoadingRef.current = true;
 
-		const { data: newComment } = await (api as StoryPageCommentRatingAPI).put(`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}/ratings/${user.id}`, {
-			rating: comment.userRating === rating ? 0 : rating
-		}).finally(() => {
+		const { data: newComment } = await (api as StoryPageCommentRatingAPI).put(
+			`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}/ratings/${user.id}`,
+			comment.userRating === rating ? 0 : rating
+		).finally(() => {
 			ratingLoadingRef.current = false;
 		});
 
@@ -225,7 +226,7 @@ const Comment = React.memo(({
 										return;
 									}
 
-									const { data: newComment } = await (api as StoryPageCommentAPI).put(
+									const { data: newComment } = await (api as StoryPageCommentAPI).patch(
 										`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}`,
 										dialog.form!.values
 									);

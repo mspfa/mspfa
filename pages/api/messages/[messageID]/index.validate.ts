@@ -10,7 +10,7 @@ export default createValidator({
 			type: 'string',
 			enum: [
 				'DELETE',
-				'PUT'
+				'PATCH'
 			]
 		}
 	}
@@ -68,7 +68,7 @@ export default createValidator({
 						},
 						method: {
 							type: 'string',
-							const: 'PUT'
+							const: 'PATCH'
 						}
 					},
 					required: [

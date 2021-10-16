@@ -10,8 +10,8 @@ import { StoryPrivacy } from 'lib/client/stories';
 import type { RecursivePartial } from 'lib/types';
 import { flatten } from 'lib/server/db';
 
-/** The keys of all `ClientNewsPost` properties which the client should be able to `PUT` into their `ServerNewsPost`. */
-type PuttableNewsPostKey = 'content';
+/** The keys of all `ClientNewsPost` properties which the client should be able to `PATCH` into their `ServerNewsPost`. */
+type WritableNewsPostKey = 'content';
 
 const Handler: APIHandler<{
 	query: {
@@ -24,8 +24,8 @@ const Handler: APIHandler<{
 	} | {
 		method: 'DELETE'
 	} | {
-		method: 'PUT',
-		body: RecursivePartial<Pick<ClientNewsPost, PuttableNewsPostKey>>
+		method: 'PATCH',
+		body: RecursivePartial<Pick<ClientNewsPost, WritableNewsPostKey>>
 	}
 ), {
 	method: 'GET',
@@ -33,7 +33,7 @@ const Handler: APIHandler<{
 } | {
 	method: 'DELETE'
 } | {
-	method: 'PUT',
+	method: 'PATCH',
 	body: ClientNewsPost
 }> = async (req, res) => {
 	await validate(req, res);
@@ -106,7 +106,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	// If this point is reached, `req.method === 'PUT'`.
+	// If this point is reached, `req.method === 'PATCH'`.
 
 	if (!(
 		user && (

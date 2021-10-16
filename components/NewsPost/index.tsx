@@ -70,7 +70,7 @@ const NewsPost = React.memo(({
 			return;
 		}
 
-		const { data: newNewsPost } = await (api as StoryNewsPostAPI).put(
+		const { data: newNewsPost } = await (api as StoryNewsPostAPI).patch(
 			`/stories/${story.id}/news/${newsPost.id}`,
 			dialog.form!.values
 		);

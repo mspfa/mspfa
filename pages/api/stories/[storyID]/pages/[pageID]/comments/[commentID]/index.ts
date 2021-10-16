@@ -11,8 +11,8 @@ import { StoryPrivacy } from 'lib/client/stories';
 import type { RecursivePartial } from 'lib/types';
 import { flatten } from 'lib/server/db';
 
-/** The keys of all `ClientComment` properties which the client should be able to `PUT` into their `ServerComment`. */
-type PuttableCommentKey = 'content';
+/** The keys of all `ClientComment` properties which the client should be able to `PATCH` into their `ServerComment`. */
+type WritableCommentKey = 'content';
 
 const Handler: APIHandler<{
 	query: {
@@ -26,8 +26,8 @@ const Handler: APIHandler<{
 	} | {
 		method: 'DELETE'
 	} | {
-		method: 'PUT',
-		body: RecursivePartial<Pick<ClientComment, PuttableCommentKey>>
+		method: 'PATCH',
+		body: RecursivePartial<Pick<ClientComment, WritableCommentKey>>
 	}
 ), {
 	method: 'GET',
@@ -35,7 +35,7 @@ const Handler: APIHandler<{
 } | {
 	method: 'DELETE'
 } | {
-	method: 'PUT',
+	method: 'PATCH',
 	body: ClientComment
 }> = async (req, res) => {
 	await validate(req, res);
@@ -135,7 +135,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	// If this point is reached, `req.method === 'PUT'`.
+	// If this point is reached, `req.method === 'PATCH'`.
 
 	if (!story.allowComments) {
 		res.status(403).send({

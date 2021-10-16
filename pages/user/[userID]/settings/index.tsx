@@ -155,7 +155,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 		});
 
 		if ((await changePasswordDialog)?.submit) {
-			await (api as UserPasswordAPI).put(`/users/${privateUser.id}/authMethods/password`, {
+			await (api as UserPasswordAPI).patch(`/users/${privateUser.id}/authMethods/password`, {
 				currentPassword: changePasswordDialog.form!.values.currentPassword,
 				newPassword: changePasswordDialog.form!.values.password
 			});
@@ -208,7 +208,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 							return;
 						}
 
-						const { data } = await (api as UserAPI).put(
+						const { data } = await (api as UserAPI).patch(
 							`users/${privateUser.id}`,
 							changedValues
 						);

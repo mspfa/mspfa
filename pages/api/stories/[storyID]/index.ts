@@ -13,8 +13,8 @@ import { StoryPrivacy } from 'lib/client/stories';
 import { authenticate } from 'lib/server/auth';
 import overwriteArrays from 'lib/client/overwriteArrays';
 
-/** The keys of all `PrivateStory` properties which the client should be able to `PUT` into their `ServerStory`. */
-type PuttableStoryKey = 'title' | 'status' | 'privacy' | 'owner' | 'editors' | 'author' | 'description' | 'icon' | 'banner' | 'style' | 'tags' | 'allowComments' | 'sidebarContent' | 'defaultPageTitle';
+/** The keys of all `PrivateStory` properties which the client should be able to `PATCH` into their `ServerStory`. */
+type WritableStoryKey = 'title' | 'status' | 'privacy' | 'owner' | 'editors' | 'author' | 'description' | 'icon' | 'banner' | 'style' | 'tags' | 'allowComments' | 'sidebarContent' | 'defaultPageTitle';
 
 const Handler: APIHandler<{
 	query: {
@@ -24,8 +24,8 @@ const Handler: APIHandler<{
 	{
 		method: 'GET'
 	} | {
-		method: 'PUT',
-		body: RecursivePartial<Pick<PrivateStory, PuttableStoryKey> & {
+		method: 'PATCH',
+		body: RecursivePartial<Pick<PrivateStory, WritableStoryKey> & {
 			willDelete: boolean,
 			anniversary: Pick<PrivateStory['anniversary'], 'year' | 'month' | 'day'>,
 			script: Pick<PrivateStory['script'], 'unverified'>
@@ -36,7 +36,7 @@ const Handler: APIHandler<{
 		method: 'GET',
 		body: PublicStory
 	} | {
-		method: 'PUT',
+		method: 'PATCH',
 		body: PrivateStory
 	}
 )> = async (req, res) => {
@@ -70,7 +70,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	// If this point is reached, `req.method === 'PUT'`.
+	// If this point is reached, `req.method === 'PATCH'`.
 
 	const { user } = await authenticate(req, res);
 

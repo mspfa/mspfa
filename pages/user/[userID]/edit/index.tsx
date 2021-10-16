@@ -69,7 +69,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 							return;
 						}
 
-						const { data } = await (api as UserAPI).put(
+						const { data } = await (api as UserAPI).patch(
 							`users/${privateUser.id}`,
 							changedValues
 						);

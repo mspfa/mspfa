@@ -20,22 +20,13 @@ export default createValidator({
 			additionalProperties: false,
 			properties: {
 				body: {
-					type: 'object',
-					properties: {
-						rating: {
-							type: 'number',
-							enum: [
-								-1,
-								0,
-								1
-							],
-							description: '`1` if the user liked the comment, `-1` if they disliked the comment, or `0` if they haven\'t rated the comment. Undefined if there is no user.'
-						}
-					},
-					required: [
-						'rating'
+					type: 'number',
+					enum: [
+						-1,
+						0,
+						1
 					],
-					additionalProperties: false
+					description: '`1` if the user liked the comment, `-1` if they disliked the comment, or `0` if they haven\'t rated the comment. Undefined if there is no user.'
 				},
 				query: {
 					type: 'object',

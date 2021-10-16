@@ -187,7 +187,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 		cancelTokenSourceRef.current = axios.CancelToken.source();
 
-		await (api as StoryAPI).put(`/stories/${privateStory.id}`, {
+		await (api as StoryAPI).patch(`/stories/${privateStory.id}`, {
 			defaultPageTitle: event.target.value
 		}, {
 			cancelToken: cancelTokenSourceRef.current.token
@@ -430,7 +430,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							return;
 						}
 
-						const { data: newInitialPages } = await (api as StoryPagesAPI).put(`/stories/${privateStory.id}/pages`, changedValues as any);
+						const { data: newInitialPages } = await (api as StoryPagesAPI).patch(`/stories/${privateStory.id}/pages`, changedValues as any);
 
 						// Preserve the React keys of updated pages.
 						for (const newInitialPage of Object.values(newInitialPages)) {

@@ -8,7 +8,7 @@ export default createValidator({
 	definitions: {
 		RequestMethod: {
 			type: 'string',
-			const: 'PUT'
+			const: 'PATCH'
 		}
 	}
 }, {
@@ -49,7 +49,7 @@ export default createValidator({
 				},
 				method: {
 					type: 'string',
-					const: 'PUT'
+					const: 'PATCH'
 				}
 			},
 			required: [

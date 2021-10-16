@@ -15,11 +15,11 @@ const Handler: APIHandler<{
 	{
 		method: 'DELETE'
 	} | {
-		method: 'PUT',
+		method: 'PATCH',
 		body: RecursivePartial<Pick<ClientMessage, 'content'>>
 	}
 ), {
-	method: 'PUT',
+	method: 'PATCH',
 	body: ClientMessage
 }> = async (req, res) => {
 	await validate(req, res);
@@ -46,7 +46,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	// If this point is reached, `req.method === 'PUT'`.
+	// If this point is reached, `req.method === 'PATCH'`.
 
 	const message = await getMessageByUnsafeID(req.query.messageID, res);
 
