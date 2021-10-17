@@ -115,24 +115,20 @@
 		color: inherit;
 	}
 
-	&-reply-form {
+	&-reply-form, &-replies {
 		margin-top: 0.75em;
-
-		&-actions {
-			margin-top: 2px;
-		}
 	}
 
-	&-replies {
-		margin-top: 0.75em;
+	&-reply-form-actions {
+		margin-top: 2px;
+	}
 
-		&-show-button-container {
-			font-size: 0.85em;
+	&-show-button-container {
+		font-size: 0.85em;
 
-			&::before {
-				content: '> ';
-				opacity: 0.7;
-			}
+		&::before {
+			content: '> ';
+			opacity: 0.7;
 		}
 	}
 }
