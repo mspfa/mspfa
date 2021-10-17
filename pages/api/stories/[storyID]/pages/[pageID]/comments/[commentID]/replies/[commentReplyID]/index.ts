@@ -113,10 +113,11 @@ const Handler: APIHandler<{
 		}
 
 		await stories.updateOne({
-			_id: story._id
+			_id: story._id,
+			[`pages.${page.id}.comments.id`]: comment.id
 		}, {
 			$pull: {
-				[`pages.${page.id}.comments.${comment.id}.replies`]: {
+				[`pages.${page.id}.comments.$.replies`]: {
 					id: commentReply.id
 				}
 			}
@@ -148,10 +149,15 @@ const Handler: APIHandler<{
 	Object.assign(comment, commentReplyMerge);
 
 	await stories.updateOne({
-		_id: story._id,
-		[`pages.${page.id}.comments.${comment.id}.replies.id`]: commentReply.id
+		_id: story._id
 	}, {
-		$set: flatten(commentReplyMerge, `pages.${page.id}.comments.${comment.id}.replies.$.`)
+		$set: flatten(commentReplyMerge, `pages.${page.id}.comments.$[comment].replies.$[commentReply].`)
+	}, {
+		arrayFilters: [{
+			comment: { id: comment.id }
+		}, {
+			commentReply: { id: commentReply.id }
+		}]
 	});
 
 	res.send(getClientCommentReply(commentReply, user));

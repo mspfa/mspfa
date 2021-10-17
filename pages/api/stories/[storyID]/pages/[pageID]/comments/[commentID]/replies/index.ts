@@ -151,10 +151,11 @@ const Handler: APIHandler<{
 	};
 
 	await stories.updateOne({
-		_id: story._id
+		_id: story._id,
+		[`pages.${page.id}.comments.id`]: comment.id
 	}, {
 		$push: {
-			[`pages.${page.id}.comments.${comment.id}.replies`]: serverCommentReply
+			[`pages.${page.id}.comments.$.replies`]: serverCommentReply
 		}
 	});
 
