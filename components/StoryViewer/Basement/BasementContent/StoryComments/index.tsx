@@ -109,7 +109,11 @@ const StoryComments = React.memo(() => {
 			newUserCache.forEach(cacheUser);
 
 			setComments(comments => [
-				...comments,
+				...comments.filter(comment => (
+					// If there exists some new comment with the same ID as this existing comment, filter out this existing comment, as it would otherwise lead to duplicate React keys as well as potentially inconsistent instances of the same comment being rendered.
+					// Duplicate comments can occur, for example, due to the user posting a new comment while sorting by oldest and then scrolling down to find the new comment they posted at the bottom again.
+					!newComments.some(newComment => newComment.id === comment.id)
+				)),
 				...newComments
 			]);
 		}
@@ -173,14 +177,15 @@ const StoryComments = React.memo(() => {
 							return;
 						}
 
-						await (api as StoryPageCommentsAPI).post(`/stories/${story.id}/pages/${pageID}/comments`, {
+						const { data: newComment } = await (api as StoryPageCommentsAPI).post(`/stories/${story.id}/pages/${pageID}/comments`, {
 							content: values.content
 						});
 
-						// Reset the sort mode to default so the new comment appears at the top.
-						setSortMode('pageID');
-						// Refresh comments in case any other new ones were added.
-						resetComments();
+						// Add the new comment to the top (regardless of the sort mode).
+						setComments([
+							newComment,
+							...comments
+						]);
 
 						formikHelpers.setFieldValue('content', '');
 					})
