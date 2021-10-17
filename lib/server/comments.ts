@@ -1,6 +1,6 @@
 import type { ObjectId } from 'mongodb';
 import type { ServerUser, ServerUserID } from 'lib/server/users';
-import type { ClientComment } from 'lib/client/comments';
+import type { ClientComment, ClientCommentReply } from 'lib/client/comments';
 import type { StoryPageID } from 'lib/server/stories';
 
 export type ServerCommentID = ObjectId;
@@ -18,8 +18,11 @@ export type ServerComment = {
 	/** @uniqueItems true */
 	likes: ServerUserID[],
 	/** @uniqueItems true */
-	dislikes: ServerUserID[]
+	dislikes: ServerUserID[],
+	replies: ServerCommentReply[]
 };
+
+export type ServerCommentReply = Omit<ServerComment, 'replies'>;
 
 /** Converts a `ServerComment` to a `ClientComment`. */
 export const getClientComment = <User extends ServerUser | undefined>(
@@ -51,5 +54,32 @@ export const getClientComment = <User extends ServerUser | undefined>(
 		User extends ServerUser ? {
 			userRating: NonNullable<ClientComment['userRating']>
 		} : never
-	)
+	),
+	replyCount: serverComment.replies.length
+});
+
+/** Converts a `ServerCommentReply` to a `ClientCommentReply`. */
+export const getClientCommentReply = <User extends ServerUser | undefined>(
+	serverCommentReply: ServerCommentReply,
+	/** The user accessing this comment, or undefined if there is no authenticated user. */
+	user: User
+): ClientCommentReply<User> => ({
+	id: serverCommentReply.id.toString(),
+	posted: +serverCommentReply.posted,
+	...serverCommentReply.edited !== undefined && {
+		edited: +serverCommentReply.edited
+	},
+	author: serverCommentReply.author.toString(),
+	content: serverCommentReply.content,
+	likeCount: serverCommentReply.likes.length,
+	dislikeCount: serverCommentReply.dislikes.length,
+	...user && {
+		userRating: (
+			serverCommentReply.likes.some(userID => userID.equals(user._id))
+				? 1
+				: serverCommentReply.dislikes.some(userID => userID.equals(user._id))
+					? -1
+					: 0
+		)
+	} as any
 });

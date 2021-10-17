@@ -16,7 +16,8 @@ export type ClientComment<
 	edited?: DateNumber,
 	author: string,
 	likeCount: integer,
-	dislikeCount: integer
+	dislikeCount: integer,
+	replyCount: integer
 } & (
 	User extends ServerUser ? {
 		/** `1` if the user liked the comment, `-1` if they disliked the comment, or `0` if they haven't rated the comment. Undefined if there is no user. */
@@ -26,3 +27,8 @@ export type ClientComment<
 		userRating?: undefined
 	}
 );
+
+/** A serializable version of `ServerCommentReply` with only the properties that can safely be exposed to any client. */
+export type ClientCommentReply<
+	User extends ServerUser | undefined = ServerUser | undefined
+> = Omit<ClientComment<User>, 'pageID' | 'replyCount'>;
