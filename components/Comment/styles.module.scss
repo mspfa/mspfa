@@ -115,7 +115,7 @@
 		color: inherit;
 	}
 
-	&-reply-form, &-replies {
+	&-reply-form, &-replies-toggle-button-container, &-replies {
 		margin-top: 0.75em;
 	}
 
@@ -123,12 +123,22 @@
 		margin-top: 2px;
 	}
 
-	&-replies-show-button-container {
-		font-size: 0.85em;
-
-		&::before {
-			content: '> ';
+	&-replies-toggle-button {
+		&-container::before {
+			content: '>';
 			opacity: 0.7;
+			font-size: 0.85em;
+			display: inline-block;
+			transform-origin: 0.5ch 0.5em;
+			margin-right: 1ch;
+
+			.comment.replies-shown & {
+				transform: rotate(90deg);
+			}
+		}
+
+		&.link {
+			font-size: 0.85em;
 		}
 	}
 }

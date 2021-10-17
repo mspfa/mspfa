@@ -124,6 +124,12 @@ const Comment = React.memo(({
 		setReplying(false);
 	});
 
+	const [repliesShown, setRepliesShown] = useState(false);
+
+	const toggleRepliesShown = useFunction(() => {
+		setRepliesShown(!repliesShown);
+	});
+
 	const IconContainer = authorUser ? Link : 'div';
 
 	return (
@@ -138,7 +144,9 @@ const Comment = React.memo(({
 					user?.id === comment.author
 						? ' by-self'
 						: ''
-				} by-${comment.author} comment-${comment.id}`
+				} by-${comment.author} comment-${comment.id}${
+					repliesShown ? ' replies-shown' : ''
+				}`
 			}
 		>
 			<IconContainer
@@ -386,13 +394,17 @@ const Comment = React.memo(({
 					</Formik>
 				)}
 				{comment.replyCount !== 0 && (
-					<div className="comment-replies">
-						<div className="comment-replies-show-button-container">
-							<Link className="comment-replies-show-button translucent">
-								{`Show Replies (${comment.replyCount})`}
-							</Link>
-						</div>
+					<div className="comment-replies-toggle-button-container">
+						<Link
+							className="comment-replies-toggle-button translucent"
+							onClick={toggleRepliesShown}
+						>
+							{`${repliesShown ? 'Hide' : 'Show'} Replies (${comment.replyCount})`}
+						</Link>
 					</div>
+				)}
+				{repliesShown && (
+					<div className="comment-replies" />
 				)}
 			</div>
 		</div>
