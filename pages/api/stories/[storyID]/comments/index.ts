@@ -24,8 +24,8 @@ const Handler: APIHandler<{
 		fromPageID: StoryPageID | string,
 		/** How many results to respond with. */
 		limit?: integer | string,
-		/** Filter the results to only include comments posted before the comment with this ID. */
-		before?: string,
+		/** Filter the results to only include comments after the comment with this ID. */
+		after?: string,
 		sort?: StoryCommentsSortMode
 	}
 }, {
@@ -78,15 +78,15 @@ const Handler: APIHandler<{
 		limit = 50;
 	}
 
-	/** An `ObjectId` of `req.query.before`, or undefined if none was specified. */
-	let beforeCommentID = undefined;
+	/** An `ObjectId` of `req.query.after`, or undefined if none was specified. */
+	let afterID = undefined;
 
-	if (req.query.before) {
+	if (req.query.after) {
 		try {
-			beforeCommentID = new ObjectId(req.query.before);
+			afterID = new ObjectId(req.query.after);
 		} catch {
 			res.status(400).send({
-				message: 'The comment ID in the specified `before` query is invalid.'
+				message: 'The comment ID in the specified `after` query is invalid.'
 			});
 			return;
 		}
@@ -109,9 +109,9 @@ const Handler: APIHandler<{
 	if (sort === 'pageID') {
 		// Append the exact number of requested results in sorted order to begin with.
 
-		// If `beforeCommentID` is set, don't push anything until we reach the comment with that ID.
+		// If `afterID` is set, don't push anything until we reach the comment with that ID.
 		/** Once set to true, all following iterations should push a comment to `comments`. */
-		let shouldPush = beforeCommentID === undefined;
+		let shouldPush = afterID === undefined;
 
 		pageLoop:
 		for (let i = fromPageID; i >= 1; i--) {
@@ -126,10 +126,10 @@ const Handler: APIHandler<{
 						break pageLoop;
 					}
 				} else if (
-					// Since `shouldPush` is false, we can assert `beforeCommentID!` here because `shouldPush` can only ever be declared false if `beforeCommentID` is not undefined.
-					comment.id.equals(beforeCommentID!)
+					// Since `shouldPush` is false, we can assert `afterID!` here because `shouldPush` can only ever be declared false if `afterID` is not undefined.
+					comment.id.equals(afterID!)
 				) {
-					// Once we reach the comment whose ID is `beforeCommentID`, we can start pushing any comments after it.
+					// Once we reach the comment whose ID is `afterID`, we can start pushing any comments after it.
 					shouldPush = true;
 				}
 			}
@@ -166,9 +166,9 @@ const Handler: APIHandler<{
 		));
 
 		const startIndex = (
-			req.query.before
+			req.query.after
 				? comments.findIndex(
-					({ id }) => id.toString() === req.query.before
+					({ id }) => id.toString() === req.query.after
 				) + 1
 				: 0
 		);

@@ -114,7 +114,7 @@ const StoryNews = React.memo(() => {
 				params: {
 					limit: NEWS_POSTS_PER_REQUEST,
 					...newsPosts.length && {
-						before: newsPosts[newsPosts.length - 1].id
+						after: newsPosts[newsPosts.length - 1].id
 					}
 				}
 			}).finally(() => {

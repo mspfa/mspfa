@@ -40,6 +40,7 @@ export type ServerStoryPage = {
 	/** Whether the client's controls should be disabled while this page is rendered. */
 	disableControls: boolean,
 	commentary: string,
+	/** This page's comments sorted from newest to oldest. */
 	comments: ServerComment[],
 	/** Whether this page was set to notify readers on publish. */
 	notify: boolean

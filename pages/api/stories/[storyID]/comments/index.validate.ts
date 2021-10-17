@@ -48,9 +48,9 @@ export default createValidator({
 							],
 							description: 'How many results to respond with.'
 						},
-						before: {
+						after: {
 							type: 'string',
-							description: 'Filter the results to only include comments posted before the comment with this ID.'
+							description: 'Filter the results to only include comments after the comment with this ID.'
 						},
 						sort: {
 							$ref: '#/definitions/StoryCommentsSortMode'

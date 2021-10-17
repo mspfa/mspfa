@@ -5,7 +5,7 @@ import type { StoryPageID } from 'lib/server/stories';
 
 export type ServerCommentID = ObjectId;
 
-export type ServerComment = {
+export type ServerCommentReply = {
 	id: ServerCommentID,
 	posted: Date,
 	edited?: Date,
@@ -18,11 +18,13 @@ export type ServerComment = {
 	/** @uniqueItems true */
 	likes: ServerUserID[],
 	/** @uniqueItems true */
-	dislikes: ServerUserID[],
-	replies: ServerCommentReply[]
+	dislikes: ServerUserID[]
 };
 
-export type ServerCommentReply = Omit<ServerComment, 'replies'>;
+export type ServerComment = ServerCommentReply & {
+	/** This comment's replies sorted from oldest to newest. */
+	replies: ServerCommentReply[]
+};
 
 /** Converts a `ServerComment` to a `ClientComment`. */
 export const getClientComment = <User extends ServerUser | undefined>(

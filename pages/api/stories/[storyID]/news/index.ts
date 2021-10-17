@@ -27,8 +27,8 @@ const Handler: APIHandler<{
 		query: {
 			/** How many results to respond with. */
 			limit?: integer | string,
-			/** Filter the results to only include news posted before the news post with this ID. */
-			before?: string
+			/** Filter the results to only include news after the news post with this ID. */
+			after?: string
 		}
 	}
 ), {
@@ -69,10 +69,24 @@ const Handler: APIHandler<{
 			limit = 50;
 		}
 
+		/** An `ObjectId` of `req.query.after`, or undefined if none was specified. */
+		let afterID: ObjectId | undefined = undefined;
+
+		if (req.query.after) {
+			try {
+				afterID = new ObjectId(req.query.after);
+			} catch {
+				res.status(400).send({
+					message: 'The news post ID in the specified `after` query is invalid.'
+				});
+				return;
+			}
+		}
+
 		const startIndex = (
-			req.query.before
+			afterID
 				? story.news.findIndex(
-					({ id }) => id.toString() === req.query.before
+					({ id }) => id.equals(afterID!)
 				) + 1
 				: 0
 		);

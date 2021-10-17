@@ -90,7 +90,7 @@ const StoryComments = React.memo(() => {
 					fromPageID: pageID,
 					limit: COMMENTS_PER_REQUEST,
 					...comments.length && {
-						before: comments[comments.length - 1].id
+						after: comments[comments.length - 1].id
 					},
 					sort: sortMode
 				}

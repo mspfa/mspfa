@@ -37,12 +37,16 @@ export default createValidator({
 								},
 								commentID: {
 									type: 'string'
+								},
+								commentReplyID: {
+									type: 'string'
 								}
 							},
 							required: [
 								'storyID',
 								'pageID',
-								'commentID'
+								'commentID',
+								'commentReplyID'
 							],
 							additionalProperties: false
 						},
@@ -72,12 +76,16 @@ export default createValidator({
 								},
 								commentID: {
 									type: 'string'
+								},
+								commentReplyID: {
+									type: 'string'
 								}
 							},
 							required: [
 								'storyID',
 								'pageID',
-								'commentID'
+								'commentID',
+								'commentReplyID'
 							],
 							additionalProperties: false
 						},
@@ -96,7 +104,7 @@ export default createValidator({
 					additionalProperties: false,
 					properties: {
 						body: {
-							$ref: '#/definitions/RecursivePartial%3Calias-731470504-70263-70404-731470504-0-212510%3Cdef-alias--360-1175--0-14471413154152%2Calias-1603872257-619-778-1603872257-0-3433636243561%3E%3E'
+							$ref: '#/definitions/RecursivePartial%3Calias-731470504-70263-70404-731470504-0-212510%3Cdef-alias--1175-1447--0-1447615575226%2Calias-783329759-634-803-783329759-0-38561010085263%3E%3E'
 						},
 						query: {
 							type: 'object',
@@ -109,12 +117,16 @@ export default createValidator({
 								},
 								commentID: {
 									type: 'string'
+								},
+								commentReplyID: {
+									type: 'string'
 								}
 							},
 							required: [
 								'storyID',
 								'pageID',
-								'commentID'
+								'commentID',
+								'commentReplyID'
 							],
 							additionalProperties: false
 						},
@@ -131,7 +143,7 @@ export default createValidator({
 				}
 			]
 		},
-		'RecursivePartial<alias-731470504-70263-70404-731470504-0-212510<def-alias--360-1175--0-14471413154152,alias-1603872257-619-778-1603872257-0-3433636243561>>': {
+		'RecursivePartial<alias-731470504-70263-70404-731470504-0-212510<def-alias--1175-1447--0-1447615575226,alias-783329759-634-803-783329759-0-38561010085263>>': {
 			type: 'object',
 			properties: {
 				content: {

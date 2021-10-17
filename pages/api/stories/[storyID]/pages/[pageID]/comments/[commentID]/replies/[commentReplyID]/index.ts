@@ -1,24 +1,25 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
-import type { ServerComment } from 'lib/server/comments';
-import { getClientComment } from 'lib/server/comments';
+import type { ServerCommentReply } from 'lib/server/comments';
+import { getClientCommentReply } from 'lib/server/comments';
 import type { ServerStoryPage } from 'lib/server/stories';
 import stories, { getStoryByUnsafeID } from 'lib/server/stories';
 import { authenticate } from 'lib/server/auth';
-import type { ClientComment } from 'lib/client/comments';
+import type { ClientCommentReply } from 'lib/client/comments';
 import { Perm } from 'lib/client/perms';
 import { StoryPrivacy } from 'lib/client/stories';
 import type { RecursivePartial } from 'lib/types';
 import { flatten } from 'lib/server/db';
 
-/** The keys of all `ClientComment` properties which the client should be able to `PATCH` into their `ServerComment`. */
-type WritableCommentKey = 'content';
+/** The keys of all `ClientCommentReply` properties which the client should be able to `PATCH` into their `ServerComment`. */
+type WritableCommentReplyKey = 'content';
 
 const Handler: APIHandler<{
 	query: {
 		storyID: string,
 		pageID: string,
-		commentID: string
+		commentID: string,
+		commentReplyID: string
 	}
 } & (
 	{
@@ -27,16 +28,16 @@ const Handler: APIHandler<{
 		method: 'DELETE'
 	} | {
 		method: 'PATCH',
-		body: RecursivePartial<Pick<ClientComment, WritableCommentKey>>
+		body: RecursivePartial<Pick<ClientCommentReply, WritableCommentReplyKey>>
 	}
 ), {
 	method: 'GET',
-	body: ClientComment
+	body: ClientCommentReply
 } | {
 	method: 'DELETE'
 } | {
 	method: 'PATCH',
-	body: ClientComment
+	body: ClientCommentReply
 }> = async (req, res) => {
 	await validate(req, res);
 
@@ -82,22 +83,31 @@ const Handler: APIHandler<{
 		return;
 	}
 
+	const commentReply = comment.replies.find(({ id }) => id.toString() === req.query.commentReplyID);
+
+	if (!commentReply) {
+		res.status(404).send({
+			message: 'No comment reply was found with the specified ID.'
+		});
+		return;
+	}
+
 	if (req.method === 'GET') {
-		res.send(getClientComment(comment, page.id, user));
+		res.send(getClientCommentReply(commentReply, user));
 		return;
 	}
 
 	if (req.method === 'DELETE') {
 		if (!(
 			user && (
-				comment.author.equals(user._id)
+				commentReply.author.equals(user._id)
 				|| story.owner.equals(user._id)
 				|| story.editors.some(userID => userID.equals(user._id))
 				|| user.perms & Perm.sudoDelete
 			)
 		)) {
 			res.status(403).send({
-				message: 'You do not have permission to delete the specified comment.'
+				message: 'You do not have permission to delete the specified comment reply.'
 			});
 			return;
 		}
@@ -106,8 +116,8 @@ const Handler: APIHandler<{
 			_id: story._id
 		}, {
 			$pull: {
-				[`pages.${page.id}.comments`]: {
-					id: comment.id
+				[`pages.${page.id}.comments.${comment.id}.replies`]: {
+					id: commentReply.id
 				}
 			}
 		});
@@ -120,31 +130,31 @@ const Handler: APIHandler<{
 
 	if (!(
 		user && (
-			comment.author.equals(user._id)
+			commentReply.author.equals(user._id)
 			|| user.perms & Perm.sudoWrite
 		)
 	)) {
 		res.status(403).send({
-			message: 'You do not have permission to edit the specified comment.'
+			message: 'You do not have permission to edit the specified comment reply.'
 		});
 		return;
 	}
 
-	const commentMerge: Partial<ServerComment> = {
+	const commentReplyMerge: Partial<ServerCommentReply> = {
 		...req.body,
 		edited: new Date()
 	};
 
-	Object.assign(comment, commentMerge);
+	Object.assign(comment, commentReplyMerge);
 
 	await stories.updateOne({
 		_id: story._id,
-		[`pages.${page.id}.comments.id`]: comment.id
+		[`pages.${page.id}.comments.${comment.id}.replies.id`]: commentReply.id
 	}, {
-		$set: flatten(commentMerge, `pages.${page.id}.comments.$.`)
+		$set: flatten(commentReplyMerge, `pages.${page.id}.comments.${comment.id}.replies.$.`)
 	});
 
-	res.send(getClientComment(comment, page.id, user));
+	res.send(getClientCommentReply(commentReply, user));
 };
 
 export default Handler;

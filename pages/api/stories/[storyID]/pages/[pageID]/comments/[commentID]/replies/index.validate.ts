@@ -10,8 +10,7 @@ export default createValidator({
 			type: 'string',
 			enum: [
 				'GET',
-				'DELETE',
-				'PATCH'
+				'POST'
 			]
 		}
 	}
@@ -19,7 +18,7 @@ export default createValidator({
 	$schema: 'http://json-schema.org/draft-07/schema#',
 	$ref: '#/definitions/Request',
 	definitions: {
-		'Request': {
+		Request: {
 			anyOf: [
 				{
 					type: 'object',
@@ -60,43 +59,19 @@ export default createValidator({
 					type: 'object',
 					additionalProperties: false,
 					properties: {
-						body: {},
-						query: {
-							type: 'object',
-							properties: {
-								storyID: {
-									type: 'string'
-								},
-								pageID: {
-									type: 'string'
-								},
-								commentID: {
-									type: 'string'
-								}
-							},
-							required: [
-								'storyID',
-								'pageID',
-								'commentID'
-							],
-							additionalProperties: false
-						},
-						method: {
-							type: 'string',
-							const: 'DELETE'
-						}
-					},
-					required: [
-						'method',
-						'query'
-					]
-				},
-				{
-					type: 'object',
-					additionalProperties: false,
-					properties: {
 						body: {
-							$ref: '#/definitions/RecursivePartial%3Calias-731470504-70263-70404-731470504-0-212510%3Cdef-alias--360-1175--0-14471413154152%2Calias-1603872257-619-778-1603872257-0-3433636243561%3E%3E'
+							type: 'object',
+							properties: {
+								content: {
+									type: 'string',
+									minLength: 1,
+									maxLength: 2000
+								}
+							},
+							required: [
+								'content'
+							],
+							additionalProperties: false
 						},
 						query: {
 							type: 'object',
@@ -120,7 +95,7 @@ export default createValidator({
 						},
 						method: {
 							type: 'string',
-							const: 'PATCH'
+							const: 'POST'
 						}
 					},
 					required: [
@@ -130,17 +105,6 @@ export default createValidator({
 					]
 				}
 			]
-		},
-		'RecursivePartial<alias-731470504-70263-70404-731470504-0-212510<def-alias--360-1175--0-14471413154152,alias-1603872257-619-778-1603872257-0-3433636243561>>': {
-			type: 'object',
-			properties: {
-				content: {
-					type: 'string',
-					minLength: 1,
-					maxLength: 2000
-				}
-			},
-			additionalProperties: false
 		}
 	}
 });
