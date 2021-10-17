@@ -67,7 +67,8 @@ const Handler: APIHandler<{
 		author: user._id,
 		content: req.body.content,
 		likes: [],
-		dislikes: []
+		dislikes: [],
+		replies: []
 	};
 
 	await stories.updateOne({
