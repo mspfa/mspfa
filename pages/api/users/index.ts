@@ -1,5 +1,5 @@
 import validate from './index.validate';
-import { validateBirthdate } from 'lib/server/api';
+import validateBirthdate from 'lib/server/validateBirthdate';
 import type { APIHandler } from 'lib/server/api';
 import type { SessionBody } from 'pages/api/session';
 import { getAuthMethodInfo, createSession } from 'lib/server/auth';

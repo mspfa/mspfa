@@ -1,6 +1,6 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
-import { validateBirthdate } from 'lib/server/api';
+import validateBirthdate from 'lib/server/validateBirthdate';
 import type { PrivateUser, PublicUser } from 'lib/client/users';
 import type { RecursivePartial } from 'lib/types';
 import { Perm } from 'lib/client/perms';
