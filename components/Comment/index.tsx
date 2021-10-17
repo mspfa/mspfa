@@ -27,6 +27,7 @@ import Button from 'components/Button';
 
 type StoryPageCommentAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]').default>;
 type StoryPageCommentRatingAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]/ratings/[userID]').default>;
+type StoryPageCommentRepliesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]/replies').default>;
 
 export type CommentProps = {
 	story: PublicStory,
@@ -96,7 +97,29 @@ const Comment = React.memo(({
 	const replyContentFieldRef = useRef<HTMLTextAreaElement>(null);
 
 	const onSubmitReply = useFunction(async (values: { content: string }) => {
-		console.log(values.content);
+		if (!user) {
+			if (await Dialog.confirm({
+				id: 'post-comment',
+				title: 'Comment',
+				content: 'Sign in to post a reply!',
+				actions: ['Sign In', 'Cancel']
+			})) {
+				promptSignIn();
+			}
+
+			return;
+		}
+
+		const { data: newCommentReply } = await (api as StoryPageCommentRepliesAPI).post(`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}/replies`, {
+			content: values.content
+		});
+
+		setComment({
+			...comment,
+			replyCount: comment.replyCount + 1
+		});
+
+		// TODO: Display new reply.
 
 		setReplying(false);
 	});
@@ -361,6 +384,15 @@ const Comment = React.memo(({
 							);
 						}}
 					</Formik>
+				)}
+				{comment.replyCount !== 0 && (
+					<div className="comment-replies">
+						<div className="comment-replies-show-button-container">
+							<Link className="comment-replies-show-button translucent">
+								{`Show Replies (${comment.replyCount})`}
+							</Link>
+						</div>
+					</div>
 				)}
 			</div>
 		</div>
