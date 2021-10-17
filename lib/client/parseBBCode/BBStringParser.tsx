@@ -136,7 +136,7 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 			} else if (isClosingBBTagData(node)) {
 				// This is a valid closing BB tag, and `this.options.removeBBTags` is necessarily disabled since `parsePartialBBString` doesn't push `ClosingBBTagData` when that option is enabled.
 
-				const children = childrenStack.pop();
+				const children = childrenStack.pop()!;
 				depth--;
 
 				/** We can assert this as non-nullable because the only case in which it's nullable is if the tag name is invalid, which has already been verified not to be the case. */
@@ -146,7 +146,12 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 						key={i}
 						attributes={node.openingBBTagData.attributes}
 					>
-						{children}
+						{(children.length === 0
+							? undefined
+							: children.length === 1
+								? children[0]
+								: children
+						)}
 					</BBTag>
 				);
 			} else {
