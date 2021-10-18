@@ -8,6 +8,7 @@ import api from 'lib/client/api';
 import Link from 'components/Link';
 import Comment from 'components/Comment';
 import type { PrivateUser } from 'lib/client/users';
+import StoryPageCommentReplies from 'components/Comment/StoryPageComment/StoryPageCommentReplies';
 
 type StoryPageCommentAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]').default>;
 type StoryPageCommentRatingAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]/ratings/[userID]').default>;
@@ -42,7 +43,7 @@ const StoryPageComment = React.memo(({
 				`${
 					story.owner === comment.author
 					|| story.editors.includes(comment.author)
-						? ' by-editor'
+						? 'by-editor'
 						: ''
 				}${repliesShown ? ' replies-shown' : ''}`
 			}
@@ -54,9 +55,10 @@ const StoryPageComment = React.memo(({
 			}
 			postReply={
 				useFunction(async values => {
-					const { data: newCommentReply } = await (api as StoryPageCommentRepliesAPI).post(`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}/replies`, {
-						content: values.content
-					});
+					const { data: newCommentReply } = await (api as StoryPageCommentRepliesAPI).post(
+						`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}/replies`,
+						values
+					);
 
 					setComment({
 						...comment,
@@ -78,7 +80,10 @@ const StoryPageComment = React.memo(({
 				</div>
 			)}
 			{repliesShown && (
-				<div className="comment-replies" />
+				<StoryPageCommentReplies
+					story={story}
+					comment={comment}
+				/>
 			)}
 		</Comment>
 	);

@@ -39,11 +39,10 @@ export default createValidator({
 								}
 							},
 							required: [
-								'storyID',
+								'commentID',
 								'pageID',
-								'commentID'
-							],
-							additionalProperties: false
+								'storyID'
+							]
 						},
 						method: {
 							type: 'string',
@@ -87,11 +86,10 @@ export default createValidator({
 								}
 							},
 							required: [
-								'storyID',
+								'commentID',
 								'pageID',
-								'commentID'
-							],
-							additionalProperties: false
+								'storyID'
+							]
 						},
 						method: {
 							type: 'string',
