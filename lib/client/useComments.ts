@@ -41,7 +41,7 @@ const useComments = <
 
 	/** A ref to whether comments are currently being requested. */
 	const loadingCommentsRef = useRef(false);
-	/** The ID of the comment to load new comments after. */
+	/** The ID of the comment to insert newly loaded comments after. */
 	const afterCommentIDRef = useRef<string>();
 
 	// If `comments` was emptied, empty the `afterCommentIDRef` as well.
@@ -84,7 +84,11 @@ const useComments = <
 
 		setComments(comments => {
 			/** The index to insert new comments into the `comments` array. */
-			const newCommentsIndex = comments.findIndex(({ id }) => id === afterCommentIDRef.current) + 1;
+			const newCommentsIndex = (
+				afterCommentIDRef.current
+					? comments.findIndex(({ id }) => id === afterCommentIDRef.current) + 1
+					: 0
+			);
 
 			const nonDuplicateFilter = (comment: ClientComment) => (
 				// If there exists some new comment with the same ID as this existing comment, filter out this existing comment, as it would otherwise lead to duplicate React keys as well as potentially inconsistent instances of the same comment being rendered.
