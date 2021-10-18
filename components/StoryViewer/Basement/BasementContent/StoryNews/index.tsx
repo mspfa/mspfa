@@ -151,25 +151,25 @@ const StoryNews = React.memo(() => {
 		// `newsPosts` must be a dependency here so that updating it calls `checkIfNewsShouldBeFetched` again without needing to change the viewport.
 	}, [checkIfNewsShouldBeFetched, notAllNewsLoaded, newsPosts]);
 
-	const deleteNewsPost = useFunction((newsID: string) => {
+	const deleteNewsPost = useFunction((newsPostID: string) => {
 		setNewsPosts(newsPosts => {
-			const newsIndex = newsPosts.findIndex(({ id }) => id === newsID);
+			const newsPostIndex = newsPosts.findIndex(({ id }) => id === newsPostID);
 
 			return [
-				...newsPosts.slice(0, newsIndex),
-				...newsPosts.slice(newsIndex + 1, newsPosts.length)
+				...newsPosts.slice(0, newsPostIndex),
+				...newsPosts.slice(newsPostIndex + 1, newsPosts.length)
 			];
 		});
 	});
 
 	const setNewsPost = useFunction((newsPost: ClientNewsPost) => {
 		setNewsPosts(newsPosts => {
-			const newsIndex = newsPosts.findIndex(({ id }) => id === newsPost.id);
+			const newsPostIndex = newsPosts.findIndex(({ id }) => id === newsPost.id);
 
 			return [
-				...newsPosts.slice(0, newsIndex),
+				...newsPosts.slice(0, newsPostIndex),
 				newsPost,
-				...newsPosts.slice(newsIndex + 1, newsPosts.length)
+				...newsPosts.slice(newsPostIndex + 1, newsPosts.length)
 			];
 		});
 	});
