@@ -8,7 +8,6 @@ import { authenticate } from 'lib/server/auth';
 import type { ClientComment } from 'lib/client/comments';
 import { Perm } from 'lib/client/perms';
 import { StoryPrivacy } from 'lib/client/stories';
-import type { RecursivePartial } from 'lib/types';
 import { flatten } from 'lib/server/db';
 
 /** The keys of all `ClientComment` properties which the client should be able to `PATCH` into their `ServerComment`. */
@@ -27,7 +26,7 @@ const Handler: APIHandler<{
 		method: 'DELETE'
 	} | {
 		method: 'PATCH',
-		body: RecursivePartial<Pick<ClientComment, WritableCommentKey>>
+		body: Pick<ClientComment, WritableCommentKey>
 	}
 ), {
 	method: 'GET',

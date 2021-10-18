@@ -32,3 +32,8 @@ export type ClientComment<
 export type ClientCommentReply<
 	User extends ServerUser | undefined = ServerUser | undefined
 > = Omit<ClientComment<User>, 'pageID' | 'replyCount'>;
+
+/** A `ClientComment` or `ClientCommentReply`. */
+export type ClientCommentOrReply = ClientComment | (
+	ClientCommentReply & Partial<Record<Exclude<keyof ClientComment, keyof ClientCommentReply>, never>>
+);

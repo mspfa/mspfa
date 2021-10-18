@@ -165,7 +165,7 @@ export type APIClient<Handler> = Omit<AxiosInstance, Method> & typeof apiExtensi
 				AxiosResponse<(
 					Response & { method: Uppercase<RequestMethod> } extends { body: {} }
 						? (Response & { method: Uppercase<RequestMethod> })['body']
-						: ''
+						: never
 				)>
 			)>
 		}

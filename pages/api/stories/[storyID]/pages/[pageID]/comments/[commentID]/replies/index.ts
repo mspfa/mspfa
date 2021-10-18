@@ -36,7 +36,7 @@ const Handler: APIHandler<{
 ), {
 	method: 'GET',
 	body: {
-		commentReplies: ClientCommentReply[],
+		comments: ClientCommentReply[],
 		userCache: PublicUser[]
 	}
 } | {
@@ -119,7 +119,7 @@ const Handler: APIHandler<{
 		const commentReplies = comment.replies.slice(startIndex, startIndex + limit);
 
 		res.send({
-			commentReplies: commentReplies.map(commentReply => (
+			comments: commentReplies.map(commentReply => (
 				getClientCommentReply(commentReply, user)
 			)),
 			userCache: await users.find!({
