@@ -1,6 +1,7 @@
 import './styles.module.scss';
-import type { ClientComment } from 'lib/client/comments';
-import React, { useState } from 'react';
+import type { ClientComment, ClientCommentReply } from 'lib/client/comments';
+import type { Dispatch, SetStateAction } from 'react';
+import React, { useRef, useState } from 'react';
 import type { PublicStory } from 'lib/client/stories';
 import useFunction from 'lib/client/useFunction';
 import type { APIClient } from 'lib/client/api';
@@ -8,6 +9,7 @@ import api from 'lib/client/api';
 import Link from 'components/Link';
 import Comment from 'components/Comment';
 import StoryPageCommentReplies from 'components/Comment/StoryPageComment/StoryPageCommentReplies';
+import { useLatest } from 'react-use';
 
 type StoryPageCommentAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]').default>;
 type StoryPageCommentRatingAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]/ratings/[userID]').default>;
@@ -32,6 +34,11 @@ const StoryPageComment = React.memo(({
 		setRepliesShown(!repliesShown);
 	});
 
+	/** A ref to the latest value of `comment` to avoid race conditions. */
+	const commentRef = useLatest(comment);
+
+	const setCommentRepliesRef = useRef<Dispatch<SetStateAction<ClientCommentReply[]>>>();
+
 	return (
 		<>
 			<Comment<StoryPageCommentAPI, StoryPageCommentRatingAPI>
@@ -54,12 +61,16 @@ const StoryPageComment = React.memo(({
 							values
 						);
 
+						// Increment the reply count of the parent comment.
 						setComment({
-							...comment,
-							replyCount: comment.replyCount + 1
+							...commentRef.current,
+							replyCount: commentRef.current.replyCount + 1
 						});
 
-						// TODO: Display new reply.
+						setCommentRepliesRef.current?.(commentReplies => [
+							...commentReplies,
+							newCommentReply
+						]);
 					})
 				}
 			>
@@ -80,6 +91,7 @@ const StoryPageComment = React.memo(({
 					<StoryPageCommentReplies
 						story={story}
 						comment={comment}
+						setCommentRepliesRef={setCommentRepliesRef}
 					/>
 				)}
 			</div>

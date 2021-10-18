@@ -41,6 +41,14 @@ const useComments = <
 
 	/** A ref to whether comments are currently being requested. */
 	const loadingCommentsRef = useRef(false);
+	/** The ID of the comment to load new comments after. */
+	// We can't just use `comments[comments.length - 1].id` instead of `afterCommentIDRef.current` since that could also reference a newly added comment rather than the last comment loaded by `loadMoreComments`.
+	const afterCommentIDRef = useRef<string>();
+
+	// If `comments` was emptied, empty the `afterCommentIDRef` as well.
+	if (comments.length === 0) {
+		afterCommentIDRef.current = undefined;
+	}
 
 	const { cacheUser } = useUserCache();
 
@@ -60,8 +68,8 @@ const useComments = <
 		} = await (api.get as CommentsAPI['get'])(apiPath, {
 			params: {
 				limit: COMMENTS_PER_REQUEST,
-				...comments.length && {
-					after: comments[comments.length - 1].id
+				...afterCommentIDRef.current && {
+					after: afterCommentIDRef.current
 				},
 				...params
 			}
@@ -75,14 +83,30 @@ const useComments = <
 
 		newUserCache.forEach(cacheUser);
 
-		setComments(comments => [
-			...comments.filter(comment => (
+		setComments(comments => {
+			/** The index to insert new comments into the `comments` array. */
+			const newCommentsIndex = comments.findIndex(({ id }) => id === afterCommentIDRef.current) + 1;
+
+			const nonDuplicateFilter = (comment: ClientComment) => (
 				// If there exists some new comment with the same ID as this existing comment, filter out this existing comment, as it would otherwise lead to duplicate React keys as well as potentially inconsistent instances of the same comment being rendered.
 				// Duplicate comments can occur, for example, due to the user posting a new comment while sorting by oldest and then scrolling down to find the new comment they posted at the bottom again.
 				!newComments.some(newComment => newComment.id === comment.id)
-			)),
-			...newComments
-		]);
+			);
+
+			/** The comments to insert the new comments after. */
+			const commentsBeforeNewComments = comments.slice(0, newCommentsIndex).filter(nonDuplicateFilter);
+
+			/** The comments to insert the new comments before. */
+			const commentsAfterNewComments = comments.slice(newCommentsIndex).filter(nonDuplicateFilter);
+
+			afterCommentIDRef.current = newComments[newComments.length - 1].id;
+
+			return [
+				...commentsBeforeNewComments,
+				...newComments,
+				...commentsAfterNewComments
+			];
+		});
 
 		return newComments.length < COMMENTS_PER_REQUEST;
 	});

@@ -1,5 +1,6 @@
 import './styles.module.scss';
-import type { ClientComment } from 'lib/client/comments';
+import type { ClientComment, ClientCommentReply } from 'lib/client/comments';
+import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
 import React, { useEffect } from 'react';
 import type { PublicStory } from 'lib/client/stories';
 import type { APIClient } from 'lib/client/api';
@@ -12,17 +13,27 @@ type StoryPageCommentRepliesAPI = APIClient<typeof import('pages/api/stories/[st
 
 export type StoryPageCommentRepliesProps = {
 	story: PublicStory,
-	comment: ClientComment
+	comment: ClientComment,
+	setCommentRepliesRef: MutableRefObject<Dispatch<SetStateAction<ClientCommentReply[]>> | undefined>
 };
 
-const StoryPageCommentReplies = React.memo(({ story, comment }: StoryPageCommentRepliesProps) => {
+const StoryPageCommentReplies = React.memo(({ story, comment, setCommentRepliesRef }: StoryPageCommentRepliesProps) => {
 	const {
 		comments: commentReplies,
+		setComments: setCommentReplies,
 		setComment: setCommentReply,
 		deleteComment: deleteCommentReply,
 		loadMoreComments: loadMoreCommentReplies,
 		loadingCommentsRef: loadingCommentRepliesRef
 	} = useComments<StoryPageCommentRepliesAPI>(`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}/replies`);
+
+	useEffect(() => {
+		setCommentRepliesRef.current = setCommentReplies;
+
+		return () => {
+			setCommentRepliesRef.current = undefined;
+		};
+	}, [setCommentRepliesRef, setCommentReplies]);
 
 	const nonLoadedReplyCount = comment.replyCount - commentReplies.length;
 
