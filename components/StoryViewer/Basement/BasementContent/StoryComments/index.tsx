@@ -14,10 +14,12 @@ import IDPrefix from 'lib/client/IDPrefix';
 import useFunction from 'lib/client/useFunction';
 import { promptSignIn, useUser } from 'lib/client/users';
 import type { ChangeEvent } from 'react';
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 import type { StoryCommentsSortMode } from 'pages/api/stories/[storyID]/comments';
 import useComments from 'lib/client/useComments';
 import StoryPageComment from 'components/Comment/StoryPageComment';
+import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
+import frameThrottler from 'lib/client/frameThrottler';
 
 type StoryCommentsAPI = APIClient<typeof import('pages/api/stories/[storyID]/comments').default>;
 type StoryPageCommentsAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments').default>;
@@ -34,16 +36,18 @@ const StoryComments = React.memo(() => {
 	const {
 		comments,
 		setComments,
-		setNotAllCommentsLoaded,
-		commentsElementRef,
 		setComment,
-		deleteComment
+		deleteComment,
+		loadMoreComments,
+		loadingCommentsRef
 	} = useComments<StoryCommentsAPI>(`/stories/${story.id}/comments`, {
 		params: {
 			fromPageID: pageID,
 			sort: sortMode
 		}
 	});
+
+	const [notAllCommentsLoaded, setNotAllCommentsLoaded] = useState(true);
 
 	/** Empties the `comments` so they can be loaded again. */
 	const resetComments = () => {
@@ -59,6 +63,43 @@ const StoryComments = React.memo(() => {
 
 		previousPageIDRef.current = pageID;
 	}
+
+	/** A ref to the element containing the comments. */
+	const commentsElementRef = useRef<HTMLDivElement>(null!);
+
+	/** Loads more comments if the bottom of the comment section is in view. */
+	const checkToLoadMoreComments = useFunction(async () => {
+		if (loadingCommentsRef.current) {
+			return;
+		}
+
+		const commentsRect = commentsElementRef.current.getBoundingClientRect();
+		const commentsStyle = window.getComputedStyle(commentsElementRef.current);
+		const commentsPaddingBottom = +commentsStyle.paddingBottom.slice(0, -2);
+		const commentsContentBottom = commentsRect.bottom - commentsPaddingBottom;
+
+		// Check if the user has scrolled below the bottom of the comment area.
+		if (commentsContentBottom < document.documentElement.clientHeight) {
+			const allCommentsLoaded = await loadMoreComments();
+
+			if (allCommentsLoaded) {
+				setNotAllCommentsLoaded(false);
+			}
+		}
+	});
+
+	useEffect(() => {
+		if (notAllCommentsLoaded) {
+			const _viewportListener = addViewportListener(checkToLoadMoreComments);
+			frameThrottler(_viewportListener).then(checkToLoadMoreComments);
+
+			return () => {
+				removeViewportListener(_viewportListener);
+			};
+		}
+
+		// `comments` must be a dependency here so that updating it calls `checkToLoadMoreComments` again without needing to change the viewport.
+	}, [comments, notAllCommentsLoaded, checkToLoadMoreComments]);
 
 	return (
 		<IDPrefix.Provider value="story-comment">
@@ -87,7 +128,7 @@ const StoryComments = React.memo(() => {
 						});
 
 						// Add the new comment to the top (regardless of the sort mode).
-						setComments([
+						setComments(comments => [
 							newComment,
 							...comments
 						]);
@@ -102,7 +143,7 @@ const StoryComments = React.memo(() => {
 					return (
 						<Form className="row story-comment-form">
 							<Label block htmlFor="story-comment-field-content">
-								Post a StoryPageComment
+								Post a Comment
 							</Label>
 							<BBField
 								name="content"

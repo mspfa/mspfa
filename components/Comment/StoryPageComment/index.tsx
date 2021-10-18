@@ -67,9 +67,9 @@ const StoryPageComment = React.memo(({
 			</Comment>
 			<div className="comment-replies-container">
 				{comment.replyCount !== 0 && (
-					<div className="comment-replies-toggle-container">
+					<div className="comment-replies-action-container comment-replies-toggle-container">
 						<Link
-							className="comment-replies-toggle translucent"
+							className="comment-replies-action comment-replies-toggle translucent"
 							onClick={toggleRepliesShown}
 						>
 							{`${repliesShown ? 'Hide' : 'Show'} Replies (${comment.replyCount})`}

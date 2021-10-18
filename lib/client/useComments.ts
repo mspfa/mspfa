@@ -1,10 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import type { ClientCommentOrReply } from 'lib/client/comments';
-import frameThrottler from 'lib/client/frameThrottler';
 import useFunction from 'lib/client/useFunction';
-import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
 import { useUserCache } from 'lib/client/UserCache';
 import type { APIHandler } from 'lib/server/api';
 import type { Awaited, integer } from 'lib/types';
@@ -41,99 +39,73 @@ const useComments = <
 
 	const [comments, setComments] = useState<ClientComment[]>([]);
 
-	const [notAllCommentsLoaded, setNotAllCommentsLoaded] = useState(true);
 	/** A ref to whether comments are currently being requested. */
 	const loadingCommentsRef = useRef(false);
-	/** A ref to the element containing the comments. */
-	const commentsElementRef = useRef<HTMLDivElement>(null!);
 
 	const { cacheUser } = useUserCache();
 
-	const checkIfCommentsShouldBeFetched = useFunction(async () => {
-		if (loadingCommentsRef.current) {
-			return;
+	/**
+	 * Loads more comments. Always ensure that `loadingCommentsRef.current` is `false` before calling this.
+	 *
+	 * If the API request is successful, returns whether all comments have been loaded yet.
+	 */
+	const loadMoreComments = useFunction(async () => {
+		loadingCommentsRef.current = true;
+
+		const {
+			data: {
+				comments: newComments,
+				userCache: newUserCache
+			}
+		} = await (api.get as CommentsAPI['get'])(apiPath, {
+			params: {
+				limit: COMMENTS_PER_REQUEST,
+				...comments.length && {
+					after: comments[comments.length - 1].id
+				},
+				...params
+			}
+		}).finally(() => {
+			loadingCommentsRef.current = false;
+		});
+
+		if (newComments.length === 0) {
+			return true;
 		}
 
-		const commentsRect = commentsElementRef.current.getBoundingClientRect();
-		const commentsStyle = window.getComputedStyle(commentsElementRef.current);
-		const commentsPaddingBottom = +commentsStyle.paddingBottom.slice(0, -2);
-		const commentsContentBottom = commentsRect.bottom - commentsPaddingBottom;
+		newUserCache.forEach(cacheUser);
 
-		// Check if the user has scrolled below the bottom of the comment area.
-		if (commentsContentBottom < document.documentElement.clientHeight) {
-			loadingCommentsRef.current = true;
+		setComments(comments => [
+			...comments.filter(comment => (
+				// If there exists some new comment with the same ID as this existing comment, filter out this existing comment, as it would otherwise lead to duplicate React keys as well as potentially inconsistent instances of the same comment being rendered.
+				// Duplicate comments can occur, for example, due to the user posting a new comment while sorting by oldest and then scrolling down to find the new comment they posted at the bottom again.
+				!newComments.some(newComment => newComment.id === comment.id)
+			)),
+			...newComments
+		]);
 
-			// Fetch more comments.
-			const {
-				data: {
-					comments: newComments,
-					userCache: newUserCache
-				}
-			} = await (api.get as CommentsAPI['get'])(apiPath, {
-				params: {
-					limit: COMMENTS_PER_REQUEST,
-					...comments.length && {
-						after: comments[comments.length - 1].id
-					},
-					...params
-				}
-			}).finally(() => {
-				loadingCommentsRef.current = false;
-			});
-
-			if (newComments.length < COMMENTS_PER_REQUEST) {
-				setNotAllCommentsLoaded(false);
-			}
-
-			if (newComments.length === 0) {
-				return;
-			}
-
-			newUserCache.forEach(cacheUser);
-
-			setComments(comments => [
-				...comments.filter(comment => (
-					// If there exists some new comment with the same ID as this existing comment, filter out this existing comment, as it would otherwise lead to duplicate React keys as well as potentially inconsistent instances of the same comment being rendered.
-					// Duplicate comments can occur, for example, due to the user posting a new comment while sorting by oldest and then scrolling down to find the new comment they posted at the bottom again.
-					!newComments.some(newComment => newComment.id === comment.id)
-				)),
-				...newComments
-			]);
-		}
+		return newComments.length < COMMENTS_PER_REQUEST;
 	});
 
-	useEffect(() => {
-		if (notAllCommentsLoaded) {
-			const _viewportListener = addViewportListener(checkIfCommentsShouldBeFetched);
-			frameThrottler(_viewportListener).then(checkIfCommentsShouldBeFetched);
-
-			return () => {
-				removeViewportListener(_viewportListener);
-			};
-		}
-
-		// `comments` must be a dependency here so that updating it calls `checkIfCommentsShouldBeFetched` again without needing to change the viewport.
-	}, [comments, notAllCommentsLoaded, checkIfCommentsShouldBeFetched]);
-
-	const deleteComment = useFunction((commentsID: string) => {
+	const deleteComment = useFunction((commentID: string) => {
 		setComments(comments => {
-			const commentsIndex = comments.findIndex(({ id }) => id === commentsID);
+			const commentIndex = comments.findIndex(({ id }) => id === commentID);
 
 			return [
-				...comments.slice(0, commentsIndex),
-				...comments.slice(commentsIndex + 1, comments.length)
+				...comments.slice(0, commentIndex),
+				...comments.slice(commentIndex + 1, comments.length)
 			];
 		});
 	});
 
-	const setComment = useFunction((commentsPost: ClientComment) => {
+	const setComment = useFunction((comment: ClientComment) => {
 		setComments(comments => {
-			const commentsIndex = comments.findIndex(({ id }) => id === commentsPost.id);
+			const commentIndex = comments.findIndex(({ id }) => id === comment.id);
 
 			return [
-				...comments.slice(0, commentsIndex),
-				commentsPost,
-				...comments.slice(commentsIndex + 1, comments.length)
+				...comments.slice(0, commentIndex),
+				comment,
+				...comments.slice(commentIndex + 1, comments.length)
 			];
 		});
 	});
@@ -141,10 +113,10 @@ const useComments = <
 	return {
 		comments,
 		setComments,
-		setNotAllCommentsLoaded,
-		commentsElementRef,
 		setComment,
-		deleteComment
+		deleteComment,
+		loadMoreComments,
+		loadingCommentsRef
 	};
 };
 
