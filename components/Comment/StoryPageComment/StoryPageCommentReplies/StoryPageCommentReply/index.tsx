@@ -26,7 +26,6 @@ const StoryPageCommentReply = React.memo(({
 	<Comment<StoryPageCommentReplyAPI, StoryPageCommentReplyRatingAPI>
 		apiPath={`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}/replies/${commentReply.id}`}
 		story={story}
-		comment={commentReply}
 		setComment={setCommentReply}
 		deleteComment={deleteCommentReply}
 		postReply={
@@ -34,7 +33,9 @@ const StoryPageCommentReply = React.memo(({
 				// TODO
 			})
 		}
-	/>
+	>
+		{commentReply}
+	</Comment>
 ));
 
 export default StoryPageCommentReply;

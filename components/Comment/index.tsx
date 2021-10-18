@@ -5,7 +5,6 @@ import type { ClientComment, ClientCommentOrReply } from 'lib/client/comments';
 import type { Awaited } from 'lib/types';
 import { promptSignIn, useUser } from 'lib/client/users';
 import { useUserCache } from 'lib/client/UserCache';
-import type { ReactNode } from 'react';
 import React, { useRef, useState } from 'react';
 import useFunction from 'lib/client/useFunction';
 import type { DialogOptions } from 'lib/client/Dialog';
@@ -53,16 +52,23 @@ const Comment = <
 		method: 'PUT',
 		body: Awaited<ReturnType<CommentAPI['get']>>['data']
 	}>>
->({ apiPath, story, comment, setComment, deleteComment, className, postReply, children }: {
+>({
+	apiPath,
+	story,
+	children: comment,
+	setComment,
+	deleteComment,
+	className,
+	postReply
+}: {
 	/** The API path of this comment. */
 	apiPath: string,
 	story: PublicStory,
-	comment: Awaited<ReturnType<CommentAPI['get']>>['data'],
+	children: Awaited<ReturnType<CommentAPI['get']>>['data'],
 	setComment: (comment: Awaited<ReturnType<CommentAPI['get']>>['data']) => void,
 	deleteComment: (commentID: string) => void,
 	className?: string,
-	postReply: (values: { content: string }) => void | PromiseLike<void>,
-	children?: ReactNode
+	postReply: (values: { content: string }) => void | PromiseLike<void>
 }) => {
 	const user = useUser();
 
@@ -397,7 +403,6 @@ const Comment = <
 						}}
 					</Formik>
 				)}
-				{children}
 			</div>
 		</div>
 	);

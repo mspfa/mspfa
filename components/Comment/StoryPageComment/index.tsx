@@ -33,46 +33,57 @@ const StoryPageComment = React.memo(({
 	});
 
 	return (
-		<Comment<StoryPageCommentAPI, StoryPageCommentRatingAPI>
-			apiPath={`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}`}
-			story={story}
-			comment={comment}
-			setComment={setComment}
-			deleteComment={deleteComment}
-			className={repliesShown ? 'replies-shown' : ''}
-			postReply={
-				useFunction(async values => {
-					const { data: newCommentReply } = await (api as StoryPageCommentRepliesAPI).post(
-						`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}/replies`,
-						values
-					);
+		<>
+			<Comment<StoryPageCommentAPI, StoryPageCommentRatingAPI>
+				apiPath={`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}`}
+				story={story}
+				setComment={setComment}
+				deleteComment={deleteComment}
+				className={
+					(comment.replyCount ? 'with-replies' : '')
+					+ (
+						repliesShown
+							? `${comment.replyCount ? ' ' : ''}replies-shown`
+							: ''
+					)
+				}
+				postReply={
+					useFunction(async values => {
+						const { data: newCommentReply } = await (api as StoryPageCommentRepliesAPI).post(
+							`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}/replies`,
+							values
+						);
 
-					setComment({
-						...comment,
-						replyCount: comment.replyCount + 1
-					});
+						setComment({
+							...comment,
+							replyCount: comment.replyCount + 1
+						});
 
-					// TODO: Display new reply.
-				})
-			}
-		>
-			{comment.replyCount !== 0 && (
-				<div className="comment-replies-toggle-button-container">
-					<Link
-						className="comment-replies-toggle-button translucent"
-						onClick={toggleRepliesShown}
-					>
-						{`${repliesShown ? 'Hide' : 'Show'} Replies (${comment.replyCount})`}
-					</Link>
-				</div>
-			)}
-			{repliesShown && (
-				<StoryPageCommentReplies
-					story={story}
-					comment={comment}
-				/>
-			)}
-		</Comment>
+						// TODO: Display new reply.
+					})
+				}
+			>
+				{comment}
+			</Comment>
+			<div className="comment-replies-container">
+				{comment.replyCount !== 0 && (
+					<div className="comment-replies-toggle-container">
+						<Link
+							className="comment-replies-toggle translucent"
+							onClick={toggleRepliesShown}
+						>
+							{`${repliesShown ? 'Hide' : 'Show'} Replies (${comment.replyCount})`}
+						</Link>
+					</div>
+				)}
+				{repliesShown && (
+					<StoryPageCommentReplies
+						story={story}
+						comment={comment}
+					/>
+				)}
+			</div>
+		</>
 	);
 });
 
