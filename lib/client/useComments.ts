@@ -42,7 +42,6 @@ const useComments = <
 	/** A ref to whether comments are currently being requested. */
 	const loadingCommentsRef = useRef(false);
 	/** The ID of the comment to load new comments after. */
-	// We can't just use `comments[comments.length - 1].id` instead of `afterCommentIDRef.current` since that could also reference a newly added comment rather than the last comment loaded by `loadMoreComments`.
 	const afterCommentIDRef = useRef<string>();
 
 	// If `comments` was emptied, empty the `afterCommentIDRef` as well.
@@ -98,6 +97,7 @@ const useComments = <
 
 			/** The comments to insert the new comments before. */
 			const commentsAfterNewComments = comments.slice(newCommentsIndex).filter(nonDuplicateFilter);
+			// We can't just insert new comments at the end since there may be new comments posted by the user which should remain below newly loaded comments.
 
 			afterCommentIDRef.current = newComments[newComments.length - 1].id;
 
