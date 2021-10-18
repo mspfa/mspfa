@@ -7,7 +7,6 @@ import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import Link from 'components/Link';
 import Comment from 'components/Comment';
-import type { PrivateUser } from 'lib/client/users';
 import StoryPageCommentReplies from 'components/Comment/StoryPageComment/StoryPageCommentReplies';
 
 type StoryPageCommentAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]').default>;
@@ -36,23 +35,11 @@ const StoryPageComment = React.memo(({
 	return (
 		<Comment<StoryPageCommentAPI, StoryPageCommentRatingAPI>
 			apiPath={`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}`}
+			story={story}
 			comment={comment}
 			setComment={setComment}
 			deleteComment={deleteComment}
-			className={
-				`${
-					story.owner === comment.author
-					|| story.editors.includes(comment.author)
-						? 'by-editor'
-						: ''
-				}${repliesShown ? ' replies-shown' : ''}`
-			}
-			canDeleteComments={
-				useFunction((user: PrivateUser) => (
-					story.owner === user.id
-					|| story.editors.includes(user.id)
-				))
-			}
+			className={repliesShown ? 'replies-shown' : ''}
 			postReply={
 				useFunction(async values => {
 					const { data: newCommentReply } = await (api as StoryPageCommentRepliesAPI).post(

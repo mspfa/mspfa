@@ -3,7 +3,6 @@ import type { APIHandler } from 'lib/server/api';
 import type { APIClient } from 'lib/client/api';
 import type { ClientComment, ClientCommentOrReply } from 'lib/client/comments';
 import type { Awaited } from 'lib/types';
-import type { PrivateUser } from 'lib/client/users';
 import { promptSignIn, useUser } from 'lib/client/users';
 import { useUserCache } from 'lib/client/UserCache';
 import type { ReactNode } from 'react';
@@ -27,6 +26,7 @@ import UserLink from 'components/Link/UserLink';
 import StoryPageLink from 'components/StoryPageLink';
 import Timestamp from 'components/Timestamp';
 import { Formik, Form, Field } from 'formik';
+import type { PublicStory } from 'lib/client/stories';
 
 /** The base component for any type of comment. */
 const Comment = <
@@ -53,15 +53,14 @@ const Comment = <
 		method: 'PUT',
 		body: Awaited<ReturnType<CommentAPI['get']>>['data']
 	}>>
->({ apiPath, comment, setComment, deleteComment, className, canDeleteComments, postReply, children }: {
+>({ apiPath, story, comment, setComment, deleteComment, className, postReply, children }: {
 	/** The API path of this comment. */
 	apiPath: string,
+	story: PublicStory,
 	comment: Awaited<ReturnType<CommentAPI['get']>>['data'],
 	setComment: (comment: Awaited<ReturnType<CommentAPI['get']>>['data']) => void,
 	deleteComment: (commentID: string) => void,
 	className?: string,
-	/** Returns whether the authenticated user can delete any comment assuming they have no `perms`. */
-	canDeleteComments?: (user: PrivateUser) => boolean,
 	postReply: (values: { content: string }) => void | PromiseLike<void>,
 	children?: ReactNode
 }) => {
@@ -148,8 +147,11 @@ const Comment = <
 						? ' by-self'
 						: ''
 				} by-${comment.author}${
-					className ? ` ${className}` : ''
-				}`
+					story.owner === comment.author
+					|| story.editors.includes(comment.author)
+						? ' by-editor'
+						: ''
+				}${className ? ` ${className}` : ''}`
 			}
 		>
 			<IconContainer
@@ -200,8 +202,9 @@ const Comment = <
 								if (user) {
 									if (
 										user.id === comment.author
+										|| story.owner === user.id
+										|| story.editors.includes(user.id)
 										|| user.perms & Perm.sudoDelete
-										|| canDeleteComments?.(user)
 									) {
 										actions.unshift(
 											{ value: 'delete', label: 'Delete' }

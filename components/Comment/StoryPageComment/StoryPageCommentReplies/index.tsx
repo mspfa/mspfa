@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import type { ClientComment } from 'lib/client/comments';
 import React from 'react';
 import type { PublicStory } from 'lib/client/stories';

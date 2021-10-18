@@ -24,3 +24,11 @@
 		font-size: 0.875rem;
 	}
 }
+
+.story-comments > .comment {
+	margin: 2em 0;
+
+	&:first-child {
+		margin-top: 1.5em;
+	}
+}
