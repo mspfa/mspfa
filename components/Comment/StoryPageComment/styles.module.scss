@@ -1,3 +1,5 @@
+@use 'components/Comment/styles.module.scss' as *;
+
 .comment {
 	&.with-replies {
 		margin-bottom: 0;
@@ -6,7 +8,7 @@
 	&-replies {
 		&-container {
 			font-size: 0.875rem;
-			margin: 0.75em 0 0 3.75em;
+			margin: 0.75em 0 0 ($comment-icon-size + $comment-icon-margin-right);
 		}
 
 		&-toggle-container {

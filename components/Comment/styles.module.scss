@@ -1,5 +1,8 @@
 @use 'lib/styles/themes' as *;
 
+$comment-icon-size: 3em;
+$comment-icon-margin-right: 0.75em;
+
 .comment {
 	display: flex;
 	position: relative;
@@ -13,9 +16,9 @@
 		&-container {
 			display: inline-block;
 			flex-shrink: 0;
-			margin-right: 0.75em;
-			width: 3em;
-			height: 3em;
+			margin-right: $comment-icon-margin-right;
+			width: $comment-icon-size;
+			height: $comment-icon-size;
 		}
 
 		width: 100%;
