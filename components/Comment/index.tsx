@@ -27,6 +27,17 @@ import Timestamp from 'components/Timestamp';
 import { Formik, Form, Field } from 'formik';
 import type { PublicStory } from 'lib/client/stories';
 
+export type CommentProps<ClientComment = ClientCommentOrReply> = {
+	/** The API path of this comment. */
+	apiPath: string,
+	story: PublicStory,
+	children: ClientComment,
+	setComment: (comment: ClientComment) => void,
+	deleteComment: (commentID: string) => void,
+	className?: string,
+	postReply: (values: { content: string }) => void | PromiseLike<void>
+};
+
 /** The base component for any type of comment. */
 const Comment = <
 	CommentAPI extends APIClient<APIHandler<{
@@ -60,16 +71,7 @@ const Comment = <
 	deleteComment,
 	className,
 	postReply
-}: {
-	/** The API path of this comment. */
-	apiPath: string,
-	story: PublicStory,
-	children: Awaited<ReturnType<CommentAPI['get']>>['data'],
-	setComment: (comment: Awaited<ReturnType<CommentAPI['get']>>['data']) => void,
-	deleteComment: (commentID: string) => void,
-	className?: string,
-	postReply: (values: { content: string }) => void | PromiseLike<void>
-}) => {
+}: CommentProps<Awaited<ReturnType<CommentAPI['get']>>['data']>) => {
 	const user = useUser();
 
 	const { userCache } = useUserCache();

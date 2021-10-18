@@ -8,6 +8,7 @@ import useComments from 'lib/client/useComments';
 import StoryPageCommentReply from 'components/Comment/StoryPageComment/StoryPageCommentReplies/StoryPageCommentReply';
 import Link from 'components/Link';
 import useFunction from 'lib/client/useFunction';
+import type { CommentProps } from 'components/Comment';
 
 type StoryPageCommentRepliesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]/replies').default>;
 
@@ -16,9 +17,9 @@ export type StoryPageCommentRepliesProps = {
 	comment: ClientComment,
 	setCommentRepliesRef: MutableRefObject<Dispatch<SetStateAction<ClientCommentReply[]>> | undefined>,
 	initialCommentRepliesRef: MutableRefObject<ClientCommentReply[]>
-};
+} & Pick<CommentProps<ClientCommentReply>, 'postReply'>;
 
-const StoryPageCommentReplies = React.memo(({ story, comment, setCommentRepliesRef, initialCommentRepliesRef }: StoryPageCommentRepliesProps) => {
+const StoryPageCommentReplies = React.memo(({ story, comment, setCommentRepliesRef, initialCommentRepliesRef, postReply }: StoryPageCommentRepliesProps) => {
 	const {
 		comments: commentReplies,
 		setComments: setCommentReplies,
@@ -67,6 +68,7 @@ const StoryPageCommentReplies = React.memo(({ story, comment, setCommentRepliesR
 					comment={comment}
 					setCommentReply={setCommentReply}
 					deleteCommentReply={deleteCommentReply}
+					postReply={postReply}
 				>
 					{commentReply}
 				</StoryPageCommentReply>

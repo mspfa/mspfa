@@ -2,11 +2,11 @@ import './styles.module.scss';
 import type { ClientComment, ClientCommentReply } from 'lib/client/comments';
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useRef, useState } from 'react';
-import type { PublicStory } from 'lib/client/stories';
 import useFunction from 'lib/client/useFunction';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import Link from 'components/Link';
+import type { CommentProps } from 'components/Comment';
 import Comment from 'components/Comment';
 import StoryPageCommentReplies from 'components/Comment/StoryPageComment/StoryPageCommentReplies';
 import { useLatest } from 'react-use';
@@ -15,12 +15,7 @@ type StoryPageCommentAPI = APIClient<typeof import('pages/api/stories/[storyID]/
 type StoryPageCommentRatingAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]/ratings/[userID]').default>;
 type StoryPageCommentRepliesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]/replies').default>;
 
-export type StoryPageCommentProps = {
-	story: PublicStory,
-	children: ClientComment,
-	setComment: (comment: ClientComment) => void,
-	deleteComment: (commentID: string) => void
-};
+export type StoryPageCommentProps = Pick<CommentProps<ClientComment>, 'story' | 'children' | 'setComment' | 'deleteComment'>;
 
 const StoryPageComment = React.memo(({
 	story,
@@ -42,6 +37,33 @@ const StoryPageComment = React.memo(({
 	/** A ref to the array of comment replies to render when replies are next opened. */
 	const initialCommentRepliesRef = useRef<ClientCommentReply[]>([]);
 
+	const postReply = useFunction(async values => {
+		const { data: newCommentReply } = await (api as StoryPageCommentRepliesAPI).post(
+			`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}/replies`,
+			values
+		);
+
+		// Increment the reply count of the parent comment.
+		setComment({
+			...commentRef.current,
+			replyCount: commentRef.current.replyCount + 1
+		});
+
+		if (setCommentRepliesRef.current) {
+			// The replies are shown, so add this new reply to them.
+
+			setCommentRepliesRef.current(commentReplies => [
+				...commentReplies,
+				newCommentReply
+			]);
+		} else {
+			// The replies are hidden, so show them with only this new reply loaded.
+
+			initialCommentRepliesRef.current.push(newCommentReply);
+			setRepliesShown(true);
+		}
+	});
+
 	return (
 		<>
 			<Comment<StoryPageCommentAPI, StoryPageCommentRatingAPI>
@@ -57,34 +79,7 @@ const StoryPageComment = React.memo(({
 							: ''
 					)
 				}
-				postReply={
-					useFunction(async values => {
-						const { data: newCommentReply } = await (api as StoryPageCommentRepliesAPI).post(
-							`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}/replies`,
-							values
-						);
-
-						// Increment the reply count of the parent comment.
-						setComment({
-							...commentRef.current,
-							replyCount: commentRef.current.replyCount + 1
-						});
-
-						if (setCommentRepliesRef.current) {
-							// The replies are shown, so add this new reply to them.
-
-							setCommentRepliesRef.current(commentReplies => [
-								...commentReplies,
-								newCommentReply
-							]);
-						} else {
-							// The replies are hidden, so show them with only this new reply loaded.
-
-							initialCommentRepliesRef.current.push(newCommentReply);
-							setRepliesShown(true);
-						}
-					})
-				}
+				postReply={postReply}
 			>
 				{comment}
 			</Comment>
@@ -105,6 +100,7 @@ const StoryPageComment = React.memo(({
 						comment={comment}
 						setCommentRepliesRef={setCommentRepliesRef}
 						initialCommentRepliesRef={initialCommentRepliesRef}
+						postReply={postReply}
 					/>
 				)}
 			</div>
