@@ -74,7 +74,7 @@ const DialogContainer = React.memo(({ dialog }: DialogContainerProps) => {
 									: dialog.content
 								)}
 							</div>
-							{!!dialog.actions.length && (
+							{dialog.actions.length !== 0 && (
 								<div className="dialog-actions front">
 									{dialog.actions.map((action, i) => (
 										<Button

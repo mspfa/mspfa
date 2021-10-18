@@ -280,7 +280,7 @@ const UserField = ({
 						value={inputValue}
 						onChange={onChange}
 					/>
-					{!!autoCompleteUsers.length && (
+					{autoCompleteUsers.length !== 0 && (
 						<div className="user-field-auto-complete input-like">
 							{autoCompleteUsers.map(publicUser => (
 								<UserFieldOption

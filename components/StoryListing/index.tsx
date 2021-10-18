@@ -83,7 +83,7 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 							{open ? 'Show Less' : 'Show More'}
 						</Link>
 					)}
-					{publicStory.description && !!publicStory.tags.length && ' - '}
+					{publicStory.description && publicStory.tags.length !== 0 && ' - '}
 					{publicStory.tags.map((tag, i) => (
 						<Fragment key={tag}>
 							{i !== 0 && ' '}

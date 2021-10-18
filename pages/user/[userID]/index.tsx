@@ -130,7 +130,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 						</BBCode>
 					</BoxSection>
 				)}
-				{!!publicStories.length && (
+				{publicStories.length !== 0 && (
 					<BoxSection
 						id="profile-stories"
 						heading={`${publicUser.name}'s Adventures`}
