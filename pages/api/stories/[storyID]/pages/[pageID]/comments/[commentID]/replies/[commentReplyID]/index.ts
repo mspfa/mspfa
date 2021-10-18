@@ -145,7 +145,7 @@ const Handler: APIHandler<{
 		edited: new Date()
 	};
 
-	Object.assign(comment, commentReplyMerge);
+	Object.assign(commentReply, commentReplyMerge);
 
 	await stories.updateOne({
 		_id: story._id
