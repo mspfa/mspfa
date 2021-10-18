@@ -9,6 +9,7 @@ import StoryPageCommentReply from 'components/Comment/StoryPageComment/StoryPage
 import Link from 'components/Link';
 import useFunction from 'lib/client/useFunction';
 import type { CommentProps } from 'components/Comment';
+import type { integer } from 'lib/types';
 
 type StoryPageCommentRepliesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]/replies').default>;
 
@@ -16,10 +17,11 @@ export type StoryPageCommentRepliesProps = {
 	story: PublicStory,
 	comment: ClientComment,
 	setCommentRepliesRef: MutableRefObject<Dispatch<SetStateAction<ClientCommentReply[]>> | undefined>,
-	initialCommentRepliesRef: MutableRefObject<ClientCommentReply[]>
+	initialCommentRepliesRef: MutableRefObject<ClientCommentReply[]>,
+	addToReplyCount: (amount: integer) => void
 } & Pick<CommentProps<ClientCommentReply>, 'postReply'>;
 
-const StoryPageCommentReplies = React.memo(({ story, comment, setCommentRepliesRef, initialCommentRepliesRef, postReply }: StoryPageCommentRepliesProps) => {
+const StoryPageCommentReplies = React.memo(({ story, comment, setCommentRepliesRef, initialCommentRepliesRef, addToReplyCount, postReply }: StoryPageCommentRepliesProps) => {
 	const {
 		comments: commentReplies,
 		setComments: setCommentReplies,
@@ -29,6 +31,11 @@ const StoryPageCommentReplies = React.memo(({ story, comment, setCommentRepliesR
 		loadingCommentsRef: loadingCommentRepliesRef
 	} = useComments<StoryPageCommentRepliesAPI>(`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}/replies`, {
 		initialComments: initialCommentRepliesRef.current
+	});
+
+	const deleteCommentReplyAndDecrementReplyCount = useFunction((commentReplyID: string) => {
+		deleteCommentReply(commentReplyID);
+		addToReplyCount(-1);
 	});
 
 	// Empty the `initialCommentRepliesRef` so it is not reused next time replies are opened.
@@ -67,7 +74,7 @@ const StoryPageCommentReplies = React.memo(({ story, comment, setCommentRepliesR
 					story={story}
 					comment={comment}
 					setCommentReply={setCommentReply}
-					deleteCommentReply={deleteCommentReply}
+					deleteCommentReply={deleteCommentReplyAndDecrementReplyCount}
 					postReply={postReply}
 				>
 					{commentReply}
