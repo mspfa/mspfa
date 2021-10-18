@@ -39,6 +39,9 @@ const StoryPageComment = React.memo(({
 
 	const setCommentRepliesRef = useRef<Dispatch<SetStateAction<ClientCommentReply[]>>>();
 
+	/** A ref to the array of comment replies to render when replies are next opened. */
+	const initialCommentRepliesRef = useRef<ClientCommentReply[]>([]);
+
 	return (
 		<>
 			<Comment<StoryPageCommentAPI, StoryPageCommentRatingAPI>
@@ -67,10 +70,19 @@ const StoryPageComment = React.memo(({
 							replyCount: commentRef.current.replyCount + 1
 						});
 
-						setCommentRepliesRef.current?.(commentReplies => [
-							...commentReplies,
-							newCommentReply
-						]);
+						if (setCommentRepliesRef.current) {
+							// The replies are shown, so add this new reply to them.
+
+							setCommentRepliesRef.current(commentReplies => [
+								...commentReplies,
+								newCommentReply
+							]);
+						} else {
+							// The replies are hidden, so show them with only this new reply loaded.
+
+							initialCommentRepliesRef.current.push(newCommentReply);
+							setRepliesShown(true);
+						}
 					})
 				}
 			>
@@ -92,6 +104,7 @@ const StoryPageComment = React.memo(({
 						story={story}
 						comment={comment}
 						setCommentRepliesRef={setCommentRepliesRef}
+						initialCommentRepliesRef={initialCommentRepliesRef}
 					/>
 				)}
 			</div>

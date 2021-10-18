@@ -14,10 +14,11 @@ type StoryPageCommentRepliesAPI = APIClient<typeof import('pages/api/stories/[st
 export type StoryPageCommentRepliesProps = {
 	story: PublicStory,
 	comment: ClientComment,
-	setCommentRepliesRef: MutableRefObject<Dispatch<SetStateAction<ClientCommentReply[]>> | undefined>
+	setCommentRepliesRef: MutableRefObject<Dispatch<SetStateAction<ClientCommentReply[]>> | undefined>,
+	initialCommentRepliesRef: MutableRefObject<ClientCommentReply[]>
 };
 
-const StoryPageCommentReplies = React.memo(({ story, comment, setCommentRepliesRef }: StoryPageCommentRepliesProps) => {
+const StoryPageCommentReplies = React.memo(({ story, comment, setCommentRepliesRef, initialCommentRepliesRef }: StoryPageCommentRepliesProps) => {
 	const {
 		comments: commentReplies,
 		setComments: setCommentReplies,
@@ -25,7 +26,12 @@ const StoryPageCommentReplies = React.memo(({ story, comment, setCommentRepliesR
 		deleteComment: deleteCommentReply,
 		loadMoreComments: loadMoreCommentReplies,
 		loadingCommentsRef: loadingCommentRepliesRef
-	} = useComments<StoryPageCommentRepliesAPI>(`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}/replies`);
+	} = useComments<StoryPageCommentRepliesAPI>(`/stories/${story.id}/pages/${comment.pageID}/comments/${comment.id}/replies`, {
+		initialComments: initialCommentRepliesRef.current
+	});
+
+	// Empty the `initialCommentRepliesRef` so it is not reused next time replies are opened.
+	initialCommentRepliesRef.current = [];
 
 	useEffect(() => {
 		setCommentRepliesRef.current = setCommentReplies;

@@ -30,14 +30,15 @@ const useComments = <
 >(
 	/** The API path to `GET` new comments from. */
 	apiPath: string,
-	{ params }: {
+	{ initialComments = [], params }: {
+		initialComments?: Array<Awaited<ReturnType<CommentsAPI['get']>>['data']['comments'][0]>,
 		/** The API query params (other than `limit` and `after`) to include in the request to `GET` new comments. */
 		params?: Omit<NonNullable<Parameters<CommentsAPI['get']>[1]>['params'], 'limit' | 'after'>
 	} = {}
 ) => {
 	type ClientComment = Awaited<ReturnType<CommentsAPI['get']>>['data']['comments'][0];
 
-	const [comments, setComments] = useState<ClientComment[]>([]);
+	const [comments, setComments] = useState<ClientComment[]>(initialComments);
 
 	/** A ref to whether comments are currently being requested. */
 	const loadingCommentsRef = useRef(false);
