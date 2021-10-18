@@ -1,0 +1,20 @@
+.comment-replies {
+	&-toggle-button-container, & {
+		margin-top: 0.75em;
+	}
+
+	&-toggle-button-container {
+		font-size: 0.85em;
+
+		&::before {
+			content: '>';
+			opacity: 0.7;
+			display: inline-block;
+			margin-right: 1ch;
+
+			.comment.replies-shown & {
+				transform: rotate(90deg);
+			}
+		}
+	}
+}

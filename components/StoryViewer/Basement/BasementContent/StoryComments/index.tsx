@@ -17,7 +17,7 @@ import type { ChangeEvent } from 'react';
 import React, { useContext, useRef, useState } from 'react';
 import type { StoryCommentsSortMode } from 'pages/api/stories/[storyID]/comments';
 import useComments from 'lib/client/useComments';
-import Comment from 'components/Comment';
+import StoryPageComment from 'components/Comment/StoryPageComment';
 
 type StoryCommentsAPI = APIClient<typeof import('pages/api/stories/[storyID]/comments').default>;
 type StoryPageCommentsAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments').default>;
@@ -72,7 +72,7 @@ const StoryComments = React.memo(() => {
 						if (!user) {
 							if (await Dialog.confirm({
 								id: 'post-comment',
-								title: 'Comment',
+								title: 'StoryPageComment',
 								content: 'Sign in to post a comment!',
 								actions: ['Sign In', 'Cancel']
 							})) {
@@ -102,7 +102,7 @@ const StoryComments = React.memo(() => {
 					return (
 						<Form className="row story-comment-form">
 							<Label block htmlFor="story-comment-field-content">
-								Post a Comment
+								Post a StoryPageComment
 							</Label>
 							<BBField
 								name="content"
@@ -152,14 +152,14 @@ const StoryComments = React.memo(() => {
 				ref={commentsElementRef}
 			>
 				{comments.map(comment => (
-					<Comment
+					<StoryPageComment
 						key={comment.id}
 						story={story}
 						setComment={setComment}
 						deleteComment={deleteComment}
 					>
 						{comment}
-					</Comment>
+					</StoryPageComment>
 				))}
 			</Row>
 		</IDPrefix.Provider>
