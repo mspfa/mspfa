@@ -72,15 +72,10 @@
 
 	&-actions {
 		margin-top: 0.75em;
-		line-height: 1;
 		font-size: 0.85em;
 
 		& > :not(:first-child) {
 			margin-left: 1em;
-		}
-
-		& > * {
-			vertical-align: middle;
 		}
 	}
 
