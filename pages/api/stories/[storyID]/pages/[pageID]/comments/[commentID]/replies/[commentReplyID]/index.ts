@@ -152,12 +152,11 @@ const Handler: APIHandler<{
 	}, {
 		$set: flatten(commentReplyMerge, `pages.${page.id}.comments.$[comment].replies.$[commentReply].`)
 	}, {
-		arrayFilters: [{
-			comment: { id: comment.id }
-		}, {
-			commentReply: { id: commentReply.id }
-		}]
-	});
+		arrayFilters: [
+			{ 'comment.id': comment.id },
+			{ 'commentReply.id': commentReply.id }
+		]
+	}).then(console.log);
 
 	res.send(getClientCommentReply(commentReply, user));
 };

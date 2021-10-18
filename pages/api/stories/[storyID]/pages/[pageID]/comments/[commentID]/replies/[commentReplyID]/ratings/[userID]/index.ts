@@ -145,11 +145,10 @@ const Handler: APIHandler<{
 		await stories.updateOne({
 			_id: story._id
 		}, update, {
-			arrayFilters: [{
-				comment: { id: comment.id }
-			}, {
-				commentReply: { id: commentReply.id }
-			}]
+			arrayFilters: [
+				{ 'comment.id': comment.id },
+				{ 'commentReply.id': commentReply.id }
+			]
 		});
 
 		clientCommentReply.userRating = req.body;
