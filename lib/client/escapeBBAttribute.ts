@@ -1,4 +1,4 @@
-import escapeHTMLTags from 'lib/client/escapeHTMLTags';
+import escapeAngleBrackets from 'lib/client/escapeAngleBrackets';
 import replaceAll from 'lib/client/replaceAll';
 
 /** Escapes and quotes a user-inputted attribute value for use in BBCode. */
@@ -9,7 +9,7 @@ const escapeBBAttribute = (
 	possiblyMultipleAttributes?: boolean
 ) => {
 	// Escape angle brackets, since HTML is parsed before BBCode and could otherwise be parsed in the middle of a BB tag's attribute, even if it's quoted.
-	value = escapeHTMLTags(value);
+	value = escapeAngleBrackets(value);
 
 	if (
 		value.includes(']')
