@@ -56,12 +56,18 @@ const StoryComments = React.memo(() => {
 	};
 
 	const previousPageIDRef = useRef(pageID);
-
-	// Reset comments whenever the page changes.
-	if (previousPageIDRef.current !== pageID) {
+	const userID = user?.id;
+	const previousUserIDRef = useRef(userID);
+	if (
+		// Reset comments whenever the page changes.
+		previousPageIDRef.current !== pageID
+		// Reset comments whenever the user changes, because otherwise comment ratings could be inaccurate.
+		|| previousUserIDRef.current !== userID
+	) {
 		resetComments();
 
 		previousPageIDRef.current = pageID;
+		previousUserIDRef.current = userID;
 	}
 
 	/** A ref to the element containing the comments. */
