@@ -21,8 +21,6 @@ export type MyGetServerSideProps<
 	GetServerSideProps extends (context: infer Context) => any
 		? (
 			context: Omit<Context, keyof MyGetServerSidePropsContext> & MyGetServerSidePropsContext
-		) => Promise<{
-			props: ServerSideProps
-		}>
+		) => Promise<{ props: ServerSideProps }>
 		: never
 );
