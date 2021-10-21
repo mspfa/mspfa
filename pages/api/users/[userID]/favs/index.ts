@@ -29,7 +29,7 @@ const Handler: APIHandler<{
 	if (user.favs.some(fav => fav === req.body.storyID)) {
 		res.status(422).send({
 			error: 'ALREADY_EXISTS',
-			message: 'That story is already in your favorites.'
+			message: 'The specified story is already in your favorites.'
 		});
 		return;
 	}
