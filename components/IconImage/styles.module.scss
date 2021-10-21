@@ -1,5 +1,6 @@
 .icon-image {
 	object-fit: cover;
+	// Prevent the line height from sometimes adding extra space below this.
 	vertical-align: bottom;
 	width: 150px;
 	height: 150px;

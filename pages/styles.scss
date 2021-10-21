@@ -133,6 +133,7 @@ input[type=radio] {
 textarea {
 	resize: vertical;
 	width: 100%;
+	// Prevent the line height from sometimes adding extra space below this.
 	vertical-align: bottom;
 }
 
