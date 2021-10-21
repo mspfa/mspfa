@@ -25,7 +25,7 @@ const Handler: APIHandler<{
 
 	if (!user.favs.some(fav => fav === storyID)) {
 		res.status(404).send({
-			message: 'That adventure is not in your favorites.'
+			message: 'That story is not in your favorites.'
 		});
 		return;
 	}
