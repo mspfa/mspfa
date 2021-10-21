@@ -176,7 +176,6 @@ export const getPrivateUser = (user: ServerUser): PrivateUser => ({
 	description: user.description,
 	icon: user.icon,
 	site: user.site,
-	storySaves: user.storySaves,
 	achievements: user.achievements,
 	favs: user.favs,
 	profileStyle: user.profileStyle,
