@@ -253,7 +253,11 @@ export const getStoryByUnsafeID = <Res extends APIResponse<any> | undefined>(
 		// It is necessary to use tuple types instead of simply having `res` be an optional parameter, because otherwise `Res` will not always be inferred correctly.
 	]
 ) => new Promise<ServerStory | (undefined extends Res ? undefined : never)>(async resolve => {
-	const storyID: StoryID = id !== undefined && id !== '' ? +id : NaN;
+	const storyID: StoryID = (
+		id !== undefined && id !== ''
+			? +id
+			: NaN
+	);
 
 	let story: ServerStory | null | undefined;
 
