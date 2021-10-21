@@ -30,7 +30,7 @@ const Handler: APIHandler<{
 
 	await updateUnreadMessages(user._id);
 
-	res.end();
+	res.status(204).end();
 };
 
 export default Handler;

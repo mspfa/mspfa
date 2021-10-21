@@ -353,9 +353,9 @@ const Handler: APIHandler<{
 
 	await updateStorySchedule(story, updateQuery);
 
-	// TODO: Adjust page IDs in users' gave saves.
+	// TODO: Adjust page IDs in users' game saves.
 
-	res.end();
+	res.status(204).end();
 };
 
 export default Handler;

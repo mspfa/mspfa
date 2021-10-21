@@ -42,7 +42,7 @@ const Handler: APIHandler<{
 
 		await Promise.all(message.notReadBy.map(updateUnreadMessages));
 
-		res.end();
+		res.status(204).end();
 		return;
 	}
 

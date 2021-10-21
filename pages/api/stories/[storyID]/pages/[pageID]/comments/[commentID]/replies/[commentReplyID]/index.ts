@@ -122,7 +122,7 @@ const Handler: APIHandler<{
 			}
 		});
 
-		res.end();
+		res.status(204).end();
 		return;
 	}
 

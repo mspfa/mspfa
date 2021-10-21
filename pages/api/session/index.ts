@@ -107,7 +107,7 @@ const Handler: APIHandler<(
 
 		new Cookies(req, res).set('auth', undefined);
 
-		res.end();
+		res.status(204).end();
 	} else {
 		res.status(404).send({
 			message: 'No valid user session was found to sign out of.'
