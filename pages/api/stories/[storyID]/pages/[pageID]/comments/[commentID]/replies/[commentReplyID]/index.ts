@@ -156,7 +156,7 @@ const Handler: APIHandler<{
 			{ 'comment.id': comment.id },
 			{ 'commentReply.id': commentReply.id }
 		]
-	}).then(console.log);
+	});
 
 	res.send(getClientCommentReply(commentReply, user));
 };
