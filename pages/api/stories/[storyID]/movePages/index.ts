@@ -7,6 +7,7 @@ import { Perm } from 'lib/client/perms';
 import type { ClientStoryPageRecord } from 'lib/client/stories';
 import invalidPublishedOrder from 'lib/client/invalidPublishedOrder';
 import type { integer } from 'lib/types';
+import users from 'lib/server/users';
 
 const Handler: APIHandler<{
 	query: {
@@ -76,9 +77,18 @@ const Handler: APIHandler<{
 
 	/** A record that maps each changed page's initial ID to its new ID after the move. */
 	const changedPageIDs: Record<StoryPageID, StoryPageID> = {};
+	/** An array of initial page IDs to be changed. */
+	const oldChangedPageIDs: StoryPageID[] = [];
 	/** A record that maps each changed page's new ID from after the move to its initial ID (the reverse of `changedPageIDs`). */
 	const oldPageIDs: Record<StoryPageID, StoryPageID> = {};
 	const newClientPages: ClientStoryPageRecord = {};
+	/** The MongoDB `$switch` operation's `branches` used to modify each user's `storySaves` entry for this story. */
+	const branches: Array<{
+		case: {
+			$eq: [string, StoryPageID]
+		},
+		then: StoryPageID
+	}> = [];
 
 	// Store `Date.now()` into a variable so it is not a different value each time, helping avoid inconsistencies.
 	const now = Date.now();
@@ -113,7 +123,16 @@ const Handler: APIHandler<{
 
 		if (oldPageID !== newPageID) {
 			changedPageIDs[oldPageID] = newPageID;
+			oldChangedPageIDs.push(oldPageID);
 			oldPageIDs[newPageID] = oldPageID;
+			branches.push({
+				// If a user's save for this story is on the `oldPageID`,
+				case: {
+					$eq: [`$storySaves.${story._id}`, oldPageID]
+				},
+				// then set it to the `newPageID`.
+				then: newPageID
+			});
 
 			// Adjust the page ID.
 			page.id = newPageID;
@@ -194,7 +213,25 @@ const Handler: APIHandler<{
 			_id: story._id
 		}, { $set });
 
-		// TODO: Adjust page IDs in users' gave saves.
+		if (oldChangedPageIDs.length) {
+			// Adjust page IDs in users' story saves.
+
+			await users.updateMany({
+				[`storySaves.${story._id}`]: {
+					$in: oldChangedPageIDs
+				}
+			}, [{
+				$set: {
+					[`storySaves.${story._id}`]: {
+						$switch: {
+							branches,
+							// Since at least one of the `branches` must be the case, the last one might as well be the `default` as an optimization.
+							default: branches.pop()!.then
+						}
+					}
+				}
+			}]);
+		}
 	}
 
 	res.send({
