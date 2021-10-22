@@ -17,6 +17,7 @@ import { useUserCache } from 'lib/client/UserCache';
 import { useUser } from 'lib/client/users';
 import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import useMountedRef from 'lib/client/useMountedRef';
 
 type StoryNewsAPI = APIClient<typeof import('pages/api/stories/[storyID]/news').default>;
 
@@ -34,6 +35,15 @@ const StoryNews = React.memo(() => {
 	const user = useUser();
 
 	const [newsPosts, setNewsPosts] = useState(initialNewsPosts);
+
+	const mountedRef = useMountedRef();
+
+	useEffect(() => () => {
+		// Mutate the `initialNewsPosts` so that the initial news posts are still up-to-date (and still within the `NEWS_POSTS_PER_REQUEST` limit) for the next time this component mounts.
+
+		initialNewsPosts.length = 0;
+		initialNewsPosts.push(...newsPosts.slice(0, NEWS_POSTS_PER_REQUEST));
+	});
 
 	const createNewsPost = useFunction(async () => {
 		const dialog = new Dialog({
@@ -76,10 +86,12 @@ const StoryNews = React.memo(() => {
 			dialog.form!.values
 		);
 
-		setNewsPosts(newsPosts => [
-			newsPost,
-			...newsPosts
-		]);
+		if (mountedRef.current) {
+			setNewsPosts(newsPosts => [
+				newsPost,
+				...newsPosts
+			]);
+		}
 	});
 
 	const [notAllNewsLoaded, setNotAllNewsLoaded] = useState(
