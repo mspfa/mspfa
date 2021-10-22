@@ -77,6 +77,10 @@ $comment-icon-margin-right: 0.75em;
 		margin-top: 0.75em;
 		font-size: 0.85em;
 
+		& > * {
+			vertical-align: middle;
+		}
+
 		& > :not(:first-child) {
 			margin-left: 1em;
 		}
