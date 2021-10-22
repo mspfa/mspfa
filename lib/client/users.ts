@@ -9,7 +9,7 @@ import createGlobalState from 'global-react-state';
 import type { DateNumber, RecursivePartial } from 'lib/types';
 
 /** All keys whose values have the same serializable type in both `ServerUser` and `PrivateUser`. */
-type PrivateServerUserKey = 'email' | 'unverifiedEmail' | 'name' | 'birthdateChanged' | 'description' | 'icon' | 'site' | 'achievements' | 'favs' | 'profileStyle' | 'settings' | 'perms' | 'dev' | 'mod' | 'patron' | 'unreadMessageCount';
+type PrivateServerUserKey = 'email' | 'unverifiedEmail' | 'name' | 'birthdateChanged' | 'description' | 'icon' | 'site' | 'favs' | 'achievements' | 'profileStyle' | 'settings' | 'perms' | 'dev' | 'mod' | 'patron' | 'unreadMessageCount';
 
 /** A serializable version of `ServerUser` with only the properties that can safely be exposed to the client that owns the user data. */
 export type PrivateUser = (

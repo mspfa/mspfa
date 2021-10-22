@@ -92,11 +92,11 @@ export type ServerUser = {
 	description: string,
 	icon: '' | URLString,
 	site: '' | URLString,
-	/** A record that maps each story ID to the page ID the user has saved in that story. */
-	storySaves: Record<StoryID, StoryPageID>,
-	achievements: Partial<Record<keyof typeof achievements, true>>,
 	/** @uniqueItems true */
 	favs: StoryID[],
+	achievements: Partial<Record<keyof typeof achievements, true>>,
+	/** A record that maps each story ID to the page ID the user has saved in that story. */
+	storySaves: Record<StoryID, StoryPageID>,
 	profileStyle: string,
 	settings: {
 		emailPublic: boolean,
@@ -146,9 +146,9 @@ export const defaultUser = {
 	description: '',
 	icon: '',
 	site: '',
-	storySaves: {} as Record<never, never>,
-	achievements: {} as Record<never, never>,
 	favs: [] as never[],
+	achievements: {} as Record<never, never>,
+	storySaves: {} as Record<never, never>,
 	profileStyle: '',
 	settings: defaultSettings,
 	perms: 0,
@@ -176,8 +176,8 @@ export const getPrivateUser = (user: ServerUser): PrivateUser => ({
 	description: user.description,
 	icon: user.icon,
 	site: user.site,
-	achievements: user.achievements,
 	favs: user.favs,
+	achievements: user.achievements,
 	profileStyle: user.profileStyle,
 	settings: user.settings,
 	perms: user.perms,
@@ -208,10 +208,10 @@ export const getPublicUser = (user: ServerUser): PublicUser => ({
 	description: user.description,
 	icon: user.icon,
 	site: user.site,
-	achievements: user.achievements,
 	...user.settings.favsPublic && {
 		favs: user.favs
 	},
+	achievements: user.achievements,
 	profileStyle: user.profileStyle,
 	...user.dev && {
 		dev: user.dev
