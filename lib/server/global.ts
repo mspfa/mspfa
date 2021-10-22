@@ -35,17 +35,6 @@ connection.then(() => {
 		}).forEach(story => {
 			unscheduleStory(story._id);
 
-			users.updateMany({}, {
-				$pull: {
-					favs: story._id
-				},
-				$unset: {
-					[`storySaves.${story._id}`]: true
-				}
-			});
-
-			// TODO: Delete this story from every user's `settings.notifications`.
-
 			stories.deleteOne({ _id: story._id });
 		});
 	};
