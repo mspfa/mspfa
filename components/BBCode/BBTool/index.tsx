@@ -539,7 +539,7 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 		<Button
 			icon={{
 				style: {
-					backgroundPositionX: `${-tagIndexes[tagName]}em`
+					backgroundPositionY: `${-tagIndexes[tagName]}em`
 				}
 			}}
 			className={`bb-tool bb-tool-${tagName}${open ? ' open' : ''}`}
