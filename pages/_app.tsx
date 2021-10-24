@@ -86,6 +86,12 @@ const MyApp = ({
 
 	const router = useRouter();
 	const asPathQueryIndex = router.asPath.indexOf('?');
+	const asPathHashIndex = router.asPath.indexOf('#');
+	const asPathEndIndex = (
+		asPathQueryIndex === -1
+			? asPathHashIndex
+			: Math.min(asPathQueryIndex, asPathHashIndex)
+	);
 
 	return (
 		<SWRConfig
@@ -111,10 +117,10 @@ const MyApp = ({
 					<Component
 						// This `key` is necessary so a page's states are reset when the route or any of its parameters changes.
 						key={
-							asPathQueryIndex === -1
+							asPathEndIndex === -1
 								? router.asPath
 								// Slice off the query so states are not reset when the query changes.
-								: router.asPath.slice(0, asPathQueryIndex)
+								: router.asPath.slice(0, asPathEndIndex)
 						}
 						// It is necessary that the props object passed here is the original `pageProps` object and not a clone, because after this point is reached, props from a page's `getServerSideProps` are assigned to the original `pageProps` object and would otherwise not be passed into the page component.
 						{...pageProps as any}
