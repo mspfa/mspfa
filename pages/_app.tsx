@@ -90,7 +90,9 @@ const MyApp = ({
 	const asPathEndIndex = (
 		asPathQueryIndex === -1
 			? asPathHashIndex
-			: Math.min(asPathQueryIndex, asPathHashIndex)
+			: asPathHashIndex === -1
+				? asPathQueryIndex
+				: Math.min(asPathQueryIndex, asPathHashIndex)
 	);
 
 	return (
@@ -119,7 +121,7 @@ const MyApp = ({
 						key={
 							asPathEndIndex === -1
 								? router.asPath
-								// Slice off the query so states are not reset when the query changes.
+								// Slice off the query and the hash so states are not reset when they change.
 								: router.asPath.slice(0, asPathEndIndex)
 						}
 						// It is necessary that the props object passed here is the original `pageProps` object and not a clone, because after this point is reached, props from a page's `getServerSideProps` are assigned to the original `pageProps` object and would otherwise not be passed into the page component.
