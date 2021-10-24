@@ -1,17 +1,18 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
-import type { ServerStory, ServerStoryPage, StoryPageID } from 'lib/server/stories';
+import type { ServerStory, ServerStoryPage, StoryID, StoryPageID } from 'lib/server/stories';
 import { getStoryByUnsafeID, getClientStoryPage, updateStorySchedule, getClientPagesAround } from 'lib/server/stories';
 import { authenticate } from 'lib/server/auth';
 import type { ClientStoryPage, ClientStoryPageRecord } from 'lib/client/stories';
 import { StoryPrivacy } from 'lib/client/stories';
 import invalidPublishedOrder from 'lib/client/invalidPublishedOrder';
-import type { DateNumber, RecursivePartial } from 'lib/types';
+import type { DateNumber, integer, RecursivePartial } from 'lib/types';
 import { Perm } from 'lib/client/perms';
 import { flatten } from 'lib/server/db';
 import { mergeWith } from 'lodash';
 import overwriteArrays from 'lib/client/overwriteArrays';
 import type { UpdateFilter } from 'mongodb';
+import users from 'lib/server/users';
 
 /** The keys of all `ClientStoryPage` properties which the client should be able to `PATCH` into any of their existing `ServerStory['pages']` (except `'published'`). */
 type WritableStoryPageKey = 'title' | 'content' | 'nextPages' | 'unlisted' | 'disableControls' | 'commentary' | 'notify';
@@ -294,6 +295,22 @@ const Handler: APIHandler<{
 
 	const updateQuery: UpdateFilter<ServerStory> = { $unset };
 
+	/** The ID of the first deleted page. */
+	let firstDeletedPageID;
+	/** The ID of the previous deleted page. */
+	let previousDeletedPageID;
+	/** The MongoDB `$switch` operation's `branches` used to determine how much to subtract from each user's `storySaves` entry for this story. */
+	const branches: Array<{
+		case: {
+			$and: [
+				{ $gte: [`$storySaves.${StoryID}`, StoryPageID] },
+				{ $lt: [`$storySaves.${StoryID}`, StoryPageID] }
+			]
+		},
+		/** The amount to subtract from the user's `storySaves` entry for this story. */
+		then: integer
+	}> = [];
+
 	const pageValues = Object.values(story.pages);
 
 	/** The number of pages which have been deleted before the page in the current `for` loop iteration. */
@@ -310,7 +327,26 @@ const Handler: APIHandler<{
 			// Delete the page from `story` so `story.pages` is in sync with what the database will be after the `updateQuery`, allowing `story` to safely be passed into `updateStorySchedule`.
 			delete story.pages[lastPageID];
 
+			if (deletedBeforeThisPage === 0) {
+				firstDeletedPageID = page.id;
+			}
+
+			if (previousDeletedPageID) {
+				branches.push({
+					// If a user's save for this story is after or on the previous deleted page and before this deleted page,
+					case: {
+						$and: [
+							{ $gte: [`$storySaves.${story._id}`, previousDeletedPageID] },
+							{ $lt: [`$storySaves.${story._id}`, page.id] }
+						]
+					},
+					// then subtract `deletedBeforeThisPage` from the saved page ID.
+					then: deletedBeforeThisPage
+				});
+			}
+
 			deletedBeforeThisPage++;
+			previousDeletedPageID = page.id;
 		} else {
 			// This page should not be deleted and may need page ID adjustments.
 
@@ -353,7 +389,31 @@ const Handler: APIHandler<{
 
 	await updateStorySchedule(story, updateQuery);
 
-	// TODO: Adjust page IDs in users' game saves.
+	if (firstDeletedPageID) {
+		// Adjust page IDs in users' story saves.
+		await users.updateMany({
+			[`storySaves.${story._id}`]: {
+				$gte: firstDeletedPageID
+			}
+		}, [{
+			$set: {
+				[`storySaves.${story._id}`]: {
+					$subtract: [`$storySaves.${story._id}`, (
+						deletedBeforeThisPage === 1
+							// If only one page was deleted, then using a `$switch` is unnecessary. Also, there would be zero `branches`, which causes MongoDB to throw an error.
+							? 1
+							: {
+								$switch: {
+									branches,
+									// If none of the `branches` are the case, then the page that the user has saved is after or on the last deleted page, so the amount that should be subtracted from the saved page ID is the number of total deleted pages.
+									default: deletedBeforeThisPage
+								}
+							}
+					)]
+				}
+			}
+		}]);
+	}
 
 	res.status(204).end();
 };

@@ -1,6 +1,6 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
-import type { ServerStoryPage, StoryPageID } from 'lib/server/stories';
+import type { ServerStoryPage, StoryID, StoryPageID } from 'lib/server/stories';
 import stories, { getStoryByUnsafeID, getClientStoryPage } from 'lib/server/stories';
 import { authenticate } from 'lib/server/auth';
 import { Perm } from 'lib/client/perms';
@@ -85,7 +85,7 @@ const Handler: APIHandler<{
 	/** The MongoDB `$switch` operation's `branches` used to modify each user's `storySaves` entry for this story. */
 	const branches: Array<{
 		case: {
-			$eq: [string, StoryPageID]
+			$eq: [`$storySaves.${StoryID}`, StoryPageID]
 		},
 		then: StoryPageID
 	}> = [];
@@ -215,7 +215,6 @@ const Handler: APIHandler<{
 
 		if (oldChangedPageIDs.length) {
 			// Adjust page IDs in users' story saves.
-
 			await users.updateMany({
 				[`storySaves.${story._id}`]: {
 					$in: oldChangedPageIDs
