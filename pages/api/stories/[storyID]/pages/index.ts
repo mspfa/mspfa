@@ -398,18 +398,21 @@ const Handler: APIHandler<{
 		}, [{
 			$set: {
 				[`storySaves.${story._id}`]: {
-					$subtract: [`$storySaves.${story._id}`, (
-						deletedBeforeThisPage === 1
-							// If only one page was deleted, then using a `$switch` is unnecessary. Also, there would be zero `branches`, which causes MongoDB to throw an error.
-							? 1
-							: {
-								$switch: {
-									branches,
-									// If none of the `branches` are the case, then the page that the user has saved is after or on the last deleted page, so the amount that should be subtracted from the saved page ID is the number of total deleted pages.
-									default: deletedBeforeThisPage
+					// Without this `$max` expression, deleting page 1, for example, would cause story saves on page 1 to become page 0.
+					$max: [1, {
+						$subtract: [`$storySaves.${story._id}`, (
+							deletedBeforeThisPage === 1
+								// If only one page was deleted, then using a `$switch` is unnecessary. Also, there would be zero `branches`, which causes MongoDB to throw an error.
+								? 1
+								: {
+									$switch: {
+										branches,
+										// If none of the `branches` are the case, then the page that the user has saved is after or on the last deleted page, so the amount that should be subtracted from the saved page ID is the number of total deleted pages.
+										default: deletedBeforeThisPage
+									}
 								}
-							}
-					)]
+						)]
+					}]
 				}
 			}
 		}]);
