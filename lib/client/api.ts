@@ -41,11 +41,11 @@ export type APIConfig<
 	RequestQuery extends AnyAPIQuery = {}
 > = Omit<AxiosRequestConfig, 'data' | 'params'> & {
 	// This has to be optional and partial because server-side route params are also on this type but should not be set by the client.
-	// The limitations in Next.js mentioned below are that there is no official distinction between query parameters and route parameters.
+	// The limitations in Next mentioned below are that there is no official distinction between query parameters and route parameters.
 	/**
 	 * The query parameters.
 	 *
-	 * ⚠️ This property is not necessarily type-safe due to limitations in Next.js, so any required parameters will appear optional.
+	 * ⚠️ This property is not necessarily type-safe due to limitations in Next, so any required parameters will appear optional.
 	 */
 	params?: Partial<RequestQuery>,
 	/** A function called immediately before the default error interception functionality is run. */
