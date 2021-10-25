@@ -87,7 +87,6 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 							beforeInterceptError: error => {
 								if (error.response?.data.error === 'ALREADY_EXISTS') {
 									// The favorite was not found, so cancel the error and remove the favorite on the client.
-
 									error.preventDefault();
 								}
 							}
