@@ -92,19 +92,18 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 
 	const { clientPages, clientPreviousPageIDs } = getClientPagesAround(story, pageID, previewMode);
 
+	const lastPageID = (
+		previewMode
+			? Object.values(story.pages).length
+			: story.pageCount
+	);
+
 	/** A `StoryLogListings` of pages in the story's "Latest Pages" section. */
 	const latestPages: StoryLogListings = [];
 
 	for (
-		let latestPageID = (
-			previewMode
-				? Object.values(story.pages).length
-				: story.pageCount
-		);
-		(
-			latestPageID > 0
-			&& latestPages.length < MAX_LATEST_PAGES
-		);
+		let latestPageID = lastPageID;
+		latestPageID > 0 && latestPages.length < MAX_LATEST_PAGES;
 		latestPageID--
 	) {
 		const latestPage = story.pages[latestPageID];
@@ -117,6 +116,14 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 				},
 				title: latestPage.title
 			});
+		}
+	}
+
+	let hasCommentary = false;
+	for (let i = 1; i < lastPageID; i++) {
+		if (story.pages[i].commentary) {
+			hasCommentary = true;
+			break;
 		}
 	}
 
@@ -139,7 +146,8 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 			// The reason this is sent to the client rather than having SSR and the client compute it a second time is as an optimization (and also it's simpler code).
 			previousPageIDs: clientPreviousPageIDs,
 			latestPages,
-			newsPosts: newsPosts.map(getClientNewsPost)
+			newsPosts: newsPosts.map(getClientNewsPost),
+			hasCommentary
 		}
 	};
 });

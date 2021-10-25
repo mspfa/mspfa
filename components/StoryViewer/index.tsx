@@ -71,7 +71,8 @@ export type StoryViewerProps = {
 	pages: Partial<Record<StoryPageID, ClientStoryPage | null>>,
 	previousPageIDs: ClientPreviousPageIDs,
 	latestPages: StoryLogListings,
-	newsPosts: ClientNewsPost[]
+	newsPosts: ClientNewsPost[],
+	hasCommentary: boolean
 };
 
 /** A React context of the initial `StoryViewerProps`. */
