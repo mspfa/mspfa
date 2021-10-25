@@ -147,7 +147,7 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 						attributes={node.openingBBTagData.attributes}
 					>
 						{(children.length === 0
-							? undefined
+							? ''
 							: children.length === 1
 								? children[0]
 								: children
@@ -169,7 +169,7 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 
 		return (
 			rootChildren.length === 0
-				? undefined
+				? ''
 				: rootChildren.length === 1
 					? rootChildren[0]
 					: rootChildren
