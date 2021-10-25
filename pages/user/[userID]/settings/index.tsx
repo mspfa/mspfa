@@ -333,7 +333,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 											/>
 											<NotificationSetting
 												name="settings.notifications.commentReplies"
-												label="Replies to Comments"
+												label="Comment Replies"
 												help="Get notified when one of your comments receives a reply."
 											/>
 										</NotificationSettingGrid>
