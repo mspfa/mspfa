@@ -8,7 +8,7 @@ import Button from 'components/Button';
 import Router from 'next/router';
 import BoxSection from 'components/Box/BoxSection';
 import type { integer } from 'lib/types';
-import getRandomImageFilename from 'lib/server/getRandomImageFilename';
+import getRandomImageFilename from 'lib/server/getRandomImageFilename'; // @server-only
 
 const goBack = () => {
 	const { asPath } = Router;
@@ -52,8 +52,8 @@ const ErrorPage = ({ statusCode, imageFilename }: ErrorPageProps) => (
 	</Page>
 );
 
-// @server-only {
 // Pass the status code from Next to `ErrorPage`'s props.
+// Even if this function is only called server-side, it must still exist client-side so the Next client knows `ErrorPage` has initial props.
 ErrorPage.getInitialProps = async ({ res, error }: {
 	res?: ServerResponse,
 	error?: any
@@ -67,6 +67,5 @@ ErrorPage.getInitialProps = async ({ res, error }: {
 		statusCode
 	};
 };
-// @server-only }
 
 export default ErrorPage;
