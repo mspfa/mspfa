@@ -145,7 +145,7 @@ const MessageListing = ({
 				if (
 					error.response && (
 						(read && error.response.data.error === 'ALREADY_EXISTS')
-					|| (!read && error.response.status === 404)
+						|| (!read && error.response.status === 404)
 					)
 				) {
 					// The user already has the message marked as read or unread.
