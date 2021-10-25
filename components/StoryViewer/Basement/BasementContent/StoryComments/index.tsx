@@ -9,7 +9,6 @@ import { Formik, Form } from 'formik';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import Dialog from 'lib/client/Dialog';
-import { useLeaveConfirmation } from 'lib/client/forms';
 import IDPrefix from 'lib/client/IDPrefix';
 import useFunction from 'lib/client/useFunction';
 import { promptSignIn, useUser } from 'lib/client/users';
@@ -143,33 +142,29 @@ const StoryComments = React.memo(() => {
 					})
 				}
 			>
-				{function StoryCommentForm({ dirty, isSubmitting }) {
-					useLeaveConfirmation(dirty);
-
-					return (
-						<Form className="row story-comment-form">
-							<Label block htmlFor="story-comment-field-content">
-								Post a Comment
-							</Label>
-							<BBField
-								name="content"
-								required
-								maxLength={2000}
-								rows={3}
+				{({ isSubmitting }) => (
+					<Form className="row story-comment-form">
+						<Label block htmlFor="story-comment-field-content">
+							Post a Comment
+						</Label>
+						<BBField
+							name="content"
+							required
+							maxLength={2000}
+							rows={3}
+							disabled={isSubmitting}
+						/>
+						<div className="story-comment-form-actions">
+							<Button
+								type="submit"
+								className="small"
 								disabled={isSubmitting}
-							/>
-							<div className="story-comment-form-actions">
-								<Button
-									type="submit"
-									className="small"
-									disabled={isSubmitting}
-								>
-									Submit!
-								</Button>
-							</div>
-						</Form>
-					);
-				}}
+							>
+								Submit!
+							</Button>
+						</div>
+					</Form>
+				)}
 			</Formik>
 			<Row className="story-comment-options">
 				<div className="story-comment-option">
