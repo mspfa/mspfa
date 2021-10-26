@@ -298,15 +298,8 @@ export const getPublicStoriesByEditor = async (editor: ServerUser) => (
 	}).map(getPublicStory).toArray()
 );
 
-/** Updates the specified story's `favCount`. Sends the new `{ favCount }` as an API response. */
-export const updateAndSendFavCount = async (
-	res: APIResponse<{
-		body: {
-			favCount: ServerStory['favCount']
-		}
-	}>,
-	storyID: StoryID
-) => {
+/** Updates the specified story's `favCount`. Returns the new `favCount` value. */
+export const updateFavCount = async (storyID: StoryID) => {
 	const favCount = (
 		await users.aggregate!<{ favCount: integer }>([
 			{ $match: { favs: storyID } },
@@ -320,7 +313,7 @@ export const updateAndSendFavCount = async (
 		$set: { favCount }
 	});
 
-	res.send({ favCount });
+	return favCount;
 };
 
 /** The maximum duration accepted by `setTimeout`. */
