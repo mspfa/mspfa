@@ -23,6 +23,7 @@ const tagHelp: Partial<Record<TagString, string>> = {
 	suggestion: 'This adventure depends mainly on suggestions from readers.',
 	mirror: 'This adventure is authored by someone else and was not intended for MSPFA.',
 	alternate: 'This adventure is an alternate version of a different story.',
+	branching: 'A prominent aspect of this adventure is that it has multiple story paths.',
 	shitpost: 'This adventure is intended to look like a low-quality joke.',
 	nsfw: 'This adventure is for 18+ readers only and should be blocked from underage readers.'
 };
