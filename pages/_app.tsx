@@ -6,7 +6,6 @@ import { getPrivateUser } from 'lib/server/users'; // @server-only
 import type { AppProps, AppContext } from 'next/app';
 import type { NextPageContext } from 'next';
 import Head from 'next/head';
-import { SWRConfig } from 'swr';
 import env from 'lib/client/env';
 import { UserContext, useUserMerge, useUserInApp } from 'lib/client/users';
 import type { PrivateUser } from 'lib/client/users';
@@ -96,40 +95,32 @@ const MyApp = ({
 	);
 
 	return (
-		<SWRConfig
-			value={{
-				revalidateOnMount: true,
-				revalidateOnFocus: false,
-				revalidateOnReconnect: false
-			}}
-		>
-			<UserContext.Provider value={mergedUser}>
-				<UserCache.Provider value={userCache}>
-					<Head>
-						<title>MS Paint Fan Adventures</title>
-						<meta name="description" content="Hello, welcome to the bath house" />
-						<meta name="author" content="MS Paint Fan Adventures" />
-						<meta property="og:type" content="website" />
-						<meta property="og:site_name" content="MS Paint Fan Adventures" />
-						<meta property="og:description" content="Hello, welcome to the bath house" />
-						<meta property="og:title" content="MS Paint Fan Adventures" />
-						<meta property="og:image" content="/images/icon.png" />
-						<link rel="icon" href="/images/icon.png" /* Image credit: heyitskane */ />
-					</Head>
-					<Component
-						// This `key` is necessary so a page's states are reset when the route or any of its parameters changes.
-						key={
-							asPathEndIndex === -1
-								? router.asPath
-								// Slice off the query and the hash so states are not reset when they change.
-								: router.asPath.slice(0, asPathEndIndex)
-						}
-						// It is necessary that the props object passed here is the original `pageProps` object and not a clone, because after this point is reached, props from a page's `getServerSideProps` are assigned to the original `pageProps` object and would otherwise not be passed into the page component.
-						{...pageProps as any}
-					/>
-				</UserCache.Provider>
-			</UserContext.Provider>
-		</SWRConfig>
+		<UserContext.Provider value={mergedUser}>
+			<UserCache.Provider value={userCache}>
+				<Head>
+					<title>MS Paint Fan Adventures</title>
+					<meta name="description" content="Hello, welcome to the bath house" />
+					<meta name="author" content="MS Paint Fan Adventures" />
+					<meta property="og:type" content="website" />
+					<meta property="og:site_name" content="MS Paint Fan Adventures" />
+					<meta property="og:description" content="Hello, welcome to the bath house" />
+					<meta property="og:title" content="MS Paint Fan Adventures" />
+					<meta property="og:image" content="/images/icon.png" />
+					<link rel="icon" href="/images/icon.png" /* Image credit: heyitskane */ />
+				</Head>
+				<Component
+					// This `key` is necessary so a page's states are reset when the route or any of its parameters changes.
+					key={
+						asPathEndIndex === -1
+							? router.asPath
+							// Slice off the query and the hash so states are not reset when they change.
+							: router.asPath.slice(0, asPathEndIndex)
+					}
+					// It is necessary that the props object passed here is the original `pageProps` object and not a clone, because after this point is reached, props from a page's `getServerSideProps` are assigned to the original `pageProps` object and would otherwise not be passed into the page component.
+					{...pageProps as any}
+				/>
+			</UserCache.Provider>
+		</UserContext.Provider>
 	);
 };
 

@@ -1,19 +1,28 @@
-import useSWR from 'swr';
 import HorizontalWealthDungeon from 'components/HorizontalWealthDungeon';
+import type { APIClient } from 'lib/client/api';
+import api from 'lib/client/api';
+import { useEffect, useState } from 'react';
 
-type FooterAPIResponse = NonNullable<typeof import('pages/api/images/footer').default['Response']>['body'];
+type FooterAPI = APIClient<typeof import('pages/api/images/footer').default>;
 
 const Footer = () => {
-	const footer: FooterAPIResponse | undefined = useSWR('/api/images/footer').data;
+	// Default to `'template.png'` so the template footer image displays in archived versions of the site where API calls don't work.
+	const [footerName, setFooterName] = useState('template.png');
+
+	useEffect(() => {
+		(api as FooterAPI).get('/images/footer').then(({ data: footer }) => {
+			setFooterName(footer.name);
+		});
+	}, []);
 
 	return (
 		<footer>
 			<div className="mspface-container">
-				{footer && (
+				{footerName && (
 					<style jsx global>
 						{`
 							footer .mspface {
-								background-image: url(/images/footers/${footer.name});
+								background-image: url(/images/footers/${footerName});
 							}
 						`}
 					</style>
