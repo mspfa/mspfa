@@ -3,7 +3,6 @@ import type { APIHandler } from 'lib/server/api';
 import messages, { getMessageByUnsafeID, updateUnreadMessages } from 'lib/server/messages';
 import { Perm } from 'lib/client/perms';
 import { permToGetUserInAPI } from 'lib/server/permToGetUser';
-import type { integer } from 'lib/types';
 
 const Handler: APIHandler<{
 	query: {
@@ -13,11 +12,6 @@ const Handler: APIHandler<{
 	method: 'PUT',
 	/** `true` if the message should be marked as read, or `false` if it should be marked as unread. */
 	body: boolean
-}, {
-	method: 'PUT',
-	body: {
-		unreadMessageCount: integer
-	}
 }> = async (req, res) => {
 	await validate(req, res);
 
@@ -42,12 +36,10 @@ const Handler: APIHandler<{
 			}
 		});
 
-		user.unreadMessageCount = await updateUnreadMessages(user._id);
+		await updateUnreadMessages(user._id);
 	}
 
-	res.send({
-		unreadMessageCount: user.unreadMessageCount
-	});
+	res.status(204).end();
 };
 
 export default Handler;

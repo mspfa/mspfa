@@ -8,7 +8,7 @@ export default createValidator({
 	definitions: {
 		RequestMethod: {
 			type: 'string',
-			const: 'POST'
+			const: 'PUT'
 		}
 	}
 }, {
@@ -20,32 +20,28 @@ export default createValidator({
 			additionalProperties: false,
 			properties: {
 				body: {
-					type: 'object',
-					properties: {
-						userID: {
-							type: 'string'
-						}
-					},
-					required: [
-						'userID'
-					],
-					additionalProperties: false
+					type: 'boolean',
+					const: true
 				},
 				query: {
 					type: 'object',
 					properties: {
 						messageID: {
 							type: 'string'
+						},
+						userID: {
+							type: 'string'
 						}
 					},
 					required: [
-						'messageID'
+						'messageID',
+						'userID'
 					],
 					additionalProperties: false
 				},
 				method: {
 					type: 'string',
-					const: 'POST'
+					const: 'PUT'
 				}
 			},
 			required: [

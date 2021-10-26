@@ -32,7 +32,7 @@ import { useIsomorphicLayoutEffect } from 'react-use';
 import type { integer } from 'lib/types';
 
 type MessageAPI = APIClient<typeof import('pages/api/messages/[messageID]').default>;
-type MessageDeletedByAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy').default>;
+type MessageDeletedByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy/[userID]').default>;
 
 type ServerSideProps = {
 	unreadMessageCount?: integer,
@@ -50,7 +50,9 @@ const Component = withErrorPage<ServerSideProps>(({
 	userCache: initialUserCache
 }) => {
 	const user = useUser()!;
+
 	const [editing, setEditing] = useState(false);
+
 	const [unreadMessageCountUpdated, setUnreadMessageCountUpdated] = useState(unreadMessageCount === undefined);
 
 	useIsomorphicLayoutEffect(() => {
@@ -77,9 +79,7 @@ const Component = withErrorPage<ServerSideProps>(({
 			return;
 		}
 
-		await (api as MessageDeletedByAPI).post(`/messages/${message.id}/deletedBy`, {
-			userID: user.id
-		});
+		await (api as MessageDeletedByUserAPI).put(`/messages/${message.id}/deletedBy/${user.id}`, true);
 
 		Router.push(`/user/${user.id}/messages`);
 	});

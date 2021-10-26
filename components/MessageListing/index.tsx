@@ -11,7 +11,7 @@ import { useUserCache } from 'lib/client/UserCache';
 import Timestamp from 'components/Timestamp';
 import { setUser, useUser } from 'lib/client/users';
 import api from 'lib/client/api';
-import type { APIClient, APIError } from 'lib/client/api';
+import type { APIClient } from 'lib/client/api';
 import Button from 'components/Button';
 import RemoveButton from 'components/Button/RemoveButton';
 import Dialog from 'lib/client/Dialog';
@@ -23,7 +23,7 @@ import { useRouter } from 'next/router';
 import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
 
 type MessageReadByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy/[userID]').default>;
-type MessageDeletedByAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy').default>;
+type MessageDeletedByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy/[userID]').default>;
 
 export type ListedMessage = ClientMessage & {
 	selected: boolean,
@@ -128,14 +128,14 @@ const MessageListing = ({
 	// This state is whether no actions should be performed on the message due to it currently loading.
 	const [loading, setLoading] = useState(false);
 
-	message.markRead = useFunction(async read => {
+	message.markRead = useFunction(async (read: boolean) => {
 		if (loading || message.read === read) {
 			return;
 		}
 
 		setLoading(true);
 
-		const { data: { unreadMessageCount } } = await (api as MessageReadByUserAPI).put(
+		await (api as MessageReadByUserAPI).put(
 			`/messages/${message.id}/readBy/${queriedUserID}`,
 			read
 		).finally(() => {
@@ -150,7 +150,7 @@ const MessageListing = ({
 		if (userIsQueriedRef.current) {
 			setUser({
 				...userRef.current!,
-				unreadMessageCount
+				unreadMessageCount: userRef.current!.unreadMessageCount + (read ? -1 : 1)
 			});
 		}
 	});
@@ -162,21 +162,11 @@ const MessageListing = ({
 
 		setLoading(true);
 
-		await (api as MessageDeletedByAPI).post(`/messages/${message.id}/deletedBy`, {
-			userID: queriedUserID
-		}, {
-			beforeInterceptError: error => {
-				if (error.response?.status === 422) {
-					// The user isn't able to delete the message, so the message might as well be deleted.
-					error.preventDefault();
-				}
-			}
-		}).catch((error: APIError) => {
-			if (!error.defaultPrevented) {
-				setLoading(false);
-
-				return Promise.reject(error);
-			}
+		await (api as MessageDeletedByUserAPI).put(
+			`/messages/${message.id}/deletedBy/${queriedUserID}`,
+			true
+		).finally(() => {
+			setLoading(false);
 		});
 
 		if (userIsQueriedRef.current && !message.read) {
