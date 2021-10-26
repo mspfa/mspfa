@@ -24,7 +24,7 @@ const Handler: APIHandler<{
 
 	// Check if this request would lead to any change.
 	if (req.body !== user.favs.includes(storyID)) {
-		// Do not allow favoriting a deleted story or a private story without permission. (Unfavoriting is fine.)
+		// Do not allow favoriting a nonexistent story or a private story without permission. (Unfavoriting is fine.)
 		if (req.body) {
 			if (!story) {
 				res.status(404).send({
