@@ -20,6 +20,7 @@ import ReplyButton from 'components/Button/ReplyButton';
 import UserLink from 'components/Link/UserLink';
 import InconspicuousDiv from 'components/InconspicuousDiv';
 import { useRouter } from 'next/router';
+import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
 
 type MessageReadByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy/[userID]').default>;
 type MessageDeletedByAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy').default>;
@@ -62,6 +63,7 @@ const MessageListing = ({
 
 	const [open, setOpen] = useState(false);
 
+	/** The first line of the message's content as plain text. */
 	const partialContent = useMemo(() => {
 		const plainContent = parseBBCode(message.content, { removeBBTags: true });
 
@@ -80,26 +82,27 @@ const MessageListing = ({
 	const listingRef = useRef<HTMLDivElement>(null!);
 	const contentRef = useRef<HTMLDivElement>(null!);
 
+	// Set `fullContent`, and set `moreLinkVisible` based on whether the `fullContent` is one line of plain text.
+	// This is a layout effect rather than a normal effect so the user can't see the component rendered with the wrong `moreLinkVisible` for a moment before the effect runs.
 	useIsomorphicLayoutEffect(() => {
 		const newFullContent = parseBBCode(message.content);
 		setFullContent(newFullContent);
 
+		// Check if the full content is not one line of plain text.
 		if (partialContent !== newFullContent) {
 			setMoreLinkVisible(true);
 		}
 	}, [message.content, partialContent]);
 
+	// Set `moreLinkVisible` based on whether the message content's one line of plain text overflows its container on viewport change and on mount.
+	// This is a layout effect rather than a normal effect for the same reason as the previous one.
 	useIsomorphicLayoutEffect(() => {
-		if (
-			// Check that this message's rich content has loaded via the previous effect hook.
-			fullContent !== undefined
-			// Check that this message's content is plain text.
-			&& partialContent === fullContent
-		) {
-			const onResize = () => {
+		// Check that this message's content is one line of plain text.
+		if (partialContent === fullContent) {
+			const viewportListener = () => {
 				if (open) {
 					// Temporarily show less so the overflow detection can be accurate.
-					listingRef.current.className = listingRef.current.className.replace(/(?:^| )open( |$)/, '$1');
+					listingRef.current.classList.remove('open');
 				}
 
 				setMoreLinkVisible(
@@ -108,22 +111,19 @@ const MessageListing = ({
 				);
 
 				if (open) {
-					listingRef.current.className += ' open';
+					// Restore the temporarily removed `open` class.
+					listingRef.current.classList.add('open');
 				}
 			};
 
-			onResize();
-			window.addEventListener('resize', onResize);
+			viewportListener();
+			const _viewportListener = addViewportListener(viewportListener);
 
 			return () => {
-				window.removeEventListener('resize', onResize);
+				removeViewportListener(_viewportListener);
 			};
 		}
-
-		// `message.content` should be a dependency here because the widths of `contentRef.current` depend on it and are referenced in this hook.
-		// This ESLint comment is necessary because the rule incorrectly thinks `partialContent` should be a dependency here, despite that it depends on `message.content` which is already a dependency.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [fullContent, message.content, open]);
+	}, [fullContent, partialContent, open]);
 
 	// This state is whether no actions should be performed on the message due to it currently loading.
 	const [loading, setLoading] = useState(false);
