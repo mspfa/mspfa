@@ -7,26 +7,12 @@ import useFunction from 'lib/client/useFunction';
 import { usePrefixedID } from 'lib/client/IDPrefix';
 import { useIsomorphicLayoutEffect } from 'react-use';
 import { isEqual, uniq } from 'lodash';
-import type { TagString } from 'lib/server/stories';
+import storyTags from 'lib/client/storyTags';
+import type { TagString } from 'lib/client/storyTags';
 import Label from 'components/Label';
 import Dialog from 'lib/client/Dialog';
 import Link from 'components/Link';
 import type { integer } from 'lib/types';
-
-/** An object that maps `TagString`s to `string`s explaining each tag. */
-const tagHelp: Partial<Record<TagString, string>> = {
-	nonmspa: 'This adventure is unrelated to MSPA.',
-	test: 'This adventure was only made to test something.',
-	translation: 'This adventure only serves as a translation of something else.',
-	sburb: 'This adventure focuses on Sburb.',
-	puzzle: 'This adventure focuses on problems and puzzles.',
-	suggestion: 'This adventure depends mainly on suggestions from readers.',
-	mirror: 'This adventure is authored by someone else and was not intended for MSPFA.',
-	alternate: 'This adventure is an alternate version of a different story.',
-	branching: 'A prominent aspect of this adventure is that it has multiple story paths.',
-	shitpost: 'This adventure is intended to look like a low-quality joke.',
-	nsfw: 'This adventure is for 18+ readers only and should be blocked from underage readers.'
-};
 
 /** A `textarea` used solely to calculate the `style.height` of a `TagField` based on its `rows` prop. */
 const heightTextArea = document.createElement('textarea'); // @client-only
@@ -306,7 +292,7 @@ const TagField = ({
 		<div className="tag-field">
 			<Label
 				block
-				help={'Tags are keywords that help identify and describe an adventure.\n\nUsers can search for adventures with certain tags, and they can read an adventure\'s tags to get an idea of what kind of adventure it is before opening it.'}
+				help={'Tags are keywords that help identify and describe an adventure.\n\nUsers can search for adventures with certain tags, and they can see an adventure\'s tags before opening it to get an idea of what kind of adventure it is.'}
 			>
 				Tags
 			</Label>
@@ -375,7 +361,7 @@ const TagField = ({
 
 							const tagValue = tag.dataset.value;
 
-							if (!(tagValue && tagHelp[tagValue])) {
+							if (!(tagValue && storyTags[tagValue])) {
 								return;
 							}
 
@@ -383,7 +369,7 @@ const TagField = ({
 								new Dialog({
 									id: 'help',
 									title: `Help: #${tagValue}`,
-									content: `Use this tag if:\n\n${tagHelp[tagValue]}`
+									content: `Use this tag if:\n\n${storyTags[tagValue]}`
 								});
 							} else if (!fieldValue.includes(tagValue)) {
 								createAndInsertTag(tagValue, inputRef.current.lastChild!);
@@ -392,7 +378,7 @@ const TagField = ({
 						})
 					}
 				>
-					{Object.keys(tagHelp).map(tagValue => (
+					{Object.keys(storyTags).map(tagValue => (
 						<div
 							key={tagValue}
 							className={`tag-field-tag-preset${fieldValue.includes(tagValue) ? ' added' : ''}`}

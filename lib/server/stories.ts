@@ -11,19 +11,13 @@ import type { ServerComment } from 'lib/server/comments';
 import type { ClientPreviousPageIDs } from 'components/StoryViewer';
 import { PAGE_PRELOAD_DEPTH } from 'components/StoryViewer';
 import type { ServerNewsPost } from 'lib/server/news';
+import type { TagString } from 'lib/client/storyTags';
 
 /** @minimum 1 */
 export type StoryID = integer;
 
 /** @minimum 1 */
 export type StoryPageID = integer;
-
-/**
- * @minLength 1
- * @maxLength 50
- * @pattern ^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$
- */
-export type TagString = string;
 
 // I call them `ServerStoryPage`s instead of `Page`s
 export type ServerStoryPage = {
