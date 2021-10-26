@@ -2,7 +2,7 @@ import './styles.module.scss';
 import IconImage from 'components/IconImage';
 import type { ClientMessage } from 'lib/client/messages';
 import Link from 'components/Link';
-import type { ChangeEvent, MutableRefObject, ReactNode } from 'react';
+import type { ChangeEvent, ReactNode } from 'react';
 import { useMemo, useRef, useState } from 'react';
 import useFunction from 'lib/client/useFunction';
 import BBCode from 'components/BBCode';
@@ -26,27 +26,26 @@ type MessageDeletedByAPI = APIClient<typeof import('pages/api/messages/[messageI
 
 export type ListedMessage = ClientMessage & {
 	selected: boolean,
-	/** A ref with methods relating to the message. Only undefined until the message has rendered. */
-	ref?: MutableRefObject<{
-		markRead: (
-			(
-				/** `true` if should mark as read. `false` if should mark as unread. */
-				read: boolean
-			) => Promise<void>
-		),
-		deleteMessage: () => Promise<void>
-	}>
+	/** Marks the message as read or unread with an API call. Only undefined until the message has rendered. */
+	markRead?: (
+		(
+			/** `true` if should mark as read. `false` if should mark as unread. */
+			read: boolean
+		) => Promise<void>
+	),
+	/** Deletes the message with an API call. Only undefined until the message has rendered. */
+	delete?: () => Promise<void>
 };
 
 export type MessageListingProps = {
-	setMessageRef: MutableRefObject<(message: ListedMessage) => void>,
-	removeListingRef: MutableRefObject<(message: ListedMessage) => void>,
+	setMessage: (message: ListedMessage) => void,
+	removeListing: (message: ListedMessage) => void,
 	children: ListedMessage
 };
 
 const MessageListing = ({
-	setMessageRef,
-	removeListingRef,
+	setMessage,
+	removeListing,
 	children: message
 }: MessageListingProps) => {
 	const user = useUser();
@@ -129,80 +128,74 @@ const MessageListing = ({
 	// This state is whether no actions should be performed on the message due to it currently loading.
 	const [loading, setLoading] = useState(false);
 
-	message.ref = useRef({} as any);
+	message.markRead = useFunction(async read => {
+		if (loading || message.read === read) {
+			return;
+		}
 
-	// We can use an empty object as the initial value of the above ref because the ref's value is then immediately set below.
+		setLoading(true);
 
-	const { markRead } = message.ref.current = {
-		markRead: useFunction(async read => {
-			if (loading || message.read === read) {
-				return;
+		const { data: { unreadMessageCount } } = await (api as MessageReadByUserAPI).put(
+			`/messages/${message.id}/readBy/${queriedUserID}`,
+			read
+		).finally(() => {
+			setLoading(false);
+		});
+
+		setMessage({
+			...message,
+			read
+		});
+
+		if (userIsQueriedRef.current) {
+			setUser({
+				...userRef.current!,
+				unreadMessageCount
+			});
+		}
+	});
+
+	message.delete = useFunction(async () => {
+		if (loading) {
+			return;
+		}
+
+		setLoading(true);
+
+		await (api as MessageDeletedByAPI).post(`/messages/${message.id}/deletedBy`, {
+			userID: queriedUserID
+		}, {
+			beforeInterceptError: error => {
+				if (error.response?.status === 422) {
+					// The user isn't able to delete the message, so the message might as well be deleted.
+					error.preventDefault();
+				}
 			}
-
-			setLoading(true);
-
-			const { data: { unreadMessageCount } } = await (api as MessageReadByUserAPI).put(
-				`/messages/${message.id}/readBy/${queriedUserID}`,
-				read
-			).finally(() => {
+		}).catch((error: APIError) => {
+			if (!error.defaultPrevented) {
 				setLoading(false);
-			});
 
-			setMessageRef.current({
-				...message,
-				read
-			});
-
-			if (userIsQueriedRef.current) {
-				setUser({
-					...userRef.current!,
-					unreadMessageCount
-				});
+				return Promise.reject(error);
 			}
-		}),
-		deleteMessage: useFunction(async () => {
-			if (loading) {
-				return;
-			}
+		});
 
-			setLoading(true);
-
-			await (api as MessageDeletedByAPI).post(`/messages/${message.id}/deletedBy`, {
-				userID: queriedUserID
-			}, {
-				beforeInterceptError: error => {
-					if (error.response?.status === 422) {
-						// The user isn't able to delete the message, so the message might as well be deleted.
-
-						error.preventDefault();
-					}
-				}
-			}).catch((error: APIError) => {
-				if (!error.defaultPrevented) {
-					setLoading(false);
-
-					return Promise.reject(error);
-				}
+		if (userIsQueriedRef.current && !message.read) {
+			setUser({
+				...userRef.current!,
+				unreadMessageCount: userRef.current!.unreadMessageCount - 1
 			});
+		}
 
-			if (userIsQueriedRef.current && !message.read) {
-				setUser({
-					...userRef.current!,
-					unreadMessageCount: userRef.current!.unreadMessageCount - 1
-				});
-			}
-
-			removeListingRef.current(message);
-		})
-	};
+		removeListing(message);
+	});
 
 	const toggleRead = useFunction(() => {
-		markRead(!message.read);
+		message.markRead!(!message.read);
 	});
 
 	const showMore = useFunction(() => {
 		setOpen(true);
-		markRead(true);
+		message.markRead!(true);
 	});
 
 	const showLess = useFunction(() => {
@@ -226,7 +219,7 @@ const MessageListing = ({
 			return;
 		}
 
-		message.ref!.current.deleteMessage();
+		message.delete!();
 	});
 
 	return (
@@ -240,7 +233,7 @@ const MessageListing = ({
 					checked={message.selected}
 					onChange={
 						useFunction((event: ChangeEvent<HTMLInputElement>) => {
-							setMessageRef.current({
+							setMessage({
 								...message,
 								selected: event.target.checked
 							});

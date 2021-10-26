@@ -20,7 +20,6 @@ import MessageListing from 'components/MessageListing';
 import { useEffect, useRef, useState } from 'react';
 import useFunction from 'lib/client/useFunction';
 import Button from 'components/Button';
-import { useLatest } from 'react-use';
 import Dialog from 'lib/client/Dialog';
 import Row from 'components/Row';
 import type { integer } from 'lib/types';
@@ -98,7 +97,7 @@ const Component = withErrorPage<ServerSideProps>(({
 	const markRead = useFunction(() => {
 		for (const message of listedMessages) {
 			if (message.selected) {
-				message.ref!.current.markRead(true);
+				message.markRead!(true);
 			}
 		}
 	});
@@ -106,7 +105,7 @@ const Component = withErrorPage<ServerSideProps>(({
 	const markUnread = useFunction(() => {
 		for (const message of listedMessages) {
 			if (message.selected) {
-				message.ref!.current.markRead(false);
+				message.markRead!(false);
 			}
 		}
 	});
@@ -122,34 +121,29 @@ const Component = withErrorPage<ServerSideProps>(({
 
 		for (const message of listedMessages) {
 			if (message.selected) {
-				message.ref!.current.deleteMessage();
+				message.delete!();
 			}
 		}
 	});
 
-	// It is necessary that `setMessage` and `removeListing` are refs to fix race conditions due to running them on multiple selected messages simultaneously.
-	const setMessageRef = useLatest(
-		useFunction((message: ListedMessage) => {
-			const messageIndex = listedMessages.findIndex(({ id }) => id === message.id);
+	const setMessage = useFunction((message: ListedMessage) => {
+		const messageIndex = listedMessages.findIndex(({ id }) => id === message.id);
 
-			setListedMessages([
-				...listedMessages.slice(0, messageIndex),
-				message,
-				...listedMessages.slice(messageIndex + 1, listedMessages.length)
-			]);
-		})
-	);
+		setListedMessages([
+			...listedMessages.slice(0, messageIndex),
+			message,
+			...listedMessages.slice(messageIndex + 1, listedMessages.length)
+		]);
+	});
 
-	const removeListingRef = useLatest(
-		useFunction((message: ListedMessage) => {
-			const messageIndex = listedMessages.findIndex(({ id }) => id === message.id);
+	const removeListing = useFunction((message: ListedMessage) => {
+		const messageIndex = listedMessages.findIndex(({ id }) => id === message.id);
 
-			setListedMessages([
-				...listedMessages.slice(0, messageIndex),
-				...listedMessages.slice(messageIndex + 1, listedMessages.length)
-			]);
-		})
-	);
+		setListedMessages([
+			...listedMessages.slice(0, messageIndex),
+			...listedMessages.slice(messageIndex + 1, listedMessages.length)
+		]);
+	});
 
 	return (
 		<Page withFlashyTitle heading="Messages">
@@ -223,8 +217,8 @@ const Component = withErrorPage<ServerSideProps>(({
 					) : (
 						<List
 							listing={MessageListing}
-							setMessageRef={setMessageRef}
-							removeListingRef={removeListingRef}
+							setMessage={setMessage}
+							removeListing={removeListing}
 						>
 							{listedMessages}
 						</List>
