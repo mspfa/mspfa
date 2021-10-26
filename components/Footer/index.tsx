@@ -12,10 +12,10 @@ const Footer = () => {
 				{footer && (
 					<style jsx global>
 						{`
-								footer .mspface {
-									background-image: url(/images/footers/${footer.name});
-								}
-							`}
+							footer .mspface {
+								background-image: url(/images/footers/${footer.name});
+							}
+						`}
 					</style>
 				)}
 				<div className="mspface left" />
