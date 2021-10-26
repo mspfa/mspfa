@@ -6,13 +6,14 @@ import { useEffect, useState } from 'react';
 type FooterAPI = APIClient<typeof import('pages/api/images/footer').default>;
 
 const Footer = () => {
-	// Default to `'template.png'` so the template footer image displays in archived versions of the site where API calls don't work.
-	const [footerName, setFooterName] = useState('template.png');
+	const [footerName, setFooterName] = useState<string>();
 
 	useEffect(() => {
-		(api as FooterAPI).get('/images/footer').then(({ data: footer }) => {
-			setFooterName(footer.name);
-		});
+		(api as FooterAPI)
+			.get('/images/footer')
+			.then(({ data: footer }) => footer.name)
+			.catch(() => 'template.png')
+			.then(setFooterName);
 	}, []);
 
 	return (
