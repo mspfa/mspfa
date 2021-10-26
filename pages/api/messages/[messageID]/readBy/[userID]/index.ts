@@ -10,9 +10,11 @@ const Handler: APIHandler<{
 		messageID: string,
 		userID: string
 	},
-	method: 'DELETE'
+	method: 'PUT',
+	/** `true` if the message should be marked as read, or `false` if it should be marked as unread. */
+	body: boolean
 }, {
-	method: 'DELETE',
+	method: 'PUT',
 	body: {
 		unreadMessageCount: integer
 	}
@@ -25,28 +27,26 @@ const Handler: APIHandler<{
 
 	if (!message.notDeletedBy.some(userID => userID.equals(user._id))) {
 		res.status(422).send({
-			message: 'The specified user does not have permission to mark the specified message as unread.'
+			message: 'The specified user does not have access to the specified message.'
 		});
 		return;
 	}
 
-	if (message.notReadBy.some(userID => userID.equals(user._id))) {
-		res.status(404).send({
-			message: 'The specified user has already marked the specified message as unread.'
+	// Check if this request would lead to any change.
+	if (req.body === message.notReadBy.some(userID => userID.equals(user._id))) {
+		await messages.updateOne({
+			_id: message._id
+		}, {
+			[req.body ? '$pull' : '$push']: {
+				notReadBy: user._id
+			}
 		});
-		return;
-	}
 
-	await messages.updateOne({
-		_id: message._id
-	}, {
-		$push: {
-			notReadBy: user._id
-		}
-	});
+		user.unreadMessageCount = await updateUnreadMessages(user._id);
+	}
 
 	res.send({
-		unreadMessageCount: await updateUnreadMessages(user._id)
+		unreadMessageCount: user.unreadMessageCount
 	});
 };
 

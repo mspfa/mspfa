@@ -19,8 +19,8 @@ import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 import ReplyButton from 'components/Button/ReplyButton';
 import UserLink from 'components/Link/UserLink';
 import InconspicuousDiv from 'components/InconspicuousDiv';
+import { useRouter } from 'next/router';
 
-type MessageReadByAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy').default>;
 type MessageReadByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy/[userID]').default>;
 type MessageDeletedByAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy').default>;
 
@@ -52,11 +52,11 @@ const MessageListing = ({
 	const user = useUser();
 	const userRef = useLatest(user);
 
-	/** A ref to whether the user is a sender or recipient of this message. */
-	const userIsParticipantRef = useLatest(!!user && (
-		message.from === user.id
-		|| message.to.includes(user.id)
-	));
+	/** The ID of the user whose messages are being viewed. */
+	const queriedUserID = useRouter().query.userID as string;
+
+	/** A ref to whether the authenticated user is viewing their own messages to avoid race conditions. */
+	const userIsQueriedRef = useLatest(user!.id === queriedUserID);
 
 	const { userCache } = useUserCache();
 	const fromUser = userCache[message.from];
@@ -135,52 +135,16 @@ const MessageListing = ({
 
 	const { markRead } = message.ref.current = {
 		markRead: useFunction(async read => {
-			if (loading || !userIsParticipantRef.current || message.read === read) {
+			if (loading || message.read === read) {
 				return;
 			}
 
 			setLoading(true);
 
-			const beforeInterceptError = (error: APIError) => {
-				if (
-					error.response && (
-						(read && error.response.data.error === 'ALREADY_EXISTS')
-						|| (!read && error.response.status === 404)
-					)
-				) {
-					// The user already has the message marked as read or unread.
-
-					error.preventDefault();
-				}
-			};
-
-			const { data: { unreadMessageCount } } = await (
+			const { data: { unreadMessageCount } } = await (api as MessageReadByUserAPI).put(
+				`/messages/${message.id}/readBy/${queriedUserID}`,
 				read
-					? (api as MessageReadByAPI).post(
-						`/messages/${message.id}/readBy`,
-						{ userID: user!.id },
-						{ beforeInterceptError }
-					)
-					: (api as MessageReadByUserAPI).delete(
-						`/messages/${message.id}/readBy/${user!.id}`,
-						{ beforeInterceptError }
-					)
-			).catch((error: APIError) => {
-				if (error.defaultPrevented) {
-					return {
-						data: {
-							unreadMessageCount: (
-								userRef.current
-									? userRef.current.unreadMessageCount + (read ? -1 : 1)
-									// If `!userRef.current`, this value should be completely unused. So I might as well set the `unreadMessageCount` to -1 so that a bug in which it isn't unused is more obvious to the user.
-									: -1
-							)
-						}
-					};
-				}
-
-				return Promise.reject(error);
-			}).finally(() => {
+			).finally(() => {
 				setLoading(false);
 			});
 
@@ -189,7 +153,7 @@ const MessageListing = ({
 				read
 			});
 
-			if (userIsParticipantRef.current as boolean) {
+			if (userIsQueriedRef.current) {
 				setUser({
 					...userRef.current!,
 					unreadMessageCount
@@ -197,14 +161,14 @@ const MessageListing = ({
 			}
 		}),
 		deleteMessage: useFunction(async () => {
-			if (loading || !userIsParticipantRef.current) {
+			if (loading) {
 				return;
 			}
 
 			setLoading(true);
 
 			await (api as MessageDeletedByAPI).post(`/messages/${message.id}/deletedBy`, {
-				userID: user!.id
+				userID: queriedUserID
 			}, {
 				beforeInterceptError: error => {
 					if (error.response?.status === 422) {
@@ -221,7 +185,7 @@ const MessageListing = ({
 				}
 			});
 
-			if (userIsParticipantRef.current as boolean && !message.read) {
+			if (userIsQueriedRef.current && !message.read) {
 				setUser({
 					...userRef.current!,
 					unreadMessageCount: userRef.current!.unreadMessageCount - 1
@@ -246,22 +210,19 @@ const MessageListing = ({
 	});
 
 	const confirmDeleteMessage = useFunction(async () => {
-		if (loading || !(
-			userIsParticipantRef.current
-			&& await Dialog.confirm({
-				id: 'delete-message',
-				title: 'Delete Message',
-				content: (
-					<>
-						Are you sure you want to delete this message?<br />
-						<br />
-						<i>{message.subject}</i><br />
-						<br />
-						The message will only be deleted for you. This cannot be undone.
-					</>
-				)
-			})
-		)) {
+		if (loading || !await Dialog.confirm({
+			id: 'delete-message',
+			title: 'Delete Message',
+			content: (
+				<>
+					Are you sure you want to delete this message?<br />
+					<br />
+					<i>{message.subject}</i><br />
+					<br />
+					The message will only be deleted for you. This cannot be undone.
+				</>
+			)
+		})) {
 			return;
 		}
 
@@ -337,23 +298,21 @@ const MessageListing = ({
 					</InconspicuousDiv>
 				)}
 			</div>
-			{userIsParticipantRef.current && (
-				<div className="listing-actions">
-					<ReplyButton
-						href={`/message/new?replyTo=${message.id}`}
-					/>
-					<Button
-						icon
-						className={message.read ? 'mark-unread-button' : 'mark-read-button'}
-						title={message.read ? 'Mark as Unread' : 'Mark as Read'}
-						onClick={toggleRead}
-					/>
-					<RemoveButton
-						title="Delete"
-						onClick={confirmDeleteMessage}
-					/>
-				</div>
-			)}
+			<div className="listing-actions">
+				<ReplyButton
+					href={`/message/new?replyTo=${message.id}`}
+				/>
+				<Button
+					icon
+					className={message.read ? 'mark-unread-button' : 'mark-read-button'}
+					title={message.read ? 'Mark as Unread' : 'Mark as Read'}
+					onClick={toggleRead}
+				/>
+				<RemoveButton
+					title="Delete"
+					onClick={confirmDeleteMessage}
+				/>
+			</div>
 		</div>
 	);
 };

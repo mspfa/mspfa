@@ -8,7 +8,7 @@ export default createValidator({
 	definitions: {
 		RequestMethod: {
 			type: 'string',
-			const: 'DELETE'
+			const: 'PUT'
 		}
 	}
 }, {
@@ -19,7 +19,10 @@ export default createValidator({
 			type: 'object',
 			additionalProperties: false,
 			properties: {
-				body: {},
+				body: {
+					type: 'boolean',
+					description: '`true` if the message should be marked as read, or `false` if it should be marked as unread.'
+				},
 				query: {
 					type: 'object',
 					properties: {
@@ -38,10 +41,11 @@ export default createValidator({
 				},
 				method: {
 					type: 'string',
-					const: 'DELETE'
+					const: 'PUT'
 				}
 			},
 			required: [
+				'body',
 				'method',
 				'query'
 			]
