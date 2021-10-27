@@ -8,7 +8,8 @@ module.exports = {
 					if (Array.isArray(rule.use)) {
 						for (const entry of rule.use) {
 							if (
-								entry.options.modules instanceof Object
+								entry.options instanceof Object
+								&& entry.options.modules instanceof Object
 								&& entry.loader.includes(`${path.sep}css-loader${path.sep}`)
 							) {
 								// Let global styles be used in style modules.
@@ -65,5 +66,6 @@ module.exports = {
 		source: '/discord',
 		destination: 'https://discord.gg/EC5acgG',
 		permanent: true
-	}]
+	}],
+	swcMinify: true
 };
