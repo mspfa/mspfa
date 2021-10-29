@@ -19,7 +19,8 @@
 		"isolatedModules": true,
 		"jsx": "preserve",
 		"importHelpers": true,
-		"baseUrl": "."
+		"baseUrl": ".",
+		"downlevelIteration": true
 	},
 	"include": [
 		"**/*.ts",
