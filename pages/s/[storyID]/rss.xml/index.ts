@@ -73,7 +73,7 @@ export const getServerSideProps: MyGetServerSideProps = async ({ res, params }) 
 				res.write('</image>');
 			}
 
-			const oneWeekAgo = Date.now() - (1000 * 60 * 60 * 24 * 7);
+			const oneWeekAgo = Date.now() - 1000 * 60 * 60 * 24 * 7;
 
 			// Start iterating from the public page count to exclude drafts and scheduled pages.
 			for (let i = story.pageCount; i >= 1; i--) {
