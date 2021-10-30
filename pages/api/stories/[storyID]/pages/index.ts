@@ -296,9 +296,12 @@ const Handler: APIHandler<{
 	const updateQuery: UpdateFilter<ServerStory> = { $unset };
 
 	/** The ID of the first deleted page. */
-	let firstDeletedPageID;
+	let firstDeletedPageID: StoryPageID | undefined;
+	/** The ID of the first page which is not to be deleted. */
+	let firstNonDeletedPageID: StoryPageID | undefined;
 	/** The ID of the previous deleted page. */
-	let previousDeletedPageID;
+	let previousDeletedPageID: StoryPageID | undefined;
+
 	/** The MongoDB `$switch` operation's `branches` used to determine how much to subtract from each user's `storySaves` entry for this story. */
 	const branches: Array<{
 		case: {
@@ -331,7 +334,13 @@ const Handler: APIHandler<{
 				firstDeletedPageID = page.id;
 			}
 
-			if (previousDeletedPageID) {
+			// Prepare to adjust page IDs in users' story saves.
+			if (
+				// To shift the saved page IDs between the previous deleted page and this deleted page, there must be a previous deleted page.
+				previousDeletedPageID
+				// Ensure all pages before this one are not also deleted, in which case all story saves on or before this page should be deleted rather than shifted, since there would be no earlier non-deleted pages to shift onto.
+				&& firstNonDeletedPageID
+			) {
 				branches.push({
 					// If a user's save for this story is after or on the previous deleted page and before this deleted page,
 					case: {
@@ -349,6 +358,10 @@ const Handler: APIHandler<{
 			previousDeletedPageID = page.id;
 		} else {
 			// This page should not be deleted and may need page ID adjustments.
+
+			if (firstNonDeletedPageID === undefined) {
+				firstNonDeletedPageID = page.id;
+			}
 
 			/** Whether this page's `nextPages` has changed. */
 			let nextPagesChanged = false;
@@ -387,36 +400,70 @@ const Handler: APIHandler<{
 		updateQuery.$set = $set;
 	}
 
-	await updateStorySchedule(story, updateQuery);
+	const storySaveUpdates: Array<Promise<any>> = [];
 
+	// Adjust page IDs in users' story saves, which is only necessary if there are any deleted pages.
 	if (firstDeletedPageID) {
-		// Adjust page IDs in users' story saves.
-		await users.updateMany({
-			[`storySaves.${story._id}`]: {
-				$gte: firstDeletedPageID
-			}
-		}, [{
-			$set: {
-				[`storySaves.${story._id}`]: {
-					// Without this `$max` expression, deleting page 1, for example, would cause story saves on page 1 to become page 0.
-					$max: [1, {
-						$subtract: [`$storySaves.${story._id}`, (
-							deletedBeforeThisPage === 1
-								// If only one page was deleted, then using a `$switch` is unnecessary. Also, there would be zero `branches`, which causes MongoDB to throw an error.
-								? 1
-								: {
-									$switch: {
-										branches,
-										// If none of the `branches` are the case, then the page that the user has saved is after or on the last deleted page, so the amount that should be subtracted from the saved page ID is the number of total deleted pages.
-										default: deletedBeforeThisPage
+		if (
+			// Only shift saved page IDs if there are any non-deleted pages to shift onto.
+			firstNonDeletedPageID
+			// Only shift saved page IDs if there are any pages that need to be shifted after a non-deleted page that can be shifted onto.
+			&& previousDeletedPageID! > firstNonDeletedPageID
+		) {
+			storySaveUpdates.push(
+				users.updateMany({
+					[`storySaves.${story._id}`]: {
+						// The ID of the earliest page that should be shifted.
+						// If you delete only page 5, then this should be page 5, which should be shifted onto page 4.
+						// If you delete only pages 1, 2, and 5, then this should be page 3, as pages 1 and 2 can't be shifted onto any earlier non-deleted pages.
+						$gte: Math.max(firstNonDeletedPageID, firstDeletedPageID)
+					}
+				}, [{
+					$set: {
+						[`storySaves.${story._id}`]: {
+							$subtract: [`$storySaves.${story._id}`, (
+								deletedBeforeThisPage === 1
+									// If only one page was deleted, then using a `$switch` is unnecessary. Also, there would be zero `branches`, which causes MongoDB to throw an error.
+									? 1
+									: {
+										$switch: {
+											branches,
+											// If none of the `branches` are the case, then the page that the user has saved is after or on the last deleted page, so the amount that should be subtracted from the saved page ID is the number of total deleted pages.
+											default: deletedBeforeThisPage
+										}
 									}
-								}
-						)]
-					}]
-				}
-			}
-		}]);
+							)]
+						}
+					}
+				}])
+			);
+		}
+
+		// If page 1 is deleted, then there may be saves for this story on page 1 (or on consecutive deleted pages immediately after page 1) which can't be shifted onto an earlier non-deleted page. These saves should instead be deleted.
+		if (firstDeletedPageID === 1) {
+			storySaveUpdates.push(
+				users.updateMany({
+					[`storySaves.${story._id}`]: (
+						firstNonDeletedPageID
+							// Delete all saved pages that are within the consecutive deleted pages at the beginning of this story.
+							? { $lt: firstNonDeletedPageID }
+							// If there are no non-deleted pages left, all saves for this story must be deleted.
+							: { $exists: true }
+					)
+				}, {
+					// The reason we don't simply shift these saves onto page 1 in the previous update query using `$max: [1, ...]` is that, if every page in a story is deleted, then page 1 does not exist, and saves on page 1 would be invalid.
+					$unset: {
+						[`storySaves.${story._id}`]: true
+					}
+				})
+			);
+		}
 	}
+
+	// Await users' story saves to be adjusted before deleting any pages. Otherwise, a story save could reference a deleted page for a very short time before story saves finish updating.
+	await Promise.all(storySaveUpdates);
+
+	await updateStorySchedule(story, updateQuery);
 
 	res.status(204).end();
 };
