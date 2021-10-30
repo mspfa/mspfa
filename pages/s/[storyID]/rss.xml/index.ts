@@ -37,40 +37,40 @@ export const getServerSideProps: MyGetServerSideProps = async ({ res, params }) 
 
 	res.setHeader('Content-Type', 'text/xml');
 
-	let rssString = '<?xml version="1.0" encoding="UTF-8"?>';
-	rssString += '<rss version="2.0">';
-	rssString += '<channel>';
+	res.write('<?xml version="1.0" encoding="UTF-8"?>');
+	res.write('<rss version="2.0">');
+	res.write('<channel>');
 
 	if (!story) {
 		res.statusCode = 404;
 
-		rssString += '<title>Error 404</title>';
-		rssString += `<link>https://mspfa.com/?s=${encodeURIComponent(params.storyID!)}</link>`;
-		rssString += '<description>Adventure not found.</description>';
+		res.write('<title>Error 404</title>');
+		res.write(`<link>https://mspfa.com/?s=${encodeURIComponent(params.storyID!)}</link>`);
+		res.write('<description>Adventure not found.</description>');
 	}
 
 	if (story) {
 		if (story.privacy === StoryPrivacy.Private) {
 			res.statusCode = 403;
 
-			rssString += '<title>Error 403</title>';
-			rssString += `<link>https://mspfa.com/?s=${story._id}</link>`;
-			rssString += '<description>This adventure is private.</description>';
+			res.write('<title>Error 403</title>');
+			res.write(`<link>https://mspfa.com/?s=${story._id}</link>`);
+			res.write('<description>This adventure is private.</description>');
 		} else {
 			// The story exists and is not private.
 
-			rssString += `<title>${escapeForXML(story.title)}</title>`;
-			rssString += `<link>https://mspfa.com/?s=${story._id}</link>`;
-			rssString += `<description>${escapeForXML(story.description)}</description>`;
-			rssString += `<pubDate>${getRFC2822Timestamp(story.updated)}</pubDate>`;
-			rssString += `<lastBuildDate>${getRFC2822Timestamp(story.updated)}</lastBuildDate>`;
+			res.write(`<title>${escapeForXML(story.title)}</title>`);
+			res.write(`<link>https://mspfa.com/?s=${story._id}</link>`);
+			res.write(`<description>${escapeForXML(story.description)}</description>`);
+			res.write(`<pubDate>${getRFC2822Timestamp(story.updated)}</pubDate>`);
+			res.write(`<lastBuildDate>${getRFC2822Timestamp(story.updated)}</lastBuildDate>`);
 
 			if (story.icon) {
-				rssString += '<image>';
-				rssString += `<url>${escapeForXML(story.icon)}</url>`;
-				rssString += `<title>${escapeForXML(story.title)}</title>`;
-				rssString += `<link>https://mspfa.com/?s=${story._id}</link>`;
-				rssString += '</image>';
+				res.write('<image>');
+				res.write(`<url>${escapeForXML(story.icon)}</url>`);
+				res.write(`<title>${escapeForXML(story.title)}</title>`);
+				res.write(`<link>https://mspfa.com/?s=${story._id}</link>`);
+				res.write('</image>');
 			}
 
 			const oneWeekAgo = Date.now() - (1000 * 60 * 60 * 24 * 7);
@@ -86,22 +86,20 @@ export const getServerSideProps: MyGetServerSideProps = async ({ res, params }) 
 				}
 
 				if (!page.unlisted) {
-					rssString += '<item>';
-					rssString += `<title>Page ${page.id}</title>`;
-					rssString += `<link>https://mspfa.com/?s=${story._id}&amp;p=${page.id}</link>`;
-					rssString += `<description>${escapeForXML(page.title)}</description>`;
-					rssString += `<guid isPermaLink="true">https://mspfa.com/?s=${story._id}&amp;p=${page.id}</guid>`;
-					rssString += `<pubDate>${getRFC2822Timestamp(page.published!)}</pubDate>`;
-					rssString += '</item>';
+					res.write('<item>');
+					res.write(`<title>Page ${page.id}</title>`);
+					res.write(`<link>https://mspfa.com/?s=${story._id}&amp;p=${page.id}</link>`);
+					res.write(`<description>${escapeForXML(page.title)}</description>`);
+					res.write(`<guid isPermaLink="true">https://mspfa.com/?s=${story._id}&amp;p=${page.id}</guid>`);
+					res.write(`<pubDate>${getRFC2822Timestamp(page.published!)}</pubDate>`);
+					res.write('</item>');
 				}
 			}
 		}
 	}
 
-	rssString += '</channel>';
-	rssString += '</rss>';
-
-	res.end(rssString);
+	res.write('</channel>');
+	res.end('</rss>');
 
 	return { props: {} };
 };
