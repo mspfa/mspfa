@@ -43,6 +43,10 @@ export const getServerSideProps: MyGetServerSideProps = async ({ res, params }) 
 
 	if (!story) {
 		res.statusCode = 404;
+
+		rssString += '<title>Error 404</title>';
+		rssString += `<link>https://mspfa.com/?s=${encodeURIComponent(params.storyID!)}</link>`;
+		rssString += '<description>Adventure not found.</description>';
 	}
 
 	if (story) {
