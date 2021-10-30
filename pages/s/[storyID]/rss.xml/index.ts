@@ -77,21 +77,44 @@ export const getServerSideProps: MyGetServerSideProps = async ({ res, params }) 
 
 			// Start iterating from the public page count to exclude drafts and scheduled pages.
 			for (let i = story.pageCount; i >= 1; i--) {
-				const page = story.pages[i];
+				const endPage = story.pages[i];
+				const endPagePublished = +endPage.published!;
 
 				// Stop iterating when we reach pages that are too old.
-				// We limit by publish date instead of page count because, otherwise, if an author publishes more pages in a single update than the limit allows, then some of them would never appear in this channel, so RSS users would never see them in their feed.
-				if (+page.published! < oneWeekAgo) {
+				// We limit by publish date instead of item count because, otherwise, if an author publishes more items in a single update than the limit allows, then some of them would never appear in this channel, so RSS users would never see them in their feed.
+				if (endPagePublished < oneWeekAgo) {
 					break;
 				}
 
-				if (!page.unlisted) {
+				/** The earliest page which was published at the same time as `endPage`. */
+				let startPage = endPage;
+
+				// Determine the `startPage`.
+				while (i > 1) {
+					const earlierPage = story.pages[i - 1];
+
+					if (+earlierPage.published! !== endPagePublished) {
+						break;
+					}
+
+					startPage = earlierPage;
+
+					i--;
+				}
+
+				if (!endPage.unlisted) {
 					res.write('<item>');
-					res.write(`<title>Page ${page.id}</title>`);
-					res.write(`<link>https://mspfa.com/?s=${story._id}&amp;p=${page.id}</link>`);
-					res.write(`<description>${escapeForXML(page.title)}</description>`);
-					res.write(`<guid isPermaLink="true">https://mspfa.com/?s=${story._id}&amp;p=${page.id}</guid>`);
-					res.write(`<pubDate>${getRFC2822Timestamp(page.published!)}</pubDate>`);
+					res.write('<title>');
+					res.write(
+						startPage === endPage
+							? `Page ${startPage.id}`
+							: `Pages ${startPage.id}-${endPage.id}`
+					);
+					res.write('</title>');
+					res.write(`<link>https://mspfa.com/?s=${story._id}&amp;p=${startPage.id}</link>`);
+					res.write(`<description>${escapeForXML(startPage.title)}</description>`);
+					res.write(`<guid isPermaLink="true">https://mspfa.com/?s=${story._id}&amp;p=${startPage.id}</guid>`);
+					res.write(`<pubDate>${getRFC2822Timestamp(startPage.published!)}</pubDate>`);
 					res.write('</item>');
 				}
 			}
