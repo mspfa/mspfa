@@ -11,17 +11,19 @@ import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 import Stick from 'components/Stick';
 import Delimit from 'components/Delimit';
 import Dialog from 'lib/client/Dialog';
-import { defaultSettings, getUser } from 'lib/client/users';
+import { defaultSettings, getUser, promptSignIn } from 'lib/client/users';
 import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
-import type { APIClient } from 'lib/client/api';
+import type { APIClient, APIConfig } from 'lib/client/api';
 import api from 'lib/client/api';
 import type { ClientNewsPost } from 'lib/client/news';
 import Basement from 'components/StoryViewer/Basement';
 import PreviewModeContext from 'lib/client/PreviewModeContext';
 import StoryPageLink from 'components/StoryPageLink';
 import StoryIDContext from 'lib/client/StoryIDContext';
+import useFunction from 'lib/client/useFunction';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
+type UserStorySaveAPI = APIClient<typeof import('pages/api/users/[userID]/storySaves/[storyID]').default>;
 
 /**
  * The maximum distance of pages to preload around the user's current page.
@@ -43,7 +45,7 @@ export const goToPage = (pageID: StoryPageID) => {
 	});
 };
 
-const openSaveGameHelp = () => {
+const saveGameHelp = () => {
 	new Dialog({
 		id: 'help',
 		title: 'Help: Save Game',
@@ -489,19 +491,121 @@ const StoryViewer = (props: StoryViewerProps) => {
 							</>
 						)}
 						<span className="story-section-footer-group">
-							<Link className="story-link-save-game">
+							<Link
+								className="story-link-save-game"
+								onClick={
+									useFunction(async () => {
+										const user = getUser();
+
+										if (!user) {
+											if (await Dialog.confirm({
+												id: 'story-saves',
+												title: 'Save Game',
+												content: 'Sign into the account you want to save to!',
+												actions: ['Sign In', 'Cancel']
+											})) {
+												promptSignIn();
+											}
+
+											return;
+										}
+
+										(api as UserStorySaveAPI).put(`/users/${user.id}/storySaves/${story.id}`, pageID);
+									})
+								}
+							>
 								Save Game
 							</Link>
 							{' '}
-							<Link className="story-link-save-game-help" onClick={openSaveGameHelp}>
+							<Link className="story-link-save-game-help" onClick={saveGameHelp}>
 								(?)
 							</Link>
 							<Stick />
-							<Link className="story-link-load-game">
+							<Link
+								className="story-link-load-game"
+								onClick={
+									useFunction(async () => {
+										const user = getUser();
+
+										if (!user) {
+											if (await Dialog.confirm({
+												id: 'story-saves',
+												title: 'Load Game',
+												content: 'Sign in to load your save!',
+												actions: ['Sign In', 'Cancel']
+											})) {
+												promptSignIn();
+											}
+
+											return;
+										}
+
+										const { data: savedPageID } = await (api as UserStorySaveAPI).get(`/users/${user.id}/storySaves/${story.id}`, {
+											beforeInterceptError: error => {
+												if (error.response?.status === 404) {
+													error.preventDefault();
+
+													new Dialog({
+														title: 'Load Game',
+														content: 'You have no save for this adventure!'
+													});
+												}
+											}
+										});
+
+										goToPage(savedPageID);
+									})
+								}
+							>
 								Load Game
 							</Link>
 							<Stick />
-							<Link className="story-link-delete-game">
+							<Link
+								className="story-link-delete-game"
+								onClick={
+									useFunction(async () => {
+										const user = getUser();
+
+										if (!user) {
+											if (await Dialog.confirm({
+												id: 'story-saves',
+												title: 'Delete Game Data',
+												content: 'Sign in to delete your save!',
+												actions: ['Sign In', 'Cancel']
+											})) {
+												promptSignIn();
+											}
+
+											return;
+										}
+
+										const deleteUserStorySaveAPIConfig: APIConfig = {
+											beforeInterceptError: error => {
+												if (error.response?.status === 404) {
+													error.preventDefault();
+
+													new Dialog({
+														title: 'Delete Game Data',
+														content: 'You have no save for this adventure!'
+													});
+												}
+											}
+										};
+
+										await (api as UserStorySaveAPI).get(`/users/${user.id}/storySaves/${story.id}`, deleteUserStorySaveAPIConfig);
+
+										if (!await Dialog.confirm({
+											id: 'story-saves',
+											title: 'Delete Game Data',
+											content: 'Are you sure you want to delete your save for this adventure?'
+										})) {
+											return;
+										}
+
+										(api as UserStorySaveAPI).delete(`/users/${user.id}/storySaves/${story.id}`, deleteUserStorySaveAPIConfig);
+									})
+								}
+							>
 								Delete Game Data
 							</Link>
 						</span>
