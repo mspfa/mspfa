@@ -86,6 +86,10 @@ export const getServerSideProps: MyGetServerSideProps = async ({ res, params }) 
 					break;
 				}
 
+				if (endPage.unlisted) {
+					continue;
+				}
+
 				/** The earliest page which was published at the same time as `endPage`. */
 				let startPage = endPage;
 
@@ -97,26 +101,26 @@ export const getServerSideProps: MyGetServerSideProps = async ({ res, params }) 
 						break;
 					}
 
-					startPage = earlierPage;
+					if (!earlierPage.unlisted) {
+						startPage = earlierPage;
+					}
 
 					i--;
 				}
 
-				if (!endPage.unlisted) {
-					res.write('<item>');
-					res.write('<title>');
-					res.write(
-						startPage === endPage
-							? `Page ${startPage.id}`
-							: `Pages ${startPage.id}-${endPage.id}`
-					);
-					res.write('</title>');
-					res.write(`<link>https://mspfa.com/?s=${story._id}&amp;p=${startPage.id}</link>`);
-					res.write(`<description>${escapeForXML(startPage.title)}</description>`);
-					res.write(`<guid isPermaLink="true">https://mspfa.com/?s=${story._id}&amp;p=${startPage.id}</guid>`);
-					res.write(`<pubDate>${getRFC2822Timestamp(startPage.published!)}</pubDate>`);
-					res.write('</item>');
-				}
+				res.write('<item>');
+				res.write('<title>');
+				res.write(
+					startPage === endPage
+						? `Page ${startPage.id}`
+						: `Pages ${startPage.id}-${endPage.id}`
+				);
+				res.write('</title>');
+				res.write(`<link>https://mspfa.com/?s=${story._id}&amp;p=${startPage.id}</link>`);
+				res.write(`<description>${escapeForXML(startPage.title)}</description>`);
+				res.write(`<guid isPermaLink="true">https://mspfa.com/?s=${story._id}&amp;p=${startPage.id}</guid>`);
+				res.write(`<pubDate>${getRFC2822Timestamp(startPage.published!)}</pubDate>`);
+				res.write('</item>');
 			}
 		}
 	}
