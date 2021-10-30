@@ -3,9 +3,8 @@ import Page from 'components/Page';
 import type { ClientStoryPage, PublicStory, StoryLogListings } from 'lib/client/stories';
 import Link from 'components/Link';
 import Router, { useRouter } from 'next/router';
-import type { Dispatch, MouseEvent, SetStateAction } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import React, { useState, useEffect, useRef, Fragment, useMemo } from 'react';
-import useFunction from 'lib/client/useFunction';
 import type { StoryPageID } from 'lib/server/stories';
 import BBCode from 'components/BBCode';
 import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
@@ -114,49 +113,20 @@ const StoryViewer = (props: StoryViewerProps) => {
 			? queriedPageID
 			: pageIDRef.current
 	);
-	pageIDRef.current = pageID;
 	const page = pages[pageID];
 
-	const [previousPageIDs, setPreviousPageIDs] = useState(initialPreviousPageIDs);
-	/** The page ID to take the user to when clicking the "Go Back" link. Unless undefined, necessarily indexes a cached page. */
-	const previousPageID = previousPageIDs[pageID];
+	const previousPageIDsRef = useRef<ClientPreviousPageIDs>(initialPreviousPageIDs);
 
-	/** Goes to one of the pages in `page.nextPages` by its index therein. Returns a boolean for whether it is successful. */
-	const goToNextPage = useFunction((
-		/** The index of the page ID in `page.nextPages` to go to. */
-		nextPageIndex = 0
-	) => {
-		const nextPageID = page?.nextPages[nextPageIndex];
+	// Check if this page is one of the previous page's `nextPages`.
+	if (pages[pageIDRef.current]?.nextPages.includes(pageID)) {
+		// The user navigated from the previous page to this page, so from now on, when the user clicks "Go Back" on this page, it should take them back to that same previous page, as opposed to a different page that also has this one in its `nextPages` but isn't the page that the user came from.
+		previousPageIDsRef.current[pageID] = pageIDRef.current;
+	}
 
-		// If the `nextPageIndex` exists in `page.nextPages` and the `nextPageID` is cached in `pages`, then go to the `nextPageID`.
-		if (nextPageID && pages[nextPageID]) {
-			goToPage(nextPageID);
+	/** The page ID to take the user to when clicking the "Go Back" link. Unless nullable, necessarily indexes a cached page. */
+	const previousPageID = previousPageIDsRef.current[pageID];
 
-			// If it is not already set that the previous page of `nextPageID` is this page, then set it.
-			if (previousPageIDs[nextPageID] !== page.id) {
-				setPreviousPageIDs({
-					...previousPageIDs,
-					[nextPageID]: page.id
-				});
-			}
-
-			return true;
-		}
-
-		return false;
-	});
-
-	const onClickNextPageLink = useFunction((event: MouseEvent<HTMLAnchorElement> & { target: HTMLAnchorElement }) => {
-		if (goToNextPage(
-			event.target.dataset.index === undefined
-				? 0
-				: +event.target.dataset.index
-		)) {
-			event.preventDefault();
-		}
-
-		// If the `goToNextPage` call is unsuccessful, don't `event.preventDefault`, and instead let the clicked link handle the page change.
-	});
+	pageIDRef.current = pageID;
 
 	/** A ref to an array of page IDs which are currently being fetched around. */
 	const fetchingPageIDsRef = useRef<StoryPageID[]>([]);
@@ -240,7 +210,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 				checkAdjacentPages(nextPageID, depth);
 			}
 
-			const previousPageID = previousPageIDs[pageIDToCheck];
+			const previousPageID = previousPageIDsRef.current[pageIDToCheck];
 			if (previousPageID === undefined) {
 				// If the `previousPageID` is unknown, fetch it.
 				unknownPagesNearby = true;
@@ -286,11 +256,15 @@ const StoryViewer = (props: StoryViewerProps) => {
 				for (const newPageID of Object.keys(newPages)) {
 					// Ensure this state update will actually cache a new page and won't just create an unnecessary re-render.
 					if (!(newPageID in pagesRef.current)) {
-						setPreviousPageIDs(previousPageIDs => ({
-							...newPreviousPageIDs,
-							// We assign the original `previousPageIDs` after the `newPreviousPageIDs` so that any `previousPageIDs` the client already has set are not overwritten.
-							...previousPageIDs
-						}));
+						// Update the `previousPageIDsRef` with the `newPreviousPageIDs`.
+						for (const newPreviousPageIDKey of Object.keys(newPreviousPageIDs)) {
+							const newPreviousPageIDKeyNumber = +newPreviousPageIDKey;
+
+							// Ensure none of the client's original `previousPageIDs` are overwritten by any of the `newPreviousPageIDs`.
+							if (!(newPreviousPageIDKey in previousPageIDsRef.current)) {
+								previousPageIDsRef.current[newPreviousPageIDKeyNumber] = newPreviousPageIDs[newPreviousPageIDKeyNumber];
+							}
+						}
 
 						setPages(pages => ({
 							...pages,
@@ -312,7 +286,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 			// Reset the preloaded images.
 			preloadResourcesElement.style.backgroundImage = '';
 		};
-	}, [queriedPageID, pages, previousPageIDs, story.id, previewMode, pagesRef]);
+	}, [queriedPageID, pages, story.id, previewMode, pagesRef]);
 
 	const storySectionElementRef = useRef<HTMLDivElement>(null!);
 
@@ -401,7 +375,12 @@ const StoryViewer = (props: StoryViewerProps) => {
 			}
 
 			if (event.code === controls.nextPage) {
-				goToNextPage();
+				const nextPageID = page?.nextPages[0];
+
+				// If the `nextPageID` exists is cached in `pages`, then go to it.
+				if (nextPageID && pages[nextPageID]) {
+					goToPage(nextPageID);
+				}
 
 				event.preventDefault();
 			}
@@ -412,13 +391,10 @@ const StoryViewer = (props: StoryViewerProps) => {
 		return () => {
 			document.removeEventListener('keydown', onKeyDown);
 		};
-	}, [goToNextPage, page, previousPageID, pages]);
+	}, [page, previousPageID, pages]);
 
 	/** Whether the "Go Back" link should be shown. */
-	const showGoBack = !(
-		previousPageID === null
-		|| previousPageID === undefined
-	);
+	const showGoBack = !!previousPageID;
 
 	const [commentaryShown, setCommentaryShown] = useState(false);
 
@@ -469,9 +445,8 @@ const StoryViewer = (props: StoryViewerProps) => {
 										{nextPage && (
 											<div className="story-section-link-container">
 												<StoryPageLink
+													className="story-section-link"
 													pageID={nextPageID}
-													data-index={i}
-													onClick={onClickNextPageLink}
 												>
 													<BBCode keepHTMLTags>
 														{nextPage.title}
