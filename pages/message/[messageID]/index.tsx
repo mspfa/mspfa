@@ -141,7 +141,7 @@ const Component = withErrorPage<ServerSideProps>(({
 												</Link>
 											) : (
 												<span title={`ID: ${message.replyTo}`}>
-													[Deleted Message]
+													(Deleted Message)
 												</span>
 											)}
 										</div>
