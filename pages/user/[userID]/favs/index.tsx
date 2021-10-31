@@ -9,25 +9,26 @@ import Box from 'components/Box';
 import BoxSection from 'components/Box/BoxSection';
 import Link from 'components/Link';
 import Row from 'components/Row';
-import type { PublicStory } from 'lib/client/stories';
 import List from 'components/List';
+import type { ListedStory } from 'components/StoryListing';
 import StoryListing from 'components/StoryListing';
 import { Perm } from 'lib/client/perms';
 import type { integer } from 'lib/types';
 import Button from 'components/Button';
 import getRandomImageFilename from 'lib/server/getRandomImageFilename';
 import findStoriesAsUser from 'lib/server/findStoriesAsUser';
+import type { StoryID } from 'lib/server/stories';
 
 type ServerSideProps = {
 	publicUser: PublicUser,
 	favsPublic: boolean,
-	publicStories: PublicStory[],
+	stories: ListedStory[],
 	imageFilename?: string
 } | {
 	statusCode: integer
 };
 
-const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publicStories, imageFilename }) => {
+const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, stories, imageFilename }) => {
 	const user = useUser();
 
 	return (
@@ -52,10 +53,10 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, publ
 							</span>
 						</Row>
 					)}
-					{publicStories.length ? (
+					{stories.length ? (
 						<Row>
 							<List listing={StoryListing}>
-								{publicStories}
+								{stories}
 							</List>
 						</Row>
 					) : (
@@ -101,16 +102,42 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		return { props: { statusCode: 403 } };
 	}
 
-	const publicStories = await findStoriesAsUser(req.user, canSudoReadUserFromParams, {
+	let stories: ListedStory[];
+
+	const storiesFoundAsUser = findStoriesAsUser(req.user, canSudoReadUserFromParams, {
 		_id: { $in: userFromParams.favs }
-	}).toArray();
+	});
+
+	if (canSudoReadUserFromParams) {
+		// If the user is viewing their own favorites, include unavailable stories.
+
+		stories = [];
+		const storyRecord: Record<StoryID, ListedStory> = {};
+
+		for (const storyID of userFromParams.favs) {
+			const story: ListedStory = {
+				id: storyID
+			};
+
+			stories.push(story);
+			storyRecord[storyID] = story;
+		}
+
+		await storiesFoundAsUser.forEach(story => {
+			Object.assign(storyRecord[story.id], story);
+		});
+	} else {
+		// If the user is viewing someone else's favorites, only include available stories.
+
+		stories = await storiesFoundAsUser.toArray();
+	}
 
 	return {
 		props: {
 			publicUser: getPublicUser(userFromParams),
 			favsPublic: userFromParams.settings.favsPublic,
-			publicStories,
-			...publicStories.length === 0 && {
+			stories,
+			...stories.length === 0 && {
 				imageFilename: await getRandomImageFilename('public/images/no-favs')
 			}
 		}
