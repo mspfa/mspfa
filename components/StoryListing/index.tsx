@@ -9,6 +9,8 @@ import InconspicuousDiv from 'components/InconspicuousDiv';
 import StoryTagLink from 'components/StoryTagLink';
 import StoryStats from 'components/StoryStats';
 import type { StoryID } from 'lib/server/stories';
+import { useUser } from 'lib/client/users';
+import FavButton from 'components/Button/FavButton';
 
 /** A story to list as a `StoryListing`, or an object with only the ID of the story if the story is unavailable. */
 export type ListedStory = PublicStory | { id: StoryID };
@@ -27,6 +29,8 @@ const StoryListing = ({ children }: StoryListingProps) => {
 	} else {
 		storyTitle = '(Unavailable Adventure)';
 	}
+
+	const user = useUser();
 
 	const [open, setOpen] = useState(false);
 
@@ -55,7 +59,7 @@ const StoryListing = ({ children }: StoryListingProps) => {
 				>
 					{storyTitle}
 				</Link>
-				{story && (
+				{story ? (
 					<>
 						<StoryStats className="listing-section listing-details">
 							{story}
@@ -83,6 +87,8 @@ const StoryListing = ({ children }: StoryListingProps) => {
 							))}
 						</InconspicuousDiv>
 					</>
+				) : user?.favs.includes(storyID) && (
+					<FavButton storyID={storyID} />
 				)}
 			</div>
 		</div>

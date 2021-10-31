@@ -14,7 +14,8 @@ type UserFavAPI = APIClient<typeof import('pages/api/users/[userID]/favs/[storyI
 
 export type FavButtonProps = Omit<ButtonProps, 'onClick' | 'title' | 'children'> & {
 	storyID: StoryID,
-	children: integer
+	/** The story's fav count. */
+	children?: integer
 };
 
 const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) => {
@@ -34,7 +35,13 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 		<Button
 			icon
 			className={`fav-button${active ? ' active' : ''}${className ? ` ${className}` : ''}`}
-			title={`${favCount} Favorite${favCount === 1 ? '' : 's'}`}
+			title={
+				favCount === undefined
+					? active
+						? 'Unfavorite'
+						: 'Favorite'
+					: `${favCount} Favorite${favCount === 1 ? '' : 's'}`
+			}
 			onClick={
 				useFunction(async () => {
 					if (loadingRef.current) {
@@ -67,7 +74,9 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 
 					setUser({ ...user });
 
-					setFavCount(favCount + (active ? -1 : 1));
+					if (favCount !== undefined) {
+						setFavCount(favCount + (active ? -1 : 1));
+					}
 				})
 			}
 			{...props}
