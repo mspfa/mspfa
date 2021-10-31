@@ -222,9 +222,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		props: {
 			toUsers: (
 				await users.find!({
-					_id: {
-						$in: toUserIDs
-					},
+					_id: { $in: toUserIDs },
 					willDelete: { $exists: false }
 				}).map(getPublicUser).toArray()
 			)

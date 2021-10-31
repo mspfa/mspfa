@@ -284,9 +284,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 			},
 			userCache: (
 				await users.find!({
-					_id: {
-						$in: userCacheIDs
-					},
+					_id: { $in: userCacheIDs },
 					willDelete: { $exists: false }
 				}).map(getPublicUser).toArray()
 			)
