@@ -495,6 +495,19 @@ const StoryViewer = (props: StoryViewerProps) => {
 								className="story-link-save-game"
 								onClick={
 									useFunction(async () => {
+										if (!page) {
+											new Dialog({
+												id: 'story-saves',
+												title: 'Save Game',
+												content: (
+													page === undefined
+														? 'Please wait for the page to finish loading before saving it.'
+														: 'The page you\'re on does not exist and can\'t be saved.'
+												)
+											});
+											return;
+										}
+
 										const user = getUser();
 
 										if (!user) {
@@ -546,6 +559,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 													error.preventDefault();
 
 													new Dialog({
+														id: 'story-saves',
 														title: 'Load Game',
 														content: 'You have no save for this adventure!'
 													});
@@ -585,6 +599,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 													error.preventDefault();
 
 													new Dialog({
+														id: 'story-saves',
 														title: 'Delete Game Data',
 														content: 'You have no save for this adventure!'
 													});
