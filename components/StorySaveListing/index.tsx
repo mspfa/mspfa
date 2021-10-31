@@ -69,7 +69,7 @@ const StorySaveListing = ({
 		<div className="listing">
 			<Link
 				className="listing-icon-container"
-				href={`/?s=${storySave.id}&p=1`}
+				href={`/?s=${storySave.id}&p=${storySave.pageID}`}
 				title={storyTitle || '(Unavailable Adventure)'}
 			>
 				<IconImage
@@ -81,7 +81,7 @@ const StorySaveListing = ({
 			<div className="listing-info">
 				<Link
 					className="listing-title translucent"
-					href={`/?s=${storySave.id}&p=1`}
+					href={`/?s=${storySave.id}&p=${storySave.pageID}`}
 					title={storyTitle || '(Unavailable Adventure)'}
 				>
 					{storyTitle || '(Unavailable Adventure)'}
