@@ -9,17 +9,14 @@ import Box from 'components/Box';
 import BoxSection from 'components/Box/BoxSection';
 import Link from 'components/Link';
 import Row from 'components/Row';
-import type { ServerStory } from 'lib/server/stories';
-import stories, { getPublicStory } from 'lib/server/stories';
 import type { PublicStory } from 'lib/client/stories';
-import { StoryPrivacy } from 'lib/client/stories';
 import List from 'components/List';
 import StoryListing from 'components/StoryListing';
 import { Perm } from 'lib/client/perms';
-import type { Filter } from 'mongodb';
 import type { integer } from 'lib/types';
 import Button from 'components/Button';
 import getRandomImageFilename from 'lib/server/getRandomImageFilename';
+import findStoriesAsUser from 'lib/server/findStoriesAsUser';
 
 type ServerSideProps = {
 	publicUser: PublicUser,
@@ -93,60 +90,20 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		return { props: { statusCode: 404 } };
 	}
 
-	const readPerms = !!(
+	const canSudoReadUserFromParams = !!(
 		req.user && (
 			req.user._id.equals(userFromParams._id)
 			|| req.user.perms & Perm.sudoRead
 		)
 	);
 
-	if (!(userFromParams.settings.favsPublic || readPerms)) {
+	if (!(userFromParams.settings.favsPublic || canSudoReadUserFromParams)) {
 		return { props: { statusCode: 403 } };
 	}
 
-	/** Queries non-deleted favorites of the user from params. */
-	const favsFilter: Filter<ServerStory> = {
-		_id: { $in: userFromParams.favs },
-		willDelete: { $exists: false }
-	};
-
-	/** Queries public adventures, or both public and unlisted adventures if the user is viewing their own favorites page. */
-	const privacyFilter: Filter<ServerStory> = {
-		privacy: (
-			readPerms
-				// A user should be able to see unlisted adventures which they favorited.
-				? { $in: [StoryPrivacy.Public, StoryPrivacy.Unlisted] }
-				// Other users should not.
-				: StoryPrivacy.Public
-		)
-	};
-
-	const publicStories = await stories.find!(
-		req.user
-			? req.user.perms & Perm.sudoRead
-				? favsFilter
-				: {
-					$and: [favsFilter, {
-						$or: [privacyFilter, {
-							$and: [{
-								privacy: (
-									readPerms
-										// If the user is viewing their own favorites page, they can already see unlisted adventures via `privacyFilter`.
-										? StoryPrivacy.Private
-										: { $in: [StoryPrivacy.Unlisted, StoryPrivacy.Private] }
-								)
-							}, {
-								// Only show unlisted/private adventures which the user owns or edits.
-								$or: [
-									{ owner: req.user._id },
-									{ editors: req.user._id }
-								]
-							}]
-						}]
-					}]
-				}
-			: Object.assign(favsFilter, privacyFilter)
-	).map(getPublicStory).toArray();
+	const publicStories = await findStoriesAsUser(req.user, canSudoReadUserFromParams, {
+		_id: { $in: userFromParams.favs }
+	}).toArray();
 
 	return {
 		props: {

@@ -1,7 +1,6 @@
 @use 'lib/styles/themes' as *;
 
 .message-list .listing {
-	position: relative;
 	box-sizing: content-box;
 	padding-top: 12px;
 
@@ -42,25 +41,6 @@
 		.bb {
 			// Disable text wrapping when `:not(.open)` so that `text-overflow: ellipsis` works.
 			white-space: nowrap;
-		}
-	}
-
-	&-actions {
-		display: none;
-		position: absolute;
-		right: 0;
-		image-rendering: pixelated;
-		transform-origin: top right;
-		transform: scale(2);
-
-		.button {
-			margin-right: 0.25em;
-		}
-	}
-
-	@include desktop {
-		&:hover .listing-actions {
-			display: block;
 		}
 	}
 }

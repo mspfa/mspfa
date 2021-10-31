@@ -2,6 +2,7 @@
 
 .listing {
 	display: flex;
+	position: relative;
 
 	&:not(:last-child) {
 		padding-bottom: 8px;
@@ -50,5 +51,24 @@
 
 	&-section {
 		margin: 4px 0;
+	}
+
+	&-actions {
+		display: none;
+		position: absolute;
+		right: 0;
+		image-rendering: pixelated;
+		transform-origin: top right;
+		transform: scale(2);
+
+		.button {
+			margin-right: 0.25em;
+		}
+	}
+
+	@include desktop {
+		&:hover .listing-actions {
+			display: block;
+		}
 	}
 }
