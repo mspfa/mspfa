@@ -40,7 +40,7 @@ const StorySaveListing = ({
 	/** The ID of the user whose storySaves are being viewed. */
 	const queriedUserID = useRouter().query.userID as string;
 
-	const storyTitle = storySave.story?.title;
+	const storyTitle = storySave.story ? storySave.story.title : '(Unavailable Adventure)';
 
 	// This state is whether no actions should be performed on the storySave due to it currently loading.
 	const [loading, setLoading] = useState(false);
@@ -50,7 +50,7 @@ const StorySaveListing = ({
 			id: 'story-saves',
 			title: 'Delete Game Data',
 			content: (
-				<>Are you sure you want to delete your save for the adventure <i>{storyTitle || '(Unavailable Adventure)'}</i>?</>
+				<>Are you sure you want to delete your save for the adventure <i>{storyTitle}</i>?</>
 			)
 		})) {
 			return;
@@ -70,21 +70,21 @@ const StorySaveListing = ({
 			<Link
 				className="listing-icon-container"
 				href={`/?s=${storySave.id}&p=${storySave.pageID}`}
-				title={storyTitle || '(Unavailable Adventure)'}
+				title={storyTitle}
 			>
 				<IconImage
 					className="listing-icon"
 					src={storySave.story?.icon}
-					alt={`${storySave.story?.title || 'Unavailable Adventure'}'s Icon`}
+					alt={`${storyTitle}'s Icon`}
 				/>
 			</Link>
 			<div className="listing-info">
 				<Link
 					className="listing-title translucent"
 					href={`/?s=${storySave.id}&p=${storySave.pageID}`}
-					title={storyTitle || '(Unavailable Adventure)'}
+					title={storyTitle}
 				>
-					{storyTitle || '(Unavailable Adventure)'}
+					{storyTitle}
 				</Link>
 				{storySave.story && (
 					<div className="listing-section listing-details">
