@@ -1,25 +1,19 @@
 import './styles.module.scss';
 import IconImage from 'components/IconImage';
 import type { PublicStory } from 'lib/client/stories';
-import { storyStatusNames } from 'lib/client/stories';
 import Link from 'components/Link';
-import FavButton from 'components/Button/FavButton';
-import EditButton from 'components/Button/EditButton';
-import { useUser } from 'lib/client/users';
-import { Perm } from 'lib/client/perms';
-import PageCount from 'components/Icon/PageCount';
 import { Fragment, useState } from 'react';
 import useFunction from 'lib/client/useFunction';
 import BBCode from 'components/BBCode';
 import InconspicuousDiv from 'components/InconspicuousDiv';
 import StoryTagLink from 'components/StoryTagLink';
+import StoryStats from 'components/StoryStats';
 
 export type StoryListingProps = {
 	children: PublicStory
 };
 
-const StoryListing = ({ children: publicStory }: StoryListingProps) => {
-	const user = useUser();
+const StoryListing = ({ children: story }: StoryListingProps) => {
 	const [open, setOpen] = useState(false);
 
 	const toggleOpen = useFunction(() => {
@@ -30,52 +24,33 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 		<div className="listing">
 			<Link
 				className="listing-icon-container"
-				href={`/?s=${publicStory.id}&p=1`}
-				title={publicStory.title}
+				href={`/?s=${story.id}&p=1`}
+				title={story.title}
 			>
 				<IconImage
 					className="listing-icon"
-					src={publicStory.icon}
-					alt={`${publicStory.title}'s Icon`}
+					src={story.icon}
+					alt={`${story.title}'s Icon`}
 				/>
 			</Link>
 			<div className="listing-info">
 				<Link
 					className="listing-title translucent"
-					href={`/?s=${publicStory.id}&p=1`}
-					title={publicStory.title}
+					href={`/?s=${story.id}&p=1`}
+					title={story.title}
 				>
-					{publicStory.title}
+					{story.title}
 				</Link>
-				<div className="listing-section listing-details">
-					<span className="listing-status spaced">
-						{storyStatusNames[publicStory.status]}
-					</span>
-					{user && (
-						publicStory.owner === user.id
-						|| publicStory.editors.includes(user.id)
-						|| !!(user.perms & Perm.sudoRead)
-					) && (
-						<EditButton
-							className="spaced"
-							href={`/s/${publicStory.id}/edit/p`}
-							title="Edit Adventure"
-						/>
-					)}
-					<FavButton className="spaced" storyID={publicStory.id}>
-						{publicStory.favCount}
-					</FavButton>
-					<PageCount className="spaced">
-						{publicStory.pageCount}
-					</PageCount>
-				</div>
+				<StoryStats className="listing-section listing-details">
+					{story}
+				</StoryStats>
 				{open && (
 					<div className="listing-section listing-description">
-						<BBCode>{publicStory.description}</BBCode>
+						<BBCode>{story.description}</BBCode>
 					</div>
 				)}
 				<InconspicuousDiv className="listing-section listing-footer">
-					{publicStory.description && (
+					{story.description && (
 						<Link
 							className="listing-more-link"
 							onClick={toggleOpen}
@@ -83,8 +58,8 @@ const StoryListing = ({ children: publicStory }: StoryListingProps) => {
 							{open ? 'Show Less' : 'Show More'}
 						</Link>
 					)}
-					{publicStory.description && publicStory.tags.length !== 0 && ' - '}
-					{publicStory.tags.map((tag, i) => (
+					{story.description && story.tags.length !== 0 && ' - '}
+					{story.tags.map((tag, i) => (
 						<Fragment key={tag}>
 							{i !== 0 && ' '}
 							<StoryTagLink>{tag}</StoryTagLink>

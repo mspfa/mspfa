@@ -1,15 +1,11 @@
 import BBCode from 'components/BBCode';
 import Button from 'components/Button';
-import EditButton from 'components/Button/EditButton';
-import FavButton from 'components/Button/FavButton';
-import PageCount from 'components/Icon/PageCount';
 import IconImage from 'components/IconImage';
 import Label from 'components/Label';
 import Row from 'components/Row';
 import StoryTagLink from 'components/StoryTagLink';
 import InconspicuousDiv from 'components/InconspicuousDiv';
 import Timestamp from 'components/Timestamp';
-import { storyStatusNames } from 'lib/client/stories';
 import useFunction from 'lib/client/useFunction';
 import React, { Fragment, useContext, useState } from 'react';
 import { PageIDContext, StoryViewerContext } from 'components/StoryViewer';
@@ -20,6 +16,7 @@ import { uniq } from 'lodash';
 import StoryNews from 'components/StoryViewer/Basement/BasementContent/StoryNews';
 import StoryComments from 'components/StoryViewer/Basement/BasementContent/StoryComments';
 import StoryOptions from 'components/StoryViewer/Basement/BasementContent/StoryOptions';
+import StoryStats from 'components/StoryStats';
 
 const BasementContent = React.memo(() => {
 	const {
@@ -73,28 +70,9 @@ const BasementContent = React.memo(() => {
 					<div className="story-title translucent">
 						{story.title}
 					</div>
-					<div className="story-stats">
-						<span className="story-status spaced">
-							{storyStatusNames[story.status]}
-						</span>
-						{user && (
-							story.owner === user.id
-							|| story.editors.includes(user.id)
-							|| !!(user.perms & Perm.sudoWrite)
-						) && (
-							<EditButton
-								className="spaced"
-								href={`/s/${story.id}/edit/p#p${pageID}`}
-								title="Edit Adventure"
-							/>
-						)}
-						<FavButton className="spaced" storyID={story.id}>
-							{story.favCount}
-						</FavButton>
-						<PageCount className="spaced">
-							{story.pageCount}
-						</PageCount>
-					</div>
+					<StoryStats editPageID={pageID}>
+						{story}
+					</StoryStats>
 					<div className="story-anniversary">
 						<Label className="spaced">
 							Created

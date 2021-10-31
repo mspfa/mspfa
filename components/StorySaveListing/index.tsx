@@ -8,13 +8,8 @@ import RemoveButton from 'components/Button/RemoveButton';
 import Dialog from 'lib/client/Dialog';
 import { useRouter } from 'next/router';
 import type { PublicStory } from 'lib/client/stories';
-import { storyStatusNames } from 'lib/client/stories';
 import type { StoryID, StoryPageID } from 'lib/server/stories';
-import { useUser } from 'lib/client/users';
-import { Perm } from 'lib/client/perms';
-import EditButton from 'components/Button/EditButton';
-import FavButton from 'components/Button/FavButton';
-import PageCount from 'components/Icon/PageCount';
+import StoryStats from 'components/StoryStats';
 
 type UserStorySaveAPI = APIClient<typeof import('pages/api/users/[userID]/storySaves/[storyID]').default>;
 
@@ -35,8 +30,6 @@ const StorySaveListing = ({
 	removeListing,
 	children: storySave
 }: StorySaveListingProps) => {
-	const user = useUser();
-
 	/** The ID of the user whose storySaves are being viewed. */
 	const queriedUserID = useRouter().query.userID as string;
 
@@ -87,28 +80,9 @@ const StorySaveListing = ({
 					{storyTitle}
 				</Link>
 				{storySave.story && (
-					<div className="listing-section listing-details">
-						<span className="listing-status spaced">
-							{storyStatusNames[storySave.story.status]}
-						</span>
-						{user && (
-							storySave.story.owner === user.id
-							|| storySave.story.editors.includes(user.id)
-							|| !!(user.perms & Perm.sudoRead)
-						) && (
-							<EditButton
-								className="spaced"
-								href={`/s/${storySave.id}/edit/p`}
-								title="Edit Adventure"
-							/>
-						)}
-						<FavButton className="spaced" storyID={storySave.id}>
-							{storySave.story.favCount}
-						</FavButton>
-						<PageCount className="spaced">
-							{storySave.story.pageCount}
-						</PageCount>
-					</div>
+					<StoryStats className="listing-section listing-details">
+						{storySave.story}
+					</StoryStats>
 				)}
 				<div className="listing-section listing-content">
 					{`Saved on Page ${storySave.pageID}`}
