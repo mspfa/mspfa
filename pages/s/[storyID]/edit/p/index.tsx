@@ -395,7 +395,12 @@ const Component = withErrorPage<ServerSideProps>(({
 
 		const newPage: ClientStoryPage = {
 			id,
-			title: privateStory.defaultPageTitle,
+			title: privateStory[
+				id === 1
+					// Page 1's title should default to the story's title instead of the general default page title.
+					? 'title'
+					: 'defaultPageTitle'
+			],
 			content: '',
 			nextPages: [id + 1],
 			unlisted: false,
