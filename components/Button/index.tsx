@@ -17,17 +17,14 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & Omit<LinkPro
 };
 
 /** A styled `button` element. Accepts any props which `button` or `Link` accepts. */
-const Button = React.forwardRef<HTMLButtonElement & HTMLAnchorElement, ButtonProps>((
-	{
-		type = 'button',
-		icon,
-		className,
-		href,
-		children,
-		...props
-	},
-	ref
-) => {
+const Button = React.forwardRef<HTMLButtonElement & HTMLAnchorElement, ButtonProps>(({
+	type = 'button',
+	icon,
+	className,
+	href,
+	children,
+	...props
+}, ref) => {
 	children = !(
 		children === undefined
 		|| children === null
