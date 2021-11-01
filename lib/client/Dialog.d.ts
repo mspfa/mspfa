@@ -94,6 +94,6 @@ export default class Dialog<Values extends Record<string, any>> extends Promise<
 	 * * Its default `actions` option is `['Yes', 'No']`.
 	 */
 	static confirm: <Values_1 extends Record<string, any>>({ actions, ...options }: DialogOptions<Values_1>) => Promise<boolean>;
-	static getByID: <Values_1 extends Record<string, any>>(id: Key) => Dialog<Values_1>;
+	static getByID: <Values_1 extends Record<string, any>>(id: Key) => Dialog<Values_1> | undefined;
 }
 export {};
