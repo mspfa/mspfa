@@ -130,6 +130,27 @@ input[type=radio] {
 	}
 }
 
+input[type=color] {
+	padding: 0;
+
+	&::-webkit-color-swatch-wrapper {
+		padding: 0;
+	}
+
+	// The selectors which include this must be separate, because putting them in the same selector causes the entire selector to become invalid in browsers that don't support even one of them.
+	@mixin color-swatch {
+		border: none;
+	}
+
+	&::-webkit-color-swatch {
+		@include color-swatch;
+	}
+
+	&::-moz-color-swatch {
+		@include color-swatch;
+	}
+}
+
 textarea {
 	resize: vertical;
 	width: 100%;
