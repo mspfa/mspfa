@@ -1,5 +1,5 @@
 import './styles.module.scss';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import useFunction from 'lib/client/useFunction';
 import { BBFieldContext } from 'components/BBCode/BBField';
 import Button from 'components/Button';
@@ -26,6 +26,35 @@ const randomColorAttributes = () => ({
 });
 
 const presetFontFamilies = ['Arial', 'Bodoni MT', 'Book Antiqua', 'Calibri', 'Cambria', 'Candara', 'Century Gothic', 'Comic Sans MS', 'Consolas', 'Courier New', 'Garamond', 'Georgia', 'Goudy Old Style', 'Helvetica', 'Homestuck-Regular', 'Impact', 'Lucida Bright', 'Lucida Console', 'Lucida Sans Typewriter', 'Perpetua', 'Rockwell', 'Segoe UI', 'Tahoma', 'Times New Roman', 'Trebuchet MS', 'Verdana'];
+
+const ColorContent = () => {
+	const inputRef = useRef<HTMLInputElement>(null!);
+
+	useEffect(() => {
+		inputRef.current.select();
+	}, []);
+
+	return (
+		<LabeledGrid>
+			<LabeledGridRow htmlFor="bb-tool-field-attributes" label="Color">
+				<Field
+					type="color"
+					name="attributes"
+					className="spaced"
+				/>
+				<Field
+					id="bb-tool-field-attributes"
+					name="attributes"
+					className="spaced"
+					required
+					autoFocus
+					size={9}
+					innerRef={inputRef}
+				/>
+			</LabeledGridRow>
+		</LabeledGrid>
+	);
+};
 
 type NewBBTagProps = {
 	/** The content of the BB tag. */
@@ -73,46 +102,12 @@ const tags: Record<string, {
 	color: {
 		title: 'Text Color',
 		initialValues: randomColorAttributes,
-		content: (
-			<LabeledGrid>
-				<LabeledGridRow htmlFor="bb-tool-field-attributes" label="Color">
-					<Field
-						type="color"
-						name="attributes"
-						className="spaced"
-					/>
-					<Field
-						id="bb-tool-field-attributes"
-						name="attributes"
-						className="spaced"
-						required
-						autoFocus
-					/>
-				</LabeledGridRow>
-			</LabeledGrid>
-		)
+		content: ColorContent
 	},
 	background: {
 		title: 'Text Background Color',
 		initialValues: randomColorAttributes,
-		content: (
-			<LabeledGrid>
-				<LabeledGridRow htmlFor="bb-tool-field-attributes" label="Color">
-					<Field
-						type="color"
-						name="attributes"
-						className="spaced"
-					/>
-					<Field
-						id="bb-tool-field-attributes"
-						name="attributes"
-						className="spaced"
-						required
-						autoFocus
-					/>
-				</LabeledGridRow>
-			</LabeledGrid>
-		)
+		content: ColorContent
 	},
 	size: {
 		title: 'Font Size',
