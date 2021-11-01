@@ -7,7 +7,7 @@ import Dialog from 'lib/client/Dialog';
 import LabeledGrid from 'components/LabeledGrid';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import Label from 'components/Label';
-import type { FormikProps } from 'formik';
+import { Field, FormikProps } from 'formik';
 import Row from 'components/Row';
 import Link from 'components/Link';
 import { getChangedValues } from 'lib/client/forms';
@@ -16,6 +16,7 @@ import { useLatest } from 'react-use';
 import { youTubeVideoIDTest } from 'components/BBCode/BBTags';
 import type { integer } from 'lib/types';
 import escapeBBAttribute from 'lib/client/escapeBBAttribute';
+import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 
 const defaultBBPreview = 'The quick brown fox jumps over the lazy dog.';
 
@@ -73,13 +74,20 @@ const tags: Record<string, {
 		initialValues: randomColorAttributes,
 		content: (
 			<LabeledGrid>
-				<LabeledGridField
-					type="color"
-					name="attributes"
-					label="Color"
-					required
-					autoFocus
-				/>
+				<LabeledGridRow htmlFor="bb-tool-field-attributes" label="Color">
+					<Field
+						type="color"
+						name="attributes"
+						className="spaced"
+					/>
+					<Field
+						id="bb-tool-field-attributes"
+						name="attributes"
+						className="spaced"
+						required
+						autoFocus
+					/>
+				</LabeledGridRow>
 			</LabeledGrid>
 		)
 	},
@@ -88,13 +96,20 @@ const tags: Record<string, {
 		initialValues: randomColorAttributes,
 		content: (
 			<LabeledGrid>
-				<LabeledGridField
-					type="color"
-					name="attributes"
-					label="Color"
-					required
-					autoFocus
-				/>
+				<LabeledGridRow htmlFor="bb-tool-field-attributes" label="Color">
+					<Field
+						type="color"
+						name="attributes"
+						className="spaced"
+					/>
+					<Field
+						id="bb-tool-field-attributes"
+						name="attributes"
+						className="spaced"
+						required
+						autoFocus
+					/>
+				</LabeledGridRow>
 			</LabeledGrid>
 		)
 	},
