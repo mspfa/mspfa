@@ -23,6 +23,24 @@
 		}
 	}
 
+	&-status .icon {
+		background-image: url(/images/icons/heart-gray.png);
+
+		.user-online & {
+			background-image: url(/images/icons/heartbeat.png);
+			background-size: auto 1em;
+			animation: 700ms steps(1) infinite heartbeat;
+			// This is default instead of at 0% in the heartbeat keyframes so it applies when the browser doesn't support CSS animations.
+			background-position: 0 0;
+
+			@keyframes heartbeat {
+				30% {
+					background-position: -1em 0;
+				}
+			}
+		}
+	}
+
 	&-actions {
 		font-size: 0.875rem;
 

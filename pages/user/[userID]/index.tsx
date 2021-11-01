@@ -23,6 +23,8 @@ import List from 'components/List';
 import StoryListing from 'components/StoryListing';
 import Button from 'components/Button';
 import type { integer } from 'lib/types';
+import Icon from 'components/Icon';
+import { useEffect } from 'react';
 
 type ServerSideProps = {
 	publicUser: PublicUser,
@@ -36,6 +38,20 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 	const user = useUser();
 
 	const notOwnProfile = user?.id !== publicUser.id;
+
+	/** Whether the user was last seen at least five minutes ago. */
+	const online = publicUser.lastSeen >= Date.now() - 1000 * 60 * 5;
+
+	// Add the `user-online` class to the root element if the user is online.
+	useEffect(() => {
+		document.documentElement.classList[online ? 'add' : 'remove']('user-online');
+
+		if (online) {
+			return () => {
+				document.documentElement.classList.remove('user-online');
+			};
+		}
+	}, [online]);
 
 	return (
 		<Page
@@ -51,6 +67,11 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 								src={publicUser.icon}
 								alt={`${publicUser.name}'s Icon`}
 							/>
+						</Row>
+						<Row id="profile-status">
+							<Icon>
+								{online ? 'Online!' : 'Offline'}
+							</Icon>
 						</Row>
 						<Row id="profile-actions">
 							{notOwnProfile && (
@@ -79,9 +100,13 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 					<Box id="profile-misc">
 						<LabeledGridBoxSection id="profile-stats" heading="Stats">
 							<LabeledGridRow label="Last Connection">
-								<Timestamp relative withTime>
-									{publicUser.lastSeen}
-								</Timestamp>
+								{online ? (
+									'Online!'
+								) : (
+									<Timestamp relative withTime>
+										{publicUser.lastSeen}
+									</Timestamp>
+								)}
 							</LabeledGridRow>
 							<LabeledGridRow label="Joined MSPFA">
 								<Timestamp>{publicUser.created}</Timestamp>
