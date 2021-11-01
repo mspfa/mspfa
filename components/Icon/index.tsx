@@ -20,7 +20,9 @@ const Icon = ({ children, className, ...props }: IconProps) => (
 			}
 			{...props}
 		/>
-		{children}
+		<span className="icon-label">
+			{children}
+		</span>
 	</>
 );
 
