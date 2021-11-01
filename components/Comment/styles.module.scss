@@ -115,6 +115,10 @@ $comment-icon-margin-right: 0.75em;
 		border: none;
 		font: inherit;
 		color: inherit;
+
+		.icon {
+			vertical-align: text-top;
+		}
 	}
 
 	&-reply-form {
