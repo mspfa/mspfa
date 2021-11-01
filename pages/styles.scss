@@ -132,6 +132,7 @@ input[type=radio] {
 
 input[type=color] {
 	padding: 0;
+	cursor: pointer;
 
 	&::-webkit-color-swatch-wrapper {
 		padding: 0;
