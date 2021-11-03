@@ -19,6 +19,7 @@ import { hashlessColorCodeTest, youTubeVideoIDTest } from 'components/BBCode/BBT
 import type { integer } from 'lib/types';
 import escapeBBAttribute from 'lib/client/escapeBBAttribute';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
+import SaveButton from 'components/Button/SaveButton';
 
 const defaultBBPreview = 'The quick brown fox jumps over the lazy dog.';
 
@@ -41,6 +42,7 @@ const ColorContent = ({ values, setFieldValue }: FormikProps<Record<string, any>
 	let computedColor;
 	let computedOpacity = 1;
 
+	// Compute `computedColor` and `computedOpacity`.
 	if (colorComputerRef.current) {
 		// Reset the color before setting the new one, because setting an invalid color doesn't necessarily reset it.
 		colorComputerRef.current.style.color = '';
@@ -60,6 +62,8 @@ const ColorContent = ({ values, setFieldValue }: FormikProps<Record<string, any>
 			}
 		}
 	}
+
+	// TODO: Implement color saving.
 
 	return (
 		<>
@@ -94,6 +98,15 @@ const ColorContent = ({ values, setFieldValue }: FormikProps<Record<string, any>
 						autoFocus
 						size={9}
 						innerRef={textInputRef}
+					/>
+					<SaveButton
+						className="spaced"
+						title="Save Color"
+						onClick={
+							useFunction(() => {
+
+							})
+						}
 					/>
 				</LabeledGridRow>
 			</LabeledGrid>
