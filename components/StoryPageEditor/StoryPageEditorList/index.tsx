@@ -1,0 +1,87 @@
+import Box from 'components/Box';
+import Button from 'components/Button';
+import type { ReactNode, RefObject } from 'react';
+import { useContext } from 'react';
+import { StoryPageEditorContext } from 'components/StoryPageEditor';
+import useFunction from 'lib/client/useFunction';
+import type { ClientStoryPage, PrivateStory } from 'lib/client/stories';
+
+export type StoryPageEditorListProps = {
+	actionsElementRef: RefObject<HTMLDivElement>,
+	story: PrivateStory,
+	pageComponents: ReactNode[]
+};
+
+const StoryPageEditorList = ({ actionsElementRef, story, pageComponents }: StoryPageEditorListProps) => {
+	const { formikPropsRef } = useContext(StoryPageEditorContext)!;
+
+	return (
+		<>
+			<div
+				id="story-editor-actions"
+				className="mid"
+				ref={actionsElementRef}
+			>
+				<Button id="story-editor-back-to-top" href="#">
+					Back to Top
+				</Button>
+				<Button
+					disabled={formikPropsRef.current.isSubmitting}
+					onClick={
+						useFunction(() => {
+							const pages = Object.values(formikPropsRef.current.values.pages);
+
+							// Get the ID of a new page being added after the last one.
+							const id = (
+								pages.length
+									? +pages[pages.length - 1].id + 1
+									: 1
+							);
+
+							const newPage: ClientStoryPage = {
+								id,
+								title: story[
+									id === 1
+										// Page 1's title should default to the story's title instead of the general default page title.
+										? 'title'
+										: 'defaultPageTitle'
+								],
+								content: '',
+								nextPages: [id + 1],
+								unlisted: false,
+								disableControls: false,
+								commentary: '',
+								notify: true
+							};
+
+							formikPropsRef.current.setFieldValue('pages', {
+								...formikPropsRef.current.values.pages,
+								[id]: newPage
+							});
+
+							// Wait for the newly added editor page to render.
+							setTimeout(() => {
+								// Select the title field of the newly added page.
+								(document.getElementById(`field-pages-${id}-title`) as HTMLInputElement | null)?.select();
+							});
+						})
+					}
+				>
+					New Page
+				</Button>
+				<Button
+					type="submit"
+					className="alt"
+					disabled={!formikPropsRef.current.dirty || formikPropsRef.current.isSubmitting}
+				>
+					Save All
+				</Button>
+			</div>
+			<Box id="story-editor-pages" className="view-mode-list">
+				{pageComponents}
+			</Box>
+		</>
+	);
+};
+
+export default StoryPageEditorList;
