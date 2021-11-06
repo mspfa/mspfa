@@ -1105,7 +1105,7 @@ const StoryPageEditor = ({
 							</Box>
 							<StoryPageEditorContext.Provider
 								value={
-									// These values are passed through a context rather than directly as `StoryPageEditorListing` props to reduce `React.memo`'s prop comparison performance cost in `StoryPageEditorListing`.
+									// These values are passed through a context rather than directly as props to reduce `React.memo`'s prop comparison performance cost in `StoryPageEditorListing`.
 									useMemo(() => ({
 										storyID,
 										firstDraftID,
