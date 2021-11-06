@@ -67,8 +67,8 @@ const Component = withErrorPage<ServerSideProps>(({
 							</Row>
 							<Row>
 								{(queriedUserID === user?.id
-									? 'You have no game saves.'
-									: 'This user has no game saves.'
+									? 'You have no saved games.'
+									: 'This user has no saved games.'
 								)}
 							</Row>
 						</>
