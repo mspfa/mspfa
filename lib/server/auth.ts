@@ -109,10 +109,11 @@ export const getAuthMethodInfo = async <AuthMethodType extends AuthMethod['type'
 	};
 };
 
-const authCookieOptions = {
+const authCookieOptions: Cookies.SetOption = {
 	sameSite: 'strict',
+	domain: '.mspfa.com',
 	maxAge: 1000 * 60 * 60 * 24 * 7
-} as const;
+};
 
 /** The number of random bytes in newly generated tokens. */
 const TOKEN_LENGTH = 64;
