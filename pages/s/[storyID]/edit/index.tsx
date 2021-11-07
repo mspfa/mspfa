@@ -42,55 +42,55 @@ import StoryIDContext from 'lib/client/StoryIDContext';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 
-const getValuesFromStory = (privateStory: PrivateStory) => ({
+const getValuesFromStory = (story: PrivateStory) => ({
 	anniversary: new Date(0).setFullYear(
-		privateStory.anniversary.year,
-		privateStory.anniversary.month,
-		privateStory.anniversary.day
+		story.anniversary.year,
+		story.anniversary.month,
+		story.anniversary.day
 	),
-	title: privateStory.title,
-	status: privateStory.status.toString(),
-	privacy: privateStory.privacy.toString(),
-	owner: privateStory.owner,
-	editors: privateStory.editors,
-	author: privateStory.author || {
+	title: story.title,
+	status: story.status.toString(),
+	privacy: story.privacy.toString(),
+	owner: story.owner,
+	editors: story.editors,
+	author: story.author || {
 		name: '',
 		site: ''
 	},
-	description: privateStory.description,
-	icon: privateStory.icon,
-	banner: privateStory.banner,
-	style: privateStory.style,
-	script: privateStory.script,
-	tags: privateStory.tags,
-	allowComments: privateStory.allowComments,
-	sidebarContent: privateStory.sidebarContent
+	description: story.description,
+	icon: story.icon,
+	banner: story.banner,
+	style: story.style,
+	script: story.script,
+	tags: story.tags,
+	allowComments: story.allowComments,
+	sidebarContent: story.sidebarContent
 });
 
 type Values = ReturnType<typeof getValuesFromStory>;
 
 type ServerSideProps = {
-	privateStory: PrivateStory,
+	story: PrivateStory,
 	userCache: PublicUser[]
 } | {
 	statusCode: integer
 };
 
 const Component = withErrorPage<ServerSideProps>(({
-	privateStory: initialPrivateStory,
+	story: initialStory,
 	userCache: initialUserCache
 }) => {
-	const [privateStory, setPrivateStory] = useState(initialPrivateStory);
+	const [story, setStory] = useState(initialStory);
 
 	const { cacheUser } = useUserCache();
 	initialUserCache.forEach(cacheUser);
 
 	const user = useUser()!;
 
-	const initialValues = getValuesFromStory(privateStory);
+	const initialValues = getValuesFromStory(story);
 
 	const ownerPerms = (
-		user.id === privateStory.owner
+		user.id === story.owner
 		|| !!(user.perms & Perm.sudoWrite)
 	);
 
@@ -113,13 +113,13 @@ const Component = withErrorPage<ServerSideProps>(({
 	const restoreStory = useFunction(async () => {
 		setLoadingRestore(true);
 
-		const { data: newPrivateStory } = await (api as StoryAPI).patch(`/stories/${privateStory.id}`, {
+		const { data: newStory } = await (api as StoryAPI).patch(`/stories/${story.id}`, {
 			willDelete: false
 		}).finally(() => {
 			setLoadingRestore(false);
 		});
 
-		setPrivateStory(newPrivateStory);
+		setStory(newStory);
 	});
 
 	const onSubmit = useFunction(async (values: Values) => {
@@ -135,7 +135,7 @@ const Component = withErrorPage<ServerSideProps>(({
 				: new Date(changedValues.anniversary)
 		);
 
-		const { data: newPrivateStory } = await (api as StoryAPI).patch(`/stories/${privateStory.id}`, {
+		const { data: newStory } = await (api as StoryAPI).patch(`/stories/${story.id}`, {
 			...changedValues,
 			anniversary: anniversaryDate && {
 				year: anniversaryDate.getFullYear(),
@@ -146,26 +146,26 @@ const Component = withErrorPage<ServerSideProps>(({
 			privacy: changedValues.privacy ? +changedValues.privacy : undefined
 		});
 
-		setPrivateStory(newPrivateStory);
+		setStory(newStory);
 
 		setEditingAnniversary(false);
 	});
 
-	const daysUntilDeletion = privateStory.willDelete !== undefined && (
+	const daysUntilDeletion = story.willDelete !== undefined && (
 		Math.round(
-			(privateStory.willDelete - Date.now())
+			(story.willDelete - Date.now())
 			/ (1000 * 60 * 60 * 24)
 		)
 	);
 
 	const pageComponent = (
 		<Page heading="Edit Adventure">
-			{privateStory.willDelete ? (
+			{story.willDelete ? (
 				<>
 					<Box>
 						<BoxSection heading="Deleted Adventure">
 							<Row>
-								<i>{privateStory.title}</i>
+								<i>{story.title}</i>
 								{` will be permanently deleted in ~${daysUntilDeletion} day${daysUntilDeletion === 1 ? '' : 's'}.`}
 							</Row>
 						</BoxSection>
@@ -190,7 +190,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					{({ isSubmitting, dirty, values, handleChange, setFieldValue, setSubmitting }) => {
 						const shouldLeave = useLeaveConfirmation(dirty);
 
-						const [ownerBeforeEdit, setOwnerBeforeEdit] = useState<string | undefined>(values.owner || privateStory.owner);
+						const [ownerBeforeEdit, setOwnerBeforeEdit] = useState<string | undefined>(values.owner || story.owner);
 
 						const deleteStory = useFunction(async () => {
 							if (!(
@@ -214,7 +214,7 @@ const Component = withErrorPage<ServerSideProps>(({
 													autoFocus
 												/>
 												<span className="spaced bolder">
-													I am sure I want to delete this adventure: <i>{privateStory.title}</i>
+													I am sure I want to delete this adventure: <i>{story.title}</i>
 												</span>
 											</label>
 										</>
@@ -230,13 +230,13 @@ const Component = withErrorPage<ServerSideProps>(({
 
 							setSubmitting(true);
 
-							const { data: newPrivateStory } = await (api as StoryAPI).patch(`stories/${privateStory.id}`, {
+							const { data: newStory } = await (api as StoryAPI).patch(`stories/${story.id}`, {
 								willDelete: true
 							}).finally(() => {
 								setSubmitting(false);
 							});
 
-							setPrivateStory(newPrivateStory);
+							setStory(newStory);
 
 							setEditingAnniversary(false);
 						});
@@ -246,19 +246,19 @@ const Component = withErrorPage<ServerSideProps>(({
 								<Box>
 									<BoxSection
 										id="story-editor-options"
-										heading={privateStory.title}
+										heading={story.title}
 									>
-										{privateStory.pageCount !== 0 && (
+										{story.pageCount !== 0 && (
 											<Button
 												className="small"
-												href={`/?s=${privateStory.id}&p=1`}
+												href={`/?s=${story.id}&p=1`}
 											>
 												View
 											</Button>
 										)}
 										<Button
 											className="small"
-											href={`/s/${privateStory.id}/edit/p`}
+											href={`/s/${story.id}/edit/p`}
 										>
 											Edit Pages
 										</Button>
@@ -398,7 +398,7 @@ const Component = withErrorPage<ServerSideProps>(({
 														<Timestamp className="spaced">
 															{values.anniversary}
 														</Timestamp>
-														{ownerPerms && !privateStory.anniversary.changed && (
+														{ownerPerms && !story.anniversary.changed && (
 															<EditButton
 																className="spaced"
 																title="Edit Creation Date"
@@ -505,7 +505,7 @@ const Component = withErrorPage<ServerSideProps>(({
 	);
 
 	return (
-		<StoryIDContext.Provider value={privateStory.id}>
+		<StoryIDContext.Provider value={story.id}>
 			{pageComponent}
 		</StoryIDContext.Provider>
 	);
@@ -532,7 +532,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 
 	return {
 		props: {
-			privateStory: getPrivateStory(story),
+			story: getPrivateStory(story),
 			userCache: await users.find!({
 				_id: {
 					$in: uniqBy([story.owner, ...story.editors], String)

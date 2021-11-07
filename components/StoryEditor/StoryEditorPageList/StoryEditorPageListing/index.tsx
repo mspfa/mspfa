@@ -9,8 +9,8 @@ import type { MouseEvent } from 'react';
 import React, { useRef, useState, useEffect, useContext } from 'react';
 import useFunction from 'lib/client/useFunction';
 import AddButton from 'components/Button/AddButton';
-import type { KeyedClientStoryPage } from 'components/StoryPageEditor';
-import { StoryPageEditorContext, _key } from 'components/StoryPageEditor';
+import type { KeyedClientStoryPage } from 'components/StoryEditor';
+import { StoryEditorContext, _key } from 'components/StoryEditor';
 import RemoveButton from 'components/Button/RemoveButton';
 import { isEqual } from 'lodash';
 import Timestamp from 'components/Timestamp';
@@ -34,7 +34,7 @@ type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages'
 const MAX_TIMEOUT = 2147483647;
 
 // DO NOT add a `children` prop to this component unless practical. It is noticeably less performant than other props.
-export type StoryPageEditorListingProps = {
+export type StoryEditorPageListingProps = {
 	/** The number of pixels to be added to this element's `style.marginTop` for holding the place of all consecutive culled page listings above this one. */
 	marginTop: number,
 	/** The `ClientStoryPage` being edited. */
@@ -46,12 +46,12 @@ export type StoryPageEditorListingProps = {
 };
 
 /** A `BoxSection` for a page in the story editor when in the list view mode. */
-const StoryPageEditorListing = React.memo(({
+const StoryEditorPageListing = React.memo(({
 	marginTop,
 	page,
 	initialPublished,
 	advancedShown
-}: StoryPageEditorListingProps) => {
+}: StoryEditorPageListingProps) => {
 	const {
 		storyID,
 		firstDraftID,
@@ -62,7 +62,7 @@ const StoryPageEditorListing = React.memo(({
 		isSubmitting,
 		cachedPageHeightsRef,
 		toggleAdvancedShown
-	} = useContext(StoryPageEditorContext)!;
+	} = useContext(StoryEditorContext)!;
 
 	/** Whether this page exists on the server. */
 	const onServer = page.id in formikPropsRef.current.initialValues.pages;
@@ -727,4 +727,4 @@ const StoryPageEditorListing = React.memo(({
 	);
 });
 
-export default StoryPageEditorListing;
+export default StoryEditorPageListing;

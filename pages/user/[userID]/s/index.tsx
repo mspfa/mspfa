@@ -67,28 +67,28 @@ const promptNewStory = async () => {
 		return;
 	}
 
-	const { data: privateStory } = await (api as StoriesAPI).post('/stories', {
+	const { data: story } = await (api as StoriesAPI).post('/stories', {
 		title: dialog.form!.values.title
 	});
 
-	Router.push(`/s/${privateStory.id}/edit`);
+	Router.push(`/s/${story.id}/edit`);
 };
 
 type ServerSideProps = {
 	/** The stories owned by the private user. */
-	privateStories: PrivateStory[]
+	stories: PrivateStory[]
 } | {
 	statusCode: integer
 };
 
-const Component = withErrorPage<ServerSideProps>(({ privateStories }) => (
+const Component = withErrorPage<ServerSideProps>(({ stories }) => (
 	<Page withFlashyTitle heading="Your Adventures">
 		<Box>
 			<BoxSection heading="Adventures">
-				{(privateStories.length
+				{(stories.length
 					? (
 						<List listing={StoryListing}>
-							{privateStories.sort((a, b) => b.updated - a.updated)}
+							{stories.sort((a, b) => b.updated - a.updated)}
 						</List>
 					)
 					: 'You haven\'t started any adventures yet! Click the button below to begin.'
@@ -114,7 +114,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 
 	return {
 		props: {
-			privateStories: await stories.find!({
+			stories: await stories.find!({
 				editors: user!._id,
 				willDelete: { $exists: false }
 			}).map(getPrivateStory).toArray()

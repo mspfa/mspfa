@@ -4,14 +4,14 @@ import { withStatusCode } from 'lib/server/errors';
 import { getClientStoryPage, getPrivateStory, getStoryByUnsafeID } from 'lib/server/stories';
 import type { ClientStoryPageRecord } from 'lib/client/stories';
 import type { integer } from 'lib/types';
-import type { StoryPageEditorProps } from 'components/StoryPageEditor';
-import StoryPageEditor from 'components/StoryPageEditor';
+import type { StoryEditorProps } from 'components/StoryEditor';
+import StoryEditor from 'components/StoryEditor';
 
-type ServerSideProps = StoryPageEditorProps | {
+type ServerSideProps = StoryEditorProps | {
 	statusCode: integer
 };
 
-const Component = withErrorPage<ServerSideProps>(StoryPageEditor);
+const Component = withErrorPage<ServerSideProps>(StoryEditor);
 
 export default Component;
 

@@ -2,8 +2,8 @@ import Button from 'components/Button';
 import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
 import type { Dispatch, ReactNode, RefObject, SetStateAction } from 'react';
 import React, { useContext, useEffect, useRef } from 'react';
-import type { KeyedClientStoryPage } from 'components/StoryPageEditor';
-import { StoryPageEditorContext, _key } from 'components/StoryPageEditor';
+import type { KeyedClientStoryPage } from 'components/StoryEditor';
+import { StoryEditorContext, _key } from 'components/StoryEditor';
 import { Field } from 'formik';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
@@ -41,7 +41,7 @@ export const defaultGridCullingInfo = {
 
 export type GridCullingInfo = typeof defaultGridCullingInfo;
 
-export type StoryPageEditorGridProps = {
+export type StoryEditorPageGridProps = {
 	actionsElementRef: RefObject<HTMLDivElement>,
 	selectedPages: StoryPageID[],
 	setSelectedPages: Dispatch<SetStateAction<StoryPageID[]>>,
@@ -52,7 +52,7 @@ export type StoryPageEditorGridProps = {
 	pageComponents: ReactNode[]
 };
 
-const StoryPageEditorGrid = ({
+const StoryEditorPageGrid = ({
 	actionsElementRef,
 	selectedPages,
 	setSelectedPages,
@@ -61,13 +61,13 @@ const StoryPageEditorGrid = ({
 	pageValues,
 	gridCullingInfo,
 	pageComponents
-}: StoryPageEditorGridProps) => {
+}: StoryEditorPageGridProps) => {
 	const {
 		storyID,
 		formikPropsRef,
 		setInitialPages,
 		cachedPageHeightsRef
-	} = useContext(StoryPageEditorContext)!;
+	} = useContext(StoryEditorContext)!;
 
 	/** A ref to the latest value of `advancedShownPageKeys` to avoid race conditions. */
 	const advancedShownPageKeysRef = useLatest(advancedShownPageKeys);
@@ -457,4 +457,4 @@ const StoryPageEditorGrid = ({
 	);
 };
 
-export default StoryPageEditorGrid;
+export default StoryEditorPageGrid;

@@ -2,18 +2,18 @@ import Box from 'components/Box';
 import Button from 'components/Button';
 import type { ReactNode, RefObject } from 'react';
 import { useContext } from 'react';
-import { StoryPageEditorContext } from 'components/StoryPageEditor';
+import { StoryEditorContext } from 'components/StoryEditor';
 import useFunction from 'lib/client/useFunction';
 import type { ClientStoryPage, PrivateStory } from 'lib/client/stories';
 
-export type StoryPageEditorListProps = {
+export type StoryEditorPageListProps = {
 	actionsElementRef: RefObject<HTMLDivElement>,
 	story: PrivateStory,
 	pageComponents: ReactNode[]
 };
 
-const StoryPageEditorList = ({ actionsElementRef, story, pageComponents }: StoryPageEditorListProps) => {
-	const { formikPropsRef } = useContext(StoryPageEditorContext)!;
+const StoryEditorPageList = ({ actionsElementRef, story, pageComponents }: StoryEditorPageListProps) => {
+	const { formikPropsRef } = useContext(StoryEditorContext)!;
 
 	return (
 		<>
@@ -84,4 +84,4 @@ const StoryPageEditorList = ({ actionsElementRef, story, pageComponents }: Story
 	);
 };
 
-export default StoryPageEditorList;
+export default StoryEditorPageList;

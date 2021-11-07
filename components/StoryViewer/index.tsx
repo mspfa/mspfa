@@ -85,6 +85,7 @@ export const CommentaryShownContext = React.createContext<[
 	setCommentaryShown: Dispatch<SetStateAction<boolean>>
 ] | undefined>(undefined);
 
+/** The `Page` on which a story can be viewed. */
 const StoryViewer = (props: StoryViewerProps) => {
 	const {
 		story,

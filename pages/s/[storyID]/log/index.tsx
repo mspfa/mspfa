@@ -19,13 +19,13 @@ import PreviewModeContext from 'lib/client/PreviewModeContext';
 import StoryIDContext from 'lib/client/StoryIDContext';
 
 type ServerSideProps = {
-	publicStory: PublicStory,
+	story: PublicStory,
 	listings: StoryLogListings
 } | {
 	statusCode: integer
 };
 
-const Component = withErrorPage<ServerSideProps>(({ publicStory, listings }) => {
+const Component = withErrorPage<ServerSideProps>(({ story, listings }) => {
 	const router = useRouter();
 
 	const sortMode = (
@@ -46,7 +46,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, listings }) => 
 	const pageComponent = (
 		<Page withFlashyTitle heading="Adventure Log">
 			<Box>
-				<BoxSection heading={publicStory.title}>
+				<BoxSection heading={story.title}>
 					<StoryLog listings={sortedListings}>
 						<Link
 							id="story-log-sort-link"
@@ -68,7 +68,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, listings }) => 
 	);
 
 	return (
-		<StoryIDContext.Provider value={publicStory.id}>
+		<StoryIDContext.Provider value={story.id}>
 			<PreviewModeContext.Provider value={previewMode}>
 				{pageComponent}
 			</PreviewModeContext.Provider>
@@ -126,7 +126,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 
 	return {
 		props: {
-			publicStory: getPublicStory(story),
+			story: getPublicStory(story),
 			listings
 		}
 	};

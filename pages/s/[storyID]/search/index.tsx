@@ -25,13 +25,13 @@ import StoryIDContext from 'lib/client/StoryIDContext';
 type StorySearchResults = Array<Pick<ClientStoryPage, 'id' | 'published' | 'title' | 'content'>>;
 
 type ServerSideProps = {
-	publicStory: PublicStory,
+	story: PublicStory,
 	results: StorySearchResults
 } | {
 	statusCode: integer
 };
 
-const Component = withErrorPage<ServerSideProps>(({ publicStory, results }) => {
+const Component = withErrorPage<ServerSideProps>(({ story, results }) => {
 	const router = useRouter();
 
 	const searchQuery = (
@@ -131,7 +131,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, results }) => {
 			<Box>
 				<BoxSection
 					id="story-search-section"
-					heading={publicStory.title}
+					heading={story.title}
 				>
 					<Formik
 						initialValues={{ searchQuery }}
@@ -173,7 +173,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicStory, results }) => {
 	);
 
 	return (
-		<StoryIDContext.Provider value={publicStory.id}>
+		<StoryIDContext.Provider value={story.id}>
 			<PreviewModeContext.Provider value={previewMode}>
 				{pageComponent}
 			</PreviewModeContext.Provider>
@@ -246,7 +246,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 
 	return {
 		props: {
-			publicStory: getPublicStory(story),
+			story: getPublicStory(story),
 			results
 		}
 	};

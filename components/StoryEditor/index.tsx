@@ -17,7 +17,7 @@ import Label from 'components/Label';
 import api from 'lib/client/api';
 import useThrottled from 'lib/client/useThrottled';
 import axios from 'axios';
-import StoryPageEditorListing from 'components/StoryPageEditor/StoryPageEditorList/StoryPageEditorListing';
+import StoryEditorPageListing from 'components/StoryEditor/StoryEditorPageList/StoryEditorPageListing';
 import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 import Dialog from 'lib/client/Dialog';
 import LabeledGrid from 'components/LabeledGrid';
@@ -31,8 +31,8 @@ import type { integer } from 'lib/types';
 import useSticky from 'lib/client/useSticky';
 import StoryIDContext from 'lib/client/StoryIDContext';
 import replaceAll from 'lib/client/replaceAll';
-import StoryPageEditorGrid, { defaultGridCullingInfo } from 'components/StoryPageEditor/StoryPageEditorGrid';
-import StoryPageEditorList from 'components/StoryPageEditor/StoryPageEditorList';
+import StoryEditorPageGrid, { defaultGridCullingInfo } from 'components/StoryEditor/StoryEditorPageGrid';
+import StoryEditorPageList from 'components/StoryEditor/StoryEditorPageList';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -57,7 +57,7 @@ export type KeyedClientStoryPage = ClientStoryPage & {
 	[_key]: integer
 };
 
-export const StoryPageEditorContext = React.createContext<{
+export const StoryEditorContext = React.createContext<{
 	storyID: StoryID,
 	firstDraftID: StoryPageID | undefined,
 	lastNonDraftID: StoryPageID | undefined,
@@ -131,16 +131,17 @@ const calculateGridSizeInfo = (
 	return { pageContainer, pageHeight, pagesPerRow, pageCount, rowsAboveView, rowsBelowView, pagesAboveView, pagesInView };
 };
 
-export type StoryPageEditorProps = {
+export type StoryEditorProps = {
 	story: PrivateStory,
 	pages: ClientStoryPageRecord
 };
 
-const StoryPageEditor = ({
-	story: initialPrivateStory,
+/** The `Page` on which a story's pages can be edited. */
+const StoryEditor = ({
+	story: initialStory,
 	pages: initialPagesProp
-}: StoryPageEditorProps) => {
-	const [story, setPrivateStory] = useState(initialPrivateStory);
+}: StoryEditorProps) => {
+	const [story, setStory] = useState(initialStory);
 	const [initialPages, setInitialPages] = useState(initialPagesProp);
 
 	const formikPropsRef = useRef<FormikProps<Values>>(null!);
@@ -151,7 +152,7 @@ const StoryPageEditor = ({
 	const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source>>();
 
 	const changeDefaultPageTitle = useThrottled(async (event: ChangeEvent<HTMLInputElement>) => {
-		setPrivateStory({
+		setStory({
 			...story,
 			defaultPageTitle: event.target.value
 		});
@@ -390,7 +391,7 @@ const StoryPageEditor = ({
 				validateOnMount={false}
 				enableReinitialize
 			>
-				{function StoryPageEditorForm(formikProps) {
+				{function StoryEditorPageForm(formikProps) {
 					// Using this instead of destructuring the Formik props directly is necessary as a performance optimization, to significantly reduce unnecessary re-renders.
 					formikPropsRef.current = formikProps;
 
@@ -711,7 +712,7 @@ const StoryPageEditor = ({
 											+ +window.getComputedStyle(pageElement).marginBottom.slice(0, -2)
 										);
 
-										// Cache this page's height. This should be done here and not in the `StoryPageEditorListing` component so it can be ensured that it is up-to-date.
+										// Cache this page's height. This should be done here and not in the `StoryEditorPageListing` component so it can be ensured that it is up-to-date.
 										cachedPageHeightsRef.current[
 											// This page's key.
 											(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[_key]
@@ -935,7 +936,7 @@ const StoryPageEditor = ({
 									cachedHeightSum += cachedPageHeightsRef.current[pageKey] || defaultCulledHeight;
 								} else {
 									pageComponents.push(
-										<StoryPageEditorListing
+										<StoryEditorPageListing
 											// The `key` cannot be set to `page.id`, or else each page's states would not be respected when deleting or rearranging pages. A page's ID can change, but its key should not.
 											key={pageKey}
 											marginTop={cachedHeightSum}
@@ -1103,9 +1104,9 @@ const StoryPageEditor = ({
 									</Row>
 								</BoxSection>
 							</Box>
-							<StoryPageEditorContext.Provider
+							<StoryEditorContext.Provider
 								value={
-									// These values are passed through a context rather than directly as props to reduce `React.memo`'s prop comparison performance cost in `StoryPageEditorListing`.
+									// These values are passed through a context rather than directly as props to reduce `React.memo`'s prop comparison performance cost in `StoryEditorPageListing`.
 									useMemo(() => ({
 										storyID,
 										firstDraftID,
@@ -1120,13 +1121,13 @@ const StoryPageEditor = ({
 								}
 							>
 								{viewMode === 'list' ? (
-									<StoryPageEditorList
+									<StoryEditorPageList
 										actionsElementRef={actionsElementRef}
 										story={story}
 										pageComponents={pageComponents}
 									/>
 								) : (
-									<StoryPageEditorGrid
+									<StoryEditorPageGrid
 										actionsElementRef={actionsElementRef}
 										selectedPages={selectedPages}
 										setSelectedPages={setSelectedPages}
@@ -1137,7 +1138,7 @@ const StoryPageEditor = ({
 										pageComponents={pageComponents}
 									/>
 								)}
-							</StoryPageEditorContext.Provider>
+							</StoryEditorContext.Provider>
 						</Form>
 					);
 				}}
@@ -1152,4 +1153,4 @@ const StoryPageEditor = ({
 	);
 };
 
-export default StoryPageEditor;
+export default StoryEditor;
