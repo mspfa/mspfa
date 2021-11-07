@@ -6,9 +6,12 @@
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: 1em;
-	vertical-align: middle;
 
 	&.labeled {
 		margin-right: 3px;
+	}
+
+	&, &-label {
+		vertical-align: middle;
 	}
 }
