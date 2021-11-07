@@ -72,6 +72,7 @@
 	text-decoration: none;
 	flex-shrink: 0;
 	@include theme(background-color, button-color);
+	@include button-depth($scale: 2px, $border: false);
 
 	&:not(.icon-button) {
 		@include theme(color, button-text-color);
@@ -138,8 +139,6 @@
 		background: inherit;
 	}
 
-	@include button-depth($scale: 2px, $border: false);
-
 	&.small {
 		font-size: 1.25em;
 	}
@@ -162,10 +161,9 @@
 	font-size: 1rem;
 	padding: 1px;
 	line-height: 0;
-
 	@include button-depth($scale: 1px, $border: true);
 
-	.button-label {
-		margin-right: 2px;
+	&.labeled {
+		padding-right: 4px;
 	}
 }

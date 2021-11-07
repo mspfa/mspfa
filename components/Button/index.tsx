@@ -25,23 +25,25 @@ const Button = React.forwardRef<HTMLButtonElement & HTMLAnchorElement, ButtonPro
 	children,
 	...props
 }, ref) => {
-	children = !(
+	const hasChildren = !(
 		children === undefined
 		|| children === null
 		|| children === false
-	) && (
-		<span className="button-label">
-			{children}
-		</span>
 	);
 
 	if (icon) {
-		className = `icon-button${className ? ` ${className}` : ''}`;
+		className = `icon-button${hasChildren ? ' labeled' : ''}${className ? ` ${className}` : ''}`;
 
 		children = (
 			<Icon {...icon}>
 				{children}
 			</Icon>
+		);
+	} else {
+		children = hasChildren && (
+			<span className="button-label">
+				{children}
+			</span>
 		);
 	}
 
