@@ -1,17 +1,12 @@
 // This middleware implements rate limiting.
 
 import type { ErrorResponseBody } from 'lib/server/api';
-import type { DateNumber } from 'lib/types';
+import type { DateNumber, integer } from 'lib/types';
 import type { NextRequest } from 'next/server';
 
 const TIME_PERIOD = 1000 * 60;
 /** The maximum number of requests that should be allowed from each client per `TIME_PERIOD`. */
 const MAX_REQUESTS_PER_TIME_PERIOD = 240;
-
-const RATE_LIMIT_ERROR: ErrorResponseBody = {
-	message: 'You\'re sending data to MSPFA too quickly. Please wait before continuing.'
-};
-const STRINGIFIED_RATE_LIMIT_ERROR = JSON.stringify(RATE_LIMIT_ERROR);
 
 /** A mapping from each client's IP to a sorted array of the date numbers at which requests were received from that client. */
 const requestTimesByIP: Record<string, DateNumber[]> = {};
@@ -46,28 +41,44 @@ export const middleware = async (req: NextRequest) => {
 		clientIP = '127.0.0.1';
 	}
 
+	// Get `clientRequestTimes`, but first create it if it doesn't exist.
 	if (!(clientIP in requestTimesByIP)) {
 		requestTimesByIP[clientIP] = [];
 	}
 	const clientRequestTimes = requestTimesByIP[clientIP];
 
+	const now = Date.now();
+
 	/** The number of requests received from this client within the last `TIME_PERIOD`. */
-	const clientRequestCount = clientRequestTimes.push(Date.now());
+	const clientRequestCount = clientRequestTimes.push(now);
 	if (clientRequestCount > MAX_REQUESTS_PER_TIME_PERIOD) {
-		return (
-			req.nextUrl.pathname.startsWith('/api/') || req.nextUrl.pathname === '/api'
-				? new Response(STRINGIFIED_RATE_LIMIT_ERROR, {
-					status: 429,
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				})
-				: new Response(RATE_LIMIT_ERROR.message, {
-					status: 429,
-					headers: {
-						'Content-Type': 'text/plain'
-					}
-				})
-		);
+		/** The `DateNumber` after which the client will no longer be rate limited. */
+		// This is calculated by getting the time that the `MAX_REQUESTS_PER_TIME_PERIOD`th-last client request time will expire, because after that request time expires, the client would have one less than the `MAX_REQUESTS_PER_TIME_PERIOD`, which allows one more to be accepted without rate limiting.
+		const retryAfter = clientRequestTimes[clientRequestCount - MAX_REQUESTS_PER_TIME_PERIOD] + TIME_PERIOD;
+
+		const message = `You're sending data to MSPFA too quickly. Please wait ~${Math.ceil((retryAfter - now) / 1000)} seconds before retrying.`;
+
+		if (req.nextUrl.pathname.startsWith('/api/') || req.nextUrl.pathname === '/api') {
+			// This is an API request, so it should return a JSON body.
+
+			const body: ErrorResponseBody & { retryAfter: integer } = {
+				retryAfter,
+				message
+			};
+
+			return new Response(JSON.stringify(body), {
+				status: 429,
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+		}
+
+		return new Response(message, {
+			status: 429,
+			headers: {
+				'Content-Type': 'text/plain'
+			}
+		});
 	}
 };
