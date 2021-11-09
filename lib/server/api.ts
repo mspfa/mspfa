@@ -45,8 +45,6 @@ export type APIHandler<
 );
 
 export type ErrorResponseBody = {
-	/** A computer-friendly error code. */
-	error?: string,
 	/** A human-friendly error message. */
 	message: string
 };
