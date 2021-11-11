@@ -21,6 +21,12 @@
 		"baseUrl": ".",
 		"downlevelIteration": true
 	},
+	"ts-node": {
+		"compilerOptions": {
+			// This is necessary because https://github.com/TypeStrong/ts-node/issues/1007 is not supported by a stable version of Node yet.
+			"module": "commonjs"
+		}
+	},
 	"include": [
 		"**/*.ts",
 		"**/*.tsx"
