@@ -174,9 +174,6 @@ const StoryEditor = ({
 					// Using this instead of destructuring the Formik props directly is necessary as a performance optimization, to significantly reduce unnecessary re-renders.
 					formikPropsRef.current = formikProps;
 
-					// This is because ESLint doesn't recognize `story.id` as a necessary hook dependency.
-					const storyID = story.id;
-
 					useLeaveConfirmation(formikPropsRef.current.dirty || formikPropsRef.current.isSubmitting);
 
 					const router = useRouter();
@@ -791,6 +788,9 @@ const StoryEditor = ({
 					/** A ref to the `#story-editor-pages-actions` element. */
 					const pagesActionsElementRef = useRef<HTMLDivElement>(null!);
 					useSticky(pagesActionsElementRef);
+
+					// This is because ESLint doesn't recognize `story.id` as a necessary hook dependency.
+					const storyID = story.id;
 
 					return (
 						<StoryEditorContext.Provider
