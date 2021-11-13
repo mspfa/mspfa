@@ -1,0 +1,7 @@
+@use 'lib/styles/themes' as *;
+
+@include mobile {
+	#story-editor-pages.view-mode-grid {
+		padding: 0 10px;
+	}
+}

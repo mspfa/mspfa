@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import Button from 'components/Button';
 import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
 import type { Dispatch, ReactNode, RefObject, SetStateAction } from 'react';

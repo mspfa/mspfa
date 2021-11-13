@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import BoxSection from 'components/Box/BoxSection';
 import Button from 'components/Button';
 import Label from 'components/Label';

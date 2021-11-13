@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import Box from 'components/Box';
 import Button from 'components/Button';
 import type { ReactNode, RefObject } from 'react';

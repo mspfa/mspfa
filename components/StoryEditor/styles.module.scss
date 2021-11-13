@@ -3,10 +3,6 @@
 @use 'lib/styles/themes' as *;
 
 #story-editor-pages {
-	&-options {
-		text-align: center;
-	}
-
 	@include desktop {
 		padding: 0 32px;
 	}
@@ -15,10 +11,6 @@
 		&.view-mode-grid {
 			padding: 0 10px;
 		}
-	}
-
-	&.view-mode-list > * {
-		margin-bottom: 24px;
 	}
 
 	&.disabled {
