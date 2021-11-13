@@ -1,40 +1,28 @@
 import './styles.module.scss';
 import Page from 'components/Page';
 import type { FormikProps } from 'formik';
-import { Field, Form, Formik } from 'formik';
-import type { ChangeEvent, Dispatch, MouseEvent, MutableRefObject, ReactNode, SetStateAction } from 'react';
+import { Form, Formik } from 'formik';
+import type { Dispatch, MouseEvent, MutableRefObject, ReactNode, SetStateAction } from 'react';
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import useFunction from 'lib/client/useFunction';
 import { getChangedValues, preventLeaveConfirmations, useLeaveConfirmation } from 'lib/client/forms';
-import Box from 'components/Box';
-import Button from 'components/Button';
 import type { StoryID, StoryPageID } from 'lib/server/stories';
 import type { ClientStoryPage, ClientStoryPageRecord, PrivateStory } from 'lib/client/stories';
 import BoxSection from 'components/Box/BoxSection';
 import type { APIClient } from 'lib/client/api';
-import Row from 'components/Row';
-import Label from 'components/Label';
 import api from 'lib/client/api';
-import useThrottled from 'lib/client/useThrottled';
-import axios from 'axios';
 import StoryEditorPageListing from 'components/StoryEditor/StoryEditorPageList/StoryEditorPageListing';
 import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
-import Dialog from 'lib/client/Dialog';
-import LabeledGrid from 'components/LabeledGrid';
-import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
-import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
-import { escapeRegExp } from 'lodash';
 import Router, { useRouter } from 'next/router';
 import frameThrottler from 'lib/client/frameThrottler';
 import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
 import type { integer } from 'lib/types';
 import useSticky from 'lib/client/useSticky';
 import StoryIDContext from 'lib/client/StoryIDContext';
-import replaceAll from 'lib/client/replaceAll';
 import StoryEditorPageGrid, { defaultGridCullingInfo } from 'components/StoryEditor/StoryEditorPageGrid';
 import StoryEditorPageList from 'components/StoryEditor/StoryEditorPageList';
+import StoryEditorPagesOptions from 'components/StoryEditor/StoryEditorPagesOptions';
 
-type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 
 const getScrollPaddingTop = () => +document.documentElement.style.scrollPaddingTop.slice(0, -2);
@@ -146,215 +134,6 @@ const StoryEditor = ({
 
 	const formikPropsRef = useRef<FormikProps<Values>>(null!);
 	const formRef = useRef<HTMLFormElement>(null!);
-
-	const defaultPageTitleInputRef = useRef<HTMLInputElement>(null!);
-
-	const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source>>();
-
-	const changeDefaultPageTitle = useThrottled(async (event: ChangeEvent<HTMLInputElement>) => {
-		setStory({
-			...story,
-			defaultPageTitle: event.target.value
-		});
-		// The reason the above state is updated before syncing with the server via the below request rather than after is so the user can use the new default page title while the request is still loading.
-
-		cancelTokenSourceRef.current = axios.CancelToken.source();
-
-		await (api as StoryAPI).patch(`/stories/${story.id}`, {
-			defaultPageTitle: event.target.value
-		}, {
-			cancelToken: cancelTokenSourceRef.current.token
-		});
-
-		cancelTokenSourceRef.current = undefined;
-	}, [story]);
-
-	const onChangeDefaultPageTitle = useFunction((event: ChangeEvent<HTMLInputElement>) => {
-		cancelTokenSourceRef.current?.cancel();
-
-		if (!event.target.reportValidity()) {
-			return;
-		}
-
-		changeDefaultPageTitle(event);
-	});
-
-	const findAndReplace = useFunction(async () => {
-		const dialog = new Dialog({
-			id: 'find-and-replace',
-			title: 'Find and Replace',
-			initialValues: {
-				regex: false,
-				find: '',
-				flags: 'g',
-				replace: ''
-			},
-			content: function Content({ values, setFieldValue }) {
-				const findInputRef = useRef<HTMLInputElement>(null!);
-				const flagsInputRef = useRef<HTMLInputElement>(null);
-
-				useEffect(() => {
-					let regexPatternError = false;
-
-					if (values.regex && values.find) {
-						try {
-							new RegExp(values.find, '');
-						} catch {
-							regexPatternError = true;
-						}
-
-						let regexFlagsError = false;
-
-						try {
-							new RegExp('test', values.flags);
-						} catch {
-							regexFlagsError = true;
-						}
-
-						flagsInputRef.current!.setCustomValidity(regexFlagsError ? 'Please enter valid regex flags.' : '');
-					}
-
-					findInputRef.current.setCustomValidity(regexPatternError ? 'Please enter a valid regex pattern.' : '');
-				}, [values.regex, values.find, values.flags]);
-
-				return (
-					<LabeledGrid>
-						<Row>Finds and replaces text in every page's content.</Row>
-						{values.regex ? (
-							<LabeledGridRow
-								label="Find"
-								htmlFor="field-find"
-							>
-								/
-								<Field
-									id="field-find"
-									name="find"
-									required
-									autoFocus
-									innerRef={findInputRef}
-								/>
-								/
-								<Field
-									id="field-find"
-									name="flags"
-									size="5"
-									title="Flags"
-									autoComplete="off"
-									innerRef={flagsInputRef}
-								/>
-							</LabeledGridRow>
-						) : (
-							<LabeledGridField
-								name="find"
-								label="Find"
-								required
-								autoFocus
-								innerRef={findInputRef as any}
-							/>
-						)}
-						<LabeledGridField
-							name="replace"
-							label="Replace With"
-						/>
-						<LabeledGridRow
-							label="Case-Sensitive"
-							htmlFor="field-case-sensitive"
-						>
-							<input
-								id="field-case-sensitive"
-								type="checkbox"
-								checked={!values.flags.includes('i')}
-								onChange={
-									useFunction((event: ChangeEvent<HTMLInputElement>) => {
-										setFieldValue(
-											'flags',
-											event.target.checked
-												? replaceAll(values.flags, 'i', '')
-												: `${values.flags}i`
-										);
-									})
-								}
-							/>
-						</LabeledGridRow>
-						<LabeledGridField
-							type="checkbox"
-							name="regex"
-							label="Regex"
-							help={'If you don\'t know what this is, don\'t enable it.\n\nRegex allows for advanced search patterns and replacements.'}
-						/>
-					</LabeledGrid>
-				);
-			},
-			actions: [
-				{ label: 'Replace All', autoFocus: false },
-				'Cancel'
-			]
-		});
-
-		if (!(await dialog)?.submit) {
-			return;
-		}
-
-		if (formikPropsRef.current.isSubmitting) {
-			new Dialog({
-				id: 'find-and-replace',
-				title: 'Find and Replace',
-				content: 'The specified action could not be completed, as the form is currently read-only.'
-			});
-			return;
-		}
-
-		const find = (
-			dialog.form!.values.regex
-				? new RegExp(dialog.form!.values.find, dialog.form!.values.flags)
-				: new RegExp(
-					escapeRegExp(dialog.form!.values.find),
-					`g${dialog.form!.values.flags.includes('i') ? 'i' : ''}`
-				)
-		);
-
-		for (const page of Object.values(formikPropsRef.current.values.pages)) {
-			const replacedContent = page.content.replace(find, dialog.form!.values.replace);
-
-			if (page.content !== replacedContent) {
-				formikPropsRef.current.setFieldValue(`pages.${page.id}.content`, replacedContent);
-			}
-		}
-	});
-
-	const jumpToPage = useFunction(async () => {
-		const dialog = new Dialog({
-			id: 'jump-to-page',
-			title: 'Jump to Page',
-			initialValues: {
-				pageID: '' as number | ''
-			},
-			content: (
-				<LabeledGrid>
-					<LabeledGridField
-						type="number"
-						name="pageID"
-						label="Page Number"
-						required
-						autoFocus
-						min={1}
-						max={Object.values(formikPropsRef.current.values.pages).length}
-					/>
-				</LabeledGrid>
-			),
-			actions: [
-				{ label: 'Jump!', autoFocus: false },
-				'Cancel'
-			]
-		});
-
-		if (!(await dialog)?.submit) {
-			return;
-		}
-
-		location.hash = '';
-		location.hash = `p${dialog.form!.values.pageID}`;
-	});
 
 	const pageComponent = (
 		<Page heading="Edit Adventure">
@@ -1014,112 +793,32 @@ const StoryEditor = ({
 					useSticky(actionsElementRef);
 
 					return (
-						<Form ref={formRef}>
-							<Box>
-								<BoxSection
-									id="story-editor-pages-options"
-									heading={story.title}
-								>
-									<Row>
-										<Button
-											className="small"
-											href={`/s/${storyID}/edit`}
-										>
-											Edit Info
-										</Button>
-										{viewMode === 'list' && (
-											<Button
-												className="small"
-												disabled={formikPropsRef.current.isSubmitting || !pageValues.length}
-												onClick={findAndReplace}
-											>
-												Find and Replace
-											</Button>
-										)}
-										<Button
-											className="small"
-											disabled={!pageValues.length}
-											onClick={jumpToPage}
-										>
-											Jump to Page
-										</Button>
-										<Button
-											className="small"
-											title={`Set View Mode to ${viewMode === 'grid' ? 'List' : 'Grid'}`}
-											disabled={formikPropsRef.current.isSubmitting}
-											onClick={
-												useFunction(() => {
-													if (formikPropsRef.current.dirty) {
-														new Dialog({
-															id: 'story-editor-view-mode',
-															title: 'View Mode',
-															content: 'You cannot change the view mode with unsaved changes.'
-														});
-														return;
-													}
-
-													setViewMode(viewMode === 'list' ? 'grid' : 'list');
-												})
-											}
-										>
-											{`View: ${viewMode === 'grid' ? 'Grid' : 'List'}`}
-										</Button>
-									</Row>
-									{viewMode === 'list' && (
-										<Row>
-											<Label
-												className="spaced"
-												htmlFor="field-default-page-title"
-											>
-												Default Page Title
-											</Label>
-											<input
-												id="field-default-page-title"
-												className="spaced"
-												maxLength={500}
-												defaultValue={story.defaultPageTitle}
-												autoComplete="off"
-												onChange={onChangeDefaultPageTitle}
-												ref={defaultPageTitleInputRef}
-											/>
-										</Row>
-									)}
-									<Row>
-										<Label className="spaced" htmlFor="field-sort-pages">
-											Sort Pages By
-										</Label>
-										<select
-											id="field-sort-pages"
-											className="spaced"
-											defaultValue={sortMode}
-											onChange={
-												useFunction((event: ChangeEvent<HTMLSelectElement>) => {
-													setSortMode(event.target.value as 'newest' | 'oldest');
-												})
-											}
-										>
-											<option value="newest">Newest</option>
-											<option value="oldest">Oldest</option>
-										</select>
-									</Row>
-								</BoxSection>
-							</Box>
-							<StoryEditorContext.Provider
-								value={
-									// These values are passed through a context rather than directly as props to reduce `React.memo`'s prop comparison performance cost in `StoryEditorPageListing`.
-									useMemo(() => ({
-										storyID,
-										firstDraftID,
-										lastNonDraftID,
-										formikPropsRef,
-										setInitialPages,
-										queuedValuesRef,
-										isSubmitting: formikProps.isSubmitting,
-										cachedPageHeightsRef,
-										toggleAdvancedShown
-									}), [formikProps.isSubmitting, firstDraftID, lastNonDraftID, storyID, toggleAdvancedShown])
-								}
-							>
+						<StoryEditorContext.Provider
+							value={
+								// These values are passed through a context rather than directly as props to reduce `React.memo`'s prop comparison performance cost in `StoryEditorPageListing`.
+								useMemo(() => ({
+									storyID,
+									firstDraftID,
+									lastNonDraftID,
+									formikPropsRef,
+									setInitialPages,
+									queuedValuesRef,
+									isSubmitting: formikProps.isSubmitting,
+									cachedPageHeightsRef,
+									toggleAdvancedShown
+								}), [formikProps.isSubmitting, firstDraftID, lastNonDraftID, storyID, toggleAdvancedShown])
+							}
+						>
+							<Form ref={formRef}>
+								<StoryEditorPagesOptions
+									story={story}
+									setStory={setStory}
+									viewMode={viewMode}
+									setViewMode={setViewMode}
+									sortMode={sortMode}
+									setSortMode={setSortMode}
+									pageCount={pageValues.length}
+								/>
 								{viewMode === 'list' ? (
 									<StoryEditorPageList
 										actionsElementRef={actionsElementRef}
@@ -1138,8 +837,8 @@ const StoryEditor = ({
 										pageComponents={pageComponents}
 									/>
 								)}
-							</StoryEditorContext.Provider>
-						</Form>
+							</Form>
+						</StoryEditorContext.Provider>
 					);
 				}}
 			</Formik>

@@ -2,33 +2,31 @@
 @use 'sass:color';
 @use 'lib/styles/themes' as *;
 
-#story-editor {
-	&-pages-options {
+#story-editor-pages {
+	&-options {
 		text-align: center;
 	}
 
-	&-pages {
-		@include desktop {
-			padding: 0 32px;
-		}
+	@include desktop {
+		padding: 0 32px;
+	}
 
-		@include mobile {
-			&.view-mode-grid {
-				padding: 0 10px;
-			}
-		}
-
-		&.view-mode-list > * {
-			margin-bottom: 24px;
-		}
-
-		&.disabled {
-			pointer-events: none;
-			opacity: 0.5;
+	@include mobile {
+		&.view-mode-grid {
+			padding: 0 10px;
 		}
 	}
 
-	&-pages-actions {
+	&.view-mode-list > * {
+		margin-bottom: 24px;
+	}
+
+	&.disabled {
+		pointer-events: none;
+		opacity: 0.5;
+	}
+
+	&-actions {
 		text-align: center;
 		position: sticky;
 		top: 0;
