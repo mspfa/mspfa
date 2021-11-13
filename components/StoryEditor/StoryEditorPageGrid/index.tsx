@@ -47,7 +47,7 @@ export type StoryEditorPageGridProps = {
 	setSelectedPages: Dispatch<SetStateAction<StoryPageID[]>>,
 	advancedShownPageKeys: integer[],
 	setAdvancedShownPageKeys: Dispatch<SetStateAction<integer[]>>,
-	pageValues: ClientStoryPage[],
+	pageCount: integer,
 	gridCullingInfo: GridCullingInfo,
 	pageComponents: ReactNode[]
 };
@@ -58,7 +58,7 @@ const StoryEditorPageGrid = ({
 	setSelectedPages,
 	advancedShownPageKeys,
 	setAdvancedShownPageKeys,
-	pageValues,
+	pageCount,
 	gridCullingInfo,
 	pageComponents
 }: StoryEditorPageGridProps) => {
@@ -301,7 +301,7 @@ const StoryEditorPageGrid = ({
 							name="pageID"
 							required
 							min={1}
-							max={pageValues.length}
+							max={pageCount}
 							autoFocus
 							innerRef={pageIDInputRef}
 						/>
@@ -413,7 +413,7 @@ const StoryEditorPageGrid = ({
 					title={
 						selectedPages.length
 							? `Deselect Selected Pages (${selectedPages.length})`
-							: `Select All Pages (${pageValues.length})`
+							: `Select All Pages (${pageCount})`
 					}
 					disabled={formikPropsRef.current.isSubmitting}
 					onClick={selectedPages.length ? deselectAll : selectAll}

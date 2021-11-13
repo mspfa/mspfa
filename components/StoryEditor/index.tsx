@@ -1133,7 +1133,7 @@ const StoryEditor = ({
 										setSelectedPages={setSelectedPages}
 										advancedShownPageKeys={advancedShownPageKeys}
 										setAdvancedShownPageKeys={setAdvancedShownPageKeys}
-										pageValues={pageValues}
+										pageCount={pageValues.length}
 										gridCullingInfo={gridCullingInfo}
 										pageComponents={pageComponents}
 									/>
