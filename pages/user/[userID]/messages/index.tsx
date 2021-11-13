@@ -52,8 +52,8 @@ const Component = withErrorPage<ServerSideProps>(({
 	initialUserCache.forEach(cacheUser);
 
 	/** A ref to the `#messages-actions` element. */
-	const actionsElementRef = useRef<HTMLDivElement>(null!);
-	useSticky(actionsElementRef);
+	const pagesActionsElementRef = useRef<HTMLDivElement>(null!);
+	useSticky(pagesActionsElementRef);
 
 	let selectedCount = 0;
 	let unreadCount = 0;
@@ -153,7 +153,7 @@ const Component = withErrorPage<ServerSideProps>(({
 				>
 					<div
 						id="messages-actions"
-						ref={actionsElementRef}
+						ref={pagesActionsElementRef}
 					>
 						<Button
 							className="small"

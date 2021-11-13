@@ -43,7 +43,7 @@ export const defaultGridCullingInfo = {
 export type GridCullingInfo = typeof defaultGridCullingInfo;
 
 export type StoryEditorPageGridProps = {
-	actionsElementRef: RefObject<HTMLDivElement>,
+	pagesActionsElementRef: RefObject<HTMLDivElement>,
 	selectedPages: StoryPageID[],
 	setSelectedPages: Dispatch<SetStateAction<StoryPageID[]>>,
 	advancedShownPageKeys: integer[],
@@ -54,7 +54,7 @@ export type StoryEditorPageGridProps = {
 };
 
 const StoryEditorPageGrid = ({
-	actionsElementRef,
+	pagesActionsElementRef,
 	selectedPages,
 	setSelectedPages,
 	advancedShownPageKeys,
@@ -408,7 +408,7 @@ const StoryEditorPageGrid = ({
 			<div
 				id="story-editor-pages-actions"
 				className="mid"
-				ref={actionsElementRef}
+				ref={pagesActionsElementRef}
 			>
 				<Button
 					title={

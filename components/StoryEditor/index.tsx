@@ -789,8 +789,8 @@ const StoryEditor = ({
 					});
 
 					/** A ref to the `#story-editor-pages-actions` element. */
-					const actionsElementRef = useRef<HTMLDivElement>(null!);
-					useSticky(actionsElementRef);
+					const pagesActionsElementRef = useRef<HTMLDivElement>(null!);
+					useSticky(pagesActionsElementRef);
 
 					return (
 						<StoryEditorContext.Provider
@@ -821,13 +821,13 @@ const StoryEditor = ({
 								/>
 								{viewMode === 'list' ? (
 									<StoryEditorPageList
-										actionsElementRef={actionsElementRef}
+										pagesActionsElementRef={pagesActionsElementRef}
 										story={story}
 										pageComponents={pageComponents}
 									/>
 								) : (
 									<StoryEditorPageGrid
-										actionsElementRef={actionsElementRef}
+										pagesActionsElementRef={pagesActionsElementRef}
 										selectedPages={selectedPages}
 										setSelectedPages={setSelectedPages}
 										advancedShownPageKeys={advancedShownPageKeys}

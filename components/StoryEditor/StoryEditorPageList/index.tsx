@@ -8,12 +8,12 @@ import useFunction from 'lib/client/useFunction';
 import type { ClientStoryPage, PrivateStory } from 'lib/client/stories';
 
 export type StoryEditorPageListProps = {
-	actionsElementRef: RefObject<HTMLDivElement>,
+	pagesActionsElementRef: RefObject<HTMLDivElement>,
 	story: PrivateStory,
 	pageComponents: ReactNode[]
 };
 
-const StoryEditorPageList = ({ actionsElementRef, story, pageComponents }: StoryEditorPageListProps) => {
+const StoryEditorPageList = ({ pagesActionsElementRef, story, pageComponents }: StoryEditorPageListProps) => {
 	const { formikPropsRef } = useContext(StoryEditorContext)!;
 
 	return (
@@ -21,7 +21,7 @@ const StoryEditorPageList = ({ actionsElementRef, story, pageComponents }: Story
 			<div
 				id="story-editor-pages-actions"
 				className="mid"
-				ref={actionsElementRef}
+				ref={pagesActionsElementRef}
 			>
 				<Button id="story-editor-back-to-top" href="#">
 					Back to Top
