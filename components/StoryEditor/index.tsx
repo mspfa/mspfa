@@ -623,8 +623,8 @@ const StoryEditor = ({
 
 						// We use `focusin` instead of `focus` because the former bubbles while the latter doesn't, and we want to capture any focus event among the page elements.
 						document.addEventListener('focusin', throttledUpdateCulledPages);
-						// We don't listen to `focusout` because, when `focusout` is dispatched, `document.activeElement` is set to `null`, causing any page element outside the view which the user is attempting to focus to instead be culled.
-						// Also, listening to `focusout` isn't necessary for any pragmatic reason, and not doing so improves performance significantly by updating the culled page elements half as often when frequently changing focus.
+						// We don't listen to `focusout` because, if the user is trying to change focus to an element outside of view, then when `focusout` is dispatched, `document.activeElement` is set to `null`, causing the element which the user is trying to focus to instead be culled.
+						// Also, listening to `focusout` isn't necessary for any pragmatic reason, and not doing so can improve performance significantly by updating the culled page elements half as often when frequently changing focus.
 
 						// Call `updateCulledPages` synchronously so the user can't see culled pages for a frame.
 						updateCulledPages();
