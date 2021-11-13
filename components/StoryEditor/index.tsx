@@ -337,7 +337,7 @@ const StoryEditor = ({
 								) {
 									// Jump to where the target page is if it isn't culled, or where it would be if it weren't culled.
 
-									// We can assert this is non-null because we have verified in that the target page exists, and if a page exists, then at least one page element (though not necessarily the one we're jumping to) must be mounted.
+									// We can assert this is non-nullable because we have verified in that the target page exists, and if a page exists, then at least one page element (though not necessarily the one we're jumping to) must be mounted.
 									const firstPageElement = document.getElementsByClassName('story-editor-page')[0] as HTMLDivElement;
 
 									if (viewMode === 'list') {
