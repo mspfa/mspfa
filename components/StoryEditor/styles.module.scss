@@ -3,7 +3,7 @@
 @use 'lib/styles/themes' as *;
 
 #story-editor {
-	&-options {
+	&-pages-options {
 		text-align: center;
 	}
 
@@ -28,7 +28,7 @@
 		}
 	}
 
-	&-actions {
+	&-pages-actions {
 		text-align: center;
 		position: sticky;
 		top: 0;

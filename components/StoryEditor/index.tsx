@@ -1009,7 +1009,7 @@ const StoryEditor = ({
 						}
 					});
 
-					/** A ref to the `#story-editor-actions` element. */
+					/** A ref to the `#story-editor-pages-actions` element. */
 					const actionsElementRef = useRef<HTMLDivElement>(null!);
 					useSticky(actionsElementRef);
 
@@ -1017,7 +1017,7 @@ const StoryEditor = ({
 						<Form ref={formRef}>
 							<Box>
 								<BoxSection
-									id="story-editor-options"
+									id="story-editor-pages-options"
 									heading={story.title}
 								>
 									<Row>

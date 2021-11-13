@@ -405,7 +405,7 @@ const StoryEditorPageGrid = ({
 	return (
 		<>
 			<div
-				id="story-editor-actions"
+				id="story-editor-pages-actions"
 				className="mid"
 				ref={actionsElementRef}
 			>
