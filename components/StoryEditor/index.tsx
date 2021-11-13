@@ -645,10 +645,15 @@ const StoryEditor = ({
 
 					// It is necessary to check for `pageValues.length` to prevent the `for` loop from trying to iterate over pages that don't exist when there are 0 pages.
 					if (pageValues.length) {
-						let firstIndex = 0;
-						let lastIndex = pageValues.length - 1;
+						/** The lowest `pageValues` index to call `iteratePage` on. */
+						let firstIndex;
+						/** The highest `pageValues` index to call `iteratePage` on. */
+						let lastIndex;
 
-						if (viewMode === 'grid') {
+						if (viewMode === 'list') {
+							firstIndex = 0;
+							lastIndex = pageValues.length - 1;
+						} else {
 							({ firstIndex, lastIndex } = gridCullingInfo);
 						}
 
