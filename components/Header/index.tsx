@@ -19,6 +19,7 @@ const Header = ({ withFlashyTitle }: HeaderProps) => (
 			</div>
 			{withFlashyTitle && <FlashyTitle />}
 		</header>
+		{/* The only reason the `Nav` is outside the `header` element is so `position: sticky` works on it correctly. */}
 		<Nav />
 	</>
 );
