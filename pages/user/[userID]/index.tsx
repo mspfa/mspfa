@@ -5,14 +5,13 @@ import type { PublicUser } from 'lib/client/users';
 import { getUserByUnsafeID, getPublicUser } from 'lib/server/users';
 import { withErrorPage } from 'lib/client/errors';
 import { withStatusCode } from 'lib/server/errors';
-import Box from 'components/Box';
-import BoxColumns from 'components/Box/BoxColumns';
+import Columns from 'components/Columns';
 import Section from 'components/Section';
 import LabeledGridSection from 'components/Section/LabeledGridSection';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import Timestamp from 'components/Timestamp';
 import Link from 'components/Link';
-import BoxFooter from 'components/Box/BoxFooter';
+import BottomActions from 'components/BottomActions';
 import IconImage from 'components/IconImage';
 import { Perm } from 'lib/client/perms';
 import Row from 'components/Row';
@@ -58,126 +57,124 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 			withFlashyTitle
 			heading={publicUser.name}
 		>
-			<Box id="profile">
-				<BoxColumns>
-					<Section id="profile-info" heading="Info">
-						<Row id="profile-icon-container">
-							<IconImage
-								id="profile-icon"
-								src={publicUser.icon}
-								alt={`${publicUser.name}'s Icon`}
-							/>
-						</Row>
-						<Row id="profile-status">
-							<Icon>
-								{online ? 'Online!' : 'Offline'}
-							</Icon>
-						</Row>
-						<Row id="profile-actions">
-							{notOwnProfile && (
-								<div>
-									<Link href={`/message/new?to=${publicUser.id}`}>
-										Send Message
-									</Link>
-								</div>
+			<Columns>
+				<Section id="profile-info" heading="Info">
+					<Row id="profile-icon-container">
+						<IconImage
+							id="profile-icon"
+							src={publicUser.icon}
+							alt={`${publicUser.name}'s Icon`}
+						/>
+					</Row>
+					<Row id="profile-status">
+						<Icon>
+							{online ? 'Online!' : 'Offline'}
+						</Icon>
+					</Row>
+					<Row id="profile-actions">
+						{notOwnProfile && (
+							<div>
+								<Link href={`/message/new?to=${publicUser.id}`}>
+									Send Message
+								</Link>
+							</div>
+						)}
+						{favsPublic && (
+							<div>
+								<Link href={`/user/${publicUser.id}/favs`}>
+									View Favorites
+								</Link>
+							</div>
+						)}
+						{notOwnProfile && (
+							<div>
+								<Link href="/TODO">
+									Report
+								</Link>
+							</div>
+						)}
+					</Row>
+				</Section>
+				<div id="profile-misc">
+					<LabeledGridSection id="profile-stats" heading="Stats">
+						<LabeledGridRow label="Last Connection">
+							{online ? (
+								'Online!'
+							) : (
+								<Timestamp relative withTime>
+									{publicUser.lastSeen}
+								</Timestamp>
 							)}
-							{favsPublic && (
-								<div>
-									<Link href={`/user/${publicUser.id}/favs`}>
-										View Favorites
-									</Link>
-								</div>
-							)}
-							{notOwnProfile && (
-								<div>
-									<Link href="/TODO">
-										Report
-									</Link>
-								</div>
-							)}
-						</Row>
-					</Section>
-					<Box id="profile-misc">
-						<LabeledGridSection id="profile-stats" heading="Stats">
-							<LabeledGridRow label="Last Connection">
-								{online ? (
-									'Online!'
-								) : (
-									<Timestamp relative withTime>
-										{publicUser.lastSeen}
-									</Timestamp>
-								)}
+						</LabeledGridRow>
+						<LabeledGridRow label="Joined MSPFA">
+							<Timestamp>{publicUser.created}</Timestamp>
+						</LabeledGridRow>
+						{publicUser.birthdate && (
+							<LabeledGridRow label="Birthdate">
+								<Timestamp>{publicUser.birthdate}</Timestamp>
 							</LabeledGridRow>
-							<LabeledGridRow label="Joined MSPFA">
-								<Timestamp>{publicUser.created}</Timestamp>
-							</LabeledGridRow>
-							{publicUser.birthdate && (
-								<LabeledGridRow label="Birthdate">
-									<Timestamp>{publicUser.birthdate}</Timestamp>
+						)}
+					</LabeledGridSection>
+					{(publicUser.email || publicUser.site) && (
+						<LabeledGridSection id="profile-contact" heading="Contact">
+							{publicUser.email && (
+								<LabeledGridRow label="Email">
+									<Link
+										href={`mailto:${publicUser.email}`}
+										target="_blank"
+									>
+										{publicUser.email}
+									</Link>
+								</LabeledGridRow>
+							)}
+							{publicUser.site && (
+								<LabeledGridRow label="Website">
+									<Link
+										href={publicUser.site}
+										target="_blank"
+									>
+										{publicUser.site}
+									</Link>
 								</LabeledGridRow>
 							)}
 						</LabeledGridSection>
-						{(publicUser.email || publicUser.site) && (
-							<LabeledGridSection id="profile-contact" heading="Contact">
-								{publicUser.email && (
-									<LabeledGridRow label="Email">
-										<Link
-											href={`mailto:${publicUser.email}`}
-											target="_blank"
-										>
-											{publicUser.email}
-										</Link>
-									</LabeledGridRow>
-								)}
-								{publicUser.site && (
-									<LabeledGridRow label="Website">
-										<Link
-											href={publicUser.site}
-											target="_blank"
-										>
-											{publicUser.site}
-										</Link>
-									</LabeledGridRow>
-								)}
-							</LabeledGridSection>
-						)}
-					</Box>
-				</BoxColumns>
-				{publicUser.description && (
-					<Section
-						id="profile-description"
-						heading="Description"
-						collapsible
-						open
-					>
-						<BBCode keepHTMLTags>
-							{publicUser.description}
-						</BBCode>
-					</Section>
-				)}
-				{publicStories.length !== 0 && (
-					<Section
-						id="profile-stories"
-						heading={`${publicUser.name}'s Adventures`}
-						collapsible
-						open
-					>
-						<List listing={StoryListing}>
-							{publicStories}
-						</List>
-					</Section>
-				)}
-				{user && (
-					user.id === publicUser.id
-					|| !!(user.perms & Perm.sudoRead)
-				) && (
-					<BoxFooter>
-						<Button href={`/user/${publicUser.id}/edit`}>
-							Edit
-						</Button>
-					</BoxFooter>
-				)}
-			</Box>
+					)}
+				</div>
+			</Columns>
+			{publicUser.description && (
+				<Section
+					id="profile-description"
+					heading="Description"
+					collapsible
+					open
+				>
+					<BBCode keepHTMLTags>
+						{publicUser.description}
+					</BBCode>
+				</Section>
+			)}
+			{publicStories.length !== 0 && (
+				<Section
+					id="profile-stories"
+					heading={`${publicUser.name}'s Adventures`}
+					collapsible
+					open
+				>
+					<List listing={StoryListing}>
+						{publicStories}
+					</List>
+				</Section>
+			)}
+			{user && (
+				user.id === publicUser.id
+				|| !!(user.perms & Perm.sudoRead)
+			) && (
+				<BottomActions>
+					<Button href={`/user/${publicUser.id}/edit`}>
+						Edit
+					</Button>
+				</BottomActions>
+			)}
 		</Page>
 	);
 });

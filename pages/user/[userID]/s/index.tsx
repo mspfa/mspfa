@@ -3,10 +3,9 @@ import { Perm } from 'lib/client/perms';
 import { permToGetUserInPage } from 'lib/server/permToGetUser';
 import { withErrorPage } from 'lib/client/errors';
 import { withStatusCode } from 'lib/server/errors';
-import Box from 'components/Box';
 import Section from 'components/Section';
 import Row from 'components/Row';
-import BoxFooter from 'components/Box/BoxFooter';
+import BottomActions from 'components/BottomActions';
 import Button from 'components/Button';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
@@ -83,23 +82,21 @@ type ServerSideProps = {
 
 const Component = withErrorPage<ServerSideProps>(({ stories }) => (
 	<Page withFlashyTitle heading="Your Adventures">
-		<Box>
-			<Section heading="Adventures">
-				{(stories.length
-					? (
-						<List listing={StoryListing}>
-							{stories.sort((a, b) => b.updated - a.updated)}
-						</List>
-					)
-					: 'You haven\'t started any adventures yet! Click the button below to begin.'
-				)}
-			</Section>
-			<BoxFooter>
-				<Button onClick={promptNewStory}>
-					New Adventure!
-				</Button>
-			</BoxFooter>
-		</Box>
+		<Section heading="Adventures">
+			{(stories.length
+				? (
+					<List listing={StoryListing}>
+						{stories.sort((a, b) => b.updated - a.updated)}
+					</List>
+				)
+				: 'You haven\'t started any adventures yet! Click the button below to begin.'
+			)}
+		</Section>
+		<BottomActions>
+			<Button onClick={promptNewStory}>
+				New Adventure!
+			</Button>
+		</BottomActions>
 	</Page>
 ));
 

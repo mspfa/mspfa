@@ -1,6 +1,12 @@
 .section {
 	display: flex;
 	flex-direction: column;
+	// This can be useful when the section's parent has fixed height.
+	flex-grow: 1;
+
+	&:not(:last-child) {
+		margin-bottom: 4px;
+	}
 
 	&-heading {
 		text-align: center;

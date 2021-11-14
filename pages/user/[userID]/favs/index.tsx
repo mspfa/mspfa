@@ -5,7 +5,6 @@ import { useUser } from 'lib/client/users';
 import { getUserByUnsafeID, getPublicUser } from 'lib/server/users';
 import { withErrorPage } from 'lib/client/errors';
 import { withStatusCode } from 'lib/server/errors';
-import Box from 'components/Box';
 import Section from 'components/Section';
 import Link from 'components/Link';
 import Row from 'components/Row';
@@ -33,51 +32,49 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, stor
 
 	return (
 		<Page withFlashyTitle heading="Favorite Adventures">
-			<Box>
-				<Section
-					id="favs-section"
-					heading={`${publicUser.name}'s Favorites`}
-				>
+			<Section
+				id="favs-section"
+				heading={`${publicUser.name}'s Favorites`}
+			>
+				<Row>
+					<Button
+						className="small"
+						href={`/user/${publicUser.id}`}
+					>
+						Back to Profile
+					</Button>
+				</Row>
+				{!favsPublic && (
 					<Row>
-						<Button
-							className="small"
-							href={`/user/${publicUser.id}`}
-						>
-							Back to Profile
-						</Button>
+						<span id="favs-public-tip">
+							Only you can see your favorites. If you want others to be able to see, enable public favorites in <Link href={`/user/${publicUser.id}/edit`}>your profile settings</Link>.
+						</span>
 					</Row>
-					{!favsPublic && (
+				)}
+				{stories.length ? (
+					<Row>
+						<List listing={StoryListing}>
+							{stories}
+						</List>
+					</Row>
+				) : (
+					<>
 						<Row>
-							<span id="favs-public-tip">
-								Only you can see your favorites. If you want others to be able to see, enable public favorites in <Link href={`/user/${publicUser.id}/edit`}>your profile settings</Link>.
-							</span>
+							<img
+								src={`/images/no-favs/${imageFilename!}`}
+								alt="Artwork for No Favorites"
+								title={`Artist: ${imageFilename!.slice(0, imageFilename!.indexOf('.'))}`}
+							/>
 						</Row>
-					)}
-					{stories.length ? (
 						<Row>
-							<List listing={StoryListing}>
-								{stories}
-							</List>
+							{(publicUser.id === user?.id
+								? 'You have no favorite adventures.'
+								: 'This user has no favorite adventures.'
+							)}
 						</Row>
-					) : (
-						<>
-							<Row>
-								<img
-									src={`/images/no-favs/${imageFilename!}`}
-									alt="Artwork for No Favorites"
-									title={`Artist: ${imageFilename!.slice(0, imageFilename!.indexOf('.'))}`}
-								/>
-							</Row>
-							<Row>
-								{(publicUser.id === user?.id
-									? 'You have no favorite adventures.'
-									: 'This user has no favorite adventures.'
-								)}
-							</Row>
-						</>
-					)}
-				</Section>
-			</Box>
+					</>
+				)}
+			</Section>
 		</Page>
 	);
 });

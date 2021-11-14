@@ -7,7 +7,6 @@ import { withStatusCode } from 'lib/server/errors';
 import { getPublicStory, getStoryByUnsafeID } from 'lib/server/stories';
 import type { integer } from 'lib/types';
 import Page from 'components/Page';
-import Box from 'components/Box';
 import Section from 'components/Section';
 import { Field, Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
@@ -128,47 +127,45 @@ const Component = withErrorPage<ServerSideProps>(({ story, results }) => {
 
 	const pageComponent = (
 		<Page withFlashyTitle heading="Adventure Search">
-			<Box>
-				<Section
-					id="story-search-section"
-					heading={story.title}
+			<Section
+				id="story-search-section"
+				heading={story.title}
+			>
+				<Formik
+					initialValues={{ searchQuery }}
+					onSubmit={
+						useFunction((values: { searchQuery: string }) => {
+							const url = new URL(location.href);
+							url.searchParams.set('query', values.searchQuery);
+							router.replace(url);
+						})
+					}
 				>
-					<Formik
-						initialValues={{ searchQuery }}
-						onSubmit={
-							useFunction((values: { searchQuery: string }) => {
-								const url = new URL(location.href);
-								url.searchParams.set('query', values.searchQuery);
-								router.replace(url);
-							})
-						}
-					>
-						<Form id="story-search-form">
-							<Label className="spaced" htmlFor="field-search-query">
-								Search
-							</Label>
-							<Field
-								id="field-search-query"
-								name="searchQuery"
-								className="spaced"
-								autoFocus
-								autoComplete="off"
-							/>
-							<Button
-								type="submit"
-								icon
-								className="search-button spaced"
-							/>
-						</Form>
-					</Formik>
-					<div id="story-search-info">
-						{`${matches} result${matches === 1 ? '' : 's'} in ${results.length} page${results.length === 1 ? '' : 's'}`}
-					</div>
-					<div id="story-search-results">
-						{resultNodes}
-					</div>
-				</Section>
-			</Box>
+					<Form id="story-search-form">
+						<Label className="spaced" htmlFor="field-search-query">
+							Search
+						</Label>
+						<Field
+							id="field-search-query"
+							name="searchQuery"
+							className="spaced"
+							autoFocus
+							autoComplete="off"
+						/>
+						<Button
+							type="submit"
+							icon
+							className="search-button spaced"
+						/>
+					</Form>
+				</Formik>
+				<div id="story-search-info">
+					{`${matches} result${matches === 1 ? '' : 's'} in ${results.length} page${results.length === 1 ? '' : 's'}`}
+				</div>
+				<div id="story-search-results">
+					{resultNodes}
+				</div>
+			</Section>
 		</Page>
 	);
 

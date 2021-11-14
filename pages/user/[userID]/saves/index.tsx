@@ -4,7 +4,6 @@ import { Perm } from 'lib/client/perms';
 import { permToGetUserInPage } from 'lib/server/permToGetUser';
 import { withErrorPage } from 'lib/client/errors';
 import { withStatusCode } from 'lib/server/errors';
-import Box from 'components/Box';
 import Section from 'components/Section';
 import List from 'components/List';
 import type { integer } from 'lib/types';
@@ -47,34 +46,32 @@ const Component = withErrorPage<ServerSideProps>(({
 
 	return (
 		<Page withFlashyTitle heading="Your Game Saves">
-			<Box>
-				<Section id="story-saves-section" heading="Game Saves">
-					{storySaves.length ? (
-						<List
-							listing={StorySaveListing}
-							removeListing={removeListing}
-						>
-							{storySaves}
-						</List>
-					) : (
-						<>
-							<Row>
-								<img
-									src={`/images/no-story-saves/${imageFilename}`}
-									alt="Artwork for No Game Saves"
-									title={`Artist: ${imageFilename.slice(0, imageFilename.indexOf('.'))}`}
-								/>
-							</Row>
-							<Row>
-								{(queriedUserID === user?.id
-									? 'You have no saved games.'
-									: 'This user has no saved games.'
-								)}
-							</Row>
-						</>
-					)}
-				</Section>
-			</Box>
+			<Section id="story-saves-section" heading="Game Saves">
+				{storySaves.length ? (
+					<List
+						listing={StorySaveListing}
+						removeListing={removeListing}
+					>
+						{storySaves}
+					</List>
+				) : (
+					<>
+						<Row>
+							<img
+								src={`/images/no-story-saves/${imageFilename}`}
+								alt="Artwork for No Game Saves"
+								title={`Artist: ${imageFilename.slice(0, imageFilename.indexOf('.'))}`}
+							/>
+						</Row>
+						<Row>
+							{(queriedUserID === user?.id
+								? 'You have no saved games.'
+								: 'This user has no saved games.'
+							)}
+						</Row>
+					</>
+				)}
+			</Section>
 		</Page>
 	);
 });

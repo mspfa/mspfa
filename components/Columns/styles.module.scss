@@ -1,7 +1,11 @@
 @use 'lib/styles/themes' as *;
 
-.box-columns {
+.columns {
 	display: flex;
+
+	&:not(:last-child) {
+		margin-bottom: 4px;
+	}
 
 	@include mobile {
 		flex-direction: column;
@@ -9,8 +13,15 @@
 
 	@include desktop {
 		& > * {
+			// Each column is a flexbox so its children fill the entire height of the column.
+			display: flex;
+			flex-direction: column;
 			flex-grow: 1;
 			width: 50%;
+		}
+
+		& > .section:not(:last-child) {
+			margin-bottom: 0;
 		}
 	}
 

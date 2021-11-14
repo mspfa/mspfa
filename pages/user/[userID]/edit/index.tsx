@@ -10,11 +10,10 @@ import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
 import useFunction from 'lib/client/useFunction';
 import { getChangedValues, useLeaveConfirmation } from 'lib/client/forms';
-import Box from 'components/Box';
-import BoxColumns from 'components/Box/BoxColumns';
+import Columns from 'components/Columns';
 import Section from 'components/Section';
 import LabeledGridSection from 'components/Section/LabeledGridSection';
-import BoxFooter from 'components/Box/BoxFooter';
+import BottomActions from 'components/BottomActions';
 import Button from 'components/Button';
 import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
@@ -87,105 +86,103 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 
 					return (
 						<Form>
-							<Box>
-								<BoxColumns>
-									<LabeledGridSection heading="Info">
-										<LabeledGridField
-											name="name"
-											label="Username"
-											autoComplete="username"
-											required
-											maxLength={32}
+							<Columns>
+								<LabeledGridSection heading="Info">
+									<LabeledGridField
+										name="name"
+										label="Username"
+										autoComplete="username"
+										required
+										maxLength={32}
+									/>
+									<LabeledGridField
+										type="url"
+										name="icon"
+										label="Icon URL"
+									/>
+									<LabeledGridField
+										type="checkbox"
+										name="settings.favsPublic"
+										// "Favorites" is shortened to "Favs" here because fitting the label on one line looks nicer.
+										label="Public Favs"
+										help="Allows others to publicly view your favorite adventures."
+									/>
+									<Row>
+										<IconImage
+											id="profile-icon"
+											src={values.icon}
+											alt="Your Profile Icon"
 										/>
+									</Row>
+								</LabeledGridSection>
+								<div>
+									<LabeledGridSection heading="Stats">
+										<LabeledGridRow htmlFor="field-birthdate-year" label="Birthdate">
+											<BirthdateField required />
+										</LabeledGridRow>
 										<LabeledGridField
-											type="url"
-											name="icon"
-											label="Icon URL"
+											type="checkbox"
+											name="settings.birthdatePublic"
+											label="Public Birthdate"
+											help="Shows your birthdate publicly on your profile."
+										/>
+									</LabeledGridSection>
+									<LabeledGridSection heading="Contact">
+										<LabeledGridField
+											type="email"
+											name="email"
+											label="Email"
+											required
 										/>
 										<LabeledGridField
 											type="checkbox"
-											name="settings.favsPublic"
-											// "Favorites" is shortened to "Favs" here because fitting the label on one line looks nicer.
-											label="Public Favs"
-											help="Allows others to publicly view your favorite adventures."
+											name="settings.emailPublic"
+											label="Public Email"
+											help="Shows your email publicly on your profile."
 										/>
-										<Row>
-											<IconImage
-												id="profile-icon"
-												src={values.icon}
-												alt="Your Profile Icon"
-											/>
-										</Row>
+										<LabeledGridField
+											type="url"
+											name="site"
+											label="Website"
+										/>
 									</LabeledGridSection>
-									<Box>
-										<LabeledGridSection heading="Stats">
-											<LabeledGridRow htmlFor="field-birthdate-year" label="Birthdate">
-												<BirthdateField required />
-											</LabeledGridRow>
-											<LabeledGridField
-												type="checkbox"
-												name="settings.birthdatePublic"
-												label="Public Birthdate"
-												help="Shows your birthdate publicly on your profile."
-											/>
-										</LabeledGridSection>
-										<LabeledGridSection heading="Contact">
-											<LabeledGridField
-												type="email"
-												name="email"
-												label="Email"
-												required
-											/>
-											<LabeledGridField
-												type="checkbox"
-												name="settings.emailPublic"
-												label="Public Email"
-												help="Shows your email publicly on your profile."
-											/>
-											<LabeledGridField
-												type="url"
-												name="site"
-												label="Website"
-											/>
-										</LabeledGridSection>
-									</Box>
-								</BoxColumns>
-								<Section heading="Description">
-									<Label block htmlFor="field-description">
-										Description
-									</Label>
-									<BBField
-										name="description"
-										rows={8}
-										maxLength={2000}
-										keepHTMLTags
-									/>
-								</Section>
-								<Section heading="Advanced" collapsible>
-									<Label block htmlFor="field-style">
-										Custom Profile Style
-									</Label>
-									<Field
-										as="textarea"
-										id="field-style"
-										name="profileStyle"
-										rows={5}
-										placeholder={'Paste SCSS here.\nIf you don\'t know what this is, don\'t worry about it.'}
-									/>
-								</Section>
-								<BoxFooter>
-									<Button
-										type="submit"
-										className="alt"
-										disabled={!dirty || isSubmitting}
-									>
-										Save
-									</Button>
-									<Button href={`/user/${privateUser.id}`}>
-										Back to Profile
-									</Button>
-								</BoxFooter>
-							</Box>
+								</div>
+							</Columns>
+							<Section heading="Description">
+								<Label block htmlFor="field-description">
+									Description
+								</Label>
+								<BBField
+									name="description"
+									rows={8}
+									maxLength={2000}
+									keepHTMLTags
+								/>
+							</Section>
+							<Section heading="Advanced" collapsible>
+								<Label block htmlFor="field-style">
+									Custom Profile Style
+								</Label>
+								<Field
+									as="textarea"
+									id="field-style"
+									name="profileStyle"
+									rows={5}
+									placeholder={'Paste SCSS here.\nIf you don\'t know what this is, don\'t worry about it.'}
+								/>
+							</Section>
+							<BottomActions>
+								<Button
+									type="submit"
+									className="alt"
+									disabled={!dirty || isSubmitting}
+								>
+									Save
+								</Button>
+								<Button href={`/user/${privateUser.id}`}>
+									Back to Profile
+								</Button>
+							</BottomActions>
 						</Form>
 					);
 				}}

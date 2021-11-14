@@ -1,5 +1,4 @@
 import './styles.module.scss';
-import Box from 'components/Box';
 import Row from 'components/Row';
 import Page from 'components/Page';
 import Section from 'components/Section';
@@ -12,25 +11,23 @@ export type ServerSideProps = {
 
 const Component = ({ imageFilename }: ServerSideProps) => (
 	<Page withFlashyTitle heading="Terms of Service">
-		<Box>
-			<Section id="terms">
-				<Row>
-					<img
-						src={`/images/terms/${imageFilename}`}
-						alt="Artwork for Terms of Service"
-						title={`Artist: ${imageFilename.slice(0, imageFilename.indexOf('.'))}`}
-					/>
-					<div id="art-disclaimer">
-						Disclaimer: This image is not part of and has no effect related to the terms of service.
-					</div>
-				</Row>
-				<Row>
-					<p>
-						[ Terms of service here ]
-					</p>
-				</Row>
-			</Section>
-		</Box>
+		<Section id="terms">
+			<Row>
+				<img
+					src={`/images/terms/${imageFilename}`}
+					alt="Artwork for Terms of Service"
+					title={`Artist: ${imageFilename.slice(0, imageFilename.indexOf('.'))}`}
+				/>
+				<div id="art-disclaimer">
+					Disclaimer: This image is not part of and has no effect related to the terms of service.
+				</div>
+			</Row>
+			<Row>
+				<p>
+					[ Terms of service here ]
+				</p>
+			</Row>
+		</Section>
 	</Page>
 );
 

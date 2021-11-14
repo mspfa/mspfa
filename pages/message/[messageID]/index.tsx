@@ -2,7 +2,6 @@ import './styles.module.scss';
 import Page from 'components/Page';
 import { withErrorPage } from 'lib/client/errors';
 import { withStatusCode } from 'lib/server/errors';
-import Box from 'components/Box';
 import Section from 'components/Section';
 import { Perm } from 'lib/client/perms';
 import messages, { getClientMessage, getMessageByUnsafeID, updateUnreadMessages } from 'lib/server/messages';
@@ -18,7 +17,7 @@ import { Fragment, useState } from 'react';
 import useFunction from 'lib/client/useFunction';
 import Timestamp from 'components/Timestamp';
 import Button from 'components/Button';
-import BoxFooter from 'components/Box/BoxFooter';
+import BottomActions from 'components/BottomActions';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import Router from 'next/router';
@@ -123,111 +122,109 @@ const Component = withErrorPage<ServerSideProps>(({
 					});
 
 					return (
-						<Form>
-							<Box
-								id="message"
-								className={editing ? 'editing' : undefined}
+						<Form
+							id="message"
+							className={editing ? 'editing' : undefined}
+						>
+							<Section
+								id="message-info"
+								heading={message.subject}
 							>
-								<Section
-									id="message-info"
-									heading={message.subject}
-								>
-									{message.replyTo && (
-										<div id="message-reply-to">
-											{'Reply To: '}
-											{replyTo ? (
-												<Link href={`/message/${replyTo.id}`}>
-													{replyTo.subject}
-												</Link>
-											) : (
-												<span title={`ID: ${message.replyTo}`}>
-													(Deleted Message)
-												</span>
-											)}
-										</div>
-									)}
-									<div id="message-from">
-										{'From: '}
-										<UserLink>{message.from}</UserLink>
+								{message.replyTo && (
+									<div id="message-reply-to">
+										{'Reply To: '}
+										{replyTo ? (
+											<Link href={`/message/${replyTo.id}`}>
+												{replyTo.subject}
+											</Link>
+										) : (
+											<span title={`ID: ${message.replyTo}`}>
+												(Deleted Message)
+											</span>
+										)}
 									</div>
-									<div id="message-to">
-										{'To: '}
-										{message.to.map((userID, i) => (
-											<Fragment key={userID}>
-												{i !== 0 && ', '}
-												<UserLink>{userID}</UserLink>
-											</Fragment>
-										))}
-									</div>
-									<div id="message-sent">
-										{'Sent: '}
-										<Timestamp
-											relative
-											withTime
-											edited={message.edited}
+								)}
+								<div id="message-from">
+									{'From: '}
+									<UserLink>{message.from}</UserLink>
+								</div>
+								<div id="message-to">
+									{'To: '}
+									{message.to.map((userID, i) => (
+										<Fragment key={userID}>
+											{i !== 0 && ', '}
+											<UserLink>{userID}</UserLink>
+										</Fragment>
+									))}
+								</div>
+								<div id="message-sent">
+									{'Sent: '}
+									<Timestamp
+										relative
+										withTime
+										edited={message.edited}
+									>
+										{message.sent}
+									</Timestamp>
+								</div>
+							</Section>
+							<Section id="message-content">
+								{editing ? (
+									<>
+										<Label block htmlFor="field-content">
+											Content
+										</Label>
+										<BBField
+											name="content"
+											required
+											rows={16}
+											maxLength={20000}
+											autoFocus
+										/>
+									</>
+								) : (
+									<BBCode>{message.content}</BBCode>
+								)}
+							</Section>
+							<BottomActions>
+								{editing ? (
+									<>
+										<Button
+											type="submit"
+											className="alt"
+											disabled={!dirty || isSubmitting}
 										>
-											{message.sent}
-										</Timestamp>
-									</div>
-								</Section>
-								<Section id="message-content">
-									{editing ? (
-										<>
-											<Label block htmlFor="field-content">
-												Content
-											</Label>
-											<BBField
-												name="content"
-												required
-												rows={16}
-												maxLength={20000}
-												autoFocus
-											/>
-										</>
-									) : (
-										<BBCode>{message.content}</BBCode>
-									)}
-								</Section>
-								<BoxFooter>
-									{editing ? (
-										<>
-											<Button
-												type="submit"
-												className="alt"
-												disabled={!dirty || isSubmitting}
-											>
-												Save
+											Save
+										</Button>
+										<Button
+											disabled={isSubmitting}
+											onClick={cancel}
+										>
+											Cancel
+										</Button>
+									</>
+								) : (
+									<>
+										<Button href={`/user/${user.id}/messages`}>
+											All Messages
+										</Button>
+										<Button href={`/message/new?replyTo=${message.id}`}>
+											Reply
+										</Button>
+										{(
+											message.from === user.id
+											|| !!(user.perms & Perm.sudoWrite)
+										) && (
+											<Button onClick={edit}>
+												Edit
 											</Button>
-											<Button
-												disabled={isSubmitting}
-												onClick={cancel}
-											>
-												Cancel
-											</Button>
-										</>
-									) : (
-										<>
-											<Button href={`/user/${user.id}/messages`}>
-												All Messages
-											</Button>
-											<Button href={`/message/new?replyTo=${message.id}`}>
-												Reply
-											</Button>
-											{(
-												message.from === user.id
-												|| !!(user.perms & Perm.sudoWrite)
-											) && (
-												<Button onClick={edit}>
-													Edit
-												</Button>
-											)}
-											<Button onClick={onClickDelete}>
-												Delete
-											</Button>
-										</>
-									)}
-								</BoxFooter>
-							</Box>
+										)}
+										<Button onClick={onClickDelete}>
+											Delete
+										</Button>
+									</>
+								)}
+							</BottomActions>
 						</Form>
 					);
 				}}

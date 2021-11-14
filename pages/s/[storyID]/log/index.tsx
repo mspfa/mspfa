@@ -8,7 +8,6 @@ import { getPublicStory, getStoryByUnsafeID } from 'lib/server/stories';
 import type { integer } from 'lib/types';
 import StoryLog from 'components/StoryLog';
 import Page from 'components/Page';
-import Box from 'components/Box';
 import Section from 'components/Section';
 import Link from 'components/Link';
 import { useMemo } from 'react';
@@ -45,25 +44,23 @@ const Component = withErrorPage<ServerSideProps>(({ story, listings }) => {
 
 	const pageComponent = (
 		<Page withFlashyTitle heading="Adventure Log">
-			<Box>
-				<Section heading={story.title}>
-					<StoryLog listings={sortedListings}>
-						<Link
-							id="story-log-sort-link"
-							onClick={
-								useFunction(() => {
-									const url = new URL(location.href);
-									url.searchParams.set('sort', sortMode === 'newest' ? 'oldest' : 'newest');
-									preventLeaveConfirmations();
-									router.replace(url, undefined, { shallow: true });
-								})
-							}
-						>
-							{sortMode === 'newest' ? 'View oldest to newest' : 'View newest to oldest'}
-						</Link>
-					</StoryLog>
-				</Section>
-			</Box>
+			<Section heading={story.title}>
+				<StoryLog listings={sortedListings}>
+					<Link
+						id="story-log-sort-link"
+						onClick={
+							useFunction(() => {
+								const url = new URL(location.href);
+								url.searchParams.set('sort', sortMode === 'newest' ? 'oldest' : 'newest');
+								preventLeaveConfirmations();
+								router.replace(url, undefined, { shallow: true });
+							})
+						}
+					>
+						{sortMode === 'newest' ? 'View oldest to newest' : 'View newest to oldest'}
+					</Link>
+				</StoryLog>
+			</Section>
 		</Page>
 	);
 

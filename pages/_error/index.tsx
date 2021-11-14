@@ -1,9 +1,8 @@
 import './styles.module.scss';
-import Box from 'components/Box';
 import Row from 'components/Row';
 import Page from 'components/Page';
 import type { ServerResponse } from 'http';
-import BoxFooter from 'components/Box/BoxFooter';
+import BottomActions from 'components/BottomActions';
 import Button from 'components/Button';
 import Router from 'next/router';
 import Section from 'components/Section';
@@ -30,25 +29,23 @@ export type ErrorPageProps = {
 
 const ErrorPage = ({ statusCode, imageFilename }: ErrorPageProps) => (
 	<Page withFlashyTitle heading={`Error ${statusCode}`}>
-		<Box id="error-box">
-			{statusCode === 403 && (
-				<Section>
-					<Row>
-						<img
-							src={`/images/403/${imageFilename!}`}
-							alt="Artwork for Error 403"
-							title={`Artist: ${imageFilename!.slice(0, imageFilename!.indexOf('.'))}`}
-						/>
-					</Row>
-					<Row>You don't have permission to access this page.</Row>
-				</Section>
-			)}
-			<BoxFooter>
-				<Button onClick={goBack}>
-					Go Back
-				</Button>
-			</BoxFooter>
-		</Box>
+		{statusCode === 403 && (
+			<Section id="error-section">
+				<Row>
+					<img
+						src={`/images/403/${imageFilename!}`}
+						alt="Artwork for Error 403"
+						title={`Artist: ${imageFilename!.slice(0, imageFilename!.indexOf('.'))}`}
+					/>
+				</Row>
+				<Row>You don't have permission to access this page.</Row>
+			</Section>
+		)}
+		<BottomActions>
+			<Button onClick={goBack}>
+				Go Back
+			</Button>
+		</BottomActions>
 	</Page>
 );
 

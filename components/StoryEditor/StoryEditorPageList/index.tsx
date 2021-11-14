@@ -1,5 +1,4 @@
 import './styles.module.scss';
-import Box from 'components/Box';
 import Button from 'components/Button';
 import type { ReactNode, RefObject } from 'react';
 import { useContext } from 'react';
@@ -78,9 +77,9 @@ const StoryEditorPageList = ({ pagesActionsElementRef, story, pageComponents }: 
 					Save All
 				</Button>
 			</div>
-			<Box id="story-editor-pages" className="view-mode-list">
+			<div id="story-editor-pages" className="view-mode-list">
 				{pageComponents}
-			</Box>
+			</div>
 		</>
 	);
 };

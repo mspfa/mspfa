@@ -2,7 +2,6 @@ import './styles.module.scss';
 import Page from 'components/Page';
 import { withErrorPage } from 'lib/client/errors';
 import { withStatusCode } from 'lib/server/errors';
-import Box from 'components/Box';
 import Section from 'components/Section';
 import { Perm } from 'lib/client/perms';
 import { permToGetUserInPage } from 'lib/server/permToGetUser';
@@ -147,84 +146,82 @@ const Component = withErrorPage<ServerSideProps>(({
 
 	return (
 		<Page withFlashyTitle heading="Messages">
-			<Box>
-				<Section
-					heading={`Your Messages (${listedMessages.length} total, ${unreadCount} unread)`}
+			<Section
+				heading={`Your Messages (${listedMessages.length} total, ${unreadCount} unread)`}
+			>
+				<div
+					id="messages-actions"
+					ref={pagesActionsElementRef}
 				>
-					<div
-						id="messages-actions"
-						ref={pagesActionsElementRef}
+					<Button
+						className="small"
+						href="/message/new"
+						title="New Message"
 					>
-						<Button
-							className="small"
-							href="/message/new"
-							title="New Message"
-						>
-							New Message
-						</Button>
-						{listedMessages.length !== 0 && (
-							<>
-								<Button
-									className="small"
-									title={
-										selectedCount
-											? `Deselect Selected Messages (${selectedCount})`
-											: `Select All Messages (${listedMessages.length})`
-									}
-									onClick={selectedCount ? deselectAll : selectAll}
-								>
-									{selectedCount ? 'Deselect All' : 'Select All'}
-								</Button>
-								{selectedCount !== 0 && (
-									<>
-										<Button
-											className="small"
-											title={`Mark Selected Messages as Read (${selectedCount})`}
-											onClick={markRead}
-										>
-											Mark as Read
-										</Button>
-										<Button
-											className="small"
-											title={`Mark Selected Messages as Unread (${selectedCount})`}
-											onClick={markUnread}
-										>
-											Mark as Unread
-										</Button>
-										<Button
-											className="small"
-											title={`Delete Selected Messages (${selectedCount})`}
-											onClick={deleteMessages}
-										>
-											Delete
-										</Button>
-									</>
-								)}
-							</>
-						)}
-					</div>
-					{listedMessages.length === 0 ? (
-						<div id="no-messages">
-							<Row>
-								<img
-									src={`/images/no-messages/${imageFilename}`}
-									alt="Artwork for No Messages"
-									title={`Artist: ${imageFilename.slice(0, imageFilename.indexOf('.'))}`}
-								/>
-							</Row>
-							<Row>No new messages.</Row>
-						</div>
-					) : (
-						<List
-							listing={MessageListing}
-							setMessage={setMessage}
-							removeListing={removeListing}
-						>
-							{listedMessages}
-						</List>
+						New Message
+					</Button>
+					{listedMessages.length !== 0 && (
+						<>
+							<Button
+								className="small"
+								title={
+									selectedCount
+										? `Deselect Selected Messages (${selectedCount})`
+										: `Select All Messages (${listedMessages.length})`
+								}
+								onClick={selectedCount ? deselectAll : selectAll}
+							>
+								{selectedCount ? 'Deselect All' : 'Select All'}
+							</Button>
+							{selectedCount !== 0 && (
+								<>
+									<Button
+										className="small"
+										title={`Mark Selected Messages as Read (${selectedCount})`}
+										onClick={markRead}
+									>
+										Mark as Read
+									</Button>
+									<Button
+										className="small"
+										title={`Mark Selected Messages as Unread (${selectedCount})`}
+										onClick={markUnread}
+									>
+										Mark as Unread
+									</Button>
+									<Button
+										className="small"
+										title={`Delete Selected Messages (${selectedCount})`}
+										onClick={deleteMessages}
+									>
+										Delete
+									</Button>
+								</>
+							)}
+						</>
 					)}
-				</Section>
-			</Box>
+				</div>
+				{listedMessages.length === 0 ? (
+					<div id="no-messages">
+						<Row>
+							<img
+								src={`/images/no-messages/${imageFilename}`}
+								alt="Artwork for No Messages"
+								title={`Artist: ${imageFilename.slice(0, imageFilename.indexOf('.'))}`}
+							/>
+						</Row>
+						<Row>No new messages.</Row>
+					</div>
+				) : (
+					<List
+						listing={MessageListing}
+						setMessage={setMessage}
+						removeListing={removeListing}
+					>
+						{listedMessages}
+					</List>
+				)}
+			</Section>
 		</Page>
 	);
 });

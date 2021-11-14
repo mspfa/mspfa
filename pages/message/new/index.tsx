@@ -6,8 +6,7 @@ import type { FormikHelpers } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import useFunction from 'lib/client/useFunction';
 import { useLeaveConfirmation } from 'lib/client/forms';
-import Box from 'components/Box';
-import BoxFooter from 'components/Box/BoxFooter';
+import BottomActions from 'components/BottomActions';
 import Button from 'components/Button';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
@@ -115,71 +114,69 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 
 					return (
 						<Form>
-							<Box>
-								<Section heading="New Message">
-									{toUsers ? (
-										<>
-											<div className="field-container">
-												<Label block htmlFor="field-to">
-													To
-												</Label>
-												<UserArrayField
-													name="to"
-													required
-													unique
-													autoFocus={toUsers.length === 0}
-												/>
-											</div>
-											<div className="field-container">
-												<Label block htmlFor="field-subject">
-													Subject
-												</Label>
-												<Field
-													id="field-subject"
-													name="subject"
-													required
-													maxLength={50}
-													autoComplete="off"
-													autoFocus={toUsers.length !== 0}
-												/>
-											</div>
-										</>
-									) : (
+							<Section heading="New Message">
+								{toUsers ? (
+									<>
 										<div className="field-container">
-											<Label className="spaced">
-												Reply To
+											<Label block htmlFor="field-to">
+												To
 											</Label>
-											<Link
-												className="spaced"
-												href={`/message/${replyTo!.id}`}
-											>
-												{replyTo!.subject}
-											</Link>
+											<UserArrayField
+												name="to"
+												required
+												unique
+												autoFocus={toUsers.length === 0}
+											/>
 										</div>
-									)}
+										<div className="field-container">
+											<Label block htmlFor="field-subject">
+												Subject
+											</Label>
+											<Field
+												id="field-subject"
+												name="subject"
+												required
+												maxLength={50}
+												autoComplete="off"
+												autoFocus={toUsers.length !== 0}
+											/>
+										</div>
+									</>
+								) : (
 									<div className="field-container">
-										<Label block htmlFor="field-content">
-											Content
+										<Label className="spaced">
+											Reply To
 										</Label>
-										<BBField
-											name="content"
-											required
-											rows={16}
-											maxLength={20000}
-											autoFocus={replyTo !== undefined}
-										/>
+										<Link
+											className="spaced"
+											href={`/message/${replyTo!.id}`}
+										>
+											{replyTo!.subject}
+										</Link>
 									</div>
-								</Section>
-								<BoxFooter>
-									<Button
-										type="submit"
-										className="alt"
-										disabled={isSubmitting}
-									>
-										Send
-									</Button>
-								</BoxFooter>
-							</Box>
+								)}
+								<div className="field-container">
+									<Label block htmlFor="field-content">
+										Content
+									</Label>
+									<BBField
+										name="content"
+										required
+										rows={16}
+										maxLength={20000}
+										autoFocus={replyTo !== undefined}
+									/>
+								</div>
+							</Section>
+							<BottomActions>
+								<Button
+									type="submit"
+									className="alt"
+									disabled={isSubmitting}
+								>
+									Send
+								</Button>
+							</BottomActions>
 						</Form>
 					);
 				}}

@@ -8,8 +8,7 @@ import type { ChangeEvent } from 'react';
 import { useState } from 'react';
 import useFunction from 'lib/client/useFunction';
 import { getChangedValues, useLeaveConfirmation } from 'lib/client/forms';
-import Box from 'components/Box';
-import BoxFooter from 'components/Box/BoxFooter';
+import BottomActions from 'components/BottomActions';
 import Button from 'components/Button';
 import { getPrivateStory, getStoryByUnsafeID } from 'lib/server/stories';
 import type { PrivateStory, StoryStatus } from 'lib/client/stories';
@@ -25,7 +24,7 @@ import { useUserCache } from 'lib/client/UserCache';
 import { uniq, uniqBy } from 'lodash';
 import users, { getPublicUser } from 'lib/server/users';
 import UserArrayField from 'components/UserField/UserArrayField';
-import BoxColumns from 'components/Box/BoxColumns';
+import Columns from 'components/Columns';
 import Section from 'components/Section';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
@@ -161,14 +160,14 @@ const Component = withErrorPage<ServerSideProps>(({
 	const pageComponent = (
 		<Page heading="Edit Adventure">
 			{story.willDelete ? (
-				<Box>
+				<>
 					<Section heading="Deleted Adventure">
 						<Row>
 							<i>{story.title}</i>
 							{` will be permanently deleted in ~${daysUntilDeletion} day${daysUntilDeletion === 1 ? '' : 's'}.`}
 						</Row>
 					</Section>
-					<BoxFooter>
+					<BottomActions>
 						{ownerPerms && (
 							<Button
 								disabled={loadingRestore}
@@ -177,8 +176,8 @@ const Component = withErrorPage<ServerSideProps>(({
 								Restore
 							</Button>
 						)}
-					</BoxFooter>
-				</Box>
+					</BottomActions>
+				</>
 			) : (
 				<Formik
 					initialValues={initialValues}
@@ -241,259 +240,257 @@ const Component = withErrorPage<ServerSideProps>(({
 
 						return (
 							<Form>
-								<Box>
-									<Section
-										id="story-editor-options"
-										heading={story.title}
-									>
-										{story.pageCount !== 0 && (
-											<Button
-												className="small"
-												href={`/?s=${story.id}&p=1`}
-											>
-												View
-											</Button>
-										)}
+								<Section
+									id="story-editor-options"
+									heading={story.title}
+								>
+									{story.pageCount !== 0 && (
 										<Button
 											className="small"
-											href={`/s/${story.id}/edit/p`}
+											href={`/?s=${story.id}&p=1`}
 										>
-											Edit Pages
+											View
 										</Button>
-									</Section>
-									<BoxColumns>
-										<LabeledGridSection id="story-editor-info" heading="Info">
-											<LabeledGridField
-												name="title"
-												label="Title"
-												autoComplete="off"
-												required
-												maxLength={50}
+									)}
+									<Button
+										className="small"
+										href={`/s/${story.id}/edit/p`}
+									>
+										Edit Pages
+									</Button>
+								</Section>
+								<Columns>
+									<LabeledGridSection id="story-editor-info" heading="Info">
+										<LabeledGridField
+											name="title"
+											label="Title"
+											autoComplete="off"
+											required
+											maxLength={50}
+										/>
+										<LabeledGridField
+											as="select"
+											name="status"
+											label="Status"
+											required
+										>
+											{Object.keys(storyStatusNames).map(status => (
+												<option
+													key={status}
+													value={status}
+												>
+													{storyStatusNames[status as unknown as StoryStatus]}
+												</option>
+											))}
+										</LabeledGridField>
+										<LabeledGridField
+											as="select"
+											name="privacy"
+											label="Privacy"
+											help={`${storyPrivacyNames[StoryPrivacy.Public]}: Anyone can see this adventure.\n${storyPrivacyNames[StoryPrivacy.Unlisted]}: Only users with this adventure's URL can see this adventure.\n${storyPrivacyNames[StoryPrivacy.Private]}: Only this adventure's owner and editors can see this adventure.`}
+											required
+											onChange={
+												useFunction((event: ChangeEvent<HTMLSelectElement>) => {
+													handleChange(event);
+
+													if (+event.target.value !== StoryPrivacy.Public) {
+														// If the story is not public, reset the anniversary date and banner URL fields so they can be safely hidden without unsaved changes.
+
+														setFieldValue('anniversary', initialValues.anniversary);
+														setFieldValue('banner', initialValues.banner);
+													}
+												})
+											}
+										>
+											{Object.keys(storyPrivacyNames).map(privacy => (
+												<option
+													key={privacy}
+													value={privacy}
+												>
+													{(storyPrivacyNames as any)[privacy]}
+												</option>
+											))}
+										</LabeledGridField>
+										<LabeledGridField
+											type="url"
+											name="icon"
+											label="Icon URL"
+											help="A direct URL to an image of your adventure's icon. The recommended image size is 150x150 pixels."
+										/>
+										<Row>
+											<IconImage
+												id="story-editor-icon"
+												src={values.icon}
+												alt="Your Adventure's Icon"
 											/>
-											<LabeledGridField
-												as="select"
-												name="status"
-												label="Status"
+										</Row>
+									</LabeledGridSection>
+									<LabeledGridSection id="story-editor-misc" heading="Misc">
+										<LabeledGridRow label="Owner">
+											<UserField
+												name="owner"
 												required
-											>
-												{Object.keys(storyStatusNames).map(status => (
-													<option
-														key={status}
-														value={status}
-													>
-														{storyStatusNames[status as unknown as StoryStatus]}
-													</option>
-												))}
-											</LabeledGridField>
-											<LabeledGridField
-												as="select"
-												name="privacy"
-												label="Privacy"
-												help={`${storyPrivacyNames[StoryPrivacy.Public]}: Anyone can see this adventure.\n${storyPrivacyNames[StoryPrivacy.Unlisted]}: Only users with this adventure's URL can see this adventure.\n${storyPrivacyNames[StoryPrivacy.Private]}: Only this adventure's owner and editors can see this adventure.`}
-												required
+												readOnly={!ownerPerms}
+												editTitle="Edit Owner"
+												confirmEdit={
+													values.owner === user.id
+														? 'Are you sure you want to transfer this adventure\'s ownership to someone else?\n\nYou will remain an editor of this adventure, but your ownership can only be restored by the new owner. The new owner will also be allowed to revoke your editing permissions.'
+														: undefined
+												}
 												onChange={
-													useFunction((event: ChangeEvent<HTMLSelectElement>) => {
-														handleChange(event);
+													useFunction((event: { target: HTMLInputElement }) => {
+														if (
+															// The user finished editing the owner.
+															event.target.value
+															// They are transferring ownership from themself.
+															&& ownerBeforeEdit === user.id
+															// They are transferring ownership to someone else.
+															&& event.target.value !== user.id
+														) {
+															setFieldValue('editors', uniq([
+																...values.editors,
+																// Add the user they are transferring ownership from to the editors.
+																ownerBeforeEdit
+																// Don't add the user they are transferring ownership to, because the user may edit the owner again, in which case the owner that was set temporarily would still be added as an editor. If the user did not intend to add them as an editor, that would be problematic, especially since the user would not even necessarily be aware the owner they set temporarily is still an editor.
+															]));
 
-														if (+event.target.value !== StoryPrivacy.Public) {
-															// If the story is not public, reset the anniversary date and banner URL fields so they can be safely hidden without unsaved changes.
-
-															setFieldValue('anniversary', initialValues.anniversary);
-															setFieldValue('banner', initialValues.banner);
+															setOwnerBeforeEdit(event.target.value);
 														}
 													})
 												}
-											>
-												{Object.keys(storyPrivacyNames).map(privacy => (
-													<option
-														key={privacy}
-														value={privacy}
-													>
-														{(storyPrivacyNames as any)[privacy]}
-													</option>
-												))}
-											</LabeledGridField>
-											<LabeledGridField
-												type="url"
-												name="icon"
-												label="Icon URL"
-												help="A direct URL to an image of your adventure's icon. The recommended image size is 150x150 pixels."
 											/>
-											<Row>
-												<IconImage
-													id="story-editor-icon"
-													src={values.icon}
-													alt="Your Adventure's Icon"
-												/>
-											</Row>
-										</LabeledGridSection>
-										<LabeledGridSection id="story-editor-misc" heading="Misc">
-											<LabeledGridRow label="Owner">
-												<UserField
-													name="owner"
+										</LabeledGridRow>
+										<LabeledGridRow
+											labelProps={{
+												className: 'user-array-field-label'
+											}}
+											label="Editors"
+											help={'The users with permission to edit this adventure.\n\nOnly the owner is allowed to delete the adventure, change its owner, or change its editors. The owner has all permissions and will be publicly listed as an editor regardless of whether they are in the editor list.'}
+										>
+											<UserArrayField
+												name="editors"
+												unique
+												readOnly={!ownerPerms}
+											/>
+										</LabeledGridRow>
+										<LabeledGridField
+											type="checkbox"
+											name="allowComments"
+											label="Allow Comments"
+										/>
+										<LabeledGridRow
+											htmlFor={editingAnniversary ? 'field-anniversary-year' : undefined}
+											label="Creation Date"
+											help="This date is displayed publicly in your adventure info and used as the date for your anniversary banner."
+										>
+											{editingAnniversary ? (
+												<DateField
+													name="anniversary"
 													required
-													readOnly={!ownerPerms}
-													editTitle="Edit Owner"
-													confirmEdit={
-														values.owner === user.id
-															? 'Are you sure you want to transfer this adventure\'s ownership to someone else?\n\nYou will remain an editor of this adventure, but your ownership can only be restored by the new owner. The new owner will also be allowed to revoke your editing permissions.'
-															: undefined
-													}
-													onChange={
-														useFunction((event: { target: HTMLInputElement }) => {
-															if (
-																// The user finished editing the owner.
-																event.target.value
-																// They are transferring ownership from themself.
-																&& ownerBeforeEdit === user.id
-																// They are transferring ownership to someone else.
-																&& event.target.value !== user.id
-															) {
-																setFieldValue('editors', uniq([
-																	...values.editors,
-																	// Add the user they are transferring ownership from to the editors.
-																	ownerBeforeEdit
-																	// Don't add the user they are transferring ownership to, because the user may edit the owner again, in which case the owner that was set temporarily would still be added as an editor. If the user did not intend to add them as an editor, that would be problematic, especially since the user would not even necessarily be aware the owner they set temporarily is still an editor.
-																]));
-
-																setOwnerBeforeEdit(event.target.value);
-															}
-														})
-													}
+													max={Date.now()}
 												/>
-											</LabeledGridRow>
-											<LabeledGridRow
-												labelProps={{
-													className: 'user-array-field-label'
-												}}
-												label="Editors"
-												help={'The users with permission to edit this adventure.\n\nOnly the owner is allowed to delete the adventure, change its owner, or change its editors. The owner has all permissions and will be publicly listed as an editor regardless of whether they are in the editor list.'}
-											>
-												<UserArrayField
-													name="editors"
-													unique
-													readOnly={!ownerPerms}
-												/>
-											</LabeledGridRow>
-											<LabeledGridField
-												type="checkbox"
-												name="allowComments"
-												label="Allow Comments"
-											/>
-											<LabeledGridRow
-												htmlFor={editingAnniversary ? 'field-anniversary-year' : undefined}
-												label="Creation Date"
-												help="This date is displayed publicly in your adventure info and used as the date for your anniversary banner."
-											>
-												{editingAnniversary ? (
-													<DateField
-														name="anniversary"
-														required
-														max={Date.now()}
-													/>
-												) : (
-													<>
-														<Timestamp className="spaced">
-															{values.anniversary}
-														</Timestamp>
-														{ownerPerms && !story.anniversary.changed && (
-															<EditButton
-																className="spaced"
-																title="Edit Creation Date"
-																onClick={editAnniversary}
-															/>
-														)}
-													</>
-												)}
-											</LabeledGridRow>
-											<LabeledGridField
-												type="url"
-												name="banner"
-												label="Banner URL"
-												help={'A direct URL to an image of your adventure\'s anniversary banner. The recommended image size is 950x100 pixels.\n\nIf your adventure is public, is ongoing or complete, and has at least 200 favorites, this image will be displayed on the homepage for one week starting on the adventure\'s anniversary date.'}
-												placeholder="Optional"
-											/>
-										</LabeledGridSection>
-									</BoxColumns>
-									<Section id="story-editor-details" heading="Details">
-										<Row>
-											<TagField rows={3} />
-										</Row>
-										<Row>
-											<Label block htmlFor="field-description">
-												Description
+											) : (
+												<>
+													<Timestamp className="spaced">
+														{values.anniversary}
+													</Timestamp>
+													{ownerPerms && !story.anniversary.changed && (
+														<EditButton
+															className="spaced"
+															title="Edit Creation Date"
+															onClick={editAnniversary}
+														/>
+													)}
+												</>
+											)}
+										</LabeledGridRow>
+										<LabeledGridField
+											type="url"
+											name="banner"
+											label="Banner URL"
+											help={'A direct URL to an image of your adventure\'s anniversary banner. The recommended image size is 950x100 pixels.\n\nIf your adventure is public, is ongoing or complete, and has at least 200 favorites, this image will be displayed on the homepage for one week starting on the adventure\'s anniversary date.'}
+											placeholder="Optional"
+										/>
+									</LabeledGridSection>
+								</Columns>
+								<Section id="story-editor-details" heading="Details">
+									<Row>
+										<TagField rows={3} />
+									</Row>
+									<Row>
+										<Label block htmlFor="field-description">
+											Description
+										</Label>
+										<Field
+											as="textarea"
+											id="field-description"
+											name="description"
+											rows={4}
+											maxLength={2000}
+										/>
+									</Row>
+									<Row>
+										<Label
+											block
+											htmlFor="field-sidebar-content"
+											help={'This content is displayed in the sidebar to the left of your adventure info.\n\nUse this for links (typically on images) to your social media, music, credits, or other advertisements. Avoid using the description for this, or else it can show up in the adventure list and create unwanted clutter.\n\nThe recommend image width in the sidebar is 238 pixels.'}
+										>
+											Sidebar (External Links)
+										</Label>
+										<BBField
+											name="sidebarContent"
+											rows={4}
+											maxLength={2000}
+											keepHTMLTags
+											placeholder={'Instead of putting external links in the description, put them here.\nClick the help button for more info.'}
+										/>
+									</Row>
+								</Section>
+								<Section id="story-editor-advanced" heading="Advanced" collapsible>
+									<Row id="story-editor-code-fields">
+										<div>
+											<Label block htmlFor="field-style">
+												Custom Style
 											</Label>
 											<Field
 												as="textarea"
-												id="field-description"
-												name="description"
-												rows={4}
-												maxLength={2000}
+												id="field-style"
+												name="style"
+												rows={8}
+												placeholder={'Paste SCSS here.\nIf you don\'t know what this is, don\'t worry about it.'}
 											/>
-										</Row>
-										<Row>
-											<Label
-												block
-												htmlFor="field-sidebar-content"
-												help={'This content is displayed in the sidebar to the left of your adventure info.\n\nUse this for links (typically on images) to your social media, music, credits, or other advertisements. Avoid using the description for this, or else it can show up in the adventure list and create unwanted clutter.\n\nThe recommend image width in the sidebar is 238 pixels.'}
-											>
-												Sidebar (External Links)
+										</div>
+										<div>
+											<Label block htmlFor="field-style">
+												Custom Script
 											</Label>
-											<BBField
-												name="sidebarContent"
-												rows={4}
-												maxLength={2000}
-												keepHTMLTags
-												placeholder={'Instead of putting external links in the description, put them here.\nClick the help button for more info.'}
+											<Field
+												as="textarea"
+												id="field-script"
+												name="script.unverified"
+												rows={8}
+												placeholder={'Paste JSX here.\nIf you don\'t know what this is, don\'t worry about it.'}
 											/>
-										</Row>
-									</Section>
-									<Section id="story-editor-advanced" heading="Advanced" collapsible>
-										<Row id="story-editor-code-fields">
-											<div>
-												<Label block htmlFor="field-style">
-													Custom Style
-												</Label>
-												<Field
-													as="textarea"
-													id="field-style"
-													name="style"
-													rows={8}
-													placeholder={'Paste SCSS here.\nIf you don\'t know what this is, don\'t worry about it.'}
-												/>
-											</div>
-											<div>
-												<Label block htmlFor="field-style">
-													Custom Script
-												</Label>
-												<Field
-													as="textarea"
-													id="field-script"
-													name="script.unverified"
-													rows={8}
-													placeholder={'Paste JSX here.\nIf you don\'t know what this is, don\'t worry about it.'}
-												/>
-											</div>
-										</Row>
-									</Section>
-									<BoxFooter>
+										</div>
+									</Row>
+								</Section>
+								<BottomActions>
+									<Button
+										type="submit"
+										className="alt"
+										disabled={!dirty || isSubmitting}
+									>
+										Save
+									</Button>
+									{ownerPerms && (
 										<Button
-											type="submit"
-											className="alt"
-											disabled={!dirty || isSubmitting}
+											disabled={isSubmitting}
+											onClick={deleteStory}
 										>
-											Save
+											Delete
 										</Button>
-										{ownerPerms && (
-											<Button
-												disabled={isSubmitting}
-												onClick={deleteStory}
-											>
-												Delete
-											</Button>
-										)}
-									</BoxFooter>
-								</Box>
+									)}
+								</BottomActions>
 							</Form>
 						);
 					}}
