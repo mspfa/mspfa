@@ -10,7 +10,7 @@ export type SectionProps = HTMLAttributes<HTMLDivElement> & {
 	customContent?: boolean
 };
 
-/** A section with a heading and content. Should always be placed in a `Box`. */
+/** A section with a heading and content. Should usually be placed in a `Box`. */
 const Section = React.forwardRef<HTMLDivElement, SectionProps>(({
 	heading,
 	className,
