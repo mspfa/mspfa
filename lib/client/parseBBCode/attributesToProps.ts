@@ -66,7 +66,7 @@ const attributesToProps = (element: Element) => {
 			}
 
 			// This is necessary because different environments may have different ways of deserializing the `style` attribute to a `CSSStyleDeclaration`.
-			// For example, JSDOM deserializes `margin: 2px;` into `{ margin: '2px' }`, while Chrome 92 deserializes it into `{ 'margin-top': '2px', 'margin-right': '2px', 'margin-bottom': '2px', 'margin-left': '2px' }`.
+			// For example, JSDOM deserializes `margin: 2px` into `{ margin: '2px' }`, while Chrome 92 deserializes it into `{ 'margin-top': '2px', 'margin-right': '2px', 'margin-bottom': '2px', 'margin-left': '2px' }`.
 			// We could parse `attribute.value` here with our own consistent implementation instead of depending on the environment's inconsistent implementation of `CSSStyleDeclaration`, but that would be much more complicated (due to escaped special characters and special characters in CSS strings) and less performant, while providing no functional difference.
 			props.suppressHydrationWarning = true;
 		} else {
