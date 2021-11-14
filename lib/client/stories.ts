@@ -29,7 +29,7 @@ export const storyPrivacyNames: Record<StoryPrivacy, string> = {
 };
 
 /** All keys whose values have the same serializable type in both `ServerStory` and `PrivateStory`. */
-type PrivateStoryKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'icon' | 'pageCount' | 'favCount' | 'banner' | 'style' | 'script' | 'tags' | 'allowComments' | 'sidebarContent' | 'defaultPageTitle' | 'quirks';
+type PrivateStoryKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'icon' | 'pageCount' | 'favCount' | 'banner' | 'style' | 'script' | 'tags' | 'allowComments' | 'sidebarContent' | 'defaultPageTitle';
 
 /** A serializable version of `ServerStory` with only the properties that can safely be exposed to any client. */
 export type PrivateStory = Pick<ServerStory, PrivateStoryKey> & {
@@ -44,7 +44,7 @@ export type PrivateStory = Pick<ServerStory, PrivateStoryKey> & {
 };
 
 /** All keys whose values have the same serializable type in both `ServerStory` and `PublicStory`. */
-type PublicStoryKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'icon' | 'pageCount' | 'favCount' | 'style' | 'script' | 'tags' | 'allowComments' | 'sidebarContent' | 'quirks';
+type PublicStoryKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'icon' | 'pageCount' | 'favCount' | 'style' | 'script' | 'tags' | 'allowComments' | 'sidebarContent';
 
 /** A serializable version of `ServerStory` with only the properties that can safely be exposed to any client. */
 export type PublicStory = Pick<ServerStory, PublicStoryKey> & {

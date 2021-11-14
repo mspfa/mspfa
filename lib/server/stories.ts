@@ -1,5 +1,4 @@
 import db from 'lib/server/db';
-import type { Quirk } from 'lib/client/quirks';
 import type { DateNumber, integer, Mutable, URLString } from 'lib/types';
 import type { ClientStoryPage, PrivateStory, PublicStory } from 'lib/client/stories';
 import { StoryStatus, StoryPrivacy } from 'lib/client/stories';
@@ -116,8 +115,7 @@ export type ServerStory = {
 	news: ServerNewsPost[],
 	defaultPageTitle: ServerStoryPage['title'],
 	/** All of this story's saved colors (for use in the `ColorPicker`). */
-	colors: ServerColor[],
-	quirks: Quirk[]
+	colors: ServerColor[]
 };
 
 /** A `Partial<ServerStory>` used to spread some general properties on newly inserted `ServerStory`s. */
@@ -141,8 +139,7 @@ export const defaultStory = {
 	sidebarContent: '',
 	news: [] as never[],
 	defaultPageTitle: 'Next.',
-	colors: [] as never[],
-	quirks: [] as never[]
+	colors: [] as never[]
 } as const;
 
 // This is just for partial type safety on `defaultStory`.
@@ -177,8 +174,7 @@ export const getPrivateStory = (story: ServerStory): PrivateStory => ({
 	allowComments: story.allowComments,
 	sidebarContent: story.sidebarContent,
 	defaultPageTitle: story.defaultPageTitle,
-	colors: story.colors.map(getClientColor),
-	quirks: story.quirks
+	colors: story.colors.map(getClientColor)
 });
 
 /** Converts a `ServerStory` to a `PublicStory`. */
@@ -203,8 +199,7 @@ export const getPublicStory = (story: ServerStory): PublicStory => ({
 	script: story.script,
 	tags: story.tags,
 	allowComments: story.allowComments,
-	sidebarContent: story.sidebarContent,
-	quirks: story.quirks
+	sidebarContent: story.sidebarContent
 });
 
 /** Converts a `ServerStoryPage` to a `ClientStoryPage`. */
