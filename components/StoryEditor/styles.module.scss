@@ -46,17 +46,17 @@
 	}
 
 	&-page {
-		& > .box-section-heading {
-			// Even though these are the default `.box-section-heading` `background-color` and `color`, non-standard themes may overwrite it, so this is to ensure it keeps the standard gray independently of theme.
+		& > .section-heading {
+			// Even though these are the default `.section-heading` `background-color` and `color`, non-standard themes may overwrite it, so this is to ensure it keeps the standard gray independently of theme.
 			background-color: map.get($standard-theme, alt-front-color);
 			color: map.get($standard-theme, alt-text-color);
 		}
 
-		&.published > .box-section-heading {
+		&.published > .section-heading {
 			background-color: #008407;
 		}
 
-		&.scheduled > .box-section-heading {
+		&.scheduled > .section-heading {
 			background-color: #cc7600;
 		}
 	}
@@ -86,7 +86,7 @@
 			pointer-events: none;
 		}
 
-		& > .box-section-heading {
+		& > .section-heading {
 			text-align: left;
 			margin-bottom: 0;
 
@@ -95,7 +95,7 @@
 			}
 		}
 
-		& > .box-section-content {
+		& > .section-content {
 			padding: 0.75ch;
 			word-break: break-all;
 		}

@@ -1,5 +1,5 @@
 import './styles.module.scss';
-import BoxSection from 'components/Box/BoxSection';
+import Section from 'components/Section';
 import Button from 'components/Button';
 import Label from 'components/Label';
 import Row from 'components/Row';
@@ -33,7 +33,7 @@ export type StoryEditorPagesOptionsProps = {
 	pageCount: integer
 };
 
-/** A `BoxSection` of options for the `StoryEditor`'s pages. */
+/** A `Section` of options for the `StoryEditor`'s pages. */
 const StoryEditorPagesOptions = ({
 	story,
 	setStory,
@@ -221,7 +221,7 @@ const StoryEditorPagesOptions = ({
 	});
 
 	return (
-		<BoxSection
+		<Section
 			id="story-editor-pages-options"
 			heading={story.title}
 		>
@@ -341,7 +341,7 @@ const StoryEditorPagesOptions = ({
 					<option value="oldest">Oldest</option>
 				</select>
 			</Row>
-		</BoxSection>
+		</Section>
 	);
 };
 

@@ -4,7 +4,7 @@ import { permToGetUserInPage } from 'lib/server/permToGetUser';
 import { withErrorPage } from 'lib/client/errors';
 import { withStatusCode } from 'lib/server/errors';
 import Box from 'components/Box';
-import BoxSection from 'components/Box/BoxSection';
+import Section from 'components/Section';
 import Row from 'components/Row';
 import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
@@ -84,7 +84,7 @@ type ServerSideProps = {
 const Component = withErrorPage<ServerSideProps>(({ stories }) => (
 	<Page withFlashyTitle heading="Your Adventures">
 		<Box>
-			<BoxSection heading="Adventures">
+			<Section heading="Adventures">
 				{(stories.length
 					? (
 						<List listing={StoryListing}>
@@ -93,7 +93,7 @@ const Component = withErrorPage<ServerSideProps>(({ stories }) => (
 					)
 					: 'You haven\'t started any adventures yet! Click the button below to begin.'
 				)}
-			</BoxSection>
+			</Section>
 			<BoxFooter>
 				<Button onClick={promptNewStory}>
 					New Adventure!

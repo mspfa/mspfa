@@ -12,8 +12,8 @@ import useFunction from 'lib/client/useFunction';
 import { getChangedValues, preventLeaveConfirmations, useLeaveConfirmation } from 'lib/client/forms';
 import Box from 'components/Box';
 import BoxColumns from 'components/Box/BoxColumns';
-import BoxSection from 'components/Box/BoxSection';
-import LabeledGridBoxSection from 'components/Box/LabeledGridBoxSection';
+import Section from 'components/Section';
+import LabeledGridSection from 'components/Section/LabeledGridSection';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import NotificationSettingGrid from 'components/Setting/NotificationSettingGrid';
 import NotificationSetting from 'components/Setting/NotificationSetting';
@@ -239,7 +239,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 					return (
 						<Form onChange={onFormChange}>
 							<Box>
-								<LabeledGridBoxSection heading="Account">
+								<LabeledGridSection heading="Account">
 									<LabeledGridField
 										type="email"
 										name="email"
@@ -286,8 +286,8 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 											Edit Sign-In Methods
 										</Button>
 									</Row>
-								</LabeledGridBoxSection>
-								<LabeledGridBoxSection heading="General">
+								</LabeledGridSection>
+								<LabeledGridSection heading="General">
 									<LabeledGridField
 										as="select"
 										name="settings.theme"
@@ -317,9 +317,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										label="Image Aliasing"
 										help={'Disables anti-aliasing in images on adventure pages (by using nearest-neighbor scaling).\n\nWhat this means is images, when scaled, will tend to have more crisp edges rather than becoming blurry. It disables the browser\'s smooth scaling effect that causes scaled images to blur.'}
 									/>
-								</LabeledGridBoxSection>
+								</LabeledGridSection>
 								<BoxColumns>
-									<BoxSection heading="General Notifications">
+									<Section heading="General Notifications">
 										<NotificationSettingGrid>
 											<NotificationSetting
 												name="settings.notifications.messages"
@@ -337,8 +337,8 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 												help="Get notified when one of your comments receives a reply."
 											/>
 										</NotificationSettingGrid>
-									</BoxSection>
-									<BoxSection heading="Default Adventure Notifications">
+									</Section>
+									<Section heading="Default Adventure Notifications">
 										<NotificationSettingGrid>
 											<NotificationSetting
 												name="settings.notifications.storyDefaults.updates"
@@ -356,9 +356,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 												help="Get notified when an adventure you edit receives a new comment."
 											/>
 										</NotificationSettingGrid>
-									</BoxSection>
+									</Section>
 								</BoxColumns>
-								<LabeledGridBoxSection heading="Controls">
+								<LabeledGridSection heading="Controls">
 									<ControlSetting
 										name="settings.controls.previousPage"
 										label="Previous Page"
@@ -371,8 +371,8 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										name="settings.controls.toggleSpoilers"
 										label="Toggle Spoilers"
 									/>
-								</LabeledGridBoxSection>
-								<BoxSection heading="Advanced" collapsible>
+								</LabeledGridSection>
+								<Section heading="Advanced" collapsible>
 									<Label block htmlFor="field-style">
 										Custom Site Style
 									</Label>
@@ -383,7 +383,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										rows={5}
 										placeholder={'Paste SCSS here.\nIf you don\'t know what this is, don\'t worry about it.'}
 									/>
-								</BoxSection>
+								</Section>
 								<BoxFooter>
 									<Row>
 										<Button

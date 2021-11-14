@@ -13,7 +13,7 @@ import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
-import BoxSection from 'components/Box/BoxSection';
+import Section from 'components/Section';
 import Dialog from 'lib/client/Dialog';
 import users, { getPublicUser } from 'lib/server/users';
 import UserArrayField from 'components/UserField/UserArrayField';
@@ -116,7 +116,7 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 					return (
 						<Form>
 							<Box>
-								<BoxSection heading="New Message">
+								<Section heading="New Message">
 									{toUsers ? (
 										<>
 											<div className="field-container">
@@ -169,7 +169,7 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 											autoFocus={replyTo !== undefined}
 										/>
 									</div>
-								</BoxSection>
+								</Section>
 								<BoxFooter>
 									<Button
 										type="submit"

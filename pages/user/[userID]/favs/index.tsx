@@ -6,7 +6,7 @@ import { getUserByUnsafeID, getPublicUser } from 'lib/server/users';
 import { withErrorPage } from 'lib/client/errors';
 import { withStatusCode } from 'lib/server/errors';
 import Box from 'components/Box';
-import BoxSection from 'components/Box/BoxSection';
+import Section from 'components/Section';
 import Link from 'components/Link';
 import Row from 'components/Row';
 import List from 'components/List';
@@ -34,7 +34,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, stor
 	return (
 		<Page withFlashyTitle heading="Favorite Adventures">
 			<Box>
-				<BoxSection
+				<Section
 					id="favs-section"
 					heading={`${publicUser.name}'s Favorites`}
 				>
@@ -76,7 +76,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, stor
 							</Row>
 						</>
 					)}
-				</BoxSection>
+				</Section>
 			</Box>
 		</Page>
 	);

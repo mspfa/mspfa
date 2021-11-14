@@ -1,5 +1,5 @@
 import './styles.module.scss';
-import BoxSection from 'components/Box/BoxSection';
+import Section from 'components/Section';
 import type { ClientStoryPage, ClientStoryPageRecord } from 'lib/client/stories';
 import deleteFromClientStoryPageRecord from 'lib/client/deleteFromClientStoryPageRecord';
 import { Field } from 'formik';
@@ -45,7 +45,7 @@ export type StoryEditorPageListingProps = {
 	advancedShown?: boolean
 };
 
-/** A `BoxSection` for a page in the story editor when in the list view mode. */
+/** A `Section` for a page in the story editor when in the list view mode. */
 const StoryEditorPageListing = React.memo(({
 	marginTop,
 	page,
@@ -508,7 +508,7 @@ const StoryEditorPageListing = React.memo(({
 	});
 
 	return (
-		<BoxSection
+		<Section
 			id={`p${page.id}`}
 			className={`story-editor-page ${pageStatus}${saved ? ' saved' : ''}`}
 			heading={(
@@ -723,7 +723,7 @@ const StoryEditorPageListing = React.memo(({
 					Delete
 				</Button>
 			</Row>
-		</BoxSection>
+		</Section>
 	);
 });
 

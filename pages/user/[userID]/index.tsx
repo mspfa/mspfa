@@ -7,8 +7,8 @@ import { withErrorPage } from 'lib/client/errors';
 import { withStatusCode } from 'lib/server/errors';
 import Box from 'components/Box';
 import BoxColumns from 'components/Box/BoxColumns';
-import BoxSection from 'components/Box/BoxSection';
-import LabeledGridBoxSection from 'components/Box/LabeledGridBoxSection';
+import Section from 'components/Section';
+import LabeledGridSection from 'components/Section/LabeledGridSection';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import Timestamp from 'components/Timestamp';
 import Link from 'components/Link';
@@ -60,7 +60,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 		>
 			<Box id="profile">
 				<BoxColumns>
-					<BoxSection id="profile-info" heading="Info">
+					<Section id="profile-info" heading="Info">
 						<Row id="profile-icon-container">
 							<IconImage
 								id="profile-icon"
@@ -96,9 +96,9 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 								</div>
 							)}
 						</Row>
-					</BoxSection>
+					</Section>
 					<Box id="profile-misc">
-						<LabeledGridBoxSection id="profile-stats" heading="Stats">
+						<LabeledGridSection id="profile-stats" heading="Stats">
 							<LabeledGridRow label="Last Connection">
 								{online ? (
 									'Online!'
@@ -116,9 +116,9 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 									<Timestamp>{publicUser.birthdate}</Timestamp>
 								</LabeledGridRow>
 							)}
-						</LabeledGridBoxSection>
+						</LabeledGridSection>
 						{(publicUser.email || publicUser.site) && (
-							<LabeledGridBoxSection id="profile-contact" heading="Contact">
+							<LabeledGridSection id="profile-contact" heading="Contact">
 								{publicUser.email && (
 									<LabeledGridRow label="Email">
 										<Link
@@ -139,12 +139,12 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 										</Link>
 									</LabeledGridRow>
 								)}
-							</LabeledGridBoxSection>
+							</LabeledGridSection>
 						)}
 					</Box>
 				</BoxColumns>
 				{publicUser.description && (
-					<BoxSection
+					<Section
 						id="profile-description"
 						heading="Description"
 						collapsible
@@ -153,10 +153,10 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 						<BBCode keepHTMLTags>
 							{publicUser.description}
 						</BBCode>
-					</BoxSection>
+					</Section>
 				)}
 				{publicStories.length !== 0 && (
-					<BoxSection
+					<Section
 						id="profile-stories"
 						heading={`${publicUser.name}'s Adventures`}
 						collapsible
@@ -165,7 +165,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 						<List listing={StoryListing}>
 							{publicStories}
 						</List>
-					</BoxSection>
+					</Section>
 				)}
 				{user && (
 					user.id === publicUser.id

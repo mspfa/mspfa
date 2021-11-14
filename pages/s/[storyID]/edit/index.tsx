@@ -14,7 +14,7 @@ import Button from 'components/Button';
 import { getPrivateStory, getStoryByUnsafeID } from 'lib/server/stories';
 import type { PrivateStory, StoryStatus } from 'lib/client/stories';
 import { StoryPrivacy, storyPrivacyNames, storyStatusNames } from 'lib/client/stories';
-import LabeledGridBoxSection from 'components/Box/LabeledGridBoxSection';
+import LabeledGridSection from 'components/Section/LabeledGridSection';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import IconImage from 'components/IconImage';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
@@ -26,7 +26,7 @@ import { uniq, uniqBy } from 'lodash';
 import users, { getPublicUser } from 'lib/server/users';
 import UserArrayField from 'components/UserField/UserArrayField';
 import BoxColumns from 'components/Box/BoxColumns';
-import BoxSection from 'components/Box/BoxSection';
+import Section from 'components/Section';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
 import Row from 'components/Row';
@@ -163,12 +163,12 @@ const Component = withErrorPage<ServerSideProps>(({
 			{story.willDelete ? (
 				<>
 					<Box>
-						<BoxSection heading="Deleted Adventure">
+						<Section heading="Deleted Adventure">
 							<Row>
 								<i>{story.title}</i>
 								{` will be permanently deleted in ~${daysUntilDeletion} day${daysUntilDeletion === 1 ? '' : 's'}.`}
 							</Row>
-						</BoxSection>
+						</Section>
 					</Box>
 					<BoxFooter>
 						{ownerPerms && (
@@ -244,7 +244,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						return (
 							<Form>
 								<Box>
-									<BoxSection
+									<Section
 										id="story-editor-options"
 										heading={story.title}
 									>
@@ -262,9 +262,9 @@ const Component = withErrorPage<ServerSideProps>(({
 										>
 											Edit Pages
 										</Button>
-									</BoxSection>
+									</Section>
 									<BoxColumns>
-										<LabeledGridBoxSection id="story-editor-info" heading="Info">
+										<LabeledGridSection id="story-editor-info" heading="Info">
 											<LabeledGridField
 												name="title"
 												label="Title"
@@ -328,8 +328,8 @@ const Component = withErrorPage<ServerSideProps>(({
 													alt="Your Adventure's Icon"
 												/>
 											</Row>
-										</LabeledGridBoxSection>
-										<LabeledGridBoxSection id="story-editor-misc" heading="Misc">
+										</LabeledGridSection>
+										<LabeledGridSection id="story-editor-misc" heading="Misc">
 											<LabeledGridRow label="Owner">
 												<UserField
 													name="owner"
@@ -415,9 +415,9 @@ const Component = withErrorPage<ServerSideProps>(({
 												help={'A direct URL to an image of your adventure\'s anniversary banner. The recommended image size is 950x100 pixels.\n\nIf your adventure is public, is ongoing or complete, and has at least 200 favorites, this image will be displayed on the homepage for one week starting on the adventure\'s anniversary date.'}
 												placeholder="Optional"
 											/>
-										</LabeledGridBoxSection>
+										</LabeledGridSection>
 									</BoxColumns>
-									<BoxSection id="story-editor-details" heading="Details">
+									<Section id="story-editor-details" heading="Details">
 										<Row>
 											<TagField rows={3} />
 										</Row>
@@ -449,8 +449,8 @@ const Component = withErrorPage<ServerSideProps>(({
 												placeholder={'Instead of putting external links in the description, put them here.\nClick the help button for more info.'}
 											/>
 										</Row>
-									</BoxSection>
-									<BoxSection id="story-editor-advanced" heading="Advanced" collapsible>
+									</Section>
+									<Section id="story-editor-advanced" heading="Advanced" collapsible>
 										<Row id="story-editor-code-fields">
 											<div>
 												<Label block htmlFor="field-style">
@@ -477,7 +477,7 @@ const Component = withErrorPage<ServerSideProps>(({
 												/>
 											</div>
 										</Row>
-									</BoxSection>
+									</Section>
 									<BoxFooter>
 										<Button
 											type="submit"

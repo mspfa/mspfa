@@ -3,7 +3,7 @@ import Page from 'components/Page';
 import { withErrorPage } from 'lib/client/errors';
 import { withStatusCode } from 'lib/server/errors';
 import Box from 'components/Box';
-import BoxSection from 'components/Box/BoxSection';
+import Section from 'components/Section';
 import { Perm } from 'lib/client/perms';
 import messages, { getClientMessage, getMessageByUnsafeID, updateUnreadMessages } from 'lib/server/messages';
 import type { ClientMessage } from 'lib/client/messages';
@@ -128,7 +128,7 @@ const Component = withErrorPage<ServerSideProps>(({
 								id="message"
 								className={editing ? 'editing' : undefined}
 							>
-								<BoxSection
+								<Section
 									id="message-info"
 									heading={message.subject}
 								>
@@ -169,8 +169,8 @@ const Component = withErrorPage<ServerSideProps>(({
 											{message.sent}
 										</Timestamp>
 									</div>
-								</BoxSection>
-								<BoxSection id="message-content">
+								</Section>
+								<Section id="message-content">
 									{editing ? (
 										<>
 											<Label block htmlFor="field-content">
@@ -187,7 +187,7 @@ const Component = withErrorPage<ServerSideProps>(({
 									) : (
 										<BBCode>{message.content}</BBCode>
 									)}
-								</BoxSection>
+								</Section>
 								<BoxFooter>
 									{editing ? (
 										<>

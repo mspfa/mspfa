@@ -1,7 +1,7 @@
 @use 'lib/styles/themes' as *;
 
 #profile {
-	.box-section > .box-section-content {
+	.section > .section-content {
 		column-gap: 2em;
 	}
 
@@ -16,7 +16,7 @@
 			width: 200px;
 		}
 
-		& > .box-section-content {
+		& > .section-content {
 			text-align: center;
 			padding-left: 10px;
 			padding-right: 10px;
@@ -49,7 +49,7 @@
 		}
 	}
 
-	&-description > .box-section-content {
+	&-description > .section-content {
 		font-size: 0.875rem;
 	}
 }

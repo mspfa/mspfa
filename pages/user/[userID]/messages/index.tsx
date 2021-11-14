@@ -3,7 +3,7 @@ import Page from 'components/Page';
 import { withErrorPage } from 'lib/client/errors';
 import { withStatusCode } from 'lib/server/errors';
 import Box from 'components/Box';
-import BoxSection from 'components/Box/BoxSection';
+import Section from 'components/Section';
 import { Perm } from 'lib/client/perms';
 import { permToGetUserInPage } from 'lib/server/permToGetUser';
 import type { ServerMessage } from 'lib/server/messages';
@@ -148,7 +148,7 @@ const Component = withErrorPage<ServerSideProps>(({
 	return (
 		<Page withFlashyTitle heading="Messages">
 			<Box>
-				<BoxSection
+				<Section
 					heading={`Your Messages (${listedMessages.length} total, ${unreadCount} unread)`}
 				>
 					<div
@@ -223,7 +223,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							{listedMessages}
 						</List>
 					)}
-				</BoxSection>
+				</Section>
 			</Box>
 		</Page>
 	);

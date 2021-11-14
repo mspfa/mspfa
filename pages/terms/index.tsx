@@ -2,7 +2,7 @@ import './styles.module.scss';
 import Box from 'components/Box';
 import Row from 'components/Row';
 import Page from 'components/Page';
-import BoxSection from 'components/Box/BoxSection';
+import Section from 'components/Section';
 import type { MyGetServerSideProps } from 'lib/server/pages';
 import getRandomImageFilename from 'lib/server/getRandomImageFilename';
 
@@ -13,7 +13,7 @@ export type ServerSideProps = {
 const Component = ({ imageFilename }: ServerSideProps) => (
 	<Page withFlashyTitle heading="Terms of Service">
 		<Box>
-			<BoxSection id="terms">
+			<Section id="terms">
 				<Row>
 					<img
 						src={`/images/terms/${imageFilename}`}
@@ -29,7 +29,7 @@ const Component = ({ imageFilename }: ServerSideProps) => (
 						[ Terms of service here ]
 					</p>
 				</Row>
-			</BoxSection>
+			</Section>
 		</Box>
 	</Page>
 );

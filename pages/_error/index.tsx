@@ -6,7 +6,7 @@ import type { ServerResponse } from 'http';
 import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
 import Router from 'next/router';
-import BoxSection from 'components/Box/BoxSection';
+import Section from 'components/Section';
 import type { integer } from 'lib/types';
 import getRandomImageFilename from 'lib/server/getRandomImageFilename'; // @server-only
 
@@ -32,7 +32,7 @@ const ErrorPage = ({ statusCode, imageFilename }: ErrorPageProps) => (
 	<Page withFlashyTitle heading={`Error ${statusCode}`}>
 		<Box id="error-box">
 			{statusCode === 403 && (
-				<BoxSection>
+				<Section>
 					<Row>
 						<img
 							src={`/images/403/${imageFilename!}`}
@@ -41,7 +41,7 @@ const ErrorPage = ({ statusCode, imageFilename }: ErrorPageProps) => (
 						/>
 					</Row>
 					<Row>You don't have permission to access this page.</Row>
-				</BoxSection>
+				</Section>
 			)}
 			<BoxFooter>
 				<Button onClick={goBack}>

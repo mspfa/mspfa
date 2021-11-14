@@ -5,7 +5,7 @@ import { permToGetUserInPage } from 'lib/server/permToGetUser';
 import { withErrorPage } from 'lib/client/errors';
 import { withStatusCode } from 'lib/server/errors';
 import Box from 'components/Box';
-import BoxSection from 'components/Box/BoxSection';
+import Section from 'components/Section';
 import List from 'components/List';
 import type { integer } from 'lib/types';
 import type { StorySave } from 'components/StorySaveListing';
@@ -48,7 +48,7 @@ const Component = withErrorPage<ServerSideProps>(({
 	return (
 		<Page withFlashyTitle heading="Your Game Saves">
 			<Box>
-				<BoxSection id="story-saves-section" heading="Game Saves">
+				<Section id="story-saves-section" heading="Game Saves">
 					{storySaves.length ? (
 						<List
 							listing={StorySaveListing}
@@ -73,7 +73,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							</Row>
 						</>
 					)}
-				</BoxSection>
+				</Section>
 			</Box>
 		</Page>
 	);

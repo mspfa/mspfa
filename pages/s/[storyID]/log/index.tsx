@@ -9,7 +9,7 @@ import type { integer } from 'lib/types';
 import StoryLog from 'components/StoryLog';
 import Page from 'components/Page';
 import Box from 'components/Box';
-import BoxSection from 'components/Box/BoxSection';
+import Section from 'components/Section';
 import Link from 'components/Link';
 import { useMemo } from 'react';
 import { useRouter } from 'next/router';
@@ -46,7 +46,7 @@ const Component = withErrorPage<ServerSideProps>(({ story, listings }) => {
 	const pageComponent = (
 		<Page withFlashyTitle heading="Adventure Log">
 			<Box>
-				<BoxSection heading={story.title}>
+				<Section heading={story.title}>
 					<StoryLog listings={sortedListings}>
 						<Link
 							id="story-log-sort-link"
@@ -62,7 +62,7 @@ const Component = withErrorPage<ServerSideProps>(({ story, listings }) => {
 							{sortMode === 'newest' ? 'View oldest to newest' : 'View newest to oldest'}
 						</Link>
 					</StoryLog>
-				</BoxSection>
+				</Section>
 			</Box>
 		</Page>
 	);

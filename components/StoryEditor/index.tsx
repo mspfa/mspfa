@@ -8,7 +8,7 @@ import useFunction from 'lib/client/useFunction';
 import { getChangedValues, preventLeaveConfirmations, useLeaveConfirmation } from 'lib/client/forms';
 import type { StoryID, StoryPageID } from 'lib/server/stories';
 import type { ClientStoryPage, ClientStoryPageRecord, PrivateStory } from 'lib/client/stories';
-import BoxSection from 'components/Box/BoxSection';
+import Section from 'components/Section';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import StoryEditorPageListing from 'components/StoryEditor/StoryEditorPageList/StoryEditorPageListing';
@@ -744,7 +744,7 @@ const StoryEditor = ({
 								const selected = selectedPages.includes(page.id);
 
 								pageComponents.push(
-									<BoxSection
+									<Section
 										key={page[_key]}
 										id={`p${page.id}`}
 										className={`story-editor-page ${pageStatus}${selected ? ' selected' : ''}`}
@@ -753,7 +753,7 @@ const StoryEditor = ({
 										onClick={onClickPageTile}
 									>
 										{page.title}
-									</BoxSection>
+									</Section>
 								);
 							}
 						};

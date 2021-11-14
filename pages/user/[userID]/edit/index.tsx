@@ -12,8 +12,8 @@ import useFunction from 'lib/client/useFunction';
 import { getChangedValues, useLeaveConfirmation } from 'lib/client/forms';
 import Box from 'components/Box';
 import BoxColumns from 'components/Box/BoxColumns';
-import BoxSection from 'components/Box/BoxSection';
-import LabeledGridBoxSection from 'components/Box/LabeledGridBoxSection';
+import Section from 'components/Section';
+import LabeledGridSection from 'components/Section/LabeledGridSection';
 import BoxFooter from 'components/Box/BoxFooter';
 import Button from 'components/Button';
 import api from 'lib/client/api';
@@ -89,7 +89,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 						<Form>
 							<Box>
 								<BoxColumns>
-									<LabeledGridBoxSection heading="Info">
+									<LabeledGridSection heading="Info">
 										<LabeledGridField
 											name="name"
 											label="Username"
@@ -116,9 +116,9 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 												alt="Your Profile Icon"
 											/>
 										</Row>
-									</LabeledGridBoxSection>
+									</LabeledGridSection>
 									<Box>
-										<LabeledGridBoxSection heading="Stats">
+										<LabeledGridSection heading="Stats">
 											<LabeledGridRow htmlFor="field-birthdate-year" label="Birthdate">
 												<BirthdateField required />
 											</LabeledGridRow>
@@ -128,8 +128,8 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 												label="Public Birthdate"
 												help="Shows your birthdate publicly on your profile."
 											/>
-										</LabeledGridBoxSection>
-										<LabeledGridBoxSection heading="Contact">
+										</LabeledGridSection>
+										<LabeledGridSection heading="Contact">
 											<LabeledGridField
 												type="email"
 												name="email"
@@ -147,10 +147,10 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 												name="site"
 												label="Website"
 											/>
-										</LabeledGridBoxSection>
+										</LabeledGridSection>
 									</Box>
 								</BoxColumns>
-								<BoxSection heading="Description">
+								<Section heading="Description">
 									<Label block htmlFor="field-description">
 										Description
 									</Label>
@@ -160,8 +160,8 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 										maxLength={2000}
 										keepHTMLTags
 									/>
-								</BoxSection>
-								<BoxSection heading="Advanced" collapsible>
+								</Section>
+								<Section heading="Advanced" collapsible>
 									<Label block htmlFor="field-style">
 										Custom Profile Style
 									</Label>
@@ -172,7 +172,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 										rows={5}
 										placeholder={'Paste SCSS here.\nIf you don\'t know what this is, don\'t worry about it.'}
 									/>
-								</BoxSection>
+								</Section>
 								<BoxFooter>
 									<Button
 										type="submit"

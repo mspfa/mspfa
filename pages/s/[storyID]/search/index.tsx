@@ -8,7 +8,7 @@ import { getPublicStory, getStoryByUnsafeID } from 'lib/server/stories';
 import type { integer } from 'lib/types';
 import Page from 'components/Page';
 import Box from 'components/Box';
-import BoxSection from 'components/Box/BoxSection';
+import Section from 'components/Section';
 import { Field, Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
 import useFunction from 'lib/client/useFunction';
@@ -129,7 +129,7 @@ const Component = withErrorPage<ServerSideProps>(({ story, results }) => {
 	const pageComponent = (
 		<Page withFlashyTitle heading="Adventure Search">
 			<Box>
-				<BoxSection
+				<Section
 					id="story-search-section"
 					heading={story.title}
 				>
@@ -167,7 +167,7 @@ const Component = withErrorPage<ServerSideProps>(({ story, results }) => {
 					<div id="story-search-results">
 						{resultNodes}
 					</div>
-				</BoxSection>
+				</Section>
 			</Box>
 		</Page>
 	);

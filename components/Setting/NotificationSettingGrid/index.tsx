@@ -1,8 +1,8 @@
 import './styles.module.scss';
 import LabeledGrid from 'components/LabeledGrid';
-import type { LabeledGridBoxSectionProps } from 'components/Box/LabeledGridBoxSection';
+import type { LabeledGridSectionProps } from 'components/Section/LabeledGridSection';
 
-export type NotificationSettingGridProps = LabeledGridBoxSectionProps;
+export type NotificationSettingGridProps = LabeledGridSectionProps;
 
 /** A `LabeledGrid` for `NotificationSetting`s. */
 const NotificationSettingGrid = ({ className, children, ...props }: NotificationSettingGridProps) => (

@@ -2,7 +2,7 @@ import './styles.module.scss';
 import type { HTMLAttributes, ReactNode } from 'react';
 import React from 'react';
 
-export type BoxSectionProps = HTMLAttributes<HTMLDivElement> & {
+export type SectionProps = HTMLAttributes<HTMLDivElement> & {
 	heading?: ReactNode,
 	collapsible?: boolean,
 	open?: boolean,
@@ -10,8 +10,8 @@ export type BoxSectionProps = HTMLAttributes<HTMLDivElement> & {
 	customContent?: boolean
 };
 
-/** A `Box` section with a heading and content. Should always be placed in a `Box`. */
-const BoxSection = React.forwardRef<HTMLDivElement, BoxSectionProps>(({
+/** A section with a heading and content. Should always be placed in a `Box`. */
+const Section = React.forwardRef<HTMLDivElement, SectionProps>(({
 	heading,
 	className,
 	collapsible,
@@ -24,19 +24,19 @@ const BoxSection = React.forwardRef<HTMLDivElement, BoxSectionProps>(({
 
 	return (
 		<SectionTag
-			className={`box-section${className ? ` ${className}` : ''}`}
+			className={`section${className ? ` ${className}` : ''}`}
 			{...props}
 			ref={ref}
 		>
 			{heading && (
-				<HeadingTag className="box-section-heading alt-front">
+				<HeadingTag className="section-heading alt-front">
 					{heading}
 				</HeadingTag>
 			)}
 			{customContent ? (
 				children
 			) : (
-				<div className="box-section-content front">
+				<div className="section-content front">
 					{children}
 				</div>
 			)}
@@ -44,4 +44,4 @@ const BoxSection = React.forwardRef<HTMLDivElement, BoxSectionProps>(({
 	);
 });
 
-export default BoxSection;
+export default Section;
