@@ -3,7 +3,7 @@ import type { ObjectId } from 'mongodb';
 import type { achievements } from 'lib/server/achievements';
 import type { URLString, EmailString, integer } from 'lib/types';
 import type { PrivateUser, PublicUser } from 'lib/client/users';
-import { defaultSettings } from 'lib/client/users';
+import defaultUserSettings from 'lib/client/defaultUserSettings';
 import type { UnsafeObjectID } from 'lib/server/db';
 import type { Theme } from 'lib/client/themes';
 import type { StoryID, StoryPageID } from 'lib/server/stories';
@@ -150,7 +150,7 @@ export const defaultUser = {
 	achievements: {} as Record<never, never>,
 	storySaves: {} as Record<never, never>,
 	profileStyle: '',
-	settings: defaultSettings,
+	settings: defaultUserSettings,
 	perms: 0,
 	unreadMessageCount: 0
 } as const;

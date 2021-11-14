@@ -8,7 +8,7 @@ import { authenticate } from 'lib/server/auth';
 import type { ClientCommentReply } from 'lib/client/comments';
 import { Perm } from 'lib/client/perms';
 import { ObjectId } from 'mongodb';
-import { StoryPrivacy } from 'lib/client/stories';
+import StoryPrivacy from 'lib/client/StoryPrivacy';
 import type { integer } from 'lib/types';
 import type { PublicUser } from 'lib/client/users';
 import users, { getPublicUser } from 'lib/server/users';

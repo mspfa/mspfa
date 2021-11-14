@@ -3,11 +3,29 @@ import NavGroup from 'components/Nav/NavGroup';
 import NavItem from 'components/Nav/NavItem';
 import NavMenu from 'components/Nav/NavMenu';
 import Router, { useRouter } from 'next/router';
-import { promptSignIn, promptSignOut, useUser } from 'lib/client/users';
+import { setUser, useUser } from 'lib/client/UserContext';
 import useSticky from 'lib/client/useSticky';
 import { useContext, useRef } from 'react';
 import StoryIDContext from 'lib/client/StoryIDContext';
 import PreviewModeContext from 'lib/client/PreviewModeContext';
+import Dialog from 'lib/client/Dialog';
+import type { APIClient } from 'lib/client/api';
+import api from 'lib/client/api';
+import promptSignIn from 'lib/client/promptSignIn';
+
+type SessionAPI = APIClient<typeof import('pages/api/session').default>;
+
+/** Opens a dialog prompting the user to sign out. */
+export const promptSignOut = async () => {
+	if (await Dialog.confirm({
+		id: 'sign-out',
+		title: 'Sign Out',
+		content: 'Are you sure you want to sign out?'
+	})) {
+		await (api as SessionAPI).delete('session');
+		setUser(undefined);
+	}
+};
 
 const visitRandomStory = () => {
 	// TODO: Visit random story.

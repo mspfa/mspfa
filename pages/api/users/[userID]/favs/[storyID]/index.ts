@@ -4,7 +4,7 @@ import { Perm } from 'lib/client/perms';
 import { permToGetUserInAPI } from 'lib/server/permToGetUser';
 import users from 'lib/server/users';
 import { getStoryByUnsafeID, updateFavCount } from 'lib/server/stories';
-import { StoryPrivacy } from 'lib/client/stories';
+import StoryPrivacy from 'lib/client/StoryPrivacy';
 
 const Handler: APIHandler<{
 	query: {

@@ -1,5 +1,5 @@
 import Page from 'components/Page';
-import { setUser, setUserMerge, defaultSettings, getUser } from 'lib/client/users';
+import { setUser, setUserMerge, getUser } from 'lib/client/UserContext';
 import type { PrivateUser } from 'lib/client/users';
 import { Perm } from 'lib/client/perms';
 import { permToGetUserInPage } from 'lib/server/permToGetUser';
@@ -36,6 +36,7 @@ import Timestamp from 'components/Timestamp';
 import EditButton from 'components/Button/EditButton';
 import type { integer } from 'lib/types';
 import useSubmitOnSave from 'lib/client/useSubmitOnSave';
+import defaultUserSettings from 'lib/client/defaultUserSettings';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 type UserAuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;
@@ -65,7 +66,7 @@ const getValuesFromUser = (privateUser: PrivateUser) => ({
 
 type Values = ReturnType<typeof getValuesFromUser>;
 
-let defaultSettingsValues: ReturnType<typeof getSettingsValues> | undefined;
+let defaultUserSettingsValues: ReturnType<typeof getSettingsValues> | undefined;
 
 let formChanged = false;
 
@@ -82,8 +83,8 @@ type ServerSideProps = {
 const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 	const [privateUser, setPrivateUser] = useState(initialPrivateUser);
 
-	if (!defaultSettingsValues) {
-		defaultSettingsValues = getSettingsValues(defaultSettings);
+	if (!defaultUserSettingsValues) {
+		defaultUserSettingsValues = getSettingsValues(defaultUserSettings);
 	}
 
 	const initialValues = getValuesFromUser(privateUser);
@@ -397,7 +398,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 									</Button>
 									<Button
 										title="Reset Settings to Default"
-										disabled={isEqual(values.settings, defaultSettingsValues)}
+										disabled={isEqual(values.settings, defaultUserSettingsValues)}
 										onClick={
 											useFunction(async () => {
 												if (await Dialog.confirm({
@@ -405,7 +406,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 													title: 'Reset Settings',
 													content: 'Are you sure you want to reset your settings to default?\n\nAll unsaved changes will be lost.'
 												})) {
-													setFieldValue('settings', defaultSettingsValues);
+													setFieldValue('settings', defaultUserSettingsValues);
 													onFormChange();
 												}
 											})

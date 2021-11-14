@@ -3,7 +3,7 @@ import type { Filter } from 'mongodb';
 import type { ServerStory } from 'lib/server/stories';
 import stories, { getPublicStory } from 'lib/server/stories';
 import { Perm } from 'lib/client/perms';
-import { StoryPrivacy } from 'lib/client/stories';
+import StoryPrivacy from 'lib/client/StoryPrivacy';
 
 /** Queries the database for stories and filters them to include only the ones that the specified user should be able to find. */
 const findStoriesAsUser = (

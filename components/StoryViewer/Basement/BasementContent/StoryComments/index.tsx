@@ -11,7 +11,7 @@ import api from 'lib/client/api';
 import Dialog from 'lib/client/Dialog';
 import IDPrefix from 'lib/client/IDPrefix';
 import useFunction from 'lib/client/useFunction';
-import { promptSignIn, useUser } from 'lib/client/users';
+import { useUser } from 'lib/client/UserContext';
 import type { ChangeEvent } from 'react';
 import React, { useContext, useRef, useState, useEffect } from 'react';
 import type { StoryCommentsSortMode } from 'pages/api/stories/[storyID]/comments';
@@ -19,6 +19,7 @@ import useComments from 'lib/client/useComments';
 import StoryPageComment from 'components/Comment/StoryPageComment';
 import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
 import frameThrottler from 'lib/client/frameThrottler';
+import promptSignIn from 'lib/client/promptSignIn';
 
 type StoryCommentsAPI = APIClient<typeof import('pages/api/stories/[storyID]/comments').default>;
 type StoryPageCommentsAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments').default>;

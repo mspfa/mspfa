@@ -4,7 +4,7 @@ import stories, { getStoryByUnsafeID } from 'lib/server/stories';
 import { authenticate } from 'lib/server/auth';
 import { Perm } from 'lib/client/perms';
 import { ObjectId } from 'mongodb';
-import { StoryPrivacy } from 'lib/client/stories';
+import StoryPrivacy from 'lib/client/StoryPrivacy';
 import type { ClientColor } from 'lib/client/colors';
 import type { ServerColor } from 'lib/server/colors';
 import { getClientColor } from 'lib/server/colors';

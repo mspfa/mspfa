@@ -8,7 +8,7 @@ import { authenticate } from 'lib/server/auth';
 import type { ClientComment } from 'lib/client/comments';
 import { Perm } from 'lib/client/perms';
 import { ObjectId } from 'mongodb';
-import { StoryPrivacy } from 'lib/client/stories';
+import StoryPrivacy from 'lib/client/StoryPrivacy';
 
 const Handler: APIHandler<{
 	query: {

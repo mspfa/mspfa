@@ -1,5 +1,5 @@
 import Page from 'components/Page';
-import { getUser, setUser } from 'lib/client/users';
+import { getUser, setUser } from 'lib/client/UserContext';
 import type { PrivateUser } from 'lib/client/users';
 import { Perm } from 'lib/client/perms';
 import { permToGetUserInPage } from 'lib/server/permToGetUser';

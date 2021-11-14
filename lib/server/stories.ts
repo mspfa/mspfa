@@ -1,7 +1,8 @@
 import db from 'lib/server/db';
 import type { DateNumber, integer, Mutable, URLString } from 'lib/types';
 import type { ClientStoryPage, PrivateStory, PublicStory } from 'lib/client/stories';
-import { StoryStatus, StoryPrivacy } from 'lib/client/stories';
+import StoryStatus from 'lib/client/StoryStatus';
+import StoryPrivacy from 'lib/client/StoryPrivacy';
 import type { ServerUser, ServerUserID } from 'lib/server/users';
 import users from 'lib/server/users';
 import type { APIResponse } from 'lib/server/api';

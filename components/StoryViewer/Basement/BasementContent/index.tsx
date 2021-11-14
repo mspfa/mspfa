@@ -9,7 +9,7 @@ import Timestamp from 'components/Timestamp';
 import useFunction from 'lib/client/useFunction';
 import React, { Fragment, useContext, useState } from 'react';
 import { PageIDContext, StoryViewerContext } from 'components/StoryViewer';
-import { useUser } from 'lib/client/users';
+import { useUser } from 'lib/client/UserContext';
 import { Perm } from 'lib/client/perms';
 import UserLink from 'components/Link/UserLink';
 import { uniq } from 'lodash';

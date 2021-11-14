@@ -4,7 +4,7 @@ import type { ServerStory, ServerStoryPage, StoryID, StoryPageID } from 'lib/ser
 import { getStoryByUnsafeID, getClientStoryPage, updateStorySchedule, getClientPagesAround } from 'lib/server/stories';
 import { authenticate } from 'lib/server/auth';
 import type { ClientStoryPage, ClientStoryPageRecord } from 'lib/client/stories';
-import { StoryPrivacy } from 'lib/client/stories';
+import StoryPrivacy from 'lib/client/StoryPrivacy';
 import invalidPublishedOrder from 'lib/client/invalidPublishedOrder';
 import type { DateNumber, integer, RecursivePartial } from 'lib/types';
 import { Perm } from 'lib/client/perms';

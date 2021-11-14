@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import Page from 'components/Page';
-import { useUser } from 'lib/client/users';
+import { useUser } from 'lib/client/UserContext';
 import type { PublicUser } from 'lib/client/users';
 import { getUserByUnsafeID, getPublicUser } from 'lib/server/users';
 import { withErrorPage } from 'lib/client/errors';

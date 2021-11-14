@@ -9,7 +9,7 @@ import { mergeWith, uniqBy } from 'lodash';
 import type { ServerStory } from 'lib/server/stories';
 import stories, { getPrivateStory, getPublicStory, getStoryByUnsafeID } from 'lib/server/stories';
 import type { PrivateStory, PublicStory } from 'lib/client/stories';
-import { StoryPrivacy } from 'lib/client/stories';
+import StoryPrivacy from 'lib/client/StoryPrivacy';
 import { authenticate } from 'lib/server/auth';
 import overwriteArrays from 'lib/client/overwriteArrays';
 

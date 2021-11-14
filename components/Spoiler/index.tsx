@@ -1,9 +1,10 @@
 import './styles.module.scss';
-import { defaultSettings, getUser, useUser } from 'lib/client/users';
+import { getUser, useUser } from 'lib/client/UserContext';
 import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
 import type { HTMLAttributes, ReactNode } from 'react';
 import { useState, useEffect } from 'react';
 import useFunction from 'lib/client/useFunction';
+import defaultUserSettings from 'lib/client/defaultUserSettings';
 
 export type SpoilerProps = HTMLAttributes<HTMLDivElement> & {
 	/** The spoiler button's label inserted after "Show" or "Hide". */
@@ -54,7 +55,7 @@ const Spoiler = ({
 	const [open, setOpen] = useState(
 		defaultOpen
 		?? user?.settings.autoOpenSpoilers
-		?? defaultSettings.autoOpenSpoilers
+		?? defaultUserSettings.autoOpenSpoilers
 	);
 
 	useEffect(() => {
@@ -64,7 +65,7 @@ const Spoiler = ({
 					return;
 				}
 
-				const controls = (getUser()?.settings || defaultSettings).controls;
+				const controls = (getUser()?.settings || defaultUserSettings).controls;
 
 				if (event.code === controls.toggleSpoilers) {
 					setOpen(open => !open);

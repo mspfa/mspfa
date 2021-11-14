@@ -6,7 +6,7 @@ import stories, { getStoryByUnsafeID } from 'lib/server/stories';
 import { authenticate } from 'lib/server/auth';
 import type { ClientComment } from 'lib/client/comments';
 import { Perm } from 'lib/client/perms';
-import { StoryPrivacy } from 'lib/client/stories';
+import StoryPrivacy from 'lib/client/StoryPrivacy';
 import type { UpdateFilter } from 'mongodb';
 import { ObjectId } from 'mongodb';
 

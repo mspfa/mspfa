@@ -11,7 +11,7 @@ import { useIsomorphicLayoutEffect, useLatest } from 'react-use';
 import Stick from 'components/Stick';
 import Delimit from 'components/Delimit';
 import Dialog from 'lib/client/Dialog';
-import { defaultSettings, getUser, promptSignIn } from 'lib/client/users';
+import { getUser } from 'lib/client/UserContext';
 import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
 import type { APIClient, APIConfig } from 'lib/client/api';
 import api from 'lib/client/api';
@@ -21,6 +21,8 @@ import PreviewModeContext from 'lib/client/PreviewModeContext';
 import StoryPageLink from 'components/StoryPageLink';
 import StoryIDContext from 'lib/client/StoryIDContext';
 import useFunction from 'lib/client/useFunction';
+import promptSignIn from 'lib/client/promptSignIn';
+import defaultUserSettings from 'lib/client/defaultUserSettings';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 type UserStorySaveAPI = APIClient<typeof import('pages/api/users/[userID]/storySaves/[storyID]').default>;
@@ -369,7 +371,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 				return;
 			}
 
-			const controls = (getUser()?.settings || defaultSettings).controls;
+			const controls = (getUser()?.settings || defaultUserSettings).controls;
 
 			if (event.code === controls.previousPage) {
 				if (previousPageID) {

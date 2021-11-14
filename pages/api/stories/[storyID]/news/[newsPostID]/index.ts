@@ -6,7 +6,7 @@ import stories, { getStoryByUnsafeID } from 'lib/server/stories';
 import { authenticate } from 'lib/server/auth';
 import type { ClientNewsPost } from 'lib/client/news';
 import { Perm } from 'lib/client/perms';
-import { StoryPrivacy } from 'lib/client/stories';
+import StoryPrivacy from 'lib/client/StoryPrivacy';
 import type { RecursivePartial } from 'lib/types';
 import { flatten } from 'lib/server/db';
 

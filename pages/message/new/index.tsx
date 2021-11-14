@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import Page from 'components/Page';
 import type { PublicUser } from 'lib/client/users';
-import { getUser, promptSignIn } from 'lib/client/users';
+import { getUser } from 'lib/client/UserContext';
 import type { FormikHelpers } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import useFunction from 'lib/client/useFunction';
@@ -28,6 +28,7 @@ import Link from 'components/Link';
 import { safeObjectID } from 'lib/server/db';
 import type { ObjectId } from 'mongodb';
 import type { integer } from 'lib/types';
+import promptSignIn from 'lib/client/promptSignIn';
 
 type MessagesAPI = APIClient<typeof import('pages/api/messages').default>;
 

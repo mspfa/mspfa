@@ -9,7 +9,7 @@ import type { ClientComment } from 'lib/client/comments';
 import { Perm } from 'lib/client/perms';
 import type { integer } from 'lib/types';
 import type { PublicUser } from 'lib/client/users';
-import { StoryPrivacy } from 'lib/client/stories';
+import StoryPrivacy from 'lib/client/StoryPrivacy';
 import users, { getPublicUser } from 'lib/server/users';
 import { uniqBy } from 'lodash';
 import { ObjectId } from 'mongodb';

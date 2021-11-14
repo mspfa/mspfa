@@ -2,7 +2,7 @@ import Dialog from 'lib/client/Dialog';
 import SignIn, { signInValues, resetSignInValues } from 'components/SignIn';
 import api from 'lib/client/api';
 import type { APIClient, APIError } from 'lib/client/api';
-import { setUser } from 'lib/client/users';
+import { setUser } from 'lib/client/UserContext';
 import type { AuthMethodOptions } from 'lib/client/auth';
 import type { integer } from 'lib/types';
 

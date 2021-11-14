@@ -3,12 +3,13 @@ import Button from 'components/Button';
 import type { ButtonProps } from 'components/Button';
 import { useRef, useState } from 'react';
 import useFunction from 'lib/client/useFunction';
-import { setUser, promptSignIn, useUser } from 'lib/client/users';
+import { setUser, useUser } from 'lib/client/UserContext';
 import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
 import Dialog from 'lib/client/Dialog';
 import type { StoryID } from 'lib/server/stories';
 import type { integer } from 'lib/types';
+import promptSignIn from 'lib/client/promptSignIn';
 
 type UserFavAPI = APIClient<typeof import('pages/api/users/[userID]/favs/[storyID]').default>;
 

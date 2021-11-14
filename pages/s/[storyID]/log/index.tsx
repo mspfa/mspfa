@@ -2,7 +2,7 @@ import './styles.module.scss';
 import { withErrorPage } from 'lib/client/errors';
 import { Perm } from 'lib/client/perms';
 import type { PublicStory, StoryLogListings } from 'lib/client/stories';
-import { StoryPrivacy } from 'lib/client/stories';
+import StoryPrivacy from 'lib/client/StoryPrivacy';
 import { withStatusCode } from 'lib/server/errors';
 import { getPublicStory, getStoryByUnsafeID } from 'lib/server/stories';
 import type { integer } from 'lib/types';

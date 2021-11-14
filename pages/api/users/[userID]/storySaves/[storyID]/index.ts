@@ -5,7 +5,7 @@ import { permToGetUserInAPI } from 'lib/server/permToGetUser';
 import users from 'lib/server/users';
 import type { StoryPageID } from 'lib/server/stories';
 import { getStoryByUnsafeID } from 'lib/server/stories';
-import { StoryPrivacy } from 'lib/client/stories';
+import StoryPrivacy from 'lib/client/StoryPrivacy';
 
 const Handler: APIHandler<{
 	query: {

@@ -14,7 +14,7 @@ import type { ClientNewsPost } from 'lib/client/news';
 import { Perm } from 'lib/client/perms';
 import useFunction from 'lib/client/useFunction';
 import { useUserCache } from 'lib/client/UserCache';
-import { useUser } from 'lib/client/users';
+import { useUser } from 'lib/client/UserContext';
 import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import useMountedRef from 'lib/client/useMountedRef';

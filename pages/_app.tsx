@@ -7,7 +7,7 @@ import type { AppProps, AppContext } from 'next/app';
 import type { NextPageContext } from 'next';
 import Head from 'next/head';
 import env from 'lib/client/env';
-import { UserContext, useUserMerge, useUserInApp } from 'lib/client/users';
+import UserContext, { useUserMerge, useUserInApp } from 'lib/client/UserContext';
 import type { PrivateUser } from 'lib/client/users';
 import type { PageRequest } from 'lib/server/pages';
 import React, { useEffect, useRef } from 'react';

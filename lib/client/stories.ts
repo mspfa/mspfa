@@ -2,32 +2,6 @@ import type { ServerStory, StoryID, ServerStoryPage, StoryPageID } from 'lib/ser
 import type { DateNumber, integer } from 'lib/types';
 import type { ClientColor } from 'lib/client/colors';
 
-export enum StoryStatus {
-	Ongoing = 0,
-	Complete,
-	Discontinued,
-	Inactive
-}
-
-export const storyStatusNames: Record<StoryStatus, string> = {
-	[StoryStatus.Ongoing]: 'Ongoing',
-	[StoryStatus.Complete]: 'Complete',
-	[StoryStatus.Discontinued]: 'Discontinued',
-	[StoryStatus.Inactive]: 'Inactive'
-};
-
-export enum StoryPrivacy {
-	Public = 0,
-	Unlisted,
-	Private
-}
-
-export const storyPrivacyNames: Record<StoryPrivacy, string> = {
-	[StoryPrivacy.Public]: 'Public',
-	[StoryPrivacy.Unlisted]: 'Unlisted',
-	[StoryPrivacy.Private]: 'Private'
-};
-
 /** All keys whose values have the same serializable type in both `ServerStory` and `PrivateStory`. */
 type PrivateStoryKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'icon' | 'pageCount' | 'favCount' | 'banner' | 'style' | 'script' | 'tags' | 'allowComments' | 'sidebarContent' | 'defaultPageTitle';
 
