@@ -12,6 +12,8 @@ import type { ClientPreviousPageIDs } from 'components/StoryViewer';
 import { PAGE_PRELOAD_DEPTH } from 'components/StoryViewer';
 import type { ServerNewsPost } from 'lib/server/news';
 import type { TagString } from 'lib/client/storyTags';
+import type { ServerColor } from 'lib/server/colors';
+import { getClientColor } from 'lib/server/colors';
 
 /** @minimum 1 */
 export type StoryID = integer;
@@ -41,11 +43,6 @@ export type ServerStoryPage = {
 };
 
 export type StoryPageRecord = Record<StoryPageID, ServerStoryPage>;
-
-export type StoryColor = {
-	value: string,
-	name: string
-};
 
 /** A story object used on the server and stored in the database. No `ServerStory` can ever be on the client. */
 export type ServerStory = {
@@ -118,7 +115,8 @@ export type ServerStory = {
 	/** This story's news posts sorted from newest to oldest. */
 	news: ServerNewsPost[],
 	defaultPageTitle: ServerStoryPage['title'],
-	colors: StoryColor[],
+	/** All of this story's saved colors (for use in the `ColorPicker`). */
+	colors: ServerColor[],
 	quirks: Quirk[]
 };
 
@@ -179,7 +177,7 @@ export const getPrivateStory = (story: ServerStory): PrivateStory => ({
 	allowComments: story.allowComments,
 	sidebarContent: story.sidebarContent,
 	defaultPageTitle: story.defaultPageTitle,
-	colors: story.colors,
+	colors: story.colors.map(getClientColor),
 	quirks: story.quirks
 });
 
@@ -206,7 +204,6 @@ export const getPublicStory = (story: ServerStory): PublicStory => ({
 	tags: story.tags,
 	allowComments: story.allowComments,
 	sidebarContent: story.sidebarContent,
-	colors: story.colors,
 	quirks: story.quirks
 });
 

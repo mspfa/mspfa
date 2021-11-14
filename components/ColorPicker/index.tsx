@@ -49,8 +49,6 @@ const ColorPicker = ({ name }: ColorPickerProps) => {
 		}
 	}
 
-	// TODO: Implement color saving.
-
 	return (
 		<>
 			<div
