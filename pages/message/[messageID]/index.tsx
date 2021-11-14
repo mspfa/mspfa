@@ -122,14 +122,11 @@ const Component = withErrorPage<ServerSideProps>(({
 						}
 					});
 
-					const formRef = useRef<HTMLFormElement>(null!);
-					useSubmitOnSave({ submitForm, dirty }, formRef, editing);
-
 					return (
 						<Form
 							id="message"
 							className={editing ? 'editing' : undefined}
-							ref={formRef}
+							ref={useSubmitOnSave({ submitForm, dirty }, editing)}
 						>
 							<Section
 								id="message-info"
