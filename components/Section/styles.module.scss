@@ -2,14 +2,14 @@
 	display: flex;
 	flex-direction: column;
 
-	@at-root details#{&}:not([open]) {
-		margin-bottom: 0;
-	}
-
 	&-heading {
 		text-align: center;
 		padding: 0.25em 0.5em;
 		margin-bottom: 4px;
+
+		details.section:not([open]) > & {
+			margin-bottom: 0;
+		}
 	}
 
 	&-content {
