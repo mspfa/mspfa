@@ -161,15 +161,13 @@ const Component = withErrorPage<ServerSideProps>(({
 	const pageComponent = (
 		<Page heading="Edit Adventure">
 			{story.willDelete ? (
-				<>
-					<Box>
-						<Section heading="Deleted Adventure">
-							<Row>
-								<i>{story.title}</i>
-								{` will be permanently deleted in ~${daysUntilDeletion} day${daysUntilDeletion === 1 ? '' : 's'}.`}
-							</Row>
-						</Section>
-					</Box>
+				<Box>
+					<Section heading="Deleted Adventure">
+						<Row>
+							<i>{story.title}</i>
+							{` will be permanently deleted in ~${daysUntilDeletion} day${daysUntilDeletion === 1 ? '' : 's'}.`}
+						</Row>
+					</Section>
 					<BoxFooter>
 						{ownerPerms && (
 							<Button
@@ -180,7 +178,7 @@ const Component = withErrorPage<ServerSideProps>(({
 							</Button>
 						)}
 					</BoxFooter>
-				</>
+				</Box>
 			) : (
 				<Formik
 					initialValues={initialValues}
