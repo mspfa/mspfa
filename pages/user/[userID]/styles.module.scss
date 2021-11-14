@@ -1,7 +1,7 @@
 @use 'lib/styles/themes' as *;
 
 #profile {
-	.section > .section-content {
+	.section-content {
 		column-gap: 2em;
 	}
 
@@ -43,13 +43,15 @@
 
 	&-actions {
 		font-size: 0.875rem;
-
-		& > :not(:first-child) {
-			margin-top: 0.25em;
-		}
+		padding: 0.25em 0;
 	}
 
 	&-description > .section-content {
 		font-size: 0.875rem;
 	}
+}
+
+.profile-action {
+	display: block;
+	margin-top: 0.25em;
 }
