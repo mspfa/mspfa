@@ -55,6 +55,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 	const [unreadMessageCountUpdated, setUnreadMessageCountUpdated] = useState(unreadMessageCount === undefined);
 
+	// Update the user's unread message count to the one received from the server-side props.
 	useIsomorphicLayoutEffect(() => {
 		if (!unreadMessageCountUpdated) {
 			setUser({
