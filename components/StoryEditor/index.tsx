@@ -22,6 +22,7 @@ import StoryIDContext from 'lib/client/StoryIDContext';
 import StoryEditorPageGrid, { defaultGridCullingInfo } from 'components/StoryEditor/StoryEditorPageGrid';
 import StoryEditorPageList from 'components/StoryEditor/StoryEditorPageList';
 import StoryEditorPagesOptions from 'components/StoryEditor/StoryEditorPagesOptions';
+import useSubmitOnSave from 'lib/client/useSubmitOnSave';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 
@@ -133,7 +134,6 @@ const StoryEditor = ({
 	const [initialPages, setInitialPages] = useState(initialPagesProp);
 
 	const formikPropsRef = useRef<FormikProps<Values>>(null!);
-	const formRef = useRef<HTMLFormElement>(null!);
 
 	const pageComponent = (
 		<Page heading="Edit Adventure">
@@ -397,37 +397,8 @@ const StoryEditor = ({
 							calledUpdateLocationHashRef.current = true;
 						}
 
-						const onKeyDown = (event: KeyboardEvent) => {
-							if (event.altKey) {
-								// If the user is holding `alt`, let the browser handle it.
-								return;
-							}
-
-							// Check for `ctrl`+`S` or `⌘`+`S`.
-							if ((event.ctrlKey || event.metaKey) && event.code === 'KeyS') {
-								if (viewMode === 'list') {
-									// Save all.
-									if (formRef.current.reportValidity()) {
-										// Save the focused element since it may be lost due to `isSubmitting`.
-										const initialActiveElement = document.activeElement;
-
-										formikPropsRef.current.submitForm().then(() => {
-											// Restore focus to the `initialActiveElement` if possible.
-											(initialActiveElement as any)?.focus?.();
-										});
-									}
-								}
-
-								// Prevent default regardless of `viewMode` in case they accidentally pressed it.
-								event.preventDefault();
-							}
-						};
-
-						document.addEventListener('keydown', onKeyDown);
-
 						return () => {
 							window.removeEventListener('hashchange', updateLocationHash);
-							document.removeEventListener('keydown', onKeyDown);
 						};
 					}, [viewMode, sortMode, gridCullingInfoRef, defaultCulledHeightRef]);
 
@@ -814,7 +785,9 @@ const StoryEditor = ({
 								}), [formikProps.isSubmitting, firstDraftID, lastNonDraftID, storyID, toggleAdvancedShown])
 							}
 						>
-							<Form ref={formRef}>
+							<Form
+								ref={useSubmitOnSave(formikProps, viewMode === 'list')}
+							>
 								<StoryEditorPagesOptions
 									story={story}
 									setStory={setStory}

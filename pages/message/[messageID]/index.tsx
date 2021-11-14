@@ -13,7 +13,7 @@ import { useUser, setUser } from 'lib/client/users';
 import { uniqBy } from 'lodash';
 import { useUserCache } from 'lib/client/UserCache';
 import Link from 'components/Link';
-import { Fragment, useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
 import useFunction from 'lib/client/useFunction';
 import Timestamp from 'components/Timestamp';
 import Button from 'components/Button';
@@ -29,6 +29,7 @@ import { useLeaveConfirmation } from 'lib/client/forms';
 import UserLink from 'components/Link/UserLink';
 import { useIsomorphicLayoutEffect } from 'react-use';
 import type { integer } from 'lib/types';
+import useSubmitOnSave from 'lib/client/useSubmitOnSave';
 
 type MessageAPI = APIClient<typeof import('pages/api/messages/[messageID]').default>;
 type MessageDeletedByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy/[userID]').default>;
@@ -109,7 +110,7 @@ const Component = withErrorPage<ServerSideProps>(({
 				}
 				enableReinitialize
 			>
-				{({ dirty, isSubmitting, resetForm }) => {
+				{({ dirty, isSubmitting, resetForm, submitForm }) => {
 					const shouldLeave = useLeaveConfirmation(dirty);
 
 					const cancel = useFunction(() => {
@@ -121,10 +122,14 @@ const Component = withErrorPage<ServerSideProps>(({
 						}
 					});
 
+					const formRef = useRef<HTMLFormElement>(null!);
+					useSubmitOnSave({ submitForm, dirty }, formRef, editing);
+
 					return (
 						<Form
 							id="message"
 							className={editing ? 'editing' : undefined}
+							ref={formRef}
 						>
 							<Section
 								id="message-info"

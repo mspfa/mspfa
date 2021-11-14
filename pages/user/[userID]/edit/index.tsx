@@ -25,6 +25,7 @@ import Row from 'components/Row';
 import BirthdateField from 'components/DateField/BirthdateField';
 import BBField from 'components/BBCode/BBField';
 import type { integer } from 'lib/types';
+import useSubmitOnSave from 'lib/client/useSubmitOnSave';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 
@@ -81,11 +82,13 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 				}
 				enableReinitialize
 			>
-				{({ isSubmitting, dirty, values }) => {
+				{({ isSubmitting, dirty, values, submitForm }) => {
 					useLeaveConfirmation(dirty);
 
 					return (
-						<Form>
+						<Form
+							ref={useSubmitOnSave({ submitForm, dirty })}
+						>
 							<Columns>
 								<LabeledGridSection heading="Info">
 									<LabeledGridField

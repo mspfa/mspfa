@@ -35,6 +35,7 @@ import { useDeepCompareEffect } from 'react-use';
 import Timestamp from 'components/Timestamp';
 import EditButton from 'components/Button/EditButton';
 import type { integer } from 'lib/types';
+import useSubmitOnSave from 'lib/client/useSubmitOnSave';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 type UserAuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;
@@ -223,7 +224,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 				}
 				enableReinitialize
 			>
-				{({ isSubmitting, dirty, values, setFieldValue, setSubmitting }) => {
+				{({ isSubmitting, dirty, values, setFieldValue, setSubmitting, submitForm }) => {
 					useLeaveConfirmation(dirty);
 
 					useEffect(() => {
@@ -236,7 +237,10 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 					});
 
 					return (
-						<Form onChange={onFormChange}>
+						<Form
+							onChange={onFormChange}
+							ref={useSubmitOnSave({ submitForm, dirty })}
+						>
 							<LabeledGridSection heading="Account">
 								<LabeledGridField
 									type="email"

@@ -38,6 +38,7 @@ import EditButton from 'components/Button/EditButton';
 import Dialog from 'lib/client/Dialog';
 import type { integer } from 'lib/types';
 import StoryIDContext from 'lib/client/StoryIDContext';
+import useSubmitOnSave from 'lib/client/useSubmitOnSave';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 
@@ -184,7 +185,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					onSubmit={onSubmit}
 					enableReinitialize
 				>
-					{({ isSubmitting, dirty, values, handleChange, setFieldValue, setSubmitting }) => {
+					{({ isSubmitting, dirty, values, handleChange, setFieldValue, setSubmitting, submitForm }) => {
 						const shouldLeave = useLeaveConfirmation(dirty);
 
 						const [ownerBeforeEdit, setOwnerBeforeEdit] = useState<string | undefined>(values.owner || story.owner);
@@ -239,7 +240,9 @@ const Component = withErrorPage<ServerSideProps>(({
 						});
 
 						return (
-							<Form>
+							<Form
+								ref={useSubmitOnSave({ submitForm, dirty })}
+							>
 								<Section
 									id="story-editor-options"
 									heading={story.title}
