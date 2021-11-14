@@ -1,6 +1,5 @@
 import './styles.module.scss';
-import type { ChangeEvent } from 'react';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useState } from 'react';
 import useFunction from 'lib/client/useFunction';
 import { BBFieldContext } from 'components/BBCode/BBField';
 import Button from 'components/Button';
@@ -9,17 +8,15 @@ import LabeledGrid from 'components/LabeledGrid';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import Label from 'components/Label';
 import type { FormikProps } from 'formik';
-import { Field } from 'formik';
 import Row from 'components/Row';
 import Link from 'components/Link';
 import { getChangedValues } from 'lib/client/forms';
 import IDPrefix from 'lib/client/IDPrefix';
 import { useLatest } from 'react-use';
-import { hashlessColorCodeTest, youTubeVideoIDTest } from 'components/BBCode/BBTags';
+import { youTubeVideoIDTest } from 'components/BBCode/BBTags';
 import type { integer } from 'lib/types';
 import escapeBBAttribute from 'lib/client/escapeBBAttribute';
-import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
-import SaveButton from 'components/Button/SaveButton';
+import ColorPicker from 'components/ColorPicker';
 
 const defaultBBPreview = 'The quick brown fox jumps over the lazy dog.';
 
@@ -28,91 +25,6 @@ const randomColorAttributes = () => ({
 });
 
 const presetFontFamilies = ['Arial', 'Bodoni MT', 'Book Antiqua', 'Calibri', 'Cambria', 'Candara', 'Century Gothic', 'Comic Sans MS', 'Consolas', 'Courier New', 'Garamond', 'Georgia', 'Goudy Old Style', 'Helvetica', 'Homestuck-Regular', 'Impact', 'Lucida Bright', 'Lucida Console', 'Lucida Sans Typewriter', 'Perpetua', 'Rockwell', 'Segoe UI', 'Tahoma', 'Times New Roman', 'Trebuchet MS', 'Verdana'];
-
-const getTwoDigitHex = (dec: string) => `0${(+dec).toString(16)}`.slice(-2);
-
-const ColorContent = ({ values, setFieldValue }: FormikProps<Record<string, any>>) => {
-	const textInputRef = useRef<HTMLInputElement>(null!);
-	const colorComputerRef = useRef<HTMLDivElement>(null);
-
-	useEffect(() => {
-		textInputRef.current.select();
-	}, []);
-
-	let computedColor;
-	let computedOpacity = 1;
-
-	// Compute `computedColor` and `computedOpacity`.
-	if (colorComputerRef.current) {
-		// Reset the color before setting the new one, because setting an invalid color doesn't necessarily reset it.
-		colorComputerRef.current.style.color = '';
-		colorComputerRef.current.style.color = values.attributes.replace(hashlessColorCodeTest, '#$1');
-
-		const { color } = getComputedStyle(colorComputerRef.current);
-		const rgbaMatch = color.match(/^rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)$/);
-
-		if (rgbaMatch) {
-			computedColor = '#';
-			computedColor += getTwoDigitHex(rgbaMatch[1]);
-			computedColor += getTwoDigitHex(rgbaMatch[2]);
-			computedColor += getTwoDigitHex(rgbaMatch[3]);
-
-			if (rgbaMatch[4]) {
-				computedOpacity = +rgbaMatch[4];
-			}
-		}
-	}
-
-	// TODO: Implement color saving.
-
-	return (
-		<>
-			<div
-				id="bb-tool-color-computer"
-				ref={colorComputerRef}
-			/>
-			<LabeledGrid>
-				<LabeledGridRow htmlFor="bb-tool-field-attributes" label="Color">
-					<input
-						type="color"
-						className="spaced"
-						style={{
-							opacity: computedOpacity
-						}}
-						value={
-							colorComputerRef.current
-								? computedColor
-								: values.attributes
-						}
-						onChange={
-							useFunction((event: ChangeEvent<HTMLInputElement>) => {
-								setFieldValue('attributes', event.target.value);
-							})
-						}
-					/>
-					<Field
-						id="bb-tool-field-attributes"
-						name="attributes"
-						className="spaced"
-						required
-						autoFocus
-						size={9}
-						innerRef={textInputRef}
-					/>
-					<SaveButton
-						className="spaced"
-						title="Save Color"
-						onClick={
-							useFunction(() => {
-
-							})
-						}
-					/>
-				</LabeledGridRow>
-			</LabeledGrid>
-		</>
-	);
-};
 
 type NewBBTagProps = {
 	/** The content of the BB tag. */
@@ -160,12 +72,12 @@ const tags: Record<string, {
 	color: {
 		title: 'Text Color',
 		initialValues: randomColorAttributes,
-		content: ColorContent
+		content: <ColorPicker name="attributes" />
 	},
 	background: {
 		title: 'Text Background Color',
 		initialValues: randomColorAttributes,
-		content: ColorContent
+		content: <ColorPicker name="attributes" />
 	},
 	size: {
 		title: 'Font Size',
