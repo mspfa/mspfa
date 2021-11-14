@@ -15,21 +15,20 @@ const escapeForXML = (string: string) => (
 );
 
 const getRFC2822Timestamp = (date: Date) => (
-	`${
-		shortWeekDayNames[date.getUTCDay()]
-	}, ${
-		twoDigits(date.getUTCDate())
-	} ${
-		shortMonthNames[date.getUTCMonth()]
-	} ${
-		`000${date.getUTCFullYear()}`.slice(-4)
-	} ${
-		[
-			date.getUTCHours(),
-			date.getUTCMinutes(),
-			date.getUTCSeconds()
-		].map(twoDigits).join(':')
-	} GMT`
+	shortWeekDayNames[date.getUTCDay()]
+	+ ', '
+	+ twoDigits(date.getUTCDate())
+	+ ' '
+	+ shortMonthNames[date.getUTCMonth()]
+	+ ' '
+	+ `000${date.getUTCFullYear()}`.slice(-4)
+	+ ' '
+	+ [
+		date.getUTCHours(),
+		date.getUTCMinutes(),
+		date.getUTCSeconds()
+	].map(twoDigits).join(':')
+	+ ' GMT'
 );
 
 export const getServerSideProps: MyGetServerSideProps = async ({ res, params }) => {

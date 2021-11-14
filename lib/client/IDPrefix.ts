@@ -11,7 +11,7 @@ const IDPrefix = React.createContext<string | undefined>(undefined);
 export const usePrefixedID = (id = '') => {
 	const prefix = useContext(IDPrefix);
 
-	return `${prefix ? `${prefix}-` : ''}${id}`;
+	return (prefix ? `${prefix}-` : '') + id;
 };
 
 export default IDPrefix;

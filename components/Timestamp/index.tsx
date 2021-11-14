@@ -69,12 +69,14 @@ const Timestamp = ({ short, relative, withTime, edited, className, children, ...
 						className="timestamp-edited"
 						dateTime={dateEdited.toISOString()}
 						title={
-							`Edited: ${relative
-								? getRelativeTimestamp(dateEdited)
-								: getAbsoluteTimestamp(dateEdited, withTime)
-							} (${relative
-								? getAbsoluteTimestamp(dateEdited, withTime)
-								: getRelativeTimestamp(dateEdited)
+							`Edited: ${
+								relative
+									? getRelativeTimestamp(dateEdited)
+									: getAbsoluteTimestamp(dateEdited, withTime)
+							} (${
+								relative
+									? getAbsoluteTimestamp(dateEdited, withTime)
+									: getRelativeTimestamp(dateEdited)
 							})`
 						}
 						suppressHydrationWarning

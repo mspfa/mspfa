@@ -150,16 +150,19 @@ const Comment = <
 	return (
 		<div
 			className={
-				`comment comment-${comment.id}${
+				`comment comment-${comment.id} by-${comment.author}`
+				+ (
 					user?.id === comment.author
 						? ' by-self'
 						: ''
-				} by-${comment.author}${
+				)
+				+ (
 					story.owner === comment.author
 					|| story.editors.includes(comment.author)
 						? ' by-editor'
 						: ''
-				}${className ? ` ${className}` : ''}`
+				)
+				+ (className ? ` ${className}` : '')
 			}
 		>
 			<IconContainer

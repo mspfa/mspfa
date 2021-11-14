@@ -21,7 +21,7 @@ import ColorPicker from 'components/ColorPicker';
 const defaultBBPreview = 'The quick brown fox jumps over the lazy dog.';
 
 const randomColorAttributes = () => ({
-	attributes: `#${`00000${Math.floor(Math.random() * 0x1000000).toString(16)}`.slice(-6)}`
+	attributes: '#' + `00000${Math.floor(Math.random() * 0x1000000).toString(16)}`.slice(-6)
 });
 
 const presetFontFamilies = ['Arial', 'Bodoni MT', 'Book Antiqua', 'Calibri', 'Cambria', 'Candara', 'Century Gothic', 'Comic Sans MS', 'Consolas', 'Courier New', 'Garamond', 'Georgia', 'Goudy Old Style', 'Helvetica', 'Homestuck-Regular', 'Impact', 'Lucida Bright', 'Lucida Console', 'Lucida Sans Typewriter', 'Perpetua', 'Rockwell', 'Segoe UI', 'Tahoma', 'Times New Roman', 'Trebuchet MS', 'Verdana'];

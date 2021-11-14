@@ -519,12 +519,7 @@ const StoryEditorPageListing = React.memo(({
 					<span className="story-editor-page-status spaced">
 						{pageStatus === 'draft' ? 'Draft' : (
 							<>
-								{
-									`${pageStatus === 'published'
-										? 'Published'
-										: 'Scheduled'
-									} `
-								}
+								{(pageStatus === 'published' ? 'Published' : 'Scheduled') + ' '}
 								<Timestamp short withTime relative>
 									{initialPublished!}
 								</Timestamp>
@@ -697,22 +692,24 @@ const StoryEditorPageListing = React.memo(({
 					<Button
 						disabled={isSubmitting}
 						title={
-							`${
-								pageStatus === 'scheduled' ? 'Unschedule' : 'Unpublish'
-							} ${
+							(pageStatus === 'scheduled' ? 'Unschedule' : 'Unpublish')
+							+ ' '
+							+ (
 								lastNonDraftID === page.id
 									? `Page ${page.id}`
 									: `Pages ${page.id} to ${lastNonDraftID}`
-							}`
+							)
 						}
 						onClick={unpublishPage}
 					>
 						{
-							`${
-								pageStatus === 'scheduled' ? 'Unschedule' : 'Unpublish'
-							} ${
-								lastNonDraftID === page.id ? '' : ` p${page.id}-${lastNonDraftID}`
-							}`
+							(pageStatus === 'scheduled' ? 'Unschedule' : 'Unpublish')
+							+ ' '
+							+ (
+								lastNonDraftID === page.id
+									? ''
+									: ` p${page.id}-${lastNonDraftID}`
+							)
 						}
 					</Button>
 				)}

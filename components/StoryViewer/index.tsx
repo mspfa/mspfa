@@ -201,7 +201,10 @@ const StoryViewer = (props: StoryViewerProps) => {
 					// Add this image to the preloaded images.
 					// To improve performance, we append to a string to be set all at once into `preloadResourcesElement.style.backgroundImage` rather than appending to `preloadResourcesElement.style.backgroundImage` directly each time.
 					// Quotation marks are necessary around the `imageURL` (as opposed to omitting them or using apostrophes instead) because `encodeURI` doesn't escape parentheses or apostrophes.
-					preloadBackgroundImage += `${preloadBackgroundImage && ', '}url("${encodeURI(imageURL)}")`;
+					preloadBackgroundImage += (
+						(preloadBackgroundImage && ', ')
+						+ `url("${encodeURI(imageURL)}")`
+					);
 				}
 			}
 

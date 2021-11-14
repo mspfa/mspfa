@@ -132,5 +132,13 @@ export const getRelativeTimestamp = (dateThen: Date) => {
 		moreMonths += 12;
 	}
 
-	return preposeTimestamp(`${years} year${years === 1 ? '' : 's'}${moreMonths ? `, ${moreMonths} month${moreMonths === 1 ? '' : 's'}` : ''}`, future);
+	return preposeTimestamp(
+		`${years} year${years === 1 ? '' : 's'}`
+		+ (
+			moreMonths
+				? `, ${moreMonths} month${moreMonths === 1 ? '' : 's'}`
+				: ''
+		),
+		future
+	);
 };

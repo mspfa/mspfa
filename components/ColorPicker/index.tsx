@@ -36,10 +36,12 @@ const ColorPicker = ({ name }: ColorPickerProps) => {
 		const rgbaMatch = color.match(/^rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)$/);
 
 		if (rgbaMatch) {
-			computedColor = '#';
-			computedColor += getTwoDigitHex(rgbaMatch[1]);
-			computedColor += getTwoDigitHex(rgbaMatch[2]);
-			computedColor += getTwoDigitHex(rgbaMatch[3]);
+			computedColor = (
+				'#'
+				+ getTwoDigitHex(rgbaMatch[1])
+				+ getTwoDigitHex(rgbaMatch[2])
+				+ getTwoDigitHex(rgbaMatch[3])
+			);
 
 			if (rgbaMatch[4]) {
 				computedOpacity = +rgbaMatch[4];

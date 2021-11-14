@@ -287,7 +287,11 @@ const Component = withErrorPage<ServerSideProps>(({
 											as="select"
 											name="privacy"
 											label="Privacy"
-											help={`${storyPrivacyNames[StoryPrivacy.Public]}: Anyone can see this adventure.\n${storyPrivacyNames[StoryPrivacy.Unlisted]}: Only users with this adventure's URL can see this adventure.\n${storyPrivacyNames[StoryPrivacy.Private]}: Only this adventure's owner and editors can see this adventure.`}
+											help={
+												`${storyPrivacyNames[StoryPrivacy.Public]}: Anyone can see this adventure.\n`
+												+ `${storyPrivacyNames[StoryPrivacy.Unlisted]}: Only users with this adventure's URL can see this adventure.\n`
+												+ `${storyPrivacyNames[StoryPrivacy.Private]}: Only this adventure's owner and editors can see this adventure.`
+											}
 											required
 											onChange={
 												useFunction((event: ChangeEvent<HTMLSelectElement>) => {
