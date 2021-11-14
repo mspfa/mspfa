@@ -13,7 +13,7 @@ import { useUser, setUser } from 'lib/client/UserContext';
 import { uniqBy } from 'lodash';
 import { useUserCache } from 'lib/client/UserCache';
 import Link from 'components/Link';
-import { Fragment, useRef, useState } from 'react';
+import { Fragment, useState } from 'react';
 import useFunction from 'lib/client/useFunction';
 import Timestamp from 'components/Timestamp';
 import Button from 'components/Button';
