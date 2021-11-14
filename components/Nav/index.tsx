@@ -62,37 +62,36 @@ const Nav = () => {
 		>
 			<NavGroup id="primary">
 				<NavItem id="home" label="Home" href="/" />
-				{(user
-					? (
-						<NavMenu
-							id="signed-in"
-							label="My MSPFA"
-							bubble={!!(notificationsBubble + messagesBubble)}
-						>
-							<NavItem
-								id="notifications"
-								label="Notifications"
-								href={`/user/${user.id}/notifications`}
-								bubble={notificationsBubble}
-							/>
-							<NavItem
-								id="messages"
-								label="Messages"
-								href={`/user/${user.id}/messages`}
-								bubble={messagesBubble}
-							/>
-							<div className="divider" />
-							<NavItem id="stories" label="Adventures" href={`/user/${user.id}/s`} />
-							<NavItem id="favs" label="Favorites" href={`/user/${user.id}/favs`} />
-							<NavItem id="saves" label="Game Saves" href={`/user/${user.id}/saves`} />
-							<div className="divider" />
-							<NavItem id="profile" label="Profile" href={`/user/${user.id}`} />
-							<NavItem id="settings" label="Settings" href={`/user/${user.id}/settings`} />
-							<div className="divider" />
-							<NavItem id="sign-out" label="Sign Out" onClick={promptSignOut} />
-						</NavMenu>
-					)
-					: <NavItem id="sign-in" label="Sign In" onClick={promptSignIn} />
+				{user ? (
+					<NavMenu
+						id="signed-in"
+						label="My MSPFA"
+						bubble={notificationsBubble + messagesBubble !== 0}
+					>
+						<NavItem
+							id="notifications"
+							label="Notifications"
+							href={`/user/${user.id}/notifications`}
+							bubble={notificationsBubble}
+						/>
+						<NavItem
+							id="messages"
+							label="Messages"
+							href={`/user/${user.id}/messages`}
+							bubble={messagesBubble}
+						/>
+						<div className="divider" />
+						<NavItem id="stories" label="Adventures" href={`/user/${user.id}/s`} />
+						<NavItem id="favs" label="Favorites" href={`/user/${user.id}/favs`} />
+						<NavItem id="saves" label="Game Saves" href={`/user/${user.id}/saves`} />
+						<div className="divider" />
+						<NavItem id="profile" label="Profile" href={`/user/${user.id}`} />
+						<NavItem id="settings" label="Settings" href={`/user/${user.id}/settings`} />
+						<div className="divider" />
+						<NavItem id="sign-out" label="Sign Out" onClick={promptSignOut} />
+					</NavMenu>
+				) : (
+					<NavItem id="sign-in" label="Sign In" onClick={promptSignIn} />
 				)}
 			</NavGroup>
 			<NavGroup id="secondary">
