@@ -1,11 +1,14 @@
 import type { ChangeEvent } from 'react';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { hashlessColorCodeTest } from 'components/BBCode/BBTags';
 import { Field, useField } from 'formik';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import SaveButton from 'components/Button/SaveButton';
 import LabeledGrid from 'components/LabeledGrid';
 import useFunction from 'lib/client/useFunction';
+import Dialog from 'lib/client/Dialog';
+import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
+import useAutoSelect from 'lib/client/useAutoSelect';
 
 const getTwoDigitHex = (dec: string) => `0${(+dec).toString(16)}`.slice(-2);
 
@@ -16,12 +19,7 @@ export type ColorPickerProps = {
 const ColorPicker = ({ name }: ColorPickerProps) => {
 	const [, { value }, { setValue }] = useField<string>(name);
 
-	const textInputRef = useRef<HTMLInputElement>(null!);
 	const colorComputerRef = useRef<HTMLDivElement>(null);
-
-	useEffect(() => {
-		textInputRef.current.select();
-	}, []);
 
 	let computedColor;
 	let computedOpacity = 1;
@@ -81,14 +79,38 @@ const ColorPicker = ({ name }: ColorPickerProps) => {
 						required
 						autoFocus
 						size={9}
-						innerRef={textInputRef}
+						innerRef={useAutoSelect()}
 					/>
 					<SaveButton
 						className="spaced"
 						title="Save Color"
 						onClick={
 							useFunction(() => {
-
+								new Dialog({
+									id: 'color-picker',
+									title: 'Save Color',
+									initialValues: {
+										colorName: value
+									},
+									content: function Content() {
+										return (
+											<LabeledGrid>
+												<LabeledGridField
+													label="Name Your Color"
+													name="colorName"
+													placeholder={value}
+													size={16}
+													autoComplete="off"
+													innerRef={useAutoSelect() as any}
+												/>
+											</LabeledGrid>
+										);
+									},
+									actions: [
+										{ label: 'Save!', autoFocus: false },
+										'Cancel'
+									]
+								});
 							})
 						}
 					/>
