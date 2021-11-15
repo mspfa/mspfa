@@ -102,6 +102,10 @@ api.interceptors.request.use(
 		startLoading();
 
 		if (value.data !== undefined) {
+			if (!value.headers) {
+				value.headers = {};
+			}
+
 			value.headers['Content-Type'] = 'application/json';
 		}
 
