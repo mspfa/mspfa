@@ -15,6 +15,8 @@ import AddButton from 'components/Button/AddButton';
 import type { ColorFieldProps } from 'components/ColorField';
 import ColorField from 'components/ColorField';
 
+type StoryColorGroupsAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups').default>;
+type StoryColorGroupAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups/[colorGroupID]').default>;
 type StoryColorsAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors').default>;
 type StoryColorAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors/[colorID]').default>;
 
@@ -27,22 +29,22 @@ const ColorTool = ({ name }: ColorToolProps) => {
 	const storyID = useContext(StoryIDContext);
 
 	const saveColor = useFunction(async () => {
-		const dialog = new Dialog({
-			id: 'color-tool',
+		const saveColorDialog = new Dialog({
+			id: 'save-color',
 			title: 'Save Color',
 			initialValues: {
-				group: 'default',
+				group: '',
 				value,
 				name: value
 			},
 			content: function Content() {
 				return (
-					<IDPrefix.Provider value="color-tool">
+					<IDPrefix.Provider value="save-color">
 						<LabeledGrid>
-							<LabeledGridRow htmlFor="color-tool-field-group" label="Color Group">
+							<LabeledGridRow htmlFor="save-color-field-group" label="Color Group">
 								<Field
 									as="select"
-									id="color-tool-field-group"
+									id="save-color-field-group"
 									name="group"
 									className="spaced"
 								>
@@ -57,13 +59,43 @@ const ColorTool = ({ name }: ColorToolProps) => {
 									className="spaced"
 									title="Create Color Group"
 									onClick={
-										useFunction(() => {
+										useFunction(async () => {
+											const colorGroupDialog = new Dialog({
+												id: 'color-group',
+												title: 'Create Color Group',
+												initialValues: { name: '' },
+												content: (
+													<IDPrefix.Provider value="color-group">
+														<LabeledGrid>
+															<LabeledGridField
+																name="name"
+																label="Name"
+																autoFocus
+																autoComplete="off"
+															/>
+														</LabeledGrid>
+													</IDPrefix.Provider>
+												),
+												actions: [
+													{ label: 'Okay', autoFocus: false },
+													'Cancel'
+												]
+											});
 
+											if (!(await colorGroupDialog)?.submit) {
+												return;
+											}
+
+											const { data: colorGroup } = await (api as StoryColorGroupsAPI).post(`/stories/${storyID}/colorGroups`, {
+												name: colorGroupDialog.form!.values.name
+											});
+
+											// TODO
 										})
 									}
 								/>
 							</LabeledGridRow>
-							<LabeledGridRow htmlFor="color-tool-field-value" label="Color Value">
+							<LabeledGridRow htmlFor="save-color-field-value" label="Color Value">
 								<ColorField
 									name="value"
 									required
@@ -87,13 +119,13 @@ const ColorTool = ({ name }: ColorToolProps) => {
 			]
 		});
 
-		if (!(await dialog)?.submit) {
+		if (!(await saveColorDialog)?.submit) {
 			return;
 		}
 
 		const { data: color } = await (api as StoryColorsAPI).post(`/stories/${storyID}/colors`, {
-			name: dialog.form!.values.name,
-			value: dialog.form!.values.value
+			name: saveColorDialog.form!.values.name,
+			value: saveColorDialog.form!.values.value
 		});
 
 		// TODO
