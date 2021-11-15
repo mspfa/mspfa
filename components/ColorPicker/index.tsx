@@ -12,6 +12,8 @@ import useAutoSelect from 'lib/client/reactHooks/useAutoSelect';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import StoryIDContext from 'lib/client/StoryIDContext';
+import IDPrefix from 'lib/client/IDPrefix';
+import AddButton from 'components/Button/AddButton';
 
 type StoryColorsAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors').default>;
 type StoryColorAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors/[colorID]').default>;
@@ -58,21 +60,50 @@ const ColorPicker = ({ name }: ColorPickerProps) => {
 			id: 'color-picker',
 			title: 'Save Color',
 			initialValues: {
+				group: 'default',
 				name: value
 			},
 			content: function Content() {
 				return (
-					<LabeledGrid>
-						<LabeledGridField
-							name="name"
-							label="Color Label"
-							help={'This label is the name associated with your saved color.\n\nIt can be anything and doesn\'t have to match the actual value of the color. For example, "John Egbert" or "blue".'}
-							placeholder={value}
-							size={16}
-							autoComplete="off"
-							innerRef={useAutoSelect() as any}
-						/>
-					</LabeledGrid>
+					<IDPrefix.Provider value="color-picker">
+						<LabeledGrid>
+							<LabeledGridRow htmlFor="color-picker-field-group" label="Color Group">
+								<Field
+									as="select"
+									id="color-picker-field-group"
+									name="group"
+									className="spaced"
+									required
+								>
+									<option
+										value="default"
+										style={{ fontStyle: 'italic' }}
+									>
+										(No Group)
+									</option>
+								</Field>
+								<AddButton
+									className="spaced"
+									title="Create Color Group"
+									onClick={
+										useFunction(() => {
+
+										})
+									}
+								/>
+							</LabeledGridRow>
+							<LabeledGridRow label="Color Value">
+								{value}
+							</LabeledGridRow>
+							<LabeledGridField
+								name="name"
+								label="Color Label"
+								help={'This label is the name associated with your saved color.\n\nIt can be anything and doesn\'t have to match the actual value of the color. For example, "John Egbert" or "blue".'}
+								autoComplete="off"
+								innerRef={useAutoSelect() as any}
+							/>
+						</LabeledGrid>
+					</IDPrefix.Provider>
 				);
 			},
 			actions: [
