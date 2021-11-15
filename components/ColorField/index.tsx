@@ -1,12 +1,13 @@
 import { Field, useField } from 'formik';
 import type { ChangeEvent, InputHTMLAttributes, RefObject } from 'react';
-import { useRef } from 'react';
 import { hashlessColorCodeTest } from 'components/BBCode/BBTags';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import { usePrefixedID } from 'lib/client/IDPrefix';
 import toKebabCase from 'lib/client/toKebabCase';
 
 const getTwoDigitHex = (dec: string) => `0${(+dec).toString(16)}`.slice(-2);
+
+const dummyElement = document.getElementById('dummy') as HTMLDivElement; // @client-only
 
 export type ColorFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 'required' | 'disabled' | 'readOnly' | 'autoFocus'> & {
 	name: string,
@@ -22,18 +23,18 @@ const ColorField = ({ id, name, required, disabled, readOnly, autoFocus, innerRe
 
 	const [, { value }, { setValue }] = useField<string>(name);
 
-	const colorComputerRef = useRef<HTMLSpanElement>(null);
-
 	let computedHexColor;
 	let computedOpacity = 1;
 
-	// Compute `computedHexColor` and `computedOpacity`.
-	if (colorComputerRef.current) {
+	// Compute `computedHexColor` and `computedOpacity` (only client-side).
+	if (typeof window !== 'undefined') {
 		// Reset the color before setting the new one, because setting an invalid color doesn't necessarily reset it.
-		colorComputerRef.current.style.color = '';
-		colorComputerRef.current.style.color = value.replace(hashlessColorCodeTest, '#$1');
+		dummyElement.style.color = '';
+		dummyElement.style.color = value.replace(hashlessColorCodeTest, '#$1');
+		const computedColor = getComputedStyle(dummyElement).color;
+		dummyElement.style.color = '';
 
-		const rgbaMatch = getComputedStyle(colorComputerRef.current).color.match(/^rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)$/);
+		const rgbaMatch = computedColor.match(/^rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)$/);
 		if (rgbaMatch) {
 			computedHexColor = (
 				'#'
@@ -59,15 +60,16 @@ const ColorField = ({ id, name, required, disabled, readOnly, autoFocus, innerRe
 					opacity: computedOpacity
 				}}
 				value={
-					colorComputerRef.current
-						? computedHexColor
-						: value
+					typeof window === 'undefined'
+						? value
+						: computedHexColor
 				}
 				onChange={
 					useFunction((event: ChangeEvent<HTMLInputElement>) => {
 						setValue(event.target.value);
 					})
 				}
+				suppressHydrationWarning
 			/>
 			<Field
 				id={id}
@@ -79,10 +81,6 @@ const ColorField = ({ id, name, required, disabled, readOnly, autoFocus, innerRe
 				autoFocus={autoFocus}
 				size={9}
 				innerRef={innerRef}
-			/>
-			<span
-				className="color-field-color-computer"
-				ref={colorComputerRef}
 			/>
 		</>
 	);

@@ -1,10 +1,10 @@
 @use 'lib/styles/themes' as *;
 
-#preload-resources {
+#dummy {
 	position: fixed;
-	top: 0;
-	left: 0;
-	// Ensure this element's content is invisible.
+	right: 0;
+	bottom: 0;
+	// Ensure this element's content is effectively invisible (despite the element still being rendered by the browser).
 	width: 0;
 	height: 0;
 	// Preload the `Homestuck-Regular` font.

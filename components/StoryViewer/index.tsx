@@ -147,9 +147,9 @@ const StoryViewer = (props: StoryViewerProps) => {
 		/** All page IDs within the `PAGE_PRELOAD_DEPTH` which should not be fetched since the client already has them. */
 		const nearbyCachedPageIDs: StoryPageID[] = [];
 
-		const preloadResourcesElement = document.getElementById('preload-resources') as HTMLDivElement;
+		const dummyElement = document.getElementById('dummy') as HTMLDivElement;
 		// Reset the preloaded images.
-		/** The string to be set into `preloadResourcesElement.style.backgroundImage` to preload images. */
+		/** The string to be set into `dummyElement.style.backgroundImage` to preload images. */
 		let preloadBackgroundImage = '';
 
 		/** A partial record mapping each page ID to `true` if `checkAdjacentPages` has already been called on it. */
@@ -202,7 +202,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 					const imageURL = imgTagMatch[3];
 
 					// Add this image to the preloaded images.
-					// To improve performance, we append to a string to be set all at once into `preloadResourcesElement.style.backgroundImage` rather than appending to `preloadResourcesElement.style.backgroundImage` directly each time.
+					// To improve performance, we append to a string to be set all at once into `dummyElement.style.backgroundImage` rather than appending to `dummyElement.style.backgroundImage` directly each time.
 					// Quotation marks are necessary around the `imageURL` (as opposed to omitting them or using apostrophes instead) because `encodeURI` doesn't escape parentheses or apostrophes.
 					preloadBackgroundImage += (
 						(preloadBackgroundImage && ', ')
@@ -232,7 +232,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 		checkAdjacentPages(queriedPageID);
 
 		// Update the preloaded images.
-		preloadResourcesElement.style.backgroundImage = preloadBackgroundImage;
+		dummyElement.style.backgroundImage = preloadBackgroundImage;
 
 		if (
 			// Only consider fetching new pages around this page if new pages around this page aren't already being fetched.
@@ -293,7 +293,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 			unmounted = true;
 
 			// Reset the preloaded images.
-			preloadResourcesElement.style.backgroundImage = '';
+			dummyElement.style.backgroundImage = '';
 		};
 	}, [queriedPageID, pages, story.id, previewMode, pagesRef]);
 

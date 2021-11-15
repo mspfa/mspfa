@@ -39,8 +39,8 @@ const Page = ({ heading, children, withFlashyTitle, basement }: PageProps) => (
 			</div>
 		</div>
 		<LoadingIndicator />
-		{/* This exists to preload certain resources via styles set on it. */}
-		<div id="preload-resources" />
+		{/* This dummy element exists to preload certain resources via styles set on it, as well as to perform computations on it in some cases. */}
+		<div id="dummy" />
 	</>
 );
 
