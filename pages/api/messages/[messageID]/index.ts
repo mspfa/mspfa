@@ -5,7 +5,6 @@ import type { ServerMessage } from 'lib/server/messages';
 import messages, { getMessageByUnsafeID, getClientMessage, updateUnreadMessages } from 'lib/server/messages';
 import { Perm } from 'lib/client/perms';
 import type { ClientMessage } from 'lib/client/messages';
-import type { RecursivePartial } from 'lib/types';
 
 const Handler: APIHandler<{
 	query: {
@@ -16,7 +15,7 @@ const Handler: APIHandler<{
 		method: 'DELETE'
 	} | {
 		method: 'PATCH',
-		body: RecursivePartial<Pick<ClientMessage, 'content'>>
+		body: Partial<Pick<ClientMessage, 'content'>>
 	}
 ), {
 	method: 'PATCH',

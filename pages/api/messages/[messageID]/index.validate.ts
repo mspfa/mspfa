@@ -18,7 +18,7 @@ export default createValidator({
 	$schema: 'http://json-schema.org/draft-07/schema#',
 	$ref: '#/definitions/Request',
 	definitions: {
-		'Request': {
+		Request: {
 			anyOf: [
 				{
 					type: 'object',
@@ -52,7 +52,15 @@ export default createValidator({
 					additionalProperties: false,
 					properties: {
 						body: {
-							$ref: '#/definitions/RecursivePartial%3Calias-731470504-70263-70404-731470504-0-212510%3Cdef-alias--102-405--0-405%2C%22content%22%3E%3E'
+							type: 'object',
+							properties: {
+								content: {
+									type: 'string',
+									minLength: 1,
+									maxLength: 20000
+								}
+							},
+							additionalProperties: false
 						},
 						query: {
 							type: 'object',
@@ -78,17 +86,6 @@ export default createValidator({
 					]
 				}
 			]
-		},
-		'RecursivePartial<alias-731470504-70263-70404-731470504-0-212510<def-alias--102-405--0-405,"content">>': {
-			type: 'object',
-			properties: {
-				content: {
-					type: 'string',
-					minLength: 1,
-					maxLength: 20000
-				}
-			},
-			additionalProperties: false
 		}
 	}
 });

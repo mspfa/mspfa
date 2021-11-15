@@ -19,7 +19,7 @@ export default createValidator({
 	$schema: 'http://json-schema.org/draft-07/schema#',
 	$ref: '#/definitions/Request',
 	definitions: {
-		'Request': {
+		Request: {
 			anyOf: [
 				{
 					type: 'object',
@@ -88,7 +88,23 @@ export default createValidator({
 					additionalProperties: false,
 					properties: {
 						body: {
-							$ref: '#/definitions/RecursivePartial%3Calias-731470504-70263-70404-731470504-0-212510%3Cdef-alias--202-402--0-4021557724836%2Calias-rID%5D_index.ts-549-709-rID%5D_index.ts-0-31901039555369%3E%3E'
+							type: 'object',
+							properties: {
+								name: {
+									type: 'string'
+								},
+								value: {
+									type: 'string'
+								},
+								group: {
+									type: [
+										'string',
+										'null'
+									],
+									description: 'The ID of the color group which the color should be set into, or `null` if the color should be removed from any group.'
+								}
+							},
+							additionalProperties: false
 						},
 						query: {
 							type: 'object',
@@ -118,18 +134,6 @@ export default createValidator({
 					]
 				}
 			]
-		},
-		'RecursivePartial<alias-731470504-70263-70404-731470504-0-212510<def-alias--202-402--0-4021557724836,alias-rID]_index.ts-549-709-rID]_index.ts-0-31901039555369>>': {
-			type: 'object',
-			properties: {
-				name: {
-					type: 'string'
-				},
-				value: {
-					type: 'string'
-				}
-			},
-			additionalProperties: false
 		}
 	}
 });

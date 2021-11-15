@@ -80,7 +80,7 @@ export default createValidator({
 					additionalProperties: false,
 					properties: {
 						body: {
-							$ref: '#/definitions/RecursivePartial%3Calias-731470504-70263-70404-731470504-0-212510%3Cdef-alias--435-737--0-1305247327831%2Calias--693-929--0-30441252892723%3E%3E'
+							$ref: '#/definitions/RecursivePartial%3Calias-731470504-70263-70404-731470504-0-212510%3Cdef-alias-lib_client_users.ts-435-737-lib_client_users.ts-0-1305247327831%2Calias-1318184999-693-929-1318184999-0-30441252892723%3E%3E'
 						},
 						query: {
 							type: 'object',
@@ -107,7 +107,7 @@ export default createValidator({
 				}
 			]
 		},
-		'RecursivePartial<alias-731470504-70263-70404-731470504-0-212510<def-alias--435-737--0-1305247327831,alias--693-929--0-30441252892723>>': {
+		'RecursivePartial<alias-731470504-70263-70404-731470504-0-212510<def-alias-lib_client_users.ts-435-737-lib_client_users.ts-0-1305247327831,alias-1318184999-693-929-1318184999-0-30441252892723>>': {
 			type: 'object',
 			properties: {
 				birthdate: {
@@ -152,7 +152,7 @@ export default createValidator({
 					type: 'string'
 				},
 				settings: {
-					$ref: '#/definitions/RecursivePartial%3Cstructure--3227-4094--3216-4095--2243-4680--2106-4681--0-7914%3E'
+					$ref: '#/definitions/RecursivePartial%3Cstructure-lib_server_users.ts-3227-4094-lib_server_users.ts-3216-4095-lib_server_users.ts-2243-4680-lib_server_users.ts-2106-4681-lib_server_users.ts-0-7914%3E'
 				}
 			},
 			additionalProperties: false
@@ -173,7 +173,7 @@ export default createValidator({
 			type: 'string',
 			pattern: '^https?://'
 		},
-		'RecursivePartial<structure--3227-4094--3216-4095--2243-4680--2106-4681--0-7914>': {
+		'RecursivePartial<structure-lib_server_users.ts-3227-4094-lib_server_users.ts-3216-4095-lib_server_users.ts-2243-4680-lib_server_users.ts-2106-4681-lib_server_users.ts-0-7914>': {
 			type: 'object',
 			properties: {
 				emailPublic: {
@@ -203,10 +203,10 @@ export default createValidator({
 					type: 'string'
 				},
 				controls: {
-					$ref: '#/definitions/RecursivePartial%3Cstructure--3653-3731--3641-3732--3227-4094--3216-4095--2243-4680--2106-4681--0-7914%3E'
+					$ref: '#/definitions/RecursivePartial%3Cstructure-lib_server_users.ts-3653-3731-lib_server_users.ts-3641-3732-lib_server_users.ts-3227-4094-lib_server_users.ts-3216-4095-lib_server_users.ts-2243-4680-lib_server_users.ts-2106-4681-lib_server_users.ts-0-7914%3E'
 				},
 				notifications: {
-					$ref: '#/definitions/RecursivePartial%3Cstructure--3749-4091--3732-4091--3227-4094--3216-4095--2243-4680--2106-4681--0-7914%3E'
+					$ref: '#/definitions/RecursivePartial%3Cstructure-lib_server_users.ts-3749-4091-lib_server_users.ts-3732-4091-lib_server_users.ts-3227-4094-lib_server_users.ts-3216-4095-lib_server_users.ts-2243-4680-lib_server_users.ts-2106-4681-lib_server_users.ts-0-7914%3E'
 				}
 			},
 			additionalProperties: false
@@ -220,7 +220,7 @@ export default createValidator({
 				'sah'
 			]
 		},
-		'RecursivePartial<structure--3653-3731--3641-3732--3227-4094--3216-4095--2243-4680--2106-4681--0-7914>': {
+		'RecursivePartial<structure-lib_server_users.ts-3653-3731-lib_server_users.ts-3641-3732-lib_server_users.ts-3227-4094-lib_server_users.ts-3216-4095-lib_server_users.ts-2243-4680-lib_server_users.ts-2106-4681-lib_server_users.ts-0-7914>': {
 			type: 'object',
 			properties: {
 				previousPage: {
@@ -235,7 +235,7 @@ export default createValidator({
 			},
 			additionalProperties: false
 		},
-		'RecursivePartial<structure--3749-4091--3732-4091--3227-4094--3216-4095--2243-4680--2106-4681--0-7914>': {
+		'RecursivePartial<structure-lib_server_users.ts-3749-4091-lib_server_users.ts-3732-4091-lib_server_users.ts-3227-4094-lib_server_users.ts-3216-4095-lib_server_users.ts-2243-4680-lib_server_users.ts-2106-4681-lib_server_users.ts-0-7914>': {
 			type: 'object',
 			properties: {
 				messages: {
@@ -248,7 +248,7 @@ export default createValidator({
 					$ref: '#/definitions/RecursivePartial%3CNotificationSetting%3E'
 				},
 				storyDefaults: {
-					$ref: '#/definitions/RecursivePartial%3Cdef-alias--1618-1810--0-79142047801771%3E'
+					$ref: '#/definitions/RecursivePartial%3Cdef-alias-lib_server_users.ts-1618-1810-lib_server_users.ts-0-79142047801771%3E'
 				},
 				stories: {
 					type: 'array',
@@ -271,7 +271,7 @@ export default createValidator({
 			},
 			additionalProperties: false
 		},
-		'RecursivePartial<def-alias--1618-1810--0-79142047801771>': {
+		'RecursivePartial<def-alias-lib_server_users.ts-1618-1810-lib_server_users.ts-0-79142047801771>': {
 			type: 'object',
 			additionalProperties: {
 				$ref: '#/definitions/RecursivePartial%3CNotificationSetting%3E'
