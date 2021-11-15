@@ -24,6 +24,7 @@ import StoryEditorPageGrid, { defaultGridCullingInfo } from 'components/StoryEdi
 import StoryEditorPageList from 'components/StoryEditor/StoryEditorPageList';
 import StoryEditorPagesOptions from 'components/StoryEditor/StoryEditorPagesOptions';
 import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';
+import PrivateStoryContext from 'lib/client/PrivateStoryContext';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 
@@ -826,7 +827,11 @@ const StoryEditor = ({
 
 	return (
 		<StoryIDContext.Provider value={story.id}>
-			{pageComponent}
+			<PrivateStoryContext.Provider
+				value={useMemo(() => [story, setStory], [story, setStory])}
+			>
+				{pageComponent}
+			</PrivateStoryContext.Provider>
 		</StoryIDContext.Provider>
 	);
 };

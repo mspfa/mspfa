@@ -9,7 +9,7 @@ import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import useAutoSelect from 'lib/client/reactHooks/useAutoSelect';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
-import StoryIDContext from 'lib/client/StoryIDContext';
+import PrivateStoryContext from 'lib/client/PrivateStoryContext';
 import IDPrefix from 'lib/client/IDPrefix';
 import AddButton from 'components/Button/AddButton';
 import type { ColorFieldProps } from 'components/ColorField';
@@ -26,7 +26,7 @@ export type ColorToolProps = ColorFieldProps;
 const ColorTool = ({ name }: ColorToolProps) => {
 	const [, { value }] = useField<string>(name);
 
-	const storyID = useContext(StoryIDContext);
+	const [story, setStory] = useContext(PrivateStoryContext) || [];
 
 	const saveColor = useFunction(async () => {
 		const saveColorDialog = new Dialog({
@@ -38,6 +38,8 @@ const ColorTool = ({ name }: ColorToolProps) => {
 				name: value
 			},
 			content: function Content() {
+				const [story, setStory] = useContext(PrivateStoryContext)!;
+
 				return (
 					<IDPrefix.Provider value="save-color">
 						<LabeledGrid>
@@ -48,6 +50,14 @@ const ColorTool = ({ name }: ColorToolProps) => {
 									name="group"
 									className="spaced"
 								>
+									{story.colorGroups.map(colorGroup => (
+										<option
+											key={colorGroup.id}
+											value={colorGroup.id}
+										>
+											{colorGroup.name}
+										</option>
+									))}
 									<option
 										value=""
 										style={{ fontStyle: 'italic' }}
@@ -86,11 +96,17 @@ const ColorTool = ({ name }: ColorToolProps) => {
 												return;
 											}
 
-											const { data: colorGroup } = await (api as StoryColorGroupsAPI).post(`/stories/${storyID}/colorGroups`, {
+											const { data: colorGroup } = await (api as StoryColorGroupsAPI).post(`/stories/${story.id}/colorGroups`, {
 												name: colorGroupDialog.form!.values.name
 											});
 
-											// TODO
+											setStory(story => ({
+												...story,
+												colorGroups: [
+													...story.colorGroups,
+													colorGroup
+												]
+											}));
 										})
 									}
 								/>
@@ -123,12 +139,21 @@ const ColorTool = ({ name }: ColorToolProps) => {
 			return;
 		}
 
-		const { data: color } = await (api as StoryColorsAPI).post(`/stories/${storyID}/colors`, {
+		const { data: color } = await (api as StoryColorsAPI).post(`/stories/${story!.id}/colors`, {
+			...saveColorDialog.form!.values.group && {
+				group: saveColorDialog.form!.values.group
+			},
 			name: saveColorDialog.form!.values.name,
 			value: saveColorDialog.form!.values.value
 		});
 
-		// TODO
+		setStory!(story => ({
+			...story,
+			colors: [
+				...story.colors,
+				color
+			]
+		}));
 	});
 
 	return (
@@ -139,7 +164,7 @@ const ColorTool = ({ name }: ColorToolProps) => {
 					required
 					innerRef={useAutoSelect()}
 				/>
-				{storyID && (
+				{story && (
 					<SaveButton
 						className="spaced"
 						title="Save Color"
