@@ -4,7 +4,7 @@ import sanitizeURL from 'lib/client/sanitizeURL';
 import Button from 'components/Button';
 import Link from 'components/Link';
 import { useEffect, useRef, useState } from 'react';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import axios from 'axios';
 import loadScript from 'lib/client/loadScript';
 

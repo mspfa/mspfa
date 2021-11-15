@@ -6,7 +6,7 @@ import { withStatusCode } from 'lib/server/errors';
 import { Field, Form, Formik } from 'formik';
 import type { ChangeEvent } from 'react';
 import { useState } from 'react';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import { getChangedValues, useLeaveConfirmation } from 'lib/client/forms';
 import BottomActions from 'components/BottomActions';
 import Button from 'components/Button';
@@ -40,7 +40,7 @@ import EditButton from 'components/Button/EditButton';
 import Dialog from 'lib/client/Dialog';
 import type { integer } from 'lib/types';
 import StoryIDContext from 'lib/client/StoryIDContext';
-import useSubmitOnSave from 'lib/client/useSubmitOnSave';
+import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 

@@ -2,7 +2,7 @@ import './styles.module.scss';
 import Button from 'components/Button';
 import type { PrivateUser } from 'lib/client/users';
 import { useState } from 'react';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import AuthMethod from 'components/AuthMethod';
 import Dialog from 'lib/client/Dialog';
 import AuthButton from 'components/Button/AuthButton';

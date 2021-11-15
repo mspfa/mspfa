@@ -17,12 +17,12 @@ import users, { getPrivateUser, getPublicUser } from 'lib/server/users';
 import type { ListedMessage } from 'components/MessageListing';
 import MessageListing from 'components/MessageListing';
 import { useEffect, useRef, useState } from 'react';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import Button from 'components/Button';
 import Dialog from 'lib/client/Dialog';
 import Row from 'components/Row';
 import type { integer } from 'lib/types';
-import useSticky from 'lib/client/useSticky';
+import useSticky from 'lib/client/reactHooks/useSticky';
 import getRandomImageFilename from 'lib/server/getRandomImageFilename';
 
 type ServerSideProps = {

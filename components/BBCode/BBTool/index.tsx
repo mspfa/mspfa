@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import { useContext, useState } from 'react';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import { BBFieldContext } from 'components/BBCode/BBField';
 import Button from 'components/Button';
 import Dialog from 'lib/client/Dialog';
@@ -12,7 +12,7 @@ import Row from 'components/Row';
 import Link from 'components/Link';
 import { getChangedValues } from 'lib/client/forms';
 import IDPrefix from 'lib/client/IDPrefix';
-import useLatest from 'lib/client/useLatest';
+import useLatest from 'lib/client/reactHooks/useLatest';
 import { youTubeVideoIDTest } from 'components/BBCode/BBTags';
 import type { integer } from 'lib/types';
 import escapeBBAttribute from 'lib/client/escapeBBAttribute';

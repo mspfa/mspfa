@@ -2,7 +2,7 @@ import './styles.module.scss';
 import NavItem from 'components/Nav/NavItem';
 import type { NavItemProps } from 'components/Nav/NavItem';
 import React, { useState, useRef } from 'react';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import type { MouseEvent } from 'react';
 
 export type NavMenuProps = {

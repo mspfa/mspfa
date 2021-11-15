@@ -4,7 +4,7 @@ import NavItem from 'components/Nav/NavItem';
 import NavMenu from 'components/Nav/NavMenu';
 import Router, { useRouter } from 'next/router';
 import { setUser, useUser } from 'lib/client/UserContext';
-import useSticky from 'lib/client/useSticky';
+import useSticky from 'lib/client/reactHooks/useSticky';
 import { useContext, useRef } from 'react';
 import StoryIDContext from 'lib/client/StoryIDContext';
 import PreviewModeContext from 'lib/client/PreviewModeContext';

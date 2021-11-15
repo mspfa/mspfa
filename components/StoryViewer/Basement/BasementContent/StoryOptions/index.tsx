@@ -4,7 +4,7 @@ import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import Row from 'components/Row';
 import { CommentaryShownContext, StoryViewerContext } from 'components/StoryViewer';
 import StoryIDContext from 'lib/client/StoryIDContext';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import type { ChangeEvent } from 'react';
 import React, { useContext } from 'react';
 import RSSButton from 'components/Button/RSSButton';

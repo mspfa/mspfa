@@ -2,7 +2,7 @@ import './styles.module.scss';
 import Link from 'components/Link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import useIsomorphicLayoutEffect from 'lib/client/useIsomorphicLayoutEffect';
+import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
 
 const flashyTitleColors = [
 	'#de3535',

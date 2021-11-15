@@ -12,10 +12,10 @@ import deleteFromClientStoryPageRecord from 'lib/client/deleteFromClientStoryPag
 import Dialog from 'lib/client/Dialog';
 import invalidPublishedOrder from 'lib/client/invalidPublishedOrder';
 import type { ClientStoryPage } from 'lib/client/stories';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import type { StoryPageID } from 'lib/server/stories';
 import type { integer } from 'lib/types';
-import useLatest from 'lib/client/useLatest';
+import useLatest from 'lib/client/reactHooks/useLatest';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 type StoryMovePagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/movePages').default>;

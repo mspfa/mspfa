@@ -3,7 +3,7 @@ import IconImage from 'components/IconImage';
 import type { PublicStory } from 'lib/client/stories';
 import Link from 'components/Link';
 import { Fragment, useState } from 'react';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import BBCode from 'components/BBCode';
 import InconspicuousDiv from 'components/InconspicuousDiv';
 import StoryTagLink from 'components/StoryTagLink';

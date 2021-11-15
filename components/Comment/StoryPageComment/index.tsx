@@ -2,7 +2,7 @@ import './styles.module.scss';
 import type { ClientComment, ClientCommentReply } from 'lib/client/comments';
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useRef, useState } from 'react';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import Link from 'components/Link';

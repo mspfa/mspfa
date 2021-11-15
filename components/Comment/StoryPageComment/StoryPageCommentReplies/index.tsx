@@ -4,10 +4,10 @@ import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
 import React, { useEffect } from 'react';
 import type { PublicStory } from 'lib/client/stories';
 import type { APIClient } from 'lib/client/api';
-import useComments from 'lib/client/useComments';
+import useComments from 'lib/client/reactHooks/useComments';
 import StoryPageCommentReply from 'components/Comment/StoryPageComment/StoryPageCommentReplies/StoryPageCommentReply';
 import Link from 'components/Link';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import type { CommentProps } from 'components/Comment';
 import type { integer } from 'lib/types';
 

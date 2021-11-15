@@ -4,7 +4,7 @@ import type { PublicUser } from 'lib/client/users';
 import { getUser } from 'lib/client/UserContext';
 import type { FormikHelpers } from 'formik';
 import { Field, Form, Formik } from 'formik';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import { useLeaveConfirmation } from 'lib/client/forms';
 import BottomActions from 'components/BottomActions';
 import Button from 'components/Button';

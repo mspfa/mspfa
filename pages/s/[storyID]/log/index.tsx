@@ -12,7 +12,7 @@ import Section from 'components/Section';
 import Link from 'components/Link';
 import { useMemo } from 'react';
 import { useRouter } from 'next/router';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import { preventLeaveConfirmations } from 'lib/client/forms';
 import PreviewModeContext from 'lib/client/PreviewModeContext';
 import StoryIDContext from 'lib/client/StoryIDContext';

@@ -1,11 +1,11 @@
 import './styles.module.scss';
 import React, { useRef } from 'react';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import type Dialog from 'lib/client/Dialog';
 import { Form, Formik } from 'formik';
 import Button from 'components/Button';
 import toKebabCase from 'lib/client/toKebabCase';
-import useIsomorphicLayoutEffect from 'lib/client/useIsomorphicLayoutEffect';
+import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
 
 export type DialogContainerProps = {
 	dialog: Dialog<any>

@@ -5,7 +5,7 @@ import { StoryViewerContext } from 'components/StoryViewer';
 import Label from 'components/Label';
 import Link from 'components/Link';
 import BBCode from 'components/BBCode';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import PreviewModeContext from 'lib/client/PreviewModeContext';
 
 /** The maximum number of pages which can be listed under the adventure's "Latest Pages" section. */

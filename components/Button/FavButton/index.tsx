@@ -2,7 +2,7 @@ import './styles.module.scss';
 import Button from 'components/Button';
 import type { ButtonProps } from 'components/Button';
 import { useRef, useState } from 'react';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import { setUser, useUser } from 'lib/client/UserContext';
 import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';

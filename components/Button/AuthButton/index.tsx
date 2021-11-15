@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import Button from 'components/Button';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import Dialog from 'lib/client/Dialog';
 import LabeledGrid from 'components/LabeledGrid';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';

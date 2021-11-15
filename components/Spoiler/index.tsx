@@ -3,7 +3,7 @@ import { getUser, useUser } from 'lib/client/UserContext';
 import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
 import type { HTMLAttributes, ReactNode } from 'react';
 import { useState, useEffect } from 'react';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import defaultUserSettings from 'lib/client/defaultUserSettings';
 
 export type SpoilerProps = HTMLAttributes<HTMLDivElement> & {

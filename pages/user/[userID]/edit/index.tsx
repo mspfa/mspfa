@@ -8,7 +8,7 @@ import { withErrorPage } from 'lib/client/errors';
 import { withStatusCode } from 'lib/server/errors';
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import { getChangedValues, useLeaveConfirmation } from 'lib/client/forms';
 import Columns from 'components/Columns';
 import Section from 'components/Section';
@@ -25,7 +25,7 @@ import Row from 'components/Row';
 import BirthdateField from 'components/DateField/BirthdateField';
 import BBField from 'components/BBCode/BBField';
 import type { integer } from 'lib/types';
-import useSubmitOnSave from 'lib/client/useSubmitOnSave';
+import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 

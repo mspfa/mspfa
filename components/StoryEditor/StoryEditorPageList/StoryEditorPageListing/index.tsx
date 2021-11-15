@@ -7,7 +7,7 @@ import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
 import type { MouseEvent } from 'react';
 import React, { useRef, useState, useEffect, useContext } from 'react';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import AddButton from 'components/Button/AddButton';
 import type { KeyedClientStoryPage } from 'components/StoryEditor';
 import { StoryEditorContext, _key } from 'components/StoryEditor';
@@ -26,7 +26,7 @@ import api from 'lib/client/api';
 import { getChangedValues } from 'lib/client/forms';
 import type { DateNumber, RecursivePartial } from 'lib/types';
 import DateField from 'components/DateField';
-import useLatest from 'lib/client/useLatest';
+import useLatest from 'lib/client/reactHooks/useLatest';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 

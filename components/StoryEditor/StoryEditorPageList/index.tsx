@@ -3,7 +3,7 @@ import Button from 'components/Button';
 import type { ReactNode, RefObject } from 'react';
 import { useContext } from 'react';
 import { StoryEditorContext } from 'components/StoryEditor';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import type { ClientStoryPage, PrivateStory } from 'lib/client/stories';
 
 export type StoryEditorPageListProps = {

@@ -5,7 +5,7 @@ import type { PrivateUser } from 'lib/client/users';
 import type { ClientAuthMethod } from 'lib/client/auth';
 import { authMethodTypeNames } from 'lib/client/auth';
 import type { Dispatch, SetStateAction } from 'react';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import type { APIClient } from 'lib/client/api';
 import Dialog from 'lib/client/Dialog';
 

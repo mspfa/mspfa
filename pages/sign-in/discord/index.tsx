@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import useIsomorphicLayoutEffect from 'lib/client/useIsomorphicLayoutEffect';
+import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
 
 const Component = () => {
 	const router = useRouter();

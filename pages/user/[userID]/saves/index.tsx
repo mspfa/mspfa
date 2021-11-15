@@ -11,7 +11,7 @@ import type { StorySave } from 'components/StorySaveListing';
 import StorySaveListing from 'components/StorySaveListing';
 import findStoriesAsUser from 'lib/server/findStoriesAsUser';
 import getRandomImageFilename from 'lib/server/getRandomImageFilename';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import { useState } from 'react';
 import type { StoryID } from 'lib/server/stories';
 import Row from 'components/Row';

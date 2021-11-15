@@ -9,7 +9,7 @@ import RemoveButton from 'components/Button/RemoveButton';
 import { useUser } from 'lib/client/UserContext';
 import type { PublicStory } from 'lib/client/stories';
 import { Perm } from 'lib/client/perms';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import Dialog from 'lib/client/Dialog';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';

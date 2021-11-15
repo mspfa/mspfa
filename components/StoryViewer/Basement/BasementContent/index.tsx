@@ -6,7 +6,7 @@ import Row from 'components/Row';
 import StoryTagLink from 'components/StoryTagLink';
 import InconspicuousDiv from 'components/InconspicuousDiv';
 import Timestamp from 'components/Timestamp';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import React, { Fragment, useContext, useState } from 'react';
 import { PageIDContext, StoryViewerContext } from 'components/StoryViewer';
 import { useUser } from 'lib/client/UserContext';

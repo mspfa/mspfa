@@ -10,7 +10,7 @@ import Page from 'components/Page';
 import Section from 'components/Section';
 import { Field, Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import Button from 'components/Button';
 import Label from 'components/Label';
 import parseBBCode from 'lib/client/parseBBCode';

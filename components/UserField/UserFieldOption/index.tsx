@@ -1,5 +1,5 @@
 import './styles.module.scss';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import type { PublicUser } from 'lib/client/users';
 import IconImage from 'components/IconImage';
 

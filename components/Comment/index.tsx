@@ -6,7 +6,7 @@ import type { Awaited } from 'lib/types';
 import { useUser } from 'lib/client/UserContext';
 import { useUserCache } from 'lib/client/UserCache';
 import React, { useRef, useState } from 'react';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import type { DialogOptions } from 'lib/client/Dialog';
 import Dialog from 'lib/client/Dialog';
 import api from 'lib/client/api';

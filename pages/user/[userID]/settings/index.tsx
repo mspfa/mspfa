@@ -8,7 +8,7 @@ import { preventReloads, withErrorPage } from 'lib/client/errors';
 import { withStatusCode } from 'lib/server/errors';
 import { Form, Formik, Field } from 'formik';
 import { useEffect, useState } from 'react';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import { getChangedValues, preventLeaveConfirmations, useLeaveConfirmation } from 'lib/client/forms';
 import Columns from 'components/Columns';
 import Section from 'components/Section';
@@ -34,7 +34,7 @@ import BirthdateField from 'components/DateField/BirthdateField';
 import Timestamp from 'components/Timestamp';
 import EditButton from 'components/Button/EditButton';
 import type { integer } from 'lib/types';
-import useSubmitOnSave from 'lib/client/useSubmitOnSave';
+import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';
 import defaultUserSettings from 'lib/client/defaultUserSettings';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;

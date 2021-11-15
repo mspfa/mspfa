@@ -1,6 +1,6 @@
 import AddButton from 'components/Button/AddButton';
 import type { MutableRefObject } from 'react';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 
 export type AddUserButtonProps = {
 	value: Array<string | undefined>,

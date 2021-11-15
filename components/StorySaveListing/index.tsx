@@ -1,7 +1,7 @@
 import IconImage from 'components/IconImage';
 import Link from 'components/Link';
 import { useState } from 'react';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
 import RemoveButton from 'components/Button/RemoveButton';

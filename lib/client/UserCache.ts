@@ -1,6 +1,6 @@
 import type { PublicUser } from 'lib/client/users';
 import React, { useContext } from 'react';
-import useFunction from 'lib/client/useFunction';
+import useFunction from 'lib/client/reactHooks/useFunction';
 
 const UserCache = React.createContext<Partial<Record<string, PublicUser>>>(undefined!);
 
