@@ -240,7 +240,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 					return (
 						<Form
 							onChange={onFormChange}
-							ref={useSubmitOnSave({ submitForm, dirty })}
+							ref={useSubmitOnSave({ submitForm, dirty, isSubmitting })}
 						>
 							<LabeledGridSection heading="Account">
 								<LabeledGridField

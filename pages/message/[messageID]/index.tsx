@@ -127,7 +127,7 @@ const Component = withErrorPage<ServerSideProps>(({
 						<Form
 							id="message"
 							className={editing ? 'editing' : undefined}
-							ref={useSubmitOnSave({ submitForm, dirty }, editing)}
+							ref={useSubmitOnSave({ submitForm, dirty, isSubmitting }, editing)}
 						>
 							<Section
 								id="message-info"

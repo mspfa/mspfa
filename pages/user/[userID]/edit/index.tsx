@@ -87,7 +87,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 
 					return (
 						<Form
-							ref={useSubmitOnSave({ submitForm, dirty })}
+							ref={useSubmitOnSave({ submitForm, dirty, isSubmitting })}
 						>
 							<Columns>
 								<LabeledGridSection heading="Info">

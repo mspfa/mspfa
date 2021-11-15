@@ -243,7 +243,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 						return (
 							<Form
-								ref={useSubmitOnSave({ submitForm, dirty })}
+								ref={useSubmitOnSave({ submitForm, dirty, isSubmitting })}
 							>
 								<Section
 									id="story-editor-options"
