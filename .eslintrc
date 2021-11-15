@@ -432,10 +432,6 @@
 						}
 					}
 				],
-				"@typescript-eslint/class-literal-property-style": [
-					"error",
-					"fields"
-				],
 				"@typescript-eslint/consistent-indexed-object-style": [
 					"error",
 					"record"
