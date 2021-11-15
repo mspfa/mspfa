@@ -12,13 +12,13 @@ import api from 'lib/client/api';
 import StoryIDContext from 'lib/client/StoryIDContext';
 import IDPrefix from 'lib/client/IDPrefix';
 import AddButton from 'components/Button/AddButton';
-import type { ColorPickerProps } from 'components/ColorPicker';
-import ColorPicker from 'components/ColorPicker';
+import type { ColorFieldProps } from 'components/ColorField';
+import ColorField from 'components/ColorField';
 
 type StoryColorsAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors').default>;
 type StoryColorAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors/[colorID]').default>;
 
-export type ColorToolProps = ColorPickerProps;
+export type ColorToolProps = ColorFieldProps;
 
 /** The content of a color BB tool. */
 const ColorTool = ({ name }: ColorToolProps) => {
@@ -65,7 +65,7 @@ const ColorTool = ({ name }: ColorToolProps) => {
 								/>
 							</LabeledGridRow>
 							<LabeledGridRow htmlFor="color-tool-field-value" label="Color Value">
-								<ColorPicker
+								<ColorField
 									name="value"
 									required
 									innerRef={useAutoSelect()}
@@ -103,7 +103,7 @@ const ColorTool = ({ name }: ColorToolProps) => {
 	return (
 		<LabeledGrid>
 			<LabeledGridRow htmlFor="bb-tool-field-attributes" label="Color">
-				<ColorPicker
+				<ColorField
 					name={name}
 					required
 					innerRef={useAutoSelect()}

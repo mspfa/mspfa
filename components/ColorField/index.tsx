@@ -8,13 +8,17 @@ import toKebabCase from 'lib/client/toKebabCase';
 
 const getTwoDigitHex = (dec: string) => `0${(+dec).toString(16)}`.slice(-2);
 
-export type ColorPickerProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'required' | 'disabled' | 'readOnly' | 'autoFocus'> & {
+export type ColorFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'id' | 'required' | 'disabled' | 'readOnly' | 'autoFocus'> & {
 	name: string,
 	innerRef?: RefObject<HTMLInputElement>
 };
 
-const ColorPicker = ({ name, required, disabled, readOnly, autoFocus, innerRef }: ColorPickerProps) => {
-	const id = usePrefixedID(`field-${toKebabCase(name)}`);
+const ColorField = ({ id, name, required, disabled, readOnly, autoFocus, innerRef }: ColorFieldProps) => {
+	const idPrefix = usePrefixedID();
+
+	if (id === undefined) {
+		id = `${idPrefix}field-${toKebabCase(name)}`;
+	}
 
 	const [, { value }, { setValue }] = useField<string>(name);
 
@@ -46,10 +50,6 @@ const ColorPicker = ({ name, required, disabled, readOnly, autoFocus, innerRef }
 
 	return (
 		<>
-			<span
-				className="color-picker-color-computer"
-				ref={colorComputerRef}
-			/>
 			<input
 				type="color"
 				className="spaced"
@@ -80,8 +80,12 @@ const ColorPicker = ({ name, required, disabled, readOnly, autoFocus, innerRef }
 				size={9}
 				innerRef={innerRef}
 			/>
+			<span
+				className="color-field-color-computer"
+				ref={colorComputerRef}
+			/>
 		</>
 	);
 };
 
-export default ColorPicker;
+export default ColorField;
