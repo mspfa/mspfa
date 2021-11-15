@@ -26,7 +26,7 @@ import api from 'lib/client/api';
 import { getChangedValues } from 'lib/client/forms';
 import type { DateNumber, RecursivePartial } from 'lib/types';
 import DateField from 'components/DateField';
-import { useLatest } from 'react-use';
+import useLatest from 'lib/client/useLatest';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 

@@ -12,7 +12,7 @@ import Row from 'components/Row';
 import Link from 'components/Link';
 import { getChangedValues } from 'lib/client/forms';
 import IDPrefix from 'lib/client/IDPrefix';
-import { useLatest } from 'react-use';
+import useLatest from 'lib/client/useLatest';
 import { youTubeVideoIDTest } from 'components/BBCode/BBTags';
 import type { integer } from 'lib/types';
 import escapeBBAttribute from 'lib/client/escapeBBAttribute';

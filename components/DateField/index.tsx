@@ -6,7 +6,7 @@ import { useState } from 'react';
 import useFunction from 'lib/client/useFunction';
 import { monthNames, twoDigits } from 'lib/client/dates';
 import { usePrefixedID } from 'lib/client/IDPrefix';
-import { useIsomorphicLayoutEffect } from 'react-use';
+import useIsomorphicLayoutEffect from 'lib/client/useIsomorphicLayoutEffect';
 import type { DateNumber, integer } from 'lib/types';
 
 // @client-only {

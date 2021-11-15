@@ -27,7 +27,7 @@ import BBField from 'components/BBCode/BBField';
 import { Form, Formik } from 'formik';
 import { useLeaveConfirmation } from 'lib/client/forms';
 import UserLink from 'components/Link/UserLink';
-import { useIsomorphicLayoutEffect } from 'react-use';
+import useIsomorphicLayoutEffect from 'lib/client/useIsomorphicLayoutEffect';
 import type { integer } from 'lib/types';
 import useSubmitOnSave from 'lib/client/useSubmitOnSave';
 

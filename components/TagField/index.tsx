@@ -5,7 +5,7 @@ import type { TextareaHTMLAttributes, KeyboardEvent, MouseEvent } from 'react';
 import React, { useRef, useState } from 'react';
 import useFunction from 'lib/client/useFunction';
 import { usePrefixedID } from 'lib/client/IDPrefix';
-import { useIsomorphicLayoutEffect } from 'react-use';
+import useIsomorphicLayoutEffect from 'lib/client/useIsomorphicLayoutEffect';
 import { isEqual, uniq } from 'lodash';
 import storyTags from 'lib/client/storyTags';
 import type { TagString } from 'lib/client/storyTags';

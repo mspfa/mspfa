@@ -18,7 +18,7 @@ import useMountedRef from 'lib/client/useMountedRef';
 import useThrottled from 'lib/client/useThrottled';
 import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
-import { useIsomorphicLayoutEffect } from 'react-use';
+import useIsomorphicLayoutEffect from 'lib/client/useIsomorphicLayoutEffect';
 import type { integer } from 'lib/types';
 import Row from 'components/Row';
 

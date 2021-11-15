@@ -15,7 +15,7 @@ import type { ClientStoryPage } from 'lib/client/stories';
 import useFunction from 'lib/client/useFunction';
 import type { StoryPageID } from 'lib/server/stories';
 import type { integer } from 'lib/types';
-import { useLatest } from 'react-use';
+import useLatest from 'lib/client/useLatest';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 type StoryMovePagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/movePages').default>;

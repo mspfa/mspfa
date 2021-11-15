@@ -5,7 +5,7 @@ import type Dialog from 'lib/client/Dialog';
 import { Form, Formik } from 'formik';
 import Button from 'components/Button';
 import toKebabCase from 'lib/client/toKebabCase';
-import { useIsomorphicLayoutEffect } from 'react-use';
+import useIsomorphicLayoutEffect from 'lib/client/useIsomorphicLayoutEffect';
 
 export type DialogContainerProps = {
 	dialog: Dialog<any>

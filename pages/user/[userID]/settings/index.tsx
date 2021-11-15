@@ -31,7 +31,6 @@ import ForgotPassword from 'components/ForgotPassword';
 import AuthMethods from 'components/AuthMethod/AuthMethods';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import BirthdateField from 'components/DateField/BirthdateField';
-import { useDeepCompareEffect } from 'react-use';
 import Timestamp from 'components/Timestamp';
 import EditButton from 'components/Button/EditButton';
 import type { integer } from 'lib/types';
@@ -89,10 +88,10 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 
 	const initialValues = getValuesFromUser(privateUser);
 
-	useDeepCompareEffect(() => () => {
-		// The page unmounted (or saved settings due to a change in `initialValues`), so reset the previewed unsaved settings.
+	useEffect(() => () => {
+		// The page unmounted, so reset the previewed unsaved settings.
 		setUserMerge(undefined);
-	}, [initialValues]);
+	}, []);
 
 	const onClickChangePassword = useFunction(async () => {
 		const { data: authMethods } = await (api as UserAuthMethodsAPI).get(`users/${privateUser.id}/authMethods`, {
