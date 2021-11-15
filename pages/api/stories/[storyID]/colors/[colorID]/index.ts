@@ -90,7 +90,7 @@ const Handler: APIHandler<{
 			)
 		)) {
 			res.status(403).send({
-				message: 'You do not have permission to delete colors of the specified adventure.'
+				message: 'You do not have permission to delete colors on the specified adventure.'
 			});
 			return;
 		}
