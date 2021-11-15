@@ -58,14 +58,15 @@ const ColorPicker = ({ name }: ColorPickerProps) => {
 			id: 'color-picker',
 			title: 'Save Color',
 			initialValues: {
-				colorName: value
+				name: value
 			},
 			content: function Content() {
 				return (
 					<LabeledGrid>
 						<LabeledGridField
-							label="Name Your Color"
-							name="colorName"
+							name="name"
+							label="Color Label"
+							help={'This label is the name associated with your saved color.\n\nIt can be anything and doesn\'t have to match the actual value of the color. For example, "John Egbert" or "blue".'}
 							placeholder={value}
 							size={16}
 							autoComplete="off"
@@ -85,7 +86,7 @@ const ColorPicker = ({ name }: ColorPickerProps) => {
 		}
 
 		const { data: color } = await (api as StoryColorsAPI).post(`/stories/${storyID}/colors`, {
-			name: dialog.form!.values.colorName,
+			name: dialog.form!.values.name,
 			value
 		});
 
