@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useRef } from 'react';
 import { Field, useField } from 'formik';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import SaveButton from 'components/Button/SaveButton';
@@ -37,8 +37,10 @@ const ColorTool = ({ name }: ColorToolProps) => {
 				value,
 				name: value
 			},
-			content: function Content() {
+			content: function Content({ setFieldValue }) {
 				const [story, setStory] = useContext(PrivateStoryContext)!;
+
+				const colorGroupFieldRef = useRef<HTMLSelectElement>(null!);
 
 				return (
 					<IDPrefix.Provider value="save-color">
@@ -49,6 +51,7 @@ const ColorTool = ({ name }: ColorToolProps) => {
 									id="save-color-field-group"
 									name="group"
 									className="spaced"
+									innerRef={colorGroupFieldRef}
 								>
 									{story.colorGroups.map(colorGroup => (
 										<option
@@ -58,10 +61,7 @@ const ColorTool = ({ name }: ColorToolProps) => {
 											{colorGroup.name}
 										</option>
 									))}
-									<option
-										value=""
-										style={{ fontStyle: 'italic' }}
-									>
+									<option value="">
 										(No Group)
 									</option>
 								</Field>
@@ -107,6 +107,9 @@ const ColorTool = ({ name }: ColorToolProps) => {
 													colorGroup
 												]
 											}));
+
+											setFieldValue('group', colorGroup.id);
+											colorGroupFieldRef.current.focus();
 										})
 									}
 								/>
