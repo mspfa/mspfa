@@ -114,50 +114,48 @@ const tags: Record<string, {
 	font: {
 		title: 'Font Family',
 		content: ({ values }) => (
-			<>
-				<LabeledGrid>
-					<LabeledGridField
-						as="select"
-						name="attributes"
-						label="Preset Font"
-						required
-						autoFocus
-					>
-						<option
-							value={presetFontFamilies.includes(values.attributes) ? '' : values.attributes}
-							disabled
-							hidden
-						/>
-						{presetFontFamilies.map(fontFamily => (
-							<option
-								key={fontFamily}
-								value={fontFamily}
-								style={{ fontFamily }}
-							>
-								{fontFamily}
-							</option>
-						))}
-					</LabeledGridField>
-					<LabeledGridField
-						name="attributes"
-						label="Alternate Font"
-						required
+			<LabeledGrid>
+				<LabeledGridField
+					as="select"
+					name="attributes"
+					label="Preset Font"
+					required
+					autoFocus
+				>
+					<option
+						value={presetFontFamilies.includes(values.attributes) ? '' : values.attributes}
+						disabled
+						hidden
 					/>
-					<Row>
-						<Label block htmlFor="field-bb-preview">
-							Preview
-						</Label>
-						<span id="field-bb-preview-container">
-							<textarea
-								id="field-bb-preview"
-								defaultValue={defaultBBPreview}
-								rows={3}
-								style={{ fontFamily: values.attributes }}
-							/>
-						</span>
-					</Row>
-				</LabeledGrid>
-			</>
+					{presetFontFamilies.map(fontFamily => (
+						<option
+							key={fontFamily}
+							value={fontFamily}
+							style={{ fontFamily }}
+						>
+							{fontFamily}
+						</option>
+					))}
+				</LabeledGridField>
+				<LabeledGridField
+					name="attributes"
+					label="Alternate Font"
+					required
+				/>
+				<Row>
+					<Label block htmlFor="field-bb-preview">
+						Preview
+					</Label>
+					<span id="field-bb-preview-container">
+						<textarea
+							id="field-bb-preview"
+							defaultValue={defaultBBPreview}
+							rows={3}
+							style={{ fontFamily: values.attributes }}
+						/>
+					</span>
+				</Row>
+			</LabeledGrid>
 		)
 	},
 	left: { title: 'Align Left' },
