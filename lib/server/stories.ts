@@ -12,7 +12,7 @@ import type { ClientPreviousPageIDs } from 'components/StoryViewer';
 import { PAGE_PRELOAD_DEPTH } from 'components/StoryViewer';
 import type { ServerNewsPost } from 'lib/server/news';
 import type { TagString } from 'lib/client/storyTags';
-import type { ServerColor } from 'lib/server/colors';
+import type { ServerColor, ServerColorGroup } from 'lib/server/colors';
 import { getClientColor } from 'lib/server/colors';
 
 /** @minimum 1 */
@@ -115,7 +115,8 @@ export type ServerStory = {
 	/** This story's news posts sorted from newest to oldest. */
 	news: ServerNewsPost[],
 	defaultPageTitle: ServerStoryPage['title'],
-	/** All of this story's saved colors (for use in the `ColorTool`). */
+	colorGroups: ServerColorGroup[],
+	/** All of this story's saved colors (for use in `ColorTool`). */
 	colors: ServerColor[]
 };
 
@@ -140,6 +141,7 @@ export const defaultStory = {
 	sidebarContent: '',
 	news: [] as never[],
 	defaultPageTitle: 'Next.',
+	colorGroups: [] as never[],
 	colors: [] as never[]
 } as const;
 

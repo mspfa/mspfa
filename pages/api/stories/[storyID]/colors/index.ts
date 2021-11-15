@@ -70,10 +70,35 @@ const Handler: APIHandler<{
 		return;
 	}
 
+	/** An `ObjectId` of `req.body.group`. */
+	let colorGroupID: ObjectId | undefined;
+
+	if ('group' in req.body) {
+		try {
+			colorGroupID = new ObjectId(req.body.group);
+		} catch {
+			res.status(400).send({
+				message: 'The specified color group ID is invalid.'
+			});
+			return;
+		}
+
+		if (!story.colorGroups.some(({ id }) => id.equals(colorGroupID!))) {
+			res.status(422).send({
+				message: 'No color group was found with the specified ID.'
+			});
+			return;
+		}
+	}
+
 	const serverColor: ServerColor = {
 		id: new ObjectId(),
-		...req.body
+		...req.body,
+		group: colorGroupID
 	};
+	if (serverColor.group === undefined) {
+		delete serverColor.group;
+	}
 
 	await stories.updateOne({
 		_id: story._id

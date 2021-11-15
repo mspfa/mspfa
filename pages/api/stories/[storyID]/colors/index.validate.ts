@@ -32,6 +32,9 @@ export default createValidator({
 								},
 								value: {
 									type: 'string'
+								},
+								group: {
+									type: 'string'
 								}
 							},
 							required: [
