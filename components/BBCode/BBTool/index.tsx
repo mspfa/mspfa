@@ -16,7 +16,7 @@ import useLatest from 'lib/client/reactHooks/useLatest';
 import { youTubeVideoIDTest } from 'components/BBCode/BBTags';
 import type { integer } from 'lib/types';
 import escapeBBAttribute from 'lib/client/escapeBBAttribute';
-import ColorPicker from 'components/ColorPicker';
+import ColorTool from 'components/ColorTool';
 
 const defaultBBPreview = 'The quick brown fox jumps over the lazy dog.';
 
@@ -72,12 +72,12 @@ const tags: Record<string, {
 	color: {
 		title: 'Text Color',
 		initialValues: randomColorAttributes,
-		content: <ColorPicker name="attributes" />
+		content: <ColorTool name="attributes" />
 	},
 	background: {
 		title: 'Text Background Color',
 		initialValues: randomColorAttributes,
-		content: <ColorPicker name="attributes" />
+		content: <ColorTool name="attributes" />
 	},
 	size: {
 		title: 'Font Size',

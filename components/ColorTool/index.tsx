@@ -20,11 +20,11 @@ type StoryColorAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors
 
 const getTwoDigitHex = (dec: string) => `0${(+dec).toString(16)}`.slice(-2);
 
-export type ColorPickerProps = {
+export type ColorToolProps = {
 	name: string
 };
 
-const ColorPicker = ({ name }: ColorPickerProps) => {
+const ColorTool = ({ name }: ColorToolProps) => {
 	const [, { value }, { setValue }] = useField<string>(name);
 
 	const colorComputerRef = useRef<HTMLDivElement>(null);
@@ -171,4 +171,4 @@ const ColorPicker = ({ name }: ColorPickerProps) => {
 	);
 };
 
-export default ColorPicker;
+export default ColorTool;

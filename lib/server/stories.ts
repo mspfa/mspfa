@@ -115,7 +115,7 @@ export type ServerStory = {
 	/** This story's news posts sorted from newest to oldest. */
 	news: ServerNewsPost[],
 	defaultPageTitle: ServerStoryPage['title'],
-	/** All of this story's saved colors (for use in the `ColorPicker`). */
+	/** All of this story's saved colors (for use in the `ColorTool`). */
 	colors: ServerColor[]
 };
 
