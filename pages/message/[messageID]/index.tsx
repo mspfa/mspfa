@@ -254,7 +254,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 
 	// If the message is unread, mark it as read.
 	if (message.notReadBy.some(userID => userID.equals(req.user!._id))) {
-		messages.updateOne({
+		await messages.updateOne({
 			_id: message._id
 		}, {
 			$pull: {
