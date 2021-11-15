@@ -1,5 +1,4 @@
 import './styles.module.scss';
-import env from 'lib/client/env';
 import { signInValues, initialSignInValues } from 'components/SignIn';
 import HCaptcha from '@hcaptcha/react-hcaptcha';
 import { useEffect } from 'react';
@@ -18,7 +17,7 @@ const Captcha = () => {
 	return (
 		<HCaptcha
 			id="captcha"
-			sitekey={env.HCAPTCHA_SITE_KEY}
+			sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY!}
 			onVerify={onCaptchaVerify}
 			onExpire={resetCaptchaToken}
 		/>

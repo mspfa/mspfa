@@ -6,7 +6,6 @@ import { getPrivateUser } from 'lib/server/users'; // @server-only
 import type { AppProps, AppContext } from 'next/app';
 import type { NextPageContext } from 'next';
 import Head from 'next/head';
-import env from 'lib/client/env';
 import UserContext, { useUserMerge, useUserInApp } from 'lib/client/UserContext';
 import type { PrivateUser } from 'lib/client/users';
 import type { PageRequest } from 'lib/server/pages';
@@ -19,7 +18,6 @@ import { useRouter } from 'next/router';
 import Dialog from 'lib/client/Dialog';
 
 export type MyAppInitialProps = {
-	env: Partial<typeof process.env>,
 	user?: PrivateUser
 };
 
@@ -35,8 +33,6 @@ const MyApp = ({
 	Component,
 	pageProps
 }: MyAppProps) => {
-	Object.assign(env, pageProps.initialProps?.env);
-
 	const { current: userCache } = useRef({});
 
 	const user = useUserInApp(pageProps.initialProps?.user);
@@ -129,16 +125,8 @@ const MyApp = ({
 MyApp.getInitialProps = async (appContext: AppContext) => {
 	const appProps = await App.getInitialProps(appContext) as MyAppProps;
 
-	const initialProps: MyAppInitialProps = {
-		env: {
-			HCAPTCHA_SITE_KEY: process.env.HCAPTCHA_SITE_KEY,
-			GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-			DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID
-		}
-	};
-
 	// This exposes `initialProps` to `MyApp` (on the server and the client) and to every page's props (on the client).
-	appProps.pageProps.initialProps = initialProps;
+	appProps.pageProps.initialProps = {};
 
 	// `req` and `res` below are exposed to every page's `getServerSideProps` (on the server) and `pages/_document` (on the server).
 	const { req, res } = appContext.ctx as NextPageContext & {
@@ -146,7 +134,7 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
 		res: NonNullable<NextPageContext['res']>
 	};
 
-	req.initialProps = initialProps;
+	req.initialProps = appProps.pageProps.initialProps;
 
 	const { user } = await authenticate(req, res);
 	if (user) {

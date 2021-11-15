@@ -1,7 +1,6 @@
 import './styles.module.scss';
 import Button from 'components/Button';
 import useFunction from 'lib/client/useFunction';
-import env from 'lib/client/env';
 import Dialog from 'lib/client/Dialog';
 import LabeledGrid from 'components/LabeledGrid';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
@@ -86,7 +85,7 @@ const promptAuthMethod = {
 		loadScript('https://apis.google.com/js/platform.js', () => {
 			const googleClientIDMeta = document.createElement('meta');
 			googleClientIDMeta.name = 'google-signin-client_id';
-			googleClientIDMeta.content = env.GOOGLE_CLIENT_ID;
+			googleClientIDMeta.content = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!;
 			document.head.appendChild(googleClientIDMeta);
 		}).then(() => {
 			gapi.load('auth2', () => {
@@ -111,7 +110,7 @@ const promptAuthMethod = {
 	discord: () => new Promise<AuthMethodOptions>(resolve => {
 		const win = window.open(
 			`https://discord.com/api/oauth2/authorize?${new URLSearchParams({
-				client_id: env.DISCORD_CLIENT_ID,
+				client_id: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID!,
 				redirect_uri: `${location.origin}/sign-in/discord`,
 				response_type: 'code',
 				scope: 'identify email'

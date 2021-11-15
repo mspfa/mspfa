@@ -11,7 +11,7 @@ import { OAuth2Client } from 'google-auth-library';
 import type { EmailString, integer } from 'lib/types';
 import type { AuthMethodOptions } from 'lib/client/auth';
 
-const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const googleClient = new OAuth2Client(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
 
 export type AuthMethodInfo<AuthMethodType extends AuthMethod['type'] = AuthMethod['type']> = {
 	authMethod: AuthMethod & (
@@ -56,7 +56,7 @@ export const getAuthMethodInfo = async <AuthMethodType extends AuthMethod['type'
 
 			const ticket = await googleClient.verifyIdToken({
 				idToken: authMethodOptions.value,
-				audience: process.env.GOOGLE_CLIENT_ID
+				audience: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
 			}).catch(onReject);
 
 			const payload = ticket.getPayload()!;
@@ -75,7 +75,7 @@ export const getAuthMethodInfo = async <AuthMethodType extends AuthMethod['type'
 			);
 
 			const { data: discordToken } = await axios.post('https://discord.com/api/oauth2/token', new URLSearchParams({
-				client_id: process.env.DISCORD_CLIENT_ID!,
+				client_id: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID!,
 				client_secret: process.env.DISCORD_CLIENT_SECRET!,
 				grant_type: 'authorization_code',
 				code: authMethodOptions.value,

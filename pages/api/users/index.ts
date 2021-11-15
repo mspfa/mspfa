@@ -78,7 +78,7 @@ const Handler: APIHandler<(
 		if (!(
 			await axios.post('https://hcaptcha.com/siteverify', new URLSearchParams({
 				secret: process.env.HCAPTCHA_SECRET_KEY!,
-				sitekey: process.env.HCAPTCHA_SITE_KEY!,
+				sitekey: process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY!,
 				response: req.body.captchaToken,
 				...typeof req.headers['x-real-ip'] === 'string' && {
 					remoteip: req.headers['x-real-ip']
