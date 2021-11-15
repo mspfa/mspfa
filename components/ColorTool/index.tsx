@@ -45,10 +45,9 @@ const ColorTool = ({ name }: ColorToolProps) => {
 									id="color-tool-field-group"
 									name="group"
 									className="spaced"
-									required
 								>
 									<option
-										value="default"
+										value=""
 										style={{ fontStyle: 'italic' }}
 									>
 										(No Group)

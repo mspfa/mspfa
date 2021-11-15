@@ -1,6 +1,6 @@
 import type { ServerStory, StoryID, ServerStoryPage, StoryPageID } from 'lib/server/stories';
 import type { DateNumber, integer } from 'lib/types';
-import type { ClientColor } from 'lib/client/colors';
+import type { ClientColor, ClientColorGroup } from 'lib/client/colors';
 
 /** All keys whose values have the same serializable type in both `ServerStory` and `PrivateStory`. */
 type PrivateStoryKey = 'anniversary' | 'title' | 'status' | 'privacy' | 'author' | 'description' | 'icon' | 'pageCount' | 'favCount' | 'banner' | 'style' | 'script' | 'tags' | 'allowComments' | 'sidebarContent' | 'defaultPageTitle';
@@ -14,6 +14,7 @@ export type PrivateStory = Pick<ServerStory, PrivateStoryKey> & {
 	owner: string,
 	editors: string[],
 	pageCount: integer,
+	colorGroups: ClientColorGroup[],
 	colors: ClientColor[]
 };
 

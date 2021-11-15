@@ -12,7 +12,7 @@ import type { ClientPreviousPageIDs } from 'components/StoryViewer';
 import { PAGE_PRELOAD_DEPTH } from 'components/StoryViewer';
 import type { ServerNewsPost } from 'lib/server/news';
 import type { TagString } from 'lib/client/storyTags';
-import type { ServerColor, ServerColorGroup } from 'lib/server/colors';
+import { getClientColorGroup, ServerColor, ServerColorGroup } from 'lib/server/colors';
 import { getClientColor } from 'lib/server/colors';
 
 /** @minimum 1 */
@@ -177,6 +177,7 @@ export const getPrivateStory = (story: ServerStory): PrivateStory => ({
 	allowComments: story.allowComments,
 	sidebarContent: story.sidebarContent,
 	defaultPageTitle: story.defaultPageTitle,
+	colorGroups: story.colorGroups.map(getClientColorGroup),
 	colors: story.colors.map(getClientColor)
 });
 
