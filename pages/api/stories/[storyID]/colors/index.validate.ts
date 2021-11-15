@@ -45,14 +45,10 @@ export default createValidator({
 							properties: {
 								storyID: {
 									type: 'string'
-								},
-								colorID: {
-									type: 'string'
 								}
 							},
 							required: [
-								'storyID',
-								'colorID'
+								'storyID'
 							],
 							additionalProperties: false
 						},
@@ -77,14 +73,10 @@ export default createValidator({
 							properties: {
 								storyID: {
 									type: 'string'
-								},
-								colorID: {
-									type: 'string'
 								}
 							},
 							required: [
-								'storyID',
-								'colorID'
+								'storyID'
 							],
 							additionalProperties: false
 						},

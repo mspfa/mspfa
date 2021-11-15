@@ -11,8 +11,7 @@ import { getClientColor } from 'lib/server/colors';
 
 const Handler: APIHandler<{
 	query: {
-		storyID: string,
-		colorID: string
+		storyID: string
 	}
 } & (
 	{
