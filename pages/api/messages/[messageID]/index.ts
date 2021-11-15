@@ -62,17 +62,17 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	const messageMerge: Partial<ServerMessage> = {
+	const messageChanges: Partial<ServerMessage> = {
 		...req.body,
 		edited: new Date()
 	};
 
-	Object.assign(message, messageMerge);
+	Object.assign(message, messageChanges);
 
 	await messages.updateOne({
 		_id: message._id
 	}, {
-		$set: messageMerge
+		$set: messageChanges
 	});
 
 	res.send(getClientMessage(message, user));

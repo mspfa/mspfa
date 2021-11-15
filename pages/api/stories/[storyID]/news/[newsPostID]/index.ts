@@ -123,18 +123,18 @@ const Handler: APIHandler<{
 
 	const newsPost = await getNewsPost();
 
-	const newsPostMerge: Partial<ServerNewsPost> = {
+	const newsPostChanges: Partial<ServerNewsPost> = {
 		...req.body,
 		edited: new Date()
 	};
 
-	Object.assign(newsPost, newsPostMerge);
+	Object.assign(newsPost, newsPostChanges);
 
 	await stories.updateOne({
 		'_id': story._id,
 		'news.id': newsPost.id
 	}, {
-		$set: flatten(newsPostMerge, 'news.$.')
+		$set: flatten(newsPostChanges, 'news.$.')
 	});
 
 	res.send(getClientNewsPost(newsPost));

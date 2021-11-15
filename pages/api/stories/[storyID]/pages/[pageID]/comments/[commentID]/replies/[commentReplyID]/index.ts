@@ -140,17 +140,17 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	const commentReplyMerge: Partial<ServerCommentReply> = {
+	const commentReplyChanges: Partial<ServerCommentReply> = {
 		...req.body,
 		edited: new Date()
 	};
 
-	Object.assign(commentReply, commentReplyMerge);
+	Object.assign(commentReply, commentReplyChanges);
 
 	await stories.updateOne({
 		_id: story._id
 	}, {
-		$set: flatten(commentReplyMerge, `pages.${page.id}.comments.$[comment].replies.$[commentReply].`)
+		$set: flatten(commentReplyChanges, `pages.${page.id}.comments.$[comment].replies.$[commentReply].`)
 	}, {
 		arrayFilters: [
 			{ 'comment.id': comment.id },

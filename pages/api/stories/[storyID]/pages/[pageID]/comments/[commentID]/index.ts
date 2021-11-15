@@ -129,18 +129,18 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	const commentMerge: Partial<ServerComment> = {
+	const commentChanges: Partial<ServerComment> = {
 		...req.body,
 		edited: new Date()
 	};
 
-	Object.assign(comment, commentMerge);
+	Object.assign(comment, commentChanges);
 
 	await stories.updateOne({
 		_id: story._id,
 		[`pages.${page.id}.comments.id`]: comment.id
 	}, {
-		$set: flatten(commentMerge, `pages.${page.id}.comments.$.`)
+		$set: flatten(commentChanges, `pages.${page.id}.comments.$.`)
 	});
 
 	res.send(getClientComment(comment, page.id, user));
