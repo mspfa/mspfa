@@ -9,7 +9,7 @@ import { Perm } from 'lib/client/perms';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 import { flatten } from 'lib/server/db';
 
-/** The keys of all `ClientNewsPost` properties which the client should be able to `PATCH` into their `ServerNewsPost`. */
+/** The keys of all `ClientNewsPost` properties which a client should be able to `PATCH` into a `ServerNewsPost`. */
 type WritableNewsPostKey = 'content';
 
 const Handler: APIHandler<{

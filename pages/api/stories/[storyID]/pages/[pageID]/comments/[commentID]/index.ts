@@ -10,7 +10,7 @@ import { Perm } from 'lib/client/perms';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 import { flatten } from 'lib/server/db';
 
-/** The keys of all `ClientComment` properties which the client should be able to `PATCH` into their `ServerComment`. */
+/** The keys of all `ClientComment` properties which a client should be able to `PATCH` into a `ServerComment`. */
 type WritableCommentKey = 'content';
 
 const Handler: APIHandler<{

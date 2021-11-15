@@ -13,7 +13,7 @@ import StoryPrivacy from 'lib/client/StoryPrivacy';
 import { authenticate } from 'lib/server/auth';
 import overwriteArrays from 'lib/client/overwriteArrays';
 
-/** The keys of all `PrivateStory` properties which the client should be able to `PATCH` into their `ServerStory`. */
+/** The keys of all `PrivateStory` properties which a client should be able to `PATCH` into a `ServerStory`. */
 type WritableStoryKey = 'title' | 'status' | 'privacy' | 'owner' | 'editors' | 'author' | 'description' | 'icon' | 'banner' | 'style' | 'tags' | 'allowComments' | 'sidebarContent' | 'defaultPageTitle';
 
 const Handler: APIHandler<{

@@ -12,7 +12,7 @@ import { mergeWith } from 'lodash';
 import stories from 'lib/server/stories';
 import overwriteArrays from 'lib/client/overwriteArrays';
 
-/** The keys of all `PrivateUser` properties which the client should be able to `PATCH` into their `ServerUser`. */
+/** The keys of all `PrivateUser` properties which a client should be able to `PATCH` into a `ServerUser`. */
 type WritableUserKey = 'birthdate' | 'name' | 'email' | 'description' | 'icon' | 'site' | 'profileStyle' | 'settings';
 
 const Handler: APIHandler<{

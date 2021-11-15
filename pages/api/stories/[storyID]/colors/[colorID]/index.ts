@@ -10,7 +10,7 @@ import StoryPrivacy from 'lib/client/StoryPrivacy';
 import { flatten } from 'lib/server/db';
 import { ObjectId } from 'mongodb';
 
-/** The keys of all `ClientColor` properties which the client should be able to `PATCH` into their `ServerColor`. */
+/** The keys of all `ClientColor` properties which a client should be able to `PATCH` into a `ServerColor`. */
 type WritableColorKey = 'name' | 'value';
 
 const Handler: APIHandler<{
