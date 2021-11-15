@@ -1,6 +1,4 @@
-import type { ChangeEvent } from 'react';
-import { useContext, useRef } from 'react';
-import { hashlessColorCodeTest } from 'components/BBCode/BBTags';
+import { useContext } from 'react';
 import { Field, useField } from 'formik';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import SaveButton from 'components/Button/SaveButton';
@@ -14,63 +12,37 @@ import api from 'lib/client/api';
 import StoryIDContext from 'lib/client/StoryIDContext';
 import IDPrefix from 'lib/client/IDPrefix';
 import AddButton from 'components/Button/AddButton';
+import type { ColorPickerProps } from 'components/ColorPicker';
+import ColorPicker from 'components/ColorPicker';
 
 type StoryColorsAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors').default>;
 type StoryColorAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors/[colorID]').default>;
 
-const getTwoDigitHex = (dec: string) => `0${(+dec).toString(16)}`.slice(-2);
+export type ColorToolProps = ColorPickerProps;
 
-export type ColorToolProps = {
-	name: string
-};
-
+/** The content of a color BB tool. */
 const ColorTool = ({ name }: ColorToolProps) => {
-	const [, { value }, { setValue }] = useField<string>(name);
-
-	const colorComputerRef = useRef<HTMLDivElement>(null);
-
-	let computedHexColor;
-	let computedOpacity = 1;
-
-	// Compute `computedHexColor` and `computedOpacity`.
-	if (colorComputerRef.current) {
-		// Reset the color before setting the new one, because setting an invalid color doesn't necessarily reset it.
-		colorComputerRef.current.style.color = '';
-		colorComputerRef.current.style.color = value.replace(hashlessColorCodeTest, '#$1');
-
-		const rgbaMatch = getComputedStyle(colorComputerRef.current).color.match(/^rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)$/);
-		if (rgbaMatch) {
-			computedHexColor = (
-				'#'
-				+ getTwoDigitHex(rgbaMatch[1])
-				+ getTwoDigitHex(rgbaMatch[2])
-				+ getTwoDigitHex(rgbaMatch[3])
-			);
-
-			if (rgbaMatch[4]) {
-				computedOpacity = +rgbaMatch[4];
-			}
-		}
-	}
+	const [, { value }] = useField<string>(name);
 
 	const storyID = useContext(StoryIDContext);
 
 	const saveColor = useFunction(async () => {
 		const dialog = new Dialog({
-			id: 'color-picker',
+			id: 'color-tool',
 			title: 'Save Color',
 			initialValues: {
 				group: 'default',
+				value,
 				name: value
 			},
 			content: function Content() {
 				return (
-					<IDPrefix.Provider value="color-picker">
+					<IDPrefix.Provider value="color-tool">
 						<LabeledGrid>
-							<LabeledGridRow htmlFor="color-picker-field-group" label="Color Group">
+							<LabeledGridRow htmlFor="color-tool-field-group" label="Color Group">
 								<Field
 									as="select"
-									id="color-picker-field-group"
+									id="color-tool-field-group"
 									name="group"
 									className="spaced"
 									required
@@ -92,8 +64,12 @@ const ColorTool = ({ name }: ColorToolProps) => {
 									}
 								/>
 							</LabeledGridRow>
-							<LabeledGridRow label="Color Value">
-								{value}
+							<LabeledGridRow htmlFor="color-tool-field-value" label="Color Value">
+								<ColorPicker
+									name="value"
+									required
+									innerRef={useAutoSelect()}
+								/>
 							</LabeledGridRow>
 							<LabeledGridField
 								name="name"
@@ -118,56 +94,29 @@ const ColorTool = ({ name }: ColorToolProps) => {
 
 		const { data: color } = await (api as StoryColorsAPI).post(`/stories/${storyID}/colors`, {
 			name: dialog.form!.values.name,
-			value
+			value: dialog.form!.values.value
 		});
 
-		console.log(color);
+		// TODO
 	});
 
 	return (
-		<>
-			<div
-				id="bb-tool-color-computer"
-				ref={colorComputerRef}
-			/>
-			<LabeledGrid>
-				<LabeledGridRow htmlFor="bb-tool-field-attributes" label="Color">
-					<input
-						type="color"
+		<LabeledGrid>
+			<LabeledGridRow htmlFor="bb-tool-field-attributes" label="Color">
+				<ColorPicker
+					name={name}
+					required
+					innerRef={useAutoSelect()}
+				/>
+				{storyID && (
+					<SaveButton
 						className="spaced"
-						style={{
-							opacity: computedOpacity
-						}}
-						value={
-							colorComputerRef.current
-								? computedHexColor
-								: value
-						}
-						onChange={
-							useFunction((event: ChangeEvent<HTMLInputElement>) => {
-								setValue(event.target.value);
-							})
-						}
+						title="Save Color"
+						onClick={saveColor}
 					/>
-					<Field
-						id="bb-tool-field-attributes"
-						name={name}
-						className="spaced"
-						required
-						autoFocus
-						size={9}
-						innerRef={useAutoSelect()}
-					/>
-					{storyID && (
-						<SaveButton
-							className="spaced"
-							title="Save Color"
-							onClick={saveColor}
-						/>
-					)}
-				</LabeledGridRow>
-			</LabeledGrid>
-		</>
+				)}
+			</LabeledGridRow>
+		</LabeledGrid>
 	);
 };
 
