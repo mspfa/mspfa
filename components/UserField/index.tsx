@@ -10,6 +10,7 @@ import type { APIClient } from 'lib/client/api';
 import type { PublicUser } from 'lib/client/users';
 import UserFieldOption from 'components/UserField/UserFieldOption';
 import EditButton from 'components/Button/EditButton';
+import type { CancelTokenSource } from 'axios';
 import axios from 'axios';
 import { useUserCache } from 'lib/client/UserCache';
 import RemoveButton from 'components/Button/RemoveButton';
@@ -82,7 +83,7 @@ const UserField = ({
 
 	const mountedRef = useMountedRef();
 
-	const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source>>();
+	const cancelTokenSourceRef = useRef<CancelTokenSource>();
 
 	const updateAutoComplete = useThrottled(async (search: string) => {
 		if (search) {

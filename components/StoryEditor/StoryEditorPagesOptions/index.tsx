@@ -13,6 +13,7 @@ import LabeledGrid from 'components/LabeledGrid';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import { Field } from 'formik';
+import type { CancelTokenSource } from 'axios';
 import axios from 'axios';
 import useThrottled from 'lib/client/useThrottled';
 import type { APIClient } from 'lib/client/api';
@@ -47,7 +48,7 @@ const StoryEditorPagesOptions = ({
 
 	const defaultPageTitleInputRef = useRef<HTMLInputElement>(null!);
 
-	const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source>>();
+	const cancelTokenSourceRef = useRef<CancelTokenSource>();
 
 	const changeDefaultPageTitle = useThrottled(async (event: ChangeEvent<HTMLInputElement>) => {
 		setStory({

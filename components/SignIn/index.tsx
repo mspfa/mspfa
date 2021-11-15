@@ -12,6 +12,7 @@ import ForgotPassword from 'components/ForgotPassword';
 import AuthButton from 'components/Button/AuthButton';
 import BirthdateField from 'components/DateField/BirthdateField';
 import { escapeRegExp } from 'lodash';
+import type { CancelTokenSource } from 'axios';
 import axios from 'axios';
 import useMountedRef from 'lib/client/useMountedRef';
 import useThrottled from 'lib/client/useThrottled';
@@ -78,7 +79,7 @@ const SignIn = ({ page }: SignInProps) => {
 	// This state is whether the inputted email is valid and taken on `page === 1`, or undefined if whether it's taken is still loading.
 	const [emailTaken, setEmailTaken] = useState<boolean>();
 
-	const cancelTokenSourceRef = useRef<ReturnType<typeof axios.CancelToken.source>>();
+	const cancelTokenSourceRef = useRef<CancelTokenSource>();
 
 	/** Asynchronously checks if the `email` is taken and sets the `emailTaken` state accordingly. */
 	const checkEmail = useThrottled(async (email: string) => {
