@@ -4,6 +4,7 @@
 	font: inherit;
 	color: inherit;
 
+	position: relative;
 	box-sizing: content-box;
 	cursor: pointer;
 	width: 1em;
@@ -11,12 +12,26 @@
 	// Default to the text color for invalid colors.
 	background-color: currentColor;
 
+	// Ensure the border of a focused cell appears over the borders of adjacent cells.
 	&:focus, &:active {
-		position: relative;
 		z-index: 1;
 	}
 
+	// Let adjacent cells share borders.
 	& + & {
 		margin-left: -2px;
+	}
+
+	// When there are multiple adjacent cells, ensures each cell's bounding box is centered on the cell.
+	&::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		padding: 2px 1px;
+		margin: -2px -1px;
+		z-index: 1;
 	}
 }
