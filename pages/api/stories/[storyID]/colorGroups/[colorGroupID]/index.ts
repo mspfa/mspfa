@@ -91,14 +91,24 @@ const Handler: APIHandler<{
 			return;
 		}
 
+		const colorGroup = await getColorGroup();
+
 		await stories.updateOne({
 			_id: story._id
 		}, {
 			$pull: {
 				colorGroups: {
-					id: (await getColorGroup()).id
+					id: colorGroup.id
 				}
+			},
+			// Remove this color group from any colors that have it.
+			$unset: {
+				'colors.$[color].group': true
 			}
+		}, {
+			arrayFilters: [
+				{ 'color.group': colorGroup.id }
+			]
 		});
 
 		res.status(204).end();
