@@ -1,6 +1,6 @@
 import EditButton from 'components/Button/EditButton';
 import FavButton from 'components/Button/FavButton';
-import PageCount from 'components/Icon/PageCount';
+import PageCount from 'components/StoryStats/PageCount';
 import { Perm } from 'lib/client/perms';
 import type { PublicStory } from 'lib/client/stories';
 import { storyStatusNames } from 'lib/client/StoryStatus';
