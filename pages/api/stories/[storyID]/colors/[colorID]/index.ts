@@ -148,8 +148,10 @@ const Handler: APIHandler<{
 	}
 
 	const colorChanges: Partial<ServerColor> = {
-		...req.body,
-		group: colorGroupID
+		...req.body as Omit<typeof req.body, 'group'>,
+		...'group' in req.body && {
+			group: colorGroupID
+		}
 	};
 
 	Object.assign(color, colorChanges);
