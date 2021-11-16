@@ -68,12 +68,55 @@ const ColorButton = ({
 							},
 							content: <ColorOptions />,
 							actions: [
-								{ label: 'Okay', autoFocus: false },
+								{ label: 'Save', autoFocus: false },
+								{ label: 'Delete', value: 'delete' },
 								'Cancel'
 							]
 						});
 
-						if (!(await dialog)?.submit) {
+						const dialogResult = await dialog;
+
+						if (dialogResult?.value === 'delete') {
+							if (!await Dialog.confirm({
+								id: 'delete-color',
+								title: 'Delete Color',
+								content: (
+									<>
+										Are you sure you want to delete this saved color?<br />
+										<br />
+										<i>
+											{color.name === color.value ? (
+												color.name
+											) : (
+												`${color.name} (${color.value})`
+											)}
+										</i><br />
+										<br />
+										This cannot be undone.
+									</>
+								)
+							})) {
+								return;
+							}
+
+							await (api as StoryColorAPI).delete(`/stories/${story.id}/colors/${color.id}`);
+
+							setStory(story => {
+								const colorIndex = story.colors.findIndex(({ id }) => id === color.id);
+
+								return {
+									...story,
+									colors: [
+										...story.colors.slice(0, colorIndex),
+										...story.colors.slice(colorIndex + 1, story.colors.length)
+									]
+								};
+							});
+
+							return;
+						}
+
+						if (!dialogResult?.submit) {
 							return;
 						}
 
