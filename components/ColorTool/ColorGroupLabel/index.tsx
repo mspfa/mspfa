@@ -9,6 +9,7 @@ import { useContext } from 'react';
 import PrivateStoryContext from 'lib/client/PrivateStoryContext';
 import ColorGroupOptions from 'components/ColorTool/ColorGroupOptions';
 import { getChangedValues } from 'lib/client/forms';
+import Grabber from 'components/Grabber';
 
 type StoryColorGroupAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups/[colorGroupID]').default>;
 
@@ -23,6 +24,10 @@ const ColorGroupLabel = ({ children: colorGroup }: ColorGroupLabelProps) => {
 	return (
 		<Label
 			block
+			className="color-group-label"
+			beforeLabel={(
+				<Grabber className="spaced" />
+			)}
 			afterLabel={(
 				<EditButton
 					className="spaced"

@@ -1,0 +1,7 @@
+@use 'sass:math';
+
+.grabber {
+	background-image: url(/images/grabber.svg);
+	opacity: math.div(1, 3);
+	cursor: move;
+}

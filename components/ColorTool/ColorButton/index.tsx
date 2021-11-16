@@ -14,6 +14,7 @@ import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import PrivateStoryContext from 'lib/client/PrivateStoryContext';
 import { getChangedValues } from 'lib/client/forms';
+import Grabber from 'components/Grabber';
 
 type StoryColorAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors/[colorID]').default>;
 
@@ -159,6 +160,7 @@ const ColorButton = ({
 
 	return editing ? (
 		<div className="color-button-container">
+			<Grabber className="spaced" />
 			{button}
 			<span
 				className="color-button-label spaced"

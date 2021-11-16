@@ -72,6 +72,11 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 			</Row>
 			{grouplessColors.length !== 0 && (
 				<Row>
+					{editing && (
+						<Label block>
+							No Group
+						</Label>
+					)}
 					{grouplessColors.map(getColorButton)}
 				</Row>
 			)}
