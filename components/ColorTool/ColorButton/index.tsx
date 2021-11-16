@@ -68,8 +68,8 @@ const ColorButton = ({
 							},
 							content: <ColorOptions />,
 							actions: [
-								{ label: 'Save', autoFocus: false },
 								{ label: 'Delete', value: 'delete' },
+								{ label: 'Save', submit: true, autoFocus: false },
 								'Cancel'
 							]
 						});

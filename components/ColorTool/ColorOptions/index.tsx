@@ -3,17 +3,13 @@ import { Field, useField } from 'formik';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import LabeledGrid from 'components/LabeledGrid';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import Dialog from 'lib/client/Dialog';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import useAutoSelect from 'lib/client/reactHooks/useAutoSelect';
-import type { APIClient } from 'lib/client/api';
-import api from 'lib/client/api';
 import PrivateStoryContext from 'lib/client/PrivateStoryContext';
 import IDPrefix from 'lib/client/IDPrefix';
 import AddButton from 'components/Button/AddButton';
 import ColorField from 'components/ColorField';
-
-type StoryColorGroupsAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups').default>;
+import promptCreateColorGroup from 'lib/client/promptCreateColorGroup';
 
 /**
  * A `LabeledGrid` of form fields containing options for a `ClientColor`.
@@ -55,45 +51,7 @@ const ColorOptions = () => {
 						title="Create Color Group"
 						onClick={
 							useFunction(async () => {
-								const dialog = new Dialog({
-									id: 'color-group',
-									title: 'Create Color Group',
-									initialValues: { name: '' },
-									content: (
-										<IDPrefix.Provider value="color-group">
-											<LabeledGrid>
-												<LabeledGridField
-													name="name"
-													label="Name"
-													required
-													maxLength={50}
-													autoComplete="off"
-													autoFocus
-												/>
-											</LabeledGrid>
-										</IDPrefix.Provider>
-									),
-									actions: [
-										{ label: 'Okay', autoFocus: false },
-										'Cancel'
-									]
-								});
-
-								if (!(await dialog)?.submit) {
-									return;
-								}
-
-								const { data: colorGroup } = await (api as StoryColorGroupsAPI).post(`/stories/${story.id}/colorGroups`, {
-									name: dialog.form!.values.name
-								});
-
-								setStory(story => ({
-									...story,
-									colorGroups: [
-										...story.colorGroups,
-										colorGroup
-									]
-								}));
+								const colorGroup = await promptCreateColorGroup(story, setStory);
 
 								setGroup(colorGroup.id);
 								colorGroupFieldRef.current.focus();
