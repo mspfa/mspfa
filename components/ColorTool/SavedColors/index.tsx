@@ -11,12 +11,14 @@ import EditButton from 'components/Button/EditButton';
 import CheckButton from 'components/Button/CheckButton';
 import type { ClientColor } from 'lib/client/colors';
 import ColorGroupLabel from 'components/ColorTool/ColorGroupLabel';
+import Button from 'components/Button';
+import promptCreateColorGroup from 'lib/client/promptCreateColorGroup';
 
 export type SavedColorsProps = Pick<ColorButtonProps, 'name'>;
 
 /** The saved colors section of `ColorTool`. */
 const SavedColors = React.memo(({ name }: SavedColorsProps) => {
-	const [story] = useContext(PrivateStoryContext)!;
+	const [story, setStory] = useContext(PrivateStoryContext)!;
 
 	/** Gets all of the `story`'s colors which have the specified `group` property. */
 	const getColorsByGroup = (colorGroupID: string | undefined) => (
@@ -40,6 +42,10 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 			{color}
 		</ColorButton>
 	);
+
+	const onClickCreateColorGroup = useFunction(() => {
+		promptCreateColorGroup(story, setStory);
+	});
 
 	const rows = (
 		<>
@@ -101,6 +107,16 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 					</LabeledGridRow>
 				);
 			})}
+			{editing && (
+				<Row>
+					<Button
+						className="small"
+						onClick={onClickCreateColorGroup}
+					>
+						Create Color Group
+					</Button>
+				</Row>
+			)}
 		</>
 	);
 
