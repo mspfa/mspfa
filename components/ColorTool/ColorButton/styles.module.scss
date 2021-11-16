@@ -1,4 +1,15 @@
-.color-button > * {
-	// Prevent children from stealing `event.target` from the button.
-	pointer-events: none;
+@use 'lib/styles/themes' as *;
+
+.color-button {
+	@include desktop {
+		// Only show the edit icon on hover.
+		&-container:not(:hover) &:not(:focus):not(:active) .icon {
+			opacity: 0;
+		}
+	}
+
+	& > * {
+		// Prevent children from stealing `event.target` from the button.
+		pointer-events: none;
+	}
 }
