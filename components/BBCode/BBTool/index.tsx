@@ -17,8 +17,9 @@ import { youTubeVideoIDTest } from 'components/BBCode/BBTags';
 import type { integer } from 'lib/types';
 import escapeBBAttribute from 'lib/client/escapeBBAttribute';
 import dynamic from 'next/dynamic';
+import Loading from 'components/LoadingIndicator/Loading';
 
-const ColorTool = dynamic(() => import('components/ColorTool'));
+const ColorTool = dynamic(() => import('components/ColorTool'), { loading: Loading });
 
 const defaultBBPreview = 'The quick brown fox jumps over the lazy dog.';
 

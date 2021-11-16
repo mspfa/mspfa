@@ -14,9 +14,10 @@ import users, { getPublicUser } from 'lib/server/users';
 import type { integer } from 'lib/types';
 import dynamic from 'next/dynamic';
 import { getClientNewsPost } from 'lib/server/news';
+import Loading from 'components/LoadingIndicator/Loading';
 
-const Homepage = dynamic(() => import('components/Homepage'));
-const StoryViewer = dynamic(() => import('components/StoryViewer'));
+const Homepage = dynamic(() => import('components/Homepage'), { loading: Loading });
+const StoryViewer = dynamic(() => import('components/StoryViewer'), { loading: Loading });
 
 type ServerSideProps = (
 	// When the user is viewing the homepage.

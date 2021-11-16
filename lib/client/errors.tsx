@@ -2,8 +2,9 @@ import { useUser } from 'lib/client/UserContext';
 import Router from 'next/router';
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
+import Loading from 'components/LoadingIndicator/Loading';
 
-const ErrorPage = dynamic(() => import('pages/_error'));
+const ErrorPage = dynamic(() => import('pages/_error'), { loading: Loading });
 
 let reloadsToPrevent = 0;
 
