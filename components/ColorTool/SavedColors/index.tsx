@@ -1,12 +1,10 @@
-import type { MouseEvent } from 'react';
-import { useContext, useState } from 'react';
-import { useField, useFormikContext } from 'formik';
+import React, { useContext, useState } from 'react';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import LabeledGrid from 'components/LabeledGrid';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import type { APIClient } from 'lib/client/api';
 import PrivateStoryContext from 'lib/client/PrivateStoryContext';
-import type { ColorFieldProps } from 'components/ColorField';
+import type { ColorButtonProps } from 'components/ColorTool/ColorButton';
 import Row from 'components/Row';
 import Label from 'components/Label';
 import ColorButton from 'components/ColorTool/ColorButton';
@@ -19,28 +17,11 @@ type StoryColorGroupAPI = APIClient<typeof import('pages/api/stories/[storyID]/c
 type StoryColorsAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors').default>;
 type StoryColorAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors/[colorID]').default>;
 
-export type SavedColorsProps = {
-	/** The `name` of the Formik field to set the value of the selected color into. */
-	name: ColorFieldProps['name']
-};
+export type SavedColorsProps = Pick<ColorButtonProps, 'name'>;
 
 /** The saved colors section of `ColorTool`. */
-const SavedColors = ({ name }: SavedColorsProps) => {
-	const [, , { setValue }] = useField<string>(name);
-	const { submitForm } = useFormikContext();
-
+const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 	const [story, setStory] = useContext(PrivateStoryContext)!;
-
-	const onClickColorButton = useFunction((
-		event: MouseEvent<HTMLButtonElement & HTMLAnchorElement> & { target: HTMLButtonElement }
-	) => {
-		const colorID = event.target.id.slice('color-button-'.length);
-		console.log(colorID);
-		const color = story.colors.find(({ id }) => id === colorID)!;
-
-		setValue(color.value);
-		submitForm();
-	});
 
 	const [editing, setEditing] = useState(false);
 
@@ -51,10 +32,7 @@ const SavedColors = ({ name }: SavedColorsProps) => {
 	const grouplessColors = story.colors.filter(({ group }) => !group);
 
 	const getColorButton = (color: ClientColor) => (
-		<ColorButton
-			key={color.id}
-			onClick={onClickColorButton}
-		>
+		<ColorButton key={color.id} name={name}>
 			{color}
 		</ColorButton>
 	);
@@ -114,6 +92,6 @@ const SavedColors = ({ name }: SavedColorsProps) => {
 			</LabeledGrid>
 		</Row>
 	);
-};
+});
 
 export default SavedColors;
