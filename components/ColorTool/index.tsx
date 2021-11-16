@@ -85,8 +85,10 @@ const ColorTool = ({ name }: ColorToolProps) => {
 															<LabeledGridField
 																name="name"
 																label="Name"
-																autoFocus
+																required
+																maxLength={50}
 																autoComplete="off"
+																autoFocus
 															/>
 														</LabeledGrid>
 													</IDPrefix.Provider>
@@ -130,6 +132,8 @@ const ColorTool = ({ name }: ColorToolProps) => {
 								name="name"
 								label="Color Label"
 								help={'This label is the name associated with your saved color.\n\nIt can be anything and doesn\'t have to match the actual value of the color. For example, "John Egbert" or "blue".'}
+								required
+								maxLength={50}
 								autoComplete="off"
 								innerRef={useAutoSelect() as any}
 							/>

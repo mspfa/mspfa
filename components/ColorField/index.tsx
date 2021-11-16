@@ -76,6 +76,7 @@ const ColorField = ({ id, name, required, disabled, readOnly, autoFocus, innerRe
 				name={name}
 				className="spaced"
 				size={9}
+				maxLength={50}
 				required={required}
 				disabled={disabled}
 				readOnly={readOnly}

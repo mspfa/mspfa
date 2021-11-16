@@ -28,7 +28,9 @@ export default createValidator({
 							type: 'object',
 							properties: {
 								name: {
-									type: 'string'
+									type: 'string',
+									minLength: 1,
+									maxLength: 50
 								}
 							},
 							required: [

@@ -6,6 +6,10 @@ export type ColorGroupID = ObjectId;
 
 export type ServerColorGroup = {
 	id: ColorGroupID,
+	/**
+	 * @minLength 1
+	 * @maxLength 50
+	 */
 	name: string
 };
 
@@ -19,7 +23,15 @@ export type ServerColor = {
 	id: ColorID,
 	/** The ID of the color group which the color belongs to, or undefined if the color is not in a group. */
 	group?: ColorGroupID,
+	/**
+	 * @minLength 1
+	 * @maxLength 50
+	 */
 	name: string,
+	/**
+	 * @minLength 1
+	 * @maxLength 50
+	 */
 	value: string
 };
 
