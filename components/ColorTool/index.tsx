@@ -1,6 +1,5 @@
-import type { MouseEvent } from 'react';
 import { useContext, useRef } from 'react';
-import { Field, useField, useFormikContext } from 'formik';
+import { Field, useField } from 'formik';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import SaveButton from 'components/Button/SaveButton';
 import LabeledGrid from 'components/LabeledGrid';
@@ -16,21 +15,16 @@ import AddButton from 'components/Button/AddButton';
 import type { ColorFieldProps } from 'components/ColorField';
 import ColorField from 'components/ColorField';
 import Row from 'components/Row';
-import Label from 'components/Label';
-import ColorCell from 'components/ColorCell';
-import EditButton from 'components/Button/EditButton';
+import SavedColors from './SavedColors';
 
 type StoryColorGroupsAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups').default>;
-type StoryColorGroupAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups/[colorGroupID]').default>;
 type StoryColorsAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors').default>;
-type StoryColorAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors/[colorID]').default>;
 
 export type ColorToolProps = ColorFieldProps;
 
 /** The content of a color BB tool. */
 const ColorTool = ({ name }: ColorToolProps) => {
-	const [, { value }, { setValue }] = useField<string>(name);
-	const { submitForm } = useFormikContext();
+	const [, { value }] = useField<string>(name);
 
 	const [story, setStory] = useContext(PrivateStoryContext) || [];
 
@@ -169,17 +163,6 @@ const ColorTool = ({ name }: ColorToolProps) => {
 		}));
 	});
 
-	const onClickColorCell = useFunction((event: MouseEvent<HTMLButtonElement> & { target: HTMLButtonElement }) => {
-		const newValue = event.target.dataset.value;
-
-		if (newValue === undefined) {
-			return;
-		}
-
-		setValue(newValue);
-		submitForm();
-	});
-
 	return (
 		<>
 			<Row>
@@ -200,64 +183,9 @@ const ColorTool = ({ name }: ColorToolProps) => {
 					</LabeledGridRow>
 				</LabeledGrid>
 			</Row>
-			{story && !!(story.colors.length || story.colorGroups.length) && (() => {
-				const grouplessColors = story.colors.filter(({ group }) => !group);
-
-				return (
-					<Row>
-						<LabeledGrid>
-							<Row>
-								<Label
-									afterLabel={
-										<EditButton className="spaced" />
-									}
-								>
-									Saved Colors
-								</Label>
-							</Row>
-							{grouplessColors.length !== 0 && (
-								<Row>
-									{grouplessColors.map(color => (
-										<ColorCell
-											key={color.id}
-											onClick={onClickColorCell}
-										>
-											{color}
-										</ColorCell>
-									))}
-								</Row>
-							)}
-							{story.colorGroups.map(colorGroup => {
-								const colors = story.colors.filter(({ group }) => group === colorGroup.id);
-
-								return (
-									<LabeledGridRow
-										key={colorGroup.id}
-										label={colorGroup.name}
-									>
-										{colors.length ? (
-											<span>
-												{colors.map(color => (
-													<ColorCell
-														key={color.id}
-														onClick={onClickColorCell}
-													>
-														{color}
-													</ColorCell>
-												))}
-											</span>
-										) : (
-											<span className="translucent">
-												(Empty)
-											</span>
-										)}
-									</LabeledGridRow>
-								);
-							})}
-						</LabeledGrid>
-					</Row>
-				);
-			})()}
+			{story && !!(story.colors.length || story.colorGroups.length) && (
+				<SavedColors name={name} />
+			)}
 		</>
 	);
 };
