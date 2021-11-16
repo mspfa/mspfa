@@ -83,7 +83,9 @@ const ColorTool = ({ name }: ColorToolProps) => {
 				</LabeledGrid>
 			</Row>
 			{story && !!(story.colors.length || story.colorGroups.length) && (
-				<SavedColors name={name} />
+				<Row>
+					<SavedColors name={name} />
+				</Row>
 			)}
 		</>
 	);

@@ -11,6 +11,7 @@ import ColorButton from 'components/ColorTool/ColorButton';
 import EditButton from 'components/Button/EditButton';
 import CheckButton from 'components/Button/CheckButton';
 import type { ClientColor } from 'lib/client/colors';
+import ColorGroupLabel from '../ColorGroupLabel';
 
 type StoryColorGroupsAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups').default>;
 type StoryColorGroupAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups/[colorGroupID]').default>;
@@ -23,74 +24,92 @@ export type SavedColorsProps = Pick<ColorButtonProps, 'name'>;
 const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 	const [story, setStory] = useContext(PrivateStoryContext)!;
 
+	/** Gets all of the `story`'s colors which have the specified `group` property. */
+	const getColorsByGroup = (colorGroupID: string | undefined) => (
+		story.colors.filter(({ group }) => group === colorGroupID)
+	);
+
+	const grouplessColors = getColorsByGroup(undefined);
+
 	const [editing, setEditing] = useState(false);
 
 	const toggleEditing = useFunction(() => {
 		setEditing(editing => !editing);
 	});
 
-	const grouplessColors = story.colors.filter(({ group }) => !group);
-
 	const getColorButton = (color: ClientColor) => (
-		<ColorButton key={color.id} name={name}>
+		<ColorButton
+			key={color.id}
+			name={name}
+			editing={editing}
+		>
 			{color}
 		</ColorButton>
 	);
 
-	return (
-		<Row>
-			<LabeledGrid>
+	const rows = (
+		<>
+			<Row>
+				<Label
+					afterLabel={
+						editing ? (
+							<CheckButton
+								className="spaced"
+								title="Finish Editing"
+								onClick={toggleEditing}
+							/>
+						) : (
+							<EditButton
+								className="spaced"
+								title="Edit Saved Colors"
+								onClick={toggleEditing}
+							/>
+						)
+					}
+				>
+					Saved Colors
+				</Label>
+			</Row>
+			{grouplessColors.length !== 0 && (
 				<Row>
-					<Label
-						afterLabel={
-							editing ? (
-								<CheckButton
-									className="spaced"
-									title="Finish Editing"
-									onClick={toggleEditing}
-								/>
-							) : (
-								<EditButton
-									className="spaced"
-									title="Edit Saved Colors"
-									onClick={toggleEditing}
-								/>
-							)
-						}
-					>
-						Saved Colors
-					</Label>
+					{grouplessColors.map(getColorButton)}
 				</Row>
-				{grouplessColors.length !== 0 && (
-					<Row>
-						{grouplessColors.map(getColorButton)}
-					</Row>
-				)}
-				{story.colorGroups.map(colorGroup => {
-					const colors = story.colors.filter(({ group }) => group === colorGroup.id);
+			)}
+			{story.colorGroups.map(colorGroup => {
+				const colors = getColorsByGroup(colorGroup.id);
 
-					return editing ? (
-						colorGroup.name
-					) : (
-						<LabeledGridRow
-							key={colorGroup.id}
-							label={colorGroup.name}
-						>
-							{colors.length ? (
-								// This `span` is necessary to allow the color buttons to wrap normally rather than being flex items.
-								<span>
-									{colors.map(getColorButton)}
-								</span>
-							) : (
-								<span className="translucent">
-									(Empty)
-								</span>
-							)}
-						</LabeledGridRow>
-					);
-				})}
-			</LabeledGrid>
-		</Row>
+				return editing ? (
+					<Row key={colorGroup.id}>
+						<ColorGroupLabel>{colorGroup}</ColorGroupLabel>
+						{colors.map(getColorButton)}
+					</Row>
+				) : (
+					<LabeledGridRow
+						key={colorGroup.id}
+						label={colorGroup.name}
+					>
+						{colors.length ? (
+							// This `span` is necessary to allow the color buttons to wrap normally rather than being flex items.
+							<span>
+								{colors.map(getColorButton)}
+							</span>
+						) : (
+							<span className="translucent">
+								(Empty)
+							</span>
+						)}
+					</LabeledGridRow>
+				);
+			})}
+		</>
+	);
+
+	return editing ? (
+		rows
+	) : (
+		<LabeledGrid>
+			{rows}
+		</LabeledGrid>
 	);
 });
 
