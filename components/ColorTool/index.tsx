@@ -26,8 +26,11 @@ const ColorTool = ({ name }: ColorToolProps) => {
 	const [story, setStory] = useContext(PrivateStoryContext) || [];
 
 	const saveColor = useFunction(async () => {
+		// Close any existing color options dialog.
+		await Dialog.getByID('color-options')?.resolve();
+
 		const dialog = new Dialog({
-			id: 'save-color',
+			id: 'color-options',
 			title: 'Save Color',
 			initialValues: {
 				group: '',

@@ -1,12 +1,21 @@
 import './styles.module.scss';
 import type { ClientColor } from 'lib/client/colors';
 import type { CSSProperties } from 'react';
+import { useContext } from 'react';
 import type { ButtonProps } from 'components/Button';
 import Button from 'components/Button';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import { useField, useFormikContext } from 'formik';
 import type { ColorFieldProps } from 'components/ColorField';
 import EditButton from 'components/Button/EditButton';
+import Dialog from 'lib/client/Dialog';
+import ColorOptions from 'components/ColorTool/ColorOptions';
+import type { APIClient } from 'lib/client/api';
+import api from 'lib/client/api';
+import PrivateStoryContext from 'lib/client/PrivateStoryContext';
+import { getChangedValues } from 'lib/client/forms';
+
+type StoryColorAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors/[colorID]').default>;
 
 export type ColorButtonProps = Omit<ButtonProps, 'children' | 'icon' | 'className' | 'title' | 'style' | 'onClick'> & {
 	/** The `name` of the Formik field to set the value of the selected color into. */
@@ -25,6 +34,8 @@ const ColorButton = ({
 	const [, , { setValue }] = useField<string>(name);
 	const { submitForm } = useFormikContext();
 
+	const [story, setStory] = useContext(PrivateStoryContext)!;
+
 	const ColorButtonComponent = editing ? EditButton : Button;
 
 	const button = (
@@ -42,9 +53,57 @@ const ColorButton = ({
 				{ '--button-color': color.value } as CSSProperties
 			}
 			onClick={
-				useFunction(() => {
+				useFunction(async () => {
 					if (editing) {
+						// Close any existing color options dialog.
+						await Dialog.getByID('color-options')?.resolve();
 
+						const dialog = new Dialog({
+							id: 'color-options',
+							title: 'Edit Color',
+							initialValues: {
+								group: color.group || '',
+								name: color.name,
+								value: color.value
+							},
+							content: <ColorOptions />,
+							actions: [
+								{ label: 'Okay', autoFocus: false },
+								'Cancel'
+							]
+						});
+
+						if (!(await dialog)?.submit) {
+							return;
+						}
+
+						const changedValues = getChangedValues<Parameters<StoryColorAPI['patch']>[1]>(
+							dialog.form!.initialValues,
+							dialog.form!.values
+						);
+
+						if (!changedValues) {
+							return;
+						}
+
+						if (changedValues.group === '') {
+							changedValues.group = null;
+						}
+
+						const { data: newColor } = await (api as StoryColorAPI).patch(`/stories/${story.id}/colors/${color.id}`, changedValues);
+
+						setStory(story => {
+							const colorIndex = story.colors.findIndex(({ id }) => id === color.id);
+
+							return {
+								...story,
+								colors: [
+									...story.colors.slice(0, colorIndex),
+									newColor,
+									...story.colors.slice(colorIndex + 1, story.colors.length)
+								]
+							};
+						});
 					} else {
 						setValue(color.value);
 						submitForm();

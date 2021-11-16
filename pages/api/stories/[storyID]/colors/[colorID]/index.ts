@@ -149,13 +149,18 @@ const Handler: APIHandler<{
 
 	const colorChanges: Partial<ServerColor> = {
 		...req.body,
-		group: undefined
+		group: colorGroupID
 	};
-	delete colorChanges.group;
 
 	Object.assign(color, colorChanges);
 
 	const shouldUnsetGroup = req.body.group === null;
+
+	if (shouldUnsetGroup) {
+		delete colorChanges.group;
+		delete color.group;
+	}
+
 	const colorChangesLength = Object.values(colorChanges).length;
 	if (shouldUnsetGroup || colorChangesLength) {
 		await stories.updateOne({

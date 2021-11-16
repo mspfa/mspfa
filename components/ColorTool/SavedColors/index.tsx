@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import LabeledGrid from 'components/LabeledGrid';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import type { APIClient } from 'lib/client/api';
 import PrivateStoryContext from 'lib/client/PrivateStoryContext';
 import type { ColorButtonProps } from 'components/ColorTool/ColorButton';
 import Row from 'components/Row';
@@ -11,18 +10,13 @@ import ColorButton from 'components/ColorTool/ColorButton';
 import EditButton from 'components/Button/EditButton';
 import CheckButton from 'components/Button/CheckButton';
 import type { ClientColor } from 'lib/client/colors';
-import ColorGroupLabel from '../ColorGroupLabel';
-
-type StoryColorGroupsAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups').default>;
-type StoryColorGroupAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups/[colorGroupID]').default>;
-type StoryColorsAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors').default>;
-type StoryColorAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors/[colorID]').default>;
+import ColorGroupLabel from 'components/ColorTool/ColorGroupLabel';
 
 export type SavedColorsProps = Pick<ColorButtonProps, 'name'>;
 
 /** The saved colors section of `ColorTool`. */
 const SavedColors = React.memo(({ name }: SavedColorsProps) => {
-	const [story, setStory] = useContext(PrivateStoryContext)!;
+	const [story] = useContext(PrivateStoryContext)!;
 
 	/** Gets all of the `story`'s colors which have the specified `group` property. */
 	const getColorsByGroup = (colorGroupID: string | undefined) => (
