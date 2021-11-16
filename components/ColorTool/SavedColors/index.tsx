@@ -75,7 +75,13 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 				return editing ? (
 					<Row key={colorGroup.id}>
 						<ColorGroupLabel>{colorGroup}</ColorGroupLabel>
-						{colors.map(getColorButton)}
+						{colors.length ? (
+							colors.map(getColorButton)
+						) : (
+							<div className="translucent">
+								(Empty)
+							</div>
+						)}
 					</Row>
 				) : (
 					<LabeledGridRow
