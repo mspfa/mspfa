@@ -1,0 +1,22 @@
+.color-cell {
+	// Undo the `button` styles.
+	padding: 0;
+	font: inherit;
+	color: inherit;
+
+	box-sizing: content-box;
+	cursor: pointer;
+	width: 1em;
+	height: 1em;
+	// Default to the text color for invalid colors.
+	background-color: currentColor;
+
+	&:focus, &:active {
+		position: relative;
+		z-index: 1;
+	}
+
+	& + & {
+		margin-left: -2px;
+	}
+}

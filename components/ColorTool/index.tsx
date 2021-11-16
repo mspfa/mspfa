@@ -1,5 +1,6 @@
+import type { MouseEvent } from 'react';
 import { useContext, useRef } from 'react';
-import { Field, useField } from 'formik';
+import { Field, useField, useFormikContext } from 'formik';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import SaveButton from 'components/Button/SaveButton';
 import LabeledGrid from 'components/LabeledGrid';
@@ -14,6 +15,9 @@ import IDPrefix from 'lib/client/IDPrefix';
 import AddButton from 'components/Button/AddButton';
 import type { ColorFieldProps } from 'components/ColorField';
 import ColorField from 'components/ColorField';
+import Row from 'components/Row';
+import Label from 'components/Label';
+import ColorCell from 'components/ColorCell';
 
 type StoryColorGroupsAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups').default>;
 type StoryColorGroupAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups/[colorGroupID]').default>;
@@ -24,7 +28,8 @@ export type ColorToolProps = ColorFieldProps;
 
 /** The content of a color BB tool. */
 const ColorTool = ({ name }: ColorToolProps) => {
-	const [, { value }] = useField<string>(name);
+	const [, { value }, { setValue }] = useField<string>(name);
+	const { submitForm } = useFormikContext();
 
 	const [story, setStory] = useContext(PrivateStoryContext) || [];
 
@@ -159,23 +164,88 @@ const ColorTool = ({ name }: ColorToolProps) => {
 		}));
 	});
 
+	const onClickColorCell = useFunction((event: MouseEvent<HTMLButtonElement> & { target: HTMLButtonElement }) => {
+		const newValue = event.target.dataset.value;
+
+		if (!newValue) {
+			return;
+		}
+
+		setValue(newValue);
+		submitForm();
+	});
+
 	return (
-		<LabeledGrid>
-			<LabeledGridRow htmlFor="bb-tool-field-attributes" label="Color">
-				<ColorField
-					name={name}
-					required
-					innerRef={useAutoSelect()}
-				/>
-				{story && (
-					<SaveButton
-						className="spaced"
-						title="Save Color"
-						onClick={saveColor}
-					/>
-				)}
-			</LabeledGridRow>
-		</LabeledGrid>
+		<>
+			<Row>
+				<LabeledGrid>
+					<LabeledGridRow htmlFor="bb-tool-field-attributes" label="Color">
+						<ColorField
+							name={name}
+							required
+							innerRef={useAutoSelect()}
+						/>
+						{story && (
+							<SaveButton
+								className="spaced"
+								title="Save Color"
+								onClick={saveColor}
+							/>
+						)}
+					</LabeledGridRow>
+				</LabeledGrid>
+			</Row>
+			{story && !!(story.colors.length || story.colorGroups.length) && (() => {
+				const grouplessColors = story.colors.filter(({ group }) => !group);
+
+				return (
+					<Row>
+						<LabeledGrid>
+							<Row>
+								<Label>Saved Colors</Label>
+							</Row>
+							{grouplessColors.length !== 0 && (
+								<Row>
+									{grouplessColors.map(color => (
+										<ColorCell
+											key={color.id}
+											onClick={onClickColorCell}
+										>
+											{color}
+										</ColorCell>
+									))}
+								</Row>
+							)}
+							{story.colorGroups.map(colorGroup => {
+								const colors = story.colors.filter(({ group }) => group === colorGroup.id);
+
+								return (
+									<LabeledGridRow
+										key={colorGroup.id}
+										label={colorGroup.name}
+									>
+										{colors.length ? (
+											colors.map(color => (
+												<ColorCell
+													key={color.id}
+													onClick={onClickColorCell}
+												>
+													{color}
+												</ColorCell>
+											))
+										) : (
+											<span className="translucent">
+												(Empty)
+											</span>
+										)}
+									</LabeledGridRow>
+								);
+							})}
+						</LabeledGrid>
+					</Row>
+				);
+			})()}
+		</>
 	);
 };
 
