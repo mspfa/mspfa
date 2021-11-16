@@ -229,14 +229,16 @@ const ColorTool = ({ name }: ColorToolProps) => {
 										label={colorGroup.name}
 									>
 										{colors.length ? (
-											colors.map(color => (
-												<ColorCell
-													key={color.id}
-													onClick={onClickColorCell}
-												>
-													{color}
-												</ColorCell>
-											))
+											<span>
+												{colors.map(color => (
+													<ColorCell
+														key={color.id}
+														onClick={onClickColorCell}
+													>
+														{color}
+													</ColorCell>
+												))}
+											</span>
 										) : (
 											<span className="translucent">
 												(Empty)

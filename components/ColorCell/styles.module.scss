@@ -18,8 +18,9 @@
 	}
 
 	// Let adjacent cells share borders.
-	& + & {
-		margin-left: -2px;
+	&:not(:last-child) {
+		// This must use a negative `margin-right` and not `margin-left` so that wrapped cells at the beginning of a line are not inconsistently shifted to the left.
+		margin-right: -2px;
 	}
 
 	// When there are multiple adjacent cells, ensures each cell's bounding box is centered on the cell.
