@@ -12,6 +12,7 @@ import Label from 'components/Label';
 import ColorCell from 'components/ColorCell';
 import EditButton from 'components/Button/EditButton';
 import CheckButton from 'components/Button/CheckButton';
+import type { ClientColor } from 'lib/client/colors';
 
 type StoryColorGroupsAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups').default>;
 type StoryColorGroupAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups/[colorGroupID]').default>;
@@ -49,6 +50,15 @@ const SavedColors = ({ name }: SavedColorsProps) => {
 
 	const grouplessColors = story.colors.filter(({ group }) => !group);
 
+	const getColorCell = (color: ClientColor) => (
+		<ColorCell
+			key={color.id}
+			onClick={onClickColorCell}
+		>
+			{color}
+		</ColorCell>
+	);
+
 	return (
 		<Row>
 			<LabeledGrid>
@@ -75,14 +85,7 @@ const SavedColors = ({ name }: SavedColorsProps) => {
 				</Row>
 				{grouplessColors.length !== 0 && (
 					<Row>
-						{grouplessColors.map(color => (
-							<ColorCell
-								key={color.id}
-								onClick={onClickColorCell}
-							>
-								{color}
-							</ColorCell>
-						))}
+						{grouplessColors.map(getColorCell)}
 					</Row>
 				)}
 				{story.colorGroups.map(colorGroup => {
@@ -96,14 +99,7 @@ const SavedColors = ({ name }: SavedColorsProps) => {
 							{colors.length ? (
 								// This `span` is necessary to allow the color cells to wrap normally rather than being flex items.
 								<span>
-									{colors.map(color => (
-										<ColorCell
-											key={color.id}
-											onClick={onClickColorCell}
-										>
-											{color}
-										</ColorCell>
-									))}
+									{colors.map(getColorCell)}
 								</span>
 							) : (
 								<span className="translucent">
