@@ -167,7 +167,7 @@ const ColorTool = ({ name }: ColorToolProps) => {
 	const onClickColorCell = useFunction((event: MouseEvent<HTMLButtonElement> & { target: HTMLButtonElement }) => {
 		const newValue = event.target.dataset.value;
 
-		if (!newValue) {
+		if (newValue === undefined) {
 			return;
 		}
 
