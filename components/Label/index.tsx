@@ -8,12 +8,14 @@ export type ExclusiveLabelProps = {
 	/** The `htmlFor` prop of the `label` element. If undefined, the label will instead be a `span`. */
 	htmlFor?: LabelHTMLAttributes<HTMLLabelElement>['htmlFor'],
 	/** Adds a help button next to the label which can be clicked to open a dialog with this value as its content. */
-	help?: ReactNode
+	help?: ReactNode,
+	/** Content to insert directly after the label within the label container. */
+	afterLabel?: ReactNode
 };
 
 export type LabelProps = HTMLAttributes<HTMLDivElement & HTMLSpanElement> & ExclusiveLabelProps;
 
-const Label = ({ block, htmlFor, help, className, children, ...props }: LabelProps) => {
+const Label = ({ block, htmlFor, help, afterLabel, className, children, ...props }: LabelProps) => {
 	const LabelContainerTag = block ? 'div' : 'span';
 	const LabelTag = htmlFor ? 'label' : 'span';
 
@@ -28,6 +30,7 @@ const Label = ({ block, htmlFor, help, className, children, ...props }: LabelPro
 			>
 				{children}
 			</LabelTag>
+			{afterLabel}
 			{help && (
 				<HelpButton
 					className="spaced"

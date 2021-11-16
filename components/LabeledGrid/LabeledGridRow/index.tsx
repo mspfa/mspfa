@@ -20,6 +20,7 @@ const LabeledGridRow = ({
 	label,
 	htmlFor,
 	help,
+	afterLabel,
 	customContent,
 	labelProps: {
 		className: labelClassName,
@@ -36,6 +37,7 @@ const LabeledGridRow = ({
 			className={`grid-row-label${labelClassName ? ` ${labelClassName}` : ''}`}
 			htmlFor={htmlFor}
 			help={help}
+			afterLabel={afterLabel}
 			{...labelProps}
 		>
 			{label}

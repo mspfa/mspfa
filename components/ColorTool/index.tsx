@@ -18,6 +18,7 @@ import ColorField from 'components/ColorField';
 import Row from 'components/Row';
 import Label from 'components/Label';
 import ColorCell from 'components/ColorCell';
+import EditButton from 'components/Button/EditButton';
 
 type StoryColorGroupsAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups').default>;
 type StoryColorGroupAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups/[colorGroupID]').default>;
@@ -206,7 +207,13 @@ const ColorTool = ({ name }: ColorToolProps) => {
 					<Row>
 						<LabeledGrid>
 							<Row>
-								<Label>Saved Colors</Label>
+								<Label
+									afterLabel={
+										<EditButton className="spaced" />
+									}
+								>
+									Saved Colors
+								</Label>
 							</Row>
 							{grouplessColors.length !== 0 && (
 								<Row>
