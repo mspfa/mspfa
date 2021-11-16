@@ -9,7 +9,7 @@ import PrivateStoryContext from 'lib/client/PrivateStoryContext';
 import type { ColorFieldProps } from 'components/ColorField';
 import Row from 'components/Row';
 import Label from 'components/Label';
-import ColorCell from 'components/ColorCell';
+import ColorButton from 'components/ColorTool/ColorButton';
 import EditButton from 'components/Button/EditButton';
 import CheckButton from 'components/Button/CheckButton';
 import type { ClientColor } from 'lib/client/colors';
@@ -20,7 +20,7 @@ type StoryColorsAPI = APIClient<typeof import('pages/api/stories/[storyID]/color
 type StoryColorAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors/[colorID]').default>;
 
 export type SavedColorsProps = {
-	/** The `name` of the Formik field to set the selected color cell's value into. */
+	/** The `name` of the Formik field to set the value of the selected color into. */
 	name: ColorFieldProps['name']
 };
 
@@ -31,14 +31,14 @@ const SavedColors = ({ name }: SavedColorsProps) => {
 
 	const [story, setStory] = useContext(PrivateStoryContext)!;
 
-	const onClickColorCell = useFunction((event: MouseEvent<HTMLButtonElement> & { target: HTMLButtonElement }) => {
-		const newValue = event.target.dataset.value;
+	const onClickColorButton = useFunction((
+		event: MouseEvent<HTMLButtonElement & HTMLAnchorElement> & { target: HTMLButtonElement }
+	) => {
+		const colorID = event.target.id.slice('color-button-'.length);
+		console.log(colorID);
+		const color = story.colors.find(({ id }) => id === colorID)!;
 
-		if (newValue === undefined) {
-			return;
-		}
-
-		setValue(newValue);
+		setValue(color.value);
 		submitForm();
 	});
 
@@ -50,13 +50,13 @@ const SavedColors = ({ name }: SavedColorsProps) => {
 
 	const grouplessColors = story.colors.filter(({ group }) => !group);
 
-	const getColorCell = (color: ClientColor) => (
-		<ColorCell
+	const getColorButton = (color: ClientColor) => (
+		<ColorButton
 			key={color.id}
-			onClick={onClickColorCell}
+			onClick={onClickColorButton}
 		>
 			{color}
-		</ColorCell>
+		</ColorButton>
 	);
 
 	return (
@@ -85,21 +85,23 @@ const SavedColors = ({ name }: SavedColorsProps) => {
 				</Row>
 				{grouplessColors.length !== 0 && (
 					<Row>
-						{grouplessColors.map(getColorCell)}
+						{grouplessColors.map(getColorButton)}
 					</Row>
 				)}
 				{story.colorGroups.map(colorGroup => {
 					const colors = story.colors.filter(({ group }) => group === colorGroup.id);
 
-					return (
+					return editing ? (
+						colorGroup.name
+					) : (
 						<LabeledGridRow
 							key={colorGroup.id}
 							label={colorGroup.name}
 						>
 							{colors.length ? (
-								// This `span` is necessary to allow the color cells to wrap normally rather than being flex items.
+								// This `span` is necessary to allow the color buttons to wrap normally rather than being flex items.
 								<span>
-									{colors.map(getColorCell)}
+									{colors.map(getColorButton)}
 								</span>
 							) : (
 								<span className="translucent">

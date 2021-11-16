@@ -1,0 +1,9 @@
+.color-button {
+	// Default to the text color for invalid colors.
+	--button-color: currentColor;
+
+	& > * {
+		// Prevent children from stealing `event.target` from the button.
+		pointer-events: none;
+	}
+}
