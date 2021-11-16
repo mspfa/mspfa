@@ -7,9 +7,7 @@ import Spoiler from 'components/Spoiler';
 import dynamic from 'next/dynamic';
 import { IFRAME_SANDBOX } from 'lib/client/parseBBCode/sanitizeBBCode';
 
-const Flash = dynamic(() => import('components/Flash'), {
-	ssr: false
-});
+const Flash = dynamic(() => import('components/Flash'));
 
 export const hashlessColorCodeTest = /^([0-9a-f]{3}(?:[0-9a-f]{3}(?:[0-9a-f]{2})?)?)$/i;
 export const youTubeVideoIDTest = /^(?:https?:)?\/\/(?:(?:www|m)\.)?(?:youtube\.com|youtu\.be)\/.*(?:v=|\/)([\w-]+).*$/i;
