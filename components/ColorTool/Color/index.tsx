@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import type { ClientColor } from 'lib/client/colors';
-import type { CSSProperties } from 'react';
+import type { CSSProperties, DragEvent } from 'react';
 import { useContext } from 'react';
 import type { ButtonProps } from 'components/Button';
 import Button from 'components/Button';
@@ -18,7 +18,7 @@ import Grabber from 'components/Grabber';
 
 type StoryColorAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors/[colorID]').default>;
 
-export type ColorButtonProps = Omit<ButtonProps, 'children' | 'icon' | 'className' | 'title' | 'style' | 'onClick'> & {
+export type ColorProps = Omit<ButtonProps, 'children' | 'icon' | 'className' | 'title' | 'style' | 'onClick'> & {
 	/** The `name` of the Formik field to set the value of the selected color into. */
 	name: ColorFieldProps['name'],
 	editing?: boolean,
@@ -26,23 +26,23 @@ export type ColorButtonProps = Omit<ButtonProps, 'children' | 'icon' | 'classNam
 };
 
 /** An icon button representing a `ClientColor`. */
-const ColorButton = ({
+const Color = ({
 	name,
 	editing,
 	children: color,
 	...props
-}: ColorButtonProps) => {
+}: ColorProps) => {
 	const [, , { setValue }] = useField<string>(name);
 	const { submitForm } = useFormikContext();
 
 	const [story, setStory] = useContext(PrivateStoryContext)!;
 
-	const ColorButtonComponent = editing ? EditButton : Button;
+	const ColorComponent = editing ? EditButton : Button;
 
 	const button = (
-		<ColorButtonComponent
+		<ColorComponent
 			icon
-			className={`color-button${editing ? ' editing spaced' : ''}`}
+			className={`color${editing ? ' editing spaced' : ''}`}
 			title={
 				editing
 					? 'Edit Color'
@@ -158,12 +158,23 @@ const ColorButton = ({
 		/>
 	);
 
+	const onDragStartGrabber = useFunction((event: DragEvent<HTMLDivElement>) => {
+		event.dataTransfer.setData('application/vnd.mspfa.color', JSON.stringify(color));
+		event.dataTransfer.effectAllowed = 'move';
+	});
+
 	return editing ? (
-		<div className="color-button-container">
-			<Grabber className="spaced" />
+		<div
+			id={`color-container-${color.id}`}
+			className="color-container"
+		>
+			<Grabber
+				className="spaced"
+				onDragStart={onDragStartGrabber}
+			/>
 			{button}
 			<span
-				className="color-button-label spaced"
+				className="color-label spaced"
 				title={color.value}
 			>
 				{color.name}
@@ -174,4 +185,4 @@ const ColorButton = ({
 	);
 };
 
-export default ColorButton;
+export default Color;

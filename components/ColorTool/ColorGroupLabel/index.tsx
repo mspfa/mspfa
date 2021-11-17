@@ -5,6 +5,7 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import type { APIClient } from 'lib/client/api';
 import Dialog from 'lib/client/Dialog';
 import api from 'lib/client/api';
+import type { DragEvent } from 'react';
 import { useContext } from 'react';
 import PrivateStoryContext from 'lib/client/PrivateStoryContext';
 import ColorGroupOptions from 'components/ColorTool/ColorGroupOptions';
@@ -24,9 +25,16 @@ const ColorGroupLabel = ({ children: colorGroup }: ColorGroupLabelProps) => {
 	return (
 		<Label
 			block
-			className="color-group-label"
 			beforeLabel={(
-				<Grabber className="spaced" />
+				<Grabber
+					className="spaced"
+					onDragStart={
+						useFunction((event: DragEvent<HTMLDivElement>) => {
+							event.dataTransfer.setData('application/vnd.mspfa.color-group', JSON.stringify(colorGroup));
+							event.dataTransfer.effectAllowed = 'move';
+						})
+					}
+				/>
 			)}
 			afterLabel={(
 				<EditButton
