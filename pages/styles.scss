@@ -110,7 +110,7 @@ input[type=checkbox]:checked::before {
 		width: 100%;
 		height: 100%;
 		background-color: currentColor;
-		mask-image: url(/images/checkmark.svg);
+		mask-image: url(/images/check.svg);
 		mask-repeat: no-repeat;
 		mask-position: center;
 	}
