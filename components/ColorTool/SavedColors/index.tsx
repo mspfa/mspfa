@@ -10,7 +10,7 @@ import Label from 'components/Label';
 import Color from 'components/ColorTool/Color';
 import EditButton from 'components/Button/EditButton';
 import CheckButton from 'components/Button/CheckButton';
-import type { ClientColor, ClientColorGroup } from 'lib/client/colors';
+import type { ClientColor } from 'lib/client/colors';
 import ColorGroupLabel from 'components/ColorTool/ColorGroupLabel';
 import Button from 'components/Button';
 import promptCreateColorGroup from 'lib/client/promptCreateColorGroup';
@@ -48,6 +48,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 		promptCreateColorGroup(story, setStory);
 	});
 
+	/** A ref to whether a color or color group is currently being dragged. */
 	const draggingGrabberRef = useRef(false);
 
 	const SavedColorsComponent = editing ? 'div' : LabeledGrid;
@@ -77,7 +78,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 
 					const type = event.dataTransfer.types.find(dataTransferType => dataTransferType.startsWith('application/vnd.mspfa.'));
 
-					if (type !== 'application/vnd.mspfa.color-group' && type !== 'application/vnd.mspfa.color') {
+					if (type !== 'application/vnd.mspfa.color-group-index' && type !== 'application/vnd.mspfa.color-index') {
 						return;
 					}
 
@@ -89,18 +90,20 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 				useFunction((event: DragEvent<HTMLDivElement>) => {
 					event.preventDefault();
 
-					const colorGroupString = event.dataTransfer.getData('application/vnd.mspfa.color-group');
-					if (colorGroupString) {
-						const colorGroup: ClientColorGroup = JSON.parse(colorGroupString);
+					const colorGroupIndexString = event.dataTransfer.getData('application/vnd.mspfa.color-group-index');
+					if (colorGroupIndexString) {
+						const colorGroupIndex = +colorGroupIndexString;
+						const colorGroup = story.colorGroups[colorGroupIndex];
 
 						console.log(colorGroup);
 
 						return;
 					}
 
-					const colorString = event.dataTransfer.getData('application/vnd.mspfa.color');
-					if (colorString) {
-						const color: ClientColor = JSON.parse(colorString);
+					const colorIndexString = event.dataTransfer.getData('application/vnd.mspfa.color-index');
+					if (colorIndexString) {
+						const colorIndex = +colorIndexString;
+						const color = story.colors[colorIndex];
 
 						console.log(color);
 					}

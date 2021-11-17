@@ -163,7 +163,7 @@ const Color = ({
 	) => {
 		event.dataTransfer.effectAllowed = 'move';
 
-		event.dataTransfer.setData('application/vnd.mspfa.color', JSON.stringify(color));
+		event.dataTransfer.setData('application/vnd.mspfa.color-index', story.colors.indexOf(color).toString());
 
 		const dragImageRect = event.target.parentNode.getBoundingClientRect();
 		event.dataTransfer.setDragImage(

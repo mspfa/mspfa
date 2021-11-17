@@ -34,7 +34,7 @@ const ColorGroupLabel = ({ children: colorGroup }: ColorGroupLabelProps) => {
 						) => {
 							event.dataTransfer.effectAllowed = 'move';
 
-							event.dataTransfer.setData('application/vnd.mspfa.color-group', JSON.stringify(colorGroup));
+							event.dataTransfer.setData('application/vnd.mspfa.color-group-index', story.colorGroups.indexOf(colorGroup).toString());
 
 							const dragImageRect = event.target.parentNode.getBoundingClientRect();
 							event.dataTransfer.setDragImage(
