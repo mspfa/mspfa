@@ -158,9 +158,19 @@ const Color = ({
 		/>
 	);
 
-	const onDragStartGrabber = useFunction((event: DragEvent<HTMLDivElement>) => {
-		event.dataTransfer.setData('application/vnd.mspfa.color', JSON.stringify(color));
+	const onDragStartGrabber = useFunction((
+		event: DragEvent<HTMLDivElement> & { target: HTMLDivElement & { parentNode: HTMLDivElement } }
+	) => {
 		event.dataTransfer.effectAllowed = 'move';
+
+		event.dataTransfer.setData('application/vnd.mspfa.color', JSON.stringify(color));
+
+		const dragImageRect = event.target.parentNode.getBoundingClientRect();
+		event.dataTransfer.setDragImage(
+			event.target.parentNode as HTMLDivElement,
+			event.clientX - dragImageRect.left,
+			event.clientY - dragImageRect.top
+		);
 	});
 
 	return editing ? (

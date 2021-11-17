@@ -29,9 +29,19 @@ const ColorGroupLabel = ({ children: colorGroup }: ColorGroupLabelProps) => {
 				<Grabber
 					className="spaced"
 					onDragStart={
-						useFunction((event: DragEvent<HTMLDivElement>) => {
-							event.dataTransfer.setData('application/vnd.mspfa.color-group', JSON.stringify(colorGroup));
+						useFunction((
+							event: DragEvent<HTMLDivElement> & { target: HTMLDivElement & { parentNode: HTMLDivElement } }
+						) => {
 							event.dataTransfer.effectAllowed = 'move';
+
+							event.dataTransfer.setData('application/vnd.mspfa.color-group', JSON.stringify(colorGroup));
+
+							const dragImageRect = event.target.parentNode.getBoundingClientRect();
+							event.dataTransfer.setDragImage(
+								event.target.parentNode as HTMLDivElement,
+								event.clientX - dragImageRect.left,
+								event.clientY - dragImageRect.top
+							);
 						})
 					}
 				/>
