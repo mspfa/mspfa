@@ -1,5 +1,5 @@
 import type { DragEvent } from 'react';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useRef } from 'react';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import LabeledGrid from 'components/LabeledGrid';
 import useFunction from 'lib/client/reactHooks/useFunction';
@@ -48,15 +48,40 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 		promptCreateColorGroup(story, setStory);
 	});
 
+	const draggingGrabberRef = useRef(false);
+
 	const SavedColorsComponent = editing ? 'div' : LabeledGrid;
 
 	return (
 		<SavedColorsComponent
 			id="saved-colors"
+			onDragStart={
+				useFunction((event: DragEvent) => {
+					if (!(event.target as HTMLElement).classList.contains('grabber')) {
+						return;
+					}
+
+					draggingGrabberRef.current = true;
+				})
+			}
+			onDragEnd={
+				useFunction(() => {
+					draggingGrabberRef.current = false;
+				})
+			}
 			onDragOver={
 				useFunction((event: DragEvent<HTMLDivElement>) => {
-					event.preventDefault();
+					if (!draggingGrabberRef.current) {
+						return;
+					}
 
+					const type = event.dataTransfer.types.find(dataTransferType => dataTransferType.startsWith('application/vnd.mspfa.'));
+
+					if (type !== 'application/vnd.mspfa.color-group' && type !== 'application/vnd.mspfa.color') {
+						return;
+					}
+
+					event.preventDefault();
 					event.dataTransfer.dropEffect = 'move';
 				})
 			}
