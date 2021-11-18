@@ -26,6 +26,24 @@ const ColorOptions = () => {
 	return (
 		<IDPrefix.Provider value="color-options">
 			<LabeledGrid>
+				<LabeledGridRow htmlFor="color-options-field-value" label="Color Value">
+					<ColorField
+						name="value"
+						required
+						innerRef={useAutoSelect()}
+					/>
+				</LabeledGridRow>
+				{/* Value comes before label because value is entered before label. */}
+				<LabeledGridField
+					name="name"
+					label="Color Label"
+					help={'This label is the name associated with your saved color.\n\nIt can be anything and doesn\'t have to match the actual value of the color. For example, "John Egbert" or "blue".'}
+					required
+					maxLength={50}
+					autoComplete="off"
+					innerRef={useAutoSelect() as any}
+				/>
+				{/* Group comes after label because group is entered after label. If the group field were placed before the label field, people would be likely to miss it since the label field is auto-selected, and people aren't used to looking at previous form fields when filling out a form. */}
 				<LabeledGridRow htmlFor="color-options-field-group" label="Color Group">
 					<Field
 						as="select"
@@ -59,22 +77,6 @@ const ColorOptions = () => {
 						}
 					/>
 				</LabeledGridRow>
-				<LabeledGridRow htmlFor="color-options-field-value" label="Color Value">
-					<ColorField
-						name="value"
-						required
-						innerRef={useAutoSelect()}
-					/>
-				</LabeledGridRow>
-				<LabeledGridField
-					name="name"
-					label="Color Label"
-					help={'This label is the name associated with your saved color.\n\nIt can be anything and doesn\'t have to match the actual value of the color. For example, "John Egbert" or "blue".'}
-					required
-					maxLength={50}
-					autoComplete="off"
-					innerRef={useAutoSelect() as any}
-				/>
 			</LabeledGrid>
 		</IDPrefix.Provider>
 	);
