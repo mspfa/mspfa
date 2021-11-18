@@ -76,9 +76,10 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 						return;
 					}
 
-					const type = event.dataTransfer.types.find(dataTransferType => dataTransferType.startsWith('application/vnd.mspfa.'));
-
-					if (type !== 'application/vnd.mspfa.color-group-index' && type !== 'application/vnd.mspfa.color-index') {
+					if (!(
+						event.dataTransfer.types.includes('application/vnd.mspfa.color-group-index')
+						|| event.dataTransfer.types.includes('application/vnd.mspfa.color-index')
+					)) {
 						return;
 					}
 
