@@ -34,7 +34,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 		setEditing(editing => !editing);
 	});
 
-	const getColor = (color: ClientColor) => (
+	const getColorComponent = (color: ClientColor) => (
 		<Color
 			key={color.id}
 			name={name}
@@ -134,7 +134,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 							No Group
 						</Label>
 					)}
-					{grouplessColors.map(getColor)}
+					{grouplessColors.map(getColorComponent)}
 				</Row>
 			)}
 			{story.colorGroups.map(colorGroup => {
@@ -148,7 +148,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 					>
 						<ColorGroupLabel>{colorGroup}</ColorGroupLabel>
 						{colors.length ? (
-							colors.map(getColor)
+							colors.map(getColorComponent)
 						) : (
 							<div className="translucent">
 								(Empty)
@@ -163,7 +163,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 						{colors.length ? (
 							// This `span` is necessary to allow the color buttons to wrap normally rather than being flex items.
 							<span>
-								{colors.map(getColor)}
+								{colors.map(getColorComponent)}
 							</span>
 						) : (
 							<span className="translucent">
