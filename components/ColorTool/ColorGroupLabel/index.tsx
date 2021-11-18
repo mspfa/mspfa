@@ -34,14 +34,14 @@ const ColorGroupLabel = ({ children: colorGroup }: ColorGroupLabelProps) => {
 						) => {
 							event.dataTransfer.effectAllowed = 'move';
 
-							event.dataTransfer.setData('application/vnd.mspfa.color-group-index', story.colorGroups.indexOf(colorGroup).toString());
-
 							const dragImageRect = event.target.parentNode.getBoundingClientRect();
 							event.dataTransfer.setDragImage(
 								event.target.parentNode as HTMLDivElement,
 								event.clientX - dragImageRect.left,
 								event.clientY - dragImageRect.top
 							);
+
+							event.dataTransfer.setData('application/vnd.mspfa.color-group-index', story.colorGroups.indexOf(colorGroup).toString());
 						})
 					}
 				/>

@@ -163,14 +163,14 @@ const Color = ({
 	) => {
 		event.dataTransfer.effectAllowed = 'move';
 
-		event.dataTransfer.setData('application/vnd.mspfa.color-index', story.colors.indexOf(color).toString());
-
 		const dragImageRect = event.target.parentNode.getBoundingClientRect();
 		event.dataTransfer.setDragImage(
 			event.target.parentNode as HTMLDivElement,
 			event.clientX - dragImageRect.left,
 			event.clientY - dragImageRect.top
 		);
+
+		event.dataTransfer.setData('application/vnd.mspfa.color-index', story.colors.indexOf(color).toString());
 	});
 
 	return editing ? (
