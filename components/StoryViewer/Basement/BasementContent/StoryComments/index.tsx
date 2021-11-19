@@ -27,7 +27,7 @@ type StoryPageCommentsAPI = APIClient<typeof import('pages/api/stories/[storyID]
 const StoryComments = React.memo(() => {
 	const { story } = useContext(StoryViewerContext)!;
 
-	const pageID = useContext(PageIDContext);
+	const pageID = useContext(PageIDContext)!;
 
 	const user = useUser();
 
@@ -186,7 +186,7 @@ const StoryComments = React.memo(() => {
 						<option value="pageID">Page Number</option>
 						<option value="newest">Newest</option>
 						<option value="oldest">Oldest</option>
-						<option value="liked">Rating</option>
+						<option value="rating">Rating</option>
 					</select>
 				</div>
 			</Row>

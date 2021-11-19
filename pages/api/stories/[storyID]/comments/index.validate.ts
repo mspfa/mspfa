@@ -85,7 +85,7 @@ export default createValidator({
 				'pageID',
 				'newest',
 				'oldest',
-				'liked'
+				'rating'
 			]
 		}
 	}

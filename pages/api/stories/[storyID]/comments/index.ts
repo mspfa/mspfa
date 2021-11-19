@@ -2,7 +2,7 @@ import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
 import type { ServerComment } from 'lib/server/comments';
 import { getClientComment } from 'lib/server/comments';
-import type { StoryPageID } from 'lib/server/stories';
+import type { ServerStoryPage, StoryPageID } from 'lib/server/stories';
 import { getStoryByUnsafeID } from 'lib/server/stories';
 import { authenticate } from 'lib/server/auth';
 import type { ClientComment } from 'lib/client/comments';
@@ -14,7 +14,7 @@ import users, { getPublicUser } from 'lib/server/users';
 import { uniqBy } from 'lodash';
 import { ObjectId } from 'mongodb';
 
-export type StoryCommentsSortMode = 'pageID' | 'newest' | 'oldest' | 'liked';
+export type StoryCommentsSortMode = 'pageID' | 'newest' | 'oldest' | 'rating';
 
 const Handler: APIHandler<{
 	method: 'GET',
@@ -96,21 +96,29 @@ const Handler: APIHandler<{
 	/** A record mapping the ID of each comment to the ID of the page it's on. */
 	const commentPageIDs: Record<string, StoryPageID> = {};
 
-	/** Adds a comment to `comments` and `commentPageIDs`. */
-	const addComment = (
+	/**
+	 * Adds a comment to `comments` and `commentPageIDs`.
+	 *
+	 * If the page the comment is on is unlisted and not the page the client is on, then does nothing.
+	 */
+	const addCommentIfListed = (
 		comment: ServerComment,
-		/** The ID of the page that the comment is on. */
-		pageID: StoryPageID
+		/** The page that the comment is on. */
+		page: ServerStoryPage
 	) => {
+		if (page.unlisted && page.id !== fromPageID) {
+			return;
+		}
+
 		comments.push(comment);
-		commentPageIDs[comment.id.toString()] = pageID;
+		commentPageIDs[comment.id.toString()] = page.id;
 	};
 
 	if (sort === 'pageID') {
 		// Append the exact number of requested results in sorted order to begin with.
 
-		// If `afterID` is set, don't push anything until we reach the comment with that ID.
 		/** Once set to true, all following iterations should push a comment to `comments`. */
+		// If `afterID` is set, don't push anything until we reach the comment with that ID.
 		let shouldPush = afterID === undefined;
 
 		pageLoop:
@@ -119,7 +127,7 @@ const Handler: APIHandler<{
 
 			for (const comment of page.comments) {
 				if (shouldPush) {
-					addComment(comment, page.id);
+					addCommentIfListed(comment, page);
 
 					// If we have enough comments, stop iterating.
 					if (comments.length >= limit) {
@@ -142,7 +150,7 @@ const Handler: APIHandler<{
 			const page = story.pages[i];
 
 			for (const comment of page.comments) {
-				addComment(comment, page.id);
+				addCommentIfListed(comment, page);
 			}
 		}
 
@@ -152,7 +160,7 @@ const Handler: APIHandler<{
 				? +b.posted - +a.posted
 				: sort === 'oldest'
 					? +a.posted - +b.posted
-					// If this point is reached, `sort === 'liked'`.
+					// If this point is reached, `sort === 'rating'`.
 					: (
 						// Sort by net rating (like count minus dislike count).
 						(b.likes.length - b.dislikes.length) - (a.likes.length - a.dislikes.length)
