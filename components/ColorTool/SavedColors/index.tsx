@@ -53,14 +53,18 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 			}
 			onDragOver={
 				useFunction((event: DragEvent<HTMLDivElement>) => {
-					if (draggingGrabberRef.current && (
-						event.dataTransfer.types.includes('application/vnd.mspfa.color-group-index')
-						|| event.dataTransfer.types.includes('application/vnd.mspfa.color-index')
+					if (!(
+						draggingGrabberRef.current && (
+							event.dataTransfer.types.includes('application/vnd.mspfa.color-group-index')
+							|| event.dataTransfer.types.includes('application/vnd.mspfa.color-index')
+						)
 					)) {
-						event.preventDefault();
-
-						event.dataTransfer.dropEffect = 'move';
+						return;
 					}
+
+					event.preventDefault();
+
+					event.dataTransfer.dropEffect = 'move';
 				})
 			}
 			onDrop={
