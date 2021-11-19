@@ -25,7 +25,7 @@ export type ColorProps = Omit<ButtonProps, 'children' | 'icon' | 'className' | '
 	children: ClientColor
 };
 
-/** An icon button representing a `ClientColor`. */
+/** A rendered representation of a `ClientColor`. */
 const Color = ({
 	name,
 	editing,

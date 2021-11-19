@@ -1,10 +1,6 @@
 @use 'lib/styles/themes' as *;
 
 .color {
-	&-container {
-		margin-left: 1em;
-	}
-
 	@include desktop {
 		// Only show the edit icon on hover.
 		&-container:not(:hover) &:not(:focus):not(:active) .icon {

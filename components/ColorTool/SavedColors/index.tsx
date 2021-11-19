@@ -1,17 +1,14 @@
 import type { DragEvent } from 'react';
 import React, { useContext, useState, useRef } from 'react';
-import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import LabeledGrid from 'components/LabeledGrid';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import PrivateStoryContext from 'lib/client/PrivateStoryContext';
 import type { ColorProps } from 'components/ColorTool/Color';
 import Row from 'components/Row';
 import Label from 'components/Label';
-import Color from 'components/ColorTool/Color';
 import EditButton from 'components/Button/EditButton';
 import CheckButton from 'components/Button/CheckButton';
-import type { ClientColor } from 'lib/client/colors';
-import ColorGroupLabel from 'components/ColorTool/ColorGroupLabel';
+import ColorGroup from 'components/ColorTool/ColorGroup';
 import Button from 'components/Button';
 import promptCreateColorGroup from 'lib/client/promptCreateColorGroup';
 
@@ -21,28 +18,11 @@ export type SavedColorsProps = Pick<ColorProps, 'name'>;
 const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 	const [story, setStory] = useContext(PrivateStoryContext)!;
 
-	/** Gets all of the `story`'s colors which have the specified `group` property. */
-	const getColorsByGroup = (colorGroupID: string | undefined) => (
-		story.colors.filter(({ group }) => group === colorGroupID)
-	);
-
-	const grouplessColors = getColorsByGroup(undefined);
-
 	const [editing, setEditing] = useState(false);
 
 	const toggleEditing = useFunction(() => {
 		setEditing(editing => !editing);
 	});
-
-	const getColorComponent = (color: ClientColor) => (
-		<Color
-			key={color.id}
-			name={name}
-			editing={editing}
-		>
-			{color}
-		</Color>
-	);
 
 	const onClickCreateColorGroup = useFunction(() => {
 		promptCreateColorGroup(story, setStory);
@@ -56,6 +36,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 	return (
 		<SavedColorsComponent
 			id="saved-colors"
+			className={editing ? 'editing' : undefined}
 			onDragStart={
 				useFunction((event: DragEvent) => {
 					if (!(event.target as HTMLElement).classList.contains('grabber')) {
@@ -127,52 +108,15 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 					Saved Colors
 				</Label>
 			</Row>
-			{grouplessColors.length !== 0 && (
-				<Row id="color-group-undefined" className="color-group">
-					{editing && (
-						<Label block>
-							No Group
-						</Label>
-					)}
-					{grouplessColors.map(getColorComponent)}
-				</Row>
-			)}
-			{story.colorGroups.map(colorGroup => {
-				const colors = getColorsByGroup(colorGroup.id);
-
-				return editing ? (
-					<Row
-						key={colorGroup.id}
-						id={`color-group-${colorGroup.id}`}
-						className="color-group"
-					>
-						<ColorGroupLabel>{colorGroup}</ColorGroupLabel>
-						{colors.length ? (
-							colors.map(getColorComponent)
-						) : (
-							<div className="translucent">
-								(Empty)
-							</div>
-						)}
-					</Row>
-				) : (
-					<LabeledGridRow
-						key={colorGroup.id}
-						label={colorGroup.name}
-					>
-						{colors.length ? (
-							// This `span` is necessary to allow the color buttons to wrap normally rather than being flex items.
-							<span>
-								{colors.map(getColorComponent)}
-							</span>
-						) : (
-							<span className="translucent">
-								(Empty)
-							</span>
-						)}
-					</LabeledGridRow>
-				);
-			})}
+			{[...story.colorGroups, undefined].map(colorGroup => (
+				<ColorGroup
+					key={String(colorGroup?.id)}
+					name={name}
+					editing={editing}
+				>
+					{colorGroup}
+				</ColorGroup>
+			))}
 			{editing && (
 				<Row>
 					<Button
