@@ -47,7 +47,7 @@
 }
 
 dialog {
-	// This is a flexbox in order to prevent the content from overflowing.
+	// This is a flexbox in order to prevent the children from overflowing.
 	display: flex;
     flex-direction: column;
 	pointer-events: auto;
