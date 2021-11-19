@@ -42,7 +42,7 @@ const Color = ({
 	const button = (
 		<ColorComponent
 			icon
-			className={`color${editing ? ' editing spaced' : ''}`}
+			className={`color${editing ? ' spaced' : ''}`}
 			title={
 				editing
 					? 'Edit Color'
