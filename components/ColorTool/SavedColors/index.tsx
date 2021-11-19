@@ -109,7 +109,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 						)
 					}
 				>
-					Saved Colors
+					This Adventure's Saved Colors
 				</Label>
 			</Row>
 			{[...story.colorGroups, undefined].map(colorGroup => (
