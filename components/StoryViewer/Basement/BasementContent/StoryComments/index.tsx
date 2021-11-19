@@ -27,6 +27,7 @@ type StoryPageCommentsAPI = APIClient<typeof import('pages/api/stories/[storyID]
 const StoryComments = React.memo(() => {
 	const { story } = useContext(StoryViewerContext)!;
 
+	// This can be asserted as non-nullable because `StoryComments` should never be rendered on pages that don't exist.
 	const pageID = useContext(PageIDContext)!;
 
 	const user = useUser();

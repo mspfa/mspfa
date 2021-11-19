@@ -125,7 +125,11 @@ const BasementContent = React.memo(() => {
 						News
 					</Button>
 				)}
-				{story.allowComments && (
+				{(
+					story.allowComments
+					// Disallow opening comments from a page which doesn't exist.
+					&& pageID
+				) && (
 					<Button
 						className="small"
 						disabled={openSection === 'comments'}
@@ -149,7 +153,8 @@ const BasementContent = React.memo(() => {
 			{openSection === 'news' ? (
 				<StoryNews />
 			) : openSection === 'comments' ? (
-				<StoryComments />
+				// Don't render `StoryComments` if viewing a page which doesn't exist.
+				pageID && <StoryComments />
 			) : openSection === 'options' && (
 				<StoryOptions />
 			)}

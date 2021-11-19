@@ -12,7 +12,7 @@ export type StoryStatsProps = {
 	children: PublicStory,
 	className?: string,
 	/** The page ID that the edit button should link to. */
-	editPageID?: StoryPageID
+	editPageID?: StoryPageID | null
 };
 
 /** A `div` with a story's status, edit button, fav button, and page count. */

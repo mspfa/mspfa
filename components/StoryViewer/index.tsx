@@ -81,8 +81,8 @@ export type StoryViewerProps = {
 
 /** A React context of the initial `StoryViewerProps`. */
 export const StoryViewerContext = React.createContext<StoryViewerProps | undefined>(undefined);
-/** A React context for the ID of the page currently being viewed in the `StoryViewer`. */
-export const PageIDContext = React.createContext<StoryPageID | undefined>(undefined);
+/** A React context for the ID of the loaded page currently being viewed in the `StoryViewer`, or `null` if the page doesn't exist. */
+export const PageIDContext = React.createContext<StoryPageID | null>(null);
 export const CommentaryShownContext = React.createContext<[
 	commentaryShown: boolean,
 	setCommentaryShown: Dispatch<SetStateAction<boolean>>
@@ -113,13 +113,15 @@ const StoryViewer = (props: StoryViewerProps) => {
 	);
 	/** A ref to the last value of `pageID` (or the first if there is no last one). */
 	const pageIDRef = useRef(queriedPageID);
-	// Only change the `pageID` to the new `queriedPageID` if the page it references has finished loading and is now cached.
+	/** The ID of the current page of the story being viewed. Can reference a page that doesn't exist, but cannot reference a page that hasn't finished loading. */
 	const pageID = (
 		queriedPageID in pages
+			// Only change the `pageID` to the new `queriedPageID` if the page it references has finished loading and is now cached.
 			? queriedPageID
+			// Otherwise keep the same value as the last render (which necessarily has finished loading).
 			: pageIDRef.current
 	);
-	const page = pages[pageID];
+	const page = pages[pageID] as ClientStoryPage | null;
 
 	const previousPageIDsRef = useRef<ClientPreviousPageIDs>(initialPreviousPageIDs);
 
@@ -434,9 +436,6 @@ const StoryViewer = (props: StoryViewerProps) => {
 									// This story has no pages.
 									<>This adventure has no pages.</>
 								)
-							) : page === undefined ? (
-								// This page has not loaded yet.
-								null
 							) : (
 								// This page is loaded.
 								<BBCode keepHTMLTags>
@@ -506,11 +505,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 											new Dialog({
 												id: 'story-saves',
 												title: 'Save Game',
-												content: (
-													page === undefined
-														? 'Please wait for the page to finish loading before saving it.'
-														: 'The page you\'re on does not exist and can\'t be saved.'
-												)
+												content: 'The page you\'re on does not exist and can\'t be saved.'
 											});
 											return;
 										}
@@ -652,7 +647,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 		<StoryIDContext.Provider value={story.id}>
 			<PreviewModeContext.Provider value={previewMode}>
 				<StoryViewerContext.Provider value={props}>
-					<PageIDContext.Provider value={pageID}>
+					<PageIDContext.Provider value={page && pageID}>
 						<CommentaryShownContext.Provider
 							value={
 								useMemo(
