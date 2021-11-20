@@ -15,7 +15,7 @@ import UserLink from 'components/Link/UserLink';
 import { uniq } from 'lodash';
 import StoryNews from 'components/StoryViewer/Basement/BasementContent/StoryNews';
 import StoryComments from 'components/StoryViewer/Basement/BasementContent/StoryComments';
-import StoryOptions from 'components/StoryViewer/Basement/BasementContent/StoryOptions';
+import StoryMore from 'components/StoryViewer/Basement/BasementContent/StoryMore';
 import StoryStats from 'components/StoryStats';
 
 const BasementContent = React.memo(() => {
@@ -46,7 +46,7 @@ const BasementContent = React.memo(() => {
 	);
 
 	// This state is the basement content section which is currently open.
-	const [openSection, setOpenSection] = useState<undefined | 'news' | 'comments' | 'options'>(
+	const [openSection, setOpenSection] = useState<undefined | 'news' | 'comments' | 'more'>(
 		showNews ? 'news' : undefined
 	);
 
@@ -140,14 +140,14 @@ const BasementContent = React.memo(() => {
 				)}
 				<Button
 					className="small"
-					disabled={openSection === 'options'}
+					disabled={openSection === 'more'}
 					onClick={
 						useFunction(() => {
-							setOpenSection('options');
+							setOpenSection('more');
 						})
 					}
 				>
-					Options
+					More
 				</Button>
 			</Row>
 			{openSection === 'news' ? (
@@ -155,8 +155,8 @@ const BasementContent = React.memo(() => {
 			) : openSection === 'comments' ? (
 				// Don't render `StoryComments` if viewing a page which doesn't exist.
 				pageID && <StoryComments />
-			) : openSection === 'options' && (
-				<StoryOptions />
+			) : openSection === 'more' && (
+				<StoryMore />
 			)}
 		</div>
 	);

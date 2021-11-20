@@ -9,7 +9,7 @@ import type { ChangeEvent } from 'react';
 import React, { useContext } from 'react';
 import RSSButton from 'components/Button/RSSButton';
 
-const StoryOptions = React.memo(() => {
+const StoryMore = React.memo(() => {
 	const storyID = useContext(StoryIDContext);
 
 	const { hasCommentary } = useContext(StoryViewerContext)!;
@@ -21,7 +21,7 @@ const StoryOptions = React.memo(() => {
 	});
 
 	return (
-		<Row className="story-options">
+		<Row className="story-more">
 			{hasCommentary && (
 				<LabeledGrid>
 					<LabeledGridRow label="Show Commentary" htmlFor="field-commentary-shown">
@@ -34,7 +34,7 @@ const StoryOptions = React.memo(() => {
 					</LabeledGridRow>
 				</LabeledGrid>
 			)}
-			<Row className="story-options-buttons">
+			<Row className="story-more-buttons">
 				<RSSButton href={`/s/${storyID}/rss.xml`}>
 					RSS
 				</RSSButton>
@@ -43,4 +43,4 @@ const StoryOptions = React.memo(() => {
 	);
 });
 
-export default StoryOptions;
+export default StoryMore;
