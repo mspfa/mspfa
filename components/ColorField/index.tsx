@@ -1,9 +1,9 @@
 import { Field, useField } from 'formik';
 import type { ChangeEvent, InputHTMLAttributes, RefObject } from 'react';
-import { hashlessColorCodeTest } from 'components/BBCode/BBTags';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import { usePrefixedID } from 'lib/client/IDPrefix';
 import toKebabCase from 'lib/client/toKebabCase';
+import addHashToColor from 'lib/client/addHashToColor';
 
 const getTwoDigitHex = (dec: string) => `0${(+dec).toString(16)}`.slice(-2);
 
@@ -30,7 +30,7 @@ const ColorField = ({ id, name, required, disabled, readOnly, autoFocus, innerRe
 	if (typeof window !== 'undefined') {
 		// Reset the color before setting the new one, because setting an invalid color doesn't necessarily reset it.
 		dummyElement.style.color = '';
-		dummyElement.style.color = value.replace(hashlessColorCodeTest, '#$1');
+		dummyElement.style.color = addHashToColor(value);
 		const computedColor = getComputedStyle(dummyElement).color;
 		dummyElement.style.color = '';
 

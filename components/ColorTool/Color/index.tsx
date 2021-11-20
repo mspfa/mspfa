@@ -15,6 +15,7 @@ import api from 'lib/client/api';
 import PrivateStoryContext from 'lib/client/PrivateStoryContext';
 import { getChangedValues } from 'lib/client/forms';
 import Grabber from 'components/Grabber';
+import addHashToColor from 'lib/client/addHashToColor';
 
 type StoryColorAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors/[colorID]').default>;
 
@@ -51,7 +52,9 @@ const Color = ({
 						: `${color.name} (${color.value})`
 			}
 			style={
-				{ '--button-color': color.value } as CSSProperties
+				{
+					'--button-color': addHashToColor(color.value)
+				} as CSSProperties
 			}
 			onClick={
 				useFunction(async () => {
