@@ -106,7 +106,7 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 						});
 
 						// This needs to be `await`ed so `isSubmitting` remains `true` while the router loads, ensuring `useLeaveConfirmation`'s argument is `false`.
-						await Router.push(`/message/${message.id}`);
+						await Router.push(`/messages/${message.id}`);
 					})
 				}
 			>
@@ -150,7 +150,7 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 										</Label>
 										<Link
 											className="spaced"
-											href={`/message/${replyTo!.id}`}
+											href={`/messages/${replyTo!.id}`}
 										>
 											{replyTo!.subject}
 										</Link>

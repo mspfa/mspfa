@@ -155,7 +155,7 @@ const Component = withErrorPage<ServerSideProps>(({
 				>
 					<Button
 						className="small"
-						href="/message/new"
+						href="/messages/new"
 						title="New Message"
 					>
 						New Message

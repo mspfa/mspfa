@@ -39,7 +39,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, stor
 				<Row>
 					<Button
 						className="small"
-						href={`/user/${publicUser.id}`}
+						href={`/users/${publicUser.id}`}
 					>
 						Back to Profile
 					</Button>
@@ -47,7 +47,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, stor
 				{!favsPublic && (
 					<Row>
 						<span id="favs-public-tip">
-							Only you can see your favorites. If you want others to be able to see, enable public favorites in <Link href={`/user/${publicUser.id}/edit`}>your profile settings</Link>.
+							Only you can see your favorites. If you want others to be able to see, enable public favorites in <Link href={`/users/${publicUser.id}/edit`}>your profile settings</Link>.
 						</span>
 					</Row>
 				)}

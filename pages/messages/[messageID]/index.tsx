@@ -82,7 +82,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 		await (api as MessageDeletedByUserAPI).put(`/messages/${message.id}/deletedBy/${user.id}`, true);
 
-		Router.push(`/user/${user.id}/messages`);
+		Router.push(`/users/${user.id}/messages`);
 	});
 
 	const edit = useFunction(() => {
@@ -137,7 +137,7 @@ const Component = withErrorPage<ServerSideProps>(({
 									<div id="message-reply-to">
 										{'Reply To: '}
 										{replyTo ? (
-											<Link href={`/message/${replyTo.id}`}>
+											<Link href={`/messages/${replyTo.id}`}>
 												{replyTo.subject}
 											</Link>
 										) : (
@@ -208,10 +208,10 @@ const Component = withErrorPage<ServerSideProps>(({
 									</>
 								) : (
 									<>
-										<Button href={`/user/${user.id}/messages`}>
+										<Button href={`/users/${user.id}/messages`}>
 											All Messages
 										</Button>
-										<Button href={`/message/new?replyTo=${message.id}`}>
+										<Button href={`/messages/new?replyTo=${message.id}`}>
 											Reply
 										</Button>
 										{(

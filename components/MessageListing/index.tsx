@@ -234,7 +234,7 @@ const MessageListing = ({
 			</label>
 			<Link
 				className="listing-icon-container"
-				href={`/message/${message.id}`}
+				href={`/messages/${message.id}`}
 				title={message.subject}
 			>
 				<IconImage
@@ -246,7 +246,7 @@ const MessageListing = ({
 			<div className="listing-info">
 				<Link
 					className="listing-title translucent"
-					href={`/message/${message.id}`}
+					href={`/messages/${message.id}`}
 					title={message.subject}
 				>
 					{message.subject}
@@ -284,7 +284,7 @@ const MessageListing = ({
 			</div>
 			<div className="listing-actions">
 				<ReplyButton
-					href={`/message/new?replyTo=${message.id}`}
+					href={`/messages/new?replyTo=${message.id}`}
 				/>
 				<Button
 					icon

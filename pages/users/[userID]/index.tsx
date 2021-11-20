@@ -76,7 +76,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 							{notOwnProfile && (
 								<Link
 									className="profile-action"
-									href={`/message/new?to=${publicUser.id}`}
+									href={`/messages/new?to=${publicUser.id}`}
 								>
 									Send Message
 								</Link>
@@ -84,7 +84,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 							{favsPublic && (
 								<Link
 									className="profile-action"
-									href={`/user/${publicUser.id}/favs`}
+									href={`/users/${publicUser.id}/favs`}
 								>
 									View Favorites
 								</Link>
@@ -175,7 +175,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 				|| !!(user.perms & Perm.sudoRead)
 			) && (
 				<BottomActions>
-					<Button href={`/user/${publicUser.id}/edit`}>
+					<Button href={`/users/${publicUser.id}/edit`}>
 						Edit
 					</Button>
 				</BottomActions>

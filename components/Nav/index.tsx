@@ -43,7 +43,7 @@ const Nav = () => {
 
 	if (user) {
 		messagesBubble = (
-			router.pathname === '/user/[userID]/messages'
+			router.pathname === '/users/[userID]/messages'
 				? 0
 				: user.unreadMessageCount
 		);
@@ -71,22 +71,22 @@ const Nav = () => {
 						<NavItem
 							id="notifications"
 							label="Notifications"
-							href={`/user/${user.id}/notifications`}
+							href={`/users/${user.id}/notifications`}
 							bubble={notificationsBubble}
 						/>
 						<NavItem
 							id="messages"
 							label="Messages"
-							href={`/user/${user.id}/messages`}
+							href={`/users/${user.id}/messages`}
 							bubble={messagesBubble}
 						/>
 						<div className="divider" />
-						<NavItem id="stories" label="Adventures" href={`/user/${user.id}/s`} />
-						<NavItem id="favs" label="Favorites" href={`/user/${user.id}/favs`} />
-						<NavItem id="saves" label="Game Saves" href={`/user/${user.id}/saves`} />
+						<NavItem id="stories" label="Adventures" href={`/users/${user.id}/s`} />
+						<NavItem id="favs" label="Favorites" href={`/users/${user.id}/favs`} />
+						<NavItem id="saves" label="Game Saves" href={`/users/${user.id}/saves`} />
 						<div className="divider" />
-						<NavItem id="profile" label="Profile" href={`/user/${user.id}`} />
-						<NavItem id="settings" label="Settings" href={`/user/${user.id}/settings`} />
+						<NavItem id="profile" label="Profile" href={`/users/${user.id}`} />
+						<NavItem id="settings" label="Settings" href={`/users/${user.id}/settings`} />
 						<div className="divider" />
 						<NavItem id="sign-out" label="Sign Out" onClick={promptSignOut} />
 					</NavMenu>

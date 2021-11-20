@@ -15,7 +15,7 @@ const UserLink = ({
 
 	return userCache[userID] ? (
 		<Link
-			href={`/user/${userID}`}
+			href={`/users/${userID}`}
 			{...props}
 		>
 			{userCache[userID]!.name}

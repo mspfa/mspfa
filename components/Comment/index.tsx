@@ -168,7 +168,7 @@ const Comment = <
 		>
 			<IconContainer
 				className="comment-icon-container"
-				href={authorUser && `/user/${authorUser.id}`}
+				href={authorUser && `/users/${authorUser.id}`}
 			>
 				<IconImage
 					className="comment-icon"
