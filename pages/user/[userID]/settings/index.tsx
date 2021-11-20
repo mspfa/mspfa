@@ -29,10 +29,7 @@ import Row from 'components/Row';
 import LabeledGrid from 'components/LabeledGrid';
 import ForgotPassword from 'components/ForgotPassword';
 import AuthMethods from 'components/AuthMethod/AuthMethods';
-import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
-import BirthdateField from 'components/DateField/BirthdateField';
-import Timestamp from 'components/Timestamp';
-import EditButton from 'components/Button/EditButton';
+import BirthdateGridRow from 'components/LabeledGrid/LabeledGridRow/BirthdateGridRow';
 import type { integer } from 'lib/types';
 import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';
 import defaultUserSettings from 'lib/client/defaultUserSettings';
@@ -182,20 +179,6 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 		});
 	});
 
-	const [editingBirthdate, setEditingBirthdate] = useState(false);
-
-	const editBirthdate = useFunction(async () => {
-		if (!await Dialog.confirm({
-			id: 'edit-birthdate',
-			title: 'Edit Birthdate',
-			content: 'You can only change your birthdate once.\n\nOnce changed, it cannot be undone.\n\nAre you sure you want to edit your birthdate?'
-		})) {
-			return;
-		}
-
-		setEditingBirthdate(true);
-	});
-
 	return (
 		<Page withFlashyTitle heading="Settings">
 			<Formik
@@ -214,8 +197,6 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 						);
 
 						setPrivateUser(data);
-
-						setEditingBirthdate(false);
 
 						if (getUser()!.id === privateUser.id) {
 							setUser(data);
@@ -250,27 +231,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 									required
 									maxLength={254}
 								/>
-								<LabeledGridRow
-									htmlFor={editingBirthdate ? 'field-birthdate-year' : ''}
-									label="Birthdate"
-								>
-									{editingBirthdate ? (
-										<BirthdateField required />
-									) : (
-										<>
-											<Timestamp className="spaced">
-												{values.birthdate}
-											</Timestamp>
-											{!privateUser.birthdateChanged && (
-												<EditButton
-													className="spaced"
-													title="Edit Birthdate"
-													onClick={editBirthdate}
-												/>
-											)}
-										</>
-									)}
-								</LabeledGridRow>
+								<BirthdateGridRow
+									birthdateChanged={privateUser.birthdateChanged}
+								/>
 								<Row>
 									{/* This button should remain visible even for those who do not have a password sign-in method, because those users may think they do regardless, and they should be informed that they don't upon clicking this button, to minimize confusion to those users. */}
 									<Button

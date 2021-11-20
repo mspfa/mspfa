@@ -20,9 +20,8 @@ import type { APIClient } from 'lib/client/api';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import IconImage from 'components/IconImage';
 import Label from 'components/Label';
-import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import Row from 'components/Row';
-import BirthdateField from 'components/DateField/BirthdateField';
+import BirthdateGridRow from 'components/LabeledGrid/LabeledGridRow/BirthdateGridRow';
 import BBField from 'components/BBCode/BBField';
 import type { integer } from 'lib/types';
 import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';
@@ -120,9 +119,9 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 								</LabeledGridSection>
 								<div>
 									<LabeledGridSection heading="Stats">
-										<LabeledGridRow htmlFor="field-birthdate-year" label="Birthdate">
-											<BirthdateField required />
-										</LabeledGridRow>
+										<BirthdateGridRow
+											birthdateChanged={privateUser.birthdateChanged}
+										/>
 										<LabeledGridField
 											type="checkbox"
 											name="settings.birthdatePublic"
