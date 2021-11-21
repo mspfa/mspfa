@@ -71,9 +71,8 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 				useFunction((event: DragEvent<HTMLDivElement>) => {
 					event.preventDefault();
 
-					const colorGroupIndexString = event.dataTransfer.getData('application/vnd.mspfa.color-group-index');
-					if (colorGroupIndexString) {
-						const colorGroupIndex = +colorGroupIndexString;
+					const colorGroupIndex = +event.dataTransfer.getData('application/vnd.mspfa.color-group-index');
+					if (!Number.isNaN(colorGroupIndex)) {
 						const colorGroup = story.colorGroups[colorGroupIndex];
 
 						console.log(colorGroup);
@@ -81,9 +80,8 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 						return;
 					}
 
-					const colorIndexString = event.dataTransfer.getData('application/vnd.mspfa.color-index');
-					if (colorIndexString) {
-						const colorIndex = +colorIndexString;
+					const colorIndex = +event.dataTransfer.getData('application/vnd.mspfa.color-index');
+					if (!Number.isNaN(colorIndex)) {
 						const color = story.colors[colorIndex];
 
 						console.log(color);
