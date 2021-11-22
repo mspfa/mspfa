@@ -89,14 +89,18 @@ export default createValidator({
 					properties: {
 						body: {
 							type: 'object',
+							additionalProperties: false,
 							properties: {
+								position: {
+									$ref: '#/definitions/integer',
+									description: 'The position in the `colorGroups` array to move the specified color group to.'
+								},
 								name: {
 									type: 'string',
 									minLength: 1,
 									maxLength: 50
 								}
-							},
-							additionalProperties: false
+							}
 						},
 						query: {
 							type: 'object',
@@ -126,6 +130,9 @@ export default createValidator({
 					]
 				}
 			]
+		},
+		integer: {
+			type: 'integer'
 		}
 	}
 });

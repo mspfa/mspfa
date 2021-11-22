@@ -8,6 +8,7 @@ import type { ClientColorGroup } from 'lib/client/colors';
 import { Perm } from 'lib/client/perms';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 import { flatten } from 'lib/server/db';
+import type { integer } from 'lib/types';
 
 /** The keys of all `ClientColorGroup` properties which a client should be able to `PATCH` into a `ServerColorGroup`. */
 type WritableColorGroupKey = 'name';
@@ -24,7 +25,10 @@ const Handler: APIHandler<{
 		method: 'DELETE'
 	} | {
 		method: 'PATCH',
-		body: Partial<Pick<ClientColorGroup, WritableColorGroupKey>>
+		body: Partial<Pick<ClientColorGroup, WritableColorGroupKey>> & {
+			/** The position in the `colorGroups` array to move the specified color group to. */
+			position?: integer
+		}
 	}
 ), {
 	method: 'GET',
@@ -132,14 +136,44 @@ const Handler: APIHandler<{
 
 	const colorGroup = await getColorGroup();
 
-	Object.assign(colorGroup, req.body);
+	const colorGroupChanges: Partial<ServerColorGroup> & Pick<typeof req.body, 'position'> = {
+		...req.body
+	};
+	// Delete the `position` property from `colorGroupChanges` since it isn't a real property of `ServerColorGroup`s.
+	delete colorGroupChanges.position;
 
-	if (Object.values(req.body).length) {
+	Object.assign(colorGroup, colorGroupChanges);
+
+	if (req.body.position === undefined) {
+		if (Object.values(colorGroupChanges).length) {
+			await stories.updateOne({
+				'_id': story._id,
+				'colorGroups.id': colorGroup.id
+			}, {
+				$set: flatten(colorGroupChanges, 'colorGroups.$.')
+			});
+		}
+	} else {
+		// Pull the outdated color group from its original position.
 		await stories.updateOne({
-			'_id': story._id,
-			'colorGroups.id': colorGroup.id
+			_id: story._id
 		}, {
-			$set: flatten(req.body, 'colorGroups.$.')
+			$pull: {
+				colorGroups: { id: colorGroup.id }
+			}
+		});
+
+		// Push the updated color group to the new position.
+		await stories.updateOne({
+			_id: story._id
+		}, {
+			$push: {
+				colorGroups: {
+					$each: [colorGroup],
+					// Clamp `req.body.position` to only valid indexes in the array.
+					$position: Math.max(0, Math.min(story.colorGroups.length - 1, req.body.position))
+				}
+			}
 		});
 	}
 

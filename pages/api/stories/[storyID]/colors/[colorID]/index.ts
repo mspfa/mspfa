@@ -9,6 +9,7 @@ import { Perm } from 'lib/client/perms';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 import { flatten } from 'lib/server/db';
 import { ObjectId } from 'mongodb';
+import type { integer } from 'lib/types';
 
 /** The keys of all `ClientColor` properties which a client should be able to `PATCH` into a `ServerColor`. */
 type WritableColorKey = 'name' | 'value';
@@ -25,10 +26,12 @@ const Handler: APIHandler<{
 		method: 'DELETE'
 	} | {
 		method: 'PATCH',
-		body: Partial<Pick<ClientColor, WritableColorKey> & {
+		body: Partial<Pick<ClientColor, WritableColorKey>> & {
 			/** The ID of the color group which the color should be set into, or `null` if the color should be removed from any group. */
-			group?: string | null
-		}>
+			group?: string | null,
+			/** The position in the `colors` array to move the specified color to. */
+			position?: integer
+		}
 	}
 ), {
 	method: 'GET',
@@ -147,12 +150,14 @@ const Handler: APIHandler<{
 		}
 	}
 
-	const colorChanges: Partial<ServerColor> = {
+	const colorChanges: Partial<ServerColor> & Pick<typeof req.body, 'position'> = {
 		...req.body as Omit<typeof req.body, 'group'>,
 		...'group' in req.body && {
 			group: colorGroupID
 		}
 	};
+	// Delete the `position` property from `colorChanges` since it isn't a real property of `ServerColor`s.
+	delete colorChanges.position;
 
 	Object.assign(color, colorChanges);
 
@@ -163,17 +168,41 @@ const Handler: APIHandler<{
 		delete color.group;
 	}
 
-	const colorChangesLength = Object.values(colorChanges).length;
-	if (shouldUnsetGroup || colorChangesLength) {
+	if (req.body.position === undefined) {
+		const colorChangesLength = Object.values(colorChanges).length;
+		if (colorChangesLength || shouldUnsetGroup) {
+			await stories.updateOne({
+				'_id': story._id,
+				'colors.id': color.id
+			}, {
+				...colorChangesLength && {
+					$set: flatten(colorChanges, 'colors.$.')
+				},
+				...shouldUnsetGroup && {
+					$unset: { 'colors.$.group': true }
+				}
+			});
+		}
+	} else {
+		// Pull the outdated color from its original position.
 		await stories.updateOne({
-			'_id': story._id,
-			'colors.id': color.id
+			_id: story._id
 		}, {
-			...colorChangesLength && {
-				$set: flatten(colorChanges, 'colors.$.')
-			},
-			...shouldUnsetGroup && {
-				$unset: { 'colors.$.group': true }
+			$pull: {
+				colors: { id: color.id }
+			}
+		});
+
+		// Push the updated color to the new position.
+		await stories.updateOne({
+			_id: story._id
+		}, {
+			$push: {
+				colors: {
+					$each: [color],
+					// Clamp `req.body.position` to only valid indexes in the array.
+					$position: Math.max(0, Math.min(story.colors.length - 1, req.body.position))
+				}
 			}
 		});
 	}

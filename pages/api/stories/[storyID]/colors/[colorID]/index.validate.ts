@@ -89,7 +89,19 @@ export default createValidator({
 					properties: {
 						body: {
 							type: 'object',
+							additionalProperties: false,
 							properties: {
+								group: {
+									type: [
+										'string',
+										'null'
+									],
+									description: 'The ID of the color group which the color should be set into, or `null` if the color should be removed from any group.'
+								},
+								position: {
+									$ref: '#/definitions/integer',
+									description: 'The position in the `colors` array to move the specified color to.'
+								},
 								name: {
 									type: 'string',
 									minLength: 1,
@@ -99,16 +111,8 @@ export default createValidator({
 									type: 'string',
 									minLength: 1,
 									maxLength: 50
-								},
-								group: {
-									type: [
-										'string',
-										'null'
-									],
-									description: 'The ID of the color group which the color should be set into, or `null` if the color should be removed from any group.'
 								}
-							},
-							additionalProperties: false
+							}
 						},
 						query: {
 							type: 'object',
@@ -138,6 +142,9 @@ export default createValidator({
 					]
 				}
 			]
+		},
+		integer: {
+			type: 'integer'
 		}
 	}
 });
