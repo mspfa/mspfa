@@ -1,10 +1,11 @@
 import type { BBTagProps } from 'components/BBCode/BBTags';
 import type { integer } from 'lib/types';
-import type { ReactNode } from 'react';
 import type { ParseNodeOptions } from 'lib/client/parseBBCode/parseNode';
 import BBTags from 'components/BBCode/BBTags';
 import preventWhitespaceCollapse from 'lib/client/parseBBCode/preventWhitespaceCollapse';
 import parseNode from 'lib/client/parseBBCode/parseNode';
+
+export type ParsedReactNode = string | JSX.Element | ParsedReactNode[];
 
 // We enforce a maximum node depth mainly for the sake of performance.
 export const MAX_BB_PARSER_NODE_DEPTH = 384;
@@ -70,16 +71,16 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 		this.unclosedBBTagIndexes = {};
 	}
 
-	/** Generates a `ReactNode` from the parser's nodes. */
-	getReactNode(depth: integer = 0): RemoveBBTags extends true ? string : ReactNode {
-		const rootChildren: ReactNode[] = [];
+	/** Generates a `ParsedReactNode` from the parser's nodes. */
+	getReactNode(depth: integer = 0): RemoveBBTags extends true ? string : ParsedReactNode {
+		const rootChildren: ParsedReactNode[] = [];
 
 		/**
 		 * A stack of arrays of parsed children.
 		 *
 		 * The first item is the children array of the root node, and the last item is the deepest children array currently being processed.
 		 */
-		const childrenStack: ReactNode[][] = [rootChildren];
+		const childrenStack: ParsedReactNode[][] = [rootChildren];
 
 		/** Pushes the specified string to the array on the top of the `childrenStack`, or concatenates it onto the array's last item if the last item is already a string. */
 		const pushString = (string: string) => {
@@ -173,7 +174,7 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 				: rootChildren.length === 1
 					? rootChildren[0]
 					: rootChildren
-		) as RemoveBBTags extends true ? string : ReactNode;
+		) as RemoveBBTags extends true ? string : ParsedReactNode;
 		// We can assert the above return type because, if `this.options.removeBBTags`, `rootChildren` can't contain any parsed BB tags since any they would be removed. It can only contain a single merged string.
 	}
 

@@ -1,5 +1,6 @@
-import type { Key, ReactNode } from 'react';
+import type { Key } from 'react';
 import attributesToProps from 'lib/client/parseBBCode/attributesToProps';
+import type { ParsedReactNode } from 'lib/client/parseBBCode/BBStringParser';
 import BBStringParser from 'lib/client/parseBBCode/BBStringParser';
 import unmarkHTMLEntities from 'lib/client/parseBBCode/unmarkHTMLEntities';
 import type { integer } from 'lib/types';
@@ -35,7 +36,7 @@ export type ParseNodeOptions<RemoveBBTags extends boolean | undefined = boolean 
 };
 
 /**
- * Returns a `ReactNode` representation of the input, with the inputted string or child nodes parsed as BBCode recursively.
+ * Returns a `ParsedReactNode` representation of the input, with the inputted string or child nodes parsed as BBCode recursively.
  *
  * ⚠️ Assumes the input is already sanitized.
  */
@@ -52,7 +53,7 @@ const parseNode = <
 		? JSX.Element
 		: RemoveBBTags extends true
 			? string
-			: ReactNode
+			: ParsedReactNode
 ) => {
 	if (typeof node === 'string') {
 		const parser = new BBStringParser(options);
@@ -62,7 +63,7 @@ const parseNode = <
 		return parser.getReactNode(depth) as any;
 	}
 
-	/** Returns `node.childNodes` parsed into a `ReactNode` with parsed BBCode. */
+	/** Returns `node.childNodes` parsed into a `ParsedReactNode` with parsed BBCode. */
 	const parseNodeChildren = () => {
 		const parser = new BBStringParser(options);
 
@@ -95,7 +96,7 @@ const parseNode = <
 	);
 
 	const props: ReturnType<typeof attributesToProps> & {
-		children?: ReactNode
+		children?: ParsedReactNode
 	} = attributesToProps(node);
 
 	if (node.nodeName === 'STYLE') {

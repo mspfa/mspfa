@@ -9,7 +9,7 @@ export type ParseBBCodeOptions<RemoveBBTags extends boolean | undefined = boolea
 	SanitizeBBCodeOptions & ParseNodeOptions<RemoveBBTags>
 );
 
-/** Sanitizes and parses a string containing HTML and BBCode. Returns a `ReactNode` of the parsed BBCode. */
+/** Sanitizes and parses a string containing HTML and BBCode. Returns a `ParsedReactNode` of the parsed BBCode. */
 const parseBBCode = <RemoveBBTags extends boolean | undefined = undefined>(
 	bbString: string,
 	{ removeBBTags, ...sanitizeOptions }: ParseBBCodeOptions<RemoveBBTags> = {}

@@ -24,6 +24,9 @@ import StoryIDContext from 'lib/client/StoryIDContext';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import promptSignIn from 'lib/client/promptSignIn';
 import defaultUserSettings from 'lib/client/defaultUserSettings';
+import parseBBCode from 'lib/client/parseBBCode';
+import type { ParsedReactNode } from 'lib/client/parseBBCode/BBStringParser';
+import BBTags from 'components/BBCode/BBTags';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 type UserStorySaveAPI = APIClient<typeof import('pages/api/users/[userID]/storySaves/[storyID]').default>;
@@ -197,20 +200,42 @@ const StoryViewer = (props: StoryViewerProps) => {
 
 			// If this page is within the `IMAGE_PRELOAD_DEPTH`, preload its images.
 			if (depth <= IMAGE_PRELOAD_DEPTH) {
-				// TODO: Fix ReDoS.
-				const imgTagTest = /\[img(?:(?:=(["']?).*?\1)|(?: [\w-]+=(["']?).*?\2)+)?\](.+)\[\/img\]/g;
-				let imgTagMatch;
-				while (imgTagMatch = imgTagTest.exec(pageToCheck.content)) {
-					const imageURL = imgTagMatch[3];
+				/** A function called recursively on every `ParsedReactNode` in `pageToCheck`'s `title` and `content`. */
+				const lookForImages = (node: ParsedReactNode) => {
+					if (typeof node === 'string') {
+						return;
+					}
 
-					// Add this image to the preloaded images.
-					// To improve performance, we append to a string to be set all at once into `dummyElement.style.backgroundImage` rather than appending to `dummyElement.style.backgroundImage` directly each time.
-					// Quotation marks are necessary around the `imageURL` (as opposed to omitting them or using apostrophes instead) because `encodeURI` doesn't escape parentheses or apostrophes.
-					preloadBackgroundImage += (
-						(preloadBackgroundImage && ', ')
-						+ `url("${encodeURI(imageURL)}")`
-					);
-				}
+					if (Array.isArray(node)) {
+						node.forEach(lookForImages);
+
+						return;
+					}
+
+					// If this point is reached, `node` is a `JSX.Element`.
+
+					if (
+						node.type === BBTags.img!
+						&& typeof node.props.children === 'string'
+					) {
+						// Add this image to the preloaded images.
+						// To improve performance, we append to a string to be set all at once into `dummyElement.style.backgroundImage` rather than appending to `dummyElement.style.backgroundImage` directly each time.
+						preloadBackgroundImage += (
+							(preloadBackgroundImage && ', ')
+							// Quotation marks are necessary around the image URL (as opposed to omitting them or using apostrophes instead) because `encodeURI` doesn't escape parentheses or apostrophes.
+							+ `url("${encodeURI(node.props.children)}")`
+						);
+
+						return;
+					}
+
+					lookForImages(node.props.children);
+				};
+
+				lookForImages([
+					parseBBCode(pageToCheck.title, { keepHTMLTags: true }),
+					parseBBCode(pageToCheck.content, { keepHTMLTags: true })
+				]);
 			}
 
 			// The reason we increment `depth` here instead of before the `depth` checks (like on the server) is because it needs to go one extra recursion step in order to fetch the pages one step outside the `PAGE_PRELOAD_DEPTH`.
@@ -232,6 +257,8 @@ const StoryViewer = (props: StoryViewerProps) => {
 		};
 
 		checkAdjacentPages(queriedPageID);
+
+		console.timeEnd();
 
 		// Update the preloaded images.
 		dummyElement.style.backgroundImage = preloadBackgroundImage;
