@@ -194,7 +194,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 							// Insert the new color at the new position.
 							newStory.colors.splice(position, 0, newColor);
 
-							return story;
+							return newStory;
 						});
 					}
 				})
