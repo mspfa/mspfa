@@ -144,7 +144,9 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 							}
 						}
 
-						dropGroupRef.current = (nearestColorGroupColorsElement!.parentNode as HTMLDivElement).id.slice('color-group-'.length);
+						dropGroupRef.current = (
+							nearestColorGroupColorsElement!.parentNode as HTMLDivElement
+						).id.slice('color-group-'.length);
 						if (dropGroupRef.current === 'undefined') {
 							// If dropping into the group of colors with no group, remove the color's group on drop.
 							dropGroupRef.current = undefined;
@@ -168,11 +170,6 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 								break;
 							}
 
-							// Dropping to the top half of the color being dragged should end up in the same position as dragging to the top half of the color being dragged, so dragging to the bottom half should not affect the drop position.
-							if (colorContainerElement.getElementsByClassName('dragging').length) {
-								continue;
-							}
-
 							// Compare the cursor's position to the bottom of this color container.
 							distance = Math.abs(clientY - colorContainerElementRect.bottom);
 							if (distance <= minDistance) {
@@ -182,6 +179,20 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 								dropPositionRef.current++;
 							} else {
 								break;
+							}
+						}
+
+						if (dropPositionRef.current !== undefined) {
+							/** The ID of the color being dragged. */
+							const draggingColorID = (
+								savedColorsElementRef.current.getElementsByClassName('dragging')[0].parentNode as HTMLDivElement
+							).id.slice('color-container-'.length);
+							/** The index of the color being dragged. */
+							const draggingColorIndex = story.colors.findIndex(({ id }) => id === draggingColorID);
+
+							// Adjust the drop position in consideration of the fact that the color being dragged is removed from the array before being inserted at the new position.
+							if (dropPositionRef.current > draggingColorIndex) {
+								dropPositionRef.current--;
 							}
 						}
 					}
