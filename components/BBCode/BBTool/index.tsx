@@ -99,7 +99,7 @@ const tags: Record<string, {
 					<Label block htmlFor="field-bb-preview">
 						Preview
 					</Label>
-					<span id="field-bb-preview-container">
+					<div id="field-bb-preview-container">
 						<textarea
 							id="field-bb-preview"
 							defaultValue={defaultBBPreview}
@@ -110,7 +110,7 @@ const tags: Record<string, {
 									: undefined
 							)}
 						/>
-					</span>
+					</div>
 				</Row>
 			</LabeledGrid>
 		)
@@ -150,14 +150,14 @@ const tags: Record<string, {
 					<Label block htmlFor="field-bb-preview">
 						Preview
 					</Label>
-					<span id="field-bb-preview-container">
+					<div id="field-bb-preview-container">
 						<textarea
 							id="field-bb-preview"
 							defaultValue={defaultBBPreview}
 							rows={3}
 							style={{ fontFamily: values.attributes }}
 						/>
-					</span>
+					</div>
 				</Row>
 			</LabeledGrid>
 		)
