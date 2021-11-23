@@ -205,13 +205,15 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 
 	const searchQuery = (
 		typeof query.query === 'string'
-			? query.query.toLowerCase()
+			? query.query
 			: ''
 	);
 
 	const results: StorySearchResult[] = [];
 
 	if (searchQuery) {
+		const queryTest = new RegExp(escapeRegExp(searchQuery), 'i');
+
 		const lastPageID = (
 			previewMode
 				? Object.values(story.pages).length
@@ -225,10 +227,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 				const content = parseBBCode(page.content, { removeBBTags: true });
 				const title = parseBBCode(page.title, { removeBBTags: true });
 
-				if (
-					content.toLowerCase().includes(searchQuery)
-					|| title.toLowerCase().includes(searchQuery)
-				) {
+				if (queryTest.test(content) || queryTest.test(title)) {
 					results.push({
 						id: page.id,
 						...page.published !== undefined && {
