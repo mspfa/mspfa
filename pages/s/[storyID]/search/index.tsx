@@ -95,6 +95,35 @@ const Component = withErrorPage<ServerSideProps>(({ story, results }) => {
 		return nodes;
 	};
 
+	// All `markResults` calls must occur before computing `pageComponent` so that the value of `matches` is correct before being passed into `pageComponent`.
+	const resultNodes = results.map(result => (
+		<div
+			key={result.id}
+			className="story-search-result"
+		>
+			<div className="story-search-result-heading">
+				<div className="story-search-result-timestamp-container">
+					{result.published === undefined ? (
+						'Draft'
+					) : (
+						<Timestamp short relative>
+							{result.published}
+						</Timestamp>
+					)}
+				</div>
+				<StoryPageLink
+					className="story-search-result-title"
+					pageID={result.id}
+				>
+					{markResults(result.title)}
+				</StoryPageLink>
+			</div>
+			<div className="story-search-result-content">
+				{markResults(result.content)}
+			</div>
+		</div>
+	));
+
 	const pageComponent = (
 		<Page withFlashyTitle heading="Adventure Search">
 			<Section
@@ -133,33 +162,7 @@ const Component = withErrorPage<ServerSideProps>(({ story, results }) => {
 					{`${matches} result${matches === 1 ? '' : 's'} in ${results.length} page${results.length === 1 ? '' : 's'}`}
 				</div>
 				<div id="story-search-results">
-					{results.map(result => (
-						<div
-							key={result.id}
-							className="story-search-result"
-						>
-							<div className="story-search-result-heading">
-								<div className="story-search-result-timestamp-container">
-									{result.published === undefined ? (
-										'Draft'
-									) : (
-										<Timestamp short relative>
-											{result.published}
-										</Timestamp>
-									)}
-								</div>
-								<StoryPageLink
-									className="story-search-result-title"
-									pageID={result.id}
-								>
-									{markResults(result.title)}
-								</StoryPageLink>
-							</div>
-							<div className="story-search-result-content">
-								{markResults(result.content)}
-							</div>
-						</div>
-					))}
+					{resultNodes}
 				</div>
 			</Section>
 		</Page>
