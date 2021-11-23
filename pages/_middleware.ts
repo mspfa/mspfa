@@ -57,7 +57,8 @@ export const middleware = async (req: NextRequest) => {
 		// This is calculated by getting the time that the `MAX_REQUESTS_PER_TIME_PERIOD`th-last client request time will be forgotten, because after that request time is forgotten, the client would have one less than the `MAX_REQUESTS_PER_TIME_PERIOD`, which allows one more to be accepted without rate limiting.
 		const retryAfter = clientRequestTimes[clientRequestCount - MAX_REQUESTS_PER_TIME_PERIOD] + TIME_PERIOD;
 
-		const message = `You're sending data to MSPFA too quickly. Please wait ~${Math.ceil((retryAfter - now) / 1000)} seconds before retrying.`;
+		const secondsUntilRetryAfter = Math.ceil((retryAfter - now) / 1000);
+		const message = `You're sending data to MSPFA too quickly. Please wait ~${secondsUntilRetryAfter} second${secondsUntilRetryAfter === 1 ? '' : 's'} before retrying.`;
 
 		if (req.nextUrl.pathname.startsWith('/api/') || req.nextUrl.pathname === '/api') {
 			// This is an API request, so it should return a JSON body.
