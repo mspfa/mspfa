@@ -93,6 +93,7 @@ const tags: Record<string, {
 					required
 					autoFocus
 					min={0}
+					max={9999}
 				/>
 				<Row>
 					<Label block htmlFor="field-bb-preview">
