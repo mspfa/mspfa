@@ -69,8 +69,8 @@
 	}
 }
 
-#field-container {
-	&-action {
+#story-page-publish {
+	&-field-container-action {
 		display: grid;
 		grid-template-columns: auto 1fr;
 		align-items: center;
@@ -86,10 +86,10 @@
 			font-size: 0.875rem;
 		}
 	}
-}
 
-#story-page-publish-tip {
-	font-size: 0.875rem;
-	opacity: 0.5;
-	max-width: fit-content;
+	&-tip {
+		font-size: 0.875rem;
+		opacity: 0.5;
+		max-width: fit-content;
+	}
 }

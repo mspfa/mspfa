@@ -27,6 +27,7 @@ import { getChangedValues } from 'lib/client/forms';
 import type { DateNumber, RecursivePartial } from 'lib/types';
 import DateField from 'components/DateField';
 import useLatest from 'lib/client/reactHooks/useLatest';
+import IDPrefix from 'lib/client/IDPrefix';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 
@@ -263,8 +264,10 @@ const StoryEditorPageListing = React.memo(({
 			}
 		}
 
-		/** The `published` value to set on the pages. */
+		/** The `published` value to be set on the pages. */
 		let published = Date.now();
+		/** The `notify` value to be set on the pages. */
+		let notify;
 
 		if (!event.shiftKey) {
 			const minDate = Math.max(
@@ -282,10 +285,11 @@ const StoryEditorPageListing = React.memo(({
 				title: 'Publish Pages',
 				initialValues: {
 					action: 'publish' as 'publish' | 'schedule',
-					date: '' as DateNumber | ''
+					date: '' as DateNumber | '',
+					silent: false
 				},
 				content: ({ values }) => (
-					<>
+					<IDPrefix.Provider value="story-page-publish">
 						<Row>
 							{`What would you like to do with ${
 								firstDraftID! === page.id
@@ -293,28 +297,28 @@ const StoryEditorPageListing = React.memo(({
 									: `p${firstDraftID!}-${page.id}`
 							}?`}
 						</Row>
-						<Row id="field-container-action">
+						<Row id="story-page-publish-field-container-action">
 							<Field
 								type="radio"
-								id="field-action-publish"
+								id="story-page-publish-field-action-publish"
 								name="action"
 								value="publish"
 							/>
-							<label htmlFor="field-action-publish">
+							<label htmlFor="story-page-publish-field-action-publish">
 								Publish Now
 							</label>
 							<Field
 								type="radio"
-								id="field-action-schedule"
+								id="story-page-publish-field-action-schedule"
 								name="action"
 								value="schedule"
 							/>
-							<label htmlFor="field-action-schedule">
+							<label htmlFor="story-page-publish-field-action-schedule">
 								Schedule for Later
 							</label>
 							{values.action === 'schedule' && (
 								<>
-									<div id="field-container-date">
+									<div id="story-page-publish-field-container-date">
 										<DateField
 											name="date"
 											withTime
@@ -333,17 +337,22 @@ const StoryEditorPageListing = React.memo(({
 									)}
 								</>
 							)}
-							{/* TODO: Add checkbox to set `notify`. */}
 						</Row>
-						{
-							// To reduce clutter, only show the tip on the default `action` setting.
-							values.action === 'publish' && (
-								<Row id="story-page-publish-tip">
-									Tip: Shift+click the publish button to bypass this dialog and publish immediately.
-								</Row>
-							)
-						}
-					</>
+						<LabeledGrid>
+							<LabeledGridField
+								type="checkbox"
+								name="silent"
+								label="Update Silently"
+								help={'Prevents this update from notifying your readers, and prevents the adventure from appearing at the front of the recently updated adventure list.\n\nNote that pages set as unlisted always update silently either way.\n\nAdditionally, if your adventure is unlisted or private, it will not publicly appear under any list no matter what.'}
+							/>
+						</LabeledGrid>
+						{/* To reduce clutter, only show the tip on the default `action` setting. */}
+						{values.action === 'publish' && (
+							<Row id="story-page-publish-tip">
+								Tip: Shift+click the publish button to bypass this dialog and publish immediately.
+							</Row>
+						)}
+					</IDPrefix.Provider>
 				),
 				actions: ['Submit!', 'Cancel']
 			});
@@ -359,13 +368,15 @@ const StoryEditorPageListing = React.memo(({
 					? dialog.form!.values.date
 					: Date.now()
 			);
+
+			notify = !dialog.form!.values.silent;
 		}
 
 		const pageChanges: Record<StoryPageID, RecursivePartial<ClientStoryPage>> = {};
 
-		// Set each draft to be published.
+		// Set each draft's `published` and `notify` values.
 		for (let pageID = firstDraftID!; pageID <= page.id; pageID++) {
-			pageChanges[pageID] = { published };
+			pageChanges[pageID] = { published, notify };
 		}
 
 		const { data: newInitialPages } = await (api as StoryPagesAPI).patch(`/stories/${storyID}/pages`, pageChanges).catch(error => {
