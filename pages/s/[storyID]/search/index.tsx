@@ -113,12 +113,17 @@ const Component = withErrorPage<ServerSideProps>(({ story, results }) => {
 						</Timestamp>
 					)}
 				</div>
-				<StoryPageLink
-					className="story-search-result-title"
-					pageID={result.id}
-				>
-					{markResults(result.title)}
-				</StoryPageLink>
+				<div className="story-search-result-title-container">
+					<span className="story-search-result-id">
+						{result.id}
+					</span>
+					<StoryPageLink
+						className="story-search-result-title"
+						pageID={result.id}
+					>
+						{markResults(result.title)}
+					</StoryPageLink>
+				</div>
 			</div>
 			<div className="story-search-result-content">
 				{markResults(result.content)}

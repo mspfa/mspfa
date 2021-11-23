@@ -21,6 +21,16 @@
 		margin-bottom: 2em;
 	}
 
+	&-id {
+		&::before {
+			content: 'Page ';
+		}
+
+		&::after {
+			content: ' - ';
+		}
+	}
+
 	&-title {
 		white-space: pre-wrap;
 
