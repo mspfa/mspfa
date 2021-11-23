@@ -20,18 +20,12 @@
 			width: 50%;
 		}
 
-		& > .section:not(:last-child) {
-			margin-bottom: 0;
-		}
-	}
-
-	& > :not(:first-child) {
-		@include desktop {
+		& > :not(:first-child) {
 			margin-left: 4px;
 		}
 
-		@include mobile {
-			margin-top: 4px;
+		& > .section:not(:last-child) {
+			margin-bottom: 0;
 		}
 	}
 }
