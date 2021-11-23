@@ -5,10 +5,10 @@ import React from 'react';
 export type LabeledGridProps = HTMLAttributes<HTMLDivElement>;
 
 /** A two-column grid of labeled rows. */
-const LabeledGrid = React.forwardRef<HTMLDivElement>((
-	{ className, ...props }: LabeledGridProps,
-	ref
-) => (
+const LabeledGrid = React.forwardRef<HTMLDivElement, LabeledGridProps>(({
+	className,
+	...props
+}, ref) => (
 	<div
 		className={`labeled-grid${className ? ` ${className}` : ''}`}
 		{...props}
