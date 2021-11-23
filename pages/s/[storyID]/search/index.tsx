@@ -20,6 +20,7 @@ import { Fragment } from 'react';
 import StoryPageLink from 'components/StoryPageLink';
 import PreviewModeContext from 'lib/client/PreviewModeContext';
 import StoryIDContext from 'lib/client/StoryIDContext';
+import { escapeRegExp } from 'lodash';
 
 type StorySearchResult = Pick<ClientStoryPage, 'id' | 'published' | 'title' | 'content'>;
 
@@ -37,13 +38,16 @@ const Component = withErrorPage<ServerSideProps>(({ story, results }) => {
 		typeof router.query.query === 'string'
 			? router.query.query
 			: ''
-	).toLowerCase();
+	);
+	const escapedQuery = escapeRegExp(searchQuery);
 
 	const previewMode = 'preview' in router.query;
 
 	let matches = 0;
 
 	const markResults = (string: string) => {
+		const queryTest = new RegExp(escapedQuery, 'gi');
+
 		/**
 		 * The array of nodes for the marked string.
 		 *
@@ -51,41 +55,39 @@ const Component = withErrorPage<ServerSideProps>(({ story, results }) => {
 		 */
 		const nodes: ReactNode[] = [];
 
-		// TODO: Accommodate the fact that `toLowerCase` can change a string's length, causing indexes in `stringToSearch` not to match up with indexes in `string`.
-		const stringToSearch = string.toLowerCase();
-		let index = stringToSearch.indexOf(searchQuery);
+		let match = queryTest.exec(string);
 
-		// Ensure this slice won't be empty due to the start of the string equaling the start of the next match.
-		if (index !== 0) {
+		// Ensure this slice won't be empty due to the start of the string equaling the start of the next match, which could result in duplicate React keys.
+		if (match?.index !== 0) {
 			nodes.push(
 				<Fragment key={0}>
-					{(index === -1
-						? string
-						: string.slice(0, index)
+					{(match
+						? string.slice(0, match.index)
+						: string
 					)}
 				</Fragment>
 			);
 		}
 
-		while (index !== -1) {
-			const endIndex = index + searchQuery.length;
+		while (match) {
+			const endIndex = match.index + match[0].length;
 
 			nodes.push(
-				<mark key={index}>
-					{string.slice(index, endIndex)}
+				<mark key={match.index}>
+					{string.slice(match.index, endIndex)}
 				</mark>
 			);
 			matches++;
 
-			index = stringToSearch.indexOf(searchQuery, endIndex);
+			match = queryTest.exec(string);
 
-			// Ensure this slice won't be empty due to the end of this match equaling the start of the next match.
-			if (endIndex !== index) {
+			// Ensure this slice won't be empty due to the end of this match equaling the start of the next match, which could result in duplicate React keys.
+			if (endIndex !== match?.index) {
 				nodes.push(
 					<Fragment key={endIndex}>
-						{(index === -1
-							? string.slice(endIndex)
-							: string.slice(endIndex, index)
+						{(match
+							? string.slice(endIndex, match.index)
+							: string.slice(endIndex)
 						)}
 					</Fragment>
 				);
