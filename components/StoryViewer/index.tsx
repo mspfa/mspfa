@@ -258,8 +258,6 @@ const StoryViewer = (props: StoryViewerProps) => {
 
 		checkAdjacentPages(queriedPageID);
 
-		console.timeEnd();
-
 		// Update the preloaded images.
 		dummyElement.style.backgroundImage = preloadBackgroundImage;
 
