@@ -90,7 +90,7 @@ const Handler: APIHandler<{
 		then: StoryPageID
 	}> = [];
 
-	// Store `Date.now()` into a variable so it is not a different value each time, helping avoid inconsistencies.
+	// Store the current date into a variable so it is not a different value each time, helping avoid inconsistencies.
 	const now = Date.now();
 
 	/** The ID of a new page being pushed via `pushNewPage`. Automatically increments each time `pushNewPage` is called. */

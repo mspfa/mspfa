@@ -6,7 +6,7 @@ import { authenticate } from 'lib/server/auth';
 import type { ClientStoryPage, ClientStoryPageRecord } from 'lib/client/stories';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 import invalidPublishedOrder from 'lib/client/invalidPublishedOrder';
-import type { DateNumber, integer, RecursivePartial } from 'lib/types';
+import type { DateNumber, integer, Mutable, RecursivePartial } from 'lib/types';
 import { Perm } from 'lib/client/perms';
 import { flatten } from 'lib/server/db';
 import { mergeWith } from 'lodash';
@@ -140,14 +140,15 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	const $set: Record<string, unknown> = {};
-	const $unset: Record<string, true> = {};
+	const $set: Mutable<UpdateFilter<ServerStory>['$set']> = {};
+	const $unset: Mutable<UpdateFilter<ServerStory>['$unset']> = {};
 
 	if (req.method === 'PATCH') {
 		const newClientPages: ClientStoryPageRecord = {};
 
-		// Store `Date.now()` into a variable so it is not a different value each time, helping avoid inconsistencies.
-		const now = Date.now();
+		// Store the current date into a variable so it is not a different value each time, helping avoid inconsistencies.
+		const dateNow = new Date();
+		const now = +dateNow;
 
 		for (const pageIDString of Object.keys(req.body)) {
 			const pageID = +pageIDString;
@@ -163,8 +164,17 @@ const Handler: APIHandler<{
 			}
 
 			const clientPage = req.body[pageID];
+			const { published, ...clientPageWithoutPublished } = clientPage;
+			const publishedAndScheduled = (
+				published !== undefined && published !== null && {
+					published: new Date(published),
+					...published > now && {
+						scheduled: true as const
+					}
+				}
+			);
 
-			if ('id' in clientPage) {
+			if ('id' in clientPageWithoutPublished) {
 				// `clientPage` is a new page being posted.
 
 				if (pageID in story.pages) {
@@ -176,7 +186,7 @@ const Handler: APIHandler<{
 
 				// This `as any` is necessary because of what I believe is a TypeScript bug which I have yet to report or find a report of.
 				// TODO: Report this bug, remove `as any` if it's fixed, or fix my code if it's not actually a bug.
-				if (pageID as any !== clientPage.id) {
+				if (pageID as any !== clientPageWithoutPublished.id) {
 					res.status(400).send({
 						message: `Page ${pageID}'s \`id\` is not set to ${pageID}.`
 					});
@@ -194,15 +204,9 @@ const Handler: APIHandler<{
 					return;
 				}
 
-				const { published, ...clientPageWithoutPublished } = clientPage;
 				const newPage: ServerStoryPage = {
 					...clientPageWithoutPublished,
-					...published !== undefined && published !== null && {
-						published: new Date(published),
-						...published > now && {
-							scheduled: true
-						}
-					},
+					...publishedAndScheduled,
 					comments: []
 				};
 
@@ -220,15 +224,9 @@ const Handler: APIHandler<{
 					return;
 				}
 
-				const { published, ...clientPageWithoutPublished } = clientPage;
 				const pageChanges: RecursivePartial<ServerStoryPage> = {
 					...clientPageWithoutPublished,
-					...published !== undefined && published !== null && {
-						published: new Date(published),
-						...published > now && {
-							scheduled: true
-						}
-					}
+					...publishedAndScheduled
 				};
 
 				const page = story.pages[pageID];

@@ -12,8 +12,8 @@ import type { ClientPreviousPageIDs } from 'components/StoryViewer';
 import { PAGE_PRELOAD_DEPTH } from 'components/StoryViewer';
 import type { ServerNewsPost } from 'lib/server/news';
 import type { TagString } from 'lib/client/storyTags';
-import { getClientColorGroup, ServerColor, ServerColorGroup } from 'lib/server/colors';
-import { getClientColor } from 'lib/server/colors';
+import type { ServerColor, ServerColorGroup } from 'lib/server/colors';
+import { getClientColorGroup, getClientColor } from 'lib/server/colors';
 
 /** @minimum 1 */
 export type StoryID = integer;
@@ -38,7 +38,7 @@ export type ServerStoryPage = {
 	commentary: string,
 	/** This page's comments sorted from newest to oldest. */
 	comments: ServerComment[],
-	/** Whether this page was set to notify readers on publish. */
+	/** Whether this page should notify readers on publish. */
 	notify: boolean
 };
 
@@ -322,15 +322,15 @@ export const unscheduleStory = (storyID: StoryID) => {
 };
 
 /**
- * Publishes due scheduled pages, sets a new timeout to rerun this function for future scheduled pages if there are any, and updates the story's `pageCount`.
+ * Publishes due scheduled pages, sets a new timeout to rerun this function for future scheduled pages if there are any, and updates the story's `pageCount` and `updated` properties.
  *
  * Applies any database updates either determined within this function or passed into its `update` parameter.
  */
 export const updateStorySchedule = async (
 	/**
-	 * The `ServerStory` whose schedule and `pageCount` is being updated.
+	 * The `ServerStory` being updated.
 	 *
-	 * ⚠️ Ensure `story.pages` matches what it would be in the database at the time AFTER this function's database update. Also ensure `story.pageCount` matches what it is in the database at the time BEFORE this function is called.
+	 * ⚠️ Ensure `story.pages` matches what it would be in the database at the time AFTER this function's database update. Also ensure `story.pageCount` and `story.updated` match what they are in the database at the time BEFORE this function is called.
 	 */
 	story: ServerStory,
 	/**
@@ -353,9 +353,14 @@ export const updateStorySchedule = async (
 		update.$unset = {};
 	}
 
-	let updatedPageCount = 0;
+	/** The new value to be set into `story.pageCount`. */
+	let newPageCount = 0;
+	/** The initial `DateNumber` of `story.updated`. */
+	const oldUpdated = +story.updated;
+	/** The new `DateNumber` to be set into `story.updated`. */
+	let newUpdated = oldUpdated;
 
-	// Store `Date.now()` into a variable so it is not a different value each time, helping avoid inconsistencies.
+	// Store the current date into a variable so it is not a different value each time, helping avoid inconsistencies.
 	const now = Date.now();
 
 	for (const page of Object.values(story.pages)) {
@@ -385,21 +390,30 @@ export const updateStorySchedule = async (
 				// This scheduled page is due, so publish it.
 
 				update.$unset[`pages.${page.id}.scheduled`] = true;
-
-				// TODO: Set update queries for publish notifications here, or something like that.
 			}
 		}
 
+		// Check for published, listed pages.
 		if (published <= now && !page.unlisted) {
-			// If this page is public, set the page count to its ID.
-			updatedPageCount = page.id;
-			// The reason we don't run `updatedPageCount++` here instead is because it's better to use the ID of the last public page as the page count rather than the actual quantity of public pages. If we did use the actual quantity of public pages as the page count, then for example, if a story's last public page ID is 40 but there is a single earlier page which is unlisted, then the page count would say 39. For those who notice this inconsistency, it could be confusing, appear to be a bug, or even hint at an unlisted page which they might then actively look for. Simply using the ID of the last public page rather than the true public page count avoids all of this with no tangible issues.
+			// Since this page is public, set the page count to its ID.
+			newPageCount = page.id;
+			// The reason we don't run `newPageCount++` here instead is because it's better to use the ID of the last public page as the page count rather than the actual quantity of public pages. If we did use the actual quantity of public pages as the page count, then for example, if a story's last public page ID is 40 but there is a single earlier page which is unlisted, then the page count would say 39. For those who notice this inconsistency, it could be confusing, appear to be a bug, or even hint at an unlisted page which they might then actively look for. Simply using the ID of the last public page rather than the true public page count avoids all of this with no tangible issues.
+
+			// If this published, listed page has notifying enabled and should be published after the current `updated` date of the story, then the `updated` date must be adjusted to account for the new latest `published` date.
+			if (page.notify && published > newUpdated) {
+				newUpdated = published;
+			}
 		}
 	}
 
-	if (updatedPageCount !== story.pageCount) {
-		// If the page count changed, update it.
-		update.$set.pageCount = updatedPageCount;
+	if (newPageCount !== story.pageCount) {
+		update.$set.pageCount = newPageCount;
+	}
+
+	if (newUpdated !== oldUpdated) {
+		update.$set.updated = new Date(newUpdated);
+
+		// TODO: Set update queries for publish notifications here, or something like that.
 	}
 
 	if (!Object.values(update.$set).length) {
