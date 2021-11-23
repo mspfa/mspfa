@@ -243,7 +243,6 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 						const position = dropPositionRef.current ?? colorIndex;
 
 						const changedPosition = colorIndex !== position;
-						console.log(colorIndex, position);
 						const changedGroup = color.group !== dropGroupRef.current;
 
 						// Only change the color's position or group if it isn't already in that position and group.
