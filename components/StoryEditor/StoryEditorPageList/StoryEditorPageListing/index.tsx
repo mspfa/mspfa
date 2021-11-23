@@ -345,7 +345,7 @@ const StoryEditorPageListing = React.memo(({
 						}
 					</>
 				),
-				actions: ['Submit', 'Cancel']
+				actions: ['Submit!', 'Cancel']
 			});
 
 			if (!(await dialog)?.submit) {
