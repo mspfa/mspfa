@@ -36,10 +36,10 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 
 	/** A ref to whether a color or color group is currently being dragged. */
 	const draggingGrabberRef = useRef(false);
-	/** A ref to the nearest position to drop the dragged color or color group into. */
+	/** A ref to the nearest position to drop the dragged color or color group into, or `undefined` if the position should not be changed on drop. */
 	const dropPositionRef = useRef<integer>();
 	/** A ref to the ID of the nearest group to drop the dragged color into, or `null` if its group should be removed on drop. */
-	const dropGroupRef = useRef<string | null>();
+	const dropGroupRef = useRef<string | null>(null);
 
 	const savedColorsElementRef = useRef<HTMLDivElement>(null!);
 
@@ -62,7 +62,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 				useFunction(() => {
 					draggingGrabberRef.current = false;
 					dropPositionRef.current = undefined;
-					dropGroupRef.current = undefined;
+					dropGroupRef.current = null;
 				})
 			}
 			onDragOver={
@@ -78,9 +78,10 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 					const { clientY } = event;
 					/** The smallest vertical distance between the cursor and a possible drop position. */
 					let minDistance = Infinity;
-					dropPositionRef.current = 0;
 
 					if (event.dataTransfer.types.includes('application/vnd.mspfa.color-group-index')) {
+						dropPositionRef.current = 0;
+
 						for (const colorGroupElement of savedColorsElementRef.current.getElementsByClassName('color-group')) {
 							if (
 								// Dropping to the position immediately before the color group being dragged should end up in the same position as the one immediately after the color group being dragged, so the color group being dragged should not add to the drop position.
@@ -95,7 +96,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 
 							// Compare the cursor's position to the top of this color group element.
 							let distance = Math.abs(clientY - colorGroupElementRect.top);
-							if (distance < minDistance) {
+							if (distance <= minDistance) {
 								minDistance = distance;
 							} else {
 								break;
@@ -103,8 +104,9 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 
 							// Compare the cursor's position to the bottom of this color group element.
 							distance = Math.abs(clientY - colorGroupElementRect.bottom);
-							if (distance < minDistance) {
+							if (distance <= minDistance) {
 								minDistance = distance;
+
 								// The cursor is closer to the bottom than it is to the top, so make the drop position one unit lower.
 								dropPositionRef.current++;
 							} else {
@@ -112,13 +114,71 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 							}
 						}
 
-						console.log(dropPositionRef.current);
-
 						return;
 					}
 
 					if (event.dataTransfer.types.includes('application/vnd.mspfa.color-index')) {
-						// TODO
+						/** The smallest vertical distance between the cursor and a possible color group to drop the color into. */
+						let minGroupDistance = Infinity;
+						let nearestColorGroupElement: Element;
+
+						for (const colorGroupElement of savedColorsElementRef.current.getElementsByClassName('color-group')) {
+							const colorGroupElementRect = colorGroupElement.getBoundingClientRect();
+
+							// Compare the cursor's position to the top of this color group element.
+							let distance = Math.abs(clientY - colorGroupElementRect.top);
+							if (distance <= minGroupDistance) {
+								minGroupDistance = distance;
+
+								nearestColorGroupElement = colorGroupElement;
+							} else {
+								break;
+							}
+
+							// Compare the cursor's position to the bottom of this color group element.
+							distance = Math.abs(clientY - colorGroupElementRect.bottom);
+							if (distance <= minGroupDistance) {
+								minGroupDistance = distance;
+							} else {
+								break;
+							}
+						}
+
+						dropGroupRef.current = nearestColorGroupElement!.id.slice('color-group-'.length);
+						if (dropGroupRef.current === 'undefined') {
+							// If dropping into the group of colors with no group, remove the color's group on drop.
+							dropGroupRef.current = null;
+						}
+
+						// Keep the color's position the same by default.
+						dropPositionRef.current = undefined;
+
+						for (const colorContainerElement of nearestColorGroupElement!.getElementsByClassName('color-container')) {
+							const colorContainerElementRect = colorContainerElement.getBoundingClientRect();
+
+							// Compare the cursor's position to the top of this color container.
+							let distance = Math.abs(clientY - colorContainerElementRect.top);
+							// This comparison must use `<=` instead of `<`, because the top of one color container could be at the exact same position as the bottom of the previous one.
+							if (distance <= minDistance) {
+								minDistance = distance;
+
+								const colorID = colorContainerElement.id.slice('color-container-'.length);
+								dropPositionRef.current = story.colors.findIndex(({ id }) => id === colorID);
+							} else {
+								break;
+							}
+
+							// Compare the cursor's position to the bottom of this color container.
+							distance = Math.abs(clientY - colorContainerElementRect.bottom);
+							if (distance <= minDistance) {
+								minDistance = distance;
+
+								// The cursor is closer to the bottom than it is to the top, so make the drop position one unit lower.
+								dropPositionRef.current++;
+							} else {
+								break;
+							}
+						}
 					}
 				})
 			}
@@ -130,7 +190,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 					if (colorGroupIndexString) {
 						const colorGroupIndex = +colorGroupIndexString;
 						const colorGroup = story.colorGroups[colorGroupIndex];
-						const position = dropPositionRef.current!;
+						const position = dropPositionRef.current ?? colorGroupIndex;
 
 						// Only change the color group's position if it isn't already in that position.
 						if (colorGroupIndex === position) {
@@ -164,7 +224,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 					if (colorIndexString) {
 						const colorIndex = +colorIndexString;
 						const color = story.colors[colorIndex];
-						const position = dropPositionRef.current!;
+						const position = dropPositionRef.current ?? colorIndex;
 
 						const changedPosition = colorIndex !== position;
 						const changedGroup = color.group !== dropGroupRef.current;
