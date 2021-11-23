@@ -43,6 +43,139 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 
 	const savedColorsElementRef = useRef<HTMLDivElement>(null!);
 
+	/** A function called on `dragenter` or `dragover` the saved colors element. */
+	const dragEventHandler = useFunction((event: DragEvent<HTMLDivElement>) => {
+		if (!draggingGrabberRef.current) {
+			return;
+		}
+
+		event.preventDefault();
+
+		event.dataTransfer.dropEffect = 'move';
+
+		const { clientY } = event;
+		/** The smallest vertical distance between the cursor and a possible drop position. */
+		let minDistance = Infinity;
+
+		if (event.dataTransfer.types.includes('application/vnd.mspfa.color-group-index')) {
+			dropPositionRef.current = 0;
+
+			for (const colorGroupElement of savedColorsElementRef.current.getElementsByClassName('color-group')) {
+				if (
+					// Dropping to the position immediately before the color group being dragged should end up in the same position as the one immediately after the color group being dragged, so the color group being dragged should not affect the drop position.
+					colorGroupElement.getElementsByClassName('dragging').length
+					// Ignore the group of colors with no group, since it doesn't actually have any position in the color group array.
+					|| colorGroupElement.id === 'color-group-undefined'
+				) {
+					continue;
+				}
+
+				const colorGroupElementRect = colorGroupElement.getBoundingClientRect();
+
+				// Compare the cursor's position to the top of this color group element.
+				let distance = Math.abs(clientY - colorGroupElementRect.top);
+				if (distance <= minDistance) {
+					minDistance = distance;
+				} else {
+					break;
+				}
+
+				// Compare the cursor's position to the bottom of this color group element.
+				distance = Math.abs(clientY - colorGroupElementRect.bottom);
+				if (distance <= minDistance) {
+					minDistance = distance;
+
+					// The cursor is closer to the bottom than it is to the top, so make the drop position one unit lower.
+					dropPositionRef.current++;
+				} else {
+					break;
+				}
+			}
+
+			return;
+		}
+
+		if (event.dataTransfer.types.includes('application/vnd.mspfa.color-index')) {
+			/** The smallest vertical distance between the cursor and a possible color group to drop the color into. */
+			let minGroupDistance = Infinity;
+			let nearestColorGroupColorsElement: Element;
+
+			for (const colorGroupColorsElement of savedColorsElementRef.current.getElementsByClassName('color-group-colors')) {
+				const colorGroupColorsElementRect = colorGroupColorsElement.getBoundingClientRect();
+
+				// Compare the cursor's position to the top of this color group colors element.
+				let distance = Math.abs(clientY - colorGroupColorsElementRect.top);
+				if (distance <= minGroupDistance) {
+					minGroupDistance = distance;
+
+					nearestColorGroupColorsElement = colorGroupColorsElement;
+				} else {
+					break;
+				}
+
+				// Compare the cursor's position to the bottom of this color group colors element.
+				distance = Math.abs(clientY - colorGroupColorsElementRect.bottom);
+				if (distance <= minGroupDistance) {
+					minGroupDistance = distance;
+				} else {
+					break;
+				}
+			}
+
+			dropGroupRef.current = (
+				nearestColorGroupColorsElement!.parentNode as HTMLDivElement
+			).id.slice('color-group-'.length);
+			if (dropGroupRef.current === 'undefined') {
+				// If dropping into the group of colors with no group, remove the color's group on drop.
+				dropGroupRef.current = undefined;
+			}
+
+			// Keep the color's position the same by default.
+			dropPositionRef.current = undefined;
+
+			for (const colorContainerElement of nearestColorGroupColorsElement!.getElementsByClassName('color-container')) {
+				const colorContainerElementRect = colorContainerElement.getBoundingClientRect();
+
+				// Compare the cursor's position to the top of this color container.
+				let distance = Math.abs(clientY - colorContainerElementRect.top);
+				// This comparison must use `<=` instead of `<`, because the top of one color container could be at the exact same position as the bottom of the previous one.
+				if (distance <= minDistance) {
+					minDistance = distance;
+
+					const colorID = colorContainerElement.id.slice('color-container-'.length);
+					dropPositionRef.current = story.colors.findIndex(({ id }) => id === colorID);
+				} else {
+					break;
+				}
+
+				// Compare the cursor's position to the bottom of this color container.
+				distance = Math.abs(clientY - colorContainerElementRect.bottom);
+				if (distance <= minDistance) {
+					minDistance = distance;
+
+					// The cursor is closer to the bottom than it is to the top, so make the drop position one unit lower.
+					dropPositionRef.current++;
+				} else {
+					break;
+				}
+			}
+
+			if (dropPositionRef.current !== undefined) {
+				/** The ID of the color being dragged. */
+				const draggingColorID = (
+					savedColorsElementRef.current.getElementsByClassName('dragging')[0].parentNode as HTMLDivElement
+				).id.slice('color-container-'.length);
+				/** The index of the color being dragged. */
+				const draggingColorIndex = story.colors.findIndex(({ id }) => id === draggingColorID);
+
+				// Adjust the drop position in consideration of the fact that the color being dragged is removed from the array before being inserted at the new position.
+				if (dropPositionRef.current > draggingColorIndex) {
+					dropPositionRef.current--;
+				}
+			}
+		}
+	});
+
 	const SavedColorsComponent = editing ? 'div' : LabeledGrid;
 
 	return (
@@ -65,139 +198,9 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 					dropGroupRef.current = undefined;
 				})
 			}
-			onDragOver={
-				useFunction((event: DragEvent<HTMLDivElement>) => {
-					if (!draggingGrabberRef.current) {
-						return;
-					}
-
-					event.preventDefault();
-
-					event.dataTransfer.dropEffect = 'move';
-
-					const { clientY } = event;
-					/** The smallest vertical distance between the cursor and a possible drop position. */
-					let minDistance = Infinity;
-
-					if (event.dataTransfer.types.includes('application/vnd.mspfa.color-group-index')) {
-						dropPositionRef.current = 0;
-
-						for (const colorGroupElement of savedColorsElementRef.current.getElementsByClassName('color-group')) {
-							if (
-								// Dropping to the position immediately before the color group being dragged should end up in the same position as the one immediately after the color group being dragged, so the color group being dragged should not affect the drop position.
-								colorGroupElement.getElementsByClassName('dragging').length
-								// Ignore the group of colors with no group, since it doesn't actually have any position in the color group array.
-								|| colorGroupElement.id === 'color-group-undefined'
-							) {
-								continue;
-							}
-
-							const colorGroupElementRect = colorGroupElement.getBoundingClientRect();
-
-							// Compare the cursor's position to the top of this color group element.
-							let distance = Math.abs(clientY - colorGroupElementRect.top);
-							if (distance <= minDistance) {
-								minDistance = distance;
-							} else {
-								break;
-							}
-
-							// Compare the cursor's position to the bottom of this color group element.
-							distance = Math.abs(clientY - colorGroupElementRect.bottom);
-							if (distance <= minDistance) {
-								minDistance = distance;
-
-								// The cursor is closer to the bottom than it is to the top, so make the drop position one unit lower.
-								dropPositionRef.current++;
-							} else {
-								break;
-							}
-						}
-
-						return;
-					}
-
-					if (event.dataTransfer.types.includes('application/vnd.mspfa.color-index')) {
-						/** The smallest vertical distance between the cursor and a possible color group to drop the color into. */
-						let minGroupDistance = Infinity;
-						let nearestColorGroupColorsElement: Element;
-
-						for (const colorGroupColorsElement of savedColorsElementRef.current.getElementsByClassName('color-group-colors')) {
-							const colorGroupColorsElementRect = colorGroupColorsElement.getBoundingClientRect();
-
-							// Compare the cursor's position to the top of this color group colors element.
-							let distance = Math.abs(clientY - colorGroupColorsElementRect.top);
-							if (distance <= minGroupDistance) {
-								minGroupDistance = distance;
-
-								nearestColorGroupColorsElement = colorGroupColorsElement;
-							} else {
-								break;
-							}
-
-							// Compare the cursor's position to the bottom of this color group colors element.
-							distance = Math.abs(clientY - colorGroupColorsElementRect.bottom);
-							if (distance <= minGroupDistance) {
-								minGroupDistance = distance;
-							} else {
-								break;
-							}
-						}
-
-						dropGroupRef.current = (
-							nearestColorGroupColorsElement!.parentNode as HTMLDivElement
-						).id.slice('color-group-'.length);
-						if (dropGroupRef.current === 'undefined') {
-							// If dropping into the group of colors with no group, remove the color's group on drop.
-							dropGroupRef.current = undefined;
-						}
-
-						// Keep the color's position the same by default.
-						dropPositionRef.current = undefined;
-
-						for (const colorContainerElement of nearestColorGroupColorsElement!.getElementsByClassName('color-container')) {
-							const colorContainerElementRect = colorContainerElement.getBoundingClientRect();
-
-							// Compare the cursor's position to the top of this color container.
-							let distance = Math.abs(clientY - colorContainerElementRect.top);
-							// This comparison must use `<=` instead of `<`, because the top of one color container could be at the exact same position as the bottom of the previous one.
-							if (distance <= minDistance) {
-								minDistance = distance;
-
-								const colorID = colorContainerElement.id.slice('color-container-'.length);
-								dropPositionRef.current = story.colors.findIndex(({ id }) => id === colorID);
-							} else {
-								break;
-							}
-
-							// Compare the cursor's position to the bottom of this color container.
-							distance = Math.abs(clientY - colorContainerElementRect.bottom);
-							if (distance <= minDistance) {
-								minDistance = distance;
-
-								// The cursor is closer to the bottom than it is to the top, so make the drop position one unit lower.
-								dropPositionRef.current++;
-							} else {
-								break;
-							}
-						}
-
-						if (dropPositionRef.current !== undefined) {
-							/** The ID of the color being dragged. */
-							const draggingColorID = (
-								savedColorsElementRef.current.getElementsByClassName('dragging')[0].parentNode as HTMLDivElement
-							).id.slice('color-container-'.length);
-							/** The index of the color being dragged. */
-							const draggingColorIndex = story.colors.findIndex(({ id }) => id === draggingColorID);
-
-							// Adjust the drop position in consideration of the fact that the color being dragged is removed from the array before being inserted at the new position.
-							if (dropPositionRef.current > draggingColorIndex) {
-								dropPositionRef.current--;
-							}
-						}
-					}
-				})
-			}
+			// It is necessary to listen to `dragenter` in addition to `dragover`, because the `dragover` event doesn't always get cancelled in time for the `drop` event to fire.
+			onDragEnter={dragEventHandler}
+			onDragOver={dragEventHandler}
 			onDrop={
 				useFunction(async (event: DragEvent<HTMLDivElement>) => {
 					event.preventDefault();
