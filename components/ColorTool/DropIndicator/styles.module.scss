@@ -1,0 +1,12 @@
+@use 'sass:math';
+
+$drop-indicator-height: 1rem * math.div(2px, 16px);
+
+.drop-indicator {
+	height: $drop-indicator-height;
+	margin: math.div(-$drop-indicator-height, 2) 0;
+	background-color: currentColor;
+	position: relative;
+	z-index: 10;
+	pointer-events: none;
+}

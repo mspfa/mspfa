@@ -40,8 +40,6 @@ const ColorGroupLabel = ({ children: colorGroup }: ColorGroupLabelProps) => {
 								event.clientX - dragImageRect.left,
 								event.clientY - dragImageRect.top
 							);
-
-							event.dataTransfer.setData('application/vnd.mspfa.color-group-index', story.colorGroups.indexOf(colorGroup).toString());
 						})
 					}
 				/>

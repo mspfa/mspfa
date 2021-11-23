@@ -172,8 +172,6 @@ const Color = ({
 			event.clientX - dragImageRect.left,
 			event.clientY - dragImageRect.top
 		);
-
-		event.dataTransfer.setData('application/vnd.mspfa.color-index', story.colors.indexOf(color).toString());
 	});
 
 	return editing ? (

@@ -1,0 +1,17 @@
+#saved-colors.editing {
+	& > :not(.drop-indicator) {
+		// This is padding instead of margin so that adjacent color groups don't merge their margins together.
+		// Except on the ends, this must be equal on the top and bottom so the drop indicator can be vertically centered when placed in the middle.
+		padding: 0.5em 0;
+		// Remove any margin so the padding is the only space between elements.
+		margin: 0;
+	}
+
+	& > :first-child {
+		padding-top: 0;
+	}
+
+	& > :last-child {
+		padding-bottom: 0;
+	}
+}
