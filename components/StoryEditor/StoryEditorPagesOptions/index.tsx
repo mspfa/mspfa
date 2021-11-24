@@ -229,7 +229,7 @@ const StoryEditorPagesOptions = ({
 			<Row>
 				<Button
 					className="small"
-					href={`/s/${story.id}/edit`}
+					href={`/stories/${story.id}/edit`}
 				>
 					Edit Info
 				</Button>

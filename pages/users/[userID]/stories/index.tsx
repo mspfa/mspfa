@@ -70,7 +70,7 @@ const promptNewStory = async () => {
 		title: dialog.form!.values.title
 	});
 
-	Router.push(`/s/${story.id}/edit`);
+	Router.push(`/stories/${story.id}/edit`);
 };
 
 type ServerSideProps = {

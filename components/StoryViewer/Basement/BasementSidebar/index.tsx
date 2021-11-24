@@ -43,7 +43,7 @@ const BasementSidebar = React.memo(() => {
 			</StoryLog>
 			{latestPagesShown && (
 				<div className="story-log-link-container">
-					<Link href={`/s/${story.id}/log${previewMode ? '?preview=1' : ''}`}>
+					<Link href={`/stories/${story.id}/log${previewMode ? '?preview=1' : ''}`}>
 						View All Pages
 					</Link>
 				</div>

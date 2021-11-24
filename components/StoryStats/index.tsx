@@ -37,7 +37,7 @@ const StoryStats = ({
 			) && (
 				<EditButton
 					className="spaced"
-					href={`/s/${story.id}/edit/pages${editPageID ? `#p${editPageID}` : ''}`}
+					href={`/stories/${story.id}/edit/pages${editPageID ? `#p${editPageID}` : ''}`}
 					title="Edit Adventure"
 				/>
 			)}

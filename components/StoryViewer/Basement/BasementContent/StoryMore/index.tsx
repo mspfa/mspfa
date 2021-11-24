@@ -35,7 +35,7 @@ const StoryMore = React.memo(() => {
 				</LabeledGrid>
 			)}
 			<Row className="story-more-buttons">
-				<RSSButton href={`/s/${storyID}/rss.xml`}>
+				<RSSButton href={`/stories/${storyID}/rss.xml`}>
 					RSS
 				</RSSButton>
 			</Row>

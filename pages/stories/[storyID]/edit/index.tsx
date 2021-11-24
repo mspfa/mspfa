@@ -259,7 +259,7 @@ const Component = withErrorPage<ServerSideProps>(({
 									)}
 									<Button
 										className="small"
-										href={`/s/${story.id}/edit/pages`}
+										href={`/stories/${story.id}/edit/pages`}
 									>
 										Edit Pages
 									</Button>

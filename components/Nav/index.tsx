@@ -108,12 +108,12 @@ const Nav = () => {
 					<NavItem
 						id="story-log"
 						label="Log"
-						href={`/s/${storyID}/log${previewMode ? '?preview=1' : ''}`}
+						href={`/stories/${storyID}/log${previewMode ? '?preview=1' : ''}`}
 					/>
 					<NavItem
 						id="story-search"
 						label="Search"
-						href={`/s/${storyID}/search${previewMode ? '?preview=1' : ''}`}
+						href={`/stories/${storyID}/search${previewMode ? '?preview=1' : ''}`}
 					/>
 				</NavGroup>
 			)}
