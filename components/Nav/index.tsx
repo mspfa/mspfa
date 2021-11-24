@@ -95,7 +95,12 @@ const Nav = () => {
 				)}
 			</NavGroup>
 			<NavGroup id="secondary">
-				<NavItem id="search" label="Explore" href="/search" />
+				<NavMenu id="browse" label="Browse">
+					<NavItem id="browse-stories" label="Adventures" href="/browse/stories" />
+					<NavItem id="browse-users" label="Users" href="/browse/users" />
+					<div className="divider" />
+					<NavItem id="browse-story-modules" label="Adventure Modules" href="/browse/story-modules" />
+				</NavMenu>
 				<NavItem id="random" label="Mystery" title="Take me to a random adventure!" onClick={visitRandomStory} />
 			</NavGroup>
 			{storyID !== undefined && (
