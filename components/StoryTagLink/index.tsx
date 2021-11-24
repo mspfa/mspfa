@@ -11,7 +11,7 @@ const StoryTagLink = ({ children }: StoryTagLinkProps) => (
 	<Link
 		className="story-tag-link"
 		href="/TODO"
-		title={storyTags[children] || '(Unknown Tag)'}
+		title={storyTags[children] || '(Custom Tag)'}
 	>
 		{`#${children}`}
 	</Link>
