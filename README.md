@@ -16,8 +16,6 @@ This is the official repository for [MS Paint Fan Adventures](https://mspfa.com/
 
 3. Enter `npm i` to install the project's dependencies.
 
-4. Enter `npm run setup` to set up the project.
-
 ## Development
 
 * Enter `npm run db` to run the database, which is necessary for the website to function.

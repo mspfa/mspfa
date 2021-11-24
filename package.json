@@ -18,8 +18,7 @@
 		"lint": "next lint",
 		"build": "next build",
 		"start": "next start",
-		"db": "mongod",
-		"setup": "ts-node scripts/setup"
+		"db": "mongod"
 	},
 	"browserslist": [
 		"defaults"

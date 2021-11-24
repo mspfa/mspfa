@@ -1,7 +1,6 @@
 import { Collection, MongoClient, ObjectId } from 'mongodb';
 import type { Db } from 'mongodb';
 
-// `as any` below is to make TypeScript not angry when this module is imported from `scripts/setup`.
 const client = new MongoClient(process.env.DB_HOST!);
 
 let mspfaDB: Db | undefined;
