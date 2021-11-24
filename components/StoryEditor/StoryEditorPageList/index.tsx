@@ -51,7 +51,7 @@ const StoryEditorPageList = ({ pagesActionsElementRef, story, pageComponents }: 
 								unlisted: false,
 								disableControls: false,
 								commentary: '',
-								notify: true
+								silent: false
 							};
 
 							formikPropsRef.current.setFieldValue('pages', {

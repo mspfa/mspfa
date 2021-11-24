@@ -38,8 +38,8 @@ export type ServerStoryPage = {
 	commentary: string,
 	/** This page's comments sorted from newest to oldest. */
 	comments: ServerComment[],
-	/** Whether this page should notify readers on publish. */
-	notify: boolean
+	/** If true, publishing the page should neither cause notifications nor change the story's `updated` value. */
+	silent: boolean
 };
 
 export type StoryPageRecord = Record<StoryPageID, ServerStoryPage>;
@@ -218,7 +218,7 @@ export const getClientStoryPage = (page: ServerStoryPage): ClientStoryPage => ({
 	unlisted: page.unlisted,
 	disableControls: page.disableControls,
 	commentary: page.commentary,
-	notify: page.notify
+	silent: page.silent
 });
 
 const stories = db.collection<ServerStory>('stories');
@@ -399,8 +399,8 @@ export const updateStorySchedule = async (
 			newPageCount = page.id;
 			// The reason we don't run `newPageCount++` here instead is because it's better to use the ID of the last public page as the page count rather than the actual quantity of public pages. If we did use the actual quantity of public pages as the page count, then for example, if a story's last public page ID is 40 but there is a single earlier page which is unlisted, then the page count would say 39. For those who notice this inconsistency, it could be confusing, appear to be a bug, or even hint at an unlisted page which they might then actively look for. Simply using the ID of the last public page rather than the true public page count avoids all of this with no tangible issues.
 
-			// If this published, listed page has notifying enabled and should be published after the current `updated` date of the story, then the `updated` date must be adjusted to account for the new latest `published` date.
-			if (page.notify && published > newUpdated) {
+			// If this published, listed page isn't silent and should be published after the current `updated` date of the story, then the `updated` date must be adjusted to account for the new latest `published` date.
+			if (!page.silent && published > newUpdated) {
 				newUpdated = published;
 			}
 		}

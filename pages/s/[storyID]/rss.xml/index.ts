@@ -85,7 +85,7 @@ export const getServerSideProps: MyGetServerSideProps = async ({ res, params }) 
 					break;
 				}
 
-				if (endPage.unlisted || !endPage.notify) {
+				if (endPage.unlisted || endPage.silent) {
 					continue;
 				}
 
@@ -100,7 +100,7 @@ export const getServerSideProps: MyGetServerSideProps = async ({ res, params }) 
 						break;
 					}
 
-					if (!earlierPage.unlisted && earlierPage.notify) {
+					if (!(earlierPage.unlisted || earlierPage.silent)) {
 						startPage = earlierPage;
 					}
 

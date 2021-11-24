@@ -266,8 +266,8 @@ const StoryEditorPageListing = React.memo(({
 
 		/** The `published` value to be set on the pages. */
 		let published = Date.now();
-		/** The `notify` value to be set on the pages. */
-		let notify;
+		/** The `silent` value to be set on the pages. */
+		let silent;
 
 		if (!event.shiftKey) {
 			const minDate = Math.max(
@@ -369,14 +369,14 @@ const StoryEditorPageListing = React.memo(({
 					: Date.now()
 			);
 
-			notify = !dialog.form!.values.silent;
+			({ silent } = dialog.form!.values);
 		}
 
 		const pageChanges: Record<StoryPageID, RecursivePartial<ClientStoryPage>> = {};
 
-		// Set each draft's `published` and `notify` values.
+		// Set each draft's `published` and `silent` values.
 		for (let pageID = firstDraftID!; pageID <= page.id; pageID++) {
-			pageChanges[pageID] = { published, notify };
+			pageChanges[pageID] = { published, silent };
 		}
 
 		const { data: newInitialPages } = await (api as StoryPagesAPI).patch(`/stories/${storyID}/pages`, pageChanges).catch(error => {

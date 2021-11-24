@@ -15,7 +15,7 @@ import type { UpdateFilter } from 'mongodb';
 import users from 'lib/server/users';
 
 /** The keys of all `ClientStoryPage` properties which the client should be able to `PATCH` into any of their existing `ServerStory['pages']` (except `'published'`). */
-type WritableStoryPageKey = 'title' | 'content' | 'nextPages' | 'unlisted' | 'disableControls' | 'commentary' | 'notify';
+type WritableStoryPageKey = 'title' | 'content' | 'nextPages' | 'unlisted' | 'disableControls' | 'commentary' | 'silent';
 
 const Handler: APIHandler<{
 	// This `unknown` is necessary to set because of what I believe is a `vega/ts-json-schema-generator` bug I have yet to report.
