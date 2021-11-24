@@ -18,8 +18,8 @@ import users from 'lib/server/users';
 type WritableStoryPageKey = 'title' | 'content' | 'nextPages' | 'unlisted' | 'disableControls' | 'commentary' | 'silent';
 
 const Handler: APIHandler<{
-	// This `unknown` is necessary to set because of what I believe is a `vega/ts-json-schema-generator` bug I have yet to report.
-	// TODO: Look into this bug and submit an issue on the GitHub. A fix is critical here, because currently other `query` values are not being validated due to this bug.
+	// This `unknown` is necessary to set because of https://github.com/vega/ts-json-schema-generator/issues/1029.
+	// TODO: Ensure this is fixed before use in production. A fix is critical here, because currently other `query` values are not being validated due to this bug.
 	query: unknown & {
 		storyID: string
 	}
