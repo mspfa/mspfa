@@ -10,7 +10,6 @@
 	}
 
 	&-auto-complete {
-		display: none;
 		min-width: 100%;
 		position: absolute;
 		left: 0;
@@ -20,8 +19,8 @@
 		white-space: nowrap;
 		z-index: 100;
 
-		.user-field.open-auto-complete > & {
-			display: block;
+		.user-field:not(:focus-within) > & {
+			display: none;
 		}
 
 		// This fixes the width of the auto-complete being too small due to `max-width: 100%`.

@@ -17,7 +17,7 @@
 		z-index: 402;
 	}
 
-	&-container.force-open & {
+	&-container:focus-within & {
 		display: flex;
 	}
 }

@@ -77,8 +77,6 @@ const UserField = ({
 
 	const [inputValue, setInputValue] = useState('');
 
-	// This state is whether the user field should have the `open-auto-complete` class, which causes its auto-complete menu to be visible.
-	const [openAutoComplete, setOpenAutoComplete] = useState(false);
 	const userFieldRef = useRef<HTMLDivElement>(null);
 	const [autoCompleteUsers, setAutoCompleteUsers] = useState<PublicUser[]>([]);
 
@@ -154,32 +152,6 @@ const UserField = ({
 
 	const isEditing = !value;
 	const [wasEditing, setWasEditing] = useState(isEditing);
-
-	const onFocus = useFunction(() => {
-		if (isEditing) {
-			setOpenAutoComplete(true);
-		}
-	});
-
-	const onBlur = useFunction(() => {
-		if (isEditing) {
-			// This timeout is necessary because otherwise, for example when tabbing through auto-complete options, this will run before the next auto-complete option focuses, so the `if` statement would not detect that any option is in focus.
-			setTimeout(() => {
-				if (!(
-					// An element is focused,
-					document.activeElement
-					// the user field is mounted,
-					&& userFieldRef.current
-					// the focused element is in the user field,
-					&& userFieldRef.current.contains(document.activeElement)
-					// and the focused element is the user field input or an auto-complete option.
-					&& /(?:^| )user-field-(?:input|option)(?: |$)/.test(document.activeElement.className)
-				)) {
-					setOpenAutoComplete(false);
-				}
-			});
-		}
-	});
 
 	useEffect(() => {
 		if (isEditing === wasEditing) {
@@ -261,9 +233,7 @@ const UserField = ({
 	return (
 		<div
 			id={id}
-			className={`user-field${isEditing && openAutoComplete ? ' open-auto-complete' : ''}`}
-			onFocus={onFocus}
-			onBlur={onBlur}
+			className="user-field"
 			ref={userFieldRef}
 		>
 			{value ? (

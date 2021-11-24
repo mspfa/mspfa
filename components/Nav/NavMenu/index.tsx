@@ -3,10 +3,8 @@ import NavItem from 'components/Nav/NavItem';
 import type { NavItemProps } from 'components/Nav/NavItem';
 import React, { useState, useRef } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import type { MouseEvent } from 'react';
 
 export type NavMenuProps = {
-	onFocus?: never,
 	onBlur?: never,
 	onClick?: never,
 	/** The nav items in this nav menu. */
@@ -15,38 +13,15 @@ export type NavMenuProps = {
 
 const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 	// This state is whether the menu's label is in focus due to being clicked.
-	const [clickedLabel, setClickedLabel] = useState(false);
-
-	// This state is whether the menu container should have the `force-open` class, which forces it to be visible.
-	// Note: The menu can still be open without the `force-open` class, for example if it or its label is hovered over.
-	const [forceOpen, setForceOpen] = useState(false);
+	const [focusFromClick, setFocusFromClick] = useState(false);
 
 	/** A ref to the underlying link element of this menu's label. */
 	const labelRef = useRef<HTMLAnchorElement & HTMLButtonElement>(null!);
-	const menuContainerRef = useRef<HTMLDivElement>(null!);
-
-	/** Handles the focus event bubbled from any element in the menu. */
-	const onFocus = useFunction(() => {
-		setForceOpen(true);
-	});
-
-	/** Handles the blur event bubbled from any element in the menu. */
-	const onBlur = useFunction(() => {
-		// This timeout is necessary because otherwise, for example when tabbing through links in the menu, this will run before the next link in the menu focuses, so the `if` statement would not detect that the menu is in focus.
-		setTimeout(() => {
-			if (!menuContainerRef.current.contains(document.activeElement)) {
-				setForceOpen(false);
-			}
-		});
-	});
 
 	return (
 		<div
 			id={`nav-menu-container-${id}`}
-			className={`nav-menu-container${forceOpen ? ' force-open' : ''}`}
-			onFocus={onFocus}
-			onBlur={onBlur}
-			ref={menuContainerRef}
+			className="nav-menu-container"
 		>
 			{/* The menu's label. */}
 			<NavItem
@@ -54,21 +29,19 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 				{...props}
 				onBlur={
 					useFunction(() => {
-						// When the menu's label is blurred, it is (obviously) no longer focused from being clicked.
-						setClickedLabel(false);
+						setFocusFromClick(false);
 					})
 				}
 				onClick={
-					useFunction((event: MouseEvent) => {
-						event.preventDefault();
-
-						if (clickedLabel) {
-							// If the label is already clicked and the user clicks it again, it should toggle its focus off, allowing the menu to be hidden.
+					useFunction(() => {
+						// We must check whether the focus is from being clicked rather than checking for any focus, because a normal focus check will succeed even if it wasn't focused before being clicked. Elements receive focus on mouse down, which is before the click event is fired on mouse up.
+						if (focusFromClick) {
+							// If the label is already clicked and the user clicks it again, it should toggle its focus off.
 							labelRef.current.blur();
+						} else {
+							// Now that the element is in focus and was clicked for the first time, toggle on `focusFromClick`.
+							setFocusFromClick(true);
 						}
-
-						// When the user clicks the label, toggle whether it is clicked.
-						setClickedLabel(!clickedLabel);
 					})
 				}
 				ref={labelRef}

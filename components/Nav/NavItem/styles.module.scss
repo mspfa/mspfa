@@ -32,7 +32,7 @@
 
 		// Hide bubbles on labels of open nav menus.
 		.nav-menu-container:hover > .nav-item > &,
-		.nav-menu-container.force-open > .nav-item > & {
+		.nav-menu-container:focus-within > .nav-item > & {
 			display: none;
 		}
 
