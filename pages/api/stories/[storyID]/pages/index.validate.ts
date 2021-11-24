@@ -69,9 +69,9 @@ export default createValidator({
 											commentary: {
 												type: 'string'
 											},
-											notify: {
+											silent: {
 												type: 'boolean',
-												description: 'Whether this page was set to notify readers on publish.'
+												description: 'If true, publishing the page should neither cause notifications nor change the story\'s `updated` value.'
 											}
 										},
 										required: [
@@ -80,7 +80,7 @@ export default createValidator({
 											'disableControls',
 											'id',
 											'nextPages',
-											'notify',
+											'silent',
 											'title',
 											'unlisted'
 										]
@@ -122,9 +122,9 @@ export default createValidator({
 											commentary: {
 												type: 'string'
 											},
-											notify: {
+											silent: {
 												type: 'boolean',
-												description: 'Whether this page was set to notify readers on publish.'
+												description: 'If true, publishing the page should neither cause notifications nor change the story\'s `updated` value.'
 											}
 										}
 									}

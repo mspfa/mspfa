@@ -37,6 +37,3 @@ export type Method = 'get' | 'delete' | 'head' | 'options' | 'post' | 'put' | 'p
 
 /** The methods for which axios has a `data` parameter. */
 export type MethodWithData = 'post' | 'put' | 'patch';
-
-// TODO: Remove this in favor of the built-in TypeScript 4.5 `Awaited` type.
-export type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T;

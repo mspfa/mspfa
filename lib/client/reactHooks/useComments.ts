@@ -5,7 +5,7 @@ import type { ClientCommentOrReply } from 'lib/client/comments';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import { useUserCache } from 'lib/client/UserCache';
 import type { APIHandler } from 'lib/server/api';
-import type { Awaited, integer } from 'lib/types';
+import type { integer } from 'lib/types';
 import type { PublicUser } from 'lib/client/users';
 
 /** The number of comments to request at a time. */
