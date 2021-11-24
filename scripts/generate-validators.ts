@@ -135,7 +135,8 @@ const generateValidator = async (
 			path: inputPath,
 			tsconfig: 'tsconfig.json',
 			// This is `false` so the server can trust that the client isn't adding any invalid properties to objects in the request body.
-			additionalProperties: false
+			additionalProperties: false,
+			skipTypeCheck: true
 		});
 	} catch (error: any) {
 		for (const diagnostic of error.diagnostics) {
