@@ -81,7 +81,7 @@ const Nav = () => {
 							bubble={messagesBubble}
 						/>
 						<div className="divider" />
-						<NavItem id="stories" label="Adventures" href={`/users/${user.id}/s`} />
+						<NavItem id="stories" label="Adventures" href={`/users/${user.id}/stories`} />
 						<NavItem id="favs" label="Favorites" href={`/users/${user.id}/favs`} />
 						<NavItem id="saves" label="Game Saves" href={`/users/${user.id}/saves`} />
 						<div className="divider" />
