@@ -28,7 +28,7 @@ const Handler: APIHandler<(
 			/** How many results to respond with. */
 			limit?: integer | string,
 			/** A case-insensitive username search or exact user ID match. */
-			search: ServerUser['name']
+			nameOrID: ServerUser['name']
 		}
 	}
 ), (
@@ -118,13 +118,12 @@ const Handler: APIHandler<(
 
 	let filter: Filter<ServerUser> = {
 		name: {
-			$regex: new RegExp(escapeRegExp(req.query.search), 'i')
+			$regex: new RegExp(escapeRegExp(req.query.nameOrID), 'i')
 		},
 		willDelete: { $exists: false }
 	};
 
-	const userID = safeObjectID(req.query.search);
-
+	const userID = safeObjectID(req.query.nameOrID);
 	if (userID) {
 		filter = {
 			$or: [
@@ -135,7 +134,7 @@ const Handler: APIHandler<(
 		};
 	}
 
-	const lowercaseSearch = req.query.search.toLowerCase();
+	const lowercaseSearch = req.query.nameOrID.toLowerCase();
 
 	let results = (
 		await users.find!(filter).map(getPublicUser).toArray()

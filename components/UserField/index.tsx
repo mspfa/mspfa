@@ -84,15 +84,15 @@ const UserField = ({
 
 	const cancelTokenSourceRef = useRef<CancelTokenSource>();
 
-	const updateAutoComplete = useThrottled(async (search: string) => {
-		if (search) {
+	const updateAutoComplete = useThrottled(async (nameOrID: string) => {
+		if (nameOrID) {
 			cancelTokenSourceRef.current?.cancel();
 			cancelTokenSourceRef.current = axios.CancelToken.source();
 
 			const { data: newAutoCompleteUsers } = await (api as UsersAPI).get('/users', {
 				params: {
 					limit: 8,
-					search
+					nameOrID
 				},
 				cancelToken: cancelTokenSourceRef.current.token
 			});
