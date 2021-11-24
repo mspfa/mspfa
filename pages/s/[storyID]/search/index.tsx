@@ -21,6 +21,7 @@ import StoryPageLink from 'components/StoryPageLink';
 import PreviewModeContext from 'lib/client/PreviewModeContext';
 import StoryIDContext from 'lib/client/StoryIDContext';
 import { escapeRegExp } from 'lodash';
+import Row from 'components/Row';
 
 type StorySearchResult = Pick<ClientStoryPage, 'id' | 'published' | 'title' | 'content'>;
 
@@ -137,6 +138,14 @@ const Component = withErrorPage<ServerSideProps>(({ story, results }) => {
 				id="story-search-section"
 				heading={story.title}
 			>
+				<Row id="story-search-actions">
+					<Button
+						className="small"
+						href={`/?s=${story.id}`}
+					>
+						Back to Adventure
+					</Button>
+				</Row>
 				<Formik
 					initialValues={{ searchQuery }}
 					onSubmit={

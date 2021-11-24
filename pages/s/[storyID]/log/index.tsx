@@ -16,6 +16,8 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import { preventLeaveConfirmations } from 'lib/client/forms';
 import PreviewModeContext from 'lib/client/PreviewModeContext';
 import StoryIDContext from 'lib/client/StoryIDContext';
+import Row from 'components/Row';
+import Button from 'components/Button';
 
 type ServerSideProps = {
 	story: PublicStory,
@@ -45,6 +47,14 @@ const Component = withErrorPage<ServerSideProps>(({ story, listings }) => {
 	const pageComponent = (
 		<Page withFlashyTitle heading="Adventure Log">
 			<Section heading={story.title}>
+				<Row id="story-log-actions">
+					<Button
+						className="small"
+						href={`/?s=${story.id}`}
+					>
+						Back to Adventure
+					</Button>
+				</Row>
 				<StoryLog listings={sortedListings}>
 					<Link
 						id="story-log-sort-link"

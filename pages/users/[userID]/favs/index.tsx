@@ -33,10 +33,9 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, stor
 	return (
 		<Page withFlashyTitle heading="Favorite Adventures">
 			<Section
-				id="favs-section"
 				heading={`${publicUser.name}'s Favorites`}
 			>
-				<Row>
+				<Row id="favs-actions">
 					<Button
 						className="small"
 						href={`/users/${publicUser.id}`}
