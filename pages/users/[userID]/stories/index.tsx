@@ -13,8 +13,8 @@ import Dialog from 'lib/client/Dialog';
 import LabeledGrid from 'components/LabeledGrid';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import randomStoryNames from 'lib/client/randomStoryNames.json';
-import type { PrivateStory } from 'lib/client/stories';
-import stories, { getPrivateStory } from 'lib/server/stories';
+import type { PublicStory } from 'lib/client/stories';
+import stories, { getPublicStory } from 'lib/server/stories';
 import List from 'components/List';
 import StoryListing from 'components/StoryListing';
 import Router from 'next/router';
@@ -75,7 +75,7 @@ const promptNewStory = async () => {
 
 type ServerSideProps = {
 	/** The stories owned by the private user. */
-	stories: PrivateStory[]
+	stories: PublicStory[]
 } | {
 	statusCode: integer
 };
@@ -114,7 +114,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 			stories: await stories.find!({
 				editors: user!._id,
 				willDelete: { $exists: false }
-			}).map(getPrivateStory).toArray()
+			}).map(getPublicStory).toArray()
 		}
 	};
 });
