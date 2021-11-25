@@ -8,10 +8,8 @@ import type { ServerUser } from 'lib/server/users';
 import { ObjectId } from 'mongodb';
 import type { PrivateUser, PublicUser } from 'lib/client/users';
 import axios from 'axios';
-import { connection, safeObjectID } from 'lib/server/db';
-import { escapeRegExp } from 'lodash';
-import type { Filter } from 'mongodb';
 import type { DateNumber, integer } from 'lib/types';
+import findUsersByNameOrID from 'lib/server/findUsersByNameOrID';
 
 const Handler: APIHandler<(
 	{
@@ -25,7 +23,7 @@ const Handler: APIHandler<(
 	} | {
 		method: 'GET',
 		query: {
-			/** How many results to respond with. */
+			/** How many results to respond with. Must not be greater than 50. */
 			limit?: integer | string,
 			/** A case-insensitive username search or exact user ID match. */
 			nameOrID: ServerUser['name']
@@ -114,46 +112,17 @@ const Handler: APIHandler<(
 
 	// If this point is reached, `req.method === 'GET'`.
 
-	await connection;
-
-	let filter: Filter<ServerUser> = {
-		name: {
-			$regex: new RegExp(escapeRegExp(req.query.nameOrID), 'i')
-		},
-		willDelete: { $exists: false }
-	};
-
-	const userID = safeObjectID(req.query.nameOrID);
-	if (userID) {
-		filter = {
-			$or: [
-				{ _id: userID },
-				filter
-			],
-			willDelete: { $exists: false }
-		};
-	}
-
-	const lowercaseSearch = req.query.nameOrID.toLowerCase();
-
-	let results = (
-		await users.find!(filter).map(getPublicUser).toArray()
-	).sort((a, b) => (
-		// Sort by lowest search index first.
-		a.name.toLowerCase().indexOf(lowercaseSearch) - b.name.toLowerCase().indexOf(lowercaseSearch)
-		// If search indexes are equal, sort by last seen first.
-		|| b.lastSeen - a.lastSeen
-	));
-
 	let limit = req.query.limit ? +req.query.limit : NaN;
 
 	if (Number.isNaN(limit) || limit > 50) {
 		limit = 50;
 	}
 
-	results = results.slice(0, limit);
-
-	res.send(results);
+	res.send(
+		(await findUsersByNameOrID(req.query.nameOrID))
+			.map(getPublicUser)
+			.slice(0, limit)
+	);
 };
 
 export default Handler;

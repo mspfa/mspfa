@@ -1,0 +1,12 @@
+.user-list .listing {
+	&-info {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	&-details {
+		font-size: 0.875rem;
+		opacity: 0.5;
+	}
+}
