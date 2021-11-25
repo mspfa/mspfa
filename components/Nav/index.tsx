@@ -118,13 +118,13 @@ const Nav = () => {
 				</NavGroup>
 			)}
 			<NavGroup id="external">
-				{/** Since these are all external links, they should all have `target="_blank"`, since the user's intention with them is generally not going to be to leave the site. */}
-				<NavItem id="discord" label="Discord" href="/discord" target="_blank" />
-				<NavMenu id="help" label="Help">
-					<NavItem id="help-discord" label="Ask on Discord" href="/discord" target="_blank" />
-					<NavItem id="support-email" label="Support Email" href="mailto:support@mspfa.com" target="_blank" />
+				{/* Since these are all external links, they should all have `target="_blank"`, since the user's intention with them is generally not going to be to leave the site. */}
+				<NavMenu id="support" label="Support">
+					<NavItem id="support-discord" label="Ask on Discord" href="/discord" target="_blank" />
+					<NavItem id="support-email" label="Email Us" href="mailto:support@mspfa.com" target="_blank" />
 				</NavMenu>
 				<NavMenu id="more" label="More">
+					<NavItem id="discord" label="Discord" href="/discord" target="_blank" />
 					<NavItem id="patreon" label="Patreon" href="https://www.patreon.com/mspfa" target="_blank" />
 					<NavItem id="twitter" label="Twitter" href="https://twitter.com/mspfa" target="_blank" />
 					<NavItem id="github" label="GitHub" href="https://github.com/MSPFA/MSPFA" target="_blank" />
