@@ -243,7 +243,6 @@ const UserField = ({
 					<input
 						className="user-field-input"
 						placeholder="Enter Username or ID"
-						autoComplete="off"
 						maxLength={32}
 						size={20}
 						required={required}
