@@ -80,7 +80,7 @@ export default createValidator({
 					additionalProperties: false,
 					properties: {
 						body: {
-							$ref: '#/definitions/RecursivePartial%3Calias-731470504-73167-73308-731470504-0-215621%3Cdef-alias-lib_client_users.ts-435-737-lib_client_users.ts-0-1305247327831%2Calias-1318184999-693-923-1318184999-0-30381551664714%3E%3E'
+							$ref: '#/definitions/RecursivePartial%3Calias-2073358172-70263-70404-2073358172-0-212510%3Cdef-alias-lib_client_users.ts-435-737-lib_client_users.ts-0-1305247327831%2Calias-1318184999-693-923-1318184999-0-30381551664714%3E%3E'
 						},
 						query: {
 							type: 'object',
@@ -107,7 +107,7 @@ export default createValidator({
 				}
 			]
 		},
-		'RecursivePartial<alias-731470504-73167-73308-731470504-0-215621<def-alias-lib_client_users.ts-435-737-lib_client_users.ts-0-1305247327831,alias-1318184999-693-923-1318184999-0-30381551664714>>': {
+		'RecursivePartial<alias-2073358172-70263-70404-2073358172-0-212510<def-alias-lib_client_users.ts-435-737-lib_client_users.ts-0-1305247327831,alias-1318184999-693-923-1318184999-0-30381551664714>>': {
 			type: 'object',
 			properties: {
 				birthdate: {
