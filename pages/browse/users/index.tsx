@@ -56,7 +56,7 @@ const Component = ({ users, resultCount }: ServerSideProps) => {
 								url.searchParams.set(name, values[name]);
 							}
 
-							Router.push(url);
+							Router.push(url, undefined, { scroll: false });
 						})
 					}
 					enableReinitialize
