@@ -1,27 +1,32 @@
 import './styles.module.scss';
 import type { Key } from 'react';
 
+/** What every `Listing`'s props must extend if it is to be passed into a `List`. */
+export type ListingPropsBase = {
+	children: { id: Key },
+	listing?: never
+};
+
 export type ListProps<
-	ListingProps extends {
-		children: { id: Key, listing?: never }
-	}
+	ListingProps extends ListingPropsBase,
+	ForbiddenListingProps extends string = keyof ListingPropsBase
 > = {
 	children: Array<ListingProps['children']>,
+	/** The component used to render items in the `List`. */
 	listing: ((props: ListingProps) => JSX.Element) & {
 		/** The `className` of the `List`. */
 		listClassName: string
 	}
-} & Omit<ListingProps, 'children' | 'listing'>;
+} & Omit<ListingProps, ForbiddenListingProps>;
 
 const List = <
-	ListingProps extends {
-		children: { id: Key, listing?: never }
-	}
+	ListingProps extends ListingPropsBase,
+	ForbiddenListingProps extends string = keyof ListingPropsBase
 >({
 	children,
 	listing: Listing,
 	...props
-}: ListProps<ListingProps>) => (
+}: ListProps<ListingProps, ForbiddenListingProps>) => (
 	<div className={`list ${Listing.listClassName}`}>
 		{children.map(child => (
 			<Listing
