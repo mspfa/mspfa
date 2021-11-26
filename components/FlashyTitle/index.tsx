@@ -40,6 +40,8 @@ const FlashyTitle = () => {
 				tabIndex={-1}
 				draggable={false}
 				style={{ backgroundColor: color }}
+				// This is necessary because the random `color` may not match between the client and the server.
+				suppressHydrationWarning
 			/>
 		</div>
 	);
