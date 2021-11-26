@@ -14,6 +14,7 @@ import findUsersByNameOrID from 'lib/server/findUsersByNameOrID';
 import type { integer } from 'lib/types';
 import List from 'components/List';
 import UserListing from 'components/UserListing';
+import Pagination from 'components/Pagination';
 
 const MAX_RESULTS_PER_PAGE = 50;
 
@@ -27,6 +28,8 @@ type ServerSideProps = {
 
 const Component = ({ users, resultCount }: ServerSideProps) => {
 	const router = useRouter();
+
+	const maxPageNumber = Math.ceil(resultCount! / MAX_RESULTS_PER_PAGE);
 
 	const initialValues = {
 		nameOrID: (
@@ -56,6 +59,7 @@ const Component = ({ users, resultCount }: ServerSideProps) => {
 							Router.push(url);
 						})
 					}
+					enableReinitialize
 				>
 					<Form>
 						<Row>
@@ -80,13 +84,21 @@ const Component = ({ users, resultCount }: ServerSideProps) => {
 				</Formik>
 			</Section>
 			{users && (
-				<Section
-					heading={`Search Results (${users.length} of ${resultCount})`}
-				>
-					<List listing={UserListing}>
-						{users}
-					</List>
-				</Section>
+				resultCount ? (
+					<Section
+						heading={`Search Results (${users.length} of ${resultCount})`}
+					>
+						<Pagination maxPage={maxPageNumber} />
+						<List listing={UserListing}>
+							{users}
+						</List>
+						<Pagination maxPage={maxPageNumber} />
+					</Section>
+				) : (
+					<Section heading="Search Results">
+						No results.
+					</Section>
+				)
 			)}
 		</Page>
 	);
@@ -97,24 +109,30 @@ export default Component;
 export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ query }) => {
 	await connection;
 
-	let pageNumber = typeof query.p === 'string' ? +query.p : 1;
-
-	if (Number.isNaN(pageNumber) || pageNumber < 1) {
-		pageNumber = 1;
-	}
-
-	const startIndex = (pageNumber - 1) * MAX_RESULTS_PER_PAGE;
-
 	const results = (
 		typeof query.nameOrID === 'string'
 			? (await findUsersByNameOrID(query.nameOrID)).map(getPublicUser)
 			: undefined
 	);
 
-	return {
-		props: results ? {
+	let props;
+
+	if (results) {
+		let pageNumber = typeof query.p === 'string' ? +query.p : 1;
+
+		if (Number.isNaN(pageNumber) || pageNumber < 1) {
+			pageNumber = 1;
+		}
+
+		const startIndex = (pageNumber - 1) * MAX_RESULTS_PER_PAGE;
+
+		props = {
 			users: results.slice(startIndex, startIndex + MAX_RESULTS_PER_PAGE),
 			resultCount: results.length
-		} : {}
-	};
+		};
+	} else {
+		props = {};
+	}
+
+	return { props };
 });
