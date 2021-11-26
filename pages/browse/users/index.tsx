@@ -86,7 +86,13 @@ const Component = ({ users, resultCount }: ServerSideProps) => {
 			{users && (
 				resultCount ? (
 					<Section
-						heading={`Search Results (${users.length} of ${resultCount})`}
+						heading={
+							`Search Results (${
+								users.length === resultCount
+									? resultCount
+									: `${users.length} of ${resultCount}`
+							})`
+						}
 					>
 						<Pagination maxPage={maxPageNumber} />
 						<List listing={UserListing}>
