@@ -101,7 +101,7 @@ const Nav = () => {
 					<div className="divider" />
 					<NavItem id="browse-modules" label="Modules" href="/browse/modules" />
 				</NavMenu>
-				<NavItem id="random" label="Mystery" title="Take me to a random adventure!" onClick={visitRandomStory} />
+				<NavItem id="random-story" label="Mystery" title="Take me to a random adventure!" onClick={visitRandomStory} />
 			</NavGroup>
 			{storyID !== undefined && (
 				<NavGroup id="story">
