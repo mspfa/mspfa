@@ -1,20 +1,15 @@
-import Page from 'components/Page';
 import { withStatusCode } from 'lib/server/errors';
 import type { PublicUser } from 'lib/client/users';
 import { getPublicUser } from 'lib/server/users';
 import { connection } from 'lib/server/db';
-import Section from 'components/Section';
 import Label from 'components/Label';
-import { Field, Form, Formik } from 'formik';
-import useFunction from 'lib/client/reactHooks/useFunction';
-import Button from 'components/Button';
+import { Field } from 'formik';
 import Row from 'components/Row';
-import Router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import findUsersByNameOrID from 'lib/server/findUsersByNameOrID';
 import type { integer } from 'lib/types';
-import List from 'components/List';
 import UserListing from 'components/UserListing';
-import Pagination from 'components/Pagination';
+import BrowsePage from 'components/BrowsePage';
 
 const MAX_RESULTS_PER_PAGE = 50;
 
@@ -29,85 +24,35 @@ type ServerSideProps = {
 const Component = ({ users, resultCount }: ServerSideProps) => {
 	const router = useRouter();
 
-	const maxPageNumber = Math.ceil(resultCount! / MAX_RESULTS_PER_PAGE);
-
-	const initialValues = {
-		nameOrID: (
-			typeof router.query.nameOrID === 'string'
-				? router.query.nameOrID
-				: ''
-		)
-	};
-
-	type Values = typeof initialValues;
-
 	return (
-		<Page withFlashyTitle heading="Browse Users">
-			<Section heading="Search Query">
-				<Formik
-					initialValues={initialValues}
-					onSubmit={
-						useFunction((values: Values) => {
-							const url = new URL(location.href);
-
-							url.searchParams.set('p', '1');
-
-							for (const name of Object.keys(values) as Array<keyof Values>) {
-								url.searchParams.set(name, values[name]);
-							}
-
-							Router.push(url, undefined, { scroll: false });
-						})
-					}
-					enableReinitialize
-				>
-					<Form>
-						<Row>
-							<Label className="spaced" htmlFor="field-name-or-id">
-								Username or ID
-							</Label>
-							<Field
-								id="field-name-or-id"
-								name="nameOrID"
-								className="spaced"
-								required
-								maxLength={32}
-								autoFocus
-								autoComplete="off"
-							/>
-						</Row>
-						<Row>
-							<Button type="submit">
-								Search!
-							</Button>
-						</Row>
-					</Form>
-				</Formik>
-			</Section>
-			{users && (
-				resultCount ? (
-					<Section
-						heading={
-							`Search Results (${
-								users.length === resultCount
-									? resultCount
-									: `${users.length} of ${resultCount}`
-							})`
-						}
-					>
-						<Pagination maxPage={maxPageNumber} />
-						<List listing={UserListing}>
-							{users}
-						</List>
-						<Pagination maxPage={maxPageNumber} />
-					</Section>
-				) : (
-					<Section heading="Search Results">
-						No results.
-					</Section>
+		<BrowsePage
+			resourceLabel="Users"
+			initialValues={{
+				nameOrID: (
+					typeof router.query.nameOrID === 'string'
+						? router.query.nameOrID
+						: ''
 				)
-			)}
-		</Page>
+			}}
+			listing={UserListing}
+			resultCount={resultCount}
+			results={users}
+		>
+			<Row>
+				<Label className="spaced" htmlFor="field-name-or-id">
+					Username or ID
+				</Label>
+				<Field
+					id="field-name-or-id"
+					name="nameOrID"
+					className="spaced"
+					required
+					maxLength={32}
+					autoFocus
+					autoComplete="off"
+				/>
+			</Row>
+		</BrowsePage>
 	);
 };
 
