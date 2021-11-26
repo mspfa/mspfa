@@ -73,6 +73,7 @@ const Component = ({ users, resultCount }: ServerSideProps) => {
 								required
 								maxLength={32}
 								autoFocus
+								autoComplete="off"
 							/>
 						</Row>
 						<Row>
