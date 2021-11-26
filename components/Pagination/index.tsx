@@ -28,6 +28,7 @@ const Pagination = React.memo(({ maxPage }: PaginationProps) => {
 		currentPage = 1;
 	}
 
+	// It doesn't matter what base parameter is set for the URL here. It's unused.
 	const url = new URL(router.asPath, 'https://mspfa.com');
 
 	/** Returns a `Link` to the specified page number. */
