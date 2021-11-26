@@ -99,7 +99,7 @@ const Nav = () => {
 					<NavItem id="browse-stories" label="Adventures" href="/browse/stories" />
 					<NavItem id="browse-users" label="Users" href="/browse/users" />
 					<div className="divider" />
-					<NavItem id="browse-story-modules" label="Adventure Modules" href="/browse/story-modules" />
+					<NavItem id="browse-modules" label="Modules" href="/browse/modules" />
 				</NavMenu>
 				<NavItem id="random" label="Mystery" title="Take me to a random adventure!" onClick={visitRandomStory} />
 			</NavGroup>
