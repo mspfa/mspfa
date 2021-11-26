@@ -47,6 +47,8 @@ const Component = ({ users, resultCount }: ServerSideProps) => {
 						useFunction((values: Values) => {
 							const url = new URL(location.href);
 
+							url.searchParams.set('p', '1');
+
 							for (const name of Object.keys(values) as Array<keyof Values>) {
 								url.searchParams.set(name, values[name]);
 							}
