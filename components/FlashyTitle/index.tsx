@@ -33,19 +33,13 @@ const FlashyTitle = () => {
 
 	return (
 		<div id="flashy-title-container">
-			<style jsx global>
-				{`
-					#flashy-title {
-						background-color: ${color};
-					}
-				`}
-			</style>
 			<Link
 				id="flashy-title"
 				href="/"
 				title="MSPFA Home"
 				tabIndex={-1}
 				draggable={false}
+				style={{ backgroundColor: color }}
 			/>
 		</div>
 	);
