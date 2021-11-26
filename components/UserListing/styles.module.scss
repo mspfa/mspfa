@@ -5,8 +5,13 @@
 		justify-content: center;
 	}
 
-	&-details {
+	&-description {
 		font-size: 0.875rem;
-		opacity: 0.5;
+		overflow: hidden;
+		text-overflow: ellipsis;
+
+		.bb {
+			white-space: nowrap;
+		}
 	}
 }

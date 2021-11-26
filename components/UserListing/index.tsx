@@ -1,8 +1,8 @@
 import './styles.module.scss';
 import IconImage from 'components/IconImage';
-import Label from 'components/Label';
 import Link from 'components/Link';
 import type { PublicUser } from 'lib/client/users';
+import BBCode from 'components/BBCode';
 
 export type UserListingProps = {
 	children: PublicUser
@@ -29,14 +29,13 @@ const UserListing = ({ children: publicUser }: UserListingProps) => (
 			>
 				{publicUser.name}
 			</Link>
-			<div className="listing-section listing-details">
-				<Label className="spaced">
-					ID
-				</Label>
-				<span className="spaced">
-					{publicUser.id}
-				</span>
-			</div>
+			{publicUser.description && (
+				<div className="listing-section listing-description translucent">
+					<BBCode removeBBTags>
+						{publicUser.description}
+					</BBCode>
+				</div>
+			)}
 		</div>
 	</div>
 );
