@@ -8,7 +8,7 @@ import { usePrefixedID } from 'lib/client/IDPrefix';
 import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
 import { isEqual, uniq } from 'lodash';
 import storyTags from 'lib/client/storyTags';
-import type { TagString } from 'lib/client/storyTags';
+import type { TagOrExcludedTagString } from 'lib/client/storyTags';
 import Label from 'components/Label';
 import Dialog from 'lib/client/Dialog';
 import Link from 'components/Link';
@@ -76,7 +76,7 @@ const TagField = ({
 	}
 
 	const { getFieldMeta, setFieldValue } = useFormikContext();
-	const fieldValue = getFieldMeta<TagString[]>(name).value;
+	const fieldValue = getFieldMeta<TagOrExcludedTagString[]>(name).value;
 	const [initialValue] = useState(fieldValue);
 
 	const inputRef = useRef<HTMLDivElement & {
@@ -129,7 +129,7 @@ const TagField = ({
 	};
 
 	const updateTagField = useFunction(() => {
-		const allTagValues: TagString[] = [];
+		const allTagValues: TagOrExcludedTagString[] = [];
 
 		for (let i = 0; i < inputRef.current.childNodes.length; i++) {
 			let child = inputRef.current.childNodes[i];

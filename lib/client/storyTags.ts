@@ -1,9 +1,16 @@
 /**
  * @minLength 1
  * @maxLength 50
- * @pattern ^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$
+ * @pattern ^[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?$
  */
 export type TagString = string;
+
+/**
+ * @minLength 1
+ * @maxLength 51
+ * @pattern ^-?[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?$
+ */
+export type TagOrExcludedTagString = string;
 
 /** A record of story tags which maps each `TagString` to a `string` explaining the tag. */
 const storyTags: Partial<Record<TagString, string>> = {

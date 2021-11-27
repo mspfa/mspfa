@@ -114,7 +114,7 @@ export default createValidator({
 											type: 'string'
 										}
 									],
-									description: 'How many results to respond with.'
+									description: 'How many results to respond with. Must not be greater than 50.'
 								},
 								nameOrID: {
 									type: 'string',

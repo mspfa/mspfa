@@ -62,8 +62,8 @@ export const getTagsFromQueryValue = (
 	typeof queryValue === 'string'
 		? queryValue
 			? queryValue.split(',').filter((tagValue, i, tagValues) => (
-				// Only allow valid tag and excluded tag values.
-				/^-?[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(tagValue)
+				// Only allow valid tag and excluded tag values. This pattern is the one specified in the `TagOrExcludedTagString` type.
+				/^-?[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?$/.test(tagValue)
 				// Disallow duplicate values.
 				&& tagValues.indexOf(tagValue) === i
 			))

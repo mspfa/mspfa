@@ -204,7 +204,7 @@ export default createValidator({
 			type: 'string',
 			minLength: 1,
 			maxLength: 50,
-			pattern: '^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$'
+			pattern: '^[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?$'
 		},
 		'RecursivePartial<indexed-type-2073358172-70377-70403-2073358172-70263-70404-2073358172-0-212510<structure-1607858492-2357-2703-1607858492-2214-2704-1607858492-2041-3887-1607858492-1901-3888-1607858492-0-17565,("year"|"month"|"day")>>': {
 			type: 'object',
