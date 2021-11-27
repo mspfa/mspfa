@@ -7,7 +7,7 @@ import { Field } from 'formik';
 import Row from 'components/Row';
 import { useRouter } from 'next/router';
 import type { integer } from 'lib/types';
-import BrowsePage, { MAX_RESULTS_PER_PAGE } from 'components/BrowsePage';
+import BrowsePage, { getBooleanRecordFromQueryValue, MAX_RESULTS_PER_PAGE } from 'components/BrowsePage';
 import StoryListing from 'components/StoryListing';
 import TagField from 'components/TagField';
 import Columns from 'components/Columns';
@@ -47,7 +47,7 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 				),
 				tags: getTagsFromQueryValue(router.query.tags),
 				excludeTags: getTagsFromQueryValue(router.query.excludeTags),
-				status: [] // TODO
+				status: getBooleanRecordFromQueryValue(router.query.status)
 			}}
 			listing={StoryListing}
 			resultCount={resultCount}

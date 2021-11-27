@@ -5,7 +5,6 @@ import Page from 'components/Page';
 import Pagination from 'components/Pagination';
 import Row from 'components/Row';
 import Section from 'components/Section';
-import type { FormikValues } from 'formik';
 import { Form, Formik } from 'formik';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import type { integer } from 'lib/types';
@@ -13,6 +12,40 @@ import Router from 'next/router';
 import type { ReactNode } from 'react';
 
 export const MAX_RESULTS_PER_PAGE = 50;
+
+type ValuesBase = Record<string, (
+	boolean | number | string
+	| Array<boolean | number | string>
+	| Record<string, boolean>
+)>;
+
+export const serializeSearchQueryValue = (value: ValuesBase[keyof ValuesBase]): string => (
+	typeof value === 'string'
+		? value
+		: typeof value === 'boolean'
+			? (+value).toString()
+			: typeof value === 'number'
+				? value.toString()
+				: Array.isArray(value)
+					? value.map(serializeSearchQueryValue).join(',')
+					: Object.keys(value).filter(valueKey => value[valueKey]).join(',')
+);
+
+/** Accepts a query value which may have been serialized from a `Record<string, boolean>` by `serializeSearchQueryValue`. Returns the original `Record`. */
+export const getBooleanRecordFromQueryValue = (queryValue: undefined | string | string[]) => {
+	const value: Record<string, boolean> = {};
+
+	if (queryValue && typeof queryValue === 'string') {
+		for (const key of queryValue.split(',')) {
+			// Ensure `key` isn't some dangerous internal value of the object.
+			if (!(key in value)) {
+				value[key] = true;
+			}
+		}
+	}
+
+	return value;
+};
 
 /** What every `Listing`'s props must extend if it is to be passed into a `BrowsePage`. */
 type BrowsePageListingPropsBase = ListingPropsBase & {
@@ -23,7 +56,7 @@ type BrowsePageListingPropsBase = ListingPropsBase & {
 };
 
 export type BrowsePageProps<
-	Values extends FormikValues,
+	Values extends ValuesBase,
 	ListingProps extends BrowsePageListingPropsBase
 > = {
 	/** The name of the resource being browsed, for example `'Adventures'`. */
@@ -43,7 +76,7 @@ export type BrowsePageProps<
  * There must be a `p` query param representing the page number of the results to display.
  */
 const BrowsePage = <
-	Values extends FormikValues,
+	Values extends ValuesBase,
 	ListingProps extends BrowsePageListingPropsBase
 >({
 	resourceLabel,
@@ -73,7 +106,10 @@ const BrowsePage = <
 							const url = new URL(location.href);
 
 							for (const name of Object.keys(values)) {
-								url.searchParams.set(name, values[name]);
+								url.searchParams.set(
+									name,
+									serializeSearchQueryValue(values[name])
+								);
 							}
 
 							url.searchParams.set('p', '1');
