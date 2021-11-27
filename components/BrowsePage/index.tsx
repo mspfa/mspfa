@@ -47,6 +47,18 @@ export const getBooleanRecordFromQueryValue = (queryValue: undefined | string | 
 	return value;
 };
 
+/** Accepts a query value which represents a set of tags. Returns an array of only the valid, unique tags. */
+export const getTagsFromQueryValue = (value: undefined | string | string[]) => (
+	value && typeof value === 'string'
+		? value.split(',').filter((tagValue, i, tagValues) => (
+			// Only allow valid tag values.
+			/^[a-z0-9-]+$/.test(tagValue)
+			// Disallow duplicate tag values.
+			&& tagValues.indexOf(tagValue) === i
+		))
+		: []
+);
+
 /** What every `Listing`'s props must extend if it is to be passed into a `BrowsePage`. */
 type BrowsePageListingPropsBase = ListingPropsBase & {
 	resourceLabel?: never,

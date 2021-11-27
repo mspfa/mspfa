@@ -7,23 +7,12 @@ import { Field } from 'formik';
 import Row from 'components/Row';
 import { useRouter } from 'next/router';
 import type { integer } from 'lib/types';
-import BrowsePage, { getBooleanRecordFromQueryValue, MAX_RESULTS_PER_PAGE } from 'components/BrowsePage';
+import BrowsePage, { getBooleanRecordFromQueryValue, getTagsFromQueryValue, MAX_RESULTS_PER_PAGE } from 'components/BrowsePage';
 import StoryListing from 'components/StoryListing';
 import TagField from 'components/TagField';
 import Columns from 'components/Columns';
 import type StoryStatus from 'lib/client/StoryStatus';
 import { storyStatusNames } from 'lib/client/StoryStatus';
-
-const getTagsFromQueryValue = (value: undefined | string | string[]) => (
-	value && typeof value === 'string'
-		? value.split(',').filter((tagValue, i, tagValues) => (
-			// Only allow valid tag values.
-			/^[a-z0-9-]+$/.test(tagValue)
-			// Disallow duplicate tag values.
-			&& tagValues.indexOf(tagValue) === i
-		))
-		: []
-);
 
 type ServerSideProps = {
 	stories?: never,
