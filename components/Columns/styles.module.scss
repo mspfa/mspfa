@@ -16,7 +16,7 @@
 		}
 	}
 
-	& > :not(:last-child) {
+	&:not(.of-sections) > :not(:last-child) {
 		margin-bottom: 1em;
 	}
 
