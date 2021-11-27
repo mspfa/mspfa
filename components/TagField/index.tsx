@@ -6,7 +6,7 @@ import React, { useRef, useState } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import { usePrefixedID } from 'lib/client/IDPrefix';
 import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
-import { isEqual, uniq } from 'lodash';
+import { isEqual } from 'lodash';
 import storyTags from 'lib/client/storyTags';
 import type { TagOrExcludedTagString } from 'lib/client/storyTags';
 import Label from 'components/Label';
@@ -220,13 +220,10 @@ const TagField = ({
 				}
 
 				if (tagDelimiters.test(child.textContent)) {
-					let tagValues = child.textContent.split(tagDelimiters);
+					const tagValues = child.textContent.split(tagDelimiters);
 
 					// Set this editable's content to everything after the last tag delimiter.
 					child.textContent = tagValues.pop()!;
-
-					// Remove any redundant tag values.
-					tagValues = uniq(tagValues);
 
 					for (let j = 0; j < tagValues.length; j++) {
 						const tagValue = (
