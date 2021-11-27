@@ -29,6 +29,7 @@ import { safeObjectID } from 'lib/server/db';
 import type { ObjectId } from 'mongodb';
 import type { integer } from 'lib/types';
 import promptSignIn from 'lib/client/promptSignIn';
+import Row from 'components/Row';
 
 type MessagesAPI = APIClient<typeof import('pages/api/messages').default>;
 
@@ -118,7 +119,7 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 							<Section heading="New Message">
 								{toUsers ? (
 									<>
-										<div className="field-container">
+										<Row>
 											<Label block htmlFor="field-to">
 												To
 											</Label>
@@ -128,8 +129,8 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 												unique
 												autoFocus={toUsers.length === 0}
 											/>
-										</div>
-										<div className="field-container">
+										</Row>
+										<Row>
 											<Label block htmlFor="field-subject">
 												Subject
 											</Label>
@@ -141,10 +142,10 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 												autoComplete="off"
 												autoFocus={toUsers.length !== 0}
 											/>
-										</div>
+										</Row>
 									</>
 								) : (
-									<div className="field-container">
+									<Row>
 										<Label className="spaced">
 											Reply To
 										</Label>
@@ -154,9 +155,9 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 										>
 											{replyTo!.subject}
 										</Link>
-									</div>
+									</Row>
 								)}
-								<div className="field-container">
+								<Row>
 									<Label block htmlFor="field-content">
 										Content
 									</Label>
@@ -167,7 +168,7 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 										maxLength={20000}
 										autoFocus={replyTo !== undefined}
 									/>
-								</div>
+								</Row>
 							</Section>
 							<BottomActions>
 								<Button
