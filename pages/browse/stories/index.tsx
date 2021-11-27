@@ -13,6 +13,7 @@ import TagField from 'components/TagField';
 import Columns from 'components/Columns';
 import type StoryStatus from 'lib/client/StoryStatus';
 import { storyStatusNames } from 'lib/client/StoryStatus';
+import type { ReactNode } from 'react';
 
 type ServerSideProps = {
 	stories?: never,
@@ -25,6 +26,35 @@ type ServerSideProps = {
 const Component = ({ stories, resultCount }: ServerSideProps) => {
 	const router = useRouter();
 
+	/** A record which maps every `StoryStatus` to `true`. */
+	const allStatusesTrue: Record<string, true> = {} as any;
+
+	const statusFieldContainers: ReactNode[] = [];
+
+	for (const status of Object.keys(storyStatusNames)) {
+		allStatusesTrue[status] = true;
+
+		statusFieldContainers.push(
+			<span
+				key={status}
+				className="browse-stories-field-container-status"
+			>
+				<Field
+					type="checkbox"
+					id={`field-status-${status}`}
+					name={`status.${status}`}
+					className="spaced"
+				/>
+				<label
+					className="spaced"
+					htmlFor={`field-status-${status}`}
+				>
+					{storyStatusNames[status as unknown as StoryStatus]}
+				</label>
+			</span>
+		);
+	}
+
 	return (
 		<BrowsePage
 			resourceLabel="Adventures"
@@ -35,8 +65,8 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 						: ''
 				),
 				tags: getTagsFromQueryValue(router.query.tags),
-				excludeTags: getTagsFromQueryValue(router.query.excludeTags),
-				status: getBooleanRecordFromQueryValue(router.query.status)
+				excludeTags: getTagsFromQueryValue(router.query.excludeTags, ['test']),
+				status: getBooleanRecordFromQueryValue(router.query.status, allStatusesTrue)
 			}}
 			listing={StoryListing}
 			resultCount={resultCount}
@@ -58,25 +88,7 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 				<Label className="spaced">
 					Status
 				</Label>
-				{Object.keys(storyStatusNames).map(status => (
-					<span
-						key={status}
-						className="browse-stories-field-container-status"
-					>
-						<Field
-							type="checkbox"
-							id={`field-status-${status}`}
-							name={`status.${status}`}
-							className="spaced"
-						/>
-						<label
-							className="spaced"
-							htmlFor={`field-status-${status}`}
-						>
-							{storyStatusNames[status as unknown as StoryStatus]}
-						</label>
-					</span>
-				))}
+				{statusFieldContainers}
 			</Row>
 			<Columns>
 				<TagField

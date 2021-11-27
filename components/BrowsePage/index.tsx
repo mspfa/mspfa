@@ -32,10 +32,17 @@ export const serializeSearchQueryValue = (value: ValuesBase[keyof ValuesBase]): 
 );
 
 /** Accepts a query value which may have been serialized from a `Record<string, boolean>` by `serializeSearchQueryValue`. Returns the original `Record`. */
-export const getBooleanRecordFromQueryValue = (queryValue: undefined | string | string[]) => {
+export const getBooleanRecordFromQueryValue = (
+	queryValue: undefined | string | string[],
+	defaultValue: Record<string, boolean> = {}
+) => {
+	if (typeof queryValue !== 'string') {
+		return defaultValue;
+	}
+
 	const value: Record<string, boolean> = {};
 
-	if (queryValue && typeof queryValue === 'string') {
+	if (queryValue) {
 		for (const key of queryValue.split(',')) {
 			// Ensure `key` isn't some dangerous internal value of the object.
 			if (!(key in value)) {
@@ -48,15 +55,20 @@ export const getBooleanRecordFromQueryValue = (queryValue: undefined | string | 
 };
 
 /** Accepts a query value which represents a set of tags. Returns an array of only the valid, unique tags. */
-export const getTagsFromQueryValue = (queryValue: undefined | string | string[]) => (
-	queryValue && typeof queryValue === 'string'
-		? queryValue.split(',').filter((tagValue, i, tagValues) => (
-			// Only allow valid tag values.
-			/^[a-z0-9-]+$/.test(tagValue)
-			// Disallow duplicate tag values.
-			&& tagValues.indexOf(tagValue) === i
-		))
-		: []
+export const getTagsFromQueryValue = (
+	queryValue: undefined | string | string[],
+	defaultValue: string[] = []
+) => (
+	typeof queryValue === 'string'
+		? queryValue
+			? queryValue.split(',').filter((tagValue, i, tagValues) => (
+				// Only allow valid tag values.
+				/^[a-z0-9-]+$/.test(tagValue)
+				// Disallow duplicate tag values.
+				&& tagValues.indexOf(tagValue) === i
+			))
+			: []
+		: defaultValue
 );
 
 /** What every `Listing`'s props must extend if it is to be passed into a `BrowsePage`. */
