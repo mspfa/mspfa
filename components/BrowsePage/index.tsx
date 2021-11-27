@@ -54,7 +54,7 @@ export const getBooleanRecordFromQueryValue = (
 	return value;
 };
 
-/** Accepts a query value which represents a set of tags. Returns an array of only the valid, unique tags. */
+/** Accepts a query value which represents a set of tags and excluded tags. Returns an array of only the valid, unique tags and excluded tags. */
 export const getTagsFromQueryValue = (
 	queryValue: undefined | string | string[],
 	defaultValue: string[] = []
@@ -62,9 +62,9 @@ export const getTagsFromQueryValue = (
 	typeof queryValue === 'string'
 		? queryValue
 			? queryValue.split(',').filter((tagValue, i, tagValues) => (
-				// Only allow valid tag values.
-				/^[a-z0-9-]+$/.test(tagValue)
-				// Disallow duplicate tag values.
+				// Only allow valid tag and excluded tag values.
+				/^-?[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(tagValue)
+				// Disallow duplicate values.
 				&& tagValues.indexOf(tagValue) === i
 			))
 			: []

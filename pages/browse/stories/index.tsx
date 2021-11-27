@@ -10,7 +10,6 @@ import type { integer } from 'lib/types';
 import BrowsePage, { getBooleanRecordFromQueryValue, getTagsFromQueryValue, MAX_RESULTS_PER_PAGE } from 'components/BrowsePage';
 import StoryListing from 'components/StoryListing';
 import TagField from 'components/TagField';
-import Columns from 'components/Columns';
 import type StoryStatus from 'lib/client/StoryStatus';
 import { storyStatusNames } from 'lib/client/StoryStatus';
 import type { ReactNode } from 'react';
@@ -64,8 +63,7 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 						? router.query.title
 						: ''
 				),
-				tags: getTagsFromQueryValue(router.query.tags),
-				excludeTags: getTagsFromQueryValue(router.query.excludeTags, ['test']),
+				tags: getTagsFromQueryValue(router.query.tags, ['-test']),
 				status: getBooleanRecordFromQueryValue(router.query.status, allStatusesTrue)
 			}}
 			listing={StoryListing}
@@ -90,17 +88,10 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 				</Label>
 				{statusFieldContainers}
 			</Row>
-			<Columns>
-				<TagField
-					label="Tags"
-					help="An adventure that has all of these tags will be included in the search results (given it also matches other search parameters)."
-				/>
-				<TagField
-					name="excludeTags"
-					label="Exclude Tags"
-					help="An adventure that has any of these tags will be excluded from the search results, even if it matches other search parameters."
-				/>
-			</Columns>
+			<TagField
+				label="Tags"
+				help={'An adventure that has all of these tags will be included in the search results (given it also matches other search parameters).\n\nPrefix a tag with a hyphen (e.g. "-test") to set it as an excluded tag. An adventure that has any of the excluded tags will be excluded from the search results, even if it matches other search parameters.'}
+			/>
 		</BrowsePage>
 	);
 };
