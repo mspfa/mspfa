@@ -1,10 +1,15 @@
 @use 'lib/styles/themes' as *;
+@use 'components/Section/styles.module' as * with ( $variables-only: true );
 
 .columns {
 	display: flex;
 
 	&:not(:last-child) {
-		margin-bottom: 4px;
+		margin-bottom: 1em;
+
+		&.of-sections {
+			margin-bottom: $space-between-sections;
+		}
 	}
 
 	@include mobile {
@@ -21,7 +26,11 @@
 		}
 
 		& > :not(:first-child) {
-			margin-left: 4px;
+			margin-left: 1em;
+		}
+
+		&.of-sections > :not(:first-child) {
+			margin-left: $space-between-sections;
 		}
 
 		& > .section:not(:last-child) {

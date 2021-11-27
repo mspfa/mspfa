@@ -264,7 +264,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										Edit Pages
 									</Button>
 								</Section>
-								<Columns>
+								<Columns ofSections>
 									<LabeledGridSection id="story-editor-info" heading="Info">
 										<LabeledGridField
 											name="title"
@@ -456,7 +456,7 @@ const Component = withErrorPage<ServerSideProps>(({
 									</Row>
 								</Section>
 								<Section id="story-editor-advanced" heading="Advanced" collapsible>
-									<Row id="story-editor-code-fields">
+									<Columns id="story-editor-code-fields">
 										<div>
 											<Label block htmlFor="field-style">
 												Custom Style
@@ -481,7 +481,7 @@ const Component = withErrorPage<ServerSideProps>(({
 												placeholder={'Paste JSX here.\nIf you don\'t know what this is, don\'t worry about it.'}
 											/>
 										</div>
-									</Row>
+									</Columns>
 								</Section>
 								<BottomActions>
 									<Button

@@ -58,7 +58,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 			heading={publicUser.name}
 		>
 			<div id="profile">
-				<Columns>
+				<Columns ofSections>
 					<Section id="profile-info" heading="Info">
 						<Row id="profile-icon-container">
 							<IconImage

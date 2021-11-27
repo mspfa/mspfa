@@ -12,26 +12,6 @@
 	&-details .row:not(:last-child) {
 		margin-bottom: 2em;
 	}
-
-	&-code-fields {
-		@include desktop {
-			display: flex;
-
-			& > * {
-				width: 50%;
-			}
-		}
-
-		& > :not(:first-child) {
-			@include desktop {
-				margin-left: 24px;
-			}
-
-			@include mobile {
-				margin-top: 1em;
-			}
-		}
-	}
 }
 
 .label-container.user-array-field-label {

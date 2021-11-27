@@ -1,25 +1,31 @@
-.section {
-	display: flex;
-	flex-direction: column;
-	// This can be useful when the section's parent has fixed height.
-	flex-grow: 1;
+$variables-only: false !default;
 
-	&:not(:last-child) {
-		margin-bottom: 4px;
-	}
+$space-between-sections: 4px;
 
-	&-heading {
-		text-align: center;
-		padding: 0.25em 0.5em;
-		margin-bottom: 4px;
-
-		details.section:not([open]) > & {
-			margin-bottom: 0;
-		}
-	}
-
-	&-content {
+@if not $variables-only {
+	.section {
+		display: flex;
+		flex-direction: column;
+		// This can be useful when the section's parent has fixed height.
 		flex-grow: 1;
-		padding: 24px;
+
+		&:not(:last-child) {
+			margin-bottom: $space-between-sections;
+		}
+
+		&-heading {
+			text-align: center;
+			padding: 0.25em 0.5em;
+			margin-bottom: $space-between-sections;
+
+			details.section:not([open]) > & {
+				margin-bottom: 0;
+			}
+		}
+
+		&-content {
+			flex-grow: 1;
+			padding: 24px;
+		}
 	}
 }

@@ -283,7 +283,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 									help={'Disables anti-aliasing in images on adventure pages (by using nearest-neighbor scaling).\n\nWhat this means is images, when scaled, will tend to have more crisp edges rather than becoming blurry. It disables the browser\'s smooth scaling effect that causes scaled images to blur.'}
 								/>
 							</LabeledGridSection>
-							<Columns>
+							<Columns ofSections>
 								<Section heading="General Notifications">
 									<NotificationSettingGrid>
 										<NotificationSetting
