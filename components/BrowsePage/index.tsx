@@ -48,9 +48,9 @@ export const getBooleanRecordFromQueryValue = (queryValue: undefined | string | 
 };
 
 /** Accepts a query value which represents a set of tags. Returns an array of only the valid, unique tags. */
-export const getTagsFromQueryValue = (value: undefined | string | string[]) => (
-	value && typeof value === 'string'
-		? value.split(',').filter((tagValue, i, tagValues) => (
+export const getTagsFromQueryValue = (queryValue: undefined | string | string[]) => (
+	queryValue && typeof queryValue === 'string'
+		? queryValue.split(',').filter((tagValue, i, tagValues) => (
 			// Only allow valid tag values.
 			/^[a-z0-9-]+$/.test(tagValue)
 			// Disallow duplicate tag values.
