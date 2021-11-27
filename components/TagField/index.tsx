@@ -408,8 +408,12 @@ const TagField = ({
 									content: `Use this tag if:\n\n${storyTags[tagValue]}`
 								});
 							} else if (!value.includes(tagValue)) {
-								createAndInsertTag(tagValue, inputRef.current.lastChild!);
-								setValue([...value, tagValue]);
+								setValue([
+									...value
+										// If the user clicked `test`, they probably don't want `-test` to stay.
+										.filter(previousTagValue => previousTagValue !== `-${tagValue}`),
+									tagValue
+								]);
 							}
 						})
 					}
