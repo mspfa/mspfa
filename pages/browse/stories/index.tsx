@@ -88,10 +88,7 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 				</Label>
 				{statusFieldContainers}
 			</Row>
-			<TagField
-				label="Tags"
-				help={'An adventure that has all of these tags will be included in the search results (given it also matches other search parameters).\n\nPrefix a tag with a hyphen (e.g. "-test") to set it as an excluded tag. An adventure that has any of the excluded tags will be excluded from the search results, even if it matches other search parameters.'}
-			/>
+			<TagField allowExcludedTags />
 		</BrowsePage>
 	);
 };

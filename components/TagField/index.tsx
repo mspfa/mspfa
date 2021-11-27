@@ -22,7 +22,8 @@ const invalidCharacters = /[^a-z0-9-,#\s\n]/g;
 /** Matches a character which would not be matched by `invalidCharacters`. */
 const validCharacter = /^[a-z0-9-,#\s\n]$/i;
 const tagDelimiters = /[,#\s\n]/g;
-const startAndEndHyphens = /^-+|-+$/g;
+const startHyphens = /^-+/;
+const endHyphens = /-+$/;
 
 /** A child node of a tag field element. */
 type TagFieldChild<NodeType extends Node = Node> = NodeType & (
@@ -46,18 +47,25 @@ const createTagFieldEditable = () => {
 	return element;
 };
 
-export type TagFieldProps = Pick<TextareaHTMLAttributes<HTMLTextAreaElement>, 'name' | 'id' | 'rows'> & {
+export type TagFieldProps = Pick<TextareaHTMLAttributes<HTMLTextAreaElement>, 'id' | 'name' | 'rows'> & {
 	/** The maximum number of tags allowed. Defaults to 50. */
 	max?: integer,
 	label?: ReactNode,
-	help?: ReactNode
+	help?: ReactNode,
+	/** Allows tags prefixed with a hyphen as valid tag values. */
+	allowExcludedTags?: boolean
 };
 
 const TagField = ({
 	name = 'tags',
 	id,
+	allowExcludedTags,
 	label = 'Tags',
-	help = 'Tags are keywords that help identify and describe an adventure.\n\nUsers can search for adventures with certain tags, and they can see an adventure\'s tags before opening it to get an idea of what kind of adventure it is.',
+	help = (
+		allowExcludedTags
+			? 'An adventure that has all of these tags will be included in the search results (given it also matches other search parameters).\n\nPrefix a tag with a hyphen (e.g. "-test") to set it as an excluded tag. An adventure that has any of the excluded tags will be excluded from the search results, even if it matches other search parameters.'
+			: 'Tags are keywords that help identify and describe an adventure.\n\nUsers can search for adventures with certain tags, and they can see an adventure\'s tags before opening it to get an idea of what kind of adventure it is.'
+	),
 	max = 50,
 	rows = 3
 }: TagFieldProps) => {
@@ -224,9 +232,9 @@ const TagField = ({
 					for (let j = 0; j < tagValues.length; j++) {
 						const tagValue = (
 							tagValues[j]
-								.replace(startAndEndHyphens, '')
+								.replace(startHyphens, allowExcludedTags ? '-' : '')
 								.slice(0, 50)
-								.replace(startAndEndHyphens, '')
+								.replace(endHyphens, '')
 						);
 
 						if (tagValue && !allTagValues.includes(tagValue)) {
