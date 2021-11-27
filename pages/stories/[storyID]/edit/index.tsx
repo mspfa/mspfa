@@ -424,7 +424,7 @@ const Component = withErrorPage<ServerSideProps>(({
 								</Columns>
 								<Section id="story-editor-details" heading="Details">
 									<Row>
-										<TagField rows={3} />
+										<TagField />
 									</Row>
 									<Row>
 										<Label block htmlFor="field-description">

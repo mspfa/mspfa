@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import { useFormikContext } from 'formik';
 import toKebabCase from 'lib/client/toKebabCase';
-import type { TextareaHTMLAttributes, KeyboardEvent, MouseEvent } from 'react';
+import type { TextareaHTMLAttributes, KeyboardEvent, MouseEvent, ReactNode } from 'react';
 import React, { useRef, useState } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import { usePrefixedID } from 'lib/client/IDPrefix';
@@ -48,14 +48,18 @@ const createTagFieldEditable = () => {
 
 export type TagFieldProps = Pick<TextareaHTMLAttributes<HTMLTextAreaElement>, 'name' | 'id' | 'rows'> & {
 	/** The maximum number of tags allowed. Defaults to 50. */
-	max?: integer
+	max?: integer,
+	label?: ReactNode,
+	help?: ReactNode
 };
 
 const TagField = ({
 	name = 'tags',
 	id,
+	label = 'Tags',
+	help = 'Tags are keywords that help identify and describe an adventure.\n\nUsers can search for adventures with certain tags, and they can see an adventure\'s tags before opening it to get an idea of what kind of adventure it is.',
 	max = 50,
-	rows
+	rows = 3
 }: TagFieldProps) => {
 	const idPrefix = usePrefixedID();
 
@@ -258,11 +262,9 @@ const TagField = ({
 	});
 
 	useIsomorphicLayoutEffect(() => {
-		// Determine the element's height based on the `rows` prop.
+		// Determine the element's height based on the `rows` prop. This is necessary because the input element is a `contentEditable` `div`, not a real `textarea` with a `rows` attribute.
 
-		if (rows !== undefined) {
-			heightTextArea.rows = rows;
-		}
+		heightTextArea.rows = rows;
 		inputRef.current.appendChild(heightTextArea);
 
 		// This height should not be managed via React state because the element is `resizable`, and any changed height could be reset by a re-render.
@@ -292,9 +294,9 @@ const TagField = ({
 		<div className="tag-field">
 			<Label
 				block
-				help={'Tags are keywords that help identify and describe an adventure.\n\nUsers can search for adventures with certain tags, and they can see an adventure\'s tags before opening it to get an idea of what kind of adventure it is.'}
+				help={help}
 			>
-				Tags
+				{label}
 			</Label>
 			<div
 				id={id}
