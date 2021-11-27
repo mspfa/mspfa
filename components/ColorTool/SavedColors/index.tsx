@@ -213,7 +213,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 
 					// Without this timeout, the state update often causes the dragging to immediately end.
 					setTimeout(() => {
-						const grabber = savedColorsElementRef.current?.getElementsByClassName('dragging')[0] as (
+						const grabber = savedColorsElementRef.current?.getElementsByClassName('grabber dragging')[0] as (
 							undefined
 							| (HTMLDivElement & { parentNode: HTMLDivElement & { parentNode: HTMLDivElement } })
 						);
