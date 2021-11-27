@@ -272,6 +272,7 @@ const TagField = ({
 	});
 
 	// Determine the element's height based on the `rows` prop. This is necessary because the input element is a `contentEditable` `div`, not a real `textarea` with a `rows` attribute.
+	// This is a layout effect hook so the field does not briefly appear to be the wrong size on the first render.
 	useIsomorphicLayoutEffect(() => {
 		heightTextArea.rows = rows;
 		inputRef.current.appendChild(heightTextArea);
@@ -283,6 +284,7 @@ const TagField = ({
 	}, [rows]);
 
 	// Update the field input's contents when its form value changes.
+	// This is a layout effect hook so the field does not briefly appear to be empty on the first render.
 	useIsomorphicLayoutEffect(() => {
 		if (inputRef.current.childNodes.length === 0) {
 			inputRef.current.appendChild(createTagFieldEditable());
