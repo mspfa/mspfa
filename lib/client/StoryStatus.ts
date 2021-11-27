@@ -1,8 +1,8 @@
 enum StoryStatus {
 	Ongoing = 0,
 	Complete,
-	Discontinued,
-	Inactive
+	Inactive,
+	Discontinued
 }
 
 export default StoryStatus;
@@ -10,6 +10,6 @@ export default StoryStatus;
 export const storyStatusNames: Record<StoryStatus, string> = {
 	[StoryStatus.Ongoing]: 'Ongoing',
 	[StoryStatus.Complete]: 'Complete',
-	[StoryStatus.Discontinued]: 'Discontinued',
-	[StoryStatus.Inactive]: 'Inactive'
+	[StoryStatus.Inactive]: 'Inactive',
+	[StoryStatus.Discontinued]: 'Discontinued'
 };
