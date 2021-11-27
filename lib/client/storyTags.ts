@@ -12,6 +12,8 @@ export type TagString = string;
  */
 export type TagOrExcludedTagString = string;
 
+export const tagOrExcludedTagTest = /^-?[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?$/;
+
 /** A record of story tags which maps each `TagString` to a `string` explaining the tag. */
 const storyTags: Partial<Record<TagString, string>> = {
 	nonmspa: 'This adventure is unrelated to MSPA.',

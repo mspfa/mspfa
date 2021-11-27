@@ -2,12 +2,12 @@ import './styles.module.scss';
 import { useField } from 'formik';
 import toKebabCase from 'lib/client/toKebabCase';
 import type { TextareaHTMLAttributes, KeyboardEvent, MouseEvent, ReactNode } from 'react';
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import { usePrefixedID } from 'lib/client/IDPrefix';
 import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
 import { isEqual } from 'lodash';
-import storyTags from 'lib/client/storyTags';
+import storyTags, { tagOrExcludedTagTest } from 'lib/client/storyTags';
 import type { TagOrExcludedTagString } from 'lib/client/storyTags';
 import Label from 'components/Label';
 import Dialog from 'lib/client/Dialog';
@@ -42,9 +42,9 @@ type TagFieldChild<NodeType extends Node = Node> = NodeType & (
 };
 
 const createTagFieldEditable = () => {
-	const element = document.createElement('span') as TagFieldChild<HTMLSpanElement>;
-	element.className = 'tag-field-editable';
-	return element;
+	const editable = document.createElement('span') as TagFieldChild<HTMLSpanElement>;
+	editable.className = 'tag-field-editable';
+	return editable;
 };
 
 export type TagFieldProps = Pick<TextareaHTMLAttributes<HTMLTextAreaElement>, 'id' | 'name' | 'rows'> & {
@@ -75,8 +75,7 @@ const TagField = ({
 		id = `${idPrefix}field-${toKebabCase(name)}`;
 	}
 
-	const [, { value }, { setValue }] = useField(name);
-	const [initialValue] = useState(value);
+	const [, { value }, { setValue }] = useField<TagOrExcludedTagString[]>(name);
 
 	const inputRef = useRef<HTMLDivElement & {
 		childNodes: NodeListOf<TagFieldChild>,
@@ -84,10 +83,14 @@ const TagField = ({
 		lastChild: TagFieldChild | null
 	}>(null!);
 
-	const createAndInsertTag = (tagValue: string, child: TagFieldChild) => {
+	/** Inserts a tag element before the specified `TagFieldChild`. Automatically adds an editable before (but not after) the new tag if necessary. */
+	const createAndInsertTag = (
+		tagValue: string,
+		/** The element to insert the tag before. */
+		child: TagFieldChild
+	) => {
+		// Ensure newly inserted tags have an editable before them.
 		if (child.previousSibling?.className !== 'tag-field-editable') {
-			// Ensure newly inserted tags have an editable before them.
-
 			inputRef.current.insertBefore(createTagFieldEditable(), child);
 		}
 
@@ -127,6 +130,7 @@ const TagField = ({
 		return tag;
 	};
 
+	/** Updates the form value of the field based on the contents of the field's input, and normalizes the contents of the field's input. */
 	const updateTagField = useFunction(() => {
 		const allTagValues: TagOrExcludedTagString[] = [];
 
@@ -149,6 +153,8 @@ const TagField = ({
 						allTagValues.includes(tagValue)
 						// Check if this tag exceeds the max tag count.
 						|| allTagValues.length >= max
+						// Check if this tag's value is malformed.
+						|| !tagOrExcludedTagTest.test(tagValue)
 					) {
 						// Remove the invalid tag.
 						inputRef.current.removeChild(child);
@@ -265,9 +271,8 @@ const TagField = ({
 		}
 	});
 
+	// Determine the element's height based on the `rows` prop. This is necessary because the input element is a `contentEditable` `div`, not a real `textarea` with a `rows` attribute.
 	useIsomorphicLayoutEffect(() => {
-		// Determine the element's height based on the `rows` prop. This is necessary because the input element is a `contentEditable` `div`, not a real `textarea` with a `rows` attribute.
-
 		heightTextArea.rows = rows;
 		inputRef.current.appendChild(heightTextArea);
 
@@ -277,22 +282,45 @@ const TagField = ({
 		inputRef.current.removeChild(heightTextArea);
 	}, [rows]);
 
+	// Update the field input's contents when its form value changes.
 	useIsomorphicLayoutEffect(() => {
-		// Add the tags from `initialValue`.
-
-		// Reset the tag field, just in case.
-		while (inputRef.current.firstChild) {
-			inputRef.current.removeChild(inputRef.current.firstChild);
+		if (inputRef.current.childNodes.length === 0) {
+			inputRef.current.appendChild(createTagFieldEditable());
 		}
 
-		// Append an editable to insert the tags before.
-		const child = createTagFieldEditable();
-		inputRef.current.appendChild(child);
+		const formTagValues = [...value];
 
-		for (const tagValue of initialValue) {
-			createAndInsertTag(tagValue, child);
+		for (const inputTag of inputRef.current.getElementsByClassName('tag-field-tag') as (
+			HTMLCollectionOf<TagFieldChild<HTMLDivElement & { className: 'tag-field-tag' }>>
+		)) {
+			if (formTagValues.length) {
+				// Add any tags from the form value which are before this tag from the input value.
+
+				const inputTagValue = inputTag.getElementsByClassName('tag-field-tag-content')[0].textContent!;
+				let formTagValue;
+				while (
+					(formTagValue = formTagValues.shift())
+					&& formTagValue !== inputTagValue
+				) {
+					createAndInsertTag(formTagValue, inputTag.previousSibling!);
+				}
+			} else {
+				// Remove this tag from the input value, since it doesn't appear in the same place in the form value.
+
+				// Merge the editables around the tag element.
+				inputTag.nextSibling!.textContent = inputTag.previousSibling!.textContent + inputTag.nextSibling!.textContent;
+				inputRef.current.removeChild(inputTag.previousSibling!);
+
+				// Remove the tag element.
+				inputRef.current.removeChild(inputTag);
+			}
 		}
-	}, [initialValue]);
+
+		// Add any tags from the form value which weren't in the input value.
+		for (const formTagValue of formTagValues) {
+			createAndInsertTag(formTagValue, inputRef.current.lastChild!);
+		}
+	}, [value]);
 
 	return (
 		<div className="tag-field">

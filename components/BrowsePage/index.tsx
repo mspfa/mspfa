@@ -7,6 +7,7 @@ import Row from 'components/Row';
 import Section from 'components/Section';
 import { Form, Formik } from 'formik';
 import useFunction from 'lib/client/reactHooks/useFunction';
+import { tagOrExcludedTagTest } from 'lib/client/storyTags';
 import type { integer } from 'lib/types';
 import Router from 'next/router';
 import type { ReactNode } from 'react';
@@ -62,8 +63,8 @@ export const getTagsFromQueryValue = (
 	typeof queryValue === 'string'
 		? queryValue
 			? queryValue.split(',').filter((tagValue, i, tagValues) => (
-				// Only allow valid tag and excluded tag values. This pattern is the one specified in the `TagOrExcludedTagString` type.
-				/^-?[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?$/.test(tagValue)
+				// Only allow valid tag or excluded tag values.
+				tagOrExcludedTagTest.test(tagValue)
 				// Disallow duplicate values.
 				&& tagValues.indexOf(tagValue) === i
 			))
