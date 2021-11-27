@@ -4,6 +4,10 @@
 .columns {
 	display: flex;
 
+	@include mobile {
+		flex-direction: column;
+	}
+
 	&:not(:last-child) {
 		margin-bottom: 1em;
 
@@ -12,8 +16,8 @@
 		}
 	}
 
-	@include mobile {
-		flex-direction: column;
+	& > :not(:last-child) {
+		margin-bottom: 1em;
 	}
 
 	@include desktop {
@@ -23,6 +27,9 @@
 			flex-direction: column;
 			flex-grow: 1;
 			width: 50%;
+			// Undo any vertical margins on the column elements.
+			margin-top: 0 !important;
+			margin-bottom: 0 !important;
 		}
 
 		& > :not(:first-child) {
@@ -31,10 +38,6 @@
 
 		&.of-sections > :not(:first-child) {
 			margin-left: $space-between-sections;
-		}
-
-		& > .section:not(:last-child) {
-			margin-bottom: 0;
 		}
 	}
 }

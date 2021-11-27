@@ -1,3 +1,5 @@
 .browse-stories-field-container-status {
 	margin-left: 2ch;
+	// Prevent line breaks between a checkbox and its label.
+	white-space: nowrap;
 }
