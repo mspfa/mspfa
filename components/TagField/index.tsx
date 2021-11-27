@@ -1,5 +1,5 @@
 import './styles.module.scss';
-import { useFormikContext } from 'formik';
+import { useField } from 'formik';
 import toKebabCase from 'lib/client/toKebabCase';
 import type { TextareaHTMLAttributes, KeyboardEvent, MouseEvent, ReactNode } from 'react';
 import React, { useRef, useState } from 'react';
@@ -75,9 +75,8 @@ const TagField = ({
 		id = `${idPrefix}field-${toKebabCase(name)}`;
 	}
 
-	const { getFieldMeta, setFieldValue } = useFormikContext();
-	const fieldValue = getFieldMeta<TagOrExcludedTagString[]>(name).value;
-	const [initialValue] = useState(fieldValue);
+	const [, { value }, { setValue }] = useField(name);
+	const [initialValue] = useState(value);
 
 	const inputRef = useRef<HTMLDivElement & {
 		childNodes: NodeListOf<TagFieldChild>,
@@ -264,8 +263,8 @@ const TagField = ({
 			]('force-hidden');
 		}
 
-		if (!isEqual(fieldValue, allTagValues)) {
-			setFieldValue(name, allTagValues);
+		if (!isEqual(value, allTagValues)) {
+			setValue(allTagValues);
 		}
 	});
 
@@ -381,9 +380,9 @@ const TagField = ({
 									title: `Help: #${tagValue}`,
 									content: `Use this tag if:\n\n${storyTags[tagValue]}`
 								});
-							} else if (!fieldValue.includes(tagValue)) {
+							} else if (!value.includes(tagValue)) {
 								createAndInsertTag(tagValue, inputRef.current.lastChild!);
-								setFieldValue(name, [...fieldValue, tagValue]);
+								setValue([...value, tagValue]);
 							}
 						})
 					}
@@ -391,7 +390,7 @@ const TagField = ({
 					{Object.keys(storyTags).map(tagValue => (
 						<div
 							key={tagValue}
-							className={`tag-field-tag-preset${fieldValue.includes(tagValue) ? ' added' : ''}`}
+							className={`tag-field-tag-preset${value.includes(tagValue) ? ' added' : ''}`}
 							data-value={tagValue}
 						>
 							<div className="tag-field-tag-content">
