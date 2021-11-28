@@ -291,31 +291,35 @@ const TagField = ({
 		}
 
 		const formTagValues = [...value];
+		let formTagValue;
 
-		for (const inputTag of inputRef.current.getElementsByClassName('tag-field-tag') as (
-			HTMLCollectionOf<TagFieldChild<HTMLDivElement & { className: 'tag-field-tag' }>>
+		tagLoop:
+		for (const tag of (
+			// It is necessary to spread this `HTMLCollection` into an array, or else the indexes of elements in the `HTMLCollection`'s iterator would shift around due to inserted or removed elements during iteration.
+			[...inputRef.current.getElementsByClassName('tag-field-tag')] as Array<TagFieldChild<HTMLDivElement>>
 		)) {
 			if (formTagValues.length) {
 				// Add any tags from the form value which are before this tag from the input value.
 
-				const inputTagValue = inputTag.getElementsByClassName('tag-field-tag-content')[0].textContent!;
-				let formTagValue;
-				while (
-					(formTagValue = formTagValues.shift())
-					&& formTagValue !== inputTagValue
-				) {
-					createAndInsertTag(formTagValue, inputTag.previousSibling!);
+				const inputTagValue = tag.getElementsByClassName('tag-field-tag-content')[0].textContent!;
+				while (formTagValue = formTagValues.shift()) {
+					if (formTagValue === inputTagValue) {
+						// This tag from the input value has been found in the form value, so don't remove it, and continue.
+						continue tagLoop;
+					}
+
+					createAndInsertTag(formTagValue, tag.previousSibling!);
 				}
-			} else {
-				// Remove this tag from the input value, since it doesn't appear in the same place in the form value.
-
-				// Merge the editables around the tag element.
-				inputTag.nextSibling!.textContent = inputTag.previousSibling!.textContent + inputTag.nextSibling!.textContent;
-				inputRef.current.removeChild(inputTag.previousSibling!);
-
-				// Remove the tag element.
-				inputRef.current.removeChild(inputTag);
 			}
+
+			// Remove this tag from the input value, since it doesn't appear in the same place in the form value.
+
+			// Merge the editables around the tag element.
+			tag.nextSibling!.textContent = tag.previousSibling!.textContent + tag.nextSibling!.textContent;
+			inputRef.current.removeChild(tag.previousSibling!);
+
+			// Remove the tag element.
+			inputRef.current.removeChild(tag);
 		}
 
 		// Add any tags from the form value which weren't in the input value.
