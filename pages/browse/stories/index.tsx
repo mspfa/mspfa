@@ -6,7 +6,7 @@ import { Field } from 'formik';
 import Row from 'components/Row';
 import { useRouter } from 'next/router';
 import type { integer } from 'lib/types';
-import BrowsePage, { getBooleanRecordFromQueryValue, getNumberFromQueryValue, getStringFromQueryValue, getTagsFromQueryValue, MAX_RESULTS_PER_PAGE } from 'components/BrowsePage';
+import BrowsePage, { getBooleanFromQueryValue, getBooleanRecordFromQueryValue, getNumberFromQueryValue, getStringFromQueryValue, getTagsFromQueryValue, MAX_RESULTS_PER_PAGE } from 'components/BrowsePage';
 import StoryListing from 'components/StoryListing';
 import TagField from 'components/TagField';
 import type StoryStatus from 'lib/client/StoryStatus';
@@ -89,9 +89,13 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 				minPageCount: getNumberFromQueryValue(router.query.minPageCount, 0),
 				maxPageCount: getNumberFromQueryValue(router.query.maxPageCount, 0),
 				minCreated: getNumberFromQueryValue(router.query.minCreated, DEFAULT_MIN_DATE, now),
+				minCreatedRelative: getBooleanFromQueryValue(router.query.minCreatedRelative),
 				maxCreated: getNumberFromQueryValue(router.query.maxCreated, DEFAULT_MIN_DATE, now),
+				maxCreatedRelative: getBooleanFromQueryValue(router.query.maxCreatedRelative),
 				minUpdated: getNumberFromQueryValue(router.query.minUpdated, DEFAULT_MIN_DATE, now),
-				maxUpdated: getNumberFromQueryValue(router.query.maxUpdated, DEFAULT_MIN_DATE, now)
+				minUpdatedRelative: getBooleanFromQueryValue(router.query.minUpdatedRelative),
+				maxUpdated: getNumberFromQueryValue(router.query.maxUpdated, DEFAULT_MIN_DATE, now),
+				maxUpdatedRelative: getBooleanFromQueryValue(router.query.maxUpdatedRelative)
 			}}
 			listing={StoryListing}
 			resultCount={resultCount}
@@ -181,10 +185,10 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 							</span>
 						</Row>
 						<BrowsePageAdvancedOptions>
-							<BrowsePageRangeField nameSuffix="FavCount" label="Favorite Count" />
-							<BrowsePageRangeField nameSuffix="PageCount" label="Page Count" />
-							<BrowsePageDateRangeField nameSuffix="Created" label="Date Created" />
-							<BrowsePageDateRangeField nameSuffix="Updated" label="Date Updated" />
+							<BrowsePageRangeField nameBase="FavCount" label="Favorite Count" />
+							<BrowsePageRangeField nameBase="PageCount" label="Page Count" />
+							<BrowsePageDateRangeField nameBase="Created" label="Date Created" />
+							<BrowsePageDateRangeField nameBase="Updated" label="Date Updated" />
 						</BrowsePageAdvancedOptions>
 					</>
 				);

@@ -8,16 +8,16 @@ export type BrowsePageRangeFieldProps = Pick<InputHTMLAttributes<HTMLInputElemen
 	/**
 	 * The `name`s of the fields without `min` or `max` in front.
 	 *
-	 * For example, if you set `nameSuffix="FavCount"`, the field `name`s will be `minFavCount` and `maxFavCount`.
+	 * For example, if you set `nameBase="FavCount"`, the field `name`s will be `minFavCount` and `maxFavCount`.
 	 */
-	nameSuffix: string,
+	nameBase: string,
 	label: ReactNode,
 	help?: ReactNode
 };
 
 /** A `Row` with a `Field` for a minimum number and another for a maximum number. */
 const BrowsePageRangeField = ({
-	nameSuffix,
+	nameBase,
 	label,
 	help,
 	min = 0,
@@ -36,7 +36,7 @@ const BrowsePageRangeField = ({
 			{'at least '}
 			<Field
 				type="number"
-				name={`min${nameSuffix}`}
+				name={`min${nameBase}`}
 				placeholder="Optional"
 				min={min}
 				max={max}
@@ -44,7 +44,7 @@ const BrowsePageRangeField = ({
 			{', at most '}
 			<Field
 				type="number"
-				name={`max${nameSuffix}`}
+				name={`max${nameBase}`}
 				placeholder="Optional"
 				min={min}
 				max={max}

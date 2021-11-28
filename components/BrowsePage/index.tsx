@@ -33,28 +33,15 @@ export const serializeSearchQueryValue = (value: ValuesBase[keyof ValuesBase]): 
 					: Object.keys(value).filter(valueKey => value[valueKey]).join(',')
 );
 
-/** Accepts a query value which may have been serialized from a `Record<string, boolean>` by `serializeSearchQueryValue`. Returns the original `Record`. */
-export const getBooleanRecordFromQueryValue = (
+/** Accepts a query value which may have been serialized from a `boolean` by `serializeSearchQueryValue`. Returns the original `boolean`. */
+export const getBooleanFromQueryValue = (
 	queryValue: undefined | string | string[],
-	defaultValue: Record<string, boolean> = {}
-) => {
-	if (typeof queryValue !== 'string') {
-		return defaultValue;
-	}
-
-	const value: Record<string, boolean> = {};
-
-	if (queryValue) {
-		for (const key of queryValue.split(',')) {
-			// Ensure `key` isn't some dangerous internal value of the object.
-			if (!(key in value)) {
-				value[key] = true;
-			}
-		}
-	}
-
-	return value;
-};
+	defaultValue = false
+) => (
+	typeof queryValue === 'string'
+		? queryValue === '1' || queryValue === 'true'
+		: defaultValue
+);
 
 /** Accepts a query value which may have been serialized from a `number` by `serializeSearchQueryValue`. Returns the original `number`. */
 export const getNumberFromQueryValue = (
@@ -84,6 +71,29 @@ export const getStringFromQueryValue = (
 		? queryValue
 		: defaultValue
 );
+
+/** Accepts a query value which may have been serialized from a `Record<string, boolean>` by `serializeSearchQueryValue`. Returns the original `Record`. */
+export const getBooleanRecordFromQueryValue = (
+	queryValue: undefined | string | string[],
+	defaultValue: Record<string, boolean> = {}
+) => {
+	if (typeof queryValue !== 'string') {
+		return defaultValue;
+	}
+
+	const value: Record<string, boolean> = {};
+
+	if (queryValue) {
+		for (const key of queryValue.split(',')) {
+			// Ensure `key` isn't some dangerous internal value of the object.
+			if (!(key in value)) {
+				value[key] = true;
+			}
+		}
+	}
+
+	return value;
+};
 
 /** Accepts a query value which represents a set of tags and excluded tags. Returns an array of only the valid, unique tags and excluded tags. */
 export const getTagsFromQueryValue = (
