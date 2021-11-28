@@ -25,7 +25,9 @@ export const serializeSearchQueryValue = (value: ValuesBase[keyof ValuesBase]): 
 	typeof value === 'string'
 		? value
 		: typeof value === 'boolean'
-			? (+value).toString()
+			? value
+				? '1'
+				: ''
 			: typeof value === 'number'
 				? value.toString()
 				: Array.isArray(value)
@@ -34,13 +36,9 @@ export const serializeSearchQueryValue = (value: ValuesBase[keyof ValuesBase]): 
 );
 
 /** Accepts a query value which may have been serialized from a `boolean` by `serializeSearchQueryValue`. Returns the original `boolean`. */
-export const getBooleanFromQueryValue = (
-	queryValue: undefined | string | string[],
-	defaultValue = false
-) => (
-	typeof queryValue === 'string'
-		? queryValue === '1'
-		: defaultValue
+// This must not accept a default value, or else `false` would not be omittable in query serialization and would have to be serialized to `0`.
+export const getBooleanFromQueryValue = (queryValue: undefined | string | string[]) => (
+	queryValue === '1'
 );
 
 /** Accepts a query value which may have been serialized from a `number` by `serializeSearchQueryValue`. Returns the original `number`. */
