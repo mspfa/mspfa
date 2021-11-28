@@ -190,13 +190,13 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 							<BrowsePageRangeField nameSuffix="PageCount" label="Page Count" />
 							<BrowsePageDateRangeField
 								nameSuffix="Created"
-								label="Creation Date"
+								label="Date Created"
 								min={MIN_QUERY_DATE}
 								max={now}
 							/>
 							<BrowsePageDateRangeField
 								nameSuffix="Updated"
-								label="Most Recent Update Date"
+								label="Latest Date Updated"
 								min={MIN_QUERY_DATE}
 								max={now}
 							/>
