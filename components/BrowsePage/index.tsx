@@ -39,7 +39,7 @@ export const getBooleanFromQueryValue = (
 	defaultValue = false
 ) => (
 	typeof queryValue === 'string'
-		? queryValue === '1' || queryValue === 'true'
+		? queryValue === '1'
 		: defaultValue
 );
 
