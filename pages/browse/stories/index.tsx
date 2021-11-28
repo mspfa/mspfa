@@ -7,12 +7,13 @@ import { Field } from 'formik';
 import Row from 'components/Row';
 import { useRouter } from 'next/router';
 import type { integer } from 'lib/types';
-import BrowsePage, { getBooleanRecordFromQueryValue, getTagsFromQueryValue, MAX_RESULTS_PER_PAGE } from 'components/BrowsePage';
+import BrowsePage, { getBooleanRecordFromQueryValue, getStringFromQueryValue, getTagsFromQueryValue, MAX_RESULTS_PER_PAGE } from 'components/BrowsePage';
 import StoryListing from 'components/StoryListing';
 import TagField from 'components/TagField';
 import type StoryStatus from 'lib/client/StoryStatus';
 import { storyStatusNames } from 'lib/client/StoryStatus';
 import type { ReactNode } from 'react';
+import type { StorySortMode } from 'pages/api/stories';
 
 type ServerSideProps = {
 	stories?: never,
@@ -58,13 +59,10 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 		<BrowsePage
 			resourceLabel="Adventures"
 			initialValues={{
-				title: (
-					typeof router.query.title === 'string'
-						? router.query.title
-						: ''
-				),
+				title: getStringFromQueryValue(router.query.title),
 				tags: getTagsFromQueryValue(router.query.tags, ['-test']),
-				status: getBooleanRecordFromQueryValue(router.query.status, allStatusesTrue)
+				status: getBooleanRecordFromQueryValue(router.query.status, allStatusesTrue),
+				sort: getStringFromQueryValue(router.query.sort, 'mostFavs') as StorySortMode
 			}}
 			listing={StoryListing}
 			resultCount={resultCount}
@@ -90,6 +88,28 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 			</Row>
 			<Row>
 				<TagField allowExcludedTags />
+			</Row>
+			<Row>
+				<Label className="spaced" htmlFor="field-sort">
+					Sort By
+				</Label>
+				<Field
+					as="select"
+					id="field-sort"
+					name="sort"
+					className="spaced"
+				>
+					<option value="titleIndex">Title Relevance</option>
+					<option value="mostFavs">Most Favorites</option>
+					<option value="leastFavs">Least Favorites</option>
+					<option value="mostPages">Most Pages</option>
+					<option value="fewestPages">Fewest Pages</option>
+					<option value="newestCreated">Most Recently Created</option>
+					<option value="oldestCreated">Least Recently Created</option>
+					<option value="oldestUpdated">Most Recently Updated</option>
+					<option value="newestUpdated">Least Recently Updated</option>
+					<option value="random">Random</option>
+				</Field>
 			</Row>
 		</BrowsePage>
 	);

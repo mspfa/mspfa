@@ -55,6 +55,16 @@ export const getBooleanRecordFromQueryValue = (
 	return value;
 };
 
+/** Accepts a query value which may have been serialized from a `string` by `serializeSearchQueryValue`. Returns the original `string`. */
+export const getStringFromQueryValue = (
+	queryValue: undefined | string | string[],
+	defaultValue = ''
+) => (
+	typeof queryValue === 'string'
+		? queryValue
+		: defaultValue
+);
+
 /** Accepts a query value which represents a set of tags and excluded tags. Returns an array of only the valid, unique tags and excluded tags. */
 export const getTagsFromQueryValue = (
 	queryValue: undefined | string | string[],
