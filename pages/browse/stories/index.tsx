@@ -144,6 +144,7 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 								<option value="random">Random</option>
 							</Field>
 							<span
+								// Make the reverse checkbox translucent when `symmetricalSort` to make it clear to the user that reversing is unused for this sort method, but don't disable it or else that would make it less convenient to access a couple sorting options from the `sort` field.
 								className={`browse-stories-checkbox-field-container${symmetricalSort ? ' translucent' : ''}`}
 							>
 								<input
