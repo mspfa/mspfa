@@ -76,6 +76,11 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 
 	const now = Date.now();
 
+	const minCreatedRelative = getBooleanFromQueryValue(router.query.minCreatedRelative);
+	const maxCreatedRelative = getBooleanFromQueryValue(router.query.maxCreatedRelative);
+	const minUpdatedRelative = getBooleanFromQueryValue(router.query.minUpdatedRelative);
+	const maxUpdatedRelative = getBooleanFromQueryValue(router.query.maxUpdatedRelative);
+
 	return (
 		<BrowsePage
 			resourceLabel="Adventures"
@@ -88,14 +93,30 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 				maxFavCount: getNumberFromQueryValue(router.query.maxFavCount, 0),
 				minPageCount: getNumberFromQueryValue(router.query.minPageCount, 0),
 				maxPageCount: getNumberFromQueryValue(router.query.maxPageCount, 0),
-				minCreated: getNumberFromQueryValue(router.query.minCreated, DEFAULT_MIN_DATE, now),
-				minCreatedRelative: getBooleanFromQueryValue(router.query.minCreatedRelative),
-				maxCreated: getNumberFromQueryValue(router.query.maxCreated, DEFAULT_MIN_DATE, now),
-				maxCreatedRelative: getBooleanFromQueryValue(router.query.maxCreatedRelative),
-				minUpdated: getNumberFromQueryValue(router.query.minUpdated, DEFAULT_MIN_DATE, now),
-				minUpdatedRelative: getBooleanFromQueryValue(router.query.minUpdatedRelative),
-				maxUpdated: getNumberFromQueryValue(router.query.maxUpdated, DEFAULT_MIN_DATE, now),
-				maxUpdatedRelative: getBooleanFromQueryValue(router.query.maxUpdatedRelative)
+				minCreated: getNumberFromQueryValue(
+					router.query.minCreated,
+					minCreatedRelative ? undefined : DEFAULT_MIN_DATE,
+					minCreatedRelative ? undefined : now
+				),
+				minCreatedRelative,
+				maxCreated: getNumberFromQueryValue(
+					router.query.maxCreated,
+					maxCreatedRelative ? undefined : DEFAULT_MIN_DATE,
+					maxCreatedRelative ? undefined : now
+				),
+				maxCreatedRelative,
+				minUpdated: getNumberFromQueryValue(
+					router.query.minUpdated,
+					minUpdatedRelative ? undefined : DEFAULT_MIN_DATE,
+					minUpdatedRelative ? undefined : now
+				),
+				minUpdatedRelative,
+				maxUpdated: getNumberFromQueryValue(
+					router.query.maxUpdated,
+					maxUpdatedRelative ? undefined : DEFAULT_MIN_DATE,
+					maxUpdatedRelative ? undefined : now
+				),
+				maxUpdatedRelative
 			}}
 			listing={StoryListing}
 			resultCount={resultCount}
