@@ -5,12 +5,12 @@ import Page from 'components/Page';
 import Pagination from 'components/Pagination';
 import Row from 'components/Row';
 import Section from 'components/Section';
+import type { FormikConfig } from 'formik';
 import { Form, Formik } from 'formik';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import { tagOrExcludedTagTest } from 'lib/client/storyTags';
 import type { integer } from 'lib/types';
 import Router from 'next/router';
-import type { ReactNode } from 'react';
 
 export const MAX_RESULTS_PER_PAGE = 50;
 
@@ -102,7 +102,7 @@ export type BrowsePageProps<
 	/** An array of the resources on the current page of search results, or undefined if no search query has been submitted yet. */
 	results?: ListProps<ListingProps>['children'],
 	/** The fields of the search query form. */
-	children: ReactNode
+	children: FormikConfig<Values>['children']
 } & Omit<ListProps<ListingProps, keyof BrowsePageListingPropsBase>, 'children'>;
 
 /**
@@ -154,14 +154,16 @@ const BrowsePage = <
 					}
 					enableReinitialize
 				>
-					<Form>
-						{children}
-						<Row>
-							<Button type="submit">
-								Search!
-							</Button>
-						</Row>
-					</Form>
+					{formikProps => (
+						<Form>
+							{typeof children === 'function' ? children(formikProps) : children}
+							<Row>
+								<Button type="submit">
+									Search!
+								</Button>
+							</Row>
+						</Form>
+					)}
 				</Formik>
 			</Section>
 			{results && (
