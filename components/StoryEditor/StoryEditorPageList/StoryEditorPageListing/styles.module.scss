@@ -20,9 +20,14 @@
 			}
 		}
 
-		&-show-advanced-link-container {
-			text-align: center;
-			font-size: 0.875rem;
+		&-show-advanced-link {
+			&-container {
+				text-align: center;
+			}
+
+			&.link {
+				font-size: 0.875rem;
+			}
 		}
 
 		&-actions {
