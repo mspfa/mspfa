@@ -5,6 +5,13 @@ import Label from 'components/Label';
 import type { DateFieldProps } from 'components/DateField';
 import DateField from 'components/DateField';
 
+const minQueryDate = new Date(0);
+minQueryDate.setFullYear(2010, 0, 1);
+minQueryDate.setHours(0, 0, 0, 0);
+
+/** The `DateNumber` at the beginning of the year that MSPFA was created (in the user's time zone). */
+export const DEFAULT_MIN_DATE = +minQueryDate;
+
 export type BrowsePageDateRangeFieldProps = Pick<DateFieldProps, 'min' | 'max'> & {
 	/**
 	 * The `name`s of the fields without `min` or `max` in front.
@@ -21,8 +28,8 @@ const BrowsePageDateRangeField = ({
 	nameSuffix,
 	label,
 	help,
-	min,
-	max
+	min = DEFAULT_MIN_DATE,
+	max = Date.now()
 }: BrowsePageDateRangeFieldProps) => (
 	<Row className="browse-page-date-range-field-container">
 		<Label

@@ -17,12 +17,7 @@ import type { StorySortMode } from 'pages/api/stories';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import BrowsePageAdvancedOptions from 'components/BrowsePage/BrowsePageAdvancedOptions';
 import BrowsePageRangeField from 'components/BrowsePage/BrowsePageRangeField';
-import BrowsePageDateRangeField from 'components/BrowsePage/BrowsePageDateRangeField';
-
-const minQueryDate = new Date(0);
-minQueryDate.setFullYear(2010, 0, 1);
-/** The beginning of the year that MSPFA was created (in the user's time zone). */
-const MIN_QUERY_DATE = minQueryDate.setHours(0, 0, 0, 0);
+import BrowsePageDateRangeField, { DEFAULT_MIN_DATE } from 'components/BrowsePage/BrowsePageDateRangeField';
 
 /** A record which maps every `StoryStatus` to `true`. */
 const allStatusesTrue: Record<string, true> = {} as any;
@@ -93,10 +88,10 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 				maxFavCount: getNumberFromQueryValue(router.query.maxFavCount, 0),
 				minPageCount: getNumberFromQueryValue(router.query.minPageCount, 0),
 				maxPageCount: getNumberFromQueryValue(router.query.maxPageCount, 0),
-				minCreated: getNumberFromQueryValue(router.query.minCreated, MIN_QUERY_DATE, now),
-				maxCreated: getNumberFromQueryValue(router.query.maxCreated, MIN_QUERY_DATE, now),
-				minUpdated: getNumberFromQueryValue(router.query.minUpdated, MIN_QUERY_DATE, now),
-				maxUpdated: getNumberFromQueryValue(router.query.maxUpdated, MIN_QUERY_DATE, now)
+				minCreated: getNumberFromQueryValue(router.query.minCreated, DEFAULT_MIN_DATE, now),
+				maxCreated: getNumberFromQueryValue(router.query.maxCreated, DEFAULT_MIN_DATE, now),
+				minUpdated: getNumberFromQueryValue(router.query.minUpdated, DEFAULT_MIN_DATE, now),
+				maxUpdated: getNumberFromQueryValue(router.query.maxUpdated, DEFAULT_MIN_DATE, now)
 			}}
 			listing={StoryListing}
 			resultCount={resultCount}
@@ -186,10 +181,10 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 							</span>
 						</Row>
 						<BrowsePageAdvancedOptions>
-							<BrowsePageRangeField nameSuffix="FavCount" label="Favorite Count" max={99999999} />
-							<BrowsePageRangeField nameSuffix="PageCount" label="Page Count" max={99999999} />
-							<BrowsePageDateRangeField nameSuffix="Created" label="Date Created" min={MIN_QUERY_DATE} max={now} />
-							<BrowsePageDateRangeField nameSuffix="Updated" label="Date Updated" min={MIN_QUERY_DATE} max={now} />
+							<BrowsePageRangeField nameSuffix="FavCount" label="Favorite Count" />
+							<BrowsePageRangeField nameSuffix="PageCount" label="Page Count" />
+							<BrowsePageDateRangeField nameSuffix="Created" label="Date Created" />
+							<BrowsePageDateRangeField nameSuffix="Updated" label="Date Updated" />
 						</BrowsePageAdvancedOptions>
 					</>
 				);

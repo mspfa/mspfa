@@ -21,7 +21,8 @@ const BrowsePageRangeField = ({
 	label,
 	help,
 	min = 0,
-	max
+	// Enough `9`s to fit the `placeholder` of "Optional", but no more as to avoid making the inputs too wide.
+	max = 99999999
 }: BrowsePageRangeFieldProps) => (
 	<Row className="browse-page-range-field-container">
 		<Label
