@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import Button from 'components/Button';
 import type { ListingPropsBase, ListProps } from 'components/List';
 import List from 'components/List';
@@ -53,6 +54,25 @@ export const getBooleanRecordFromQueryValue = (
 	}
 
 	return value;
+};
+
+/** Accepts a query value which may have been serialized from a `number` by `serializeSearchQueryValue`. Returns the original `number`. */
+export const getNumberFromQueryValue = (
+	queryValue: undefined | string | string[],
+	min = -Infinity,
+	max = Infinity,
+	defaultValue: '' | number = ''
+) => {
+	if (typeof queryValue !== 'string') {
+		return defaultValue;
+	}
+
+	const value = +queryValue;
+	return (
+		Number.isNaN(value)
+			? defaultValue
+			: Math.max(min, Math.min(max, value))
+	);
 };
 
 /** Accepts a query value which may have been serialized from a `string` by `serializeSearchQueryValue`. Returns the original `string`. */
@@ -141,10 +161,10 @@ const BrowsePage = <
 							const url = new URL(location.href);
 
 							for (const name of Object.keys(values)) {
-								url.searchParams.set(
-									name,
-									serializeSearchQueryValue(values[name])
-								);
+								const serializedValue = serializeSearchQueryValue(values[name]);
+								if (serializedValue) {
+									url.searchParams.set(name, serializedValue);
+								}
 							}
 
 							url.searchParams.set('p', '1');

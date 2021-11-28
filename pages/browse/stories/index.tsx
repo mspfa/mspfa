@@ -1,4 +1,3 @@
-import './styles.module.scss';
 import { withStatusCode } from 'lib/server/errors';
 import type { PublicStory } from 'lib/client/stories';
 import { connection } from 'lib/server/db';
@@ -7,7 +6,7 @@ import { Field } from 'formik';
 import Row from 'components/Row';
 import { useRouter } from 'next/router';
 import type { integer } from 'lib/types';
-import BrowsePage, { getBooleanRecordFromQueryValue, getStringFromQueryValue, getTagsFromQueryValue, MAX_RESULTS_PER_PAGE } from 'components/BrowsePage';
+import BrowsePage, { getBooleanRecordFromQueryValue, getNumberFromQueryValue, getStringFromQueryValue, getTagsFromQueryValue, MAX_RESULTS_PER_PAGE } from 'components/BrowsePage';
 import StoryListing from 'components/StoryListing';
 import TagField from 'components/TagField';
 import type StoryStatus from 'lib/client/StoryStatus';
@@ -16,6 +15,14 @@ import type { ChangeEvent, ReactNode } from 'react';
 import { useState } from 'react';
 import type { StorySortMode } from 'pages/api/stories';
 import useFunction from 'lib/client/reactHooks/useFunction';
+import BrowsePageAdvancedOptions from 'components/BrowsePage/BrowsePageAdvancedOptions';
+import BrowsePageRangeField from 'components/BrowsePage/BrowsePageRangeField';
+import BrowsePageDateRangeField from 'components/BrowsePage/BrowsePageDateRangeField';
+
+const minQueryDate = new Date(0);
+minQueryDate.setFullYear(2010, 0, 1);
+/** The beginning of the year that MSPFA was created (in the user's time zone). */
+const MIN_QUERY_DATE = minQueryDate.setHours(0, 0, 0, 0);
 
 /** A record which maps every `StoryStatus` to `true`. */
 const allStatusesTrue: Record<string, true> = {} as any;
@@ -28,7 +35,7 @@ for (const status of Object.keys(storyStatusNames)) {
 	statusFieldContainers.push(
 		<span
 			key={status}
-			className="browse-stories-checkbox-field-container"
+			className="browse-page-checkbox-field-container"
 		>
 			<Field
 				type="checkbox"
@@ -72,6 +79,8 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 
 	const [sortReverse, setSortReverse] = useState(false);
 
+	const now = Date.now();
+
 	return (
 		<BrowsePage
 			resourceLabel="Adventures"
@@ -79,7 +88,15 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 				title: getStringFromQueryValue(router.query.title),
 				tags: getTagsFromQueryValue(router.query.tags, ['-test']),
 				status: getBooleanRecordFromQueryValue(router.query.status, allStatusesTrue),
-				sort: getStringFromQueryValue(router.query.sort, 'mostFavs') as StorySortMode
+				sort: getStringFromQueryValue(router.query.sort, 'mostFavs') as StorySortMode,
+				minFavCount: getNumberFromQueryValue(router.query.minFavCount, 0),
+				maxFavCount: getNumberFromQueryValue(router.query.maxFavCount, 0),
+				minPageCount: getNumberFromQueryValue(router.query.minPageCount, 0),
+				maxPageCount: getNumberFromQueryValue(router.query.maxPageCount, 0),
+				minCreated: getNumberFromQueryValue(router.query.minCreated, MIN_QUERY_DATE, now),
+				maxCreated: getNumberFromQueryValue(router.query.maxCreated, MIN_QUERY_DATE, now),
+				minUpdated: getNumberFromQueryValue(router.query.minUpdated, MIN_QUERY_DATE, now),
+				maxUpdated: getNumberFromQueryValue(router.query.maxUpdated, MIN_QUERY_DATE, now)
 			}}
 			listing={StoryListing}
 			resultCount={resultCount}
@@ -127,15 +144,15 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 								<option value="titleIndex">Title Relevance</option>
 								{sortReverse ? (
 									<>
-										<option value="fewestFavs">Fewest Favorites</option>
+										<option value="fewestFavs">Least Favorited</option>
 										<option value="fewestPages">Fewest Pages</option>
 										<option value="oldest">Oldest</option>
 									</>
 								) : (
 									<>
-										<option value="mostFavs">Most Favorites</option>
+										<option value="mostFavs">Most Favorited</option>
 										<option value="mostPages">Most Pages</option>
-										<option value="newest">Most Recently Created</option>
+										<option value="newest">Newest</option>
 									</>
 								)}
 								<option value="newestUpdated">Most Recently Updated</option>
@@ -143,7 +160,7 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 							</Field>
 							<span
 								// Make the reverse checkbox translucent when `symmetricalSort` to make it clear to the user that reversing is unused for this sort method, but don't disable it or else that would make it less convenient to access a couple sorting options from the `sort` field.
-								className={`browse-stories-checkbox-field-container${symmetricalSort ? ' translucent' : ''}`}
+								className={`browse-page-checkbox-field-container${symmetricalSort ? ' translucent' : ''}`}
 							>
 								<input
 									type="checkbox"
@@ -168,6 +185,22 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 								</label>
 							</span>
 						</Row>
+						<BrowsePageAdvancedOptions>
+							<BrowsePageRangeField nameSuffix="FavCount" label="Favorite Count" />
+							<BrowsePageRangeField nameSuffix="PageCount" label="Page Count" />
+							<BrowsePageDateRangeField
+								nameSuffix="Created"
+								label="Creation Date"
+								min={MIN_QUERY_DATE}
+								max={now}
+							/>
+							<BrowsePageDateRangeField
+								nameSuffix="Updated"
+								label="Most Recent Update Date"
+								min={MIN_QUERY_DATE}
+								max={now}
+							/>
+						</BrowsePageAdvancedOptions>
 					</>
 				);
 			}}
