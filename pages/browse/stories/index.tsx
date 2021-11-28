@@ -53,7 +53,7 @@ for (const status of Object.keys(storyStatusNames)) {
 	);
 }
 
-/** A mapping from each `StorySortMode` to the `StorySortMode` which is in reverse from it. */
+/** A mapping from each `StorySortMode` to the `StorySortMode` which sorts in reverse from it. */
 const reversedSorts: Record<StorySortMode, StorySortMode> = {
 	titleIndex: 'titleIndex',
 	mostFavs: 'fewestFavs',
