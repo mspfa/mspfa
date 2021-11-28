@@ -572,9 +572,9 @@ const StoryEditorPageListing = React.memo(({
 					disabled={isSubmitting}
 				/>
 			</Row>
-			<Row className="story-editor-page-show-advanced-link-container">
+			<Row className="story-editor-page-toggle-advanced-link-container">
 				<Link
-					className="story-editor-page-show-advanced-link translucent"
+					className="story-editor-page-toggle-advanced-link translucent"
 					onClick={togglePageAdvancedShown}
 				>
 					{advancedShown ? 'Hide Advanced Options' : 'Show Advanced Options'}
