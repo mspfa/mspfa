@@ -88,7 +88,9 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 				</Label>
 				{statusFieldContainers}
 			</Row>
-			<TagField allowExcludedTags />
+			<Row>
+				<TagField allowExcludedTags />
+			</Row>
 		</BrowsePage>
 	);
 };
