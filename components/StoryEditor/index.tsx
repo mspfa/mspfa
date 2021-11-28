@@ -542,7 +542,7 @@ const StoryEditor = ({
 
 								const newGridCullingInfo = { ...defaultGridCullingInfo };
 
-								// If `!pageElements.length`, the entire below `if` block won't execute, and the values of `newGridCullingInfo` will equal those of `defaultGridCullingInfo`. This is to prevent permanently culling all pages if there have ever been 0 page elements.
+								// If `pageElements.length === 0`, the entire below `if` block won't execute, and the values of `newGridCullingInfo` will equal those of `defaultGridCullingInfo`. This is to prevent permanently culling all pages if there have ever been 0 page elements.
 								if (pageElements.length) {
 									const {
 										pageHeight,

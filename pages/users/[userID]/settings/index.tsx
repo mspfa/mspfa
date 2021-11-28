@@ -97,7 +97,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 			}
 		});
 
-		if (!authMethods.length) {
+		if (authMethods.length === 0) {
 			new Dialog({
 				id: 'change-password',
 				title: 'Error',
