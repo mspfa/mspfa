@@ -6,7 +6,7 @@ import { authenticate } from 'lib/server/auth';
 import type { PrivateStory } from 'lib/client/stories';
 import { connection } from 'lib/server/db';
 
-export type StorySortMode = 'titleIndex' | 'mostFavs' | 'leastFavs' | 'mostPages' | 'fewestPages' | 'newestCreated' | 'oldestCreated' | 'oldestUpdated' | 'newestUpdated' | 'random';
+export type StorySortMode = 'titleIndex' | 'mostFavs' | 'fewestFavs' | 'mostPages' | 'fewestPages' | 'newest' | 'oldest' | 'newestUpdated' | 'random';
 
 const Handler: APIHandler<{
 	method: 'POST',

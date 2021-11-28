@@ -49,14 +49,13 @@ for (const status of Object.keys(storyStatusNames)) {
 /** A mapping from each `StorySortMode` to the `StorySortMode` which is in reverse from it. */
 const reversedSorts: Record<StorySortMode, StorySortMode> = {
 	titleIndex: 'titleIndex',
-	leastFavs: 'mostFavs',
-	fewestPages: 'mostPages',
-	oldestCreated: 'newestCreated',
-	newestUpdated: 'oldestUpdated',
-	mostFavs: 'leastFavs',
+	mostFavs: 'fewestFavs',
+	fewestFavs: 'mostFavs',
 	mostPages: 'fewestPages',
-	newestCreated: 'oldestCreated',
-	oldestUpdated: 'newestUpdated',
+	fewestPages: 'mostPages',
+	newest: 'oldest',
+	oldest: 'newest',
+	newestUpdated: 'newestUpdated',
 	random: 'random'
 };
 
@@ -128,19 +127,18 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 								<option value="titleIndex">Title Relevance</option>
 								{sortReverse ? (
 									<>
-										<option value="leastFavs">Least Favorites</option>
+										<option value="fewestFavs">Fewest Favorites</option>
 										<option value="fewestPages">Fewest Pages</option>
-										<option value="oldestCreated">Least Recently Created</option>
-										<option value="newestUpdated">Least Recently Updated</option>
+										<option value="oldest">Oldest</option>
 									</>
 								) : (
 									<>
 										<option value="mostFavs">Most Favorites</option>
 										<option value="mostPages">Most Pages</option>
-										<option value="newestCreated">Most Recently Created</option>
-										<option value="oldestUpdated">Most Recently Updated</option>
+										<option value="newest">Most Recently Created</option>
 									</>
 								)}
+								<option value="newestUpdated">Most Recently Updated</option>
 								<option value="random">Random</option>
 							</Field>
 							<span
