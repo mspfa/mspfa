@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import Row from 'components/Row';
 import type { InputHTMLAttributes, ReactNode } from 'react';
 import Label from 'components/Label';
