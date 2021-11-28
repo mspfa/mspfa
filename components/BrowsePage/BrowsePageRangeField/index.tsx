@@ -30,7 +30,7 @@ const BrowsePageRangeField = ({
 		>
 			{label}
 		</Label>
-		<div className="browse-page-range-field spaced">
+		<div className="browse-page-range-field-line spaced">
 			{'at least '}
 			<Field
 				type="number"

@@ -32,7 +32,7 @@ const BrowsePageDateRangeField = ({
 		>
 			{label}
 		</Label>
-		<div className="browse-page-date-range-field spaced">
+		<div className="browse-page-date-range-field-line spaced">
 			{'at least '}
 			<DateField
 				name={`min${nameSuffix}`}
@@ -41,7 +41,7 @@ const BrowsePageDateRangeField = ({
 				withTime
 			/>
 		</div>
-		<div className="browse-page-date-range-field spaced">
+		<div className="browse-page-date-range-field-line spaced">
 			{'at most '}
 			<DateField
 				name={`max${nameSuffix}`}
