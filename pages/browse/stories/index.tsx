@@ -186,20 +186,10 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 							</span>
 						</Row>
 						<BrowsePageAdvancedOptions>
-							<BrowsePageRangeField nameSuffix="FavCount" label="Favorite Count" />
-							<BrowsePageRangeField nameSuffix="PageCount" label="Page Count" />
-							<BrowsePageDateRangeField
-								nameSuffix="Created"
-								label="Date Created"
-								min={MIN_QUERY_DATE}
-								max={now}
-							/>
-							<BrowsePageDateRangeField
-								nameSuffix="Updated"
-								label="Date Updated"
-								min={MIN_QUERY_DATE}
-								max={now}
-							/>
+							<BrowsePageRangeField nameSuffix="FavCount" label="Favorite Count" max={99999999} />
+							<BrowsePageRangeField nameSuffix="PageCount" label="Page Count" max={99999999} />
+							<BrowsePageDateRangeField nameSuffix="Created" label="Date Created" min={MIN_QUERY_DATE} max={now} />
+							<BrowsePageDateRangeField nameSuffix="Updated" label="Date Updated" min={MIN_QUERY_DATE} max={now} />
 						</BrowsePageAdvancedOptions>
 					</>
 				);
