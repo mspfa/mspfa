@@ -128,6 +128,17 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 				/** Whether the `sort` value should remain the same when `sortReverse`. */
 				const symmetricalSort = values.sort === reversedSort;
 
+				// Reset the sort method to default if an invalid sort method is selected.
+				if (
+					// You shouldn't be able to sort by title index if you haven't entered any title.
+					values.sort === 'titleIndex' && values.title.length === 0
+				) {
+					setFieldValue(
+						'sort',
+						sortReverse ? 'fewestFavs' : 'mostFavs'
+					);
+				}
+
 				return (
 					<>
 						<Row>
@@ -160,8 +171,16 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 								id="field-sort"
 								name="sort"
 								className="spaced"
+								required
 							>
-								<option value="titleIndex">Title Relevance</option>
+								{values.title && (
+									<option
+										value="titleIndex"
+										title="Sorts by how early the title you searched for appears in the adventure's title."
+									>
+										Title Relevance
+									</option>
+								)}
 								{sortReverse ? (
 									<>
 										<option value="fewestFavs">Least Favorited</option>
