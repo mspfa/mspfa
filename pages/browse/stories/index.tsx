@@ -61,6 +61,8 @@ const reversedSorts: Record<StorySortMode, StorySortMode> = {
 	random: 'random'
 };
 
+const DEFAULT_SORT = 'mostFavs';
+
 type ServerSideProps = {
 	stories?: never,
 	resultCount?: never
@@ -88,7 +90,7 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 				title: getStringFromQueryValue(router.query.title),
 				tags: getTagsFromQueryValue(router.query.tags, ['-test']),
 				status: getBooleanRecordFromQueryValue(router.query.status, allStatusesTrue),
-				sort: getStringFromQueryValue(router.query.sort, 'mostFavs') as StorySortMode,
+				sort: getStringFromQueryValue(router.query.sort, DEFAULT_SORT) as StorySortMode,
 				minFavCount: getNumberFromQueryValue(router.query.minFavCount, 0),
 				maxFavCount: getNumberFromQueryValue(router.query.maxFavCount, 0),
 				minPageCount: getNumberFromQueryValue(router.query.minPageCount, 0),
@@ -135,7 +137,7 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 				) {
 					setFieldValue(
 						'sort',
-						sortReverse ? 'fewestFavs' : 'mostFavs'
+						sortReverse ? reversedSorts[DEFAULT_SORT] : DEFAULT_SORT
 					);
 				}
 
