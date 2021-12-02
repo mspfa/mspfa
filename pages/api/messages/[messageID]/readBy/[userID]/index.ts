@@ -1,6 +1,6 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
-import messages, { updateUnreadMessages } from 'lib/server/messages';
+import messages from 'lib/server/messages';
 import updateUnreadMessages from 'lib/server/messages/updateUnreadMessages';
 import getMessageByUnsafeID from 'lib/server/messages/getMessageByUnsafeID';
 import { Perm } from 'lib/client/perms';

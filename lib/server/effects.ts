@@ -4,7 +4,8 @@ import users from 'lib/server/users';
 import stories from 'lib/server/stories';
 import updateStorySchedule, { unscheduleStory } from 'lib/server/stories/updateStorySchedule';
 import { connection } from 'lib/server/db';
-import messages, { deleteMessageForUser } from 'lib/server/messages';
+import messages from 'lib/server/messages';
+import deleteMessageForUser from 'lib/server/messages/deleteMessageForUser';
 
 connection.then(() => {
 	// Set timeouts for any scheduled pages.
