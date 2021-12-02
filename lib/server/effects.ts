@@ -1,7 +1,8 @@
 // This script is executed once initially on the server.
 
 import users from 'lib/server/users';
-import stories, { unscheduleStory, updateStorySchedule } from 'lib/server/stories';
+import stories from 'lib/server/stories';
+import updateStorySchedule, { unscheduleStory } from 'lib/server/stories/updateStorySchedule';
 import { connection } from 'lib/server/db';
 import messages, { deleteMessageForUser } from 'lib/server/messages';
 

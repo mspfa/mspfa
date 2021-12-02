@@ -2,9 +2,10 @@ import './styles.module.scss';
 import Page from 'components/Page';
 import type { PublicUser } from 'lib/client/users';
 import { useUser } from 'lib/client/reactContexts/UserContext';
-import { getUserByUnsafeID, getPublicUser } from 'lib/server/users';
+import { getPublicUser } from 'lib/server/users';
+import getUserByUnsafeID from 'lib/server/users/getUserByUnsafeID';
 import { withErrorPage } from 'lib/client/errors';
-import { withStatusCode } from 'lib/server/errors';
+import withStatusCode from 'lib/server/withStatusCode';
 import Section from 'components/Section';
 import Link from 'components/Link';
 import Row from 'components/Row';
@@ -15,7 +16,7 @@ import { Perm } from 'lib/client/perms';
 import type { integer } from 'lib/types';
 import Button from 'components/Button';
 import getRandomImageFilename from 'lib/server/getRandomImageFilename';
-import findStoriesAsUser from 'lib/server/findStoriesAsUser';
+import getStoriesAsUser from 'lib/server/stories/getStoriesAsUser';
 import type { StoryID } from 'lib/server/stories';
 
 type ServerSideProps = {
@@ -100,7 +101,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 
 	let stories: ListedStory[];
 
-	const storiesFoundAsUser = findStoriesAsUser(req.user, canSudoReadUserFromParams, {
+	const storiesFoundAsUser = getStoriesAsUser(req.user, canSudoReadUserFromParams, {
 		_id: { $in: userFromParams.favs }
 	});
 

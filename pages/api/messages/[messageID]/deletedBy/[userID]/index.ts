@@ -1,8 +1,10 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
-import { deleteMessageForUser, getMessageByUnsafeID, updateUnreadMessages } from 'lib/server/messages';
+import { deleteMessageForUser } from 'lib/server/messages';
+import updateUnreadMessages from 'lib/server/messages/updateUnreadMessages';
+import getMessageByUnsafeID from 'lib/server/messages/getMessageByUnsafeID';
 import { Perm } from 'lib/client/perms';
-import { permToGetUserInAPI } from 'lib/server/permToGetUser';
+import { permToGetUserInAPI } from 'lib/server/users/permToGetUser';
 
 const Handler: APIHandler<{
 	query: {

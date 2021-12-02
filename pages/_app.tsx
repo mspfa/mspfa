@@ -1,5 +1,5 @@
 import './styles.scss';
-import 'lib/server/global'; // @server-only
+import 'lib/server/effects'; // @server-only
 import App from 'next/app'; // @server-only
 import { authenticate } from 'lib/server/auth'; // @server-only
 import { getPrivateUser } from 'lib/server/users'; // @server-only

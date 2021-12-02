@@ -1,4 +1,4 @@
-import { getUserByUnsafeID } from 'lib/server/users';
+import getUserByUnsafeID from 'lib/server/users/getUserByUnsafeID';
 import type { ServerUser } from 'lib/server/users';
 import type { UnsafeObjectID } from 'lib/server/db';
 import type { APIRequest, APIResponse } from 'lib/server/api';

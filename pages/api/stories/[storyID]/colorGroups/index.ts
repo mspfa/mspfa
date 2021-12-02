@@ -1,6 +1,7 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
-import stories, { getStoryByUnsafeID } from 'lib/server/stories';
+import stories from 'lib/server/stories';
+import getStoryByUnsafeID from 'lib/server/stories/getStoryByUnsafeID';
 import { authenticate } from 'lib/server/auth';
 import { Perm } from 'lib/client/perms';
 import { ObjectId } from 'mongodb';

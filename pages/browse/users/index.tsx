@@ -1,4 +1,4 @@
-import { withStatusCode } from 'lib/server/errors';
+import withStatusCode from 'lib/server/withStatusCode';
 import type { PublicUser } from 'lib/client/users';
 import { getPublicUser } from 'lib/server/users';
 import { connection } from 'lib/server/db';
@@ -6,7 +6,7 @@ import Label from 'components/Label';
 import { Field } from 'formik';
 import Row from 'components/Row';
 import { useRouter } from 'next/router';
-import findUsersByNameOrID from 'lib/server/findUsersByNameOrID';
+import getUsersByNameOrID from 'lib/server/users/getUsersByNameOrID';
 import type { integer } from 'lib/types';
 import UserListing from 'components/UserListing';
 import BrowsePage from 'components/BrowsePage';
@@ -62,7 +62,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ query
 
 	const results = (
 		typeof query.nameOrID === 'string'
-			? (await findUsersByNameOrID(query.nameOrID)).map(getPublicUser)
+			? (await getUsersByNameOrID(query.nameOrID)).map(getPublicUser)
 			: undefined
 	);
 

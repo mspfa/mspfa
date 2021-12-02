@@ -4,7 +4,7 @@ import { connection, safeObjectID } from 'lib/server/db';
 import type { Filter } from 'mongodb';
 import { escapeRegExp } from 'lodash';
 
-const findUsersByNameOrID = async (nameOrID: string) => {
+const getUsersByNameOrID = async (nameOrID: string) => {
 	await connection;
 
 	let filter: Filter<ServerUser> = {
@@ -39,4 +39,4 @@ const findUsersByNameOrID = async (nameOrID: string) => {
 	));
 };
 
-export default findUsersByNameOrID;
+export default getUsersByNameOrID;

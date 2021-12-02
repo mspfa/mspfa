@@ -1,10 +1,12 @@
 import './styles.module.scss';
 import Page from 'components/Page';
 import { withErrorPage } from 'lib/client/errors';
-import { withStatusCode } from 'lib/server/errors';
+import withStatusCode from 'lib/server/withStatusCode';
 import Section from 'components/Section';
 import { Perm } from 'lib/client/perms';
-import messages, { getClientMessage, getMessageByUnsafeID, updateUnreadMessages } from 'lib/server/messages';
+import messages, { getClientMessage } from 'lib/server/messages';
+import updateUnreadMessages from 'lib/server/messages/updateUnreadMessages';
+import getMessageByUnsafeID from 'lib/server/messages/getMessageByUnsafeID';
 import type { ClientMessage } from 'lib/client/messages';
 import BBCode from 'components/BBCode';
 import users, { getPublicUser } from 'lib/server/users';

@@ -1,4 +1,4 @@
-import { withStatusCode } from 'lib/server/errors';
+import withStatusCode from 'lib/server/withStatusCode';
 import type { PublicStory } from 'lib/client/stories';
 import { connection } from 'lib/server/db';
 import Label from 'components/Label';

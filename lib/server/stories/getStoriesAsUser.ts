@@ -6,7 +6,7 @@ import { Perm } from 'lib/client/perms';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 
 /** Queries the database for stories and filters them to include only the ones that the specified user should be able to find. */
-const findStoriesAsUser = (
+const getStoriesAsUser = (
 	/** The user finding the stories. Undefined if the client finding the stories is not authenticated. */
 	user: ServerUser | undefined,
 	/**
@@ -70,4 +70,4 @@ const findStoriesAsUser = (
 	).map(getPublicStory);
 };
 
-export default findStoriesAsUser;
+export default getStoriesAsUser;

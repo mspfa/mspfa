@@ -2,7 +2,7 @@ import type { MyGetServerSideProps } from 'lib/server/pages';
 import ErrorPage from 'pages/_error';
 
 /** Sets `res.statusCode` based on the returned `statusCode` prop. */
-export const withStatusCode = <
+const withStatusCode = <
 	ServerSideProps extends Record<string, any> = {}
 >(getServerSideProps: MyGetServerSideProps<ServerSideProps>): MyGetServerSideProps<ServerSideProps> => (
 	async props => {
@@ -21,3 +21,5 @@ export const withStatusCode = <
 		return serverSideProps;
 	}
 );
+
+export default withStatusCode;

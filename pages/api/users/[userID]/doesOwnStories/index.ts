@@ -1,6 +1,6 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
-import { getUserByUnsafeID } from 'lib/server/users';
+import getUserByUnsafeID from 'lib/server/users/getUserByUnsafeID';
 import stories from 'lib/server/stories';
 
 const Handler: APIHandler<{

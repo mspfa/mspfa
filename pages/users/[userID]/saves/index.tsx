@@ -1,15 +1,15 @@
 import './styles.module.scss';
 import Page from 'components/Page';
 import { Perm } from 'lib/client/perms';
-import { permToGetUserInPage } from 'lib/server/permToGetUser';
+import { permToGetUserInPage } from 'lib/server/users/permToGetUser';
 import { withErrorPage } from 'lib/client/errors';
-import { withStatusCode } from 'lib/server/errors';
+import withStatusCode from 'lib/server/withStatusCode';
 import Section from 'components/Section';
 import List from 'components/List';
 import type { integer } from 'lib/types';
 import type { StorySave } from 'components/StorySaveListing';
 import StorySaveListing from 'components/StorySaveListing';
-import findStoriesAsUser from 'lib/server/findStoriesAsUser';
+import getStoriesAsUser from 'lib/server/stories/getStoriesAsUser';
 import getRandomImageFilename from 'lib/server/getRandomImageFilename';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import { useState } from 'react';
@@ -100,7 +100,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		storySaveRecord[storyID] = storySave;
 	}
 
-	await findStoriesAsUser(user, true, {
+	await getStoriesAsUser(user, true, {
 		_id: { $in: storyIDs }
 	}).forEach(story => {
 		storySaveRecord[story.id].story = story;

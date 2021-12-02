@@ -1,8 +1,9 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
 import type { PublicStory } from 'lib/client/stories';
-import { getUserByUnsafeID } from 'lib/server/users';
-import stories, { getPublicStoriesByEditor, getPublicStory } from 'lib/server/stories';
+import getUserByUnsafeID from 'lib/server/users/getUserByUnsafeID';
+import stories, { getPublicStory } from 'lib/server/stories';
+import getPublicStoriesByEditor from 'lib/server/stories/getPublicStoriesByEditor';
 import { authenticate } from 'lib/server/auth';
 import { Perm } from 'lib/client/perms';
 

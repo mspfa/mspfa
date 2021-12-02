@@ -3,9 +3,11 @@ import type { APIHandler } from 'lib/server/api';
 import { authenticate } from 'lib/server/auth';
 import type { ClientMessage } from 'lib/client/messages';
 import type { ServerMessage } from 'lib/server/messages';
-import messages, { updateUnreadMessages, getClientMessage, getMessageByUnsafeID } from 'lib/server/messages';
+import messages, { getClientMessage } from 'lib/server/messages';
+import getMessageByUnsafeID from 'lib/server/messages/getMessageByUnsafeID';
+import updateUnreadMessages from 'lib/server/messages/updateUnreadMessages';
 import { ObjectId } from 'mongodb';
-import { getUserByUnsafeID } from 'lib/server/users';
+import getUserByUnsafeID from 'lib/server/users/getUserByUnsafeID';
 import { uniqBy } from 'lodash';
 
 const Handler: APIHandler<{

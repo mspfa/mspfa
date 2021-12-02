@@ -1,9 +1,10 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
 import { Perm } from 'lib/client/perms';
-import { permToGetUserInAPI } from 'lib/server/permToGetUser';
+import { permToGetUserInAPI } from 'lib/server/users/permToGetUser';
 import users from 'lib/server/users';
-import { getStoryByUnsafeID, updateFavCount } from 'lib/server/stories';
+import updateFavCount from 'lib/server/stories/updateFavCount';
+import getStoryByUnsafeID from 'lib/server/stories/getStoryByUnsafeID';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 
 const Handler: APIHandler<{

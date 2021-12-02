@@ -1,7 +1,10 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
 import type { ServerStory, ServerStoryPage, StoryID, StoryPageID } from 'lib/server/stories';
-import { getStoryByUnsafeID, getClientStoryPage, updateStorySchedule, getClientPagesAround } from 'lib/server/stories';
+import { getClientStoryPage } from 'lib/server/stories';
+import updateStorySchedule from 'lib/server/stories/updateStorySchedule';
+import getStoryByUnsafeID from 'lib/server/stories/getStoryByUnsafeID';
+import getClientPagesAround from 'lib/server/stories/getClientPagesAround';
 import { authenticate } from 'lib/server/auth';
 import type { ClientStoryPage, ClientStoryPageRecord } from 'lib/client/stories';
 import StoryPrivacy from 'lib/client/StoryPrivacy';

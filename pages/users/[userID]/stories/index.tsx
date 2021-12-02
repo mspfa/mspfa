@@ -1,8 +1,8 @@
 import Page from 'components/Page';
 import { Perm } from 'lib/client/perms';
-import { permToGetUserInPage } from 'lib/server/permToGetUser';
+import { permToGetUserInPage } from 'lib/server/users/permToGetUser';
 import { withErrorPage } from 'lib/client/errors';
-import { withStatusCode } from 'lib/server/errors';
+import withStatusCode from 'lib/server/withStatusCode';
 import Section from 'components/Section';
 import Row from 'components/Row';
 import BottomActions from 'components/BottomActions';

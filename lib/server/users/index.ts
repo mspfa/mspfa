@@ -1,13 +1,11 @@
-import db, { safeObjectID } from 'lib/server/db';
+import db from 'lib/server/db';
 import type { ObjectId } from 'mongodb';
 import type { achievements } from 'lib/server/achievements';
 import type { URLString, EmailString, integer } from 'lib/types';
 import type { PrivateUser, PublicUser } from 'lib/client/users';
 import defaultUserSettings from 'lib/client/defaultUserSettings';
-import type { UnsafeObjectID } from 'lib/server/db';
 import type { Theme } from 'lib/client/themes';
 import type { StoryID, StoryPageID } from 'lib/server/stories';
-import type { APIResponse } from 'lib/server/api';
 
 export type ServerUserID = ObjectId;
 
@@ -227,45 +225,3 @@ export const getPublicUser = (user: ServerUser): PublicUser => ({
 const users = db.collection<ServerUser>('users');
 
 export default users;
-
-/**
- * Finds and returns a `ServerUser` by a possibly unsafe ID.
- *
- * Returns `undefined` if the ID is invalid, the user is not found, or the user is scheduled for deletion.
- *
- * If the `res` parameter is specified, failing to find a valid user will result in an error response, and this function will never resolve.
- */
-export const getUserByUnsafeID = <Res extends APIResponse<any> | undefined>(
-	...[id, res]: [
-		id: UnsafeObjectID,
-		res: Res
-	] | [
-		id: UnsafeObjectID
-		// It is necessary to use tuple types instead of simply having `res` be an optional parameter, because otherwise `Res` will not always be inferred correctly.
-	]
-) => new Promise<ServerUser | (undefined extends Res ? undefined : never)>(async resolve => {
-	const userID = safeObjectID(id);
-
-	let user: ServerUser | null | undefined;
-
-	if (userID) {
-		user = await users.findOne({
-			_id: userID,
-			willDelete: { $exists: false }
-		});
-	}
-
-	if (!user) {
-		if (res) {
-			res.status(404).send({
-				message: 'No user was found with the specified ID.'
-			});
-		} else {
-			resolve(undefined as any);
-		}
-
-		return;
-	}
-
-	resolve(user);
-});

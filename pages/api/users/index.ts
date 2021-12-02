@@ -9,7 +9,7 @@ import { ObjectId } from 'mongodb';
 import type { PrivateUser, PublicUser } from 'lib/client/users';
 import axios from 'axios';
 import type { DateNumber, integer } from 'lib/types';
-import findUsersByNameOrID from 'lib/server/findUsersByNameOrID';
+import getUsersByNameOrID from 'lib/server/users/getUsersByNameOrID';
 
 const Handler: APIHandler<(
 	{
@@ -119,7 +119,7 @@ const Handler: APIHandler<(
 	}
 
 	res.send(
-		(await findUsersByNameOrID(req.query.nameOrID))
+		(await getUsersByNameOrID(req.query.nameOrID))
 			.map(getPublicUser)
 			.slice(0, limit)
 	);

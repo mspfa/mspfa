@@ -1,7 +1,8 @@
 import { Perm } from 'lib/client/perms';
 import { withErrorPage } from 'lib/client/errors';
-import { withStatusCode } from 'lib/server/errors';
-import { getClientStoryPage, getPrivateStory, getStoryByUnsafeID } from 'lib/server/stories';
+import withStatusCode from 'lib/server/withStatusCode';
+import { getClientStoryPage, getPrivateStory } from 'lib/server/stories';
+import getStoryByUnsafeID from 'lib/server/stories/getStoryByUnsafeID';
 import type { ClientStoryPageRecord } from 'lib/client/stories';
 import type { integer } from 'lib/types';
 import type { StoryEditorProps } from 'components/StoryEditor';
