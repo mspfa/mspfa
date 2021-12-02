@@ -11,7 +11,7 @@ import api from 'lib/client/api';
 import Dialog from 'lib/client/Dialog';
 import IDPrefix from 'lib/client/IDPrefix';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import { useUser } from 'lib/client/UserContext';
+import { useUser } from 'lib/client/reactContexts/UserContext';
 import type { ChangeEvent } from 'react';
 import React, { useContext, useRef, useState, useEffect } from 'react';
 import type { StoryCommentsSortMode } from 'pages/api/stories/[storyID]/comments';

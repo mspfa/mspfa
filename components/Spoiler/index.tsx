@@ -1,5 +1,5 @@
 import './styles.module.scss';
-import { getUser, useUser } from 'lib/client/UserContext';
+import { getUser, useUser } from 'lib/client/reactContexts/UserContext';
 import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
 import type { HTMLAttributes, ReactNode } from 'react';
 import { useState, useEffect } from 'react';

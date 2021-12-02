@@ -12,7 +12,7 @@ import Dialog from 'lib/client/Dialog';
 import ColorOptions from 'components/ColorTool/ColorOptions';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
-import PrivateStoryContext from 'lib/client/PrivateStoryContext';
+import PrivateStoryContext from 'lib/client/reactContexts/PrivateStoryContext';
 import { getChangedValues } from 'lib/client/forms';
 import Grabber from 'components/Grabber';
 import addHashToColor from 'lib/client/addHashToColor';

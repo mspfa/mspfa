@@ -21,7 +21,7 @@ import IconImage from 'components/IconImage';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import UserField from 'components/UserField';
 import type { PublicUser } from 'lib/client/users';
-import { useUser } from 'lib/client/UserContext';
+import { useUser } from 'lib/client/reactContexts/UserContext';
 import { useUserCache } from 'lib/client/UserCache';
 import { uniq, uniqBy } from 'lodash';
 import users, { getPublicUser } from 'lib/server/users';
@@ -39,7 +39,7 @@ import Timestamp from 'components/Timestamp';
 import EditButton from 'components/Button/EditButton';
 import Dialog from 'lib/client/Dialog';
 import type { integer } from 'lib/types';
-import StoryIDContext from 'lib/client/StoryIDContext';
+import StoryIDContext from 'lib/client/reactContexts/StoryIDContext';
 import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;

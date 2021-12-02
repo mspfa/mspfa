@@ -1,4 +1,4 @@
-import { useUser } from 'lib/client/UserContext';
+import { useUser } from 'lib/client/reactContexts/UserContext';
 import Router from 'next/router';
 import { useState } from 'react';
 import dynamic from 'next/dynamic';

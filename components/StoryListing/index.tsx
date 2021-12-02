@@ -9,7 +9,7 @@ import InconspicuousDiv from 'components/InconspicuousDiv';
 import StoryTagLink from 'components/StoryTagLink';
 import StoryStats from 'components/StoryStats';
 import type { StoryID } from 'lib/server/stories';
-import { useUser } from 'lib/client/UserContext';
+import { useUser } from 'lib/client/reactContexts/UserContext';
 import FavButton from 'components/Button/FavButton';
 
 /** A story to list as a `StoryListing`, or an object with only the ID of the story if the story is unavailable. */

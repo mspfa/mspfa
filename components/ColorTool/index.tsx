@@ -8,7 +8,7 @@ import Dialog from 'lib/client/Dialog';
 import useAutoSelect from 'lib/client/reactHooks/useAutoSelect';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
-import PrivateStoryContext from 'lib/client/PrivateStoryContext';
+import PrivateStoryContext from 'lib/client/reactContexts/PrivateStoryContext';
 import type { ColorFieldProps } from 'components/ColorField';
 import ColorField from 'components/ColorField';
 import Row from 'components/Row';

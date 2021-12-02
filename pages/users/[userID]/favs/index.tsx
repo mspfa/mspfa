@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import Page from 'components/Page';
 import type { PublicUser } from 'lib/client/users';
-import { useUser } from 'lib/client/UserContext';
+import { useUser } from 'lib/client/reactContexts/UserContext';
 import { getUserByUnsafeID, getPublicUser } from 'lib/server/users';
 import { withErrorPage } from 'lib/client/errors';
 import { withStatusCode } from 'lib/server/errors';

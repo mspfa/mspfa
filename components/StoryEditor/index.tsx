@@ -19,12 +19,12 @@ import frameThrottler from 'lib/client/frameThrottler';
 import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
 import type { integer } from 'lib/types';
 import useSticky from 'lib/client/reactHooks/useSticky';
-import StoryIDContext from 'lib/client/StoryIDContext';
+import StoryIDContext from 'lib/client/reactContexts/StoryIDContext';
 import StoryEditorPageGrid, { defaultGridCullingInfo } from 'components/StoryEditor/StoryEditorPageGrid';
 import StoryEditorPageList from 'components/StoryEditor/StoryEditorPageList';
 import StoryEditorPagesOptions from 'components/StoryEditor/StoryEditorPagesOptions';
 import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';
-import PrivateStoryContext from 'lib/client/PrivateStoryContext';
+import PrivateStoryContext from 'lib/client/reactContexts/PrivateStoryContext';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 

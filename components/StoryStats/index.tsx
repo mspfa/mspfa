@@ -4,7 +4,7 @@ import PageCount from 'components/StoryStats/PageCount';
 import { Perm } from 'lib/client/perms';
 import type { PublicStory } from 'lib/client/stories';
 import { storyStatusNames } from 'lib/client/StoryStatus';
-import { useUser } from 'lib/client/UserContext';
+import { useUser } from 'lib/client/reactContexts/UserContext';
 import type { StoryPageID } from 'lib/server/stories';
 import React from 'react';
 

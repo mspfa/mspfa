@@ -6,7 +6,7 @@ import type { ClientNewsPost } from 'lib/client/news';
 import React from 'react';
 import EditButton from 'components/Button/EditButton';
 import RemoveButton from 'components/Button/RemoveButton';
-import { useUser } from 'lib/client/UserContext';
+import { useUser } from 'lib/client/reactContexts/UserContext';
 import type { PublicStory } from 'lib/client/stories';
 import { Perm } from 'lib/client/perms';
 import useFunction from 'lib/client/reactHooks/useFunction';

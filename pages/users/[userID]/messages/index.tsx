@@ -9,7 +9,7 @@ import type { ServerMessage } from 'lib/server/messages';
 import messages, { getClientMessage } from 'lib/server/messages';
 import type { ClientMessage } from 'lib/client/messages';
 import type { PublicUser, PrivateUser } from 'lib/client/users';
-import { getUser, setUser } from 'lib/client/UserContext';
+import { getUser, setUser } from 'lib/client/reactContexts/UserContext';
 import { useUserCache } from 'lib/client/UserCache';
 import List from 'components/List';
 import { uniqBy } from 'lodash';

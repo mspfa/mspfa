@@ -14,8 +14,8 @@ import { useMemo } from 'react';
 import { useRouter } from 'next/router';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import { preventLeaveConfirmations } from 'lib/client/forms';
-import PreviewModeContext from 'lib/client/PreviewModeContext';
-import StoryIDContext from 'lib/client/StoryIDContext';
+import PreviewModeContext from 'lib/client/reactContexts/PreviewModeContext';
+import StoryIDContext from 'lib/client/reactContexts/StoryIDContext';
 import Row from 'components/Row';
 import Button from 'components/Button';
 

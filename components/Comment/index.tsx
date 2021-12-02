@@ -2,7 +2,7 @@ import './styles.module.scss';
 import type { APIHandler } from 'lib/server/api';
 import type { APIClient } from 'lib/client/api';
 import type { ClientComment, ClientCommentOrReply } from 'lib/client/comments';
-import { useUser } from 'lib/client/UserContext';
+import { useUser } from 'lib/client/reactContexts/UserContext';
 import { useUserCache } from 'lib/client/UserCache';
 import React, { useRef, useState } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';

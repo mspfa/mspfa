@@ -6,7 +6,7 @@ import Label from 'components/Label';
 import Link from 'components/Link';
 import BBCode from 'components/BBCode';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import PreviewModeContext from 'lib/client/PreviewModeContext';
+import PreviewModeContext from 'lib/client/reactContexts/PreviewModeContext';
 
 /** The maximum number of pages which can be listed under the adventure's "Latest Pages" section. */
 export const MAX_LATEST_PAGES = 45;

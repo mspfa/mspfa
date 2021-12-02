@@ -6,7 +6,7 @@ import { getPrivateUser } from 'lib/server/users'; // @server-only
 import type { AppProps, AppContext } from 'next/app';
 import type { NextPageContext } from 'next';
 import Head from 'next/head';
-import UserContext, { useUserMerge, useUserInApp } from 'lib/client/UserContext';
+import UserContext, { useUserMerge, useUserInApp } from 'lib/client/reactContexts/UserContext';
 import type { PrivateUser } from 'lib/client/users';
 import type { PageRequest } from 'lib/server/pages';
 import React, { useEffect, useRef } from 'react';

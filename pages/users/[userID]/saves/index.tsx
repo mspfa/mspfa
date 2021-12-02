@@ -15,7 +15,7 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import { useState } from 'react';
 import type { StoryID } from 'lib/server/stories';
 import Row from 'components/Row';
-import { useUser } from 'lib/client/UserContext';
+import { useUser } from 'lib/client/reactContexts/UserContext';
 import { useRouter } from 'next/router';
 
 type ServerSideProps = {

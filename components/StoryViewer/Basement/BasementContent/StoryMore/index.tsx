@@ -3,7 +3,7 @@ import LabeledGrid from 'components/LabeledGrid';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import Row from 'components/Row';
 import { CommentaryShownContext, StoryViewerContext } from 'components/StoryViewer';
-import StoryIDContext from 'lib/client/StoryIDContext';
+import StoryIDContext from 'lib/client/reactContexts/StoryIDContext';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import type { ChangeEvent } from 'react';
 import React, { useContext } from 'react';

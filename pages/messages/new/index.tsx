@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import Page from 'components/Page';
 import type { PublicUser } from 'lib/client/users';
-import { getUser } from 'lib/client/UserContext';
+import { getUser } from 'lib/client/reactContexts/UserContext';
 import type { FormikHelpers } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import useFunction from 'lib/client/reactHooks/useFunction';

@@ -18,8 +18,8 @@ import Timestamp from 'components/Timestamp';
 import type { ReactNode } from 'react';
 import { Fragment } from 'react';
 import StoryPageLink from 'components/StoryPageLink';
-import PreviewModeContext from 'lib/client/PreviewModeContext';
-import StoryIDContext from 'lib/client/StoryIDContext';
+import PreviewModeContext from 'lib/client/reactContexts/PreviewModeContext';
+import StoryIDContext from 'lib/client/reactContexts/StoryIDContext';
 import { escapeRegExp } from 'lodash';
 import Row from 'components/Row';
 

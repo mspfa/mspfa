@@ -5,7 +5,7 @@ import LabeledGrid from 'components/LabeledGrid';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import useAutoSelect from 'lib/client/reactHooks/useAutoSelect';
-import PrivateStoryContext from 'lib/client/PrivateStoryContext';
+import PrivateStoryContext from 'lib/client/reactContexts/PrivateStoryContext';
 import IDPrefix from 'lib/client/IDPrefix';
 import AddButton from 'components/Button/AddButton';
 import ColorField from 'components/ColorField';

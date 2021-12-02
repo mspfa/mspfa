@@ -9,7 +9,7 @@ import type { ClientMessage } from 'lib/client/messages';
 import BBCode from 'components/BBCode';
 import users, { getPublicUser } from 'lib/server/users';
 import type { PublicUser } from 'lib/client/users';
-import { useUser, setUser } from 'lib/client/UserContext';
+import { useUser, setUser } from 'lib/client/reactContexts/UserContext';
 import { uniqBy } from 'lodash';
 import { useUserCache } from 'lib/client/UserCache';
 import Link from 'components/Link';

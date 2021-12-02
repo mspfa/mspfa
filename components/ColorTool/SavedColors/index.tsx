@@ -3,7 +3,7 @@ import type { DragEvent } from 'react';
 import React, { useContext, useState, useRef } from 'react';
 import LabeledGrid from 'components/LabeledGrid';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import PrivateStoryContext from 'lib/client/PrivateStoryContext';
+import PrivateStoryContext from 'lib/client/reactContexts/PrivateStoryContext';
 import type { ColorProps } from 'components/ColorTool/Color';
 import Row from 'components/Row';
 import Label from 'components/Label';

@@ -7,7 +7,7 @@ import Dialog from 'lib/client/Dialog';
 import api from 'lib/client/api';
 import type { DragEvent } from 'react';
 import { useContext } from 'react';
-import PrivateStoryContext from 'lib/client/PrivateStoryContext';
+import PrivateStoryContext from 'lib/client/reactContexts/PrivateStoryContext';
 import ColorGroupOptions from 'components/ColorTool/ColorGroupOptions';
 import { getChangedValues } from 'lib/client/forms';
 import Grabber from 'components/Grabber';

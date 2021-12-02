@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import type { ClientColor, ClientColorGroup } from 'lib/client/colors';
 import React, { useContext } from 'react';
-import PrivateStoryContext from 'lib/client/PrivateStoryContext';
+import PrivateStoryContext from 'lib/client/reactContexts/PrivateStoryContext';
 import Label from 'components/Label';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import Color from 'components/ColorTool/Color';

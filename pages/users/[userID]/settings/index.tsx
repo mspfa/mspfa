@@ -1,5 +1,5 @@
 import Page from 'components/Page';
-import { setUser, setUserMerge, getUser } from 'lib/client/UserContext';
+import { setUser, setUserMerge, getUser } from 'lib/client/reactContexts/UserContext';
 import type { PrivateUser } from 'lib/client/users';
 import { Perm } from 'lib/client/perms';
 import { permToGetUserInPage } from 'lib/server/permToGetUser';

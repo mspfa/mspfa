@@ -9,7 +9,7 @@ import BBCode from 'components/BBCode';
 import parseBBCode from 'lib/client/parseBBCode';
 import { useUserCache } from 'lib/client/UserCache';
 import Timestamp from 'components/Timestamp';
-import { setUser, useUser } from 'lib/client/UserContext';
+import { setUser, useUser } from 'lib/client/reactContexts/UserContext';
 import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
 import Button from 'components/Button';

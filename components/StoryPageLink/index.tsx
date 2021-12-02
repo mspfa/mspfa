@@ -2,8 +2,8 @@ import type { LinkProps } from 'components/Link';
 import Link from 'components/Link';
 import type { StoryPageID } from 'lib/server/stories';
 import { useContext } from 'react';
-import StoryIDContext from 'lib/client/StoryIDContext';
-import PreviewModeContext from 'lib/client/PreviewModeContext';
+import StoryIDContext from 'lib/client/reactContexts/StoryIDContext';
+import PreviewModeContext from 'lib/client/reactContexts/PreviewModeContext';
 
 export type StoryPageLinkProps = Omit<LinkProps, 'href' | 'shallow'> & {
 	pageID: StoryPageID
