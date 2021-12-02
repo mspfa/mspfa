@@ -9,11 +9,11 @@ const preventWhitespaceCollapse = (string: string) => {
 	// `\u00a0` is the non-breaking space character.
 
 	if (string[0] === ' ') {
-		string = `\u00a0${string.slice(1)}`;
+		string = '\u00a0' + string.slice(1);
 	}
 
 	if (string[string.length - 1] === ' ') {
-		string = `${string.slice(0, -1)}\u00a0`;
+		string = string.slice(0, -1) + '\u00a0';
 	}
 
 	string = replaceAll(string, ' \n', '\u00a0\n');
