@@ -2,7 +2,7 @@ import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
 import stories from 'lib/server/stories';
 import getStoryByUnsafeID from 'lib/server/stories/getStoryByUnsafeID';
-import { authenticate } from 'lib/server/auth';
+import authenticate from 'lib/server/auth/authenticate';
 import { Perm } from 'lib/client/perms';
 import { ObjectId } from 'mongodb';
 import StoryPrivacy from 'lib/client/StoryPrivacy';

@@ -1,7 +1,7 @@
 import './styles.scss';
 import 'lib/server/effects'; // @server-only
 import App from 'next/app'; // @server-only
-import { authenticate } from 'lib/server/auth'; // @server-only
+import authenticate from 'lib/server/auth/authenticate'; // @server-only
 import { getPrivateUser } from 'lib/server/users'; // @server-only
 import type { AppProps, AppContext } from 'next/app';
 import type { NextPageContext } from 'next';

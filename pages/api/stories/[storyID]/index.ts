@@ -11,7 +11,7 @@ import stories, { getPrivateStory, getPublicStory } from 'lib/server/stories';
 import getStoryByUnsafeID from 'lib/server/stories/getStoryByUnsafeID';
 import type { PrivateStory, PublicStory } from 'lib/client/stories';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
-import { authenticate } from 'lib/server/auth';
+import authenticate from 'lib/server/auth/authenticate';
 import overwriteArrays from 'lib/client/overwriteArrays';
 
 /** The keys of all `PrivateStory` properties which a client should be able to `PATCH` into a `ServerStory`. */

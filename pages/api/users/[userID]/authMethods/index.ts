@@ -5,7 +5,7 @@ import { permToGetUserInAPI } from 'lib/server/users/permToGetUser';
 import users from 'lib/server/users';
 import type { AuthMethod } from 'lib/server/users';
 import type { AuthMethodOptions, ClientAuthMethod } from 'lib/client/auth';
-import { getAuthMethodInfo } from 'lib/server/auth';
+import getAuthMethodInfo from 'lib/server/auth/getAuthMethodInfo';
 
 const Handler: APIHandler<{
 	query: {

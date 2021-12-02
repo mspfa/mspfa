@@ -4,7 +4,7 @@ import type { ServerNewsPost } from 'lib/server/news';
 import { getClientNewsPost } from 'lib/server/news';
 import stories from 'lib/server/stories';
 import getStoryByUnsafeID from 'lib/server/stories/getStoryByUnsafeID';
-import { authenticate } from 'lib/server/auth';
+import authenticate from 'lib/server/auth/authenticate';
 import type { ClientNewsPost } from 'lib/client/news';
 import { Perm } from 'lib/client/perms';
 import StoryPrivacy from 'lib/client/StoryPrivacy';

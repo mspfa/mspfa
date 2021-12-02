@@ -5,7 +5,7 @@ import { getClientStoryPage } from 'lib/server/stories';
 import updateStorySchedule from 'lib/server/stories/updateStorySchedule';
 import getStoryByUnsafeID from 'lib/server/stories/getStoryByUnsafeID';
 import getClientPagesAround from 'lib/server/stories/getClientPagesAround';
-import { authenticate } from 'lib/server/auth';
+import authenticate from 'lib/server/auth/authenticate';
 import type { ClientStoryPage, ClientStoryPageRecord } from 'lib/client/stories';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 import invalidPublishedOrder from 'lib/client/invalidPublishedOrder';

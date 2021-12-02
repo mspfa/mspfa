@@ -4,7 +4,7 @@ import type { ServerColor } from 'lib/server/colors';
 import { getClientColor } from 'lib/server/colors';
 import stories from 'lib/server/stories';
 import getStoryByUnsafeID from 'lib/server/stories/getStoryByUnsafeID';
-import { authenticate } from 'lib/server/auth';
+import authenticate from 'lib/server/auth/authenticate';
 import type { ClientColor } from 'lib/client/colors';
 import { Perm } from 'lib/client/perms';
 import StoryPrivacy from 'lib/client/StoryPrivacy';

@@ -2,7 +2,7 @@ import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
 import type { ServerStory } from 'lib/server/stories';
 import stories, { defaultStory, getPrivateStory } from 'lib/server/stories';
-import { authenticate } from 'lib/server/auth';
+import authenticate from 'lib/server/auth/authenticate';
 import type { PrivateStory } from 'lib/client/stories';
 import { connection } from 'lib/server/db';
 

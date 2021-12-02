@@ -3,7 +3,7 @@ import type { ServerUser } from 'lib/server/users';
 import type { UnsafeObjectID } from 'lib/server/db';
 import type { APIRequest, APIResponse } from 'lib/server/api';
 import type { PageRequest } from 'lib/server/pages';
-import { authenticate } from 'lib/server/auth';
+import authenticate from 'lib/server/auth/authenticate';
 import type { integer } from 'lib/types';
 
 type PermToGetUserRequiredParams = [

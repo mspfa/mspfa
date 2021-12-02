@@ -5,7 +5,7 @@ import { getClientCommentReply } from 'lib/server/comments';
 import type { ServerStoryPage } from 'lib/server/stories';
 import stories from 'lib/server/stories';
 import getStoryByUnsafeID from 'lib/server/stories/getStoryByUnsafeID';
-import { authenticate } from 'lib/server/auth';
+import authenticate from 'lib/server/auth/authenticate';
 import type { ClientCommentReply } from 'lib/client/comments';
 import { Perm } from 'lib/client/perms';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
