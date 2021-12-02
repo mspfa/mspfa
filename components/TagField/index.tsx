@@ -4,7 +4,7 @@ import toKebabCase from 'lib/client/toKebabCase';
 import type { TextareaHTMLAttributes, KeyboardEvent, MouseEvent, ReactNode } from 'react';
 import React, { useRef } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import { usePrefixedID } from 'lib/client/IDPrefix';
+import { usePrefixedID } from 'lib/client/reactContexts/IDPrefix';
 import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
 import { isEqual } from 'lodash';
 import storyTags, { tagOrExcludedTagTest } from 'lib/client/storyTags';

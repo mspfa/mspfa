@@ -3,7 +3,7 @@ import type { FieldAttributes } from 'formik';
 import toKebabCase from 'lib/client/toKebabCase';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import type { LabeledGridRowProps } from 'components/LabeledGrid/LabeledGridRow';
-import { usePrefixedID } from 'lib/client/IDPrefix';
+import { usePrefixedID } from 'lib/client/reactContexts/IDPrefix';
 
 export type ExclusiveLabeledGridFieldProps = Pick<LabeledGridRowProps, 'label' | 'help'> & {
 	/**

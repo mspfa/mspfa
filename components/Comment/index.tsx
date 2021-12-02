@@ -11,7 +11,7 @@ import Dialog from 'lib/client/Dialog';
 import api from 'lib/client/api';
 import Link from 'components/Link';
 import { useLeaveConfirmation } from 'lib/client/forms';
-import IDPrefix from 'lib/client/IDPrefix';
+import IDPrefix from 'lib/client/reactContexts/IDPrefix';
 import { Perm } from 'lib/client/perms';
 import BBCode from 'components/BBCode';
 import BBField from 'components/BBCode/BBField';

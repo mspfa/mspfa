@@ -1,6 +1,6 @@
 import LabeledGrid from 'components/LabeledGrid';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
-import IDPrefix from 'lib/client/IDPrefix';
+import IDPrefix from 'lib/client/reactContexts/IDPrefix';
 
 /**
  * A `LabeledGrid` of form fields containing options for a `ClientColorGroup`.

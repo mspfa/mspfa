@@ -11,7 +11,7 @@ import type { FormikProps } from 'formik';
 import Row from 'components/Row';
 import Link from 'components/Link';
 import { getChangedValues } from 'lib/client/forms';
-import IDPrefix from 'lib/client/IDPrefix';
+import IDPrefix from 'lib/client/reactContexts/IDPrefix';
 import useLatest from 'lib/client/reactHooks/useLatest';
 import { youTubeVideoIDTest } from 'components/BBCode/BBTags';
 import type { integer } from 'lib/types';

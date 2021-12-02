@@ -4,7 +4,7 @@ import type { KeyboardEvent } from 'react';
 import { useState, useRef } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
-import { usePrefixedID } from 'lib/client/IDPrefix';
+import { usePrefixedID } from 'lib/client/reactContexts/IDPrefix';
 import toKebabCase from 'lib/client/toKebabCase';
 import EditButton from 'components/Button/EditButton';
 import RemoveButton from 'components/Button/RemoveButton';

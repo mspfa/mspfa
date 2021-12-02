@@ -9,7 +9,7 @@ import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import Dialog from 'lib/client/Dialog';
 import frameThrottler from 'lib/client/frameThrottler';
-import IDPrefix from 'lib/client/IDPrefix';
+import IDPrefix from 'lib/client/reactContexts/IDPrefix';
 import type { ClientNewsPost } from 'lib/client/news';
 import { Perm } from 'lib/client/perms';
 import useFunction from 'lib/client/reactHooks/useFunction';

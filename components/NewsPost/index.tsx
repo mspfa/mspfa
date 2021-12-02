@@ -13,7 +13,7 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import Dialog from 'lib/client/Dialog';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
-import IDPrefix from 'lib/client/IDPrefix';
+import IDPrefix from 'lib/client/reactContexts/IDPrefix';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
 

@@ -4,7 +4,7 @@ import toKebabCase from 'lib/client/toKebabCase';
 import type { ChangeEvent, InputHTMLAttributes, ReactNode } from 'react';
 import { useState, useRef, useEffect } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import { usePrefixedID } from 'lib/client/IDPrefix';
+import { usePrefixedID } from 'lib/client/reactContexts/IDPrefix';
 import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
 import type { PublicUser } from 'lib/client/users';
