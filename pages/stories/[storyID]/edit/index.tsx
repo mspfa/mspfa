@@ -23,7 +23,7 @@ import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import UserField from 'components/UserField';
 import type { PublicUser } from 'lib/client/users';
 import { useUser } from 'lib/client/reactContexts/UserContext';
-import { useUserCache } from 'lib/client/UserCache';
+import { useUserCache } from 'lib/client/reactContexts/UserCache';
 import { uniq, uniqBy } from 'lodash';
 import users, { getPublicUser } from 'lib/server/users';
 import UserArrayField from 'components/UserField/UserArrayField';

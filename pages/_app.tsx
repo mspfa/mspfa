@@ -12,7 +12,7 @@ import type { PageRequest } from 'lib/server/pages';
 import React, { useEffect, useRef } from 'react';
 import { setTheme } from 'lib/client/themes';
 import { mergeWith } from 'lodash';
-import UserCache from 'lib/client/UserCache';
+import UserCache from 'lib/client/reactContexts/UserCache';
 import overwriteArrays from 'lib/client/overwriteArrays';
 import { useRouter } from 'next/router';
 import Dialog from 'lib/client/Dialog';

@@ -7,7 +7,7 @@ import { useMemo, useRef, useState } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import BBCode from 'components/BBCode';
 import parseBBCode from 'lib/client/parseBBCode';
-import { useUserCache } from 'lib/client/UserCache';
+import { useUserCache } from 'lib/client/reactContexts/UserCache';
 import Timestamp from 'components/Timestamp';
 import { setUser, useUser } from 'lib/client/reactContexts/UserContext';
 import api from 'lib/client/api';

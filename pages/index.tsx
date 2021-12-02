@@ -6,7 +6,7 @@ import { withErrorPage } from 'lib/client/errors';
 import { Perm } from 'lib/client/perms';
 import type { StoryLogListings } from 'lib/client/stories';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
-import { useUserCache } from 'lib/client/UserCache';
+import { useUserCache } from 'lib/client/reactContexts/UserCache';
 import type { PublicUser } from 'lib/client/users';
 import withStatusCode from 'lib/server/withStatusCode';
 import { getPublicStory } from 'lib/server/stories';

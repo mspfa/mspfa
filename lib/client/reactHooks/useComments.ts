@@ -3,7 +3,7 @@ import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import type { ClientCommentOrReply } from 'lib/client/comments';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import { useUserCache } from 'lib/client/UserCache';
+import { useUserCache } from 'lib/client/reactContexts/UserCache';
 import type { APIHandler } from 'lib/server/api';
 import type { integer } from 'lib/types';
 import type { PublicUser } from 'lib/client/users';

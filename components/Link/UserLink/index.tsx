@@ -1,6 +1,6 @@
 import type { LinkProps } from 'components/Link';
 import Link from 'components/Link';
-import { useUserCache } from 'lib/client/UserCache';
+import { useUserCache } from 'lib/client/reactContexts/UserCache';
 
 export type UserLinkProps = Omit<LinkProps, 'children' | 'href'> & {
 	/** The ID of the user to link. */

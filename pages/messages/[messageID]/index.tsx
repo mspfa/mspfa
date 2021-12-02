@@ -13,7 +13,7 @@ import users, { getPublicUser } from 'lib/server/users';
 import type { PublicUser } from 'lib/client/users';
 import { useUser, setUser } from 'lib/client/reactContexts/UserContext';
 import { uniqBy } from 'lodash';
-import { useUserCache } from 'lib/client/UserCache';
+import { useUserCache } from 'lib/client/reactContexts/UserCache';
 import Link from 'components/Link';
 import { Fragment, useState } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';

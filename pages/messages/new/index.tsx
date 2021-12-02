@@ -16,7 +16,7 @@ import Section from 'components/Section';
 import Dialog from 'lib/client/Dialog';
 import users, { getPublicUser } from 'lib/server/users';
 import UserArrayField from 'components/UserField/UserArrayField';
-import { useUserCache } from 'lib/client/UserCache';
+import { useUserCache } from 'lib/client/reactContexts/UserCache';
 import Router from 'next/router';
 import { uniq } from 'lodash';
 import type { ClientMessage } from 'lib/client/messages';

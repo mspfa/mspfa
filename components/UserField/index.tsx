@@ -12,7 +12,7 @@ import UserFieldOption from 'components/UserField/UserFieldOption';
 import EditButton from 'components/Button/EditButton';
 import type { CancelTokenSource } from 'axios';
 import axios from 'axios';
-import { useUserCache } from 'lib/client/UserCache';
+import { useUserCache } from 'lib/client/reactContexts/UserCache';
 import RemoveButton from 'components/Button/RemoveButton';
 import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
 import useLatest from 'lib/client/reactHooks/useLatest';

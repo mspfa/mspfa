@@ -13,7 +13,7 @@ import IDPrefix from 'lib/client/reactContexts/IDPrefix';
 import type { ClientNewsPost } from 'lib/client/news';
 import { Perm } from 'lib/client/perms';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import { useUserCache } from 'lib/client/UserCache';
+import { useUserCache } from 'lib/client/reactContexts/UserCache';
 import { useUser } from 'lib/client/reactContexts/UserContext';
 import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
 import React, { useContext, useEffect, useRef, useState } from 'react';

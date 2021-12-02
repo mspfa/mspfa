@@ -3,7 +3,7 @@ import type { APIHandler } from 'lib/server/api';
 import type { APIClient } from 'lib/client/api';
 import type { ClientComment, ClientCommentOrReply } from 'lib/client/comments';
 import { useUser } from 'lib/client/reactContexts/UserContext';
-import { useUserCache } from 'lib/client/UserCache';
+import { useUserCache } from 'lib/client/reactContexts/UserCache';
 import React, { useRef, useState } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import type { DialogOptions } from 'lib/client/Dialog';
