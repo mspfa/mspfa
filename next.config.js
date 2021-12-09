@@ -40,7 +40,6 @@ module.exports = {
 						),
 						replace: ''
 					},
-
 					// Normally, the minifier thinks `import`ed style modules which have nothing `import`ed `from` them are unused, so it omits them from the production build.
 					{
 						search: /^import '(.+\.module\.(?:s?css|sass))';$/gm,
@@ -49,7 +48,6 @@ module.exports = {
 							return `import ${variableName} from '${matchedPath}'; ${variableName};`;
 						}
 					},
-
 					// If a global JSX style is in a component's children but not wrapped in curly brackets, it will add randomized class names to all the components in the same block of JSX.
 					{
 						search: /(?<!\(\s+)(<style jsx global>.*?<\/style>)/gs,
