@@ -25,16 +25,18 @@ import Button from 'components/Button';
 import type { integer } from 'lib/types';
 import Icon from 'components/Icon';
 import { useEffect } from 'react';
+import getStoriesAsUser from 'lib/server/stories/getStoriesAsUser';
 
 type ServerSideProps = {
 	publicUser: PublicUser,
-	publicStories: PublicStory[],
-	favsPublic: boolean
+	stories: PublicStory[],
+	favsPublic: boolean,
+	favCount?: integer
 } | {
 	statusCode: integer
 };
 
-const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, favsPublic }) => {
+const Component = withErrorPage<ServerSideProps>(({ publicUser, stories, favsPublic, favCount }) => {
 	const user = useUser();
 
 	const notOwnProfile = user?.id !== publicUser.id;
@@ -87,7 +89,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 									className="profile-action"
 									href={`/users/${publicUser.id}/favs`}
 								>
-									View Favorites
+									{`View Favorites (${favCount})`}
 								</Link>
 							)}
 							{notOwnProfile && (
@@ -158,15 +160,15 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, publicStories, f
 						</BBCode>
 					</Section>
 				)}
-				{publicStories.length !== 0 && (
+				{stories.length !== 0 && (
 					<Section
 						id="profile-stories"
-						heading={`${publicUser.name}'s Adventures`}
+						heading={`${publicUser.name}'s Adventures (${stories.length})`}
 						collapsible
 						open
 					>
 						<List listing={StoryListing}>
-							{publicStories}
+							{stories}
 						</List>
 					</Section>
 				)}
@@ -194,8 +196,16 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ param
 		return {
 			props: {
 				publicUser: getPublicUser(userFromParams),
-				publicStories: await getPublicStoriesByEditor(userFromParams),
-				favsPublic: userFromParams.settings.favsPublic
+				stories: await getPublicStoriesByEditor(userFromParams),
+				favsPublic: userFromParams.settings.favsPublic,
+				...userFromParams.settings.favsPublic && {
+					favCount: (
+						// Show only the public fav count on the user's profile no matter who you are, so that everyone sees the same number.
+						await getStoriesAsUser(undefined, false, {
+							_id: { $in: userFromParams.favs }
+						}).count()
+					)
+				}
 			}
 		};
 	}
