@@ -152,7 +152,8 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 								name="title"
 								className="spaced"
 								maxLength={50}
-								autoFocus
+								// Only auto-focus if there isn't already a search query.
+								autoFocus={!stories}
 							/>
 						</Row>
 						<Row>

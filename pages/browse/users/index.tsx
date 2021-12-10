@@ -48,7 +48,8 @@ const Component = ({ users, resultCount }: ServerSideProps) => {
 					className="spaced"
 					required
 					maxLength={32}
-					autoFocus
+					// Only auto-focus if there isn't already a search query.
+					autoFocus={!users}
 				/>
 			</Row>
 		</BrowsePage>
