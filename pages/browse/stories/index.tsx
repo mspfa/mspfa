@@ -20,7 +20,7 @@ import BrowsePageRangeField from 'components/BrowsePage/BrowsePageRangeField';
 import BrowsePageDateRangeField, { DEFAULT_MIN_DATE } from 'components/BrowsePage/BrowsePageDateRangeField';
 
 /** A record which maps every `StoryStatus` to `true`. */
-const allStatusesTrue: Record<string, true> = {} as any;
+const allStatusesTrue: Record<string, true> = {};
 
 const statusFieldContainers: ReactNode[] = [];
 
