@@ -3,7 +3,7 @@ import type { APIHandler } from 'lib/server/api';
 import type { ServerComment } from 'lib/server/comments';
 import { getClientComment } from 'lib/server/comments';
 import type { ServerStoryPage, StoryPageID } from 'lib/server/stories';
-import { getStoryByUnsafeID } from 'lib/server/stories';
+import getStoryByUnsafeID from 'lib/server/stories/getStoryByUnsafeID';
 import authenticate from 'lib/server/auth/authenticate';
 import type { ClientComment } from 'lib/client/comments';
 import { Perm } from 'lib/client/perms';

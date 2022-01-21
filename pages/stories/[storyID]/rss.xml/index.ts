@@ -3,7 +3,7 @@ import escapeAngleBrackets from 'lib/client/escapeAngleBrackets';
 import replaceAll from 'lib/client/replaceAll';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 import type { MyGetServerSideProps } from 'lib/server/pages';
-import { getStoryByUnsafeID } from 'lib/server/stories';
+import getStoryByUnsafeID from 'lib/server/stories/getStoryByUnsafeID';
 
 const Component = () => null;
 
