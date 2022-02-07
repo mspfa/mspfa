@@ -1,6 +1,6 @@
 import db from 'lib/server/db';
 import type { ObjectId } from 'mongodb';
-import type { achievements } from 'lib/server/achievements';
+import type { AchievementID } from 'lib/client/achievements';
 import type { URLString, EmailString, integer } from 'lib/types';
 import type { PrivateUser, PublicUser } from 'lib/client/users';
 import defaultUserSettings from 'lib/client/defaultUserSettings';
@@ -92,7 +92,7 @@ export type ServerUser = {
 	site: '' | URLString,
 	/** @uniqueItems true */
 	favs: StoryID[],
-	achievements: Partial<Record<keyof typeof achievements, true>>,
+	achievements: Partial<Record<AchievementID, true>>,
 	/** A record that maps each story ID to the page ID the user has saved in that story. */
 	storySaves: Record<StoryID, StoryPageID>,
 	profileStyle: string,
