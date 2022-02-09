@@ -21,19 +21,13 @@ export type RandomArtworkProps = {
 	 * Examples: `Cool Guy 43.png`, `'Cool Guy 43.2.png'`
 	 */
 	imageFilename: string,
-	/** Content to put immediately following the `img` tag. */
+	/** Content to put immediately following the artwork's `img` tag. */
 	afterImage?: ReactNode,
-	/** Content to put in a centered row below the artwork. */
-	children?: ReactNode
+	/** A description of what the artwork is trying to convey, to put in a centered row below the artwork. */
+	children?: string
 };
 
-const RandomArtwork = ({
-	directory,
-	name,
-	imageFilename,
-	afterImage,
-	children
-}: RandomArtworkProps) => (
+const RandomArtwork = ({ directory, name, imageFilename, afterImage, children }: RandomArtworkProps) => (
 	<>
 		<Row className="random-artwork-row random-artwork-image-container">
 			<img
@@ -44,7 +38,7 @@ const RandomArtwork = ({
 			{afterImage}
 		</Row>
 		{children !== undefined && (
-			<Row className="random-artwork-row">
+			<Row className="random-artwork-row random-artwork-description">
 				{children}
 			</Row>
 		)}

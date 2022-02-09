@@ -1,4 +1,5 @@
 import './styles.module.scss';
+import Row from 'components/Row';
 import RandomArtwork from 'components/RandomArtwork';
 import Page from 'components/Page';
 import Section from 'components/Section';
@@ -21,11 +22,12 @@ const Component = ({ imageFilename }: ServerSideProps) => (
 						Disclaimer: This image is not part of and has no effect related to the terms of service.
 					</div>
 				)}
-			>
+			/>
+			<Row id="terms">
 				<p>
 					[ Terms of service here ]
 				</p>
-			</RandomArtwork>
+			</Row>
 		</Section>
 	</Page>
 );
