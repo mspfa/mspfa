@@ -34,7 +34,7 @@ const StoryNews = React.memo(() => {
 
 	const user = useUser();
 
-	const [newsPosts, setNewsPosts] = useState(initialNewsPosts);
+	const [newsPosts, setNewsPosts] = useState([...initialNewsPosts]);
 
 	const mountedRef = useMountedRef();
 
