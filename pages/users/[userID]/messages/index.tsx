@@ -20,7 +20,7 @@ import { useEffect, useRef, useState } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import Button from 'components/Button';
 import Dialog from 'lib/client/Dialog';
-import Row from 'components/Row';
+import RandomArtwork from 'components/RandomArtwork';
 import type { integer } from 'lib/types';
 import useSticky from 'lib/client/reactHooks/useSticky';
 import getRandomImageFilename from 'lib/server/getRandomImageFilename';
@@ -202,16 +202,13 @@ const Component = withErrorPage<ServerSideProps>(({
 					)}
 				</div>
 				{listedMessages.length === 0 ? (
-					<div id="no-messages">
-						<Row>
-							<img
-								src={`/images/no-messages/${imageFilename}`}
-								alt="Artwork for No Messages"
-								title={`Artist: ${imageFilename.slice(0, imageFilename.indexOf('.'))}`}
-							/>
-						</Row>
-						<Row>No new messages.</Row>
-					</div>
+					<RandomArtwork
+						directory="no-messages"
+						name="No Messages"
+						imageFilename={imageFilename}
+					>
+						No new messages.
+					</RandomArtwork>
 				) : (
 					<List
 						listing={MessageListing}

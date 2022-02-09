@@ -1,5 +1,4 @@
-import './styles.module.scss';
-import Row from 'components/Row';
+import RandomArtwork from 'components/RandomArtwork';
 import Page from 'components/Page';
 import type { ServerResponse } from 'http';
 import BottomActions from 'components/BottomActions';
@@ -30,15 +29,14 @@ export type ErrorPageProps = {
 const ErrorPage = ({ statusCode, imageFilename }: ErrorPageProps) => (
 	<Page withFlashyTitle heading={`Error ${statusCode}`}>
 		{statusCode === 403 && (
-			<Section id="error-section">
-				<Row>
-					<img
-						src={`/images/403/${imageFilename!}`}
-						alt="Artwork for Error 403"
-						title={`Artist: ${imageFilename!.slice(0, imageFilename!.indexOf('.'))}`}
-					/>
-				</Row>
-				<Row>You don't have permission to access this page.</Row>
+			<Section>
+				<RandomArtwork
+					directory="403"
+					name="Error 403"
+					imageFilename={imageFilename!}
+				>
+					You don't have permission to access this page.
+				</RandomArtwork>
 			</Section>
 		)}
 		<BottomActions>

@@ -1,4 +1,3 @@
-import './styles.module.scss';
 import Page from 'components/Page';
 import { Perm } from 'lib/client/perms';
 import { permToGetUserInPage } from 'lib/server/users/permToGetUser';
@@ -14,7 +13,7 @@ import getRandomImageFilename from 'lib/server/getRandomImageFilename';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import { useState } from 'react';
 import type { StoryID } from 'lib/server/stories';
-import Row from 'components/Row';
+import RandomArtwork from 'components/RandomArtwork';
 import { useUser } from 'lib/client/reactContexts/UserContext';
 import { useRouter } from 'next/router';
 
@@ -55,21 +54,16 @@ const Component = withErrorPage<ServerSideProps>(({
 						{storySaves}
 					</List>
 				) : (
-					<>
-						<Row>
-							<img
-								src={`/images/no-story-saves/${imageFilename}`}
-								alt="Artwork for No Game Saves"
-								title={`Artist: ${imageFilename.slice(0, imageFilename.indexOf('.'))}`}
-							/>
-						</Row>
-						<Row>
-							{(queriedUserID === user?.id
-								? 'You have no saved games.'
-								: 'This user has no saved games.'
-							)}
-						</Row>
-					</>
+					<RandomArtwork
+						directory="no-story-saves"
+						name="No Game Saves"
+						imageFilename={imageFilename}
+					>
+						{(queriedUserID === user?.id
+							? 'You have no saved games.'
+							: 'This user has no saved games.'
+						)}
+					</RandomArtwork>
 				)}
 			</Section>
 		</Page>

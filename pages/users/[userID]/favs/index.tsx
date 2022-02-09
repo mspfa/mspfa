@@ -18,6 +18,7 @@ import Button from 'components/Button';
 import getRandomImageFilename from 'lib/server/getRandomImageFilename';
 import getStoriesAsUser from 'lib/server/stories/getStoriesAsUser';
 import type { StoryID } from 'lib/server/stories';
+import RandomArtwork from 'components/RandomArtwork';
 
 type ServerSideProps = {
 	publicUser: PublicUser,
@@ -58,21 +59,16 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, stor
 						</List>
 					</Row>
 				) : (
-					<>
-						<Row>
-							<img
-								src={`/images/no-favs/${imageFilename!}`}
-								alt="Artwork for No Favorites"
-								title={`Artist: ${imageFilename!.slice(0, imageFilename!.indexOf('.'))}`}
-							/>
-						</Row>
-						<Row>
-							{(publicUser.id === user?.id
-								? 'You have no favorite adventures.'
-								: 'This user has no favorite adventures.'
-							)}
-						</Row>
-					</>
+					<RandomArtwork
+						directory="no-favs"
+						name="No Favorites"
+						imageFilename={imageFilename!}
+					>
+						{(publicUser.id === user?.id
+							? 'You have no favorite adventures.'
+							: 'This user has no favorite adventures.'
+						)}
+					</RandomArtwork>
 				)}
 			</Section>
 		</Page>

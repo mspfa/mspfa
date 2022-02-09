@@ -1,5 +1,5 @@
 import './styles.module.scss';
-import Row from 'components/Row';
+import RandomArtwork from 'components/RandomArtwork';
 import Page from 'components/Page';
 import Section from 'components/Section';
 import type { MyGetServerSideProps } from 'lib/server/pages';
@@ -11,22 +11,21 @@ export type ServerSideProps = {
 
 const Component = ({ imageFilename }: ServerSideProps) => (
 	<Page withFlashyTitle heading="Terms of Service">
-		<Section id="terms">
-			<Row>
-				<img
-					src={`/images/terms/${imageFilename}`}
-					alt="Artwork for Terms of Service"
-					title={`Artist: ${imageFilename.slice(0, imageFilename.indexOf('.'))}`}
-				/>
-				<div id="art-disclaimer">
-					Disclaimer: This image is not part of and has no effect related to the terms of service.
-				</div>
-			</Row>
-			<Row>
+		<Section>
+			<RandomArtwork
+				directory="terms"
+				name="Terms of Service"
+				imageFilename={imageFilename}
+				afterImage={(
+					<div id="art-disclaimer">
+						Disclaimer: This image is not part of and has no effect related to the terms of service.
+					</div>
+				)}
+			>
 				<p>
 					[ Terms of service here ]
 				</p>
-			</Row>
+			</RandomArtwork>
 		</Section>
 	</Page>
 );
