@@ -1,5 +1,6 @@
 import type { ClientColor, ClientColorGroup } from 'lib/client/colors';
 import type { ObjectId } from 'mongodb';
+import stringifyID from 'lib/server/db/stringifyID';
 
 export type ColorID = ObjectId;
 export type ColorGroupID = ObjectId;
@@ -15,7 +16,7 @@ export type ServerColorGroup = {
 
 /** Converts a `ServerColor` to a `ClientColor`. */
 export const getClientColorGroup = (colorGroup: ServerColorGroup): ClientColorGroup => ({
-	id: colorGroup.id.toString(),
+	id: stringifyID(colorGroup.id),
 	name: colorGroup.name
 });
 
@@ -37,9 +38,9 @@ export type ServerColor = {
 
 /** Converts a `ServerColor` to a `ClientColor`. */
 export const getClientColor = (color: ServerColor): ClientColor => ({
-	id: color.id.toString(),
+	id: stringifyID(color.id),
 	...color.group && {
-		group: color.group.toString()
+		group: stringifyID(color.group)
 	},
 	name: color.name,
 	value: color.value

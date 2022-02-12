@@ -2,6 +2,7 @@ import type { ObjectId } from 'mongodb';
 import type { ServerUser, ServerUserID } from 'lib/server/users';
 import type { ClientComment, ClientCommentReply } from 'lib/client/comments';
 import type { StoryPageID } from 'lib/server/stories';
+import stringifyID from 'lib/server/db/stringifyID';
 
 export type ServerCommentID = ObjectId;
 
@@ -34,13 +35,13 @@ export const getClientComment = <User extends ServerUser | undefined>(
 	/** The user accessing this comment, or undefined if there is no authenticated user. */
 	user: User
 ): ClientComment<User> => ({
-	id: serverComment.id.toString(),
+	id: stringifyID(serverComment.id),
 	pageID,
 	posted: +serverComment.posted,
 	...serverComment.edited !== undefined && {
 		edited: +serverComment.edited
 	},
-	author: serverComment.author.toString(),
+	author: stringifyID(serverComment.author),
 	content: serverComment.content,
 	likeCount: serverComment.likes.length,
 	dislikeCount: serverComment.dislikes.length,
@@ -66,12 +67,12 @@ export const getClientCommentReply = <User extends ServerUser | undefined>(
 	/** The user accessing this comment, or undefined if there is no authenticated user. */
 	user: User
 ): ClientCommentReply<User> => ({
-	id: serverCommentReply.id.toString(),
+	id: stringifyID(serverCommentReply.id),
 	posted: +serverCommentReply.posted,
 	...serverCommentReply.edited !== undefined && {
 		edited: +serverCommentReply.edited
 	},
-	author: serverCommentReply.author.toString(),
+	author: stringifyID(serverCommentReply.author),
 	content: serverCommentReply.content,
 	likeCount: serverCommentReply.likes.length,
 	dislikeCount: serverCommentReply.dislikes.length,

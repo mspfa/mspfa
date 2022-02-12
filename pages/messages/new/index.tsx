@@ -26,7 +26,7 @@ import getMessageByUnsafeID from 'lib/server/messages/getMessageByUnsafeID';
 import { Perm } from 'lib/client/perms';
 import withStatusCode from 'lib/server/withStatusCode';
 import Link from 'components/Link';
-import { safeObjectID } from 'lib/server/db';
+import parseID from 'lib/server/db/parseID';
 import type { ObjectId } from 'mongodb';
 import type { integer } from 'lib/types';
 import promptSignIn from 'lib/client/promptSignIn';
@@ -216,7 +216,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 			: query.to
 				? uniq(query.to)
 				: []
-	).map(safeObjectID).filter(Boolean) as ObjectId[];
+	).map(parseID).filter(Boolean) as ObjectId[];
 
 	return {
 		props: {

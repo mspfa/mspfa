@@ -10,6 +10,7 @@ import { Perm } from 'lib/client/perms';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 import { flatten } from 'lib/server/db';
 import type { integer } from 'lib/types';
+import stringifyID from 'lib/server/db/stringifyID';
 
 /** The keys of all `ClientColorGroup` properties which a client should be able to `PATCH` into a `ServerColorGroup`. */
 type WritableColorGroupKey = 'name';
@@ -46,7 +47,7 @@ const Handler: APIHandler<{
 
 	/** Gets the requested color group. If the color group doesn't exist, responds with an error and never resolves. */
 	const getColorGroup = () => new Promise<ServerColorGroup>(resolve => {
-		const colorGroup = story.colorGroups.find(({ id }) => id.toString() === req.query.colorGroupID);
+		const colorGroup = story.colorGroups.find(({ id }) => stringifyID(id) === req.query.colorGroupID);
 
 		if (!colorGroup) {
 			res.status(404).send({

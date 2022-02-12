@@ -1,6 +1,7 @@
 import type { ServerUser } from 'lib/server/users';
 import users from 'lib/server/users';
-import { connection, safeObjectID } from 'lib/server/db';
+import { connection } from 'lib/server/db';
+import parseID from 'lib/server/db/parseID';
 import type { Filter } from 'mongodb';
 import { escapeRegExp } from 'lodash';
 
@@ -14,7 +15,7 @@ const getUsersByNameOrID = async (nameOrID: string) => {
 		willDelete: { $exists: false }
 	};
 
-	const userID = safeObjectID(nameOrID);
+	const userID = parseID(nameOrID);
 	if (userID) {
 		delete filter.willDelete;
 

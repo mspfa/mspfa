@@ -6,6 +6,7 @@ import type { PrivateUser, PublicUser } from 'lib/client/users';
 import defaultUserSettings from 'lib/client/defaultUserSettings';
 import type { Theme } from 'lib/client/themes';
 import type { StoryID, StoryPageID } from 'lib/server/stories';
+import stringifyID from 'lib/server/db/stringifyID';
 
 export type ServerUserID = ObjectId;
 
@@ -159,7 +160,7 @@ typeCheckedDefaultUser;
 
 /** Converts a `ServerUser` to a `PrivateUser`. */
 export const getPrivateUser = (user: ServerUser): PrivateUser => ({
-	id: user._id.toString(),
+	id: stringifyID(user._id),
 	...user.email && {
 		email: user.email
 	},
@@ -193,7 +194,7 @@ export const getPrivateUser = (user: ServerUser): PrivateUser => ({
 
 /** Converts a `ServerUser` to a `PublicUser`. */
 export const getPublicUser = (user: ServerUser): PublicUser => ({
-	id: user._id.toString(),
+	id: stringifyID(user._id),
 	...user.email !== undefined && user.settings.emailPublic && {
 		email: user.email
 	},

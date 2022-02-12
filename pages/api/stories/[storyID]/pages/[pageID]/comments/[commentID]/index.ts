@@ -10,6 +10,7 @@ import type { ClientComment } from 'lib/client/comments';
 import { Perm } from 'lib/client/perms';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 import { flatten } from 'lib/server/db';
+import stringifyID from 'lib/server/db/stringifyID';
 
 /** The keys of all `ClientComment` properties which a client should be able to `PATCH` into a `ServerComment`. */
 type WritableCommentKey = 'content';
@@ -73,7 +74,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	const comment = page.comments.find(({ id }) => id.toString() === req.query.commentID);
+	const comment = page.comments.find(({ id }) => stringifyID(id) === req.query.commentID);
 
 	if (!comment) {
 		res.status(404).send({

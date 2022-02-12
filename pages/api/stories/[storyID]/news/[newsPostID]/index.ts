@@ -9,6 +9,7 @@ import type { ClientNewsPost } from 'lib/client/news';
 import { Perm } from 'lib/client/perms';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 import { flatten } from 'lib/server/db';
+import stringifyID from 'lib/server/db/stringifyID';
 
 /** The keys of all `ClientNewsPost` properties which a client should be able to `PATCH` into a `ServerNewsPost`. */
 type WritableNewsPostKey = 'content';
@@ -42,7 +43,7 @@ const Handler: APIHandler<{
 
 	/** Gets the requested news post. If the news post doesn't exist, responds with an error and never resolves. */
 	const getNewsPost = () => new Promise<ServerNewsPost>(resolve => {
-		const newsPost = story.news.find(({ id }) => id.toString() === req.query.newsPostID);
+		const newsPost = story.news.find(({ id }) => stringifyID(id) === req.query.newsPostID);
 
 		if (!newsPost) {
 			res.status(404).send({

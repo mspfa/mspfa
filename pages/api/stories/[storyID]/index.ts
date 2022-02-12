@@ -4,7 +4,8 @@ import type { RecursivePartial } from 'lib/types';
 import { Perm } from 'lib/client/perms';
 import type { ServerUserID } from 'lib/server/users';
 import users from 'lib/server/users';
-import { flatten, safeObjectID } from 'lib/server/db';
+import { flatten } from 'lib/server/db';
+import parseID from 'lib/server/db/parseID';
 import { mergeWith, uniqBy } from 'lodash';
 import type { ServerStory } from 'lib/server/stories';
 import stories, { getPrivateStory, getPublicStory } from 'lib/server/stories';
@@ -13,6 +14,7 @@ import type { PrivateStory, PublicStory } from 'lib/client/stories';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 import authenticate from 'lib/server/auth/authenticate';
 import overwriteArrays from 'lib/client/overwriteArrays';
+import stringifyID from 'lib/server/db/stringifyID';
 
 /** The keys of all `PrivateStory` properties which a client should be able to `PATCH` into a `ServerStory`. */
 type WritableStoryKey = 'title' | 'status' | 'privacy' | 'owner' | 'editors' | 'author' | 'description' | 'icon' | 'banner' | 'style' | 'tags' | 'allowComments' | 'sidebarContent' | 'defaultPageTitle';
@@ -146,12 +148,12 @@ const Handler: APIHandler<{
 						[
 							...req.body.owner ? [req.body.owner] : [],
 							...req.body.editors ? req.body.editors : []
-						].map(safeObjectID).filter(Boolean) as ServerUserID[],
+						].map(parseID).filter(Boolean) as ServerUserID[],
 						String
 					)
 				}
 			}).map(
-				newEditor => [newEditor._id.toString(), newEditor] as const
+				newEditor => [stringifyID(newEditor._id), newEditor] as const
 			).toArray()
 		);
 

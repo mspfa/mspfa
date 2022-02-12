@@ -3,7 +3,7 @@ import type { ServerStory, StoryID } from 'lib/server/stories';
 import stories from 'lib/server/stories';
 
 /**
- * Finds and returns a `ServerStory` by a possibly unsafe ID.
+ * Finds and returns a `ServerStory` by a possibly invalid ID.
  *
  * Returns `undefined` if the ID is invalid or the story is not found.
  *

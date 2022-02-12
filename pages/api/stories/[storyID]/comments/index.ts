@@ -13,6 +13,7 @@ import StoryPrivacy from 'lib/client/StoryPrivacy';
 import users, { getPublicUser } from 'lib/server/users';
 import { uniqBy } from 'lodash';
 import { ObjectId } from 'mongodb';
+import stringifyID from 'lib/server/db/stringifyID';
 
 export type StoryCommentsSortMode = 'pageID' | 'newest' | 'oldest' | 'rating';
 
@@ -111,7 +112,7 @@ const Handler: APIHandler<{
 		}
 
 		comments.push(comment);
-		commentPageIDs[comment.id.toString()] = page.id;
+		commentPageIDs[stringifyID(comment.id)] = page.id;
 	};
 
 	if (sort === 'pageID') {
@@ -167,7 +168,7 @@ const Handler: APIHandler<{
 						// Sort by like count if they have the same net rating.
 						|| b.likes.length - a.likes.length
 						// Sort by page ID if they have the same net rating and like count.
-						|| commentPageIDs[b.id.toString()] - commentPageIDs[a.id.toString()]
+						|| commentPageIDs[stringifyID(b.id)] - commentPageIDs[stringifyID(a.id)]
 						// Sort by newest if they have the same net rating, like count, and page ID.
 						|| +b.posted - +a.posted
 					)
@@ -176,7 +177,7 @@ const Handler: APIHandler<{
 		const startIndex = (
 			req.query.after
 				? comments.findIndex(
-					({ id }) => id.toString() === req.query.after
+					({ id }) => stringifyID(id) === req.query.after
 				) + 1
 				: 0
 		);
@@ -188,7 +189,7 @@ const Handler: APIHandler<{
 		comments: comments.map(comment => (
 			getClientComment(
 				comment,
-				commentPageIDs[comment.id.toString()],
+				commentPageIDs[stringifyID(comment.id)],
 				user
 			)
 		)),

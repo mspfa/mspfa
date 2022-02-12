@@ -10,6 +10,7 @@ import type { ClientCommentReply } from 'lib/client/comments';
 import { Perm } from 'lib/client/perms';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 import { flatten } from 'lib/server/db';
+import stringifyID from 'lib/server/db/stringifyID';
 
 /** The keys of all `ClientCommentReply` properties which a client should be able to `PATCH` into a `ServerComment`. */
 type WritableCommentReplyKey = 'content';
@@ -74,7 +75,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	const comment = page.comments.find(({ id }) => id.toString() === req.query.commentID);
+	const comment = page.comments.find(({ id }) => stringifyID(id) === req.query.commentID);
 
 	if (!comment) {
 		res.status(404).send({
@@ -83,7 +84,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	const commentReply = comment.replies.find(({ id }) => id.toString() === req.query.commentReplyID);
+	const commentReply = comment.replies.find(({ id }) => stringifyID(id) === req.query.commentReplyID);
 
 	if (!commentReply) {
 		res.status(404).send({

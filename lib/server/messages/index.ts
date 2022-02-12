@@ -2,6 +2,7 @@ import type { ObjectId } from 'mongodb';
 import db from 'lib/server/db';
 import type { ServerUser, ServerUserID } from 'lib/server/users';
 import type { ClientMessage } from 'lib/client/messages';
+import stringifyID from 'lib/server/db/stringifyID';
 
 export type ServerMessageID = ObjectId;
 
@@ -40,15 +41,15 @@ export const getClientMessage = (
 	/** The user accessing this message, or the user whose list this message is being rendered to. */
 	user: ServerUser
 ): ClientMessage => ({
-	id: message._id.toString(),
+	id: stringifyID(message._id),
 	sent: +message.sent,
 	...message.edited !== undefined && {
 		edited: +message.edited
 	},
-	from: message.from.toString(),
-	to: message.to.map(String),
+	from: stringifyID(message.from),
+	to: message.to.map(stringifyID),
 	...message.replyTo !== undefined && {
-		replyTo: message.replyTo.toString()
+		replyTo: stringifyID(message.replyTo)
 	},
 	subject: message.subject,
 	content: message.content,

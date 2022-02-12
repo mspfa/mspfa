@@ -9,6 +9,7 @@ import type { ServerNewsPost } from 'lib/server/news';
 import type { TagString } from 'lib/client/storyTags';
 import type { ServerColor, ServerColorGroup } from 'lib/server/colors';
 import { getClientColorGroup, getClientColor } from 'lib/server/colors';
+import stringifyID from 'lib/server/db/stringifyID';
 
 /** @minimum 1 */
 export type StoryID = integer;
@@ -156,8 +157,8 @@ export const getPrivateStory = (story: ServerStory): PrivateStory => ({
 	title: story.title,
 	status: story.status,
 	privacy: story.privacy,
-	owner: story.owner.toString(),
-	editors: story.editors.map(String),
+	owner: stringifyID(story.owner),
+	editors: story.editors.map(stringifyID),
 	...story.author && {
 		author: story.author
 	},
@@ -185,8 +186,8 @@ export const getPublicStory = (story: ServerStory): PublicStory => ({
 	title: story.title,
 	status: story.status,
 	privacy: story.privacy,
-	owner: story.owner.toString(),
-	editors: story.editors.map(String),
+	owner: stringifyID(story.owner),
+	editors: story.editors.map(stringifyID),
 	...story.author && {
 		author: story.author
 	},

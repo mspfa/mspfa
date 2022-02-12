@@ -10,6 +10,7 @@ import { Perm } from 'lib/client/perms';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 import type { UpdateFilter } from 'mongodb';
 import { ObjectId } from 'mongodb';
+import stringifyID from 'lib/server/db/stringifyID';
 
 const Handler: APIHandler<{
 	query: {
@@ -59,7 +60,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	const comment = page.comments.find(({ id }) => id.toString() === req.query.commentID);
+	const comment = page.comments.find(({ id }) => stringifyID(id) === req.query.commentID);
 
 	if (!comment) {
 		res.status(404).send({

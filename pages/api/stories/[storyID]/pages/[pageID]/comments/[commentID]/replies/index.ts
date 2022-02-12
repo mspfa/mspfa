@@ -14,6 +14,7 @@ import type { integer } from 'lib/types';
 import type { PublicUser } from 'lib/client/users';
 import users, { getPublicUser } from 'lib/server/users';
 import { uniqBy } from 'lodash';
+import stringifyID from 'lib/server/db/stringifyID';
 
 const Handler: APIHandler<{
 	// TODO: Same as other instances of `query: unknown &`.
@@ -80,7 +81,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	const comment = page.comments.find(({ id }) => id.toString() === req.query.commentID);
+	const comment = page.comments.find(({ id }) => stringifyID(id) === req.query.commentID);
 
 	if (!comment) {
 		res.status(404).send({

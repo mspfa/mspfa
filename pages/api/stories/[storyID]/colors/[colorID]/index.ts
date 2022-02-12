@@ -11,6 +11,7 @@ import StoryPrivacy from 'lib/client/StoryPrivacy';
 import { flatten } from 'lib/server/db';
 import { ObjectId } from 'mongodb';
 import type { integer } from 'lib/types';
+import stringifyID from 'lib/server/db/stringifyID';
 
 /** The keys of all `ClientColor` properties which a client should be able to `PATCH` into a `ServerColor`. */
 type WritableColorKey = 'name' | 'value';
@@ -49,7 +50,7 @@ const Handler: APIHandler<{
 
 	/** Gets the requested color. If the color doesn't exist, responds with an error and never resolves. */
 	const getColor = () => new Promise<ServerColor>(resolve => {
-		const color = story.colors.find(({ id }) => id.toString() === req.query.colorID);
+		const color = story.colors.find(({ id }) => stringifyID(id) === req.query.colorID);
 
 		if (!color) {
 			res.status(404).send({

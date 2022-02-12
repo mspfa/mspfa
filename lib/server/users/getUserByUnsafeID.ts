@@ -1,11 +1,10 @@
 import type { ServerUser } from 'lib/server/users';
 import users from 'lib/server/users';
 import type { APIResponse } from 'lib/server/api';
-import type { UnsafeObjectID } from 'lib/server/db';
-import { safeObjectID } from 'lib/server/db';
+import parseID from 'lib/server/db/parseID';
 
 /**
- * Finds and returns a `ServerUser` by a possibly unsafe ID.
+ * Finds and returns a `ServerUser` by a possibly invalid ID.
  *
  * Returns `undefined` if the ID is invalid, the user is not found, or the user is scheduled for deletion.
  *
@@ -13,14 +12,14 @@ import { safeObjectID } from 'lib/server/db';
  */
 const getUserByUnsafeID = <Res extends APIResponse<any> | undefined>(
 	...[id, res]: [
-		id: UnsafeObjectID,
+		id: string | undefined,
 		res: Res
 	] | [
-		id: UnsafeObjectID
+		id: string | undefined
 		// It is necessary to use tuple types instead of simply having `res` be an optional parameter, because otherwise `Res` will not always be inferred correctly.
 	]
 ) => new Promise<ServerUser | (undefined extends Res ? undefined : never)>(async resolve => {
-	const userID = safeObjectID(id);
+	const userID = parseID(id);
 
 	let user: ServerUser | null | undefined;
 

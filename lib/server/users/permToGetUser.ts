@@ -1,16 +1,16 @@
 import getUserByUnsafeID from 'lib/server/users/getUserByUnsafeID';
 import type { ServerUser } from 'lib/server/users';
-import type { UnsafeObjectID } from 'lib/server/db';
 import type { APIRequest, APIResponse } from 'lib/server/api';
 import type { PageRequest } from 'lib/server/pages';
 import authenticate from 'lib/server/auth/authenticate';
 import type { integer } from 'lib/types';
+import stringifyID from 'lib/server/db/stringifyID';
 
 type PermToGetUserRequiredParams = [
 	/** The user to check the perms of. */
 	user: ServerUser | undefined,
 	/** The potentially unsafe user ID of the user to get. */
-	id: UnsafeObjectID,
+	id: string | undefined,
 	/**
 	 * The perm or bitwise OR of perms to require.
 	 *
@@ -58,7 +58,7 @@ const permToGetUser = <Res extends APIResponse<any> | undefined>(
 		return;
 	}
 
-	if (id && user._id.toString() === id.toString()) {
+	if (id && stringifyID(user._id) === stringifyID(id)) {
 		// The user is trying to access their own data, which is permitted.
 
 		resolve({ user });
@@ -128,7 +128,7 @@ const permToGetUser = <Res extends APIResponse<any> | undefined>(
  * const user = await permToGetUserInAPI(req, res, Perm.sudoWrite, req.body.user);
  * ```
  */
-export const permToGetUserInAPI = async <UserID extends UnsafeObjectID = undefined>(
+export const permToGetUserInAPI = async <UserID extends string | undefined = undefined>(
 	req: APIRequest<{ query: { userID: UserID } } | {}>,
 	res: APIResponse,
 	/**
@@ -140,9 +140,9 @@ export const permToGetUserInAPI = async <UserID extends UnsafeObjectID = undefin
 	...[
 		userID = (req.query as any).userID
 	]: (UserID extends undefined ? [
-		userID: UnsafeObjectID
+		userID: string | undefined
 	] : [
-		userID?: UnsafeObjectID
+		userID?: string | undefined
 	])
 ) => (
 	(await permToGetUser(
@@ -167,7 +167,7 @@ export const permToGetUserInAPI = async <UserID extends UnsafeObjectID = undefin
 export const permToGetUserInPage = async (
 	req: PageRequest,
 	/** The potentially unsafe user ID of the user to get. */
-	id: UnsafeObjectID,
+	id: string | undefined,
 	/**
 	 * The perm or bitwise OR of perms to require.
 	 *
