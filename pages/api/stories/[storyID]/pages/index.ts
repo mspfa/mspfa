@@ -11,7 +11,7 @@ import StoryPrivacy from 'lib/client/StoryPrivacy';
 import invalidPublishedOrder from 'lib/client/invalidPublishedOrder';
 import type { DateNumber, integer, Mutable, RecursivePartial } from 'lib/types';
 import { Perm } from 'lib/client/perms';
-import { flatten } from 'lib/server/db';
+import flatten from 'lib/server/db/flatten';
 import { mergeWith } from 'lodash';
 import overwriteArrays from 'lib/client/overwriteArrays';
 import type { UpdateFilter } from 'mongodb';

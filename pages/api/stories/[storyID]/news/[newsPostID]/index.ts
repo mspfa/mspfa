@@ -8,7 +8,7 @@ import authenticate from 'lib/server/auth/authenticate';
 import type { ClientNewsPost } from 'lib/client/news';
 import { Perm } from 'lib/client/perms';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
-import { flatten } from 'lib/server/db';
+import flatten from 'lib/server/db/flatten';
 import stringifyID from 'lib/server/db/stringifyID';
 
 /** The keys of all `ClientNewsPost` properties which a client should be able to `PATCH` into a `ServerNewsPost`. */

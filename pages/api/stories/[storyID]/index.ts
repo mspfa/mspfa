@@ -4,7 +4,7 @@ import type { RecursivePartial } from 'lib/types';
 import { Perm } from 'lib/client/perms';
 import type { ServerUserID } from 'lib/server/users';
 import users from 'lib/server/users';
-import { flatten } from 'lib/server/db';
+import flatten from 'lib/server/db/flatten';
 import parseID from 'lib/server/db/parseID';
 import { mergeWith, uniqBy } from 'lodash';
 import type { ServerStory } from 'lib/server/stories';

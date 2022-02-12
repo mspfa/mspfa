@@ -8,7 +8,7 @@ import { permToGetUserInAPI } from 'lib/server/users/permToGetUser';
 import users, { getPrivateUser, getPublicUser } from 'lib/server/users';
 import getUserByUnsafeID from 'lib/server/users/getUserByUnsafeID';
 import type { ServerUser } from 'lib/server/users';
-import { flatten } from 'lib/server/db';
+import flatten from 'lib/server/db/flatten';
 import { mergeWith } from 'lodash';
 import stories from 'lib/server/stories';
 import overwriteArrays from 'lib/client/overwriteArrays';

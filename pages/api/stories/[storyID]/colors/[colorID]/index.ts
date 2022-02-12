@@ -8,7 +8,7 @@ import authenticate from 'lib/server/auth/authenticate';
 import type { ClientColor } from 'lib/client/colors';
 import { Perm } from 'lib/client/perms';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
-import { flatten } from 'lib/server/db';
+import flatten from 'lib/server/db/flatten';
 import { ObjectId } from 'mongodb';
 import type { integer } from 'lib/types';
 import stringifyID from 'lib/server/db/stringifyID';
