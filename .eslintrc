@@ -586,6 +586,8 @@
 				"@typescript-eslint/no-duplicate-imports": "error",
 				"no-extra-semi": "off",
 				"@typescript-eslint/no-extra-semi": "error",
+				"no-implied-eval": "off",
+				"@typescript-eslint/no-implied-eval": "error",
 				"no-redeclare": "off",
 				"@typescript-eslint/no-redeclare": [
 					"error"
