@@ -6,7 +6,7 @@ export type Achievement = {
 export const achievements = {
 	author: {
 		name: 'Humble Beginnings',
-		description: 'Start your first adventure.'
+		description: 'Embark on your first adventure.'
 	},
 	get10Favs: {
 		name: 'Tentative Storyteller',
@@ -29,8 +29,8 @@ export const achievements = {
 		description: 'Go online at least 3 years after you first signed up for MSPFA.'
 	},
 	contribute: {
-		name: 'Unique Contributor',
-		description: 'Contribute to the website in a unique and helpful manner.'
+		name: 'Distinguished Enhancer',
+		description: 'Contribute something unique and helpful to the website itself.'
 	},
 	donate: {
 		name: 'Loyal Benefactor',
