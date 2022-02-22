@@ -10,7 +10,7 @@ let reloadsToPrevent = 0;
 
 /** Prevent a number of the following reloads caused by user ID updates. */
 export const preventReloads = (
-	/** How many additional reloads to prevent. */
+	/** How many additional reloads to prevent. Defaults to 1. */
 	count = 1
 ) => reloadsToPrevent += count;
 
