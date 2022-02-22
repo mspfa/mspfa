@@ -93,7 +93,7 @@ export const getBooleanRecordFromQueryValue = (
 	return value;
 };
 
-/** Accepts a query value which represents a set of tags and excluded tags. Returns an array of only the valid, unique tags and excluded tags. */
+/** Accepts a query value which represents a set of tags and excluded tags. Returns an array of only the valid and unique tags and excluded tags. */
 export const getTagsFromQueryValue = (
 	queryValue: undefined | string | string[],
 	defaultValue: string[] = []
