@@ -13,7 +13,7 @@
 	"homepage": "https://mspfa.com",
 	"scripts": {
 		"dev": "cross-env NODE_OPTIONS='--inspect' next dev",
-		"generate-validators": "ts-node scripts/generate-validators",
+		"generate-validators": "ts-node scripts/generateValidators",
 		"build-start": "npm run build && npm start",
 		"lint": "next lint",
 		"build": "next build",
