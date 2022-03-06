@@ -1,4 +1,4 @@
-import type { DependencyList, MutableRefObject } from 'react';
+import type { MutableRefObject } from 'react';
 import { useRef } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
 
@@ -10,7 +10,6 @@ export type ThrottledCallback<CallbackArgs extends unknown[]> = ((...args: Callb
 const useThrottled = <CallbackArgs extends unknown[]>(
 	/** The function to throttle. */
 	callback: (...args: CallbackArgs) => unknown,
-	deps: DependencyList,
 	/** The number of milliseconds to wait after the function stops being called. */
 	delay = 500
 ) => {

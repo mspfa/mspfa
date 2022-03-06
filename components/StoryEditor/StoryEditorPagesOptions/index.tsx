@@ -66,7 +66,7 @@ const StoryEditorPagesOptions = ({
 		});
 
 		cancelTokenSourceRef.current = undefined;
-	}, [story, setStory]);
+	});
 
 	const onChangeDefaultPageTitle = useFunction((event: ChangeEvent<HTMLInputElement>) => {
 		cancelTokenSourceRef.current?.cancel();

@@ -95,7 +95,7 @@ const SignIn = ({ page }: SignInProps) => {
 		if (mountedRef.current) {
 			setEmailTaken(taken);
 		}
-	}, [mountedRef]);
+	});
 
 	/** If `page === 1`, queues an update to the `emailTaken` state, possibly via a `checkEmail` call. */
 	const updateEmailTaken = useFunction((email: string) => {

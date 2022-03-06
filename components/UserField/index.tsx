@@ -107,7 +107,7 @@ const UserField = ({
 		} else {
 			setAutoCompleteUsers([]);
 		}
-	}, [cacheUser, mountedRef]);
+	});
 
 	const updateAutoCompleteRef = useLatest(updateAutoComplete);
 
