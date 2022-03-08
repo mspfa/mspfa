@@ -157,13 +157,13 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 							/>
 						</Row>
 						<Row>
+							<TagField allowExcludedTags />
+						</Row>
+						<Row>
 							<Label className="spaced">
 								Status
 							</Label>
 							{statusFieldContainers}
-						</Row>
-						<Row>
-							<TagField allowExcludedTags />
 						</Row>
 						<Row>
 							<Label className="spaced" htmlFor="field-sort">
