@@ -85,7 +85,10 @@ const StorySaveListing = ({
 					</StoryStats>
 				)}
 				<div className="listing-section listing-content">
-					{`Saved on Page ${storySave.pageID}`}
+					{(storySave.story
+						? `Saved on Page ${storySave.pageID} of ${storySave.story.pageCount}`
+						: `Saved on Page ${storySave.pageID}`
+					)}
 				</div>
 			</div>
 			<div className="listing-actions">
