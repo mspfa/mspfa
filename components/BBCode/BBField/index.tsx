@@ -41,36 +41,30 @@ const BBField = ({ name, keepHTMLTags, escapeHTML, removeBBTags, ...props }: BBF
 			}
 		>
 			<div className="bb-toolbar">
-				<span className="bb-tool-group bb-tool-group-font-primary">
-					<BBTool tag="b" />
-					<BBTool tag="i" />
-					<BBTool tag="u" />
-					<BBTool tag="s" />
-				</span>
-				<span className="bb-tool-group bb-tool-group-font-secondary">
-					<BBTool tag="color" />
-					<BBTool tag="background" />
-					<BBTool tag="size" />
-					<BBTool tag="font" />
-				</span>
-				<span className="bb-tool-group bb-tool-group-align">
-					<BBTool tag="left" />
-					<BBTool tag="center" />
-					<BBTool tag="right" />
-					<BBTool tag="justify" />
-				</span>
-				<span className="bb-tool-group bb-tool-group-utility">
-					<BBTool tag="url" />
-					<BBTool tag="spoiler" />
-					<BBTool tag="chat" />
-					<BBTool tag="alt" />
-				</span>
-				<span className="bb-tool-group bb-tool-group-media">
-					<BBTool tag="img" />
-					<BBTool tag="video" />
-					<BBTool tag="iframe" />
-					<BBTool tag="flash" />
-				</span>
+				<BBTool tag="b" />
+				<BBTool tag="i" />
+				<BBTool tag="u" />
+				<BBTool tag="s" />
+				<span className="bb-tool-separator" />
+				<BBTool tag="color" />
+				<BBTool tag="background" />
+				<BBTool tag="size" />
+				<BBTool tag="font" />
+				<span className="bb-tool-separator" />
+				<BBTool tag="left" />
+				<BBTool tag="center" />
+				<BBTool tag="right" />
+				<BBTool tag="justify" />
+				<span className="bb-tool-separator" />
+				<BBTool tag="url" />
+				<BBTool tag="spoiler" />
+				<BBTool tag="chat" />
+				<BBTool tag="alt" />
+				<span className="bb-tool-separator" />
+				<BBTool tag="img" />
+				<BBTool tag="video" />
+				<BBTool tag="iframe" />
+				<BBTool tag="flash" />
 			</div>
 			<Field
 				as="textarea"

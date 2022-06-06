@@ -1,18 +1,28 @@
 .story-comment {
 	&-form {
-		.bb-tool-group-font-secondary,
-		.bb-tool-group-align,
-		.bb-tool-chat,
-		.bb-tool-alt,
-		.bb-tool-video,
-		.bb-tool-iframe,
-		.bb-tool-flash,
-		.bb-preview {
-			display: none;
-		}
+		.bb {
+			&-tool {
+				&-separator,
+				&-color,
+				&-background,
+				&-size,
+				&-font,
+				&-left,
+				&-center,
+				&-right,
+				&-justify,
+				&-chat,
+				&-alt,
+				&-video,
+				&-iframe,
+				&-flash {
+					display: none;
+				}
+			}
 
-		.bb-tool-group:not(:last-child) {
-			margin-right: 0;
+			&-preview {
+				display: none;
+			}
 		}
 
 		&-actions {
