@@ -58,7 +58,7 @@ const permToGetUser = <Res extends APIResponse<any> | undefined>(
 		return;
 	}
 
-	if (id && stringifyID(user._id) === stringifyID(id)) {
+	if (id && id === stringifyID(user._id)) {
 		// The user is trying to access their own data, which is permitted.
 
 		resolve({ user });

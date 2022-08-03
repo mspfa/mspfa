@@ -152,9 +152,9 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 										</Label>
 										<Link
 											className="spaced"
-											href={`/messages/${replyTo!.id}`}
+											href={`/messages/${replyTo.id}`}
 										>
-											{replyTo!.subject}
+											{replyTo.subject}
 										</Link>
 									</Row>
 								)}
