@@ -1,4 +1,5 @@
 {
+	"task.allowAutomaticTasks": "on",
 	"files.eol": "\n",
 	"editor.insertSpaces": false,
 	"eslint.format.enable": true,
