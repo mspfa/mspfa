@@ -588,7 +588,7 @@ const StoryEditorPageListing = React.memo(({
 								block
 								help={'The page numbers of the commands to link at the bottom of this page (in order). By default, each newly added page will already link to the page after it.\n\nThis is particularly useful for skipping hidden pages or adding multiple page links in branching stories.'}
 							>
-								Next Pages
+								Next Page Links
 							</Label>
 							<div className="story-editor-next-page-container">
 								{page.nextPages.map((pageID, nextPageIndex) => (
