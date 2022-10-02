@@ -8,7 +8,7 @@ const processNoparseTags = (initialBBString: string) => {
 		return initialBBString;
 	}
 
-	let bbString = initialBBString;
+	let bbString = '';
 
 	/** The index at the end of the previous match, or of the start of the string if there is no previous match. */
 	let matchEndIndex = 0;
