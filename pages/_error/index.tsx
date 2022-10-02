@@ -1,6 +1,6 @@
 import RandomArtwork from 'components/RandomArtwork';
 import Page from 'components/Page';
-import type { ServerResponse } from 'http';
+import type { ServerResponse } from 'node:http';
 import BottomActions from 'components/BottomActions';
 import Button from 'components/Button';
 import Router from 'next/router';

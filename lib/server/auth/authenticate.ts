@@ -1,7 +1,7 @@
 import argon2 from 'argon2';
 import Cookies from 'cookies';
 import { ObjectId } from 'mongodb';
-import type { IncomingMessage, ServerResponse } from 'http';
+import type { IncomingMessage, ServerResponse } from 'node:http';
 import users from 'lib/server/users';
 import type { ServerUser } from 'lib/server/users';
 import authCookieOptions from 'lib/server/auth/authCookieOptions';

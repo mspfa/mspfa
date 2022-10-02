@@ -1,5 +1,5 @@
-import fs from 'fs-extra';
-import path from 'path';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
 
 /** A record mapping the path string of each directory to an array of filename strings of the images in the directory. */
 const directories: Record<string, string[]> = {};

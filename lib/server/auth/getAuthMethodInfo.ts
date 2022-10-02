@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import argon2 from 'argon2';
 import axios from 'axios';
 import { OAuth2Client } from 'google-auth-library';

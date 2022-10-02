@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { IncomingMessage } from 'http';
+import type { IncomingMessage } from 'node:http';
 import type { AnyAPIQuery } from 'lib/client/api';
 
 /** The server-side API request object. */
@@ -36,7 +36,7 @@ export type APIHandler<
 	((req: APIRequest<Request>, res: APIResponse<Response>) => void | Promise<void>)
 	// This is so you can use `NonNullable<APIHandler['Request']>` and `NonNullable<APIHandler['Response']>` instead of having to use a conditional type with `infer` to get the request and response types.
 	& {
-		// This union of optional unknowns is to ensure there are no inaccurate validation errors in APIs which do not have a `body` and/or `query` in their request type.
+		// This intersection of optional unknowns is to ensure there are no inaccurate validation errors in APIs which do not have a `body` and/or `query` in their request type.
 		Request?: Request & { body?: unknown, query?: unknown },
 		Response?: Response
 	}

@@ -1,4 +1,4 @@
-import type { IncomingMessage } from 'http';
+import type { IncomingMessage } from 'node:http';
 import type { GetServerSideProps } from 'next';
 import type { MyAppInitialProps } from 'pages/_app';
 import type { ServerUser } from 'lib/server/users';

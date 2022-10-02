@@ -19,7 +19,7 @@ window.addEventListener('unhandledrejection', (
 });
 // @client-only }
 
-export type AnyAPIQuery = Partial<Record<string, string | string[]>>;
+export type AnyAPIQuery = Partial<Record<string, string | number | Array<string | number>>>;
 
 export type APIError<
 	ResponseBody = Record<string, unknown>,
@@ -163,7 +163,9 @@ export type APIClient<Handler> = Omit<AxiosInstance, Method> & typeof apiExtensi
 			)]: (
 				url: string,
 				...args: Request & { method: Uppercase<RequestMethod> } extends { query: infer RequestQuery }
-					? APIClientArgs<Request, Response, RequestMethod, RequestQuery>
+					? RequestQuery extends AnyAPIQuery
+						? APIClientArgs<Request, Response, RequestMethod, RequestQuery>
+						: never
 					: APIClientArgs<Request, Response, RequestMethod>
 			) => Promise<(
 				AxiosResponse<(

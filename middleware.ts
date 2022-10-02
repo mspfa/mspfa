@@ -3,6 +3,7 @@
 import type { ErrorResponseBody } from 'lib/server/api';
 import type { DateNumber, integer } from 'lib/types';
 import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 /** The number of milliseconds it takes for a client request time to be forgotten. */
 const TIME_PERIOD = 1000 * 60;
@@ -60,7 +61,7 @@ export const middleware = async (req: NextRequest) => {
 		const secondsUntilRetryAfter = Math.ceil((retryAfter - now) / 1000);
 		const message = `You're sending data to MSPFA too quickly. Please wait ~${secondsUntilRetryAfter} second${secondsUntilRetryAfter === 1 ? '' : 's'} before retrying.`;
 
-		if (req.nextUrl.pathname.startsWith('/api/') || req.nextUrl.pathname === '/api') {
+		if (/^\/api(?:\/|$)/.test(req.nextUrl.pathname)) {
 			// This is an API request, so it should return a JSON body.
 
 			const body: ErrorResponseBody & { retryAfter: integer } = {

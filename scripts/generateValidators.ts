@@ -3,9 +3,9 @@
 
 import { createGenerator } from 'ts-json-schema-generator';
 import type { SchemaGenerator } from 'ts-json-schema-generator';
-import fs from 'fs-extra';
-import path from 'path';
-import { exec } from 'child_process';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
+import { exec } from 'node:child_process';
 import c from 'ansi-colors';
 import type { integer } from 'lib/types';
 
@@ -26,11 +26,11 @@ const inputLines: string[] = [];
 /** The schema generator used to generate the validators for both request methods and request bodies. */
 let generator: SchemaGenerator;
 
-const walk = (dir: string) => {
-	for (const dirent of fs.readdirSync(dir, { withFileTypes: true })) {
+const findValidatorPaths = async (dir: string) => {
+	for (const dirent of await fs.readdir(dir, { withFileTypes: true })) {
 		const direntPath = path.join(dir, dirent.name);
 		if (dirent.isDirectory()) {
-			walk(direntPath);
+			findValidatorPaths(direntPath);
 		} else if (direntPath.endsWith('.ts')) {
 			if (direntPath.endsWith('.validate.ts')) {
 				validatorPaths.push(direntPath);
@@ -40,12 +40,6 @@ const walk = (dir: string) => {
 		}
 	}
 };
-
-walk(path.normalize('pages/api'));
-
-for (const validatorPath of validatorPaths) {
-	fs.unlinkSync(validatorPath);
-}
 
 const getMetadata = (
 	/** The TS file to generate a validator for. */
@@ -66,7 +60,6 @@ const initializeValidator = async (
 	const { sourcePathModule, outputPath } = getMetadata(sourcePath);
 
 	// This is necessary so validator imports don't throw errors and prevent TS compilation.
-	await fs.createFile(outputPath);
 	await fs.writeFile(
 		outputPath,
 		'export default {} as any;'
@@ -119,12 +112,17 @@ const generateValidator = async (
 };
 
 (async () => {
+	console.info(c.blue('Deleting old validators...'));
+	await findValidatorPaths(path.normalize('pages/api'));
+	await Promise.all(
+		validatorPaths.map(fs.unlink)
+	);
+
 	// Initialize validators in parallel.
-	console.info(c.blue('Initializing...'));
+	console.info(c.blue('Initializing validators...'));
 	await Promise.all(sourcePaths.map(initializeValidator));
 
 	// Instantiate the schema generator.
-	await fs.createFile(inputPath);
 	await fs.writeFile(
 		inputPath,
 		inputLines.join('\n')
