@@ -77,8 +77,12 @@ export type StoryViewerProps = {
 	 */
 	pages: Partial<Record<StoryPageID, ClientStoryPage | null>>,
 	previousPageIDs: ClientPreviousPageIDs,
+	// These ESLint comments are necessary because it doesn't recognize the props are used outside this file.
+	// eslint-disable-next-line react/no-unused-prop-types
 	latestPages: StoryLogListings,
+	// eslint-disable-next-line react/no-unused-prop-types
 	newsPosts: ClientNewsPost[],
+	// eslint-disable-next-line react/no-unused-prop-types
 	hasCommentary: boolean
 };
 

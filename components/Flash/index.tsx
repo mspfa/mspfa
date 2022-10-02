@@ -102,13 +102,13 @@ const Flash = ({
 		}
 	}, [flashMode, error, src, width, height]);
 
-	const flashWarningFooter = src ? (
+	const flashWarningFooter = src && (
 		<p className="flash-warning-footer">
 			<Link href={src} download>
 				Download Original Flash File
 			</Link>
 		</p>
-	) : null;
+	);
 
 	return (
 		<div className="flash-container" style={{ width, height }}>

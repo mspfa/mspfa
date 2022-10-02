@@ -1,7 +1,7 @@
 import getRateLimitMessage from 'lib/client/getRateLimitMessage';
 import type { MyGetServerSideProps } from 'lib/server/pages';
 
-const Component = () => null;
+const Component = () => undefined;
 
 export default Component;
 

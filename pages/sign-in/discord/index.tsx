@@ -10,8 +10,6 @@ const Component = () => {
 			window.close();
 		}
 	});
-
-	return null;
 };
 
 export default Component;

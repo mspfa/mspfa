@@ -26,9 +26,8 @@ const Page = ({ heading, children, withFlashyTitle, basement }: PageProps) => (
 		<div id="page">
 			<Header withFlashyTitle={withFlashyTitle} />
 			<main className={`mid${heading ? ' padded' : ''}`}>
-				{(heading
-					? <PageHeading>{heading}</PageHeading>
-					: null
+				{heading !== undefined && (
+					<PageHeading>{heading}</PageHeading>
 				)}
 				{children}
 			</main>

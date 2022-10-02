@@ -5,7 +5,7 @@ import StoryPrivacy from 'lib/client/StoryPrivacy';
 import type { MyGetServerSideProps } from 'lib/server/pages';
 import getStoryByUnsafeID from 'lib/server/stories/getStoryByUnsafeID';
 
-const Component = () => null;
+const Component = () => undefined;
 
 export default Component;
 
