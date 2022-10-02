@@ -113,7 +113,7 @@ const MyApp = ({
 							: router.asPath.slice(0, asPathEndIndex)
 					}
 					// It is necessary that the props object passed here is the original `pageProps` object and not a clone, because after this point is reached, props from a page's `getServerSideProps` are assigned to the original `pageProps` object and would otherwise not be passed into the page component.
-					{...pageProps as any}
+					{...pageProps}
 				/>
 			</UserCache.Provider>
 		</UserContext.Provider>

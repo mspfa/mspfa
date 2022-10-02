@@ -37,13 +37,13 @@ const AuthMethod = ({ userID, authMethod, authMethods, setAuthMethods }: AuthMet
 							content: (
 								<>
 									Are you sure you want to remove this {authMethodTypeName} sign-in method?
-									{authMethod.name ? (
+									{authMethod.name && (
 										<>
 											<br />
 											<br />
 											<i>{authMethod.name}</i>
 										</>
-									) : null}
+									)}
 								</>
 							)
 						})) {

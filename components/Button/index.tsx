@@ -34,8 +34,10 @@ const Button = React.forwardRef<HTMLButtonElement & HTMLAnchorElement, ButtonPro
 	if (icon) {
 		className = `icon-button${hasChildren ? ' labeled' : ''}${className ? ` ${className}` : ''}`;
 
+		const iconProps = icon === true ? {} : icon;
+
 		children = (
-			<Icon {...icon}>
+			<Icon {...iconProps}>
 				{children}
 			</Icon>
 		);

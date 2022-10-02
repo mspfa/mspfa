@@ -16,7 +16,7 @@ module.exports = {
 								entry.options.modules.mode = 'global';
 
 								// Undo the default hashing of style module class names.
-								entry.options.modules.getLocalIdent = (context, localIdentName, localName) => localName;
+								entry.options.modules.getLocalIdent = (_, __, localName) => localName;
 							}
 						}
 					}
