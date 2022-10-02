@@ -3,98 +3,98 @@ import replaceAll from 'lib/client/replaceAll';
 
 /** Escapes text inside BB `noparse` tags in the input string by replacing special HTML and BBCode characters with HTML entities. */
 const processNoparseTags = (initialBBString: string) => {
-	let bbString = '';
+	// Optimize by not looking for `noparse` tags if `[/noparse]` (case-insensitive) can't possibly be in the string.
+	if (!initialBBString.includes('[/')) {
+		return initialBBString;
+	}
 
-	// Optimize by only looking for `noparse` tags if there are possibly any instances of `[/noparse]` (case-insensitive) in the string.
-	if (initialBBString.includes('[/')) {
-		/** The index at the end of the previous match, or of the start of the string if there is no previous match. */
-		let matchEndIndex = 0;
-		/** The index of the previous match for `[noparse]`. */
-		let openNoparseIndex;
-		/** The index at the end of the previous match for `[/noparse]`, or of the start of the string if there is no previous match. */
-		let closeNoparseEndIndex = 0;
+	let bbString = initialBBString;
 
-		// Escape text inside `noparse` tags.
-		noparseTagLoop:
-		while ((
-			// The reason we look for `[` and not `[noparse]` directly is in order to be case-insensitive without using regular expressions which are less performant.
-			// Also, `initialBBString.toLowerCase().indexOf('[noparse]')` is not necessarily equal to the index of case-insensitive `[noparse]` in `initialBBString`, since `toLowerCase` can change the length of certain characters, so we can't use that either.
-			openNoparseIndex = initialBBString.indexOf('[', matchEndIndex)
-		) !== -1) {
+	/** The index at the end of the previous match, or of the start of the string if there is no previous match. */
+	let matchEndIndex = 0;
+	/** The index of the previous match for `[noparse]`. */
+	let openNoparseIndex;
+	/** The index at the end of the previous match for `[/noparse]`, or of the start of the string if there is no previous match. */
+	let closeNoparseEndIndex = 0;
+
+	// Escape text inside `noparse` tags.
+	noparseTagLoop:
+	while ((
+		// The reason we look for `[` and not `[noparse]` directly is in order to be case-insensitive without using regular expressions which are less performant.
+		// Also, `initialBBString.toLowerCase().indexOf('[noparse]')` is not necessarily equal to the index of case-insensitive `[noparse]` in `initialBBString`, since `toLowerCase` can change the length of certain characters, so we can't use that either.
+		openNoparseIndex = initialBBString.indexOf('[', matchEndIndex)
+	) !== -1) {
+		if (
+			// Check if the `openNoparseIndex` is the index of a `[noparse]`.
+			initialBBString.slice(
+				// In addition to everything before the `openNoparseIndex`, slice off the first character after the `openNoparseIndex` since we already know it's `[`.
+				openNoparseIndex + '['.length,
+				openNoparseIndex + '[noparse]'.length
+			).toLowerCase() !== 'noparse]'
+		) {
+			// The `openNoparseIndex` is not the index of a `[noparse]`, so keep looking.
+
+			matchEndIndex = openNoparseIndex + 1;
+			continue;
+		}
+
+		// The `openNoparseIndex` is the index of a `[noparse]`.
+
+		const openNoparseEndIndex = openNoparseIndex + '[noparse]'.length;
+		matchEndIndex = openNoparseEndIndex;
+
+		/** The index at the start of the previous match for a `[/noparse]`. */
+		let closeNoparseIndex;
+
+		while (true) {
+			closeNoparseIndex = initialBBString.indexOf('[/', matchEndIndex);
+
+			if (closeNoparseIndex === -1) {
+				// If there are no more closing `noparse` tags, then this `noparse` tag is invalid and there can't be any valid ones after it, so stop looking for and processing `noparse` tags.
+				break noparseTagLoop;
+			}
+
 			if (
-				// Check if the `openNoparseIndex` is the index of a `[noparse]`.
+				// Check if the `closeNoparseIndex` is the index of a `[/noparse]`.
 				initialBBString.slice(
-					// In addition to everything before the `openNoparseIndex`, slice off the first character after the `openNoparseIndex` since we already know it's `[`.
-					openNoparseIndex + '['.length,
-					openNoparseIndex + '[noparse]'.length
+					// In addition to everything before the `closeNoparseIndex`, slice off the first 2 characters after the `closeNoparseIndex` since we already know they're `[/`.
+					closeNoparseIndex + '[/'.length,
+					closeNoparseIndex + '[/noparse]'.length
 				).toLowerCase() !== 'noparse]'
 			) {
-				// The `openNoparseIndex` is not the index of a `[noparse]`, so keep looking.
+				// The `closeNoparseIndex` is not the index of a `[/noparse]`, so keep looking.
 
-				matchEndIndex = openNoparseIndex + 1;
+				matchEndIndex = closeNoparseIndex + '[/'.length;
 				continue;
 			}
 
-			// The `openNoparseIndex` is the index of a `[noparse]`.
-
-			const openNoparseEndIndex = openNoparseIndex + '[noparse]'.length;
-			matchEndIndex = openNoparseEndIndex;
-
-			/** The index at the start of the previous match for a `[/noparse]`. */
-			let closeNoparseIndex;
-
-			while (true) {
-				closeNoparseIndex = initialBBString.indexOf('[/', matchEndIndex);
-
-				if (closeNoparseIndex === -1) {
-					// If there are no more closing `noparse` tags, then this `noparse` tag is invalid and there can't be any valid ones after it, so stop looking for and processing `noparse` tags.
-					break noparseTagLoop;
-				}
-
-				if (
-					// Check if the `closeNoparseIndex` is the index of a `[/noparse]`.
-					initialBBString.slice(
-						// In addition to everything before the `closeNoparseIndex`, slice off the first 2 characters after the `closeNoparseIndex` since we already know they're `[/`.
-						closeNoparseIndex + '[/'.length,
-						closeNoparseIndex + '[/noparse]'.length
-					).toLowerCase() !== 'noparse]'
-				) {
-					// The `closeNoparseIndex` is not the index of a `[/noparse]`, so keep looking.
-
-					matchEndIndex = closeNoparseIndex + '[/'.length;
-					continue;
-				}
-
-				// The `openNoparseIndex` is the index of a `[noparse]`, so break the loop with the correct `openNoparseIndex`.
-				break;
-			}
-
-			/** The slice of the input string from inside this `noparse` tag. */
-			let noparseChildren = initialBBString.slice(openNoparseEndIndex, closeNoparseIndex);
-
-			// Escape HTML entities. This must be done before any other escaping to prevent the ampersands generated by other escapes from being escaped.
-			noparseChildren = replaceAll(noparseChildren, '&', '&amp;');
-			// Escape HTML tags.
-			noparseChildren = escapeAngleBrackets(noparseChildren);
-			// Escape BBCode tags.
-			noparseChildren = replaceAll(noparseChildren, '[', '&lsqb;');
-			noparseChildren = replaceAll(noparseChildren, ']', '&rsqb;');
-
-			bbString += (
-				// Append everything between the end of the last `noparse` tag and the start of this one.
-				initialBBString.slice(closeNoparseEndIndex, openNoparseIndex)
-				// Append this tag's children, with HTML and BBCode escaped.
-				+ noparseChildren
-			);
-
-			matchEndIndex = closeNoparseEndIndex = closeNoparseIndex + '[/noparse]'.length;
+			// The `openNoparseIndex` is the index of a `[noparse]`, so break the loop with the correct `openNoparseIndex`.
+			break;
 		}
 
-		// Append the rest of the input string.
-		bbString += initialBBString.slice(closeNoparseEndIndex);
-	} else {
-		bbString = initialBBString;
+		/** The slice of the input string from inside this `noparse` tag. */
+		let noparseChildren = initialBBString.slice(openNoparseEndIndex, closeNoparseIndex);
+
+		// Escape HTML entities. This must be done before any other escaping to prevent the ampersands generated by other escapes from being escaped.
+		noparseChildren = replaceAll(noparseChildren, '&', '&amp;');
+		// Escape HTML tags.
+		noparseChildren = escapeAngleBrackets(noparseChildren);
+		// Escape BBCode tags.
+		noparseChildren = replaceAll(noparseChildren, '[', '&lsqb;');
+		noparseChildren = replaceAll(noparseChildren, ']', '&rsqb;');
+
+		bbString += (
+			// Append everything between the end of the last `noparse` tag and the start of this one.
+			initialBBString.slice(closeNoparseEndIndex, openNoparseIndex)
+			// Append this tag's children, with HTML and BBCode escaped.
+			+ noparseChildren
+		);
+
+		matchEndIndex = closeNoparseEndIndex = closeNoparseIndex + '[/noparse]'.length;
 	}
+
+	// Append the rest of the input string.
+	bbString += initialBBString.slice(closeNoparseEndIndex);
 
 	return bbString;
 };
