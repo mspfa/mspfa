@@ -30,7 +30,7 @@ const findValidatorPaths = async (dir: string) => {
 	for (const dirent of await fs.readdir(dir, { withFileTypes: true })) {
 		const direntPath = path.join(dir, dirent.name);
 		if (dirent.isDirectory()) {
-			findValidatorPaths(direntPath);
+			await findValidatorPaths(direntPath);
 		} else if (direntPath.endsWith('.ts')) {
 			if (direntPath.endsWith('.validate.ts')) {
 				validatorPaths.push(direntPath);

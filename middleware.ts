@@ -1,7 +1,6 @@
 // This middleware implements rate limiting.
 
-import type { ErrorResponseBody } from 'lib/server/api';
-import type { DateNumber, integer } from 'lib/types';
+import type { DateNumber } from 'lib/types';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
@@ -58,30 +57,14 @@ export const middleware = async (req: NextRequest) => {
 		// This is calculated by getting the time that the `MAX_REQUESTS_PER_TIME_PERIOD`th-last client request time will be forgotten, because after that request time is forgotten, the client would have one less than the `MAX_REQUESTS_PER_TIME_PERIOD`, which allows one more to be accepted without rate limiting.
 		const retryAfter = clientRequestTimes[clientRequestCount - MAX_REQUESTS_PER_TIME_PERIOD] + TIME_PERIOD;
 
-		const secondsUntilRetryAfter = Math.ceil((retryAfter - now) / 1000);
-		const message = `You're sending data to MSPFA too quickly. Please wait ~${secondsUntilRetryAfter} second${secondsUntilRetryAfter === 1 ? '' : 's'} before retrying.`;
-
 		if (/^\/api(?:\/|$)/.test(req.nextUrl.pathname)) {
-			// This is an API request, so it should return a JSON body.
-
-			const body: ErrorResponseBody & { retryAfter: integer } = {
-				retryAfter,
-				message
-			};
-
-			return new Response(JSON.stringify(body), {
-				status: 429,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			});
+			return NextResponse.rewrite(
+				new URL(`/api/_error/429?retryAfter=${retryAfter}`, req.url)
+			);
 		}
 
-		return new Response(message, {
-			status: 429,
-			headers: {
-				'Content-Type': 'text/plain'
-			}
-		});
+		return NextResponse.rewrite(
+			new URL(`/_error/429?retryAfter=${retryAfter}`, req.url)
+		);
 	}
 };
