@@ -16,38 +16,45 @@ export default createAPIValidator({
 	$ref: '#/definitions/Request',
 	definitions: {
 		Request: {
-			type: 'object',
-			additionalProperties: false,
-			properties: {
-				body: {
-					type: 'boolean',
-					description: '`true` if the story should be favorited, or `false` if it should be unfavorited.'
-				},
-				query: {
+			anyOf: [
+				{
 					type: 'object',
+					additionalProperties: false,
 					properties: {
-						userID: {
-							type: 'string'
+						body: {
+							type: 'boolean',
+							description: '`true` if the story should be favorited, or `false` if it should be unfavorited.'
 						},
-						storyID: {
-							type: 'string'
+						query: {
+							type: 'object',
+							properties: {
+								userID: {
+									type: 'string'
+								},
+								storyID: {
+									type: 'string'
+								}
+							},
+							required: [
+								'userID',
+								'storyID'
+							],
+							additionalProperties: false
+						},
+						method: {
+							type: 'string',
+							const: 'PUT'
 						}
 					},
 					required: [
-						'userID',
-						'storyID'
-					],
-					additionalProperties: false
+						'body',
+						'method',
+						'query'
+					]
 				},
-				method: {
-					type: 'string',
-					const: 'PUT'
+				{
+					not: {}
 				}
-			},
-			required: [
-				'body',
-				'method',
-				'query'
 			]
 		}
 	}

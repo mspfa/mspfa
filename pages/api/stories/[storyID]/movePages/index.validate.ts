@@ -16,53 +16,60 @@ export default createAPIValidator({
 	$ref: '#/definitions/Request',
 	definitions: {
 		Request: {
-			type: 'object',
-			additionalProperties: false,
-			properties: {
-				body: {
+			anyOf: [
+				{
 					type: 'object',
+					additionalProperties: false,
 					properties: {
-						pageIDs: {
-							type: 'array',
-							items: {
-								$ref: '#/definitions/StoryPageID'
+						body: {
+							type: 'object',
+							properties: {
+								pageIDs: {
+									type: 'array',
+									items: {
+										$ref: '#/definitions/StoryPageID'
+									},
+									description: 'The initial IDs of pages to move. After being moved, the pages will be in the same order as in this array.',
+									uniqueItems: true
+								},
+								position: {
+									$ref: '#/definitions/integer',
+									description: 'The position to insert the pages at.\n\nFor example, position 0 will insert the pages before page 1, position 1 will insert the pages after page 1, position 2 will insert the pages after page 2, and so on.',
+									minimum: 0
+								}
 							},
-							description: 'The initial IDs of pages to move. After being moved, the pages will be in the same order as in this array.',
-							uniqueItems: true
+							required: [
+								'pageIDs',
+								'position'
+							],
+							additionalProperties: false
 						},
-						position: {
-							$ref: '#/definitions/integer',
-							description: 'The position to insert the pages at.\n\nFor example, position 0 will insert the pages before page 1, position 1 will insert the pages after page 1, position 2 will insert the pages after page 2, and so on.',
-							minimum: 0
+						query: {
+							type: 'object',
+							properties: {
+								storyID: {
+									type: 'string'
+								}
+							},
+							required: [
+								'storyID'
+							],
+							additionalProperties: false
+						},
+						method: {
+							type: 'string',
+							const: 'POST'
 						}
 					},
 					required: [
-						'pageIDs',
-						'position'
-					],
-					additionalProperties: false
+						'body',
+						'method',
+						'query'
+					]
 				},
-				query: {
-					type: 'object',
-					properties: {
-						storyID: {
-							type: 'string'
-						}
-					},
-					required: [
-						'storyID'
-					],
-					additionalProperties: false
-				},
-				method: {
-					type: 'string',
-					const: 'POST'
+				{
+					not: {}
 				}
-			},
-			required: [
-				'body',
-				'method',
-				'query'
 			]
 		},
 		StoryPageID: {

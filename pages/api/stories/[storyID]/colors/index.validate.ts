@@ -96,6 +96,9 @@ export default createAPIValidator({
 						'method',
 						'query'
 					]
+				},
+				{
+					not: {}
 				}
 			]
 		}

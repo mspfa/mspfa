@@ -16,60 +16,67 @@ export default createAPIValidator({
 	$ref: '#/definitions/Request',
 	definitions: {
 		Request: {
-			type: 'object',
-			additionalProperties: false,
-			properties: {
-				body: {},
-				query: {
+			anyOf: [
+				{
 					type: 'object',
+					additionalProperties: false,
 					properties: {
-						storyID: {
-							type: 'string'
-						},
-						fromPageID: {
-							anyOf: [
-								{
-									$ref: '#/definitions/StoryPageID'
-								},
-								{
+						body: {},
+						query: {
+							type: 'object',
+							properties: {
+								storyID: {
 									type: 'string'
-								}
-							],
-							description: 'The page ID which comments are being requested from.'
-						},
-						limit: {
-							anyOf: [
-								{
-									$ref: '#/definitions/integer'
 								},
-								{
-									type: 'string'
+								fromPageID: {
+									anyOf: [
+										{
+											$ref: '#/definitions/StoryPageID'
+										},
+										{
+											type: 'string'
+										}
+									],
+									description: 'The page ID which comments are being requested from.'
+								},
+								limit: {
+									anyOf: [
+										{
+											$ref: '#/definitions/integer'
+										},
+										{
+											type: 'string'
+										}
+									],
+									description: 'How many results to respond with.'
+								},
+								after: {
+									type: 'string',
+									description: 'Filter the results to only include comments after the comment with this ID.'
+								},
+								sort: {
+									$ref: '#/definitions/StoryCommentsSortMode'
 								}
+							},
+							required: [
+								'storyID',
+								'fromPageID'
 							],
-							description: 'How many results to respond with.'
+							additionalProperties: false
 						},
-						after: {
+						method: {
 							type: 'string',
-							description: 'Filter the results to only include comments after the comment with this ID.'
-						},
-						sort: {
-							$ref: '#/definitions/StoryCommentsSortMode'
+							const: 'GET'
 						}
 					},
 					required: [
-						'storyID',
-						'fromPageID'
-					],
-					additionalProperties: false
+						'method',
+						'query'
+					]
 				},
-				method: {
-					type: 'string',
-					const: 'GET'
+				{
+					not: {}
 				}
-			},
-			required: [
-				'method',
-				'query'
 			]
 		},
 		StoryPageID: {

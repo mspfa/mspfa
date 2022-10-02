@@ -16,69 +16,75 @@ export default createAPIValidator({
 	$ref: '#/definitions/Request',
 	definitions: {
 		Request: {
-			type: 'object',
-			additionalProperties: false,
-			properties: {
-				body: {
-					anyOf: [
-						{
-							type: 'object',
-							additionalProperties: false,
-							properties: {
-								to: {
-									type: 'array',
-									items: {
-										type: 'string'
+			anyOf: [
+				{
+					type: 'object',
+					additionalProperties: false,
+					properties: {
+						body: {
+							anyOf: [
+								{
+									type: 'object',
+									additionalProperties: false,
+									properties: {
+										to: {
+											type: 'array',
+											items: {
+												type: 'string'
+											},
+											minItems: 1,
+											uniqueItems: true
+										},
+										subject: {
+											type: 'string',
+											minLength: 1,
+											maxLength: 50
+										},
+										content: {
+											type: 'string',
+											minLength: 1,
+											maxLength: 20000
+										}
 									},
-									minItems: 1,
-									uniqueItems: true
+									required: [
+										'content',
+										'subject',
+										'to'
+									]
 								},
-								subject: {
-									type: 'string',
-									minLength: 1,
-									maxLength: 50
-								},
-								content: {
-									type: 'string',
-									minLength: 1,
-									maxLength: 20000
+								{
+									type: 'object',
+									additionalProperties: false,
+									properties: {
+										replyTo: {
+											type: 'string'
+										},
+										content: {
+											type: 'string',
+											minLength: 1,
+											maxLength: 20000
+										}
+									},
+									required: [
+										'content'
+									]
 								}
-							},
-							required: [
-								'content',
-								'subject',
-								'to'
 							]
 						},
-						{
-							type: 'object',
-							additionalProperties: false,
-							properties: {
-								replyTo: {
-									type: 'string'
-								},
-								content: {
-									type: 'string',
-									minLength: 1,
-									maxLength: 20000
-								}
-							},
-							required: [
-								'content',
-								'replyTo'
-							]
+						query: {},
+						method: {
+							type: 'string',
+							const: 'POST'
 						}
+					},
+					required: [
+						'body',
+						'method'
 					]
 				},
-				query: {},
-				method: {
-					type: 'string',
-					const: 'POST'
+				{
+					not: {}
 				}
-			},
-			required: [
-				'body',
-				'method'
 			]
 		}
 	}

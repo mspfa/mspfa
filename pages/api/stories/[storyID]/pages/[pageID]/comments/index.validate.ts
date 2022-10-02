@@ -16,48 +16,55 @@ export default createAPIValidator({
 	$ref: '#/definitions/Request',
 	definitions: {
 		Request: {
-			type: 'object',
-			additionalProperties: false,
-			properties: {
-				body: {
+			anyOf: [
+				{
 					type: 'object',
+					additionalProperties: false,
 					properties: {
-						content: {
-							type: 'string',
-							minLength: 1,
-							maxLength: 2000
-						}
-					},
-					required: [
-						'content'
-					],
-					additionalProperties: false
-				},
-				query: {
-					type: 'object',
-					properties: {
-						storyID: {
-							type: 'string'
+						body: {
+							type: 'object',
+							properties: {
+								content: {
+									type: 'string',
+									minLength: 1,
+									maxLength: 2000
+								}
+							},
+							required: [
+								'content'
+							],
+							additionalProperties: false
 						},
-						pageID: {
-							type: 'string'
+						query: {
+							type: 'object',
+							properties: {
+								storyID: {
+									type: 'string'
+								},
+								pageID: {
+									type: 'string'
+								}
+							},
+							required: [
+								'storyID',
+								'pageID'
+							],
+							additionalProperties: false
+						},
+						method: {
+							type: 'string',
+							const: 'POST'
 						}
 					},
 					required: [
-						'storyID',
-						'pageID'
-					],
-					additionalProperties: false
+						'body',
+						'method',
+						'query'
+					]
 				},
-				method: {
-					type: 'string',
-					const: 'POST'
+				{
+					not: {}
 				}
-			},
-			required: [
-				'body',
-				'method',
-				'query'
 			]
 		}
 	}

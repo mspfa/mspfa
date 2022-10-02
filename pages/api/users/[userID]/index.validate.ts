@@ -80,7 +80,7 @@ export default createAPIValidator({
 					additionalProperties: false,
 					properties: {
 						body: {
-							$ref: '#/definitions/RecursivePartial%3Calias-2073358172-70263-70404-2073358172-0-212510%3Cdef-alias-lib_client_users.ts-435-737-lib_client_users.ts-0-1305247327831%2Calias-1318184999-748-978-1318184999-0-30931551664714%3E%3E'
+							$ref: '#/definitions/RecursivePartial%3Calias-731470504-73815-73956-731470504-0-216469%3Cdef-alias-lib_client_users.ts-435-737-lib_client_users.ts-0-1306247327831%2Calias-1318184999-752-982-1318184999-0-30981551664714%3E%3E'
 						},
 						query: {
 							type: 'object',
@@ -104,10 +104,13 @@ export default createAPIValidator({
 						'method',
 						'query'
 					]
+				},
+				{
+					not: {}
 				}
 			]
 		},
-		'RecursivePartial<alias-2073358172-70263-70404-2073358172-0-212510<def-alias-lib_client_users.ts-435-737-lib_client_users.ts-0-1305247327831,alias-1318184999-748-978-1318184999-0-30931551664714>>': {
+		'RecursivePartial<alias-731470504-73815-73956-731470504-0-216469<def-alias-lib_client_users.ts-435-737-lib_client_users.ts-0-1306247327831,alias-1318184999-752-982-1318184999-0-30981551664714>>': {
 			type: 'object',
 			properties: {
 				birthdate: {
@@ -152,7 +155,7 @@ export default createAPIValidator({
 					type: 'string'
 				},
 				settings: {
-					$ref: '#/definitions/RecursivePartial%3Cstructure-839751756-3105-3972-839751756-3094-3973-839751756-2121-4558-839751756-1984-4559-839751756-0-6676%3E'
+					$ref: '#/definitions/RecursivePartial%3Cstructure-839751756-3147-4014-839751756-3136-4015-839751756-2175-4600-839751756-2038-4601-839751756-0-6723%3E'
 				}
 			},
 			additionalProperties: false
@@ -173,7 +176,7 @@ export default createAPIValidator({
 			type: 'string',
 			pattern: '^https?://'
 		},
-		'RecursivePartial<structure-839751756-3105-3972-839751756-3094-3973-839751756-2121-4558-839751756-1984-4559-839751756-0-6676>': {
+		'RecursivePartial<structure-839751756-3147-4014-839751756-3136-4015-839751756-2175-4600-839751756-2038-4601-839751756-0-6723>': {
 			type: 'object',
 			properties: {
 				emailPublic: {
@@ -203,10 +206,10 @@ export default createAPIValidator({
 					type: 'string'
 				},
 				controls: {
-					$ref: '#/definitions/RecursivePartial%3Cstructure-839751756-3531-3609-839751756-3519-3610-839751756-3105-3972-839751756-3094-3973-839751756-2121-4558-839751756-1984-4559-839751756-0-6676%3E'
+					$ref: '#/definitions/RecursivePartial%3Cstructure-839751756-3573-3651-839751756-3561-3652-839751756-3147-4014-839751756-3136-4015-839751756-2175-4600-839751756-2038-4601-839751756-0-6723%3E'
 				},
 				notifications: {
-					$ref: '#/definitions/RecursivePartial%3Cstructure-839751756-3627-3969-839751756-3610-3969-839751756-3105-3972-839751756-3094-3973-839751756-2121-4558-839751756-1984-4559-839751756-0-6676%3E'
+					$ref: '#/definitions/RecursivePartial%3Cstructure-839751756-3669-4011-839751756-3652-4011-839751756-3147-4014-839751756-3136-4015-839751756-2175-4600-839751756-2038-4601-839751756-0-6723%3E'
 				}
 			},
 			additionalProperties: false
@@ -220,7 +223,7 @@ export default createAPIValidator({
 				'sah'
 			]
 		},
-		'RecursivePartial<structure-839751756-3531-3609-839751756-3519-3610-839751756-3105-3972-839751756-3094-3973-839751756-2121-4558-839751756-1984-4559-839751756-0-6676>': {
+		'RecursivePartial<structure-839751756-3573-3651-839751756-3561-3652-839751756-3147-4014-839751756-3136-4015-839751756-2175-4600-839751756-2038-4601-839751756-0-6723>': {
 			type: 'object',
 			properties: {
 				previousPage: {
@@ -235,7 +238,7 @@ export default createAPIValidator({
 			},
 			additionalProperties: false
 		},
-		'RecursivePartial<structure-839751756-3627-3969-839751756-3610-3969-839751756-3105-3972-839751756-3094-3973-839751756-2121-4558-839751756-1984-4559-839751756-0-6676>': {
+		'RecursivePartial<structure-839751756-3669-4011-839751756-3652-4011-839751756-3147-4014-839751756-3136-4015-839751756-2175-4600-839751756-2038-4601-839751756-0-6723>': {
 			type: 'object',
 			properties: {
 				messages: {
@@ -248,13 +251,10 @@ export default createAPIValidator({
 					$ref: '#/definitions/RecursivePartial%3CNotificationSetting%3E'
 				},
 				storyDefaults: {
-					$ref: '#/definitions/RecursivePartial%3Cdef-alias-839751756-1496-1688-839751756-0-66762047801771%3E'
+					$ref: '#/definitions/RecursivePartial%3Cdef-alias-839751756-1550-1742-839751756-0-67232047801771%3E'
 				},
 				stories: {
-					type: 'array',
-					items: {
-						$ref: '#/definitions/StoryNotificationSettings'
-					}
+					$ref: '#/definitions/RecursivePartial%3Cindexed-type-731470504-74065-74088-731470504-73956-74089-731470504-0-216469%3Cdef-alias-1409642825-692-742-1409642825-0-64491012797994%2Cdef-alias-839751756-1742-2038-839751756-0-6723127147939%3E%3E'
 				}
 			},
 			additionalProperties: false
@@ -271,47 +271,34 @@ export default createAPIValidator({
 			},
 			additionalProperties: false
 		},
-		'RecursivePartial<def-alias-839751756-1496-1688-839751756-0-66762047801771>': {
+		'RecursivePartial<def-alias-839751756-1550-1742-839751756-0-67232047801771>': {
 			type: 'object',
 			additionalProperties: {
 				$ref: '#/definitions/RecursivePartial%3CNotificationSetting%3E'
 			}
 		},
-		'StoryNotificationSettings': {
-			anyOf: [
-				{
-					type: 'boolean',
-					const: true
-				},
-				{
-					$ref: '#/definitions/StoryReaderNotificationSettings'
-				},
-				{
-					$ref: '#/definitions/StoryEditorNotificationSettings'
-				}
-			],
-			description: '`true` if the setting should inherit the user\'s default story notification settings.\n\n`StoryReaderNotificationSettings | StoryEditorNotificationSettings` otherwise.'
-		},
-		'StoryReaderNotificationSettings': {
+		'RecursivePartial<indexed-type-731470504-74065-74088-731470504-73956-74089-731470504-0-216469<def-alias-1409642825-692-742-1409642825-0-64491012797994,def-alias-839751756-1742-2038-839751756-0-6723127147939>>': {
 			type: 'object',
-			additionalProperties: false,
+			additionalProperties: {
+				$ref: '#/definitions/RecursivePartial%3CStoryNotificationSettings%3E'
+			}
+		},
+		'RecursivePartial<StoryNotificationSettings>': {
+			type: 'object',
 			properties: {
-				comments: {
-					not: {}
-				},
 				updates: {
-					$ref: '#/definitions/NotificationSetting'
+					$ref: '#/definitions/RecursivePartial%3CNotificationSetting%3E'
 				},
 				news: {
-					$ref: '#/definitions/NotificationSetting'
+					$ref: '#/definitions/RecursivePartial%3CNotificationSetting%3E'
+				},
+				comments: {
+					$ref: '#/definitions/RecursivePartial%3C(undefined%7CNotificationSetting)%3E'
 				}
 			},
-			required: [
-				'news',
-				'updates'
-			]
+			additionalProperties: false
 		},
-		'NotificationSetting': {
+		'RecursivePartial<(undefined|NotificationSetting)>': {
 			type: 'object',
 			properties: {
 				email: {
@@ -321,17 +308,7 @@ export default createAPIValidator({
 					type: 'boolean'
 				}
 			},
-			required: [
-				'email',
-				'site'
-			],
 			additionalProperties: false
-		},
-		'StoryEditorNotificationSettings': {
-			type: 'object',
-			additionalProperties: {
-				$ref: '#/definitions/NotificationSetting'
-			}
 		}
 	}
 });

@@ -16,32 +16,39 @@ export default createAPIValidator({
 	$ref: '#/definitions/Request',
 	definitions: {
 		Request: {
-			type: 'object',
-			additionalProperties: false,
-			properties: {
-				body: {
+			anyOf: [
+				{
 					type: 'object',
+					additionalProperties: false,
 					properties: {
-						title: {
+						body: {
+							type: 'object',
+							properties: {
+								title: {
+									type: 'string',
+									minLength: 1,
+									maxLength: 50
+								}
+							},
+							required: [
+								'title'
+							],
+							additionalProperties: false
+						},
+						query: {},
+						method: {
 							type: 'string',
-							minLength: 1,
-							maxLength: 50
+							const: 'POST'
 						}
 					},
 					required: [
-						'title'
-					],
-					additionalProperties: false
+						'body',
+						'method'
+					]
 				},
-				query: {},
-				method: {
-					type: 'string',
-					const: 'POST'
+				{
+					not: {}
 				}
-			},
-			required: [
-				'body',
-				'method'
 			]
 		}
 	}

@@ -16,34 +16,41 @@ export default createAPIValidator({
 	$ref: '#/definitions/Request',
 	definitions: {
 		Request: {
-			type: 'object',
-			additionalProperties: false,
-			properties: {
-				body: {},
-				query: {
+			anyOf: [
+				{
 					type: 'object',
+					additionalProperties: false,
 					properties: {
-						userID: {
-							type: 'string'
+						body: {},
+						query: {
+							type: 'object',
+							properties: {
+								userID: {
+									type: 'string'
+								},
+								authMethodID: {
+									type: 'string'
+								}
+							},
+							required: [
+								'userID',
+								'authMethodID'
+							],
+							additionalProperties: false
 						},
-						authMethodID: {
-							type: 'string'
+						method: {
+							type: 'string',
+							const: 'DELETE'
 						}
 					},
 					required: [
-						'userID',
-						'authMethodID'
-					],
-					additionalProperties: false
+						'method',
+						'query'
+					]
 				},
-				method: {
-					type: 'string',
-					const: 'DELETE'
+				{
+					not: {}
 				}
-			},
-			required: [
-				'method',
-				'query'
 			]
 		}
 	}

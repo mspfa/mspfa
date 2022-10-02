@@ -52,6 +52,9 @@ export default createAPIValidator({
 						'body',
 						'method'
 					]
+				},
+				{
+					not: {}
 				}
 			]
 		},

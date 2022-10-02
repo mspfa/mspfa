@@ -16,46 +16,53 @@ export default createAPIValidator({
 	$ref: '#/definitions/Request',
 	definitions: {
 		Request: {
-			type: 'object',
-			additionalProperties: false,
-			properties: {
-				body: {
+			anyOf: [
+				{
 					type: 'object',
+					additionalProperties: false,
 					properties: {
-						currentPassword: {
-							$ref: '#/definitions/PasswordString'
+						body: {
+							type: 'object',
+							properties: {
+								currentPassword: {
+									$ref: '#/definitions/PasswordString'
+								},
+								newPassword: {
+									$ref: '#/definitions/PasswordString'
+								}
+							},
+							required: [
+								'currentPassword',
+								'newPassword'
+							],
+							additionalProperties: false
 						},
-						newPassword: {
-							$ref: '#/definitions/PasswordString'
+						query: {
+							type: 'object',
+							properties: {
+								userID: {
+									type: 'string'
+								}
+							},
+							required: [
+								'userID'
+							],
+							additionalProperties: false
+						},
+						method: {
+							type: 'string',
+							const: 'PATCH'
 						}
 					},
 					required: [
-						'currentPassword',
-						'newPassword'
-					],
-					additionalProperties: false
+						'body',
+						'method',
+						'query'
+					]
 				},
-				query: {
-					type: 'object',
-					properties: {
-						userID: {
-							type: 'string'
-						}
-					},
-					required: [
-						'userID'
-					],
-					additionalProperties: false
-				},
-				method: {
-					type: 'string',
-					const: 'PATCH'
+				{
+					not: {}
 				}
-			},
-			required: [
-				'body',
-				'method',
-				'query'
 			]
 		},
 		PasswordString: {

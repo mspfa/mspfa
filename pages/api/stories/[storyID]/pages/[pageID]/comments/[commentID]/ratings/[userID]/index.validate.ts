@@ -16,51 +16,64 @@ export default createAPIValidator({
 	$ref: '#/definitions/Request',
 	definitions: {
 		Request: {
-			type: 'object',
-			additionalProperties: false,
-			properties: {
-				body: {
-					type: 'number',
-					enum: [
-						-1,
-						0,
-						1
-					],
-					description: '`1` if the user liked the comment, `-1` if they disliked the comment, or `0` if they haven\'t rated the comment. Undefined if there is no user.'
-				},
-				query: {
+			anyOf: [
+				{
 					type: 'object',
+					additionalProperties: false,
 					properties: {
-						storyID: {
-							type: 'string'
+						body: {
+							anyOf: [
+								{
+									type: 'object',
+									properties: {}
+								},
+								{
+									type: 'object',
+									properties: {}
+								},
+								{
+									type: 'object',
+									properties: {}
+								}
+							]
 						},
-						pageID: {
-							type: 'string'
+						query: {
+							type: 'object',
+							properties: {
+								storyID: {
+									type: 'string'
+								},
+								pageID: {
+									type: 'string'
+								},
+								commentID: {
+									type: 'string'
+								},
+								userID: {
+									type: 'string'
+								}
+							},
+							required: [
+								'storyID',
+								'pageID',
+								'commentID',
+								'userID'
+							],
+							additionalProperties: false
 						},
-						commentID: {
-							type: 'string'
-						},
-						userID: {
-							type: 'string'
+						method: {
+							type: 'string',
+							const: 'PUT'
 						}
 					},
 					required: [
-						'storyID',
-						'pageID',
-						'commentID',
-						'userID'
-					],
-					additionalProperties: false
+						'method',
+						'query'
+					]
 				},
-				method: {
-					type: 'string',
-					const: 'PUT'
+				{
+					not: {}
 				}
-			},
-			required: [
-				'body',
-				'method',
-				'query'
 			]
 		}
 	}
