@@ -17,7 +17,6 @@ export type StoryID = integer;
 /** @minimum 1 */
 export type StoryPageID = integer;
 
-// I call them `ServerStoryPage`s instead of `Page`s
 export type ServerStoryPage = {
 	id: StoryPageID,
 	/** The date that the page was or will be published, or undefined if the page is still a draft. */

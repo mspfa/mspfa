@@ -1,14 +1,15 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
-import type { ServerStoryPage, StoryID, StoryPageID } from 'lib/server/stories';
+import type { ServerStory, ServerStoryPage, StoryID, StoryPageID } from 'lib/server/stories';
 import stories, { getClientStoryPage } from 'lib/server/stories';
 import getStoryByUnsafeID from 'lib/server/stories/getStoryByUnsafeID';
 import authenticate from 'lib/server/auth/authenticate';
 import { Perm } from 'lib/client/perms';
 import type { ClientStoryPageRecord } from 'lib/client/stories';
 import invalidPublishedOrder from 'lib/client/invalidPublishedOrder';
-import type { integer } from 'lib/types';
+import type { integer, Mutable } from 'lib/types';
 import users from 'lib/server/users';
+import type { UpdateFilter } from 'mongodb';
 
 const Handler: APIHandler<{
 	query: {
@@ -74,7 +75,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	const $set: Record<string, unknown> = {};
+	const $set: Mutable<UpdateFilter<ServerStory>['$set']> = {};
 
 	/** A record that maps each changed page's initial ID to its new ID after the move. */
 	const changedPageIDs: Record<StoryPageID, StoryPageID> = {};

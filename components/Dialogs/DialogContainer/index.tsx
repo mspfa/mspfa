@@ -19,7 +19,7 @@ export type DialogContainerProps = {
 const DialogContainer = React.memo(({ dialog }: DialogContainerProps) => {
 	const idKebab = toKebabCase(dialog.id.toString());
 
-	const dialogRef = useRef<HTMLElement>(null!);
+	const dialogRef = useRef<HTMLDialogElement>(null!);
 
 	useIsomorphicLayoutEffect(() => {
 		dialog.open = true;

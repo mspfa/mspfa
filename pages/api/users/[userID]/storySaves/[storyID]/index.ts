@@ -59,7 +59,7 @@ const Handler: APIHandler<{
 		}, {
 			$set: {
 				[`storySaves.${story._id}`]: req.body
-			}
+			} as Record<`storySaves.${number}`, typeof req.body>
 		});
 
 		res.status(204).end();

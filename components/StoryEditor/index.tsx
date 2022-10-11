@@ -235,7 +235,10 @@ const StoryEditor = ({
 					// This state is an array of the keys of pages whose advanced section is toggled open.
 					const [advancedShownPageKeys, setAdvancedShownPageKeys] = useState<integer[]>([]);
 
-					const onClickPageTile = useFunction((event: MouseEvent<HTMLDivElement> & { target: HTMLDivElement }) => {
+					const onClickPageTile = useFunction((event: (
+						MouseEvent<HTMLDivElement & HTMLDetailsElement>
+						& { target: HTMLDivElement | HTMLDetailsElement }
+					)) => {
 						const pageID = +event.target.id.slice(1);
 
 						const newSelectedPages = [...selectedPages];

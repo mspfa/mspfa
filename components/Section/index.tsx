@@ -1,17 +1,16 @@
 import './styles.module.scss';
-import type { HTMLAttributes, ReactNode } from 'react';
+import type { DetailsHTMLAttributes, HTMLAttributes, ReactNode } from 'react';
 import React from 'react';
 
-export type SectionProps = HTMLAttributes<HTMLDivElement> & {
+export type SectionProps = HTMLAttributes<HTMLDivElement> & DetailsHTMLAttributes<HTMLDetailsElement> & {
 	heading?: ReactNode,
 	collapsible?: boolean,
-	open?: boolean,
 	/** Whether this component's children should be inserted directly instead of inside a content element. */
 	customContent?: boolean
 };
 
 /** A section with a heading box and a content box. */
-const Section = React.forwardRef<HTMLDivElement, SectionProps>(({
+const Section = React.forwardRef<HTMLDivElement & HTMLDetailsElement, SectionProps>(({
 	heading,
 	className,
 	collapsible,

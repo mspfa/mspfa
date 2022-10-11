@@ -31,7 +31,7 @@
 		"google-auth-library": "^8.5.2",
 		"isomorphic-dompurify": "^0.22.0",
 		"lodash": "^4.17.21",
-		"mongodb": "^4.10.0",
+		"mongodb": "GrantGryczan/node-mongodb-native",
 		"next": "^12.3.1",
 		"react": "^18.2.0",
 		"react-component-updater": "^1.0.7",

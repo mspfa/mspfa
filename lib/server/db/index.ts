@@ -1,5 +1,5 @@
 import { Collection, MongoClient } from 'mongodb';
-import type { Db } from 'mongodb';
+import type { Db, Document } from 'mongodb';
 
 const client = new MongoClient(process.env.DB_HOST!);
 
@@ -19,31 +19,31 @@ export const connection = client.connect().then(() => {
 const collectionKeys = Object.getOwnPropertyNames(Collection.prototype) as Array<keyof Collection>;
 
 /** A `Collection` with only its async function properties. */
-type PartialCollection<Document extends Record<string, any> = any> = {
-	[Key in keyof Collection<Document>]: (
-		Collection<Document>[Key] extends (...args: any) => Promise<any>
-			? Collection<Document>[Key]
+type PartialCollection<TSchema extends Document = Document> = {
+	[Key in keyof Collection<TSchema>]: (
+		Collection<TSchema>[Key] extends (...args: any) => Promise<any>
+			? Collection<TSchema>[Key]
 			: undefined
 	)
 };
 
 const db = {
-	collection: <Document>(name: string) => {
+	collection: <TSchema extends Document>(name: string) => {
 		// Check if the database has already connected.
 		if (mspfaDB) {
-			return mspfaDB.collection<Document>(name);
+			return mspfaDB.collection<TSchema>(name);
 		}
 
-		// This is typed as `any` because I don't think figuring out a mutable type that works here is worth my time.
 		/**
-		 * Before the DB connects, this is the collection with only its async function properties (`PartialCollection<Document>`).
+		 * Before the DB connects, this is the collection with only its async function properties (`PartialCollection<TSchema>`).
 		 *
-		 * After the DB connects, this is set to the full collection (`Collection<Document>`).
+		 * After the DB connects, this is set to the full collection (`Collection<TSchema>`).
 		 */
+		// This is typed as `any` because I don't think figuring out a mutable type that works here is worth my time.
 		const partialCollection: any = {};
 
 		const collectionUpdate = connection.then(() => {
-			const collection = mspfaDB!.collection<Document>(name);
+			const collection = mspfaDB!.collection<TSchema>(name);
 
 			// Now that the DB has connected, set all of the properties of the full collection.
 			for (const key of collectionKeys) {
@@ -58,13 +58,13 @@ const db = {
 
 		// The DB has not connected yet, so set only the async function properties on the `partialCollection`.
 		for (const key of collectionKeys) {
-			partialCollection[key] = async (...args: any[]) => {
+			partialCollection[key] = async (...args: unknown[]) => {
 				await collectionUpdate;
 				return partialCollection[key](...args);
 			};
 		}
 
-		return partialCollection as Collection<Document> | PartialCollection<Document>;
+		return partialCollection as Collection<TSchema> | PartialCollection<TSchema>;
 	}
 };
 
