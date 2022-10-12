@@ -90,7 +90,7 @@
 		&:focus:not(:active)::after {
 			// An amount of brightness to add to the background color (between 0 and 1).
 			$added-brightness: 0.2;
-			// This filter function composition adds a constant amount of brightness independently of the initial brightness..
+			// This filter function composition adds a constant amount of brightness independently of the initial brightness.
 			filter: brightness(math.div(1, 1 - $added-brightness)) invert(1) brightness(1 - $added-brightness) invert(1);
 		}
 	}
