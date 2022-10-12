@@ -45,8 +45,7 @@
 			// These should be invisible but selectable.
 			font-size: 0;
 
-			.tag-field-editable:empty + .tag-field-tag &:first-child,
-			&.force-hidden {
+			.tag-field-editable:empty + .tag-field-tag &:first-child {
 				display: none;
 			}
 		}

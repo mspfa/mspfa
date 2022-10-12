@@ -258,12 +258,8 @@ const TagField = ({
 		);
 
 		if (lastTag) {
-			(lastTag.lastChild as HTMLElement).classList[
-				inputRef.current.lastChild!.textContent
-					? 'remove'
-					// Hide the comma if there's nothing after it.
-					: 'add'
-			]('force-hidden');
+			// Hide the comma if there's nothing after it.
+			(lastTag.lastChild as HTMLElement).hidden = !inputRef.current.lastChild!.textContent;
 		}
 
 		if (!isEqual(value, allTagValues)) {
