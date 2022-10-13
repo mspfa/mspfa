@@ -15,16 +15,18 @@
 
 * {
 	outline: none;
-	-webkit-tap-highlight-color: transparent;
-	-webkit-focus-ring-color: transparent;
 	max-width: 100%;
 }
 
 :root {
 	// Normalize the default line height.
 	line-height: 1.15;
-	// Prevent font size adjustments after mobile orientation changes.
-	-webkit-text-size-adjust: 100%;
+	// Breaks words to prevent overflow.
+	word-break: break-word;
+	-webkit-tap-highlight-color: transparent;
+	-webkit-focus-ring-color: transparent;
+	// Prevent inconsistent font size adjustments after mobile orientation changes.
+	text-size-adjust: 100%;
 
 	// Load standard theme.
 	@each $theme-variable, $value in $standard-theme {
@@ -46,7 +48,6 @@ body {
 	// This makes the scrollbar not change visibility and offset the page horizontally when changing the page height, for example by toggling tall spoilers on a short page.
 	overflow-y: scroll;
 	@include theme(background-color, back-color);
-	word-break: break-word;
 }
 
 body,
@@ -185,7 +186,7 @@ select {
 	cursor: pointer;
 
 	&:invalid {
-		// `select` elements are generally only `:invalid` if a disabled option is selected, so this is effectively the `placeholder` attribute color, because `select`s don't have `placeholder`s.
+		// `select` elements are generally only `:invalid` if a disabled option is selected, so this is effectively the placeholder attribute color, because `select`s don't have `placeholder`s.
 		// This color code matches Chrome's default.
 		color: #757575;
 	}
