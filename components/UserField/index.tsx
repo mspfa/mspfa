@@ -241,7 +241,6 @@ const UserField = ({
 			) : (
 				<>
 					<input
-						type="search"
 						className="user-field-input"
 						placeholder="Enter Username or ID"
 						maxLength={32}
