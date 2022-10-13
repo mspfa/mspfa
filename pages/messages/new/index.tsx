@@ -121,7 +121,7 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 								{toUsers ? (
 									<>
 										<Row>
-											<Label block htmlFor="field-to">
+											<Label block>
 												To
 											</Label>
 											<UserArrayField
