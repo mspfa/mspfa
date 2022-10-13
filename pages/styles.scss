@@ -20,8 +20,13 @@
 	max-width: 100%;
 }
 
-// Load standard theme.
 :root {
+	// Normalize the default line height.
+	line-height: 1.15;
+	// Prevent font size adjustments after mobile orientation changes.
+	-webkit-text-size-adjust: 100%;
+
+// Load standard theme.
 	@each $theme-variable, $value in $standard-theme {
 		--#{$theme-variable}: #{$value};
 	}
@@ -220,26 +225,10 @@ input, textarea, select, option {
 	}
 }
 
-.red {
-	color: #ff0000;
-}
-
 .bolder {
 	text-shadow: 0.25px 0 currentColor;
 }
 
-.left {
-	text-align: left;
-}
-
-.center {
-	text-align: center;
-}
-
-.right {
-	text-align: right;
-}
-
-.justify {
-	text-align: justify;
+.red {
+	color: #ff0000;
 }

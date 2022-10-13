@@ -1,5 +1,21 @@
 @use 'sass:math';
 
+.left {
+	text-align: left;
+}
+
+.center {
+	text-align: center;
+}
+
+.right {
+	text-align: right;
+}
+
+.justify {
+	text-align: justify;
+}
+
 .chat {
 	border: 1px dashed #808080;
 	padding: (math.div(15, 14) * 1em) (math.div(25, 14) * 1em);
