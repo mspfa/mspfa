@@ -158,21 +158,9 @@ input[type=color] {
 	}
 }
 
-::-webkit-search-cancel-button {
-	appearance: none;
-	height: 1rem;
-	width: 1rem;
-	margin: auto;
-	background-image: url(/images/icons/remove.png); // Image credit: seymour schlong
-}
-
-input[type=search] {
-	// Don't let the search cancel button cover up the placeholder text or the input value when it's not supposed to be visible.
-	&:placeholder-shown, &:not(:focus):not(:hover) {
-		&::-webkit-search-cancel-button {
-			display: none;
-		}
-	}
+// Display search inputs the same as other text inputs.
+::-webkit-search-decoration, ::-webkit-search-cancel-button {
+	display: none;
 }
 
 textarea {
