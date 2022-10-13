@@ -148,6 +148,7 @@ const Component = ({ stories, resultCount }: ServerSideProps) => {
 								Title
 							</Label>
 							<Field
+								type="search"
 								id="field-title"
 								name="title"
 								className="spaced"

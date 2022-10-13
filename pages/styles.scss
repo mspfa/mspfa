@@ -26,7 +26,7 @@
 	// Prevent font size adjustments after mobile orientation changes.
 	-webkit-text-size-adjust: 100%;
 
-// Load standard theme.
+	// Load standard theme.
 	@each $theme-variable, $value in $standard-theme {
 		--#{$theme-variable}: #{$value};
 	}
@@ -154,6 +154,23 @@ input[type=color] {
 
 	&::-moz-color-swatch {
 		@include color-swatch;
+	}
+}
+
+::-webkit-search-cancel-button {
+	appearance: none;
+	height: 1rem;
+	width: 1rem;
+	margin: auto;
+	background-image: url(/images/icons/remove.png); // Image credit: seymour schlong
+}
+
+input[type=search] {
+	// Don't let the search cancel button cover up the placeholder text or the input value when it's not supposed to be visible.
+	&:placeholder-shown, &:not(:focus):not(:hover) {
+		&::-webkit-search-cancel-button {
+			display: none;
+		}
 	}
 }
 

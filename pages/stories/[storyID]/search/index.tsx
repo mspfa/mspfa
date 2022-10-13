@@ -162,6 +162,7 @@ const Component = withErrorPage<ServerSideProps>(({ story, results }) => {
 							Search
 						</Label>
 						<Field
+							type="search"
 							id="field-search-query"
 							name="searchQuery"
 							className="spaced"

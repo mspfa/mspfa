@@ -43,6 +43,7 @@ const Component = ({ users, resultCount }: ServerSideProps) => {
 					Username or ID
 				</Label>
 				<Field
+					type="search"
 					id="field-name-or-id"
 					name="nameOrID"
 					className="spaced"
