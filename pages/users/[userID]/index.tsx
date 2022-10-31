@@ -203,8 +203,8 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ param
 						// Show only the public fav count on the user's profile no matter who you are, so that everyone sees the same number.
 						await getStoriesAsUser(undefined, false, {
 							_id: { $in: userFromParams.favs }
-						}).count()
-					)
+						}).toArray()
+					).length
 				}
 			}
 		};
