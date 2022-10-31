@@ -19,7 +19,12 @@
 		"isolatedModules": true,
 		"jsx": "preserve",
 		"baseUrl": ".",
-		"downlevelIteration": true
+		"downlevelIteration": true,
+		"plugins": [
+			{
+				"name": "next"
+			}
+		]
 	},
 	"ts-node": {
 		"compilerOptions": {
