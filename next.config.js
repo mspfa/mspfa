@@ -65,5 +65,7 @@ module.exports = {
 		destination: 'https://discord.gg/EC5acgG',
 		permanent: true
 	}],
-	swcMinify: true
+	experimental: {
+		allowMiddlewareResponseBody: true
+	}
 };

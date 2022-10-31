@@ -1,13 +1,15 @@
 // This middleware implements rate limiting.
+// TODO: Stop using middleware for this. It doesn't work because no variables are persistent in middleware.
 
-import type { DateNumber } from 'lib/types';
+import type { ErrorResponseBody } from 'lib/server/api';
+import type { DateNumber, integer } from 'lib/types';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 /** The number of milliseconds it takes for a client request time to be forgotten. */
 const TIME_PERIOD = 1000 * 60;
 /** The maximum number of requests to allow from each client per `TIME_PERIOD`. */
-const MAX_REQUESTS_PER_TIME_PERIOD = 240;
+const MAX_REQUESTS_PER_TIME_PERIOD = 2;
 
 /** A mapping from each client's IP to a sorted array of the date numbers at which requests were received from that client. */
 const requestTimesByIP: Record<string, DateNumber[]> = {};
@@ -57,14 +59,26 @@ export const middleware = async (req: NextRequest) => {
 		// This is calculated by getting the time that the `MAX_REQUESTS_PER_TIME_PERIOD`th-last client request time will be forgotten, because after that request time is forgotten, the client would have one less than the `MAX_REQUESTS_PER_TIME_PERIOD`, which allows one more to be accepted without rate limiting.
 		const retryAfter = clientRequestTimes[clientRequestCount - MAX_REQUESTS_PER_TIME_PERIOD] + TIME_PERIOD;
 
+		const retryAfterSeconds = Math.ceil((retryAfter - now) / 1000);
+		const message = `You're sending data to MSPFA too quickly. Please wait ~${retryAfterSeconds} second${retryAfterSeconds === 1 ? '' : 's'} before retrying.`;
+
 		if (/^\/api(?:\/|$)/.test(req.nextUrl.pathname)) {
-			return NextResponse.rewrite(
-				new URL(`/api/_error/429?retryAfter=${retryAfter}`, req.url)
-			);
+			// This is an API request, so it should return a JSON body.
+
+			const body: ErrorResponseBody & { retryAfter: integer } = {
+				retryAfter,
+				message
+			};
+
+			return NextResponse.json(body, {
+				status: 429,
+				headers: { 'Content-Type': 'application/json' }
+			});
 		}
 
-		return NextResponse.rewrite(
-			new URL(`/_error/429?retryAfter=${retryAfter}`, req.url)
-		);
+		return new NextResponse(message, {
+			status: 429,
+			headers: { 'Content-Type': 'text/plain' }
+		});
 	}
 };
