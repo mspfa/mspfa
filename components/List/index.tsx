@@ -1,5 +1,6 @@
 import './styles.module.scss';
 import type { Key } from 'react';
+import classNames from 'classnames';
 
 /** What every `Listing`'s props must extend if it is to be passed into a `List`. */
 export type ListingPropsBase = {
@@ -27,7 +28,7 @@ const List = <
 	listing: Listing,
 	...props
 }: ListProps<ListingProps, ForbiddenListingProps>) => (
-	<div className={`list ${Listing.listClassName}`}>
+	<div className={classNames('list', Listing.listClassName)}>
 		{children.map(child => (
 			<Listing
 				key={child.id}

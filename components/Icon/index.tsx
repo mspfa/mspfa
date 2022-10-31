@@ -1,5 +1,6 @@
 import './styles.module.scss';
 import type { HTMLAttributes } from 'react';
+import classNames from 'classnames';
 
 export type IconProps = HTMLAttributes<HTMLDivElement>;
 
@@ -14,7 +15,7 @@ const Icon = ({ children, className, ...props }: IconProps) => {
 	return (
 		<>
 			<div
-				className={`icon${hasChildren ? ' labeled' : ''}${className ? ` ${className}` : ''}`}
+				className={classNames('icon', { labeled: hasChildren }, className)}
 				{...props}
 			/>
 			{hasChildren && (

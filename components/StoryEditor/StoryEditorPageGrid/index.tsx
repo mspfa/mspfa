@@ -16,6 +16,7 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import type { StoryPageID } from 'lib/server/stories';
 import type { integer } from 'lib/types';
 import useLatest from 'lib/client/reactHooks/useLatest';
+import classNames from 'classnames';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 type StoryMovePagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/movePages').default>;
@@ -446,7 +447,7 @@ const StoryEditorPageGrid = ({
 			</div>
 			<div
 				id="story-editor-pages"
-				className={`view-mode-grid${formikPropsRef.current.isSubmitting ? ' disabled' : ''}`}
+				className={classNames('view-mode-grid', { disabled: formikPropsRef.current.isSubmitting })}
 				style={{
 					paddingTop: `${gridCullingInfo.paddingTop}px`,
 					paddingBottom: `${gridCullingInfo.paddingBottom}px`

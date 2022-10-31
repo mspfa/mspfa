@@ -2,6 +2,7 @@ import './styles.module.scss';
 import createGlobalState from 'global-react-state';
 import React from 'react';
 import Router from 'next/router';
+import classNames from 'classnames';
 
 const [useLoadingCount, setLoadingCount, getLoadingCount] = createGlobalState(0);
 
@@ -89,7 +90,7 @@ const LoadingIndicator = () => {
 	return (
 		<div
 			id="loading-indicator"
-			className={loadingCount ? 'loading' : undefined}
+			className={classNames({ loading: loadingCount !== 0 })}
 		/>
 	);
 };

@@ -28,6 +28,7 @@ import type { DateNumber, RecursivePartial } from 'lib/types';
 import DateField from 'components/DateField';
 import useLatest from 'lib/client/reactHooks/useLatest';
 import IDPrefix from 'lib/client/reactContexts/IDPrefix';
+import classNames from 'classnames';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 
@@ -521,7 +522,7 @@ const StoryEditorPageListing = React.memo(({
 	return (
 		<Section
 			id={`p${page.id}`}
-			className={`story-editor-page ${pageStatus}${saved ? ' saved' : ''}`}
+			className={classNames('story-editor-page', pageStatus, { saved })}
 			heading={(
 				<>
 					<span className="story-editor-page-id spaced">

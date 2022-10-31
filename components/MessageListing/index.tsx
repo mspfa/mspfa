@@ -22,6 +22,7 @@ import UserLink from 'components/Link/UserLink';
 import InconspicuousDiv from 'components/InconspicuousDiv';
 import { useRouter } from 'next/router';
 import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
+import classNames from 'classnames';
 
 type MessageReadByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy/[userID]').default>;
 type MessageDeletedByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy/[userID]').default>;
@@ -215,7 +216,7 @@ const MessageListing = ({
 
 	return (
 		<div
-			className={`listing${message.read ? ' read' : ''}${open ? ' open' : ''}`}
+			className={classNames('listing', { read: message.read, open })}
 			ref={listingRef}
 		>
 			<label className="listing-selected-label" title="Select Message">

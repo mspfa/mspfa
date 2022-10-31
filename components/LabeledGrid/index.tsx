@@ -1,6 +1,7 @@
 import './styles.module.scss';
 import type { HTMLAttributes } from 'react';
 import React from 'react';
+import classNames from 'classnames';
 
 export type LabeledGridProps = HTMLAttributes<HTMLDivElement>;
 
@@ -10,7 +11,7 @@ const LabeledGrid = React.forwardRef<HTMLDivElement, LabeledGridProps>(({
 	...props
 }, ref) => (
 	<div
-		className={`labeled-grid${className ? ` ${className}` : ''}`}
+		className={classNames('labeled-grid', className)}
 		{...props}
 		ref={ref}
 	/>

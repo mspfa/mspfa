@@ -12,6 +12,7 @@ import Dialog from 'lib/client/Dialog';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import promptSignIn from 'lib/client/promptSignIn';
+import classNames from 'classnames';
 
 type SessionAPI = APIClient<typeof import('pages/api/session').default>;
 
@@ -57,7 +58,7 @@ const Nav = () => {
 
 	return (
 		<nav
-			className={user?.settings.stickyNav ? 'sticky' : undefined}
+			className={classNames({ sticky: user?.settings.stickyNav })}
 			ref={ref}
 		>
 			<NavGroup id="primary">

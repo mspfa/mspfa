@@ -10,6 +10,7 @@ import type { CommentProps } from 'components/Comment';
 import Comment from 'components/Comment';
 import StoryPageCommentReplies from 'components/Comment/StoryPageComment/StoryPageCommentReplies';
 import type { integer } from 'lib/types';
+import classNames from 'classnames';
 
 type StoryPageCommentAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]').default>;
 type StoryPageCommentRatingAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]/ratings/[userID]').default>;
@@ -72,14 +73,10 @@ const StoryPageComment = React.memo(({
 				story={story}
 				setComment={setComment}
 				deleteComment={deleteComment}
-				className={
-					(comment.replyCount ? 'with-replies' : '')
-					+ (
-						repliesShown
-							? `${comment.replyCount ? ' ' : ''}replies-shown`
-							: ''
-					)
-				}
+				className={classNames({
+					'with-replies': comment.replyCount !== 0,
+					'replies-shown': repliesShown
+				})}
 				postReply={postReply}
 			>
 				{comment}

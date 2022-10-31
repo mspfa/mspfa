@@ -5,6 +5,7 @@ import type { HTMLAttributes, ReactNode } from 'react';
 import { useState, useEffect } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import defaultUserSettings from 'lib/client/defaultUserSettings';
+import classNames from 'classnames';
 
 export type SpoilerProps = HTMLAttributes<HTMLDivElement> & {
 	/** The spoiler button's label inserted after "Show" or "Hide". */
@@ -84,7 +85,7 @@ const Spoiler = ({
 
 	return (
 		<div
-			className={`spoiler${open ? ' open' : ' closed'}${className ? ` ${className}` : ''}`}
+			className={classNames('spoiler', { open }, className)}
 			{...props}
 		>
 			<div className="spoiler-heading">

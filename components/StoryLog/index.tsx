@@ -6,6 +6,7 @@ import type { StoryLogListings } from 'lib/client/stories';
 import type { HTMLAttributes } from 'react';
 import { useMemo } from 'react';
 import StoryPageLink from 'components/StoryPageLink';
+import classNames from 'classnames';
 
 export type StoryLogProps = {
 	listings?: StoryLogListings
@@ -13,7 +14,7 @@ export type StoryLogProps = {
 
 const StoryLog = ({ listings, children, className, ...props }: StoryLogProps) => (
 	<div
-		className={`story-log${className ? ` ${className}` : ''}`}
+		className={classNames('story-log', className)}
 		{...props}
 	>
 		{children}

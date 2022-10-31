@@ -4,6 +4,7 @@ import Icon from 'components/Icon';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import type { DragEvent } from 'react';
 import { useState } from 'react';
+import classNames from 'classnames';
 
 export type GrabberProps = Omit<IconProps, 'draggable'>;
 
@@ -12,7 +13,7 @@ const Grabber = ({ className, onDragStart, onDragEnd, ...props }: GrabberProps) 
 
 	return (
 		<Icon
-			className={`grabber${dragging ? ' dragging' : ''}${className ? ` ${className}` : ''}`}
+			className={classNames('grabber', { dragging }, className)}
 			draggable
 			onDragStart={
 				useFunction((event: DragEvent<HTMLDivElement>) => {

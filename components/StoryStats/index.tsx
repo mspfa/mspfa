@@ -7,6 +7,7 @@ import { storyStatusNames } from 'lib/client/StoryStatus';
 import { useUser } from 'lib/client/reactContexts/UserContext';
 import type { StoryPageID } from 'lib/server/stories';
 import React from 'react';
+import classNames from 'classnames';
 
 export type StoryStatsProps = {
 	children: PublicStory,
@@ -25,7 +26,7 @@ const StoryStats = ({
 
 	return (
 		<div
-			className={`story-stats${className ? ` ${className}` : ''}`}
+			className={classNames('story-stats', className)}
 		>
 			<span className="story-status spaced">
 				{storyStatusNames[story.status]}

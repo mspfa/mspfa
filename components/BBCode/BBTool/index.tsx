@@ -18,6 +18,7 @@ import type { integer } from 'lib/types';
 import escapeBBAttribute from 'lib/client/escapeBBAttribute';
 import dynamic from 'next/dynamic';
 import Loading from 'components/LoadingIndicator/Loading';
+import classNames from 'classnames';
 
 const ColorTool = dynamic(() => import('components/ColorTool'), { loading: Loading });
 
@@ -525,7 +526,7 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 					backgroundPositionY: `${-tagIndexes[tagName]}em`
 				}
 			}}
-			className={`bb-tool bb-tool-${tagName}${open ? ' open' : ''}`}
+			className={classNames(`bb-tool bb-tool-${tagName}`, { open })}
 			title={tag.title}
 			disabled={disabled}
 			onClick={

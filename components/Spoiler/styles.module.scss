@@ -12,7 +12,7 @@
 		padding: 1em 5%;
 	}
 
-	&.closed &-content {
+	&:not(.open) &-content {
 		display: none;
 	}
 }

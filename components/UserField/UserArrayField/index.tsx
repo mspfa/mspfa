@@ -5,6 +5,7 @@ import { useMemo, useRef } from 'react';
 import UserField from 'components/UserField';
 import AddUserButton from 'components/UserField/AddUserButton';
 import type { integer } from 'lib/types';
+import classNames from 'classnames';
 
 export type UserArrayFieldProps = Pick<InputHTMLAttributes<HTMLInputElement>, 'required' | 'readOnly' | 'autoFocus' | 'className'> & {
 	name: string,
@@ -42,7 +43,7 @@ const UserArrayField = ({
 
 	return (
 		<div
-			className={`user-array-field${className ? ` ${className}` : ''}`}
+			className={classNames('user-array-field', className)}
 			ref={userArrayFieldRef}
 		>
 			{value.map((userID, i) => (

@@ -6,6 +6,7 @@ import Footer from 'components/Footer';
 import Dialogs from 'components/Dialogs';
 import LoadingIndicator from 'components/LoadingIndicator';
 import PageHeading from 'components/Page/PageHeading';
+import classNames from 'classnames';
 
 export type PageProps = {
 	/**
@@ -23,20 +24,26 @@ const Page = ({ heading, children, withFlashyTitle, basement }: PageProps) => (
 	<>
 		{/* It is necessary for dialogs to be before the page so that dialog elements are reached first when tabbing. */}
 		<Dialogs />
+
 		<div id="page">
 			<Header withFlashyTitle={withFlashyTitle} />
-			<main className={`mid${heading ? ' padded' : ''}`}>
+
+			<main className={classNames('mid', { padded: heading !== undefined })}>
 				{heading !== undefined && (
 					<PageHeading>{heading}</PageHeading>
 				)}
 				{children}
 			</main>
+
 			<Footer />
+
 			{basement}
+
 			<div id="copyright">
 				{`MS Paint Fan Adventures © 2010-${new Date().getFullYear()}`}
 			</div>
 		</div>
+
 		<LoadingIndicator />
 		{/* This dummy element exists to preload certain resources via styles set on it, as well as to perform computations on it in some cases. */}
 		<div id="dummy" />

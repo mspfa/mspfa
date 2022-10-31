@@ -16,6 +16,7 @@ import PrivateStoryContext from 'lib/client/reactContexts/PrivateStoryContext';
 import { getChangedValues } from 'lib/client/forms';
 import Grabber from 'components/Grabber';
 import addHashToColor from 'lib/client/addHashToColor';
+import classNames from 'classnames';
 
 type StoryColorAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors/[colorID]').default>;
 
@@ -43,7 +44,7 @@ const Color = ({
 	const button = (
 		<ColorComponent
 			icon
-			className={`color${editing ? ' spaced' : ''}`}
+			className={classNames('color', { spaced: editing })}
 			title={
 				editing
 					? 'Edit Color'

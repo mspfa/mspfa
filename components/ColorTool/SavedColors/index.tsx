@@ -17,6 +17,7 @@ import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import type { ClientColorGroup } from 'lib/client/colors';
 import DropIndicator from 'components/ColorTool/DropIndicator';
+import classNames from 'classnames';
 
 type StoryColorGroupAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups/[colorGroupID]').default>;
 type StoryColorAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors/[colorID]').default>;
@@ -204,7 +205,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 	return (
 		<SavedColorsComponent
 			id="saved-colors"
-			className={editing ? 'editing' : undefined}
+			className={classNames({ editing })}
 			onDragStart={
 				useFunction((event: DragEvent) => {
 					if (!(event.target as HTMLElement).classList.contains('grabber')) {

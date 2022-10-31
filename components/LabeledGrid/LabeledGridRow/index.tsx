@@ -2,6 +2,7 @@ import './styles.module.scss';
 import type { HTMLAttributes, ReactNode } from 'react';
 import Label from 'components/Label';
 import type { ExclusiveLabelProps } from 'components/Label';
+import classNames from 'classnames';
 
 type DivPropsWithoutChildren = Omit<HTMLAttributes<HTMLDivElement>, 'children'>;
 
@@ -34,7 +35,7 @@ const LabeledGridRow = ({
 }: LabeledGridRowProps) => (
 	<>
 		<Label
-			className={`grid-row-label${labelClassName ? ` ${labelClassName}` : ''}`}
+			className={classNames('grid-row-label', labelClassName)}
 			htmlFor={htmlFor}
 			help={help}
 			afterLabel={afterLabel}
@@ -46,7 +47,7 @@ const LabeledGridRow = ({
 			children
 		) : (
 			<div
-				className={`grid-row-content${contentClassName ? ` ${contentClassName}` : ''}`}
+				className={classNames('grid-row-content', contentClassName)}
 				{...contentProps}
 			>
 				{children}

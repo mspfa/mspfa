@@ -32,6 +32,7 @@ import UserLink from 'components/Link/UserLink';
 import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
 import type { integer } from 'lib/types';
 import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';
+import classNames from 'classnames';
 
 type MessageAPI = APIClient<typeof import('pages/api/messages/[messageID]').default>;
 type MessageDeletedByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy/[userID]').default>;
@@ -128,7 +129,7 @@ const Component = withErrorPage<ServerSideProps>(({
 					return (
 						<Form
 							id="message"
-							className={editing ? 'editing' : undefined}
+							className={classNames({ editing })}
 							ref={useSubmitOnSave({ submitForm, dirty, isSubmitting }, editing)}
 						>
 							<Section

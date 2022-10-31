@@ -26,6 +26,7 @@ import Timestamp from 'components/Timestamp';
 import { Formik, Form, Field } from 'formik';
 import type { PublicStory } from 'lib/client/stories';
 import promptSignIn from 'lib/client/promptSignIn';
+import classNames from 'classnames';
 
 export type CommentProps<ClientComment = ClientCommentOrReply> = {
 	/** The API path of this comment. */
@@ -149,21 +150,17 @@ const Comment = <
 
 	return (
 		<div
-			className={
-				`comment comment-${comment.id} by-${comment.author}`
-				+ (
-					user?.id === comment.author
-						? ' by-self'
-						: ''
-				)
-				+ (
-					story.owner === comment.author
-					|| story.editors.includes(comment.author)
-						? ' by-editor'
-						: ''
-				)
-				+ (className ? ` ${className}` : '')
-			}
+			className={classNames(
+				`comment comment-${comment.id} by-${comment.author}`,
+				{
+					'by-self': user?.id === comment.author,
+					'by-editor': (
+						story.owner === comment.author
+						|| story.editors.includes(comment.author)
+					)
+				},
+				className
+			)}
 		>
 			<IconContainer
 				className="comment-icon-container"
@@ -313,7 +310,10 @@ const Comment = <
 				<div className="comment-actions">
 					<span className="comment-ratings">
 						<button
-							className={`comment-action comment-rating-button like-button${comment.userRating === 1 ? ' active' : ''}`}
+							className={classNames(
+								'comment-action comment-rating-button like-button',
+								{ active: comment.userRating === 1 }
+							)}
 							title="Like"
 							onClick={
 								useFunction(() => {
@@ -326,7 +326,10 @@ const Comment = <
 							</Icon>
 						</button>
 						<button
-							className={`comment-action comment-rating-button dislike-button${comment.userRating === -1 ? ' active' : ''}`}
+							className={classNames(
+								'comment-action comment-rating-button dislike-button',
+								{ active: comment.userRating === -1 }
+							)}
 							title="Dislike"
 							onClick={
 								useFunction(() => {

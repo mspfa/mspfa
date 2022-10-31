@@ -4,6 +4,7 @@ import type { ButtonProps } from 'components/Button';
 import type { ReactNode } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import Dialog from 'lib/client/Dialog';
+import classNames from 'classnames';
 
 export type HelpButtonProps = Omit<ButtonProps, 'children' | 'onClick' | 'title'> & {
 	subject: ReactNode,
@@ -13,7 +14,7 @@ export type HelpButtonProps = Omit<ButtonProps, 'children' | 'onClick' | 'title'
 const HelpButton = ({ className, subject, children, ...props }: HelpButtonProps) => (
 	<Button
 		icon
-		className={`help-button${className ? ` ${className}` : ''}`}
+		className={classNames('help-button', className)}
 		title="Help"
 		onClick={
 			useFunction(() => {
