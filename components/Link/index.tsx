@@ -105,9 +105,9 @@ const Link = React.forwardRef<HTMLAnchorElement & HTMLButtonElement, LinkProps>(
 			scroll={scroll ?? true}
 			shallow={shallow}
 			locale={locale}
-		>
-			<a {...anchorProps} ref={ref} />
-		</NextLink>
+			{...anchorProps}
+			ref={ref}
+		/>
 	);
 });
 
