@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import type { ClientComment, ClientCommentReply } from 'lib/client/comments';
-import type { Dispatch, SetStateAction } from 'react';
+import type { Updater } from 'use-immer';
 import React, { useRef, useState } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import type { APIClient } from 'lib/client/api';
@@ -38,7 +38,7 @@ const StoryPageComment = React.memo(({
 		});
 	});
 
-	const setCommentRepliesRef = useRef<Dispatch<SetStateAction<ClientCommentReply[]>>>();
+	const updateCommentRepliesRef = useRef<Updater<ClientCommentReply[]>>();
 
 	/** A ref to the array of comment replies to render when replies are next opened. */
 	const initialCommentRepliesRef = useRef<ClientCommentReply[]>([]);
@@ -51,13 +51,12 @@ const StoryPageComment = React.memo(({
 
 		addToReplyCount(1);
 
-		if (setCommentRepliesRef.current) {
+		if (updateCommentRepliesRef.current) {
 			// The replies are shown, so add this new reply to them.
 
-			setCommentRepliesRef.current(commentReplies => [
-				...commentReplies,
-				newCommentReply
-			]);
+			updateCommentRepliesRef.current(commentReplies => {
+				commentReplies.push(newCommentReply);
+			});
 		} else {
 			// The replies are hidden, so show them with only this new reply loaded.
 
@@ -96,7 +95,7 @@ const StoryPageComment = React.memo(({
 					<StoryPageCommentReplies
 						story={story}
 						comment={comment}
-						setCommentRepliesRef={setCommentRepliesRef}
+						updateCommentRepliesRef={updateCommentRepliesRef}
 						initialCommentRepliesRef={initialCommentRepliesRef}
 						addToReplyCount={addToReplyCount}
 						postReply={postReply}

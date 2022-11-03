@@ -20,7 +20,7 @@ export type ColorGroupLabelProps = {
 
 /** A `Label` representing a `ClientColorGroup` when saved colors are being edited. */
 const ColorGroupLabel = ({ children: colorGroup }: ColorGroupLabelProps) => {
-	const [story, setStory] = useContext(PrivateStoryContext)!;
+	const [story, updateStory] = useContext(PrivateStoryContext)!;
 
 	return (
 		<Label
@@ -88,23 +88,16 @@ const ColorGroupLabel = ({ children: colorGroup }: ColorGroupLabelProps) => {
 
 								await (api as StoryColorGroupAPI).delete(`/stories/${story.id}/colorGroups/${colorGroup.id}`);
 
-								setStory(story => {
+								updateStory(story => {
 									const colorGroupIndex = story.colorGroups.findIndex(({ id }) => id === colorGroup.id);
 
-									return {
-										...story,
-										colorGroups: [
-											...story.colorGroups.slice(0, colorGroupIndex),
-											...story.colorGroups.slice(colorGroupIndex + 1, story.colorGroups.length)
-										],
-										colors: story.colors.map(({ group, ...color }) => ({
-											...color,
-											// Only keep the color's group if the color wasn't in the group being deleted.
-											...group !== colorGroup.id && {
-												group
-											}
-										}))
-									};
+									story.colorGroups.splice(colorGroupIndex, 1);
+
+									for (const color of story.colors) {
+										if (color.group === colorGroup.id) {
+											delete color.group;
+										}
+									}
 								});
 
 								return;
@@ -122,17 +115,10 @@ const ColorGroupLabel = ({ children: colorGroup }: ColorGroupLabelProps) => {
 
 							const { data: newColorGroup } = await (api as StoryColorGroupAPI).patch(`/stories/${story.id}/colorGroups/${colorGroup.id}`, changedValues);
 
-							setStory(story => {
+							updateStory(story => {
 								const colorGroupIndex = story.colorGroups.findIndex(({ id }) => id === colorGroup.id);
 
-								return {
-									...story,
-									colorGroups: [
-										...story.colorGroups.slice(0, colorGroupIndex),
-										newColorGroup,
-										...story.colorGroups.slice(colorGroupIndex + 1, story.colorGroups.length)
-									]
-								};
+								story.colorGroups[colorGroupIndex] = newColorGroup;
 							});
 						})
 					}

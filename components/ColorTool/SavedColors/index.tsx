@@ -29,7 +29,7 @@ export type SavedColorsProps = Pick<ColorProps, 'name'>;
 
 /** The saved colors section of `ColorTool`. */
 const SavedColors = React.memo(({ name }: SavedColorsProps) => {
-	const [story, setStory] = useContext(PrivateStoryContext)!;
+	const [story, updateStory] = useContext(PrivateStoryContext)!;
 
 	const [editing, setEditing] = useState(false);
 
@@ -38,25 +38,25 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 	});
 
 	const onClickCreateColorGroup = useFunction(() => {
-		promptCreateColorGroup(story, setStory);
+		promptCreateColorGroup(story, updateStory);
 	});
 
 	// This state is whether a color or color group is currently being dragged.
 	const [dragging, setDragging] = useState<false | 'color' | 'color-group'>(false);
 	// This state is the index of the color or color group being dragged.
 	const [draggingIndex, setDraggingIndex] = useState<integer>();
-	// This state is the nearest position to drop the dragged color or color group into.
-	const [dropPosition, setDropPosition] = useState<integer>();
+	// This state is the nearest index to drop the dragged color or color group at.
+	const [dropIndex, setDropIndex] = useState<integer>();
 	// This state is the ID of the nearest group to drop the dragged color into, or `undefined` if its group should be removed on drop.
 	const [dropGroup, setDropGroup] = useState<ClientColorGroup['id']>();
-	/** The position in the `colors` or `colorGroups` array at which a drop indicator should be inserted. */
-	const dropIndicatorPosition = (
-		dropPosition === undefined
+	/** The index in the `colors` or `colorGroups` array at which a drop indicator should be inserted. */
+	const dropIndicatorIndex = (
+		dropIndex === undefined
 			? undefined
-			// Adjust the `dropPosition` to consider the item being dragged as still within the array.
-			: dropPosition > draggingIndex!
-				? dropPosition + 1
-				: dropPosition
+			// Adjust the `dropIndex` to consider the item being dragged as still within the array.
+			: dropIndex > draggingIndex!
+				? dropIndex + 1
+				: dropIndex
 	);
 
 	const savedColorsElementRef = useRef<HTMLDivElement>(null);
@@ -72,17 +72,17 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 		event.dataTransfer.dropEffect = 'move';
 
 		const { clientY } = event;
-		/** The smallest vertical distance between the cursor and a possible drop position. */
-		// Distance comparisons must use `<=` instead of `<`, because otherwise, the top of one element being at the same position as the bottom of the previous one would `break` the comparison loop.
+		/** The smallest vertical distance between the cursor and a possible drop index. */
+		// Distance comparisons must use `<=` instead of `<`, because otherwise, the top of one element being at the same index as the bottom of the previous one would `break` the comparison loop.
 		let minDistance = Infinity;
-		let newDropPosition;
+		let newDropIndex;
 
 		if (dragging === 'color-group') {
-			// Start at the top position, since the below loop works by starting from the top and incrementing the position for each color group which is closer to the cursor.
-			newDropPosition = 0;
+			// Start at the top index, since the below loop works by starting from the top and incrementing the index for each color group which is closer to the cursor.
+			newDropIndex = 0;
 
 			for (const colorGroupElement of savedColorsElementRef.current!.getElementsByClassName('color-group')) {
-				// Ignore the group of colors with no group, since it doesn't actually have any position in the color group array.
+				// Ignore the group of colors with no group, since it doesn't actually have any index in the color group array.
 				if (colorGroupElement.id === 'color-group-undefined') {
 					continue;
 				}
@@ -102,8 +102,8 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 				if (distance <= minDistance) {
 					minDistance = distance;
 
-					// The cursor is closer to the bottom than it is to the top, so make the drop position one unit lower.
-					newDropPosition++;
+					// The cursor is closer to the bottom than it is to the top, so make the drop index one unit lower.
+					newDropIndex++;
 				} else {
 					break;
 				}
@@ -111,8 +111,8 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 		} else {
 			// If this point is reached, `dragging === 'color'`.
 
-			// Keep the initial position.
-			newDropPosition = draggingIndex!;
+			// Keep the initial index.
+			newDropIndex = draggingIndex!;
 			/** The smallest vertical distance between the cursor and a possible color group to drop the color into. */
 			let minGroupDistance = Infinity;
 			let nearestColorGroupColorsElement: Element;
@@ -160,7 +160,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 					minDistance = distance;
 
 					const colorID = colorContainerElement.id.slice('color-container-'.length);
-					newDropPosition = story.colors.findIndex(({ id }) => id === colorID);
+					newDropIndex = story.colors.findIndex(({ id }) => id === colorID);
 				} else {
 					break;
 				}
@@ -170,35 +170,32 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 				if (distance <= minDistance) {
 					minDistance = distance;
 
-					// The cursor is closer to the bottom than it is to the top, so make the drop position one unit lower.
-					newDropPosition++;
+					// The cursor is closer to the bottom than it is to the top, so make the drop index one unit lower.
+					newDropIndex++;
 				} else {
 					break;
 				}
 			}
 		}
 
-		// Adjust the drop position in consideration of the fact that the item being dragged is removed from the array before being inserted at the new position.
-		if (newDropPosition > draggingIndex!) {
-			newDropPosition--;
+		// Adjust the drop index in consideration of the fact that the item being dragged is removed from the array before being inserted at the new index.
+		if (newDropIndex > draggingIndex!) {
+			newDropIndex--;
 		}
 
-		if (newDropPosition !== dropPosition!) {
-			setDropPosition(newDropPosition);
+		if (newDropIndex !== dropIndex!) {
+			setDropIndex(newDropIndex);
 		}
 	});
 
-	const colorGroups = (
-		dragging === 'color-group' ? [
-			...story.colorGroups.slice(0, dropIndicatorPosition),
-			_dropIndicator,
-			...story.colorGroups.slice(dropIndicatorPosition),
-			undefined
-		] as const : [
-			...story.colorGroups,
-			undefined
-		]
-	);
+	const colorGroups: Array<ClientColorGroup | undefined | typeof _dropIndicator> = [
+		...story.colorGroups,
+		// This is to render the colors without a `group`.
+		undefined
+	];
+	if (dragging === 'color-group') {
+		colorGroups.splice(dropIndicatorIndex!, 0, _dropIndicator);
+	}
 
 	const SavedColorsComponent = editing ? 'div' : LabeledGrid;
 
@@ -227,14 +224,14 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 							const draggingColorID = grabber.parentNode.id.slice('color-container-'.length);
 							const newDraggingIndex = story.colors.findIndex(({ id }) => id === draggingColorID);
 							setDraggingIndex(newDraggingIndex);
-							setDropPosition(newDraggingIndex);
+							setDropIndex(newDraggingIndex);
 							setDropGroup(story.colors[newDraggingIndex].group);
 							setDragging('color');
 						} else if (grabber.parentNode.parentNode.classList.contains('color-group')) {
 							const draggingColorGroupID = grabber.parentNode.parentNode.id.slice('color-group-'.length);
 							const newDraggingIndex = story.colorGroups.findIndex(({ id }) => id === draggingColorGroupID);
 							setDraggingIndex(newDraggingIndex);
-							setDropPosition(newDraggingIndex);
+							setDropIndex(newDraggingIndex);
 							setDragging('color-group');
 						}
 					});
@@ -244,7 +241,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 				useFunction(() => {
 					setDragging(false);
 					setDraggingIndex(undefined);
-					setDropPosition(undefined);
+					setDropIndex(undefined);
 					setDropGroup(undefined);
 				})
 			}
@@ -262,29 +259,18 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 					if (dragging === 'color-group') {
 						const colorGroup = story.colorGroups[draggingIndex!];
 
-						// Only change the color group's position if it isn't already in that position.
-						if (draggingIndex! === dropPosition!) {
+						// Only change the color group's index if it isn't already in that index.
+						if (draggingIndex! === dropIndex!) {
 							return;
 						}
 
 						const { data: newColorGroup } = await (api as StoryColorGroupAPI).patch(`/stories/${story.id}/colorGroups/${colorGroup.id}`, {
-							position: dropPosition!
+							index: dropIndex!
 						});
 
-						setStory(story => {
-							const newStory = {
-								...story,
-								colorGroups: [
-									...story.colorGroups.slice(0, draggingIndex),
-									// Don't include the original color group.
-									...story.colorGroups.slice(draggingIndex! + 1)
-								]
-							};
-
-							// Insert the new color group at the new position.
-							newStory.colorGroups.splice(dropPosition!, 0, newColorGroup);
-
-							return newStory;
+						updateStory(story => {
+							story.colorGroups.splice(draggingIndex!, 1);
+							story.colorGroups.splice(dropIndex!, 0, newColorGroup);
 						});
 
 						return;
@@ -294,37 +280,26 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 
 					const color = story.colors[draggingIndex!];
 
-					const changedPosition = draggingIndex! !== dropPosition!;
+					const changedIndex = draggingIndex! !== dropIndex!;
 					const changedGroup = color.group !== dropGroup;
 
-					// Only change the color's position or group if it isn't already in that position and group.
-					if (!(changedPosition || changedGroup)) {
+					// Only change the color's index or group if it isn't already in that index and group.
+					if (!(changedIndex || changedGroup)) {
 						return;
 					}
 
 					const { data: newColor } = await (api as StoryColorAPI).patch(`/stories/${story.id}/colors/${color.id}`, {
-						...changedPosition && {
-							position: dropPosition!
+						...changedIndex && {
+							index: dropIndex!
 						},
 						...changedGroup && {
 							group: dropGroup || null
 						}
 					});
 
-					setStory(story => {
-						const newStory = {
-							...story,
-							colors: [
-								...story.colors.slice(0, draggingIndex),
-								// Don't include the original color.
-								...story.colors.slice(draggingIndex! + 1, story.colors.length)
-							]
-						};
-
-						// Insert the new color at the new position.
-						newStory.colors.splice(dropPosition!, 0, newColor);
-
-						return newStory;
+					updateStory(story => {
+						story.colorGroups.splice(draggingIndex!, 1);
+						story.colorGroups.splice(dropIndex!, 0, newColor);
 					});
 				})
 			}
@@ -353,15 +328,15 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 			</Row>
 			{colorGroups.map(colorGroup => (
 				colorGroup === _dropIndicator ? (
-					<DropIndicator key="drag-indicator" />
+					<DropIndicator key="drop-indicator" />
 				) : (
 					<ColorGroup
 						key={String(colorGroup?.id)}
 						name={name}
 						editing={editing}
-						dropIndicatorPosition={
+						dropIndicatorIndex={
 							dragging === 'color' && colorGroup?.id === dropGroup
-								? dropIndicatorPosition!
+								? dropIndicatorIndex!
 								: undefined
 						}
 					>

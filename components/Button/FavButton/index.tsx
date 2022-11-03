@@ -68,6 +68,7 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 						loadingRef.current = false;
 					});
 
+					// TODO: Don't mutate `user.favs`.
 					if (active) {
 						user.favs.splice(favIndex, 1);
 					} else {
@@ -77,7 +78,11 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 					setUser({ ...user });
 
 					if (favCount !== undefined) {
-						setFavCount(favCount + (active ? -1 : 1));
+						if (active) {
+							setFavCount(favCount - 1);
+						} else {
+							setFavCount(favCount + 1);
+						}
 					}
 				})
 			}

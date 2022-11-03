@@ -17,6 +17,7 @@ import type { StoryPageID } from 'lib/server/stories';
 import type { integer } from 'lib/types';
 import useLatest from 'lib/client/reactHooks/useLatest';
 import classNames from 'classnames';
+import type { Updater } from 'use-immer';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 type StoryMovePagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/movePages').default>;
@@ -48,7 +49,7 @@ export type StoryEditorPageGridProps = {
 	selectedPages: StoryPageID[],
 	setSelectedPages: Dispatch<SetStateAction<StoryPageID[]>>,
 	advancedShownPageKeys: integer[],
-	setAdvancedShownPageKeys: Dispatch<SetStateAction<integer[]>>,
+	updateAdvancedShownPageKeys: Updater<integer[]>,
 	pageCount: integer,
 	gridCullingInfo: GridCullingInfo,
 	pageComponents: ReactNode[]
@@ -59,7 +60,7 @@ const StoryEditorPageGrid = ({
 	selectedPages,
 	setSelectedPages,
 	advancedShownPageKeys,
-	setAdvancedShownPageKeys,
+	updateAdvancedShownPageKeys,
 	pageCount,
 	gridCullingInfo,
 	pageComponents
@@ -208,7 +209,7 @@ const StoryEditorPageGrid = ({
 		}
 
 		if (advancedShownPageKeysChanged) {
-			setAdvancedShownPageKeys(newAdvancedShownPageKeys);
+			updateAdvancedShownPageKeys(newAdvancedShownPageKeys);
 		}
 
 		setSelectedPages([]);
@@ -228,8 +229,8 @@ const StoryEditorPageGrid = ({
 		/** The selected page with the highest ID. */
 		const lastSelectedPage = formikPropsRef.current.values.pages[selectedPages[selectedPages.length - 1]];
 
-		/** The position to insert the pages at. */
-		let position: integer | undefined;
+		/** The index to insert the pages at. */
+		let index: integer | undefined;
 
 		const dialog = new Dialog({
 			id: 'move-pages',
@@ -260,7 +261,7 @@ const StoryEditorPageGrid = ({
 						}
 						pageBefore = formikPropsRef.current.values.pages[pageBeforeID];
 
-						position = pageBeforeID;
+						index = pageBeforeID;
 
 						/** The ID of `pageAfter`. May not index a real page after the `while` loop. */
 						let pageAfterID = pageID + (relation === 'before' ? 0 : 1);
@@ -328,7 +329,7 @@ const StoryEditorPageGrid = ({
 			}
 		} = await (api as StoryMovePagesAPI).post(`/stories/${storyID}/movePages`, {
 			pageIDs: selectedPages,
-			position: position!
+			index: index!
 		}).catch(error => {
 			formikPropsRef.current.setSubmitting(false);
 

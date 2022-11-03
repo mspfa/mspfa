@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import type { ClientComment, ClientCommentReply } from 'lib/client/comments';
-import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
+import type { MutableRefObject } from 'react';
 import React, { useEffect } from 'react';
 import type { PublicStory } from 'lib/client/stories';
 import type { APIClient } from 'lib/client/api';
@@ -10,21 +10,22 @@ import Link from 'components/Link';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import type { CommentProps } from 'components/Comment';
 import type { integer } from 'lib/types';
+import type { Updater } from 'use-immer';
 
 type StoryPageCommentRepliesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments/[commentID]/replies').default>;
 
 export type StoryPageCommentRepliesProps = {
 	story: PublicStory,
 	comment: ClientComment,
-	setCommentRepliesRef: MutableRefObject<Dispatch<SetStateAction<ClientCommentReply[]>> | undefined>,
+	updateCommentRepliesRef: MutableRefObject<Updater<ClientCommentReply[]> | undefined>,
 	initialCommentRepliesRef: MutableRefObject<ClientCommentReply[]>,
 	addToReplyCount: (amount: integer) => void
 } & Pick<CommentProps<ClientCommentReply>, 'postReply'>;
 
-const StoryPageCommentReplies = React.memo(({ story, comment, setCommentRepliesRef, initialCommentRepliesRef, addToReplyCount, postReply }: StoryPageCommentRepliesProps) => {
+const StoryPageCommentReplies = React.memo(({ story, comment, updateCommentRepliesRef, initialCommentRepliesRef, addToReplyCount, postReply }: StoryPageCommentRepliesProps) => {
 	const {
 		comments: commentReplies,
-		setComments: setCommentReplies,
+		updateComments: updateCommentReplies,
 		setComment: setCommentReply,
 		deleteComment: deleteCommentReply,
 		loadMoreComments: loadMoreCommentReplies,
@@ -42,12 +43,12 @@ const StoryPageCommentReplies = React.memo(({ story, comment, setCommentRepliesR
 	initialCommentRepliesRef.current = [];
 
 	useEffect(() => {
-		setCommentRepliesRef.current = setCommentReplies;
+		updateCommentRepliesRef.current = updateCommentReplies;
 
 		return () => {
-			setCommentRepliesRef.current = undefined;
+			updateCommentRepliesRef.current = undefined;
 		};
-	}, [setCommentRepliesRef, setCommentReplies]);
+	}, [updateCommentRepliesRef, updateCommentReplies]);
 
 	const nonLoadedReplyCount = comment.replyCount - commentReplies.length;
 

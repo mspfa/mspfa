@@ -27,7 +27,7 @@ const ColorField = ({ id, name, required, disabled, readOnly, autoFocus, innerRe
 	let computedOpacity = 1;
 
 	// Compute `computedHexColor` and `computedOpacity` (only client-side).
-	if (typeof window !== 'undefined') {
+	if (typeof getComputedStyle !== 'undefined') {
 		// Reset the color before setting the new one, because setting an invalid color doesn't necessarily reset it.
 		dummyElement.style.color = '';
 		dummyElement.style.color = addHashToColor(value);

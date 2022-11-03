@@ -26,6 +26,7 @@ import StoryEditorPagesOptions from 'components/StoryEditor/StoryEditorPagesOpti
 import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';
 import PrivateStoryContext from 'lib/client/reactContexts/PrivateStoryContext';
 import classNames from 'classnames';
+import { useImmer } from 'use-immer';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 
@@ -133,7 +134,7 @@ const StoryEditor = ({
 	story: initialStory,
 	pages: initialPagesProp
 }: StoryEditorProps) => {
-	const [story, setStory] = useState(initialStory);
+	const [story, updateStory] = useImmer(initialStory);
 	const [initialPages, setInitialPages] = useState(initialPagesProp);
 
 	const formikPropsRef = useRef<FormikProps<Values>>(null!);
@@ -197,7 +198,7 @@ const StoryEditor = ({
 					/**
 					 * Anything set to this ref should be set as the Formik values once before rendering.
 					 *
-					 * Values must be queued instead of set immediately whenever this form's initial values are changed, since doing so resets the values due to the `enableReinitialization` prop on the `Formik` component.
+					 * Values must be queued instead of set immediately whenever this form's initial values are changed, since doing so resets the values due to the `enableReinitialize` prop on the `Formik` component.
 					*/
 					const queuedValuesRef = useRef<Values>();
 
@@ -234,7 +235,7 @@ const StoryEditor = ({
 					}
 
 					// This state is an array of the keys of pages whose advanced section is toggled open.
-					const [advancedShownPageKeys, setAdvancedShownPageKeys] = useState<integer[]>([]);
+					const [advancedShownPageKeys, updateAdvancedShownPageKeys] = useImmer<integer[]>([]);
 
 					const onClickPageTile = useFunction((event: (
 						MouseEvent<HTMLDivElement & HTMLDetailsElement>
@@ -751,20 +752,14 @@ const StoryEditor = ({
 						/** The key of the page to toggle the advanced section of. */
 						pageKey: integer
 					) => {
-						const pageKeyIndex = advancedShownPageKeys.indexOf(pageKey);
-						if (pageKeyIndex === -1) {
-							// Add this `pageKey` to the `advancedShownPageKeys`.
-							setAdvancedShownPageKeys([
-								...advancedShownPageKeys,
-								pageKey
-							]);
-						} else {
-							// Remove this `pageKey` from the `advancedShownPageKeys`.
-							setAdvancedShownPageKeys([
-								...advancedShownPageKeys.slice(0, pageKeyIndex),
-								...advancedShownPageKeys.slice(pageKeyIndex + 1, advancedShownPageKeys.length)
-							]);
-						}
+						updateAdvancedShownPageKeys(advancedShownPageKeys => {
+							const pageKeyIndex = advancedShownPageKeys.indexOf(pageKey);
+							if (pageKeyIndex === -1) {
+								advancedShownPageKeys.push(pageKey);
+							} else {
+								advancedShownPageKeys.splice(pageKeyIndex, 1);
+							}
+						});
 					});
 
 					/** A ref to the `#story-editor-pages-actions` element. */
@@ -796,7 +791,7 @@ const StoryEditor = ({
 							>
 								<StoryEditorPagesOptions
 									story={story}
-									setStory={setStory}
+									updateStory={updateStory}
 									viewMode={viewMode}
 									setViewMode={setViewMode}
 									sortMode={sortMode}
@@ -815,7 +810,7 @@ const StoryEditor = ({
 										selectedPages={selectedPages}
 										setSelectedPages={setSelectedPages}
 										advancedShownPageKeys={advancedShownPageKeys}
-										setAdvancedShownPageKeys={setAdvancedShownPageKeys}
+										updateAdvancedShownPageKeys={updateAdvancedShownPageKeys}
 										pageCount={pageValues.length}
 										gridCullingInfo={gridCullingInfo}
 										pageComponents={pageComponents}
@@ -832,7 +827,7 @@ const StoryEditor = ({
 	return (
 		<StoryIDContext.Provider value={story.id}>
 			<PrivateStoryContext.Provider
-				value={useMemo(() => [story, setStory], [story, setStory])}
+				value={useMemo(() => [story, updateStory], [story, updateStory])}
 			>
 				{pageComponent}
 			</PrivateStoryContext.Provider>

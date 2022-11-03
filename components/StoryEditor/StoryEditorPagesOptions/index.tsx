@@ -21,12 +21,13 @@ import api from 'lib/client/api';
 import type { integer } from 'lib/types';
 import { StoryEditorContext } from 'components/StoryEditor';
 import type { PrivateStory } from 'lib/client/stories';
+import type { Updater } from 'use-immer';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 
 export type StoryEditorPagesOptionsProps = {
 	story: PrivateStory,
-	setStory: Dispatch<SetStateAction<PrivateStory>>,
+	updateStory: Updater<PrivateStory>,
 	viewMode: 'grid' | 'list',
 	setViewMode: Dispatch<SetStateAction<'grid' | 'list'>>,
 	sortMode: 'oldest' | 'newest',
@@ -37,7 +38,7 @@ export type StoryEditorPagesOptionsProps = {
 /** A `Section` of options for the `StoryEditor`'s pages. */
 const StoryEditorPagesOptions = ({
 	story,
-	setStory,
+	updateStory,
 	viewMode,
 	setViewMode,
 	sortMode,
@@ -51,9 +52,8 @@ const StoryEditorPagesOptions = ({
 	const cancelTokenSourceRef = useRef<CancelTokenSource>();
 
 	const changeDefaultPageTitle = useThrottled(async (event: ChangeEvent<HTMLInputElement>) => {
-		setStory({
-			...story,
-			defaultPageTitle: event.target.value
+		updateStory(story => {
+			story.defaultPageTitle = event.target.value;
 		});
 		// The reason the above state is updated before syncing with the server via the below request rather than after is so the user can use the new default page title while the request is still loading.
 

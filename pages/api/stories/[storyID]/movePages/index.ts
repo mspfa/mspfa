@@ -24,13 +24,13 @@ const Handler: APIHandler<{
 		 */
 		pageIDs: StoryPageID[],
 		/**
-		 * The position to insert the pages at.
+		 * The index to insert the pages at.
 		 *
-		 * For example, position 0 will insert the pages before page 1, position 1 will insert the pages after page 1, position 2 will insert the pages after page 2, and so on.
+		 * For example, index 0 will insert the pages before page 1, index 1 will insert the pages after page 1, index 2 will insert the pages after page 2, and so on.
 		 *
 		 * @minimum 0
 		 */
-		position: integer
+		index: integer
 	}
 }, {
 	method: 'POST',
@@ -66,11 +66,11 @@ const Handler: APIHandler<{
 	}
 
 	if (!(
-		req.body.position === 0
-		|| req.body.position in story.pages
+		req.body.index === 0
+		|| req.body.index in story.pages
 	)) {
 		res.status(422).send({
-			message: 'The specified target position is invalid.'
+			message: 'The specified target index is invalid.'
 		});
 		return;
 	}
@@ -165,8 +165,8 @@ const Handler: APIHandler<{
 			}
 		}
 
-		// Check if this index is the requested insertion position.
-		if (i === req.body.position) {
+		// Check if this index is the requested insertion index.
+		if (i === req.body.index) {
 			// Insert all the pages which were requested to move here, in order.
 			for (const pageID of req.body.pageIDs) {
 				await pushNewPage(story.pages[pageID]);

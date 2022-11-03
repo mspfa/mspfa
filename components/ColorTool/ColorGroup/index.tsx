@@ -17,8 +17,8 @@ export type ColorGroupProps = {
 	editing?: boolean,
 	/** The `ColorGroup` to render, or undefined if colors without a group should be rendered. */
 	children: ClientColorGroup | undefined,
-	/** The position in the `colors` array at which a drop indicator should be inserted. */
-	dropIndicatorPosition?: integer
+	/** The index in the `colors` array at which a drop indicator should be inserted. */
+	dropIndicatorIndex?: integer
 };
 
 /** A rendered representation of a `ClientColorGroup`. */
@@ -26,21 +26,18 @@ const ColorGroup = ({
 	name,
 	editing,
 	children: colorGroup,
-	dropIndicatorPosition
+	dropIndicatorIndex
 }: ColorGroupProps) => {
 	const [story] = useContext(PrivateStoryContext)!;
 
 	const colorGroupID = colorGroup?.id;
-	const inThisGroup = (color: ClientColor) => color.group === colorGroupID;
-	const colors = (
-		dropIndicatorPosition === undefined
-			? story.colors.filter(inThisGroup)
-			: [
-				...story.colors.slice(0, dropIndicatorPosition).filter(inThisGroup),
-				_dropIndicator,
-				...story.colors.slice(dropIndicatorPosition).filter(inThisGroup)
-			] as const
+
+	const colors: Array<ClientColor | typeof _dropIndicator> = (
+		story.colors.filter(color => color.group === colorGroupID)
 	);
+	if (dropIndicatorIndex !== undefined) {
+		colors.splice(dropIndicatorIndex, 0, _dropIndicator);
+	}
 
 	const colorsComponent = (
 		// When not `editing`, this container `div` is necessary to allow the color buttons to wrap normally rather than being flex items.

@@ -18,6 +18,7 @@ import { useUser } from 'lib/client/reactContexts/UserContext';
 import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import useMountedRef from 'lib/client/reactHooks/useMountedRef';
+import { useImmer } from 'use-immer';
 
 type StoryNewsAPI = APIClient<typeof import('pages/api/stories/[storyID]/news').default>;
 
@@ -34,7 +35,7 @@ const StoryNews = React.memo(() => {
 
 	const user = useUser();
 
-	const [newsPosts, setNewsPosts] = useState([...initialNewsPosts]);
+	const [newsPosts, updateNewsPosts] = useImmer([...initialNewsPosts]);
 
 	const mountedRef = useMountedRef();
 
@@ -87,10 +88,9 @@ const StoryNews = React.memo(() => {
 		);
 
 		if (mountedRef.current) {
-			setNewsPosts(newsPosts => [
-				newsPost,
-				...newsPosts
-			]);
+			updateNewsPosts(newsPosts => {
+				newsPosts.unshift(newsPost);
+			});
 		}
 	});
 
@@ -143,10 +143,9 @@ const StoryNews = React.memo(() => {
 
 			newUserCache.forEach(cacheUser);
 
-			setNewsPosts(newsPosts => [
-				...newsPosts,
-				...newNewsPosts
-			]);
+			updateNewsPosts(newsPosts => {
+				newsPosts.push(...newNewsPosts);
+			});
 		}
 	});
 
@@ -164,25 +163,18 @@ const StoryNews = React.memo(() => {
 	}, [checkIfNewsShouldBeFetched, notAllNewsLoaded, newsPosts]);
 
 	const deleteNewsPost = useFunction((newsPostID: string) => {
-		setNewsPosts(newsPosts => {
+		updateNewsPosts(newsPosts => {
 			const newsPostIndex = newsPosts.findIndex(({ id }) => id === newsPostID);
 
-			return [
-				...newsPosts.slice(0, newsPostIndex),
-				...newsPosts.slice(newsPostIndex + 1, newsPosts.length)
-			];
+			newsPosts.splice(newsPostIndex, 1);
 		});
 	});
 
 	const setNewsPost = useFunction((newsPost: ClientNewsPost) => {
-		setNewsPosts(newsPosts => {
+		updateNewsPosts(newsPosts => {
 			const newsPostIndex = newsPosts.findIndex(({ id }) => id === newsPost.id);
 
-			return [
-				...newsPosts.slice(0, newsPostIndex),
-				newsPost,
-				...newsPosts.slice(newsPostIndex + 1, newsPosts.length)
-			];
+			newsPosts[newsPostIndex] = newsPost;
 		});
 	});
 

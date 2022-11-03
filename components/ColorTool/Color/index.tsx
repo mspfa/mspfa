@@ -37,7 +37,7 @@ const Color = ({
 	const [, , { setValue }] = useField<string>(name);
 	const { submitForm } = useFormikContext();
 
-	const [story, setStory] = useContext(PrivateStoryContext)!;
+	const [story, updateStory] = useContext(PrivateStoryContext)!;
 
 	const ColorComponent = editing ? EditButton : Button;
 
@@ -106,16 +106,10 @@ const Color = ({
 
 							await (api as StoryColorAPI).delete(`/stories/${story.id}/colors/${color.id}`);
 
-							setStory(story => {
+							updateStory(story => {
 								const colorIndex = story.colors.findIndex(({ id }) => id === color.id);
 
-								return {
-									...story,
-									colors: [
-										...story.colors.slice(0, colorIndex),
-										...story.colors.slice(colorIndex + 1, story.colors.length)
-									]
-								};
+								story.colors.splice(colorIndex, 1);
 							});
 
 							return;
@@ -140,17 +134,10 @@ const Color = ({
 
 						const { data: newColor } = await (api as StoryColorAPI).patch(`/stories/${story.id}/colors/${color.id}`, changedValues);
 
-						setStory(story => {
+						updateStory(story => {
 							const colorIndex = story.colors.findIndex(({ id }) => id === color.id);
 
-							return {
-								...story,
-								colors: [
-									...story.colors.slice(0, colorIndex),
-									newColor,
-									...story.colors.slice(colorIndex + 1, story.colors.length)
-								]
-							};
+							story.colors[colorIndex] = newColor;
 						});
 					} else {
 						setValue(color.value);

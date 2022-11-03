@@ -29,7 +29,7 @@ const BBCode = <AlreadyParsed extends boolean | undefined = false>({
 }: BBCodeProps<AlreadyParsed>) => useMemo(() => (
 	<span className="bb">
 		{(alreadyParsed
-			? children as ReactNode
+			? children
 			: parseBBCode(children as string, { keepHTMLTags, escapeHTML, removeBBTags })
 		)}
 	</span>

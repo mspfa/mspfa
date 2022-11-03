@@ -16,7 +16,7 @@ import { uniqBy } from 'lodash';
 import users, { getPrivateUser, getPublicUser } from 'lib/server/users';
 import type { ListedMessage } from 'components/MessageListing';
 import MessageListing from 'components/MessageListing';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import Button from 'components/Button';
 import Dialog from 'lib/client/Dialog';
@@ -24,6 +24,7 @@ import RandomArtwork from 'components/RandomArtwork';
 import type { integer } from 'lib/types';
 import useSticky from 'lib/client/reactHooks/useSticky';
 import getRandomImageFilename from 'lib/server/getRandomImageFilename';
+import { useImmer } from 'use-immer';
 
 type ServerSideProps = {
 	privateUser: PrivateUser,
@@ -40,7 +41,7 @@ const Component = withErrorPage<ServerSideProps>(({
 	userCache: initialUserCache,
 	imageFilename
 }) => {
-	const [listedMessages, setListedMessages] = useState(() => (
+	const [listedMessages, updateListedMessages] = useImmer(() => (
 		clientMessages.map<ListedMessage>(message => ({
 			...message,
 			selected: false
@@ -80,17 +81,19 @@ const Component = withErrorPage<ServerSideProps>(({
 	}, [unreadCount, privateUser.id]);
 
 	const deselectAll = useFunction(() => {
-		setListedMessages(listedMessages.map(message => ({
-			...message,
-			selected: false
-		})));
+		updateListedMessages(listedMessages => {
+			for (const message of listedMessages) {
+				message.selected = false;
+			}
+		});
 	});
 
 	const selectAll = useFunction(() => {
-		setListedMessages(listedMessages.map(message => ({
-			...message,
-			selected: true
-		})));
+		updateListedMessages(listedMessages => {
+			for (const message of listedMessages) {
+				message.selected = true;
+			}
+		});
 	});
 
 	const markRead = useFunction(() => {
@@ -126,22 +129,19 @@ const Component = withErrorPage<ServerSideProps>(({
 	});
 
 	const setMessage = useFunction((message: ListedMessage) => {
-		const messageIndex = listedMessages.findIndex(({ id }) => id === message.id);
+		updateListedMessages(listedMessages => {
+			const messageIndex = listedMessages.findIndex(({ id }) => id === message.id);
 
-		setListedMessages([
-			...listedMessages.slice(0, messageIndex),
-			message,
-			...listedMessages.slice(messageIndex + 1, listedMessages.length)
-		]);
+			listedMessages[messageIndex] = message;
+		});
 	});
 
 	const removeListing = useFunction((message: ListedMessage) => {
-		const messageIndex = listedMessages.findIndex(({ id }) => id === message.id);
+		updateListedMessages(listedMessages => {
+			const messageIndex = listedMessages.findIndex(({ id }) => id === message.id);
 
-		setListedMessages([
-			...listedMessages.slice(0, messageIndex),
-			...listedMessages.slice(messageIndex + 1, listedMessages.length)
-		]);
+			listedMessages.splice(messageIndex, 1);
+		});
 	});
 
 	return (

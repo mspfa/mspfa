@@ -1,4 +1,4 @@
-import type { Dispatch, SetStateAction } from 'react';
+import type { Updater } from 'use-immer';
 import { createContext } from 'react';
 import type { PrivateStory } from 'lib/client/stories';
 
@@ -9,7 +9,7 @@ import type { PrivateStory } from 'lib/client/stories';
  */
 const PrivateStoryContext = createContext<[
 	PrivateStory,
-	Dispatch<SetStateAction<PrivateStory>>
+	Updater<PrivateStory>
 ] | undefined>(undefined);
 
 export default PrivateStoryContext;

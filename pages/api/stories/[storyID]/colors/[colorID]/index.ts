@@ -31,8 +31,8 @@ const Handler: APIHandler<{
 		body: Partial<Pick<ClientColor, WritableColorKey>> & {
 			/** The ID of the color group which the color should be set into, or `null` if the color should be removed from any group. */
 			group?: string | null,
-			/** The position in the `colors` array to move the specified color to. */
-			position?: integer
+			/** The index in the `colors` array to move the specified color to. */
+			index?: integer
 		}
 	}
 ), {
@@ -152,14 +152,14 @@ const Handler: APIHandler<{
 		}
 	}
 
-	const colorChanges: Partial<ServerColor> & Pick<typeof req.body, 'position'> = {
+	const colorChanges: Partial<ServerColor> & Pick<typeof req.body, 'index'> = {
 		...req.body as Omit<typeof req.body, 'group'>,
 		...'group' in req.body && {
 			group: colorGroupID
 		}
 	};
-	// Delete the `position` property from `colorChanges` since it isn't a real property of `ServerColor`s.
-	delete colorChanges.position;
+	// Delete the `index` property from `colorChanges` since it isn't a real property of `ServerColor`s.
+	delete colorChanges.index;
 
 	Object.assign(color, colorChanges);
 
@@ -170,7 +170,7 @@ const Handler: APIHandler<{
 		delete color.group;
 	}
 
-	if (req.body.position === undefined) {
+	if (req.body.index === undefined) {
 		const colorChangesLength = Object.values(colorChanges).length;
 		if (colorChangesLength || shouldUnsetGroup) {
 			await stories.updateOne({
@@ -186,7 +186,7 @@ const Handler: APIHandler<{
 			});
 		}
 	} else {
-		// Pull the outdated color from its original position.
+		// Pull the outdated color from its original index.
 		await stories.updateOne({
 			_id: story._id
 		}, {
@@ -195,15 +195,15 @@ const Handler: APIHandler<{
 			}
 		});
 
-		// Push the updated color to the new position.
+		// Push the updated color to the new index.
 		await stories.updateOne({
 			_id: story._id
 		}, {
 			$push: {
 				colors: {
 					$each: [color],
-					// Clamp `req.body.position` to only valid indexes in the array.
-					$position: Math.max(0, Math.min(story.colors.length - 1, req.body.position))
+					// Clamp `req.body.index` to only valid indexes in the array.
+					$position: Math.max(0, Math.min(story.colors.length - 1, req.body.index))
 				}
 			}
 		});

@@ -23,7 +23,7 @@ export type ColorToolProps = ColorFieldProps;
 const ColorTool = ({ name }: ColorToolProps) => {
 	const [, { value }] = useField<string>(name);
 
-	const [story, setStory] = useContext(PrivateStoryContext) || [];
+	const [story, updateStory] = useContext(PrivateStoryContext) || [];
 
 	const saveColor = useFunction(async () => {
 		// Close any existing color options dialog.
@@ -56,13 +56,9 @@ const ColorTool = ({ name }: ColorToolProps) => {
 			value: dialog.form!.values.value
 		});
 
-		setStory!(story => ({
-			...story,
-			colors: [
-				...story.colors,
-				color
-			]
-		}));
+		updateStory!(story => {
+			story.colors.push(color);
+		});
 	});
 
 	return (

@@ -36,7 +36,7 @@ const StoryComments = React.memo(() => {
 
 	const {
 		comments,
-		setComments,
+		updateComments,
 		setComment,
 		deleteComment,
 		loadMoreComments,
@@ -52,7 +52,7 @@ const StoryComments = React.memo(() => {
 
 	/** Empties the `comments` so they can be loaded again. */
 	const resetComments = () => {
-		setComments([]);
+		updateComments([]);
 		setNotAllCommentsLoaded(true);
 	};
 
@@ -135,10 +135,9 @@ const StoryComments = React.memo(() => {
 						});
 
 						// Add the new comment to the top (regardless of the sort mode).
-						setComments(comments => [
-							newComment,
-							...comments
-						]);
+						updateComments(comments => {
+							comments.unshift(newComment);
+						});
 
 						formikHelpers.setFieldValue('content', '');
 					})

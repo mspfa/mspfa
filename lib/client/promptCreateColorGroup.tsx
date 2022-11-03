@@ -3,7 +3,7 @@ import Dialog from 'lib/client/Dialog';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import type { PrivateStory } from 'lib/client/stories';
-import type { Dispatch, SetStateAction } from 'react';
+import type { Updater } from 'use-immer';
 import type { ClientColorGroup } from 'lib/client/colors';
 
 type StoryColorGroupsAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups').default>;
@@ -15,7 +15,7 @@ type StoryColorGroupsAPI = APIClient<typeof import('pages/api/stories/[storyID]/
  */
 const promptCreateColorGroup = (
 	story: PrivateStory,
-	setStory: Dispatch<SetStateAction<PrivateStory>>
+	updateStory: Updater<PrivateStory>
 ) => new Promise<ClientColorGroup>(async resolve => {
 	// Close any existing color options dialog.
 	await Dialog.getByID('color-group-options')?.resolve();
@@ -39,13 +39,9 @@ const promptCreateColorGroup = (
 		name: dialog.form!.values.name
 	});
 
-	setStory(story => ({
-		...story,
-		colorGroups: [
-			...story.colorGroups,
-			colorGroup
-		]
-	}));
+	updateStory(story => {
+		story.colorGroups.push(colorGroup);
+	});
 
 	resolve(colorGroup);
 });

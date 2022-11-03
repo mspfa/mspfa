@@ -17,7 +17,7 @@ import promptCreateColorGroup from 'lib/client/promptCreateColorGroup';
  * Must be placed in a Formik form with values named `group`, `name`, and `value` (corresponding to the properties of a `ClientColor`).
  */
 const ColorOptions = () => {
-	const [story, setStory] = useContext(PrivateStoryContext)!;
+	const [story, updateStory] = useContext(PrivateStoryContext)!;
 
 	const [, , { setValue: setGroup }] = useField<string>('group');
 
@@ -69,7 +69,7 @@ const ColorOptions = () => {
 						title="Create Color Group"
 						onClick={
 							useFunction(async () => {
-								const colorGroup = await promptCreateColorGroup(story, setStory);
+								const colorGroup = await promptCreateColorGroup(story, updateStory);
 
 								setGroup(colorGroup.id);
 								colorGroupFieldRef.current.focus();

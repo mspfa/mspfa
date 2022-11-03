@@ -11,7 +11,7 @@ import StorySaveListing from 'components/StorySaveListing';
 import getStoriesAsUser from 'lib/server/stories/getStoriesAsUser';
 import getRandomImageFilename from 'lib/server/getRandomImageFilename';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import { useState } from 'react';
+import { useImmer } from 'use-immer';
 import type { StoryID } from 'lib/server/stories';
 import RandomArtwork from 'components/RandomArtwork';
 import { useUser } from 'lib/client/reactContexts/UserContext';
@@ -28,19 +28,18 @@ const Component = withErrorPage<ServerSideProps>(({
 	storySaves: initialStorySaves,
 	imageFilename
 }) => {
-	const [storySaves, setStorySaves] = useState(initialStorySaves);
+	const [storySaves, updateStorySaves] = useImmer(initialStorySaves);
 
 	const user = useUser();
 
 	const queriedUserID = useRouter().query.userID as string;
 
 	const removeListing = useFunction((storySave: StorySave) => {
-		const storySaveIndex = storySaves.findIndex(({ id }) => id === storySave.id);
+		updateStorySaves(storySaves => {
+			const storySaveIndex = storySaves.findIndex(({ id }) => id === storySave.id);
 
-		setStorySaves([
-			...storySaves.slice(0, storySaveIndex),
-			...storySaves.slice(storySaveIndex + 1, storySaves.length)
-		]);
+			storySaves.splice(storySaveIndex, 1);
+		});
 	});
 
 	return (

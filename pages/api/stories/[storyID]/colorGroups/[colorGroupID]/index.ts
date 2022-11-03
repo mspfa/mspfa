@@ -28,8 +28,8 @@ const Handler: APIHandler<{
 	} | {
 		method: 'PATCH',
 		body: Partial<Pick<ClientColorGroup, WritableColorGroupKey>> & {
-			/** The position in the `colorGroups` array to move the specified color group to. */
-			position?: integer
+			/** The index in the `colorGroups` array to move the specified color group to. */
+			index?: integer
 		}
 	}
 ), {
@@ -138,15 +138,15 @@ const Handler: APIHandler<{
 
 	const colorGroup = await getColorGroup();
 
-	const colorGroupChanges: Partial<ServerColorGroup> & Pick<typeof req.body, 'position'> = {
+	const colorGroupChanges: Partial<ServerColorGroup> & Pick<typeof req.body, 'index'> = {
 		...req.body
 	};
-	// Delete the `position` property from `colorGroupChanges` since it isn't a real property of `ServerColorGroup`s.
-	delete colorGroupChanges.position;
+	// Delete the `index` property from `colorGroupChanges` since it isn't a real property of `ServerColorGroup`s.
+	delete colorGroupChanges.index;
 
 	Object.assign(colorGroup, colorGroupChanges);
 
-	if (req.body.position === undefined) {
+	if (req.body.index === undefined) {
 		if (Object.values(colorGroupChanges).length) {
 			await stories.updateOne({
 				'_id': story._id,
@@ -156,7 +156,7 @@ const Handler: APIHandler<{
 			});
 		}
 	} else {
-		// Pull the outdated color group from its original position.
+		// Pull the outdated color group from its original index.
 		await stories.updateOne({
 			_id: story._id
 		}, {
@@ -165,15 +165,15 @@ const Handler: APIHandler<{
 			}
 		});
 
-		// Push the updated color group to the new position.
+		// Push the updated color group to the new index.
 		await stories.updateOne({
 			_id: story._id
 		}, {
 			$push: {
 				colorGroups: {
 					$each: [colorGroup],
-					// Clamp `req.body.position` to only valid indexes in the array.
-					$position: Math.max(0, Math.min(story.colorGroups.length - 1, req.body.position))
+					// Clamp `req.body.index` to only valid indexes in the array.
+					$position: Math.max(0, Math.min(story.colorGroups.length - 1, req.body.index))
 				}
 			}
 		});
