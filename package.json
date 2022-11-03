@@ -30,13 +30,15 @@
 		"formik": "^2.2.9",
 		"global-react-state": "^1.2.3",
 		"google-auth-library": "^8.5.2",
+		"immer": "^9.0.16",
 		"isomorphic-dompurify": "^0.22.0",
 		"lodash": "^4.17.21",
 		"mongodb": "GrantGryczan/node-mongodb-native",
 		"next": "^13.0.0",
 		"react": "^18.2.0",
 		"react-component-updater": "^1.0.7",
-		"react-dom": "^18.2.0"
+		"react-dom": "^18.2.0",
+		"use-immer": "^0.7.0"
 	},
 	"devDependencies": {
 		"@grantgryczan/eslint-config": "^1.1.0",
