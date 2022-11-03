@@ -64,7 +64,7 @@ const onChange = (
 };
 
 // The following regular expression is copied directly from https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
-const emailTest = /^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+const EMAIL_ADDRESS = /^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
 export type SignInProps = {
 	/** 0 if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
@@ -114,7 +114,7 @@ const SignIn = ({ page }: SignInProps) => {
 			return;
 		}
 
-		if (!emailTest.test(email)) {
+		if (!EMAIL_ADDRESS.test(email)) {
 			// If the email is invalid, then it shouldn't report an error for being taken.
 			setEmailTaken(false);
 			return;

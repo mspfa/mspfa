@@ -164,8 +164,6 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 		}
 	});
 
-	// The hooks immediately above and below cannot be inline and must be defined in this scope, because this scope is where `privateUser.id` (the dependency of those callbacks) can be checked for updates at a minimal frequency.
-
 	const onClickEditAuthMethods = useFunction(async () => {
 		const { data: authMethods } = await (api as UserAuthMethodsAPI).get(`users/${privateUser.id}/authMethods`);
 

@@ -7,7 +7,7 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import { usePrefixedID } from 'lib/client/reactContexts/IDPrefix';
 import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
 import { isEqual } from 'lodash';
-import storyTags, { tagOrExcludedTagTest } from 'lib/client/storyTags';
+import storyTags, { TAG_OR_EXCLUDED_TAG } from 'lib/client/storyTags';
 import type { TagOrExcludedTagString } from 'lib/client/storyTags';
 import Label from 'components/Label';
 import Dialog from 'lib/client/Dialog';
@@ -19,12 +19,12 @@ import classNames from 'classnames';
 const heightTextArea = document.createElement('textarea'); // @client-only
 
 /** Characters that should be replaced from the tag field before delimiters are processed. */
-const invalidCharacters = /[^a-z0-9-,#\s\n]/g;
-/** Matches a character which would not be matched by `invalidCharacters`. */
-const validCharacter = /^[a-z0-9-,#\s\n]$/i;
-const tagDelimiters = /[,#\s\n]/g;
-const startHyphens = /^-+/;
-const endHyphens = /-+$/;
+const INVALID_CHARACTERS = /[^a-z0-9-,#\s\n]/g;
+/** Matches a character which would not be matched by `INVALID_CHARACTERS`. */
+const VALID_CHARACTER = /^[a-z0-9-,#\s\n]$/i;
+const TAG_DELIMITERS = /[,#\s\n]/g;
+const START_HYPHENS = /^-+/;
+const END_HYPHENS = /-+$/;
 
 /** A child node of a tag field element. */
 type TagFieldChild<NodeType extends Node = Node> = NodeType & (
@@ -155,7 +155,7 @@ const TagField = ({
 						// Check if this tag exceeds the max tag count.
 						|| allTagValues.length >= max
 						// Check if this tag's value is malformed.
-						|| !tagOrExcludedTagTest.test(tagValue)
+						|| !TAG_OR_EXCLUDED_TAG.test(tagValue)
 					) {
 						// Remove the invalid tag.
 						inputRef.current.removeChild(child);
@@ -222,12 +222,12 @@ const TagField = ({
 				}
 
 				// Remove all invalid characters from this editable before delimiters are processed.
-				if (invalidCharacters.test(child.textContent)) {
-					child.textContent = child.textContent.toLowerCase().replace(invalidCharacters, '');
+				if (INVALID_CHARACTERS.test(child.textContent)) {
+					child.textContent = child.textContent.toLowerCase().replace(INVALID_CHARACTERS, '');
 				}
 
-				if (tagDelimiters.test(child.textContent)) {
-					const tagValues = child.textContent.split(tagDelimiters);
+				if (TAG_DELIMITERS.test(child.textContent)) {
+					const tagValues = child.textContent.split(TAG_DELIMITERS);
 
 					// Set this editable's content to everything after the last tag delimiter.
 					child.textContent = tagValues.pop()!;
@@ -235,9 +235,9 @@ const TagField = ({
 					for (let j = 0; j < tagValues.length; j++) {
 						const tagValue = (
 							tagValues[j]
-								.replace(startHyphens, allowExcludedTags ? '-' : '')
+								.replace(START_HYPHENS, allowExcludedTags ? '-' : '')
 								.slice(0, 50)
-								.replace(endHyphens, '')
+								.replace(END_HYPHENS, '')
 						);
 
 						if (tagValue && !allTagValues.includes(tagValue)) {
@@ -354,7 +354,7 @@ const TagField = ({
 								|| event.metaKey
 								|| event.altKey
 								// Only let the user enter valid characters for tags.
-								|| validCharacter.test(event.key)
+								|| VALID_CHARACTER.test(event.key)
 							)
 						)) {
 							event.preventDefault();

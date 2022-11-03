@@ -9,7 +9,7 @@ import Section from 'components/Section';
 import type { FormikConfig } from 'formik';
 import { Form, Formik } from 'formik';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import { tagOrExcludedTagTest } from 'lib/client/storyTags';
+import { TAG_OR_EXCLUDED_TAG } from 'lib/client/storyTags';
 import type { integer } from 'lib/types';
 import Router from 'next/router';
 
@@ -102,7 +102,7 @@ export const getTagsFromQueryValue = (
 		? queryValue
 			? queryValue.split(',').filter((tagValue, i, tagValues) => (
 				// Only allow valid tag or excluded tag values.
-				tagOrExcludedTagTest.test(tagValue)
+				TAG_OR_EXCLUDED_TAG.test(tagValue)
 				// Disallow duplicate values.
 				&& tagValues.indexOf(tagValue) === i
 			))

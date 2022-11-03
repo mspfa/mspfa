@@ -13,7 +13,7 @@ import Link from 'components/Link';
 import { getChangedValues } from 'lib/client/forms';
 import IDPrefix from 'lib/client/reactContexts/IDPrefix';
 import useLatest from 'lib/client/reactHooks/useLatest';
-import { youTubeVideoIDTest } from 'components/BBCode/BBTags';
+import { YOUTUBE_VIDEO_ID } from 'components/BBCode/BBTags';
 import type { integer } from 'lib/types';
 import escapeBBAttribute from 'lib/client/escapeBBAttribute';
 import dynamic from 'next/dynamic';
@@ -324,7 +324,7 @@ const tags: Record<string, {
 			loop: false
 		},
 		content: ({ values: { children: url } }) => {
-			const urlFromYouTube = youTubeVideoIDTest.test(url);
+			const isFromYouTube = YOUTUBE_VIDEO_ID.test(url);
 
 			return (
 				<LabeledGrid>
@@ -353,15 +353,15 @@ const tags: Record<string, {
 						type="number"
 						name="width"
 						label="Width"
-						required={urlFromYouTube}
-						min={urlFromYouTube ? 200 : 0}
+						required={isFromYouTube}
+						min={isFromYouTube ? 200 : 0}
 					/>
 					<LabeledGridField
 						type="number"
 						name="height"
 						label="Height"
-						required={urlFromYouTube}
-						min={urlFromYouTube ? 200 : 0}
+						required={isFromYouTube}
+						min={isFromYouTube ? 200 : 0}
 					/>
 					<LabeledGridField type="checkbox" name="autoplay" label="Autoplay" />
 					<LabeledGridField type="checkbox" name="controls" label="Show Controls" />

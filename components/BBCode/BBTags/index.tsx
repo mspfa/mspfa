@@ -11,7 +11,7 @@ import addHashToColor from 'lib/client/addHashToColor';
 
 const Flash = dynamic(() => import('components/Flash'), { loading: Loading });
 
-export const youTubeVideoIDTest = /^(?:https?:)?\/\/(?:(?:www|m)\.)?(?:youtube\.com|youtu\.be)\/.*(?:v=|\/)([\w-]+).*$/i;
+export const YOUTUBE_VIDEO_ID = /^(?:https?:)?\/\/(?:(?:www|m)\.)?(?:youtube\.com|youtu\.be)\/.*(?:v=|\/)([\w-]+).*$/i;
 
 export type BBTagProps = {
 	/**
@@ -198,7 +198,7 @@ const BBTags: Partial<Record<string, BBTag>> = {
 		let youtubeVideoID: string | undefined;
 
 		if (typeof children === 'string') {
-			youtubeVideoID = children.match(youTubeVideoIDTest)?.[1];
+			youtubeVideoID = children.match(YOUTUBE_VIDEO_ID)?.[1];
 		}
 
 		return youtubeVideoID ? (
