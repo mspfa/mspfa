@@ -97,11 +97,11 @@ const StoryComments = React.memo(() => {
 
 	useEffect(() => {
 		if (notAllCommentsLoaded) {
-			const _viewportListener = addViewportListener(checkToLoadMoreComments);
-			frameThrottler(_viewportListener).then(checkToLoadMoreComments);
+			const viewportListenerKey = addViewportListener(checkToLoadMoreComments);
+			frameThrottler(viewportListenerKey).then(checkToLoadMoreComments);
 
 			return () => {
-				removeViewportListener(_viewportListener);
+				removeViewportListener(viewportListenerKey);
 			};
 		}
 

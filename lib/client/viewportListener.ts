@@ -5,10 +5,10 @@ const removeViewportListeners: Record<symbol, () => void> = {};
 
 /** Calls `listener` whenever the viewport changes, throttled by `frameThrottler`. Returns a symbol which can be passed into `removeViewportListener` or used as a `frameThrottler` key. */
 export const addViewportListener = (listener: () => unknown) => {
-	const _viewportListener = Symbol('viewportListener');
+	const viewportListenerKey = Symbol('viewportListener');
 
 	const throttledListener = () => {
-		frameThrottler(_viewportListener)
+		frameThrottler(viewportListenerKey)
 			.then(listener);
 	};
 
@@ -41,16 +41,16 @@ export const addViewportListener = (listener: () => unknown) => {
 
 	listenToPixelRatio();
 
-	removeViewportListeners[_viewportListener] = () => {
-		cancelFrameThrottler(_viewportListener);
+	removeViewportListeners[viewportListenerKey] = () => {
+		cancelFrameThrottler(viewportListenerKey);
 		window.removeEventListener('resize', throttledListener);
 		document.removeEventListener('scroll', throttledListener);
 		resolutionQuery.removeEventListener('change', changePixelRatio);
 	};
 
-	return _viewportListener;
+	return viewportListenerKey;
 };
 
-export const removeViewportListener = (_viewportListener: symbol) => {
-	removeViewportListeners[_viewportListener]();
+export const removeViewportListener = (viewportListenerKey: symbol) => {
+	removeViewportListeners[viewportListenerKey]();
 };

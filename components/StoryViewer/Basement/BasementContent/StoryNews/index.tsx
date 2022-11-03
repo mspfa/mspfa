@@ -151,11 +151,11 @@ const StoryNews = React.memo(() => {
 
 	useEffect(() => {
 		if (notAllNewsLoaded) {
-			const _viewportListener = addViewportListener(checkIfNewsShouldBeFetched);
-			frameThrottler(_viewportListener).then(checkIfNewsShouldBeFetched);
+			const viewportListenerKey = addViewportListener(checkIfNewsShouldBeFetched);
+			frameThrottler(viewportListenerKey).then(checkIfNewsShouldBeFetched);
 
 			return () => {
-				removeViewportListener(_viewportListener);
+				removeViewportListener(viewportListenerKey);
 			};
 		}
 

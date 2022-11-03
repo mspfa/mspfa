@@ -78,8 +78,8 @@ export type DialogOptions<Values extends Record<string, any> = any> = {
 
 export type DialogResult = Partial<DialogAction> | undefined;
 
-const _resolvePromise = Symbol('resolvePromise');
-let resolvePromise: (value?: DialogResult) => void;
+const resolvePromise = Symbol('resolvePromise');
+let temporaryResolvePromise: Dialog<any>[typeof resolvePromise];
 
 let nextDialogID = 0;
 
@@ -107,7 +107,7 @@ export default class Dialog<Values extends Record<string, any>> extends Promise<
 	/** The action with `submit: true`. */
 	submitAction: DialogAction | undefined;
 
-	[_resolvePromise]: typeof resolvePromise;
+	[resolvePromise]: (value?: DialogResult) => void;
 
 	constructor({
 		id = nextDialogID++,
@@ -118,10 +118,10 @@ export default class Dialog<Values extends Record<string, any>> extends Promise<
 		actions: actionsOption = ['Okay']
 	}: DialogOptions<Values>) {
 		super(resolve => {
-			// `this[_resolvePromise]` cannot be set here directly, because then a class property would be set before `super` is called, which throws an error.
-			resolvePromise = resolve;
+			// `this[resolvePromise]` cannot be set here directly, because then a class property would be set before `super` is called, which throws an error.
+			temporaryResolvePromise = resolve;
 		});
-		this[_resolvePromise] = resolvePromise;
+		this[resolvePromise] = temporaryResolvePromise;
 
 		this.id = id;
 		this.title = title;
@@ -208,7 +208,7 @@ export default class Dialog<Values extends Record<string, any>> extends Promise<
 		/** Whether dialogs should be re-rendered upon completion. */
 		shouldUpdateDialogs = true
 	) => {
-		this[_resolvePromise](value);
+		this[resolvePromise](value);
 		this.resolved = true;
 
 		for (let i = 0; i < dialogs.length; i++) {

@@ -119,10 +119,10 @@ const MessageListing = ({
 			};
 
 			viewportListener();
-			const _viewportListener = addViewportListener(viewportListener);
+			const viewportListenerKey = addViewportListener(viewportListener);
 
 			return () => {
-				removeViewportListener(_viewportListener);
+				removeViewportListener(viewportListenerKey);
 			};
 		}
 	}, [fullContent, partialContent, open]);
