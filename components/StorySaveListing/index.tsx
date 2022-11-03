@@ -11,7 +11,7 @@ import type { PublicStory } from 'lib/client/stories';
 import type { StoryID, StoryPageID } from 'lib/server/stories';
 import StoryStats from 'components/StoryStats';
 
-type UserStorySaveAPI = APIClient<typeof import('pages/api/users/[userID]/storySaves/[storyID]').default>;
+type UserStorySaveAPI = APIClient<typeof import('pages/api/users/[userID]/story-saves/[storyID]').default>;
 
 export type StorySave = {
 	id: StoryID,
@@ -51,7 +51,7 @@ const StorySaveListing = ({
 
 		setLoading(true);
 
-		await (api as UserStorySaveAPI).delete(`/users/${queriedUserID}/storySaves/${storySave.id}`).finally(() => {
+		await (api as UserStorySaveAPI).delete(`/users/${queriedUserID}/story-saves/${storySave.id}`).finally(() => {
 			setLoading(false);
 		});
 

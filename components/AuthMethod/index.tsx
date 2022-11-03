@@ -9,7 +9,7 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import type { APIClient } from 'lib/client/api';
 import Dialog from 'lib/client/Dialog';
 
-type AuthMethodAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods/[authMethodID]').default>;
+type AuthMethodAPI = APIClient<typeof import('pages/api/users/[userID]/auth-methods/[authMethodID]').default>;
 
 export type AuthMethodProps = {
 	userID: PrivateUser['id'],
@@ -50,7 +50,7 @@ const AuthMethod = ({ userID, authMethod, authMethods, setAuthMethods }: AuthMet
 							return;
 						}
 
-						await (api as AuthMethodAPI).delete(`users/${userID}/authMethods/${authMethod.id}`);
+						await (api as AuthMethodAPI).delete(`/users/${userID}/auth-methods/${authMethod.id}`);
 
 						if (Dialog.getByID('auth-methods')) {
 							setAuthMethods(authMethods.filter(({ id }) => id !== authMethod.id));

@@ -35,7 +35,7 @@ import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';
 import classNames from 'classnames';
 
 type MessageAPI = APIClient<typeof import('pages/api/messages/[messageID]').default>;
-type MessageDeletedByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy/[userID]').default>;
+type MessageDeletedByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/deleted-by/[userID]').default>;
 
 type ServerSideProps = {
 	unreadMessageCount?: integer,
@@ -83,7 +83,7 @@ const Component = withErrorPage<ServerSideProps>(({
 			return;
 		}
 
-		await (api as MessageDeletedByUserAPI).put(`/messages/${message.id}/deletedBy/${user.id}`, true);
+		await (api as MessageDeletedByUserAPI).put(`/messages/${message.id}/deleted-by/${user.id}`, true);
 
 		Router.push(`/users/${user.id}/messages`);
 	});

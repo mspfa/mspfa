@@ -19,7 +19,7 @@ import type { ClientColorGroup } from 'lib/client/colors';
 import DropIndicator from 'components/ColorTool/DropIndicator';
 import classNames from 'classnames';
 
-type StoryColorGroupAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups/[colorGroupID]').default>;
+type StoryColorGroupAPI = APIClient<typeof import('pages/api/stories/[storyID]/color-groups/[colorGroupID]').default>;
 type StoryColorAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors/[colorID]').default>;
 
 /** A symbol that represents where a `DropIndicator` should be rendered. */
@@ -264,7 +264,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 							return;
 						}
 
-						const { data: newColorGroup } = await (api as StoryColorGroupAPI).patch(`/stories/${story.id}/colorGroups/${colorGroup.id}`, {
+						const { data: newColorGroup } = await (api as StoryColorGroupAPI).patch(`/stories/${story.id}/color-groups/${colorGroup.id}`, {
 							index: dropIndex!
 						});
 

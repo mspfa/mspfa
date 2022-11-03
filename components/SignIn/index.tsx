@@ -22,7 +22,7 @@ import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayout
 import type { integer } from 'lib/types';
 import Row from 'components/Row';
 
-type EmailTakenAPI = APIClient<typeof import('pages/api/emailTaken').default>;
+type EmailTakenAPI = APIClient<typeof import('pages/api/email-taken').default>;
 
 const startSigningUp = () => {
 	setSignInPage(1);
@@ -85,7 +85,7 @@ const SignIn = ({ page }: SignInProps) => {
 	const checkEmail = useThrottled(async (email: string) => {
 		cancelTokenSourceRef.current = axios.CancelToken.source();
 
-		const { data: { taken } } = await (api as EmailTakenAPI).get('/emailTaken', {
+		const { data: { taken } } = await (api as EmailTakenAPI).get('/email-taken', {
 			params: { email },
 			cancelToken: cancelTokenSourceRef.current.token
 		});
@@ -103,7 +103,7 @@ const SignIn = ({ page }: SignInProps) => {
 		if (checkEmail.timeoutRef.current) {
 			clearTimeout(checkEmail.timeoutRef.current);
 		}
-		// Cancel the last `/emailTaken` request, if there is one pending.
+		// Cancel the last `/email-taken` request, if there is one pending.
 		if (cancelTokenSourceRef.current) {
 			cancelTokenSourceRef.current.cancel();
 			cancelTokenSourceRef.current = undefined;

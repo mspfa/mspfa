@@ -23,7 +23,7 @@ export const promptSignOut = async () => {
 		title: 'Sign Out',
 		content: 'Are you sure you want to sign out?'
 	})) {
-		await (api as SessionAPI).delete('session');
+		await (api as SessionAPI).delete('/session');
 		setUser(undefined);
 	}
 };

@@ -10,7 +10,7 @@ import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
 import type { AuthMethodOptions, ClientAuthMethod } from 'lib/client/auth';
 
-type AuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;
+type AuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/auth-methods').default>;
 
 export type AuthMethodsProps = {
 	userID: PrivateUser['id'],
@@ -24,7 +24,7 @@ const AuthMethods = ({
 	const [authMethods, setAuthMethods] = useState(initialAuthMethods);
 
 	const onResolve = useFunction(async (authMethodOptions: AuthMethodOptions) => {
-		const { data: authMethod } = await (api as AuthMethodsAPI).post(`users/${userID}/authMethods`, authMethodOptions);
+		const { data: authMethod } = await (api as AuthMethodsAPI).post(`users/${userID}/auth-methods`, authMethodOptions);
 
 		if (Dialog.getByID('auth-methods')) {
 			setAuthMethods([...authMethods, authMethod]);

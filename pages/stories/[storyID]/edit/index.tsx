@@ -231,7 +231,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 							setSubmitting(true);
 
-							const { data: newStory } = await (api as StoryAPI).patch(`stories/${story.id}`, {
+							const { data: newStory } = await (api as StoryAPI).patch(`/stories/${story.id}`, {
 								willDelete: true
 							}).finally(() => {
 								setSubmitting(false);

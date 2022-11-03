@@ -35,9 +35,9 @@ import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';
 import defaultUserSettings from 'lib/client/defaultUserSettings';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
-type UserAuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods').default>;
-type UserPasswordAPI = APIClient<typeof import('pages/api/users/[userID]/authMethods/password').default>;
-type UserDoesOwnStoriesAPI = APIClient<typeof import('pages/api/users/[userID]/doesOwnStories').default>;
+type UserAuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/auth-methods').default>;
+type UserPasswordAPI = APIClient<typeof import('pages/api/users/[userID]/auth-methods/password').default>;
+type UserDoesOwnStoriesAPI = APIClient<typeof import('pages/api/users/[userID]/does-own-stories').default>;
 
 const getSettingsValues = (settings: PrivateUser['settings']) => ({
 	autoOpenSpoilers: settings.autoOpenSpoilers,
@@ -91,7 +91,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 	}, []);
 
 	const onClickChangePassword = useFunction(async () => {
-		const { data: authMethods } = await (api as UserAuthMethodsAPI).get(`users/${privateUser.id}/authMethods`, {
+		const { data: authMethods } = await (api as UserAuthMethodsAPI).get(`/users/${privateUser.id}/auth-methods`, {
 			params: {
 				type: 'password'
 			}
@@ -152,7 +152,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 		});
 
 		if ((await changePasswordDialog)?.submit) {
-			await (api as UserPasswordAPI).patch(`/users/${privateUser.id}/authMethods/password`, {
+			await (api as UserPasswordAPI).patch(`/users/${privateUser.id}/auth-methods/password`, {
 				currentPassword: changePasswordDialog.form!.values.currentPassword,
 				newPassword: changePasswordDialog.form!.values.password
 			});
@@ -165,7 +165,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 	});
 
 	const onClickEditAuthMethods = useFunction(async () => {
-		const { data: authMethods } = await (api as UserAuthMethodsAPI).get(`users/${privateUser.id}/authMethods`);
+		const { data: authMethods } = await (api as UserAuthMethodsAPI).get(`/users/${privateUser.id}/auth-methods`);
 
 		new Dialog({
 			id: 'auth-methods',
@@ -382,7 +382,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 											useFunction(async () => {
 												setSubmitting(true);
 
-												const { data: doesOwnStories } = await (api as UserDoesOwnStoriesAPI).get(`users/${privateUser.id}/doesOwnStories`).catch(error => {
+												const { data: doesOwnStories } = await (api as UserDoesOwnStoriesAPI).get(`/users/${privateUser.id}/does-own-stories`).catch(error => {
 													setSubmitting(false);
 													return Promise.reject(error);
 												});
@@ -433,7 +433,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 
 												setSubmitting(true);
 
-												await (api as UserAPI).delete(`users/${privateUser.id}`).catch(error => {
+												await (api as UserAPI).delete(`/users/${privateUser.id}`).catch(error => {
 													setSubmitting(false);
 													return Promise.reject(error);
 												});

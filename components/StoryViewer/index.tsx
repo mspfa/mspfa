@@ -29,7 +29,7 @@ import type { ParsedReactNode } from 'lib/client/parseBBCode/BBStringParser';
 import BBTags from 'components/BBCode/BBTags';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
-type UserStorySaveAPI = APIClient<typeof import('pages/api/users/[userID]/storySaves/[storyID]').default>;
+type UserStorySaveAPI = APIClient<typeof import('pages/api/users/[userID]/story-saves/[storyID]').default>;
 
 /**
  * The maximum distance of pages to preload around the user's current page.
@@ -554,7 +554,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 											return;
 										}
 
-										(api as UserStorySaveAPI).put(`/users/${user.id}/storySaves/${story.id}`, pageID);
+										(api as UserStorySaveAPI).put(`/users/${user.id}/story-saves/${story.id}`, pageID);
 									})
 								}
 							>
@@ -584,7 +584,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 											return;
 										}
 
-										const { data: savedPageID } = await (api as UserStorySaveAPI).get(`/users/${user.id}/storySaves/${story.id}`, {
+										const { data: savedPageID } = await (api as UserStorySaveAPI).get(`/users/${user.id}/story-saves/${story.id}`, {
 											beforeInterceptError: error => {
 												if (error.response?.status === 404) {
 													error.preventDefault();
@@ -638,7 +638,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 											}
 										};
 
-										await (api as UserStorySaveAPI).get(`/users/${user.id}/storySaves/${story.id}`, deleteUserStorySaveAPIConfig);
+										await (api as UserStorySaveAPI).get(`/users/${user.id}/story-saves/${story.id}`, deleteUserStorySaveAPIConfig);
 
 										if (!await Dialog.confirm({
 											id: 'story-saves',
@@ -648,7 +648,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 											return;
 										}
 
-										(api as UserStorySaveAPI).delete(`/users/${user.id}/storySaves/${story.id}`, deleteUserStorySaveAPIConfig);
+										(api as UserStorySaveAPI).delete(`/users/${user.id}/story-saves/${story.id}`, deleteUserStorySaveAPIConfig);
 									})
 								}
 							>

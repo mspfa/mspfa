@@ -20,7 +20,7 @@ import classNames from 'classnames';
 import type { Updater } from 'use-immer';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
-type StoryMovePagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/movePages').default>;
+type StoryMovePagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/move-pages').default>;
 
 export const defaultGridCullingInfo = {
 	// The default `firstIndex` and `lastIndex` must both be 0 so that exactly one page is rendered, and its size can be used to process culling.
@@ -327,7 +327,7 @@ const StoryEditorPageGrid = ({
 				changedPageIDs,
 				changedPages: newInitialPages
 			}
-		} = await (api as StoryMovePagesAPI).post(`/stories/${storyID}/movePages`, {
+		} = await (api as StoryMovePagesAPI).post(`/stories/${storyID}/move-pages`, {
 			pageIDs: selectedPages,
 			index: index!
 		}).catch(error => {

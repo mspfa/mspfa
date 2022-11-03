@@ -6,7 +6,7 @@ import type { PrivateStory } from 'lib/client/stories';
 import type { Updater } from 'use-immer';
 import type { ClientColorGroup } from 'lib/client/colors';
 
-type StoryColorGroupsAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups').default>;
+type StoryColorGroupsAPI = APIClient<typeof import('pages/api/stories/[storyID]/color-groups').default>;
 
 /**
  * Prompts the user to create a color group.
@@ -35,7 +35,7 @@ const promptCreateColorGroup = (
 		return;
 	}
 
-	const { data: colorGroup } = await (api as StoryColorGroupsAPI).post(`/stories/${story.id}/colorGroups`, {
+	const { data: colorGroup } = await (api as StoryColorGroupsAPI).post(`/stories/${story.id}/color-groups`, {
 		name: dialog.form!.values.name
 	});
 

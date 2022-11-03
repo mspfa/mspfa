@@ -12,7 +12,7 @@ import ColorGroupOptions from 'components/ColorTool/ColorGroupOptions';
 import { getChangedValues } from 'lib/client/forms';
 import Grabber from 'components/Grabber';
 
-type StoryColorGroupAPI = APIClient<typeof import('pages/api/stories/[storyID]/colorGroups/[colorGroupID]').default>;
+type StoryColorGroupAPI = APIClient<typeof import('pages/api/stories/[storyID]/color-groups/[colorGroupID]').default>;
 
 export type ColorGroupLabelProps = {
 	children: ClientColorGroup
@@ -86,7 +86,7 @@ const ColorGroupLabel = ({ children: colorGroup }: ColorGroupLabelProps) => {
 									return;
 								}
 
-								await (api as StoryColorGroupAPI).delete(`/stories/${story.id}/colorGroups/${colorGroup.id}`);
+								await (api as StoryColorGroupAPI).delete(`/stories/${story.id}/color-groups/${colorGroup.id}`);
 
 								updateStory(story => {
 									const colorGroupIndex = story.colorGroups.findIndex(({ id }) => id === colorGroup.id);
@@ -113,7 +113,7 @@ const ColorGroupLabel = ({ children: colorGroup }: ColorGroupLabelProps) => {
 								return;
 							}
 
-							const { data: newColorGroup } = await (api as StoryColorGroupAPI).patch(`/stories/${story.id}/colorGroups/${colorGroup.id}`, changedValues);
+							const { data: newColorGroup } = await (api as StoryColorGroupAPI).patch(`/stories/${story.id}/color-groups/${colorGroup.id}`, changedValues);
 
 							updateStory(story => {
 								const colorGroupIndex = story.colorGroups.findIndex(({ id }) => id === colorGroup.id);

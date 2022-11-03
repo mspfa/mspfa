@@ -24,8 +24,8 @@ import { useRouter } from 'next/router';
 import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
 import classNames from 'classnames';
 
-type MessageReadByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/readBy/[userID]').default>;
-type MessageDeletedByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/deletedBy/[userID]').default>;
+type MessageReadByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/read-by/[userID]').default>;
+type MessageDeletedByUserAPI = APIClient<typeof import('pages/api/messages/[messageID]/deleted-by/[userID]').default>;
 
 export type ListedMessage = ClientMessage & {
 	selected: boolean,
@@ -138,7 +138,7 @@ const MessageListing = ({
 		setLoading(true);
 
 		await (api as MessageReadByUserAPI).put(
-			`/messages/${message.id}/readBy/${queriedUserID}`,
+			`/messages/${message.id}/read-by/${queriedUserID}`,
 			read
 		).finally(() => {
 			setLoading(false);
@@ -165,7 +165,7 @@ const MessageListing = ({
 		setLoading(true);
 
 		await (api as MessageDeletedByUserAPI).put(
-			`/messages/${message.id}/deletedBy/${queriedUserID}`,
+			`/messages/${message.id}/deleted-by/${queriedUserID}`,
 			true
 		).finally(() => {
 			setLoading(false);
