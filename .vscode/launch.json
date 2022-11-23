@@ -1,6 +1,5 @@
 // Install the debugger extension here: https://marketplace.visualstudio.com/items?itemName=ms-vscode.js-debug
 // Be sure to launch Chrome with the `--remote-debugging-port=9222` launch option, or else the Chrome debugger cannot attach.
-
 {
 	"version": "0.2.0",
 	"configurations": [
