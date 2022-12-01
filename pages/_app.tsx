@@ -15,7 +15,7 @@ import { mergeWith } from 'lodash';
 import UserCache from 'lib/client/reactContexts/UserCache';
 import overwriteArrays from 'lib/client/overwriteArrays';
 import { useRouter } from 'next/router';
-import Dialog from 'lib/client/Dialog';
+import useUncaughtErrorDialogs from 'lib/client/reactHooks/useUncaughtErrorDialogs';
 
 export type MyAppInitialProps = {
 	user?: PrivateUser
@@ -49,35 +49,7 @@ const MyApp = ({
 		setTheme(theme);
 	}, [theme]);
 
-	// Display an error dialog when an uncaught error occurs.
-	useEffect(() => {
-		const onError = (event: ErrorEvent) => {
-			if (event.filename.startsWith(`${location.origin}/`)) {
-				new Dialog({
-					title: 'Uncaught Error',
-					content: (
-						<>
-							<div className="red">
-								{event.message}
-							</div>
-							<br />
-							<div className="translucent">
-								{event.error.stack || (
-									`${event.error.message}\n    at ${event.filename}:${event.lineno}${event.colno ? `:${event.colno}` : ''}`
-								)}
-							</div>
-						</>
-					)
-				});
-			}
-		};
-
-		window.addEventListener('error', onError);
-
-		return () => {
-			window.removeEventListener('error', onError);
-		};
-	}, []);
+	useUncaughtErrorDialogs();
 
 	const router = useRouter();
 	const asPathQueryIndex = router.asPath.indexOf('?');
