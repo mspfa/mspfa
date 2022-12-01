@@ -403,7 +403,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 				return;
 			}
 
-			const controls = (getUser()?.settings || defaultUserSettings).controls;
+			const { controls } = getUser()?.settings || defaultUserSettings;
 
 			if (event.code === controls.previousPage) {
 				if (previousPageID) {

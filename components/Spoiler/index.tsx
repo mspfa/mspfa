@@ -66,7 +66,7 @@ const Spoiler = ({
 					return;
 				}
 
-				const controls = (getUser()?.settings || defaultUserSettings).controls;
+				const { controls } = getUser()?.settings || defaultUserSettings;
 
 				if (event.code === controls.toggleSpoilers) {
 					setOpen(open => !open);
