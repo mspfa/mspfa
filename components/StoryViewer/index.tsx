@@ -328,7 +328,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 		};
 	}, [queriedPageID, pages, story.id, previewMode, pagesRef]);
 
-	const storySectionElementRef = useRef<HTMLDivElement>(null!);
+	const storySectionElementRef = useRef<HTMLDivElement>(null as never);
 
 	// Add the `panel` class to any media elements large enough to be considered a panel.
 	// This is a layout effect rather than a normal effect so that media is not briefly visible at the wrong size.

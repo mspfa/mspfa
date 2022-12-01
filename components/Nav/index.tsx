@@ -50,7 +50,7 @@ const Nav = () => {
 		);
 	}
 
-	const ref = useRef<HTMLElement>(null!);
+	const ref = useRef<HTMLElement>(null as never);
 	useSticky(ref);
 
 	const storyID = useContext(StoryIDContext);

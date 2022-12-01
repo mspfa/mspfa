@@ -21,7 +21,7 @@ const ColorOptions = () => {
 
 	const [, , { setValue: setGroup }] = useField<string>('group');
 
-	const colorGroupFieldRef = useRef<HTMLSelectElement>(null!);
+	const colorGroupFieldRef = useRef<HTMLSelectElement>(null as never);
 
 	return (
 		<IDPrefix.Provider value="color-options">

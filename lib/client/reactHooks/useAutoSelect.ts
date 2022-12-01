@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 /** Returns a ref which must be passed into an element to be auto-selected on first mount. */
 const useAutoSelect = () => {
-	const elementRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null!);
+	const elementRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null as never);
 
 	useEffect(() => {
 		elementRef.current.select();

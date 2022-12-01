@@ -15,7 +15,7 @@ const useSubmitOnSave = (
 	const formikPropsRef = useRef(formikProps);
 	formikPropsRef.current = formikProps;
 
-	const formRef = useRef<HTMLFormElement>(null!);
+	const formRef = useRef<HTMLFormElement>(null as never);
 
 	useEffect(() => {
 		if (!shouldSubmit) {

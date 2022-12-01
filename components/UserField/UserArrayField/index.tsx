@@ -20,7 +20,7 @@ const UserArrayField = ({
 	className,
 	...props
 }: UserArrayFieldProps) => {
-	const userArrayFieldRef = useRef<HTMLDivElement>(null!);
+	const userArrayFieldRef = useRef<HTMLDivElement>(null as never);
 
 	const [, { value: fieldValue }, { setValue: setFieldValue }] = useField<Array<string | undefined>>(name);
 

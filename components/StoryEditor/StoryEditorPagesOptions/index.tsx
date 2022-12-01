@@ -47,7 +47,7 @@ const StoryEditorPagesOptions = ({
 }: StoryEditorPagesOptionsProps) => {
 	const { formikPropsRef } = useContext(StoryEditorContext)!;
 
-	const defaultPageTitleInputRef = useRef<HTMLInputElement>(null!);
+	const defaultPageTitleInputRef = useRef<HTMLInputElement>(null as never);
 
 	const cancelTokenSourceRef = useRef<CancelTokenSource>();
 
@@ -89,7 +89,7 @@ const StoryEditorPagesOptions = ({
 				replace: ''
 			},
 			content: function Content({ values, setFieldValue }) {
-				const findInputRef = useRef<HTMLInputElement>(null!);
+				const findInputRef = useRef<HTMLInputElement>(null as never);
 				const flagsInputRef = useRef<HTMLInputElement>(null);
 
 				useEffect(() => {

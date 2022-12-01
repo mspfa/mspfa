@@ -82,7 +82,7 @@ const TagField = ({
 		childNodes: NodeListOf<TagFieldChild>,
 		firstChild: TagFieldChild | null,
 		lastChild: TagFieldChild | null
-	}>(null!);
+	}>(null as never);
 
 	/** Inserts a tag element before the specified `TagFieldChild`. Automatically adds an editable before (but not after) the new tag if necessary. */
 	const createAndInsertTag = (

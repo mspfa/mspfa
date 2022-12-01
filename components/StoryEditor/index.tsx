@@ -137,7 +137,7 @@ const StoryEditor = ({
 	const [story, updateStory] = useImmer(initialStory);
 	const [initialPages, setInitialPages] = useState(initialPagesProp);
 
-	const formikPropsRef = useRef<FormikProps<Values>>(null!);
+	const formikPropsRef = useRef<FormikProps<Values>>(null as never);
 
 	const pageComponent = (
 		<Page heading="Edit Adventure">
@@ -763,7 +763,7 @@ const StoryEditor = ({
 					});
 
 					/** A ref to the `#story-editor-pages-actions` element. */
-					const pagesActionsElementRef = useRef<HTMLDivElement>(null!);
+					const pagesActionsElementRef = useRef<HTMLDivElement>(null as never);
 					useSticky(pagesActionsElementRef);
 
 					// This is because ESLint doesn't recognize `story.id` as a necessary hook dependency.

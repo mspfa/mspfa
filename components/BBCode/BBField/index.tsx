@@ -26,7 +26,7 @@ export type BBFieldProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'ch
 const BBField = ({ name, keepHTMLTags, escapeHTML, removeBBTags, ...props }: BBFieldProps) => {
 	const [, { value }, { setValue }] = useField<string>(name);
 
-	const textAreaRef = useRef<HTMLTextAreaElement>(null!);
+	const textAreaRef = useRef<HTMLTextAreaElement>(null as never);
 
 	const disableBBTools = props.disabled || props.readOnly;
 

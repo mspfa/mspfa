@@ -100,7 +100,7 @@ const StoryNews = React.memo(() => {
 	);
 	/** A ref to whether news is currently being requested. */
 	const newsLoadingRef = useRef(false);
-	const newsElementRef = useRef<HTMLDivElement>(null!);
+	const newsElementRef = useRef<HTMLDivElement>(null as never);
 
 	const checkIfNewsShouldBeFetched = useFunction(async () => {
 		if (newsLoadingRef.current) {

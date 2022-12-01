@@ -81,8 +81,8 @@ const MessageListing = ({
 
 	// This state is whether the message's `partialContent` is not equal to its `fullContent`.
 	const [moreLinkVisible, setMoreLinkVisible] = useState(false);
-	const listingRef = useRef<HTMLDivElement>(null!);
-	const contentRef = useRef<HTMLDivElement>(null!);
+	const listingRef = useRef<HTMLDivElement>(null as never);
+	const contentRef = useRef<HTMLDivElement>(null as never);
 
 	// Set `fullContent`, and set `moreLinkVisible` based on whether the `fullContent` is one line of plain text.
 	// This is a layout effect rather than a normal effect so the user can't see the component rendered with the wrong `moreLinkVisible` for a moment before the effect runs.

@@ -240,7 +240,7 @@ const StoryEditorPageGrid = ({
 				pageID: '' as number | ''
 			},
 			content: function Content({ values: { relation, pageID } }) {
-				const pageIDInputRef = useRef<HTMLInputElement>(null!);
+				const pageIDInputRef = useRef<HTMLInputElement>(null as never);
 
 				useEffect(() => {
 					const validPage = (

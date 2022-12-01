@@ -16,7 +16,7 @@ const NavMenu = ({ id, children, ...props }: NavMenuProps) => {
 	const [focusFromClick, setFocusFromClick] = useState(false);
 
 	/** A ref to the underlying link element of this menu's label. */
-	const labelRef = useRef<HTMLAnchorElement & HTMLButtonElement>(null!);
+	const labelRef = useRef<HTMLAnchorElement & HTMLButtonElement>(null as never);
 
 	return (
 		<div

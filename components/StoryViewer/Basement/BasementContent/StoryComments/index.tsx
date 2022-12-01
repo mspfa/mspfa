@@ -72,7 +72,7 @@ const StoryComments = React.memo(() => {
 	}
 
 	/** A ref to the element containing the comments. */
-	const commentsElementRef = useRef<HTMLDivElement>(null!);
+	const commentsElementRef = useRef<HTMLDivElement>(null as never);
 
 	/** Loads more comments if the bottom of the comment section is in view. */
 	const checkToLoadMoreComments = useFunction(async () => {

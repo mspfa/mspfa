@@ -52,7 +52,7 @@ const Component = withErrorPage<ServerSideProps>(({
 	initialUserCache.forEach(cacheUser);
 
 	/** A ref to the `#messages-actions` element. */
-	const pagesActionsElementRef = useRef<HTMLDivElement>(null!);
+	const pagesActionsElementRef = useRef<HTMLDivElement>(null as never);
 	useSticky(pagesActionsElementRef);
 
 	let selectedCount = 0;

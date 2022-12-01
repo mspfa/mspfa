@@ -101,7 +101,7 @@ const StoryEditorPageListing = React.memo(({
 		}
 	}, [pageStatus, initialPublished]);
 
-	const ref = useRef<HTMLDivElement & HTMLDetailsElement>(null!);
+	const ref = useRef<HTMLDivElement & HTMLDetailsElement>(null as never);
 
 	const removeNextPage = useFunction((event: MouseEvent<HTMLButtonElement & HTMLAnchorElement> & { target: HTMLButtonElement }) => {
 		// The `parentNode` of this `RemoveButton` will be the `div.story-editor-next-page` element.
