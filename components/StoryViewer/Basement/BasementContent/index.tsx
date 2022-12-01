@@ -26,7 +26,7 @@ const BasementContent = React.memo(() => {
 
 	const pageID = useContext(PageIDContext);
 
-	const user = useUser();
+	const [user] = useUser();
 
 	const editorLinks = uniq([story.owner, ...story.editors]).map((userID, i) => (
 		<Fragment key={userID}>

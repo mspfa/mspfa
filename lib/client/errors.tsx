@@ -22,7 +22,7 @@ export const withErrorPage = <
 	Component: (props: Props & { statusCode?: undefined }) => JSX.Element
 ) => (
 	({ statusCode, ...props }: Props) => {
-		const user = useUser();
+		const [user] = useUser();
 		const userID = user?.id;
 
 		const [previousUserID, setPreviousUserID] = useState(userID);

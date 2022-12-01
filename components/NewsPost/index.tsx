@@ -33,7 +33,7 @@ const NewsPost = React.memo(({
 	setNewsPost,
 	deleteNewsPost
 }: NewsPostProps) => {
-	const user = useUser();
+	const [user] = useUser();
 
 	const userIsEditor = !!user && (
 		story.owner === user.id

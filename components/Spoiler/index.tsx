@@ -1,11 +1,12 @@
 import './styles.module.scss';
-import { getUser, useUser } from 'lib/client/reactContexts/UserContext';
+import { useUser } from 'lib/client/reactContexts/UserContext';
 import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
 import type { HTMLAttributes, ReactNode } from 'react';
 import { useState, useEffect } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import defaultUserSettings from 'lib/client/defaultUserSettings';
 import classNames from 'classnames';
+import useLatest from 'lib/client/reactHooks/useLatest';
 
 export type SpoilerProps = HTMLAttributes<HTMLDivElement> & {
 	/** The spoiler button's label inserted after "Show" or "Hide". */
@@ -52,12 +53,11 @@ const Spoiler = ({
 	children,
 	...props
 }: SpoilerProps) => {
-	const user = useUser();
-	const [open, setOpen] = useState(
-		defaultOpen
-		?? user?.settings.autoOpenSpoilers
-		?? defaultUserSettings.autoOpenSpoilers
-	);
+	const [user] = useUser();
+	const settings = user?.settings || defaultUserSettings;
+	const settingsRef = useLatest(settings);
+
+	const [open, setOpen] = useState(defaultOpen ?? settings.autoOpenSpoilers);
 
 	useEffect(() => {
 		if (listenToControl) {
@@ -66,7 +66,7 @@ const Spoiler = ({
 					return;
 				}
 
-				const { controls } = getUser()?.settings || defaultUserSettings;
+				const { controls } = settingsRef.current;
 
 				if (event.code === controls.toggleSpoilers) {
 					setOpen(open => !open);
@@ -81,7 +81,7 @@ const Spoiler = ({
 				document.removeEventListener('keydown', onKeyDown);
 			};
 		}
-	}, [listenToControl]);
+	}, [listenToControl, settingsRef]);
 
 	return (
 		<div

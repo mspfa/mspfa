@@ -9,7 +9,7 @@ import BBCode from 'components/BBCode';
 import parseBBCode from 'lib/client/parseBBCode';
 import { useUserCache } from 'lib/client/reactContexts/UserCache';
 import Timestamp from 'components/Timestamp';
-import { setUser, useUser } from 'lib/client/reactContexts/UserContext';
+import { useUser } from 'lib/client/reactContexts/UserContext';
 import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
 import Button from 'components/Button';
@@ -51,7 +51,7 @@ const MessageListing = ({
 	removeListing,
 	children: message
 }: MessageListingProps) => {
-	const user = useUser();
+	const [user, setUser] = useUser();
 	const userRef = useLatest(user);
 
 	/** The ID of the user whose messages are being viewed. */
@@ -144,10 +144,7 @@ const MessageListing = ({
 			setLoading(false);
 		});
 
-		setMessage({
-			...message,
-			read
-		});
+		setMessage({ ...message, read });
 
 		if (userIsQueriedRef.current) {
 			setUser({

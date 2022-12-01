@@ -9,7 +9,7 @@ import type { ServerMessage } from 'lib/server/messages';
 import messages, { getClientMessage } from 'lib/server/messages';
 import type { ClientMessage } from 'lib/client/messages';
 import type { PublicUser, PrivateUser } from 'lib/client/users';
-import { getUser, setUser } from 'lib/client/reactContexts/UserContext';
+import { useUser } from 'lib/client/reactContexts/UserContext';
 import { useUserCache } from 'lib/client/reactContexts/UserCache';
 import List from 'components/List';
 import { uniqBy } from 'lodash';
@@ -25,6 +25,7 @@ import type { integer } from 'lib/types';
 import useSticky from 'lib/client/reactHooks/useSticky';
 import getRandomImageFilename from 'lib/server/getRandomImageFilename';
 import { useImmer } from 'use-immer';
+import useLatest from 'lib/client/reactHooks/useLatest';
 
 type ServerSideProps = {
 	privateUser: PrivateUser,
@@ -41,6 +42,9 @@ const Component = withErrorPage<ServerSideProps>(({
 	userCache: initialUserCache,
 	imageFilename
 }) => {
+	const [user, setUser] = useUser<true>();
+	const userRef = useLatest(user);
+
 	const [listedMessages, updateListedMessages] = useImmer(() => (
 		clientMessages.map<ListedMessage>(message => ({
 			...message,
@@ -69,16 +73,17 @@ const Component = withErrorPage<ServerSideProps>(({
 	}
 
 	useEffect(() => {
-		const user = getUser();
-
-		if (user?.id === privateUser.id) {
-			// Update the user's unread message count in case it is outdated.
+		if (
+			userRef.current.id === privateUser.id
+			&& userRef.current.unreadMessageCount !== unreadCount
+		) {
+			// Update the user's unread message count since it is outdated.
 			setUser({
-				...user,
+				...userRef.current,
 				unreadMessageCount: unreadCount
 			});
 		}
-	}, [unreadCount, privateUser.id]);
+	}, [unreadCount, privateUser.id, setUser, userRef]);
 
 	const deselectAll = useFunction(() => {
 		updateListedMessages(listedMessages => {

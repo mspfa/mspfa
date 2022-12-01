@@ -3,7 +3,7 @@ import Button from 'components/Button';
 import type { ButtonProps } from 'components/Button';
 import { useRef, useState } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import { setUser, useUser } from 'lib/client/reactContexts/UserContext';
+import { useUser } from 'lib/client/reactContexts/UserContext';
 import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
 import Dialog from 'lib/client/Dialog';
@@ -21,7 +21,7 @@ export type FavButtonProps = Omit<ButtonProps, 'onClick' | 'title' | 'children'>
 };
 
 const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) => {
-	const user = useUser();
+	const [user, setUser] = useUser();
 
 	const [favCount, setFavCount] = useState(children);
 

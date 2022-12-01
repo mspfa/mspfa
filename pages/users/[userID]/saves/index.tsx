@@ -30,7 +30,7 @@ const Component = withErrorPage<ServerSideProps>(({
 }) => {
 	const [storySaves, updateStorySaves] = useImmer(initialStorySaves);
 
-	const user = useUser();
+	const [user] = useUser();
 
 	const queriedUserID = useRouter().query.userID as string;
 

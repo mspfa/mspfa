@@ -6,10 +6,11 @@ import { getPrivateUser } from 'lib/server/users'; // @server-only
 import type { AppProps, AppContext } from 'next/app';
 import type { NextPageContext } from 'next';
 import Head from 'next/head';
-import UserContext, { useUserMerge, useUserInApp } from 'lib/client/reactContexts/UserContext';
+import type { UserContextType } from 'lib/client/reactContexts/UserContext';
+import UserContext, { useUserMerge } from 'lib/client/reactContexts/UserContext';
 import type { PrivateUser } from 'lib/client/users';
 import type { PageRequest } from 'lib/server/pages';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { setTheme } from 'lib/client/themes';
 import { mergeWith } from 'lodash';
 import UserCache from 'lib/client/reactContexts/UserCache';
@@ -35,7 +36,8 @@ const MyApp = ({
 }: MyAppProps) => {
 	const { current: userCache } = useRef({});
 
-	const user = useUserInApp(pageProps.initialProps?.user);
+	const [user, setUser]: UserContextType = useState(pageProps.initialProps?.user);
+
 	const [userMerge] = useUserMerge();
 	const mergedUser = (
 		userMerge
@@ -63,8 +65,10 @@ const MyApp = ({
 	);
 
 	return (
-		<UserContext.Provider value={mergedUser}>
-			<UserCache.Provider value={userCache}>
+		<UserCache.Provider value={userCache}>
+			<UserContext.Provider
+				value={useMemo(() => [user, setUser], [user])}
+			>
 				<Head>
 					<title>MS Paint Fan Adventures</title>
 					<meta name="description" content="Hello, welcome to the bath house" />
@@ -87,8 +91,8 @@ const MyApp = ({
 					// It is necessary that the props object passed here is the original `pageProps` object and not a clone, because after this point is reached, props from a page's `getServerSideProps` are assigned to the original `pageProps` object and would otherwise not be passed into the page component.
 					{...pageProps}
 				/>
-			</UserCache.Provider>
-		</UserContext.Provider>
+			</UserContext.Provider>
+		</UserCache.Provider>
 	);
 };
 

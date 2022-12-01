@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import Page from 'components/Page';
 import type { PublicUser } from 'lib/client/users';
-import { getUser } from 'lib/client/reactContexts/UserContext';
+import { useUser } from 'lib/client/reactContexts/UserContext';
 import type { FormikHelpers } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import useFunction from 'lib/client/reactHooks/useFunction';
@@ -57,6 +57,8 @@ type ServerSideProps = {
 };
 
 const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
+	const [user] = useUser();
+
 	const { cacheUser } = useUserCache();
 
 	toUsers?.forEach(cacheUser);
@@ -80,7 +82,7 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 						values: Values,
 						{ setSubmitting }: FormikHelpers<Values>
 					) => {
-						if (!getUser()) {
+						if (!user) {
 							setSubmitting(false);
 
 							if (await Dialog.confirm({

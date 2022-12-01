@@ -22,7 +22,7 @@ const StoryStats = ({
 	className,
 	editPageID
 }: StoryStatsProps) => {
-	const user = useUser();
+	const [user] = useUser();
 
 	return (
 		<div

@@ -12,7 +12,7 @@ import useLatest from 'lib/client/reactHooks/useLatest';
 import Stick from 'components/Stick';
 import Delimit from 'components/Delimit';
 import Dialog from 'lib/client/Dialog';
-import { getUser } from 'lib/client/reactContexts/UserContext';
+import { useUser } from 'lib/client/reactContexts/UserContext';
 import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
 import type { APIClient, APIConfig } from 'lib/client/api';
 import api from 'lib/client/api';
@@ -97,6 +97,9 @@ export const CommentaryShownContext = React.createContext<[
 
 /** The `Page` on which a story can be viewed. */
 const StoryViewer = (props: StoryViewerProps) => {
+	const [user] = useUser();
+	const userRef = useLatest(user);
+
 	const {
 		story,
 		pages: initialPages,
@@ -403,7 +406,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 				return;
 			}
 
-			const { controls } = getUser()?.settings || defaultUserSettings;
+			const { controls } = userRef.current?.settings || defaultUserSettings;
 
 			if (event.code === controls.previousPage) {
 				if (previousPageID) {
@@ -431,7 +434,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 		return () => {
 			document.removeEventListener('keydown', onKeyDown);
 		};
-	}, [page, previousPageID, pages]);
+	}, [page, previousPageID, pages, userRef]);
 
 	/** Whether the "Go Back" link should be shown. */
 	const showGoBack = !!previousPageID;
@@ -539,8 +542,6 @@ const StoryViewer = (props: StoryViewerProps) => {
 											return;
 										}
 
-										const user = getUser();
-
 										if (!user) {
 											if (await Dialog.confirm({
 												id: 'story-saves',
@@ -569,8 +570,6 @@ const StoryViewer = (props: StoryViewerProps) => {
 								className="story-link-load-game"
 								onClick={
 									useFunction(async () => {
-										const user = getUser();
-
 										if (!user) {
 											if (await Dialog.confirm({
 												id: 'story-saves',
@@ -609,8 +608,6 @@ const StoryViewer = (props: StoryViewerProps) => {
 								className="story-link-delete-game"
 								onClick={
 									useFunction(async () => {
-										const user = getUser();
-
 										if (!user) {
 											if (await Dialog.confirm({
 												id: 'story-saves',

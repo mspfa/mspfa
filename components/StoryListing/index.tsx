@@ -30,7 +30,7 @@ const StoryListing = ({ children }: StoryListingProps) => {
 		storyTitle = '(Unavailable Adventure)';
 	}
 
-	const user = useUser();
+	const [user] = useUser();
 
 	const [open, setOpen] = useState(false);
 

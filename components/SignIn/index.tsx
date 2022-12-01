@@ -21,6 +21,8 @@ import type { APIClient } from 'lib/client/api';
 import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
 import type { integer } from 'lib/types';
 import Row from 'components/Row';
+import type { UserContextType } from 'lib/client/reactContexts/UserContext';
+import { useUser } from 'lib/client/reactContexts/UserContext';
 
 type EmailTakenAPI = APIClient<typeof import('pages/api/email-taken').default>;
 
@@ -71,8 +73,13 @@ export type SignInProps = {
 	page: integer
 };
 
+// TODO: Refactor this jank bullshit.
+export let setUser: UserContextType[1];
+
 const SignIn = ({ page }: SignInProps) => {
 	useSignInValuesUpdater();
+
+	setUser = useUser()[1];
 
 	const mountedRef = useMountedRef();
 

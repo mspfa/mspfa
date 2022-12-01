@@ -3,7 +3,7 @@ import NavGroup from 'components/Nav/NavGroup';
 import NavItem from 'components/Nav/NavItem';
 import NavMenu from 'components/Nav/NavMenu';
 import Router, { useRouter } from 'next/router';
-import { setUser, useUser } from 'lib/client/reactContexts/UserContext';
+import { useUser } from 'lib/client/reactContexts/UserContext';
 import useSticky from 'lib/client/reactHooks/useSticky';
 import { useContext, useRef } from 'react';
 import StoryIDContext from 'lib/client/reactContexts/StoryIDContext';
@@ -13,20 +13,9 @@ import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import promptSignIn from 'lib/client/promptSignIn';
 import classNames from 'classnames';
+import useFunction from 'lib/client/reactHooks/useFunction';
 
 type SessionAPI = APIClient<typeof import('pages/api/session').default>;
-
-/** Opens a dialog prompting the user to sign out. */
-export const promptSignOut = async () => {
-	if (await Dialog.confirm({
-		id: 'sign-out',
-		title: 'Sign Out',
-		content: 'Are you sure you want to sign out?'
-	})) {
-		await (api as SessionAPI).delete('/session');
-		setUser(undefined);
-	}
-};
 
 const visitRandomStory = () => {
 	// TODO: Visit random story.
@@ -37,7 +26,7 @@ const visitRandomStory = () => {
 const Nav = () => {
 	const router = useRouter();
 
-	const user = useUser();
+	const [user, setUser] = useUser();
 
 	const notificationsBubble = 0;
 	let messagesBubble = 0;
@@ -49,6 +38,17 @@ const Nav = () => {
 				: user.unreadMessageCount
 		);
 	}
+
+	const promptSignOut = useFunction(async () => {
+		if (await Dialog.confirm({
+			id: 'sign-out',
+			title: 'Sign Out',
+			content: 'Are you sure you want to sign out?'
+		})) {
+			await (api as SessionAPI).delete('/session');
+			setUser(undefined);
+		}
+	});
 
 	const ref = useRef<HTMLElement>(null as never);
 	useSticky(ref);

@@ -33,7 +33,7 @@ const StoryNews = React.memo(() => {
 
 	const { cacheUser } = useUserCache();
 
-	const user = useUser();
+	const [user] = useUser();
 
 	const [newsPosts, updateNewsPosts] = useImmer([...initialNewsPosts]);
 

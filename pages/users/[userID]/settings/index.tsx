@@ -1,5 +1,5 @@
 import Page from 'components/Page';
-import { setUser, setUserMerge, getUser } from 'lib/client/reactContexts/UserContext';
+import { setUserMerge, useUser } from 'lib/client/reactContexts/UserContext';
 import type { PrivateUser } from 'lib/client/users';
 import { Perm } from 'lib/client/perms';
 import { permToGetUserInPage } from 'lib/server/users/permToGetUser';
@@ -33,6 +33,7 @@ import BirthdateGridRow from 'components/LabeledGrid/LabeledGridRow/BirthdateGri
 import type { integer } from 'lib/types';
 import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';
 import defaultUserSettings from 'lib/client/defaultUserSettings';
+import useLatest from 'lib/client/reactHooks/useLatest';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 type UserAuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/auth-methods').default>;
@@ -77,6 +78,9 @@ type ServerSideProps = {
 };
 
 const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
+	const [user, setUser] = useUser<true>();
+	const userRef = useLatest(user);
+
 	const [privateUser, setPrivateUser] = useState(initialPrivateUser);
 
 	if (!defaultUserSettingsValues) {
@@ -196,7 +200,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 
 						setPrivateUser(data);
 
-						if (getUser()!.id === privateUser.id) {
+						if (userRef.current.id === privateUser.id) {
 							setUser(data);
 						}
 					})
@@ -438,7 +442,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 													return Promise.reject(error);
 												});
 
-												if (getUser()!.id === privateUser.id) {
+												if (userRef.current.id === privateUser.id) {
 													// We don't want to reload when they sign out; we want to go to the homepage.
 													preventReloads();
 													setUser(undefined);

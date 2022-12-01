@@ -37,7 +37,7 @@ type ServerSideProps = {
 };
 
 const Component = withErrorPage<ServerSideProps>(({ publicUser, stories, favsPublic, favCount }) => {
-	const user = useUser();
+	const [user] = useUser();
 
 	const notOwnProfile = user?.id !== publicUser.id;
 

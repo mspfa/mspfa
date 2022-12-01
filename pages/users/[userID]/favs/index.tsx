@@ -30,7 +30,7 @@ type ServerSideProps = {
 };
 
 const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, stories, imageFilename }) => {
-	const user = useUser();
+	const [user] = useUser();
 
 	return (
 		<Page withFlashyTitle heading="Favorite Adventures">

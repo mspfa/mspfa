@@ -11,7 +11,7 @@ import type { ClientMessage } from 'lib/client/messages';
 import BBCode from 'components/BBCode';
 import users, { getPublicUser } from 'lib/server/users';
 import type { PublicUser } from 'lib/client/users';
-import { useUser, setUser } from 'lib/client/reactContexts/UserContext';
+import { useUser } from 'lib/client/reactContexts/UserContext';
 import { uniqBy } from 'lodash';
 import { useUserCache } from 'lib/client/reactContexts/UserCache';
 import Link from 'components/Link';
@@ -52,7 +52,7 @@ const Component = withErrorPage<ServerSideProps>(({
 	replyTo,
 	userCache: initialUserCache
 }) => {
-	const user = useUser()!;
+	const [user, setUser] = useUser<true>();
 
 	const [editing, setEditing] = useState(false);
 
@@ -69,7 +69,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 			setUnreadMessageCountUpdated(true);
 		}
-	}, [unreadMessageCount, user, unreadMessageCountUpdated]);
+	}, [unreadMessageCount, user, unreadMessageCountUpdated, setUser]);
 
 	const { cacheUser } = useUserCache();
 	initialUserCache.forEach(cacheUser);

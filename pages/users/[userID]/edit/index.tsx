@@ -1,5 +1,4 @@
 import Page from 'components/Page';
-import { getUser, setUser } from 'lib/client/reactContexts/UserContext';
 import type { PrivateUser } from 'lib/client/users';
 import { Perm } from 'lib/client/perms';
 import { permToGetUserInPage } from 'lib/server/users/permToGetUser';
@@ -25,6 +24,8 @@ import BirthdateGridRow from 'components/LabeledGrid/LabeledGridRow/BirthdateGri
 import BBField from 'components/BBCode/BBField';
 import type { integer } from 'lib/types';
 import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';
+import { useUser } from 'lib/client/reactContexts/UserContext';
+import useLatest from 'lib/client/reactHooks/useLatest';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 
@@ -52,6 +53,9 @@ type ServerSideProps = {
 };
 
 const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateUser }) => {
+	const [user, setUser] = useUser<true>();
+	const userRef = useLatest(user);
+
 	const [privateUser, setPrivateUser] = useState(initialPrivateUser);
 
 	const initialValues = getValuesFromUser(privateUser);
@@ -74,7 +78,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 						);
 
 						setPrivateUser(data);
-						if (getUser()!.id === privateUser.id) {
+						if (userRef.current.id === privateUser.id) {
 							setUser(data);
 						}
 					})

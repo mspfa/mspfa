@@ -88,7 +88,7 @@ const Component = withErrorPage<ServerSideProps>(({
 	const { cacheUser } = useUserCache();
 	initialUserCache.forEach(cacheUser);
 
-	const user = useUser()!;
+	const [user] = useUser<true>();
 
 	const initialValues = getValuesFromStory(story);
 

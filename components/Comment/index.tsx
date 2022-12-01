@@ -73,7 +73,7 @@ const Comment = <
 	className,
 	postReply
 }: CommentProps<Awaited<ReturnType<CommentAPI['get']>>['data']>) => {
-	const user = useUser();
+	const [user] = useUser();
 
 	const { userCache } = useUserCache();
 

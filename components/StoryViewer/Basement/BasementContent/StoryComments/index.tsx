@@ -30,7 +30,7 @@ const StoryComments = React.memo(() => {
 	// This can be asserted as non-nullable because `StoryComments` should never be rendered on pages that don't exist.
 	const pageID = useContext(PageIDContext)!;
 
-	const user = useUser();
+	const [user] = useUser();
 
 	const [sortMode, setSortMode] = useState<StoryCommentsSortMode>('pageID');
 
