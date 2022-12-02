@@ -25,8 +25,8 @@ const promptAuthMethod = {
 			id: 'add-auth-method',
 			title: 'Add Password',
 			initialValues: {
-				password: '' as string,
-				confirmPassword: '' as string
+				password: '',
+				confirmPassword: ''
 			},
 			content: ({ values }) => (
 				<LabeledGrid>

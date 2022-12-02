@@ -114,9 +114,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 			id: 'change-password',
 			title: 'Change Password',
 			initialValues: {
-				currentPassword: '' as string,
-				password: '' as string,
-				confirmPassword: '' as string
+				currentPassword: '',
+				password: '',
+				confirmPassword: ''
 			},
 			content: ({ values }) => (
 				<LabeledGrid>
