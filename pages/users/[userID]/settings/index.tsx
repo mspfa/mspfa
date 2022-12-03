@@ -21,12 +21,10 @@ import BottomActions from 'components/BottomActions';
 import Button from 'components/Button';
 import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
-import { escapeRegExp, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import Dialog from 'lib/client/Dialog';
 import Label from 'components/Label';
 import Row from 'components/Row';
-import LabeledGrid from 'components/LabeledGrid';
-import ForgotPassword from 'components/ForgotPassword';
 import AuthMethods from 'components/AuthMethod/AuthMethods';
 import BirthdateGridRow from 'components/LabeledGrid/LabeledGridRow/BirthdateGridRow';
 import type { integer } from 'lib/types';
@@ -34,10 +32,10 @@ import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';
 import defaultUserSettings from 'lib/client/defaultUserSettings';
 import useLatest from 'lib/client/reactHooks/useLatest';
 import DeleteUserButton from 'components/Button/DeleteUserButton';
+import ChangePasswordButton from 'components/Button/ChangePasswordButton';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 type UserAuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/auth-methods').default>;
-type UserPasswordAPI = APIClient<typeof import('pages/api/users/[userID]/auth-methods/password').default>;
 
 const getSettingsValues = (settings: PrivateUser['settings']) => ({
 	autoOpenSpoilers: settings.autoOpenSpoilers,
@@ -92,93 +90,6 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 		// The page unmounted, so reset the previewed unsaved settings.
 		setUserMerge(undefined);
 	}, []);
-
-	const onClickChangePassword = useFunction(async () => {
-		const { data: authMethods } = await (api as UserAuthMethodsAPI).get(`/users/${privateUser.id}/auth-methods`, {
-			params: {
-				type: 'password'
-			}
-		});
-
-		if (authMethods.length === 0) {
-			new Dialog({
-				id: 'change-password',
-				title: 'Error',
-				content: 'Your account does not use a password to sign in. If you want to add a password to your account, select "Edit Sign-In Methods" and add a password there instead.'
-			});
-			return;
-		}
-
-		const changePasswordDialog = new Dialog({
-			id: 'change-password',
-			title: 'Change Password',
-			initialValues: {
-				currentPassword: '',
-				password: '',
-				confirmPassword: ''
-			},
-			content: ({ values }) => (
-				<LabeledGrid>
-					<LabeledGridField
-						type="password"
-						name="currentPassword"
-						label="Current Password"
-						autoComplete="current-password"
-						required
-						minLength={8}
-						autoFocus
-					/>
-					<ForgotPassword />
-					<LabeledGridField
-						type="password"
-						name="password"
-						label="New Password"
-						autoComplete="new-password"
-						required
-						minLength={8}
-					/>
-					<LabeledGridField
-						type="password"
-						name="confirmPassword"
-						label="Confirm"
-						autoComplete="new-password"
-						required
-						placeholder="Re-Type Password"
-						pattern={escapeRegExp(values.password)}
-					/>
-				</LabeledGrid>
-			),
-			actions: [
-				{ label: 'Okay', autoFocus: false },
-				'Cancel'
-			]
-		});
-
-		if ((await changePasswordDialog)?.submit) {
-			await (api as UserPasswordAPI).patch(`/users/${privateUser.id}/auth-methods/password`, {
-				currentPassword: changePasswordDialog.form!.values.currentPassword,
-				newPassword: changePasswordDialog.form!.values.password
-			});
-
-			new Dialog({
-				title: 'Change Password',
-				content: 'Success! Your password has been changed.'
-			});
-		}
-	});
-
-	const onClickEditAuthMethods = useFunction(async () => {
-		const { data: authMethods } = await (api as UserAuthMethodsAPI).get(`/users/${privateUser.id}/auth-methods`);
-
-		new Dialog({
-			id: 'auth-methods',
-			title: 'Edit Sign-In Methods',
-			content: <AuthMethods userID={privateUser.id} authMethods={authMethods} />,
-			actions: [
-				{ label: 'Done', autoFocus: false }
-			]
-		});
-	});
 
 	return (
 		<Page withFlashyTitle heading="Settings">
@@ -237,17 +148,25 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 								/>
 								<Row>
 									{/* This button should remain visible even for those who do not have a password sign-in method, because those users may think they do regardless, and they should be informed that they don't upon clicking this button, to minimize confusion to those users. */}
-									<Button
-										className="small"
-										onClick={onClickChangePassword}
-									>
-										Change Password
-									</Button>
+									<ChangePasswordButton privateUser={privateUser} />
 								</Row>
 								<Row>
 									<Button
 										className="small"
-										onClick={onClickEditAuthMethods}
+										onClick={
+											useFunction(async () => {
+												const { data: authMethods } = await (api as UserAuthMethodsAPI).get(`/users/${privateUser.id}/auth-methods`);
+
+												new Dialog({
+													id: 'auth-methods',
+													title: 'Edit Sign-In Methods',
+													content: <AuthMethods userID={privateUser.id} authMethods={authMethods} />,
+													actions: [
+														{ label: 'Done', autoFocus: false }
+													]
+												});
+											})
+										}
 									>
 										Edit Sign-In Methods
 									</Button>
