@@ -22,6 +22,7 @@ export type ExternalAuthMethod = AuthMethodProperties & {
 	value: string
 };
 
+// TODO: Don't use this type in `ServerUser`, because even though it's technically accurate, it's semantically inaccurate, which is confusing.
 /** @minLength 8 */
 export type PasswordString = string;
 
@@ -152,11 +153,7 @@ export const defaultUser = {
 	settings: defaultUserSettings,
 	perms: 0,
 	unreadMessageCount: 0
-} as const;
-
-// This is just for partial type safety on `defaultUser`.
-const typeCheckedDefaultUser: Partial<ServerUser> = defaultUser;
-typeCheckedDefaultUser;
+} as const satisfies Partial<ServerUser>;
 
 /** Converts a `ServerUser` to a `PrivateUser`. */
 export const getPrivateUser = (user: ServerUser): PrivateUser => ({

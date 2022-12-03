@@ -44,10 +44,6 @@ export const achievements = {
 		name: 'The Yellow Yard',
 		description: 'Hack your way into acquiring this achievement.'
 	}
-} as const;
+} as const satisfies Record<string, Achievement>;
 
 export type AchievementID = keyof typeof achievements;
-
-// This is just for type safety on `achievements`.
-const typeCheckedAchievements: Record<AchievementID, Achievement> = achievements;
-typeCheckedAchievements;

@@ -138,11 +138,7 @@ export const defaultStory = {
 	defaultPageTitle: 'Next.',
 	colorGroups: [] as never[],
 	colors: [] as never[]
-} as const;
-
-// This is just for partial type safety on `defaultStory`.
-const typeCheckedDefaultStory: Partial<ServerStory> = defaultStory;
-typeCheckedDefaultStory;
+} as const satisfies Partial<ServerStory>;
 
 /** Converts a `ServerStory` to a `PrivateStory`. */
 export const getPrivateStory = (story: ServerStory): PrivateStory => ({
