@@ -6,7 +6,7 @@ import LabeledGrid from 'components/LabeledGrid';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import toKebabCase from 'lib/client/toKebabCase';
 import type { ButtonProps } from 'components/Button';
-import type { AuthMethodOptions } from 'lib/client/auth';
+import type { AuthMethodOptions, ClientAuthMethod } from 'lib/client/auth';
 import { authMethodTypeNames } from 'lib/client/auth';
 import { startLoading, stopLoading } from 'components/LoadingIndicator';
 import loadScript from 'lib/client/loadScript';
@@ -15,55 +15,8 @@ import { escapeRegExp } from 'lodash';
 /** The global Google API object. */
 declare const gapi: any;
 
-const resolveAddAuthMethodDialog = () => Dialog.getByID('add-auth-method')?.resolve();
-
-const promptAuthMethod = {
-	password: () => new Promise<AuthMethodOptions>(async resolve => {
-		await resolveAddAuthMethodDialog();
-
-		const dialog = new Dialog({
-			id: 'add-auth-method',
-			title: 'Add Password',
-			initialValues: {
-				password: '',
-				confirmPassword: ''
-			},
-			content: ({ values }) => (
-				<LabeledGrid>
-					<LabeledGridField
-						type="password"
-						name="password"
-						label="New Password"
-						autoComplete="new-password"
-						required
-						minLength={8}
-						autoFocus
-					/>
-					<LabeledGridField
-						type="password"
-						name="confirmPassword"
-						label="Confirm"
-						autoComplete="new-password"
-						required
-						placeholder="Re-Type Password"
-						pattern={escapeRegExp(values.password)}
-					/>
-				</LabeledGrid>
-			),
-			actions: [
-				{ label: 'Okay', autoFocus: false },
-				'Cancel'
-			]
-		});
-
-		if ((await dialog)?.submit) {
-			resolve({
-				type: 'password',
-				value: dialog.form!.values.password
-			});
-		}
-	}),
-	google: () => new Promise<AuthMethodOptions>(async resolve => {
+const promptAuthMethod = (type: ClientAuthMethod['type']) => new Promise<AuthMethodOptions>(async resolve => {
+	if (type === 'google') {
 		const onError = (error: any) => {
 			if (error.error === 'popup_closed_by_user') {
 				console.warn(error);
@@ -106,8 +59,11 @@ const promptAuthMethod = {
 				});
 			});
 		}).catch(onError);
-	}),
-	discord: () => new Promise<AuthMethodOptions>(resolve => {
+
+		return;
+	}
+
+	if (type === 'discord') {
 		const win = window.open(
 			`https://discord.com/api/oauth2/authorize?${new URLSearchParams({
 				client_id: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID!,
@@ -150,11 +106,57 @@ const promptAuthMethod = {
 			}
 		};
 		window.addEventListener('message', onMessage);
-	})
-};
+
+		return;
+	}
+
+	// If this point is reached, `type === 'password'`.
+
+	const dialog = new Dialog({
+		id: 'add-auth-method',
+		title: 'Add Password',
+		initialValues: {
+			password: '',
+			confirmPassword: ''
+		},
+		content: ({ values }) => (
+			<LabeledGrid>
+				<LabeledGridField
+					type="password"
+					name="password"
+					label="New Password"
+					autoComplete="new-password"
+					required
+					minLength={8}
+					autoFocus
+				/>
+				<LabeledGridField
+					type="password"
+					name="confirmPassword"
+					label="Confirm"
+					autoComplete="new-password"
+					required
+					placeholder="Re-Type Password"
+					pattern={escapeRegExp(values.password)}
+				/>
+			</LabeledGrid>
+		),
+		actions: [
+			{ label: 'Okay', autoFocus: false },
+			'Cancel'
+		]
+	});
+
+	if ((await dialog)?.submit) {
+		resolve({
+			type: 'password',
+			value: dialog.form!.values.password
+		});
+	}
+});
 
 export type AuthButtonProps = Omit<ButtonProps, 'type' | 'className' | 'onClick'> & {
-	type: keyof typeof promptAuthMethod,
+	type: ClientAuthMethod['type'],
 	onResolve: (authMethodOptions: AuthMethodOptions) => void
 };
 
@@ -163,9 +165,9 @@ const AuthButton = ({ type, onResolve, ...props }: AuthButtonProps) => (
 		className={`auth-button-${toKebabCase(type)}`}
 		onClick={
 			useFunction(async () => {
-				onResolve(await promptAuthMethod[type]());
+				const authMethodOptions = await promptAuthMethod(type);
 
-				await resolveAddAuthMethodDialog();
+				onResolve(authMethodOptions);
 			})
 		}
 		{...props}

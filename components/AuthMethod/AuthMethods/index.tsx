@@ -24,6 +24,8 @@ const AuthMethods = ({
 	const [authMethods, setAuthMethods] = useState(initialAuthMethods);
 
 	const onResolve = useFunction(async (authMethodOptions: AuthMethodOptions) => {
+		await Dialog.getByID('add-auth-method')?.resolve();
+
 		const { data: authMethod } = await (api as AuthMethodsAPI).post(`users/${userID}/auth-methods`, authMethodOptions);
 
 		if (Dialog.getByID('auth-methods')) {
