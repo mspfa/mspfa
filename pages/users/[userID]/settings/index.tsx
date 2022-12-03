@@ -4,12 +4,12 @@ import type { PrivateUser } from 'lib/client/users';
 import { Perm } from 'lib/client/perms';
 import { permToGetUserInPage } from 'lib/server/users/permToGetUser';
 import { getPrivateUser } from 'lib/server/users';
-import { preventReloads, withErrorPage } from 'lib/client/errors';
+import { withErrorPage } from 'lib/client/errors';
 import withStatusCode from 'lib/server/withStatusCode';
 import { Form, Formik, Field } from 'formik';
 import { useEffect, useState } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import { getChangedValues, preventLeaveConfirmations, useLeaveConfirmation } from 'lib/client/forms';
+import { getChangedValues, useLeaveConfirmation } from 'lib/client/forms';
 import Columns from 'components/Columns';
 import Section from 'components/Section';
 import LabeledGridSection from 'components/Section/LabeledGridSection';
@@ -24,7 +24,6 @@ import type { APIClient } from 'lib/client/api';
 import { escapeRegExp, isEqual } from 'lodash';
 import Dialog from 'lib/client/Dialog';
 import Label from 'components/Label';
-import Router from 'next/router';
 import Row from 'components/Row';
 import LabeledGrid from 'components/LabeledGrid';
 import ForgotPassword from 'components/ForgotPassword';
@@ -34,11 +33,11 @@ import type { integer } from 'lib/types';
 import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';
 import defaultUserSettings from 'lib/client/defaultUserSettings';
 import useLatest from 'lib/client/reactHooks/useLatest';
+import DeleteUserButton from 'components/Button/DeleteUserButton';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 type UserAuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/auth-methods').default>;
 type UserPasswordAPI = APIClient<typeof import('pages/api/users/[userID]/auth-methods/password').default>;
-type UserDoesOwnStoriesAPI = APIClient<typeof import('pages/api/users/[userID]/does-own-stories').default>;
 
 const getSettingsValues = (settings: PrivateUser['settings']) => ({
 	autoOpenSpoilers: settings.autoOpenSpoilers,
@@ -207,7 +206,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 				}
 				enableReinitialize
 			>
-				{({ isSubmitting, dirty, values, setFieldValue, setSubmitting, submitForm }) => {
+				{({ isSubmitting, dirty, values, setFieldValue, submitForm }) => {
 					useLeaveConfirmation(dirty);
 
 					useEffect(() => {
@@ -380,81 +379,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 									</Button>
 								</Row>
 								<Row>
-									<Button
-										disabled={isSubmitting}
-										onClick={
-											useFunction(async () => {
-												setSubmitting(true);
-
-												const { data: doesOwnStories } = await (api as UserDoesOwnStoriesAPI).get(`/users/${privateUser.id}/does-own-stories`).catch(error => {
-													setSubmitting(false);
-													return Promise.reject(error);
-												});
-
-												setSubmitting(false);
-
-												if (doesOwnStories) {
-													new Dialog({
-														id: 'delete-user',
-														title: 'Delete Account',
-														content: 'If you want to delete your account, first delete or transfer ownership of each of the adventures you own.'
-													});
-
-													return;
-												}
-
-												if (!await Dialog.confirm({
-													id: 'delete-user',
-													title: 'Delete Account',
-													content: (
-														<>
-															Are you sure you want to delete your account?<br />
-															<br />
-															Your account will be restored if you sign into it within 30 days after deletion.<br />
-															<br />
-															If you do not sign into your account within 30 days, <span className="bolder red">the deletion will be irreversible.</span><br />
-															<br />
-															<label>
-																<input
-																	type="checkbox"
-																	className="spaced"
-																	required
-																	autoFocus
-																/>
-																<span className="spaced bolder">
-																	I am sure I want to delete my account: <i>{privateUser.name}</i>
-																</span>
-															</label>
-														</>
-													),
-													actions: [
-														{ label: 'Yes', autoFocus: false },
-														'No'
-													]
-												})) {
-													return;
-												}
-
-												setSubmitting(true);
-
-												await (api as UserAPI).delete(`/users/${privateUser.id}`).catch(error => {
-													setSubmitting(false);
-													return Promise.reject(error);
-												});
-
-												if (userRef.current.id === privateUser.id) {
-													// We don't want to reload when they sign out; we want to go to the homepage.
-													preventReloads();
-													setUser(undefined);
-												}
-
-												preventLeaveConfirmations();
-												Router.push('/');
-											})
-										}
-									>
-										Delete Account
-									</Button>
+									<DeleteUserButton privateUser={privateUser} />
 								</Row>
 							</BottomActions>
 						</Form>
