@@ -1,6 +1,6 @@
 import type { PrivateUser } from 'lib/client/users';
 
-const defaultUserSettings: PrivateUser['settings'] = {
+const defaultUserSettings = {
 	emailPublic: false,
 	birthdatePublic: false,
 	favsPublic: true,
@@ -25,6 +25,6 @@ const defaultUserSettings: PrivateUser['settings'] = {
 		},
 		stories: {} as Record<never, never>
 	}
-} as const;
+} as const;// satisfies PrivateUser['settings'];
 
 export default defaultUserSettings;

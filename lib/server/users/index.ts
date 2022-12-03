@@ -153,7 +153,7 @@ export const defaultUser = {
 	settings: defaultUserSettings,
 	perms: 0,
 	unreadMessageCount: 0
-} as const satisfies Partial<ServerUser>;
+} as const;// satisfies Partial<ServerUser>;
 
 /** Converts a `ServerUser` to a `PrivateUser`. */
 export const getPrivateUser = (user: ServerUser): PrivateUser => ({
