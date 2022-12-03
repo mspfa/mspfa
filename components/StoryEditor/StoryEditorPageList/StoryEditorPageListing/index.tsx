@@ -571,6 +571,11 @@ const StoryEditorPageListing = React.memo(({
 					rows={6}
 					keepHTMLTags
 					disabled={isSubmitting}
+					placeholder={
+						page.id === 1
+							? 'The link to the next page is always added automatically.'
+							: undefined
+					}
 				/>
 			</Row>
 			<Row className="story-editor-page-toggle-advanced-link-container">
