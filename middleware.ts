@@ -1,5 +1,4 @@
 // This middleware implements rate limiting.
-// TODO: Stop using middleware for this. It doesn't work because no variables are persistent in middleware.
 
 import type { ErrorResponseBody } from 'lib/server/api';
 import type { DateNumber, integer } from 'lib/types';
@@ -9,7 +8,7 @@ import { NextResponse } from 'next/server';
 /** The number of milliseconds it takes for a client request time to be forgotten. */
 const TIME_PERIOD = 1000 * 60;
 /** The maximum number of requests to allow from each client per `TIME_PERIOD`. */
-const MAX_REQUESTS_PER_TIME_PERIOD = 2;
+const MAX_REQUESTS_PER_TIME_PERIOD = 240;
 
 /** A mapping from each client's IP to a sorted array of the date numbers at which requests were received from that client. */
 const requestTimesByIP: Record<string, DateNumber[]> = {};
