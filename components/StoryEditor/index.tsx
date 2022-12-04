@@ -642,7 +642,7 @@ const StoryEditor = ({
 							/** The index of this page in `pageValues`. */
 							i: integer
 						) => {
-							// This is typed as nullable because `i` may not index a real page if there should be no pages in view.
+							// This is typed as nullable because `i` may not index a real page if there are no pages in view.
 							const page = pageValues[i] as KeyedClientStoryPage | undefined;
 
 							if (!page) {
@@ -652,7 +652,7 @@ const StoryEditor = ({
 
 							// If this page doesn't have a React key yet, set one.
 							if (!(keyProp in page)) {
-								page[keyProp] = nextKeyRef.current++;
+								(page as KeyedClientStoryPage)[keyProp] = nextKeyRef.current++;
 							}
 
 							const initialPublished = (
