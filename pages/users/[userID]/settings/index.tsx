@@ -1,5 +1,5 @@
 import Page from 'components/Page';
-import { setUserMerge, useUser } from 'lib/client/reactContexts/UserContext';
+import { useUser } from 'lib/client/reactContexts/UserContext';
 import type { PrivateUser } from 'lib/client/users';
 import { Perm } from 'lib/client/perms';
 import { permToGetUserInPage } from 'lib/server/users/permToGetUser';
@@ -7,7 +7,7 @@ import { getPrivateUser } from 'lib/server/users';
 import { withErrorPage } from 'lib/client/errors';
 import withStatusCode from 'lib/server/withStatusCode';
 import { Form, Formik, Field } from 'formik';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import { getChangedValues, useLeaveConfirmation } from 'lib/client/forms';
 import Columns from 'components/Columns';
@@ -21,7 +21,7 @@ import BottomActions from 'components/BottomActions';
 import Button from 'components/Button';
 import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
-import { isEqual } from 'lodash';
+import { isEqual, mergeWith } from 'lodash';
 import Dialog from 'lib/client/Dialog';
 import Label from 'components/Label';
 import Row from 'components/Row';
@@ -33,6 +33,7 @@ import defaultUserSettings from 'lib/client/defaultUserSettings';
 import useLatest from 'lib/client/reactHooks/useLatest';
 import DeleteUserButton from 'components/Button/DeleteUserButton';
 import ChangePasswordButton from 'components/Button/ChangePasswordButton';
+import overwriteArrays from 'lib/client/overwriteArrays';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 type UserAuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/auth-methods').default>;
@@ -62,12 +63,6 @@ type Values = ReturnType<typeof getValuesFromUser>;
 
 let defaultUserSettingsValues: ReturnType<typeof getSettingsValues> | undefined;
 
-let formChanged = false;
-
-const onFormChange = () => {
-	formChanged = true;
-};
-
 type ServerSideProps = {
 	initialPrivateUser: PrivateUser
 } | {
@@ -86,10 +81,13 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 
 	const initialValues = getValuesFromUser(privateUser);
 
-	useEffect(() => () => {
-		// The page unmounted, so reset the previewed unsaved settings.
-		setUserMerge(undefined);
-	}, []);
+	// Undo the previewed settings on unmount.
+	const restoreUser = useFunction(() => {
+		if (user.id === privateUser.id) {
+			setUser(privateUser);
+		}
+	});
+	useEffect(() => restoreUser, [restoreUser]);
 
 	return (
 		<Page withFlashyTitle heading="Settings">
@@ -120,18 +118,31 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 				{({ isSubmitting, dirty, values, setFieldValue, submitForm }) => {
 					useLeaveConfirmation(dirty);
 
+					const formChangedRef = useRef(false);
 					useEffect(() => {
-						if (formChanged) {
-							formChanged = false;
+						if (formChangedRef.current) {
+							formChangedRef.current = false;
 
-							// Preview the unsaved settings by merging them with the user state.
-							setUserMerge({ settings: values.settings });
+							if (user.id === privateUser.id) {
+								const userWithPreviewedSettings = mergeWith(
+									{},
+									user,
+									{ settings: values.settings },
+									overwriteArrays
+								);
+
+								setUser(userWithPreviewedSettings);
+							}
 						}
 					});
 
 					return (
 						<Form
-							onChange={onFormChange}
+							onChange={
+								useFunction(() => {
+									formChangedRef.current = true;
+								})
+							}
 							ref={useSubmitOnSave({ submitForm, dirty, isSubmitting })}
 						>
 							<LabeledGridSection heading="Account">
@@ -289,7 +300,8 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 													content: 'Are you sure you want to reset your settings to default?\n\nAll unsaved changes will be lost. This won\'t overwrite your previous settings until you save.'
 												})) {
 													setFieldValue('settings', defaultUserSettingsValues);
-													onFormChange();
+
+													formChangedRef.current = true;
 												}
 											})
 										}

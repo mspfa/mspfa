@@ -7,14 +7,12 @@ import type { AppProps, AppContext } from 'next/app';
 import type { NextPageContext } from 'next';
 import Head from 'next/head';
 import type { UserContextType } from 'lib/client/reactContexts/UserContext';
-import UserContext, { useUserMerge } from 'lib/client/reactContexts/UserContext';
+import UserContext from 'lib/client/reactContexts/UserContext';
 import type { PrivateUser } from 'lib/client/users';
 import type { PageRequest } from 'lib/server/pages';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { setTheme } from 'lib/client/themes';
-import { mergeWith } from 'lodash';
 import UserCache from 'lib/client/reactContexts/UserCache';
-import overwriteArrays from 'lib/client/overwriteArrays';
 import { useRouter } from 'next/router';
 import useUncaughtErrorDialogs from 'lib/client/reactHooks/useUncaughtErrorDialogs';
 
@@ -38,15 +36,7 @@ const MyApp = ({
 
 	const [user, setUser]: UserContextType = useState(pageProps.initialProps?.user);
 
-	const [userMerge] = useUserMerge();
-	const mergedUser = (
-		userMerge
-			? user && mergeWith({}, user, userMerge, overwriteArrays)
-			: user
-	);
-
-	const theme = mergedUser?.settings.theme || 'standard';
-
+	const theme = user?.settings.theme || 'standard';
 	useEffect(() => {
 		setTheme(theme);
 	}, [theme]);
