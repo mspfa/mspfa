@@ -1,6 +1,7 @@
 import type { SetOption } from 'cookies';
 
 const authCookieOptions: SetOption = {
+	// Protect against CSRF attacks.
 	sameSite: 'strict',
 	domain: (
 		process.env.NODE_ENV === 'development'
