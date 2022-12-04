@@ -14,7 +14,7 @@ export type DialogContainerProps = {
 /**
  * The component for a dialog.
  *
- * ⚠️ This should never be rendered anywhere but in the `Dialogs` component's direct children.
+ * ⚠️ This should never be used anywhere but in the `Dialogs` component's direct children.
  */
 const DialogContainer = React.memo(({ dialog }: DialogContainerProps) => {
 	const idKebab = toKebabCase(dialog.id.toString());
