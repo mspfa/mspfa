@@ -5,6 +5,7 @@ import type { APIRequest, APIResponse } from 'lib/server/api';
 import type { ServerUser, UserSession } from 'lib/server/users';
 import users from 'lib/server/users';
 import authCookieOptions from 'lib/server/auth/authCookieOptions';
+import stringifyID from 'lib/server/db/stringifyID';
 
 /** The number of random bytes in newly generated session tokens. */
 const TOKEN_LENGTH = 64;
@@ -31,7 +32,7 @@ const createSession = async (
 
 	new Cookies(req, res).set(
 		'auth',
-		`${user._id}:${token}`,
+		`${stringifyID(user._id)}:${token}`,
 		authCookieOptions
 	);
 

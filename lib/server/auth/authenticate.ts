@@ -1,10 +1,10 @@
 import argon2 from 'argon2';
 import Cookies from 'cookies';
-import { ObjectId } from 'mongodb';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import users from 'lib/server/users';
 import type { ServerUser } from 'lib/server/users';
 import authCookieOptions from 'lib/server/auth/authCookieOptions';
+import parseID from 'lib/server/db/parseID';
 
 /**
  * Checks if the HTTP `Authorization` header or `auth` cookie represents a valid existing session.
@@ -35,13 +35,13 @@ const authenticate = async (
 	}
 
 	if (credentials) {
-		const match = /^([^:]+):([^:]+)$/.exec(credentials);
+		const [userIDString, token, ...invalidParts] = credentials.split(':');
 
-		if (match) {
-			const [, userID, token] = match;
+		if (invalidParts.length === 0) {
+			const userID = parseID(userIDString);
 
-			const user = await users.findOne({
-				_id: new ObjectId(userID)
+			const user = userID && await users.findOne({
+				_id: userID
 			});
 
 			if (user) {
