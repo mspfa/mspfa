@@ -2,6 +2,7 @@ import HorizontalWealthDungeon from 'components/HorizontalWealthDungeon';
 import createGlobalState from 'global-react-state';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
+import Head from 'next/head';
 import { useEffect } from 'react';
 
 type FooterAPI = APIClient<typeof import('pages/api/images/footer').default>;
@@ -28,13 +29,15 @@ const Footer = () => {
 		<footer>
 			<div className="mspface-container">
 				{footerName && (
-					<style jsx global>
-						{`
+					<Head>
+						<style>
+							{`
 							footer .mspface {
 								background-image: url(/images/footers/${footerName});
 							}
-						`}
-					</style>
+							`}
+						</style>
+					</Head>
 				)}
 				<div className="mspface left" />
 				<HorizontalWealthDungeon />

@@ -47,11 +47,6 @@ module.exports = {
 							const variableName = `__styles_${matchedPath.replace(/[^\w]/g, '_')}`;
 							return `import ${variableName} from '${matchedPath}'; ${variableName};`;
 						}
-					},
-					// If a global JSX style is in a component's children but not wrapped in curly brackets, it will add randomized class names to all the components in the same block of JSX.
-					{
-						search: /(?<!\(\s+)(<style jsx global>.*?<\/style>)/gs,
-						replace: '{$1}'
 					}
 				]
 			}
