@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 /**
  * The component which renders the dialog stack.
  *
- * ⚠️ This should never be rendered anywhere but in the `Page` component's direct children.
+ * ⚠️ This should never be rendered anywhere but in the `Page` component.
  */
 const Dialogs = () => {
 	const dialogs = useDialogs();
