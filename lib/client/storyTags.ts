@@ -27,7 +27,7 @@ const storyTags: Partial<Record<TagString, string>> = {
 	alternate: 'This adventure is an alternate version of a different story.',
 	branching: 'A prominent aspect of this adventure is that it has multiple story paths.',
 	shitpost: 'This adventure is intended to look like a low-quality joke.',
-	nsfw: 'This adventure is for 18+ readers only, should be blocked from underage readers, and is unlisted to anyone not signed in.'
+	nsfw: 'This adventure is for 18+ readers only and should be blocked from underage readers and unlisted to anyone not signed in.'
 };
 
 export default storyTags;
