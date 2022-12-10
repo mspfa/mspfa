@@ -1,8 +1,9 @@
 import './styles.module.scss';
-import type { MutableRefObject, ReactElement } from 'react';
+import type { MutableRefObject, ReactElement, ReactNode } from 'react';
 import React, { useContext, useMemo, useRef } from 'react';
 import type { FormikValues } from 'formik';
 import type { ResolvedDialog } from 'components/Dialog';
+import Dialog from 'components/Dialog';
 
 export type DialogContextValue<
 	Action extends string,
@@ -37,6 +38,10 @@ export type DialogContainerProps<
 	resolve: (value: ResolvedDialog<Action, Values> | PromiseLike<ResolvedDialog<Action, Values>>) => void
 };
 
+const isDialogElement = (node: ReactNode) => (
+	React.isValidElement(node) && node.type === Dialog
+);
+
 const DialogContainerWithoutMemo = <
 	Action extends string = string,
 	Values extends FormikValues = FormikValues
@@ -46,6 +51,10 @@ const DialogContainerWithoutMemo = <
 }: DialogContainerProps<Action, Values>) => {
 	if (typeof children === 'function') {
 		children = children();
+	}
+
+	if (!isDialogElement(children)) {
+		throw new TypeError('You must pass only a `Dialog` component into `Dialog.create`.');
 	}
 
 	const submittedActionRef = useRef<Action | undefined>();

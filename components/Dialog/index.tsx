@@ -32,7 +32,7 @@ export type DialogProps<
 	initialValues?: Values
 };
 
-const isAction = (node: ReactNode): node is ReactElement<ActionProps, typeof Action> => (
+const isActionElement = (node: ReactNode): node is ReactElement<ActionProps, typeof Action> => (
 	React.isValidElement(node) && node.type === Action
 );
 
@@ -85,7 +85,7 @@ const Dialog = <
 				for (let i = 0; i < childrenArray.length; i++) {
 					const node = childrenArray[i];
 
-					if (!isAction(node)) {
+					if (!isActionElement(node)) {
 						childrenWithoutActions.push(node);
 						continue;
 					}
