@@ -26,6 +26,7 @@ export type ResolvedDialog<
 export type DialogProps<
 	Values extends FormikValues = FormikValues
 > = Partial<Omit<FormikConfig<Values>, 'initialValues' | 'onSubmit'>> & {
+	/** If set, any other dialog with the same `id` will be canceled when this dialog is created. */
 	id?: string,
 	title: ReactNode,
 	initialValues?: Values
