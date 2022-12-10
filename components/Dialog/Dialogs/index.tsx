@@ -1,5 +1,3 @@
-import { useDialogs } from 'lib/client/Dialog';
-import DialogContainer from 'components/Dialogs/DialogContainer';
 import { useEffect } from 'react';
 
 /**
@@ -8,14 +6,11 @@ import { useEffect } from 'react';
  * ⚠️ This should never be rendered anywhere but in the `Page` component.
  */
 const Dialogs = () => {
-	const dialogs = useDialogs();
 
 	useEffect(() => {
 		const onKeyDown = (event: KeyboardEvent) => {
 			if (event.code === 'Escape') {
-				const topDialog = dialogs.length && dialogs[dialogs.length - 1];
 				if (topDialog) {
-					topDialog.resolve();
 				}
 			}
 		};
@@ -31,7 +26,6 @@ const Dialogs = () => {
 		<div id="dialogs">
 			{dialogs.map(dialog => (
 				<DialogContainer
-					key={dialog.id}
 					dialog={dialog}
 				/>
 			))}

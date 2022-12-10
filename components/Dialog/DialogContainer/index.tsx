@@ -14,17 +14,14 @@ export type DialogContainerProps = {
 /**
  * The component for a dialog.
  *
- * ⚠️ This should never be used anywhere but in the `Dialogs` component's direct children.
  */
 const DialogContainer = React.memo(({ dialog }: DialogContainerProps) => {
 	const idKebab = toKebabCase(dialog.id.toString());
 
-	const dialogRef = useRef<HTMLDialogElement>(null as never);
 
 	useIsomorphicLayoutEffect(() => {
 		dialog.open = true;
 
-		const dialogElement = dialogRef.current;
 
 		return () => {
 			dialog.open = false;
@@ -47,7 +44,6 @@ const DialogContainer = React.memo(({ dialog }: DialogContainerProps) => {
 					if (dialog.submitAction) {
 						dialog.submitAction.onClick();
 					} else {
-						dialog.resolve({ submit: true });
 					}
 				})
 			}
@@ -63,7 +59,6 @@ const DialogContainer = React.memo(({ dialog }: DialogContainerProps) => {
 						<dialog
 							id={`dialog-${idKebab}`}
 							open
-							ref={dialogRef}
 						>
 							<div className="dialog-title alt-front">
 								{dialog.title}
