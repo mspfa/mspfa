@@ -1,95 +1,73 @@
 import './styles.module.scss';
-import React, { useRef } from 'react';
-import useFunction from 'lib/client/reactHooks/useFunction';
-import type Dialog from 'lib/client/Dialog';
-import { Form, Formik } from 'formik';
-import Button from 'components/Button';
-import toKebabCase from 'lib/client/toKebabCase';
-import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
+import type { MutableRefObject, ReactElement } from 'react';
+import React, { useContext, useMemo, useRef } from 'react';
+import type { FormikValues } from 'formik';
+import type { ResolvedDialog } from 'components/Dialog';
 
-export type DialogContainerProps = {
-	dialog: Dialog<any>
+export type DialogContextValue<
+	Action extends string,
+	Values extends FormikValues
+> = Pick<DialogContainerProps<Action, Values>, 'resolve'> & {
+	/** A ref to the value of `action` that should be set on the resolved dialog. */
+	submittedActionRef: MutableRefObject<Action | undefined>
 };
 
 /**
- * The component for a dialog.
+ * A React context provided by `DialogContainer`s and consumed by `Dialog`s.
  *
+ * ⚠️ Calling `useContext` on this is not type-safe. Call `useDialogContext` with type arguments instead.
  */
-const DialogContainer = React.memo(({ dialog }: DialogContainerProps) => {
-	const idKebab = toKebabCase(dialog.id.toString());
+export const DialogContext = React.createContext<DialogContextValue<any, any>>(undefined as never);
 
+/** Consumes `DialogContext`. */
+export const useDialogContext = <
+	Action extends string,
+	Values extends FormikValues
+>(): DialogContextValue<Action, Values> => (
+	useContext(DialogContext)
+);
 
-	useIsomorphicLayoutEffect(() => {
-		dialog.open = true;
+export type DialogContainerProps<
+	Action extends string = string,
+	Values extends FormikValues = FormikValues
+> = {
+	/** The value passed into `Dialog.create`. */
+	children: JSX.Element | (() => JSX.Element),
+	/** Resolves `Dialog.create`'s promise and closes the dialog. */
+	resolve: (value: ResolvedDialog<Action, Values> | PromiseLike<ResolvedDialog<Action, Values>>) => void
+};
 
+const DialogContainerWithoutMemo = <
+	Action extends string = string,
+	Values extends FormikValues = FormikValues
+>({
+	children,
+	resolve
+}: DialogContainerProps<Action, Values>) => {
+	if (typeof children === 'function') {
+		children = children();
+	}
 
-		return () => {
-			dialog.open = false;
-
-			// It is necessary to store `parentNode` in a variable so it does not become `null` after `removeChild` is called below.
-			const { parentNode } = dialogElement;
-			if (parentNode) {
-				// Replay the dialog pop animation.
-				parentNode.removeChild(dialogElement);
-				parentNode.appendChild(dialogElement);
-			}
-		};
-	}, [dialog]);
+	const submittedActionRef = useRef<Action | undefined>();
 
 	return (
-		<Formik<any>
-			initialValues={dialog.initialValues}
-			onSubmit={
-				useFunction(() => {
-					if (dialog.submitAction) {
-						dialog.submitAction.onClick();
-					} else {
-					}
-				})
+		<DialogContext.Provider
+			value={
+				useMemo(() => ({ resolve, submittedActionRef }), [resolve])
 			}
 		>
-			{props => {
-				dialog.form = props;
-
-				return (
-					<Form
-						id={`dialog-container-${idKebab}`}
-						className="dialog-container"
-					>
-						<dialog
-							id={`dialog-${idKebab}`}
-							open
-						>
-							<div className="dialog-title alt-front">
-								{dialog.title}
-							</div>
-							<div className="dialog-content front">
-								{(typeof dialog.content === 'function'
-									? dialog.content(props)
-									: dialog.content
-								)}
-							</div>
-							{dialog.actions.length !== 0 && (
-								<div className="dialog-actions front">
-									{dialog.actions.map((action, i) => (
-										<Button
-											key={i}
-											type={action.submit ? 'submit' : 'button'}
-											className="dialog-action"
-											autoFocus={action.autoFocus}
-											onClick={action.submit ? undefined : action.onClick}
-										>
-											{action.label}
-										</Button>
-									))}
-								</div>
-							)}
-						</dialog>
-					</Form>
-				);
-			}}
-		</Formik>
+			{children}
+		</DialogContext.Provider>
 	);
-});
+};
+
+/**
+ * A component which wraps every dialog.
+ *
+ * ⚠️ This should never directly be used anywhere except in `Dialog.create`.
+ */
+const DialogContainer = React.memo(DialogContainerWithoutMemo) as typeof DialogContainerWithoutMemo;
 
 export default DialogContainer;
+
+export type DialogContainerElement = ReactElement<DialogContainerProps, typeof DialogContainer>;

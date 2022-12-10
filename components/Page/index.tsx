@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import Header from 'components/Header';
 import type { HeaderProps } from 'components/Header';
 import Footer from 'components/Footer';
-import Dialogs from 'components/Dialogs';
+import Dialogs from 'components/Dialog/Dialogs';
 import LoadingIndicator from 'components/LoadingIndicator';
 import PageHeading from 'components/Page/PageHeading';
 import classNames from 'classnames';

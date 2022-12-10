@@ -1,18 +1,7 @@
-import createUpdater from 'react-component-updater';
 import type { ReactNode, Key } from 'react';
 import type { FormikProps } from 'formik';
 import Router from 'next/router';
 import type { integer } from 'lib/types';
-
-/** The array of all dialogs. */
-export const dialogs: Array<Dialog<any>> = [];
-const [useDialogsUpdater, updateDialogs] = createUpdater();
-
-/** A hook which keeps the component updated with `dialogs`. */
-export const useDialogs = () => {
-	useDialogsUpdater();
-	return dialogs;
-};
 
 export type DialogActionOptions = {
 	/** The label of the action's button. */
