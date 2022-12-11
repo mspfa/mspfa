@@ -39,6 +39,8 @@ const isActionElement = (node: ReactNode): node is ReactElement<ActionProps, typ
 /**
  * A component for a dialog box. Can contain `Action` components and Formik fields.
  *
+ * If this component's child is a function, the dialog's Formik props are passed in.
+ *
  * ⚠️ Should only be passed into `Dialog.create`.
  */
 const Dialog = <
