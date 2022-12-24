@@ -55,7 +55,7 @@ const Dialog = <
 
 		const conflictingDialog = Dialog.getByID(id);
 		if (conflictingDialog !== dialog) {
-			conflictingDialog?.close();
+			conflictingDialog?.cancel();
 		}
 
 		dialogsByID[id] = dialog;
@@ -76,8 +76,7 @@ const Dialog = <
 				useFunction(async (...args) => {
 					await onSubmit?.(...args);
 
-					dialog.close({
-						submitted: true,
+					dialog.submit({
 						action: submissionActionRef.current
 					});
 				})
@@ -161,39 +160,38 @@ export type DialogManager<
 	element: JSX.Element,
 	/** The value of the `id` prop passed into the `Dialog` component. Undefined if the dialog hasn't been rendered yet. */
 	id?: string,
-	/** Whether `close` has been called on the dialog. */
+	/** Whether `submit` or `cancel` has been called on the dialog. */
 	closed: boolean,
-	/**
-	 * Closes the dialog and resolves its promise.
-	 *
-	 * Does nothing if the dialog is already closed.
-	 */
-	close: (options?: DialogResolutionOptions<Action>) => Promise<void>,
+	/** Closes the dialog as a submission (without submitting its form) and resolves its promise. Does nothing if the dialog is already closed. */
+	submit: (options?: DialogCloseOptions<Action>) => Promise<void>,
+	/** Closes the dialog as a cancellation and resolves its promise. Does nothing if the dialog is already closed. */
+	cancel: (options?: DialogCloseOptions<Action>) => Promise<void>,
 	/** The dialog's initial Formik values. */
 	initialValues?: Values,
 	/** The dialog's Formik values. */
 	values?: Values
 }>;
 
-/** The information used to close a dialog. */
-export type DialogResolutionOptions<
+/** The options for a dialog's `submit` or `cancel` method. */
+export type DialogCloseOptions<
 	Action extends string = string
-> = Readonly<{
-	/** Whether the user closed the dialog using a submitting action and not a canceling action. */
-	submitted: boolean,
+> = {
 	/** The `value` prop of the `Action` component used to submit the dialog, or undefined if the dialog was canceled and not submitted. */
 	action?: Action
-}>;
+};
 
 /** The resolution value of a `DialogManager` promise. */
 export type DialogResolution<
 	Action extends string = string,
 	Values extends FormikValues = FormikValues
 > = (
-	DialogResolutionOptions<Action>
+	Readonly<DialogCloseOptions<Action>>
 	& Pick<DialogManager<Action, Values>, 'id'>
 	& Required<Pick<DialogManager<Action, Values>, 'initialValues' | 'values'>>
-);
+) & Readonly<{
+	/** Whether the dialog was canceled rather than submitted. */
+	canceled: boolean
+}>;
 
 let dialogCounter = 0;
 
@@ -203,7 +201,7 @@ Dialog.create = async <
 >(
 	/** A `Dialog` JSX element, or a function (which can use hooks) that returns one. */
 	node: DialogContainerProps['children']
-) => {
+): Promise<DialogManager<Action, Values>> => {
 	if (typeof window === 'undefined') {
 		throw new Error('`Dialog.create` must not be called server-side.');
 	}
@@ -222,8 +220,9 @@ Dialog.create = async <
 		resolvePromise = resolve;
 	});
 
-	const close: DialogManager<Action, Values>['close'] = async (
-		options = { submitted: false }
+	const close = async (
+		type: 'submit' | 'cancel',
+		options?: DialogCloseOptions<Action>
 	) => {
 		if (dialog.closed) {
 			return;
@@ -235,16 +234,21 @@ Dialog.create = async <
 
 		resolvePromise({
 			id: dialog.id,
+			canceled: type === 'cancel',
+			action: options?.action,
 			// These can be asserted as non-nullable because they were set by `setDialogProperties` when the `Dialog` component was rendered.
 			values: dialog.values!,
-			initialValues: dialog.initialValues!,
-			...options
+			initialValues: dialog.initialValues!
 		});
 	};
 
+	const submit: DialogManager<Action, Values>['submit'] = options => close('submit', options);
+	const cancel: DialogManager<Action, Values>['cancel'] = options => close('cancel', options);
+
 	const dialog: DialogManager<Action, Values> = Object.assign(promise, {
 		closed: false,
-		close,
+		submit,
+		cancel,
 		element: undefined as never
 	});
 

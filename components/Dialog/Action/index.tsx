@@ -63,10 +63,7 @@ const Action = <
 						return;
 					}
 
-					dialog.close({
-						submitted: false,
-						action: value
-					});
+					dialog.cancel({ action: value });
 				})
 			}
 			{...props}

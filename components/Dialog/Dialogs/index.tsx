@@ -38,7 +38,7 @@ const Dialogs = () => {
 		const onKeyDown = (event: KeyboardEvent) => {
 			if (event.code === 'Escape') {
 				const topDialog = dialogs[dialogs.length - 1];
-				topDialog.close();
+				topDialog.cancel();
 			}
 		};
 
