@@ -1,32 +1,9 @@
 import './styles.module.scss';
-import type { MutableRefObject, ReactElement, ReactNode } from 'react';
+import type { MutableRefObject } from 'react';
 import React, { useContext, useMemo, useRef } from 'react';
-import type { FormikValues } from 'formik';
-import type { ResolvedDialog } from 'components/Dialog';
+import type { FormikProps, FormikValues } from 'formik';
+import type { DialogManager } from 'components/Dialog';
 import Dialog from 'components/Dialog';
-
-export type DialogContextValue<
-	Action extends string,
-	Values extends FormikValues
-> = Pick<DialogContainerProps<Action, Values>, 'resolve'> & {
-	/** A ref to the value of `action` that should be set on the resolved dialog. */
-	submittedActionRef: MutableRefObject<Action | undefined>
-};
-
-/**
- * A React context provided by `DialogContainer`s and consumed by `Dialog`s.
- *
- * ⚠️ Calling `useContext` on this is not type-safe. Call `useDialogContext` with type arguments instead.
- */
-export const DialogContext = React.createContext<DialogContextValue<any, any>>(undefined as never);
-
-/** Consumes `DialogContext`. */
-export const useDialogContext = <
-	Action extends string,
-	Values extends FormikValues
->(): DialogContextValue<Action, Values> => (
-	useContext(DialogContext)
-);
 
 export type DialogContainerProps<
 	Action extends string = string,
@@ -34,37 +11,52 @@ export type DialogContainerProps<
 > = {
 	/** The value passed into `Dialog.create`. */
 	children: JSX.Element | (() => JSX.Element),
-	/** Resolves `Dialog.create`'s promise and closes the dialog. */
-	resolve: (value: ResolvedDialog<Action, Values> | PromiseLike<ResolvedDialog<Action, Values>>) => void
+	dialog: DialogManager<Action, Values>,
+	/** Informs `Dialog.create` of any new value of the dialog's Formik props. */
+	setFormProps: (props: FormikProps<Values>) => void
 };
 
-const isDialogElement = (node: ReactNode) => (
-	React.isValidElement(node) && node.type === Dialog
+export type DialogContextValue<
+	Action extends string,
+	Values extends FormikValues
+> = Pick<DialogContainerProps<Action, Values>, 'dialog' | 'setFormProps'> & {
+	/** A ref to the value of `action` that should be set on the `DialogResolution` once the dialog's form is submitted. */
+	submittedActionRef: MutableRefObject<Action | undefined>
+};
+
+/** A React context provided by `DialogContainer`s and consumed by `Dialog`s. */
+const DialogContext = React.createContext<DialogContextValue<any, any>>(undefined as never);
+
+/** A hook that returns various values pertaining to this dialog. */
+export const useDialogContext = <
+	Action extends string,
+	Values extends FormikValues
+>(): DialogContextValue<Action, Values> => (
+	useContext(DialogContext)
 );
 
 const DialogContainerWithoutMemo = <
 	Action extends string = string,
 	Values extends FormikValues = FormikValues
->({
-	children,
-	resolve
-}: DialogContainerProps<Action, Values>) => {
+>({ children, dialog, setFormProps }: DialogContainerProps<Action, Values>) => {
 	if (typeof children === 'function') {
 		children = children();
 	}
 
-	if (!isDialogElement(children)) {
+	if (!(React.isValidElement(children) && children.type === Dialog)) {
 		throw new TypeError('You must pass only a `Dialog` component into `Dialog.create`.');
 	}
 
 	const submittedActionRef = useRef<Action | undefined>();
 
+	const dialogContextValue = useMemo(() => ({
+		dialog,
+		setFormProps,
+		submittedActionRef
+	}), [dialog, setFormProps]);
+
 	return (
-		<DialogContext.Provider
-			value={
-				useMemo(() => ({ resolve, submittedActionRef }), [resolve])
-			}
-		>
+		<DialogContext.Provider value={dialogContextValue}>
 			{children}
 		</DialogContext.Provider>
 	);
@@ -78,5 +70,3 @@ const DialogContainerWithoutMemo = <
 const DialogContainer = React.memo(DialogContainerWithoutMemo) as typeof DialogContainerWithoutMemo;
 
 export default DialogContainer;
-
-export type DialogContainerElement = ReactElement<DialogContainerProps, typeof DialogContainer>;

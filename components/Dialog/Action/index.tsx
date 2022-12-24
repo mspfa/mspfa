@@ -3,7 +3,6 @@ import type { ButtonProps } from 'components/Button';
 import Button from 'components/Button';
 import { useDialogContext } from 'components/Dialog/DialogContainer';
 import type { FormikValues } from 'formik';
-import { useFormikContext } from 'formik';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import type { MouseEvent } from 'react';
 
@@ -38,8 +37,7 @@ const Action = <
 	onClick,
 	...props
 }: ActionProps<Action>) => {
-	const { resolve, submittedActionRef } = useDialogContext<Action, Values>();
-	const { initialValues, values } = useFormikContext<Values>();
+	const { dialog, submittedActionRef } = useDialogContext<Action, Values>();
 
 	return (
 		<Button
@@ -61,9 +59,7 @@ const Action = <
 						return;
 					}
 
-					resolve({
-						initialValues,
-						values,
+					dialog.close({
 						submitted: false,
 						action: value
 					});

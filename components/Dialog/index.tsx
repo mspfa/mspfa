@@ -2,26 +2,16 @@ import type { ActionProps } from 'components/Dialog/Action';
 import Action from 'components/Dialog/Action';
 import type { DialogContainerProps } from 'components/Dialog/DialogContainer';
 import DialogContainer, { useDialogContext } from 'components/Dialog/DialogContainer';
-import { dialogsUpdater } from 'components/Dialog/Dialogs';
-import type { FormikConfig, FormikValues } from 'formik';
+import { dialogElementsUpdater } from 'components/Dialog/Dialogs';
+import type { FormikConfig, FormikProps, FormikValues } from 'formik';
 import { Form, Formik } from 'formik';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import type { ReactElement, ReactNode } from 'react';
 import React, { Fragment } from 'react';
 
-export type ResolvedDialog<
-	Action extends string,
-	Values extends FormikValues
-> = Readonly<{
-	/** The dialog's initial Formik values. */
-	initialValues: Values,
-	/** The dialog's Formik values. */
-	values: Values,
-	/** Whether the user closed the dialog using a submitting action and not a cancelling action. */
-	submitted: boolean,
-	/** The `value` prop of the `Action` component used to submit the dialog, or undefined if the dialog was canceled and not submitted. */
-	action?: Action
-}>;
+const isActionElement = (node: ReactNode): node is ReactElement<ActionProps, typeof Action> => (
+	React.isValidElement(node) && node.type === Action
+);
 
 export type DialogProps<
 	Values extends FormikValues = FormikValues
@@ -31,10 +21,6 @@ export type DialogProps<
 	title: ReactNode,
 	initialValues?: Values
 };
-
-const isActionElement = (node: ReactNode): node is ReactElement<ActionProps, typeof Action> => (
-	React.isValidElement(node) && node.type === Action
-);
 
 /**
  * A component for a dialog box. Can contain `Action` components and Formik fields.
@@ -53,16 +39,14 @@ const Dialog = <
 	children,
 	...props
 }: DialogProps<Values>) => {
-	const { resolve, submittedActionRef } = useDialogContext<Action, Values>();
+	const { dialog, setFormProps, submittedActionRef } = useDialogContext<Action, Values>();
 
 	return (
 		<Formik<Values>
 			initialValues={initialValues as any}
 			onSubmit={
-				useFunction(values => {
-					resolve({
-						initialValues,
-						values,
+				useFunction(() => {
+					dialog.close({
 						submitted: true,
 						action: submittedActionRef.current
 					});
@@ -71,6 +55,8 @@ const Dialog = <
 			{...props}
 		>
 			{props => {
+				setFormProps(props);
+
 				if (typeof children === 'function') {
 					children = children(props);
 				}
@@ -132,45 +118,98 @@ const Dialog = <
 
 export default Dialog;
 
+/** The information used to close a dialog. */
+export type DialogResolutionOptions<
+	Action extends string = string
+> = Readonly<{
+	/** Whether the user closed the dialog using a submitting action and not a cancelling action. */
+	submitted: boolean,
+	/** The `value` prop of the `Action` component used to submit the dialog, or undefined if the dialog was canceled and not submitted. */
+	action?: Action
+}>;
+
+/** The resolution value of a `DialogManager` promise. */
+export type DialogResolution<
+	Action extends string = string,
+	Values extends FormikValues = FormikValues
+> = DialogResolutionOptions<Action> & Readonly<{
+	/** The dialog's initial Formik values. */
+	initialValues: Values,
+	/** The dialog's Formik values. */
+	values: Values
+}>;
+
+/** A promise representing a dialog, returned from `Dialog.create`. */
+export type DialogManager<
+	Action extends string = string,
+	Values extends FormikValues = FormikValues
+> = Promise<DialogResolution<Action, Values>> & Readonly<{
+	/** Closes the dialog and resolves its promise. */
+	close: (options?: DialogResolutionOptions<Action>) => Promise<void>
+}>;
+
 let dialogCounter = 0;
 
-Dialog.create = <
+Dialog.create = async <
 	Action extends string = string,
 	Values extends FormikValues = FormikValues
 >(
 	/** A `Dialog` JSX element, or a function (which can use hooks) that returns one. */
 	node: DialogContainerProps['children']
-) => new Promise<ResolvedDialog<Action, Values>>(resolve => {
+) => {
 	if (typeof window === 'undefined') {
 		throw new Error('`Dialog.create` must not be called server-side.');
 	}
 
-	const open = () => {
-		dialogsUpdater.updateDialogs(dialogs => {
-			dialogs.push(container);
+	let formProps: FormikProps<Values>;
+	let setFormProps: (props: FormikProps<Values>) => void;
+
+	const formPropsHaveBeenSet = new Promise<void>(resolve => {
+		setFormProps = props => {
+			formProps = props;
+
+			resolve();
+		};
+	});
+
+	let resolvePromise: (value: DialogResolution<Action, Values> | PromiseLike<DialogResolution<Action, Values>>) => void;
+	const promise = new Promise<DialogResolution<Action, Values>>(resolve => {
+		resolvePromise = resolve;
+	});
+
+	const close: DialogManager<Action, Values>['close'] = async (
+		options = { submitted: false }
+	) => {
+		await formPropsHaveBeenSet;
+
+		resolvePromise({
+			values: formProps.values,
+			initialValues: formProps.initialValues,
+			...options
 		});
 	};
 
-	const close = () => {
-		dialogsUpdater.updateDialogs(dialogs => {
-			const containerIndex = dialogs.indexOf(container);
-			dialogs.splice(containerIndex, 1);
-		});
-	};
+	const dialog: DialogManager<Action, Values> = Object.assign(promise, { close });
 
-	const container = (
+	const element = (
 		<DialogContainer<Action, Values>
 			key={dialogCounter++}
-			// This ESLint comment is necessary because ESLint doesn't know this can never re-render since we aren't inside a component. Hooks don't even work here.
-			// eslint-disable-next-line react/jsx-no-bind
-			resolve={value => {
-				resolve(value);
-				close();
-			}}
+			dialog={dialog}
+			setFormProps={setFormProps!}
 		>
 			{node}
 		</DialogContainer>
 	);
 
+	const open = () => {
+		const { updateDialogElements } = dialogElementsUpdater;
+
+		updateDialogElements(dialogElements => {
+			dialogElements.push(element);
+		});
+	};
+
 	open();
-});
+
+	return dialog;
+};
