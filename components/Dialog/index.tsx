@@ -1,18 +1,18 @@
 import type { ActionProps } from 'components/Dialog/Action';
 import Action from 'components/Dialog/Action';
-import type { DialogContainerProps } from 'components/Dialog/DialogContainer';
+import type { DialogContainerProps, DialogContextValue } from 'components/Dialog/DialogContainer';
 import DialogContainer, { useDialogContext } from 'components/Dialog/DialogContainer';
 import { dialogsState } from 'components/Dialog/Dialogs';
-import type { FormikConfig, FormikProps, FormikValues } from 'formik';
+import type { FormikConfig, FormikValues } from 'formik';
 import { Form, Formik } from 'formik';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import type { ReactElement, ReactNode } from 'react';
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useRef } from 'react';
 
 export type DialogProps<
 	Values extends FormikValues = FormikValues
 > = Partial<Omit<FormikConfig<Values>, 'initialValues'>> & {
-	/** If set, any other dialog with the same `id` will be canceled when this dialog is created. */
+	/** If set, any other dialog with the same `id` will be closed after this dialog is rendered. */
 	id?: string,
 	title: ReactNode,
 	initialValues?: Values
@@ -40,7 +40,12 @@ const Dialog = <
 	children,
 	...props
 }: DialogProps<Values>) => {
-	const { dialog, setFormProps, submissionActionRef } = useDialogContext<Action, Values>();
+	const { dialog, setDialogProperties, submissionActionRef } = useDialogContext<Action, Values>();
+
+	const initialIDRef = useRef(id);
+	if (initialIDRef.current !== id) {
+		throw Error('A `Dialog`\'s `id` prop must never change.');
+	}
 
 	// Close any other dialog with the same `id` as this one.
 	useEffect(() => {
@@ -80,7 +85,11 @@ const Dialog = <
 			{...props}
 		>
 			{props => {
-				setFormProps(props);
+				setDialogProperties({
+					id,
+					initialValues: props.initialValues,
+					values: props.values
+				});
 
 				if (typeof children === 'function') {
 					children = children(props);
@@ -143,6 +152,29 @@ const Dialog = <
 
 export default Dialog;
 
+/** A promise representing a dialog, returned from `Dialog.create`. */
+export type DialogManager<
+	Action extends string = string,
+	Values extends FormikValues = FormikValues
+> = Promise<DialogResolution<Action, Values>> & Readonly<{
+	/** The dialog's `DialogContainer` element. */
+	element: JSX.Element,
+	/** The value of the `id` prop passed into the `Dialog` component. Undefined if the dialog hasn't been rendered yet. */
+	id?: string,
+	/** Whether `close` has been called on the dialog. */
+	closed: boolean,
+	/**
+	 * Closes the dialog and resolves its promise.
+	 *
+	 * Does nothing if the dialog is already closed.
+	 */
+	close: (options?: DialogResolutionOptions<Action>) => Promise<void>,
+	/** The dialog's initial Formik values. */
+	initialValues?: Values,
+	/** The dialog's Formik values. */
+	values?: Values
+}>;
+
 /** The information used to close a dialog. */
 export type DialogResolutionOptions<
 	Action extends string = string
@@ -157,29 +189,11 @@ export type DialogResolutionOptions<
 export type DialogResolution<
 	Action extends string = string,
 	Values extends FormikValues = FormikValues
-> = DialogResolutionOptions<Action> & Readonly<{
-	/** The dialog's initial Formik values. */
-	initialValues: Values,
-	/** The dialog's Formik values. */
-	values: Values
-}>;
-
-/** A promise representing a dialog, returned from `Dialog.create`. */
-export type DialogManager<
-	Action extends string = string,
-	Values extends FormikValues = FormikValues
-> = Promise<DialogResolution<Action, Values>> & Readonly<{
-	/** Whether `close` has been called on the dialog. */
-	closed: boolean,
-	/**
-	 * Closes the dialog and resolves its promise.
-	 *
-	 * Does nothing if the dialog is already closed.
-	 */
-	close: (options?: DialogResolutionOptions<Action>) => Promise<void>,
-	/** The dialog's `DialogContainer` element. */
-	element: JSX.Element
-}>;
+> = (
+	DialogResolutionOptions<Action>
+	& Pick<DialogManager<Action, Values>, 'id'>
+	& Required<Pick<DialogManager<Action, Values>, 'initialValues' | 'values'>>
+);
 
 let dialogCounter = 0;
 
@@ -194,12 +208,10 @@ Dialog.create = async <
 		throw new Error('`Dialog.create` must not be called server-side.');
 	}
 
-	let formProps: FormikProps<Values>;
-	let setFormProps: (props: FormikProps<Values>) => void;
-
-	const formPropsHaveBeenSet = new Promise<void>(resolve => {
-		setFormProps = props => {
-			formProps = props;
+	let setDialogProperties: DialogContextValue<Action, Values>['setDialogProperties'];
+	const dialogRendered = new Promise<void>(resolve => {
+		setDialogProperties = properties => {
+			Object.assign(dialog, properties);
 
 			resolve();
 		};
@@ -219,11 +231,13 @@ Dialog.create = async <
 
 		Object.assign(dialog, { closed: true });
 
-		await formPropsHaveBeenSet;
+		await dialogRendered;
 
 		resolvePromise({
-			values: formProps.values,
-			initialValues: formProps.initialValues,
+			id: dialog.id,
+			// These can be asserted as non-nullable because they were set by `setDialogProperties` when the `Dialog` component was rendered.
+			values: dialog.values!,
+			initialValues: dialog.initialValues!,
 			...options
 		});
 	};
@@ -238,7 +252,7 @@ Dialog.create = async <
 		<DialogContainer<Action, Values>
 			key={dialogCounter++}
 			dialog={dialog}
-			setFormProps={setFormProps!}
+			setDialogProperties={setDialogProperties!}
 		>
 			{node}
 		</DialogContainer>
@@ -261,6 +275,7 @@ Dialog.create = async <
 
 const dialogsByID: Record<string, DialogManager<any, any>> = {};
 
+/** Gets the `DialogManager` with the specified `id`. */
 Dialog.getByID = <
 	Action extends string = string,
 	Values extends FormikValues = FormikValues

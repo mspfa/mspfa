@@ -1,8 +1,8 @@
 import './styles.module.scss';
 import type { MutableRefObject } from 'react';
 import React, { useContext, useMemo, useRef } from 'react';
-import type { FormikProps, FormikValues } from 'formik';
-import type { DialogManager } from 'components/Dialog';
+import type { FormikValues } from 'formik';
+import type { DialogManager, DialogResolution } from 'components/Dialog';
 import Dialog from 'components/Dialog';
 
 export type DialogContainerProps<
@@ -12,14 +12,14 @@ export type DialogContainerProps<
 	/** The value passed into `Dialog.create`. */
 	children: JSX.Element | (() => JSX.Element),
 	dialog: DialogManager<Action, Values>,
-	/** Informs `Dialog.create` of any new value of the dialog's Formik props. */
-	setFormProps: (props: FormikProps<Values>) => void
+	/** Sets the `id`, `initialValues`, and `values` properties on the `DialogManager` as soon as they're all known. */
+	setDialogProperties: (properties: Pick<DialogResolution<Action, Values>, 'id' | 'initialValues' | 'values'>) => void
 };
 
 export type DialogContextValue<
 	Action extends string,
 	Values extends FormikValues
-> = Pick<DialogContainerProps<Action, Values>, 'dialog' | 'setFormProps'> & {
+> = Pick<DialogContainerProps<Action, Values>, 'dialog' | 'setDialogProperties'> & {
 	/** A ref to the value of `action` that should be set on the `DialogResolution` once the dialog's form is submitted. */
 	submissionActionRef: MutableRefObject<Action | undefined>
 };
@@ -38,7 +38,7 @@ export const useDialogContext = <
 const DialogContainerWithoutMemo = <
 	Action extends string = string,
 	Values extends FormikValues = FormikValues
->({ children, dialog, setFormProps }: DialogContainerProps<Action, Values>) => {
+>({ children, dialog, setDialogProperties }: DialogContainerProps<Action, Values>) => {
 	if (typeof children === 'function') {
 		children = children();
 	}
@@ -51,9 +51,9 @@ const DialogContainerWithoutMemo = <
 
 	const dialogContextValue = useMemo(() => ({
 		dialog,
-		setFormProps,
+		setDialogProperties,
 		submissionActionRef
-	}), [dialog, setFormProps]);
+	}), [dialog, setDialogProperties]);
 
 	return (
 		<DialogContext.Provider value={dialogContextValue}>
