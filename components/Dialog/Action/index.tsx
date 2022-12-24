@@ -3,6 +3,7 @@ import type { ButtonProps } from 'components/Button';
 import Button from 'components/Button';
 import { useDialogContext } from 'components/Dialog/DialogContainer';
 import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import type { MouseEvent } from 'react';
 
@@ -34,16 +35,19 @@ const Action = <
 	keepOpen = false,
 	className,
 	value,
+	disabled,
 	onClick,
 	...props
 }: ActionProps<Action>) => {
 	const { dialog, submissionActionRef } = useDialogContext<Action, Values>();
+	const { isSubmitting } = useFormikContext<Values>();
 
 	return (
 		<Button
 			type={cancel ? 'button' : 'submit'}
 			className={classNames('dialog-action', className)}
 			value={value}
+			disabled={isSubmitting || disabled}
 			onClick={
 				useFunction((event: MouseEvent<HTMLButtonElement & HTMLAnchorElement>) => {
 					onClick?.(event);
