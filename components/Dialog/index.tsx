@@ -11,7 +11,7 @@ import React, { Fragment } from 'react';
 
 export type DialogProps<
 	Values extends FormikValues = FormikValues
-> = Partial<Omit<FormikConfig<Values>, 'initialValues' | 'onSubmit'>> & {
+> = Partial<Omit<FormikConfig<Values>, 'initialValues'>> & {
 	/** If set, any other dialog with the same `id` will be canceled when this dialog is created. */
 	id?: string,
 	title: ReactNode,
@@ -36,6 +36,7 @@ const Dialog = <
 	id,
 	title,
 	initialValues = {} as any,
+	onSubmit,
 	children,
 	...props
 }: DialogProps<Values>) => {
@@ -45,7 +46,9 @@ const Dialog = <
 		<Formik<Values>
 			initialValues={initialValues as any}
 			onSubmit={
-				useFunction(() => {
+				useFunction(async (...args) => {
+					await onSubmit?.(...args);
+
 					dialog.close({
 						submitted: true,
 						action: submissionActionRef.current
