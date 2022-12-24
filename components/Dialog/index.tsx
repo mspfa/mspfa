@@ -141,6 +141,10 @@ Dialog.create = <
 	/** A `Dialog` JSX element, or a function (which can use hooks) that returns one. */
 	node: DialogContainerProps['children']
 ) => new Promise<ResolvedDialog<Action, Values>>(resolve => {
+	if (typeof window === 'undefined') {
+		throw new Error('`Dialog.create` must not be called server-side.');
+	}
+
 	const open = () => {
 		dialogsUpdater.updateDialogs(dialogs => {
 			dialogs.push(container);
