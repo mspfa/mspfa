@@ -1,5 +1,5 @@
 import './styles.module.scss';
-import type { MutableRefObject } from 'react';
+import type { MutableRefObject, ReactNode } from 'react';
 import React, { useContext, useMemo, useRef } from 'react';
 import type { FormikValues } from 'formik';
 import type { DialogManager, DialogResolution } from 'components/Dialog';
@@ -35,6 +35,10 @@ export const useDialogContext = <
 	useContext(DialogContext)
 );
 
+const isDialogElement = (node: ReactNode) => (
+	React.isValidElement(node) && node.type === Dialog
+);
+
 const DialogContainerWithoutMemo = <
 	Action extends string = string,
 	Values extends FormikValues = FormikValues
@@ -43,7 +47,7 @@ const DialogContainerWithoutMemo = <
 		children = children();
 	}
 
-	if (!(React.isValidElement(children) && children.type === Dialog)) {
+	if (!isDialogElement(children)) {
 		throw new TypeError('You must pass only a `Dialog` component into `Dialog.create`.');
 	}
 

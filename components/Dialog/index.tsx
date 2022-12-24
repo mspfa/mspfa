@@ -287,18 +287,6 @@ Dialog.getByID = <
 	dialogsByID[id] as DialogManager<Action, Values> | undefined
 );
 
-Dialog.OKAY = <Action>Okay</Action>;
-
-Dialog.OKAY_AUTO_FOCUS = React.cloneElement(Dialog.OKAY, { autoFocus: true });
-
-Dialog.CANCEL = <Action cancel>Cancel</Action>;
-
-Dialog.YES = <Action>Yes</Action>;
-
-Dialog.YES_AUTO_FOCUS = React.cloneElement(Dialog.YES, { autoFocus: true });
-
-Dialog.NO = <Action cancel>No</Action>;
-
 /** Equivalent to `Dialog.create`, but resolves to a boolean of whether the dialog was submitted and not canceled. */
 Dialog.confirm = async (...args: Parameters<typeof Dialog.create>) => (
 	!(await Dialog.create(...args)).canceled

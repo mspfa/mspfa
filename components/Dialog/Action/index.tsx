@@ -6,6 +6,7 @@ import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import type { MouseEvent } from 'react';
+import React from 'react';
 
 export type ActionProps<
 	Action extends string = string
@@ -72,3 +73,15 @@ const Action = <
 };
 
 export default Action;
+
+Action.OKAY = <Action>Okay</Action>;
+
+Action.OKAY_AUTO_FOCUS = React.cloneElement(Action.OKAY, { autoFocus: true });
+
+Action.CANCEL = <Action cancel>Cancel</Action>;
+
+Action.YES = <Action>Yes</Action>;
+
+Action.YES_AUTO_FOCUS = React.cloneElement(Action.YES, { autoFocus: true });
+
+Action.NO = <Action cancel>No</Action>;
