@@ -144,6 +144,8 @@ export type DialogManager<
 	Action extends string = string,
 	Values extends FormikValues = FormikValues
 > = Promise<DialogResolution<Action, Values>> & Readonly<{
+	/** Whether `close` has been called on the dialog. */
+	closed: boolean,
 	/** Closes the dialog and resolves its promise. */
 	close: (options?: DialogResolutionOptions<Action>) => Promise<void>,
 	/** The dialog's `DialogContainer` element. */
@@ -182,6 +184,8 @@ Dialog.create = async <
 	const close: DialogManager<Action, Values>['close'] = async (
 		options = { submitted: false }
 	) => {
+		Object.assign(dialog, { closed: true });
+
 		await formPropsHaveBeenSet;
 
 		resolvePromise({
@@ -192,6 +196,7 @@ Dialog.create = async <
 	};
 
 	const dialog: DialogManager<Action, Values> = Object.assign(promise, {
+		closed: false,
 		close,
 		element: undefined as never
 	});
