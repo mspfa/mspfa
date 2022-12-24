@@ -8,9 +8,9 @@ import { useImmer } from 'use-immer';
 export let dialogsState: ImmerHook<ReadonlyArray<DialogManager<any, any>>>;
 
 /**
- * The component which renders the dialog stack.
+ * The component that renders all dialogs.
  *
- * ⚠️ This should never be rendered anywhere but in the `Page` component.
+ * ⚠️ This should never be used anywhere but in the `Page` component.
  */
 const Dialogs = () => {
 	dialogsState = useImmer<ReadonlyArray<DialogManager<any, any>>>([]);
