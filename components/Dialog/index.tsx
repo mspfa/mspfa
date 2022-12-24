@@ -179,7 +179,7 @@ export type DialogManager<
 export type DialogResolutionOptions<
 	Action extends string = string
 > = Readonly<{
-	/** Whether the user closed the dialog using a submitting action and not a cancelling action. */
+	/** Whether the user closed the dialog using a submitting action and not a canceling action. */
 	submitted: boolean,
 	/** The `value` prop of the `Action` component used to submit the dialog, or undefined if the dialog was canceled and not submitted. */
 	action?: Action

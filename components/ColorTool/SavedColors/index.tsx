@@ -245,7 +245,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 					setDropGroup(undefined);
 				})
 			}
-			// It is necessary to listen to `dragenter` in addition to `dragover`, because the `dragover` event doesn't always get cancelled in time for the `drop` event to fire.
+			// It is necessary to listen to `dragenter` in addition to `dragover`, because the `dragover` event doesn't always get canceled in time for the `drop` event to fire.
 			onDragEnter={dragEventHandler}
 			onDragOver={dragEventHandler}
 			onDrop={

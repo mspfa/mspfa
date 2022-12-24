@@ -21,7 +21,7 @@ export default frameThrottler;
 /**
  * Cancels an animation frame by its `frameThrottler` key and prevents any `frameThrottler` promises with that key from resolving.
  *
- * Returns a boolean for whether an `frameThrottler` request existed with that key and was cancelled.
+ * Returns a boolean for whether an `frameThrottler` request existed with that key and was canceled.
  */
 export const cancelFrameThrottler = (key: FrameThrottlerKey) => {
 	if (frameThrottlerRequests[key]) {
