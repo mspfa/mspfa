@@ -9,10 +9,6 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import type { ReactElement, ReactNode } from 'react';
 import React, { Fragment } from 'react';
 
-const isActionElement = (node: ReactNode): node is ReactElement<ActionProps, typeof Action> => (
-	React.isValidElement(node) && node.type === Action
-);
-
 export type DialogProps<
 	Values extends FormikValues = FormikValues
 > = Partial<Omit<FormikConfig<Values>, 'initialValues' | 'onSubmit'>> & {
@@ -21,6 +17,10 @@ export type DialogProps<
 	title: ReactNode,
 	initialValues?: Values
 };
+
+const isActionElement = (node: ReactNode): node is ReactElement<ActionProps, typeof Action> => (
+	React.isValidElement(node) && node.type === Action
+);
 
 /**
  * A component for a dialog box. Can contain `Action` components and Formik fields.
