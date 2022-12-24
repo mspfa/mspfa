@@ -293,19 +293,11 @@ Dialog.OKAY_AUTO_FOCUS = React.cloneElement(Dialog.OKAY, { autoFocus: true });
 
 Dialog.CANCEL = <Action cancel value="cancel">Cancel</Action>;
 
-Dialog.OKAY_CANCEL = [Dialog.OKAY, Dialog.CANCEL];
-
-Dialog.OKAY_AUTO_FOCUS_CANCEL = [Dialog.OKAY_AUTO_FOCUS, Dialog.CANCEL];
-
 Dialog.YES = <Action value="yes">Yes</Action>;
 
 Dialog.YES_AUTO_FOCUS = React.cloneElement(Dialog.YES, { autoFocus: true });
 
 Dialog.NO = <Action cancel value="no">No</Action>;
-
-Dialog.YES_NO = [Dialog.YES, Dialog.NO];
-
-Dialog.YES_AUTO_FOCUS_NO = [Dialog.YES_AUTO_FOCUS, Dialog.NO];
 
 /** Equivalent to `Dialog.create`, but resolves to a boolean of whether the dialog was submitted and not canceled. */
 Dialog.confirm = async (...args: Parameters<typeof Dialog.create>) => (
