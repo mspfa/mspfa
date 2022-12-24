@@ -2,7 +2,7 @@ import type { ActionProps } from 'components/Dialog/Action';
 import Action from 'components/Dialog/Action';
 import type { DialogContainerProps } from 'components/Dialog/DialogContainer';
 import DialogContainer, { useDialogContext } from 'components/Dialog/DialogContainer';
-import { dialogElementsUpdater } from 'components/Dialog/Dialogs';
+import { dialogsState } from 'components/Dialog/Dialogs';
 import type { FormikConfig, FormikProps, FormikValues } from 'formik';
 import { Form, Formik } from 'formik';
 import useFunction from 'lib/client/reactHooks/useFunction';
@@ -145,7 +145,9 @@ export type DialogManager<
 	Values extends FormikValues = FormikValues
 > = Promise<DialogResolution<Action, Values>> & Readonly<{
 	/** Closes the dialog and resolves its promise. */
-	close: (options?: DialogResolutionOptions<Action>) => Promise<void>
+	close: (options?: DialogResolutionOptions<Action>) => Promise<void>,
+	/** The dialog's `DialogContainer` element. */
+	element: JSX.Element
 }>;
 
 let dialogCounter = 0;
@@ -189,7 +191,10 @@ Dialog.create = async <
 		});
 	};
 
-	const dialog: DialogManager<Action, Values> = Object.assign(promise, { close });
+	const dialog: DialogManager<Action, Values> = Object.assign(promise, {
+		close,
+		element: undefined as never
+	});
 
 	const element = (
 		<DialogContainer<Action, Values>
@@ -201,11 +206,13 @@ Dialog.create = async <
 		</DialogContainer>
 	);
 
-	const open = () => {
-		const { updateDialogElements } = dialogElementsUpdater;
+	Object.assign(dialog, { element });
 
-		updateDialogElements(dialogElements => {
-			dialogElements.push(element);
+	const open = () => {
+		const [, updateDialogs] = dialogsState;
+
+		updateDialogs(dialogs => {
+			dialogs.push(dialog);
 		});
 	};
 
