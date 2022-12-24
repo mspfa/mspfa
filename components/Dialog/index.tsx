@@ -7,7 +7,7 @@ import type { FormikConfig, FormikProps, FormikValues } from 'formik';
 import { Form, Formik } from 'formik';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import type { ReactElement, ReactNode } from 'react';
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 
 export type DialogProps<
 	Values extends FormikValues = FormikValues
@@ -41,6 +41,28 @@ const Dialog = <
 	...props
 }: DialogProps<Values>) => {
 	const { dialog, setFormProps, submissionActionRef } = useDialogContext<Action, Values>();
+
+	// Close any other dialog with the same `id` as this one.
+	useEffect(() => {
+		if (id === undefined) {
+			return;
+		}
+
+		const conflictingDialog = Dialog.getByID(id);
+		if (conflictingDialog !== dialog) {
+			conflictingDialog?.close();
+		}
+
+		dialogsByID[id] = dialog;
+
+		return () => {
+			if (Dialog.getByID(id) !== dialog) {
+				return;
+			}
+
+			delete dialogsByID[id];
+		};
+	}, [dialog, id]);
 
 	return (
 		<Formik<Values>
@@ -149,7 +171,11 @@ export type DialogManager<
 > = Promise<DialogResolution<Action, Values>> & Readonly<{
 	/** Whether `close` has been called on the dialog. */
 	closed: boolean,
-	/** Closes the dialog and resolves its promise. */
+	/**
+	 * Closes the dialog and resolves its promise.
+	 *
+	 * Does nothing if the dialog is already closed.
+	 */
 	close: (options?: DialogResolutionOptions<Action>) => Promise<void>,
 	/** The dialog's `DialogContainer` element. */
 	element: JSX.Element
@@ -187,6 +213,10 @@ Dialog.create = async <
 	const close: DialogManager<Action, Values>['close'] = async (
 		options = { submitted: false }
 	) => {
+		if (dialog.closed) {
+			return;
+		}
+
 		Object.assign(dialog, { closed: true });
 
 		await formPropsHaveBeenSet;
@@ -228,3 +258,12 @@ Dialog.create = async <
 
 	return dialog;
 };
+
+const dialogsByID: Record<string, DialogManager<any, any>> = {};
+
+Dialog.getByID = <
+	Action extends string = string,
+	Values extends FormikValues = FormikValues
+>(id: string) => (
+	dialogsByID[id] as DialogManager<Action, Values> | undefined
+);
