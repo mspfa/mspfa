@@ -21,7 +21,7 @@ export type DialogContextValue<
 	Values extends FormikValues
 > = Pick<DialogContainerProps<Action, Values>, 'dialog' | 'setFormProps'> & {
 	/** A ref to the value of `action` that should be set on the `DialogResolution` once the dialog's form is submitted. */
-	submittedActionRef: MutableRefObject<Action | undefined>
+	submissionActionRef: MutableRefObject<Action | undefined>
 };
 
 /** A React context provided by `DialogContainer`s and consumed by `Dialog`s. */
@@ -47,12 +47,12 @@ const DialogContainerWithoutMemo = <
 		throw new TypeError('You must pass only a `Dialog` component into `Dialog.create`.');
 	}
 
-	const submittedActionRef = useRef<Action | undefined>();
+	const submissionActionRef = useRef<Action | undefined>();
 
 	const dialogContextValue = useMemo(() => ({
 		dialog,
 		setFormProps,
-		submittedActionRef
+		submissionActionRef
 	}), [dialog, setFormProps]);
 
 	return (

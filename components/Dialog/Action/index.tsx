@@ -37,7 +37,7 @@ const Action = <
 	onClick,
 	...props
 }: ActionProps<Action>) => {
-	const { dialog, submittedActionRef } = useDialogContext<Action, Values>();
+	const { dialog, submissionActionRef } = useDialogContext<Action, Values>();
 
 	return (
 		<Button
@@ -55,7 +55,7 @@ const Action = <
 					if (!cancel) {
 						// Let the dialog form handle this through the `submit` event if the form is valid.
 						// If the form is invalid, then no `submit` event will fire, and this value will be either unused or overwritten later.
-						submittedActionRef.current = value;
+						submissionActionRef.current = value;
 						return;
 					}
 

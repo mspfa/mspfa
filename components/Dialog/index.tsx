@@ -39,7 +39,7 @@ const Dialog = <
 	children,
 	...props
 }: DialogProps<Values>) => {
-	const { dialog, setFormProps, submittedActionRef } = useDialogContext<Action, Values>();
+	const { dialog, setFormProps, submissionActionRef } = useDialogContext<Action, Values>();
 
 	return (
 		<Formik<Values>
@@ -48,7 +48,7 @@ const Dialog = <
 				useFunction(() => {
 					dialog.close({
 						submitted: true,
-						action: submittedActionRef.current
+						action: submissionActionRef.current
 					});
 				})
 			}
