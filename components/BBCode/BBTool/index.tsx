@@ -547,11 +547,13 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 	// Whether this BB tool currently has an open dialog.
 	const [open, setOpen] = useState(false);
 
+	const getSelectedText = () => textAreaRef.current.value.slice(
+		textAreaRef.current.selectionStart,
+		textAreaRef.current.selectionEnd
+	);
+
 	const onClick = useFunction(async () => {
-		let selectedText = textAreaRef.current.value.slice(
-			textAreaRef.current.selectionStart,
-			textAreaRef.current.selectionEnd
-		);
+		let selectedText = getSelectedText();
 
 		/** The options that will be passed into `getBBTagCode`. */
 		let tagCodeOptions: BBTagCodeOptions = {
@@ -603,10 +605,7 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 			}
 
 			// Update `selectedText` in case the user changed their selection while the dialog was open.
-			selectedText = textAreaRef.current.value.slice(
-				textAreaRef.current.selectionStart,
-				textAreaRef.current.selectionEnd
-			);
+			selectedText = getSelectedText();
 
 			tagCodeOptions = {
 				...dialogResult.values,
