@@ -9,7 +9,7 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import type { ReactElement, ReactNode } from 'react';
 import React, { Fragment, useEffect, useRef } from 'react';
 
-/** Recursively looks for `Action` elements in the inputted React tree, returning an array of all of them. */
+/** Recursively looks for `Action` elements in the inputted `ReactNode`, returning an array of all of them. */
 const findActions = (
 	node: ReactNode,
 	actions: ReactNode[] = []
