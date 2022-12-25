@@ -162,6 +162,8 @@ export type DialogManager<
 	id?: string,
 	/** Whether `submit` or `cancel` has been called on the dialog. */
 	closed: boolean,
+	/** Closes the dialog, never resolving its promise. Does nothing if the dialog is already closed. */
+	remove: () => Promise<void>,
 	/** Closes the dialog as a submission (without submitting its form) and resolves its promise. Does nothing if the dialog is already closed. */
 	submit: (options?: DialogCloseOptions<Action>) => Promise<void>,
 	/** Closes the dialog as a cancellation and resolves its promise. Does nothing if the dialog is already closed. */
@@ -221,14 +223,24 @@ Dialog.create = <
 	});
 
 	const close = async (
-		type: 'submit' | 'cancel',
+		type: 'remove' | 'submit' | 'cancel',
 		options?: DialogCloseOptions<Action>
 	) => {
 		if (dialog.closed) {
 			return;
 		}
 
+		const [, updateDialogs] = dialogsState;
+		updateDialogs(dialogs => {
+			const dialogIndex = dialogs.indexOf(dialog);
+			dialogs.splice(dialogIndex, 1);
+		});
+
 		Object.assign(dialog, { closed: true });
+
+		if (type === 'remove') {
+			return;
+		}
 
 		await dialogRendered;
 
@@ -242,15 +254,13 @@ Dialog.create = <
 		});
 	};
 
-	const submit: DialogManager<Values, Action>['submit'] = options => close('submit', options);
-	const cancel: DialogManager<Values, Action>['cancel'] = options => close('cancel', options);
-
 	const dialog: DialogManager<Values, Action> = Object.assign(promise, {
 		closed: false,
-		submit,
-		cancel,
+		remove: () => close('remove'),
+		submit: options => close('submit', options),
+		cancel: options => close('cancel', options),
 		element: undefined as never
-	});
+	} satisfies Partial<DialogManager<Values, Action>>);
 
 	const element = (
 		<DialogContainer<Values, Action>
@@ -262,11 +272,12 @@ Dialog.create = <
 		</DialogContainer>
 	);
 
-	Object.assign(dialog, { element });
+	Object.assign(dialog, {
+		element
+	} satisfies Partial<DialogManager<Values, Action>>);
 
 	const open = () => {
 		const [, updateDialogs] = dialogsState;
-
 		updateDialogs(dialogs => {
 			dialogs.push(dialog);
 		});

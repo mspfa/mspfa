@@ -14,12 +14,14 @@ export let dialogsState: ImmerHook<ReadonlyArray<DialogManager<any, any>>>;
  */
 const Dialogs = () => {
 	dialogsState = useImmer<ReadonlyArray<DialogManager<any, any>>>([]);
-	const [dialogs, updateDialogs] = dialogsState;
+	const [dialogs] = dialogsState;
 
 	// Remove dialogs without resolution on route change.
 	useEffect(() => {
 		const onRouteChangeStart = () => {
-			updateDialogs([]);
+			for (const dialog of dialogs) {
+				dialog.remove();
+			}
 		};
 
 		Router.events.on('routeChangeStart', onRouteChangeStart);
@@ -27,7 +29,7 @@ const Dialogs = () => {
 		return () => {
 			Router.events.off('routeChangeStart', onRouteChangeStart);
 		};
-	}, [updateDialogs]);
+	}, [dialogs]);
 
 	// Close the top dialog when pressing `Escape`.
 	useEffect(() => {
