@@ -544,13 +544,15 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 	/** A ref to the latest value of `disabled` to avoid race conditions. */
 	const disabledRef = useLatest(disabled);
 
-	// Whether this BB tool currently has an open dialog.
-	const [open, setOpen] = useState(false);
+	// How many open dialogs this BB tool currently has.
+	const [dialogCount, setDialogCount] = useState(0);
 
-	const getSelectedText = () => textAreaRef.current.value.slice(
-		textAreaRef.current.selectionStart,
-		textAreaRef.current.selectionEnd
-	);
+	const getSelectedText = useFunction(() => (
+		textAreaRef.current.value.slice(
+			textAreaRef.current.selectionStart,
+			textAreaRef.current.selectionEnd
+		)
+	));
 
 	const onClick = useFunction(async () => {
 		let selectedText = getSelectedText();
@@ -563,7 +565,7 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 		};
 
 		if (options.dialogContent) {
-			setOpen(true);
+			setDialogCount(dialogCount => dialogCount + 1);
 
 			const dialogResult = await Dialog.create<BBToolDialogValues, never>(
 				<Dialog<BBToolDialogValues, never>
@@ -588,8 +590,7 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 				</Dialog>
 			);
 
-			// TODO: Fix the race condition here if the user clicks the same BB tool twice, the second time opening a dialog that closes the first.
-			setOpen(false);
+			setDialogCount(dialogCount => dialogCount - 1);
 
 			if (dialogResult.canceled) {
 				return;
@@ -653,7 +654,11 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 					backgroundPositionY: `${-iconIndexes[tagName]}em`
 				}
 			}}
-			className={classNames(`bb-tool bb-tool-${tagName}`, { open })}
+			className={
+				classNames(`bb-tool bb-tool-${tagName}`, {
+					open: dialogCount !== 0
+				})
+			}
 			title={options.title}
 			disabled={disabled}
 			onClick={onClick}
