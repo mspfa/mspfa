@@ -24,7 +24,9 @@ export type ActionProps<
 	 */
 	keepOpen?: boolean,
 	/** The value to set the `action` property to on the resolved dialog if the user closes it by clicking this button. */
-	value?: Action
+	value?: Action,
+	/** Defaults to the form's `isSubmitting` value. */
+	disabled?: boolean
 };
 
 /** A dialog submission or cancellation button. */
@@ -48,7 +50,7 @@ const Action = <
 			type={cancel ? 'button' : 'submit'}
 			className={classNames('dialog-action', className)}
 			value={value}
-			disabled={isSubmitting || disabled}
+			disabled={disabled ?? isSubmitting}
 			onClick={
 				useFunction((event: MouseEvent<HTMLButtonElement & HTMLAnchorElement>) => {
 					onClick?.(event);
