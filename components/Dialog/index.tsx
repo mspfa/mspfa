@@ -30,8 +30,8 @@ const isActionElement = (node: ReactNode): node is ReactElement<ActionProps, typ
  * ⚠️ Should only be passed into `Dialog.create`.
  */
 const Dialog = <
-	Action extends string = string,
-	Values extends FormikValues = FormikValues
+	Values extends FormikValues = FormikValues,
+	Action extends string = string
 >({
 	id,
 	title,
@@ -40,7 +40,7 @@ const Dialog = <
 	children,
 	...props
 }: DialogProps<Values>) => {
-	const { dialog, setDialogProperties, submissionActionRef } = useDialogContext<Action, Values>();
+	const { dialog, setDialogProperties, submissionActionRef } = useDialogContext<Values, Action>();
 
 	const initialIDRef = useRef(id);
 	if (initialIDRef.current !== id) {
@@ -153,9 +153,9 @@ export default Dialog;
 
 /** A promise representing a dialog, returned from `Dialog.create`. */
 export type DialogManager<
-	Action extends string = string,
-	Values extends FormikValues = FormikValues
-> = Promise<DialogResolution<Action, Values>> & Readonly<{
+	Values extends FormikValues = FormikValues,
+	Action extends string = string
+> = Promise<DialogResolution<Values, Action>> & Readonly<{
 	/** The dialog's `DialogContainer` element. */
 	element: JSX.Element,
 	/** The value of the `id` prop passed into the `Dialog` component. Undefined if the dialog hasn't been rendered yet. */
@@ -182,12 +182,12 @@ export type DialogCloseOptions<
 
 /** The resolution value of a `DialogManager` promise. */
 export type DialogResolution<
-	Action extends string = string,
-	Values extends FormikValues = FormikValues
+	Values extends FormikValues = FormikValues,
+	Action extends string = string
 > = (
 	Readonly<DialogCloseOptions<Action>>
-	& Pick<DialogManager<Action, Values>, 'id'>
-	& Required<Pick<DialogManager<Action, Values>, 'initialValues' | 'values'>>
+	& Pick<DialogManager<Values, Action>, 'id'>
+	& Required<Pick<DialogManager<Values, Action>, 'initialValues' | 'values'>>
 ) & Readonly<{
 	/** Whether the dialog was canceled rather than submitted. */
 	canceled: boolean
@@ -196,17 +196,17 @@ export type DialogResolution<
 let dialogCounter = 0;
 
 Dialog.create = <
-	Action extends string = string,
-	Values extends FormikValues = FormikValues
+	Values extends FormikValues = FormikValues,
+	Action extends string = string
 >(
 	/** A `Dialog` JSX element, or a function (which can use hooks) that returns one. */
 	node: DialogContainerProps['children']
-): DialogManager<Action, Values> => {
+): DialogManager<Values, Action> => {
 	if (typeof window === 'undefined') {
 		throw new Error('`Dialog.create` must not be called server-side.');
 	}
 
-	let setDialogProperties: DialogContextValue<Action, Values>['setDialogProperties'];
+	let setDialogProperties: DialogContextValue<Values, Action>['setDialogProperties'];
 	const dialogRendered = new Promise<void>(resolve => {
 		setDialogProperties = properties => {
 			Object.assign(dialog, properties);
@@ -215,8 +215,8 @@ Dialog.create = <
 		};
 	});
 
-	let resolvePromise: (value: DialogResolution<Action, Values> | PromiseLike<DialogResolution<Action, Values>>) => void;
-	const promise = new Promise<DialogResolution<Action, Values>>(resolve => {
+	let resolvePromise: (value: DialogResolution<Values, Action> | PromiseLike<DialogResolution<Values, Action>>) => void;
+	const promise = new Promise<DialogResolution<Values, Action>>(resolve => {
 		resolvePromise = resolve;
 	});
 
@@ -242,10 +242,10 @@ Dialog.create = <
 		});
 	};
 
-	const submit: DialogManager<Action, Values>['submit'] = options => close('submit', options);
-	const cancel: DialogManager<Action, Values>['cancel'] = options => close('cancel', options);
+	const submit: DialogManager<Values, Action>['submit'] = options => close('submit', options);
+	const cancel: DialogManager<Values, Action>['cancel'] = options => close('cancel', options);
 
-	const dialog: DialogManager<Action, Values> = Object.assign(promise, {
+	const dialog: DialogManager<Values, Action> = Object.assign(promise, {
 		closed: false,
 		submit,
 		cancel,
@@ -253,7 +253,7 @@ Dialog.create = <
 	});
 
 	const element = (
-		<DialogContainer<Action, Values>
+		<DialogContainer<Values, Action>
 			key={dialogCounter++}
 			dialog={dialog}
 			setDialogProperties={setDialogProperties!}
@@ -281,10 +281,10 @@ const dialogsByID: Record<string, DialogManager<any, any>> = {};
 
 /** Gets the `DialogManager` with the specified `id`. */
 Dialog.getByID = <
-	Action extends string = string,
-	Values extends FormikValues = FormikValues
+	Values extends FormikValues = FormikValues,
+	Action extends string = string
 >(id: string) => (
-	dialogsByID[id] as DialogManager<Action, Values> | undefined
+	dialogsByID[id] as DialogManager<Values, Action> | undefined
 );
 
 /** Equivalent to `Dialog.create`, but resolves to a boolean of whether the dialog was submitted and not canceled. */

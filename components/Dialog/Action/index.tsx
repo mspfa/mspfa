@@ -29,8 +29,8 @@ export type ActionProps<
 
 /** A dialog submission or cancellation button. */
 const Action = <
-	Action extends string = string,
-	Values extends FormikValues = FormikValues
+	Values extends FormikValues = FormikValues,
+	Action extends string = string
 >({
 	cancel = false,
 	keepOpen = false,
@@ -40,7 +40,7 @@ const Action = <
 	onClick,
 	...props
 }: ActionProps<Action>) => {
-	const { dialog, submissionActionRef } = useDialogContext<Action, Values>();
+	const { dialog, submissionActionRef } = useDialogContext<Values, Action>();
 	const { isSubmitting } = useFormikContext<Values>();
 
 	return (

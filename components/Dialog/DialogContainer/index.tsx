@@ -6,20 +6,20 @@ import type { DialogManager, DialogResolution } from 'components/Dialog';
 import Dialog from 'components/Dialog';
 
 export type DialogContainerProps<
-	Action extends string = string,
-	Values extends FormikValues = FormikValues
+	Values extends FormikValues = FormikValues,
+	Action extends string = string
 > = {
 	/** The value passed into `Dialog.create`. */
 	children: JSX.Element | (() => JSX.Element),
-	dialog: DialogManager<Action, Values>,
+	dialog: DialogManager<Values, Action>,
 	/** Sets the `id`, `initialValues`, and `values` properties on the `DialogManager` as soon as they're all known. */
-	setDialogProperties: (properties: Pick<DialogResolution<Action, Values>, 'id' | 'initialValues' | 'values'>) => void
+	setDialogProperties: (properties: Pick<DialogResolution<Values, Action>, 'id' | 'initialValues' | 'values'>) => void
 };
 
 export type DialogContextValue<
-	Action extends string,
-	Values extends FormikValues
-> = Pick<DialogContainerProps<Action, Values>, 'dialog' | 'setDialogProperties'> & {
+	Values extends FormikValues,
+	Action extends string
+> = Pick<DialogContainerProps<Values, Action>, 'dialog' | 'setDialogProperties'> & {
 	/** A ref to the value of `action` that should be set on the `DialogResolution` once the dialog's form is submitted. */
 	submissionActionRef: MutableRefObject<Action | undefined>
 };
@@ -29,9 +29,9 @@ const DialogContext = React.createContext<DialogContextValue<any, any>>(undefine
 
 /** A hook that returns various values pertaining to this dialog. */
 export const useDialogContext = <
-	Action extends string,
-	Values extends FormikValues
->(): DialogContextValue<Action, Values> => (
+	Values extends FormikValues,
+	Action extends string
+>(): DialogContextValue<Values, Action> => (
 	useContext(DialogContext)
 );
 
@@ -40,9 +40,9 @@ const isDialogElement = (node: ReactNode) => (
 );
 
 const DialogContainerWithoutMemo = <
-	Action extends string = string,
-	Values extends FormikValues = FormikValues
->({ children, dialog, setDialogProperties }: DialogContainerProps<Action, Values>) => {
+	Values extends FormikValues = FormikValues,
+	Action extends string = string
+>({ children, dialog, setDialogProperties }: DialogContainerProps<Values, Action>) => {
 	if (typeof children === 'function') {
 		children = children();
 	}
