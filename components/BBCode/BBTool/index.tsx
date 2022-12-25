@@ -3,11 +3,11 @@ import { useContext, useState } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import { BBFieldContext } from 'components/BBCode/BBField';
 import Button from 'components/Button';
-import Dialog from 'lib/client/Dialog';
+import type { DialogProps, DialogResult } from 'components/Dialog';
+import Dialog from 'components/Dialog';
 import LabeledGrid from 'components/LabeledGrid';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import Label from 'components/Label';
-import type { FormikProps } from 'formik';
 import Row from 'components/Row';
 import Link from 'components/Link';
 import { getChangedValues } from 'lib/client/forms';
@@ -19,6 +19,7 @@ import escapeBBAttribute from 'lib/client/escapeBBAttribute';
 import dynamic from 'next/dynamic';
 import Loading from 'components/LoadingIndicator/Loading';
 import classNames from 'classnames';
+import Action from 'components/Dialog/Action';
 
 const ColorTool = dynamic(() => import('components/ColorTool'), { loading: Loading });
 
@@ -30,45 +31,43 @@ const randomColorAttributes = () => ({
 
 const presetFontFamilies = ['Arial', 'Bodoni MT', 'Book Antiqua', 'Calibri', 'Cambria', 'Candara', 'Century Gothic', 'Comic Sans MS', 'Consolas', 'Courier New', 'Garamond', 'Georgia', 'Goudy Old Style', 'Helvetica', 'Homestuck-Regular', 'Impact', 'Lucida Bright', 'Lucida Console', 'Lucida Sans Typewriter', 'Perpetua', 'Rockwell', 'Segoe UI', 'Tahoma', 'Times New Roman', 'Trebuchet MS', 'Verdana'];
 
-type NewBBTagProps = {
-	/** The content of the BB tag. */
+type BBTagCodeOptions = {
+	/** The BBCode string inside the BB tag. */
 	children: string,
+	/** Like `BBTagProps['attributes']` but more lenient, and using `''` instead of `undefined`. */
 	attributes: string | number | Partial<Record<string, string | number>>
 };
 
-const tags: Record<string, {
+type BBToolDialogValues = Record<string, unknown> & BBTagCodeOptions;
+
+type BBToolOptions = {
 	title: string,
 	/**
-	 * The initial values of the BB tag's dialog form.
+	 * The initial values of the BB tag dialog's form.
 	 *
-	 * These values are spread to `{ children, attributes: '' }` when setting the dialog form's initial values.
+	 * If `children` is unset, it defaults to the user's selected text. `attributes` defaults to `''`.
 	 *
-	 * If this is a function, the return value is spread to the initial values instead.
+	 * If this is a function, the user's selected text is passed in when the dialog opens, and the return value is used instead.
 	 */
-	initialValues?: (
-		Record<string, any>
-		| ((
-			/** The user's selected text in the text area. */
-			children: string
-		) => Record<string, any>)
-	),
+	initialValues?: Partial<BBToolDialogValues> | ((selectedText: string) => Partial<BBToolDialogValues>),
 	/**
-	 * The content of the BB tool dialog that opens when the `BBTool` is clicked.
+	 * The content of the BB tool dialog that opens when the `BBTool` is clicked. The dialog's form values used as the BB tag's props.
 	 *
-	 * If `undefined`, no dialog will open when the `BBTool` is clicked.
+	 * If undefined, no dialog will open when the `BBTool` is clicked.
 	 */
-	content?: Dialog<Record<string, any>>['content'],
+	dialogContent?: DialogProps<any>['children'],
 	/**
-	 * A function called when the BB tool dialog closes.
+	 * The dialog's result is passed into this function, and the return value is spread onto the default `BBTagCodeOptions` object that `getBBTagCode` will be called with.
 	 *
-	 * The dialog form's values are passed in, and the return value is spread with the form's values and the current selected `children` to the BB tag's props.
+	 * The default `BBTagCodeOptions` object is the dialog form's values, but with `children` set to the user's selected text at the time the dialog was closed.
 	 */
-	getProps?: <Values extends Record<string, any>>(
-		values: FormikProps<Values>
-	) => Partial<NewBBTagProps>,
-	/** After inserting the tag into the text area, whether to set the selection to after the tag rather than selecting its children. */
+	getTagCodeOptions?: (dialogResult: DialogResult<any, never>) => Partial<BBToolDialogValues>,
+	/** After inserting the tag into the text area, whether to place the text cursor after the tag rather than selecting its children. */
 	selectAfter?: boolean
-}> = {
+};
+
+// ⚠️ Must be in the same order as the BB tool icon sheet.
+const optionsByTagName: Record<string, BBToolOptions> = {
 	b: { title: 'Bold' },
 	i: { title: 'Italic' },
 	u: { title: 'Underline' },
@@ -76,16 +75,16 @@ const tags: Record<string, {
 	color: {
 		title: 'Text Color',
 		initialValues: randomColorAttributes,
-		content: <ColorTool name="attributes" />
+		dialogContent: <ColorTool name="attributes" />
 	},
 	background: {
 		title: 'Text Background Color',
 		initialValues: randomColorAttributes,
-		content: <ColorTool name="attributes" />
+		dialogContent: <ColorTool name="attributes" />
 	},
 	size: {
 		title: 'Font Size',
-		content: ({ values }) => (
+		dialogContent: ({ values }) => (
 			<LabeledGrid>
 				<LabeledGridField
 					type="number"
@@ -118,7 +117,7 @@ const tags: Record<string, {
 	},
 	font: {
 		title: 'Font Family',
-		content: ({ values }) => (
+		dialogContent: ({ values }) => (
 			<LabeledGrid>
 				<LabeledGridField
 					as="select"
@@ -174,7 +173,7 @@ const tags: Record<string, {
 			children: '',
 			[/^(?:\w+:)?\/\//.test(children) ? 'attributes' : 'children']: children
 		}),
-		content: ({ initialValues }) => (
+		dialogContent: ({ initialValues }) => (
 			<LabeledGrid>
 				<LabeledGridField
 					type="url"
@@ -193,7 +192,7 @@ const tags: Record<string, {
 				/>
 			</LabeledGrid>
 		),
-		getProps: ({ values: { attributes, children } }) => {
+		getTagCodeOptions: ({ values: { attributes, children } }) => {
 			const childrenIsURL = !children || attributes === children;
 
 			return {
@@ -209,7 +208,7 @@ const tags: Record<string, {
 			show: '',
 			hide: ''
 		},
-		content: ({ values: { advancedMode } }) => (
+		dialogContent: ({ values: { advancedMode } }) => (
 			<LabeledGrid>
 				{!advancedMode && (
 					<LabeledGridField
@@ -244,7 +243,7 @@ const tags: Record<string, {
 				)}
 			</LabeledGrid>
 		),
-		getProps: ({ values: { attributes, advancedMode, show, hide } }) => ({
+		getTagCodeOptions: ({ values: { attributes, advancedMode, show, hide } }) => ({
 			attributes: (
 				advancedMode
 					? show || hide
@@ -260,7 +259,7 @@ const tags: Record<string, {
 	chat: { title: 'Chat' },
 	alt: {
 		title: 'Hover Text',
-		content: (
+		dialogContent: (
 			<LabeledGrid>
 				<LabeledGridField
 					name="attributes"
@@ -278,7 +277,7 @@ const tags: Record<string, {
 			width: '',
 			height: ''
 		},
-		content: (
+		dialogContent: (
 			<LabeledGrid>
 				<LabeledGridField
 					type="url"
@@ -305,7 +304,7 @@ const tags: Record<string, {
 				/>
 			</LabeledGrid>
 		),
-		getProps: ({ values: { width, height, children } }) => ({
+		getTagCodeOptions: ({ values: { width, height, children } }) => ({
 			children,
 			attributes: (
 				(width || '')
@@ -323,7 +322,7 @@ const tags: Record<string, {
 			controls: true,
 			loop: false
 		},
-		content: ({ values: { children: url } }) => {
+		dialogContent: ({ values: { children: url } }) => {
 			const isFromYouTube = YOUTUBE_VIDEO_ID.test(url);
 
 			return (
@@ -348,7 +347,7 @@ const tags: Record<string, {
 					/>
 					{/* YouTube requires embedded players to have a viewport that is at least 200x200 pixels. */}
 					{/* Source: https://developers.google.com/youtube/iframe_api_reference#Requirements */}
-					{/* Also, width and height are required fields here since the `iframe` has no good way of determining a good default size for the video. */}
+					{/* Also, width and height are required fields here since the `iframe` has no means of determining a good default size for the video. */}
 					<LabeledGridField
 						type="number"
 						name="width"
@@ -378,23 +377,24 @@ const tags: Record<string, {
 				</LabeledGrid>
 			);
 		},
-		getProps: ({
+		getTagCodeOptions: ({
 			initialValues,
 			values: { children, ...values }
 		}) => {
-			const changedValues = getChangedValues(initialValues, values);
+			const changedAttributes = getChangedValues(initialValues, values);
+
+			if (changedAttributes) {
+				for (const [key, value] of Object.entries(changedAttributes)) {
+					if (typeof value !== 'boolean') {
+						continue;
+					}
+
+					changedAttributes[key] = +value;
+				}
+			}
 
 			return {
-				attributes: changedValues && Object.fromEntries(
-					Object.entries(changedValues as typeof values).map(
-						([key, value]) => [
-							key,
-							typeof value === 'boolean'
-								? +value
-								: value
-						]
-					)
-				),
+				attributes: changedAttributes,
 				children
 			};
 		},
@@ -406,7 +406,7 @@ const tags: Record<string, {
 			width: 650,
 			height: 450
 		},
-		content: (
+		dialogContent: (
 			<LabeledGrid>
 				<LabeledGridField
 					type="url"
@@ -439,7 +439,7 @@ const tags: Record<string, {
 				/>
 			</LabeledGrid>
 		),
-		getProps: ({ values: { width, height, children } }) => ({
+		getTagCodeOptions: ({ values: { width, height, children } }) => ({
 			children,
 			attributes: (
 				(width || '')
@@ -454,7 +454,7 @@ const tags: Record<string, {
 			width: 650,
 			height: 450
 		},
-		content: (
+		dialogContent: (
 			<LabeledGrid>
 				<Row className="red">
 					It is highly recommended not to use Flash due to its loss of support. Consider using video or HTML5 instead.
@@ -483,7 +483,7 @@ const tags: Record<string, {
 				/>
 			</LabeledGrid>
 		),
-		getProps: ({ values: { width, height, children } }) => ({
+		getTagCodeOptions: ({ values: { width, height, children } }) => ({
 			children,
 			attributes: (
 				(width || '')
@@ -494,14 +494,42 @@ const tags: Record<string, {
 	}
 };
 
-// The above `tags` must be in the same order as the BB tool icon sheet.
+/** A mapping from each BB tool's tag name to the index of its icon within the BB tool icon sheet. */
+const iconIndexes: Record<string, integer> = {};
 
-/** The indexes of each tag within the BB tool icon sheet. */
-const tagIndexes: Record<string, integer> = {};
-const tagNames = Object.keys(tags);
+const tagNames = Object.keys(optionsByTagName);
 for (let i = 0; i < tagNames.length; i++) {
-	tagIndexes[tagNames[i]] = i;
+	const tagName = tagNames[i];
+
+	iconIndexes[tagName] = i;
 }
+
+/** Generates the BBCode for a BB tag. */
+const getBBTagCode = (
+	tagName: string,
+	{ attributes, children }: BBTagCodeOptions
+) => {
+	let openTagContents = tagName;
+	if (attributes) {
+		if (attributes instanceof Object) {
+			for (const [key, value] of Object.entries(attributes)) {
+				if (value === undefined) {
+					continue;
+				}
+
+				openTagContents += ` ${key}=${escapeBBAttribute(value.toString(), true)}`;
+			}
+		} else {
+			openTagContents += `=${escapeBBAttribute(attributes.toString())}`;
+		}
+	}
+
+	const openTag = `[${openTagContents}]` as const;
+	const closeTag = `[/${tagName}]` as const;
+	const tag = `${openTag}${children}${closeTag}` as const;
+
+	return { tag, openTag, closeTag };
+};
 
 export type BBToolProps = {
 	/** The name of the BB tag which the BB tool creates. */
@@ -510,7 +538,7 @@ export type BBToolProps = {
 
 /** A button in a `BBToolbar` with a corresponding BB tag. */
 const BBTool = ({ tag: tagName }: BBToolProps) => {
-	const tag = tags[tagName];
+	const options = optionsByTagName[tagName];
 
 	const { textAreaRef, setValue, disabled } = useContext(BBFieldContext)!;
 	/** A ref to the latest value of `disabled` to avoid race conditions. */
@@ -519,136 +547,117 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 	// Whether this BB tool currently has an open dialog.
 	const [open, setOpen] = useState(false);
 
+	const onClick = useFunction(async () => {
+		let selectedText = textAreaRef.current.value.slice(
+			textAreaRef.current.selectionStart,
+			textAreaRef.current.selectionEnd
+		);
+
+		/** The options that will be passed into `getBBTagCode`. */
+		let tagCodeOptions: BBTagCodeOptions = {
+			children: selectedText,
+			// An empty string must be used instead of `undefined` so that any fields of the dialog form with `name="attributes"` are initially Formik-controlled.
+			attributes: ''
+		};
+
+		if (options.dialogContent) {
+			setOpen(true);
+
+			const dialogResult = await Dialog.create<BBToolDialogValues, never>(
+				<Dialog<BBToolDialogValues, never>
+					id="bb-tool"
+					title={options.title}
+					initialValues={{
+						...tagCodeOptions,
+						...options.initialValues instanceof Function
+							? options.initialValues(selectedText)
+							: options.initialValues
+					}}
+				>
+					{props => (
+						<IDPrefix.Provider value="bb-tool">
+							{(options.dialogContent instanceof Function
+								? options.dialogContent(props)
+								: options.dialogContent
+							)}
+							{Action.OKAY} {Action.CANCEL}
+						</IDPrefix.Provider>
+					)}
+				</Dialog>
+			);
+
+			// TODO: Fix the race condition here if the user clicks the same BB tool twice, the second time opening a dialog that closes the first.
+			setOpen(false);
+
+			if (dialogResult.canceled) {
+				return;
+			}
+
+			if (disabledRef.current) {
+				Dialog.create(
+					<Dialog id="bb-tool" title={options.title}>
+						The specified BBCode could not be inserted into the target text area, as it is currently read-only.
+					</Dialog>
+				);
+				return;
+			}
+
+			// Update `selectedText` in case the user changed their selection while the dialog was open.
+			selectedText = textAreaRef.current.value.slice(
+				textAreaRef.current.selectionStart,
+				textAreaRef.current.selectionEnd
+			);
+
+			tagCodeOptions = {
+				...dialogResult.values,
+				// Overwrite the selected text from when the dialog opened.
+				children: selectedText,
+				...options.getTagCodeOptions?.(dialogResult)
+			};
+		}
+
+		const textArea = textAreaRef.current;
+		const { selectionStart, selectionEnd } = textArea;
+
+		const { tag, openTag, closeTag } = getBBTagCode(tagName, tagCodeOptions);
+
+		setValue(
+			textArea.value.slice(0, selectionStart)
+			+ tag
+			+ textArea.value.slice(selectionEnd)
+		);
+
+		// This timeout is necessary so the selection of the new value occurs after the new value renders.
+		setTimeout(() => {
+			textArea.focus();
+
+			// It is necessary to use `selectionStart` below instead of `textArea.selectionStart` because the latter resets to 0 after the value changes.
+
+			if (options.selectAfter) {
+				textArea.selectionStart = textArea.selectionEnd = (
+					selectionStart
+					+ openTag.length
+					+ tagCodeOptions.children.length
+					+ closeTag.length
+				);
+			} else {
+				textArea.selectionStart = selectionStart + openTag.length;
+				textArea.selectionEnd = textArea.selectionStart + tagCodeOptions.children.length;
+			}
+		});
+	});
+
 	return (
 		<Button
 			icon={{
 				style: {
-					backgroundPositionY: `${-tagIndexes[tagName]}em`
+					backgroundPositionY: `${-iconIndexes[tagName]}em`
 				}
 			}}
 			className={classNames(`bb-tool bb-tool-${tagName}`, { open })}
-			title={tag.title}
+			title={options.title}
 			disabled={disabled}
-			onClick={
-				useFunction(async () => {
-					let children = textAreaRef.current.value.slice(
-						textAreaRef.current.selectionStart,
-						textAreaRef.current.selectionEnd
-					);
-
-					/** Information about this instance of the BB tag, including children, attributes, and other form values. */
-					const tagData: NewBBTagProps = {
-						children,
-						// This needs to initially be an empty string and not `undefined` so that the form's initial values include this property, and any fields with `name="attributes"` are initially Formik-controlled.
-						attributes: '',
-						...tag.initialValues instanceof Function
-							? tag.initialValues(children)
-							: tag.initialValues
-					};
-
-					if (tag.content) {
-						// Close any existing BB tool dialog.
-						await Dialog.getByID('bb-tool')?.resolve();
-
-						setOpen(true);
-
-						const dialog = new Dialog<Record<string, any>>({
-							id: 'bb-tool',
-							title: tag.title,
-							content: props => (
-								<IDPrefix.Provider value="bb-tool">
-									{(tag.content instanceof Function
-										? tag.content(props)
-										: tag.content
-									)}
-								</IDPrefix.Provider>
-							),
-							initialValues: { ...tagData },
-							actions: [
-								{ label: 'Okay', autoFocus: false },
-								'Cancel'
-							]
-						});
-
-						const dialogResult = await dialog;
-
-						setOpen(false);
-
-						if (!dialogResult?.submit) {
-							return;
-						}
-
-						if (disabledRef.current) {
-							new Dialog({
-								id: 'bb-tool',
-								title: tag.title,
-								content: 'The specified BBCode could not be inserted into the target text area, as it is currently read-only.'
-							});
-							return;
-						}
-
-						// Update `children` in case the user changed their selection while the dialog was open.
-						children = textAreaRef.current.value.slice(
-							textAreaRef.current.selectionStart,
-							textAreaRef.current.selectionEnd
-						);
-
-						Object.assign(
-							tagData,
-							dialog.form!.values,
-							// Spread the updated selection in the `children` value to overwrite the outdated value in the dialog form's values.
-							{ children },
-							tag.getProps && tag.getProps(dialog.form!)
-						);
-					}
-
-					let openTag = `[${tagName}`;
-					if (tagData.attributes) {
-						if (tagData.attributes instanceof Object) {
-							for (const key of Object.keys(tagData.attributes)) {
-								const value = tagData.attributes[key];
-								if (value !== undefined) {
-									openTag += ` ${key}=${escapeBBAttribute(value.toString(), true)}`;
-								}
-							}
-						} else {
-							openTag += `=${escapeBBAttribute(tagData.attributes.toString())}`;
-						}
-					}
-					openTag += ']';
-
-					const closeTag = `[/${tagName}]`;
-
-					const selectionStart = textAreaRef.current.selectionStart;
-
-					setValue(
-						textAreaRef.current.value.slice(0, selectionStart)
-						+ openTag
-						+ tagData.children
-						+ closeTag
-						+ textAreaRef.current.value.slice(textAreaRef.current.selectionEnd, textAreaRef.current.value.length)
-					);
-
-					// This timeout is necessary so the selection of the new value occurs after the new value renders.
-					setTimeout(() => {
-						textAreaRef.current.focus();
-
-						// It is necessary to use `selectionStart` below instead of `textAreaRef.current.selectionStart` because the latter resets to 0 after the value changes.
-
-						if (tag.selectAfter) {
-							textAreaRef.current.selectionStart = textAreaRef.current.selectionEnd = (
-								selectionStart
-								+ openTag.length
-								+ tagData.children.length
-								+ closeTag.length
-							);
-						} else {
-							textAreaRef.current.selectionStart = selectionStart + openTag.length;
-							textAreaRef.current.selectionEnd = textAreaRef.current.selectionStart + tagData.children.length;
-						}
-					});
-				})
-			}
+			onClick={onClick}
 		/>
 	);
 };

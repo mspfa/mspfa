@@ -57,13 +57,10 @@ const getWidthAndHeight = (attributes: BBTagProps['attributes']) => {
 	};
 };
 
-export type BBTag = (
-	((props: BBTagProps) => JSX.Element)
-	& {
-		/** Whether the `BBTag` is wrapped by `withBlock`. */
-		readonly withBlock?: boolean
-	}
-);
+export type BBTag = ((props: BBTagProps) => JSX.Element) & Readonly<{
+	/** Whether the `BBTag` is wrapped by `withBlock`. */
+	withBlock?: boolean
+}>;
 
 /** A mapping from lowercase BB tag names to their corresponding React components. */
 const BBTags: Partial<Record<string, BBTag>> = {
