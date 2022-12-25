@@ -168,10 +168,10 @@ const optionsByTagName: Record<string, BBToolOptions> = {
 	justify: { title: 'Align Justify' },
 	url: {
 		title: 'Link',
-		initialValues: children => ({
+		initialValues: selectedText => ({
 			attributes: '',
 			children: '',
-			[/^(?:\w+:)?\/\//.test(children) ? 'attributes' : 'children']: children
+			[/^(?:\w+:)?\/\//.test(selectedText) ? 'attributes' : 'children']: selectedText
 		}),
 		dialogContent: ({ initialValues }) => (
 			<LabeledGrid>
