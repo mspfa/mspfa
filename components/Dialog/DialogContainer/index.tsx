@@ -9,8 +9,8 @@ export type DialogContainerProps<
 	Values extends FormikValues = FormikValues,
 	Action extends string = string
 > = {
-	/** The value passed into `Dialog.create`. */
-	children: JSX.Element | (() => JSX.Element),
+	/** The value which was passed into `Dialog.create`. */
+	children: Parameters<typeof Dialog.create>[0],
 	dialog: DialogManager<Values, Action>,
 	/** Sets the `id`, `initialValues`, and `values` properties on the `DialogManager` as soon as they're all known. */
 	setDialogProperties: (properties: Pick<DialogResult<Values, Action>, 'id' | 'initialValues' | 'values'>) => void
@@ -42,7 +42,11 @@ const isDialogElement = (node: ReactNode) => (
 const DialogContainerWithoutMemo = <
 	Values extends FormikValues = FormikValues,
 	Action extends string = string
->({ children, dialog, setDialogProperties }: DialogContainerProps<Values, Action>) => {
+>({
+	children,
+	dialog,
+	setDialogProperties
+}: DialogContainerProps<Values, Action>) => {
 	if (typeof children === 'function') {
 		children = children();
 	}

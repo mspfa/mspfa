@@ -1,6 +1,6 @@
 import type { ActionProps } from 'components/Dialog/Action';
 import Action from 'components/Dialog/Action';
-import type { DialogContainerProps, DialogContextValue } from 'components/Dialog/DialogContainer';
+import type { DialogContextValue } from 'components/Dialog/DialogContainer';
 import DialogContainer, { useDialogContext } from 'components/Dialog/DialogContainer';
 import { dialogsState } from 'components/Dialog/Dialogs';
 import type { FormikConfig, FormikValues } from 'formik';
@@ -200,7 +200,7 @@ Dialog.create = <
 	Action extends string = string
 >(
 	/** A `Dialog` JSX element, or a function (which can use hooks) that returns one. */
-	node: DialogContainerProps['children']
+	node: JSX.Element | (() => JSX.Element)
 ): DialogManager<Values, Action> => {
 	if (typeof window === 'undefined') {
 		throw new Error('`Dialog.create` must not be called server-side.');
