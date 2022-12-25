@@ -111,15 +111,12 @@ const Dialog = <
 						continue;
 					}
 
-					if (node.key !== null) {
-						actions.push(node);
-						continue;
-					}
-
 					actions.push(
-						<Fragment key={i}>
-							{node}
-						</Fragment>
+						node.key === null ? (
+							<Fragment key={actions.length}>
+								{node}
+							</Fragment>
+						) : node
 					);
 				}
 
@@ -134,11 +131,7 @@ const Dialog = <
 							</div>
 							{actions.length !== 0 && (
 								<div className="dialog-actions front">
-									{actions.map((action, i) => (
-										<Fragment key={i}>
-											{action}
-										</Fragment>
-									))}
+									{actions}
 								</div>
 							)}
 						</dialog>
