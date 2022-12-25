@@ -195,13 +195,13 @@ export type DialogResolution<
 
 let dialogCounter = 0;
 
-Dialog.create = async <
+Dialog.create = <
 	Action extends string = string,
 	Values extends FormikValues = FormikValues
 >(
 	/** A `Dialog` JSX element, or a function (which can use hooks) that returns one. */
 	node: DialogContainerProps['children']
-): Promise<DialogManager<Action, Values>> => {
+): DialogManager<Action, Values> => {
 	if (typeof window === 'undefined') {
 		throw new Error('`Dialog.create` must not be called server-side.');
 	}
