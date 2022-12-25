@@ -10,7 +10,7 @@ export type DialogContainerProps<
 	Action extends string = string
 > = {
 	/** The value which was passed into `Dialog.create`. */
-	children: Parameters<typeof Dialog.create>[0],
+	children: Parameters<typeof Dialog.create<Values, Action>>[0],
 	dialog: DialogManager<Values, Action>,
 	/** Sets the `id`, `initialValues`, and `values` properties on the `DialogManager` as soon as they're all known. */
 	setDialogProperties: (properties: Pick<DialogResult<Values, Action>, 'id' | 'initialValues' | 'values'>) => void
