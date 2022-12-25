@@ -2,7 +2,7 @@ import './styles.module.scss';
 import type { MutableRefObject, ReactNode } from 'react';
 import React, { useContext, useMemo, useRef } from 'react';
 import type { FormikValues } from 'formik';
-import type { DialogManager, DialogResolution } from 'components/Dialog';
+import type { DialogManager, DialogResult } from 'components/Dialog';
 import Dialog from 'components/Dialog';
 
 export type DialogContainerProps<
@@ -13,14 +13,14 @@ export type DialogContainerProps<
 	children: JSX.Element | (() => JSX.Element),
 	dialog: DialogManager<Values, Action>,
 	/** Sets the `id`, `initialValues`, and `values` properties on the `DialogManager` as soon as they're all known. */
-	setDialogProperties: (properties: Pick<DialogResolution<Values, Action>, 'id' | 'initialValues' | 'values'>) => void
+	setDialogProperties: (properties: Pick<DialogResult<Values, Action>, 'id' | 'initialValues' | 'values'>) => void
 };
 
 export type DialogContextValue<
 	Values extends FormikValues,
 	Action extends string
 > = Pick<DialogContainerProps<Values, Action>, 'dialog' | 'setDialogProperties'> & {
-	/** A ref to the value of `action` that should be set on the `DialogResolution` once the dialog's form is submitted. */
+	/** A ref to the value of `action` that should be set on the `DialogResult` once the dialog's form is submitted. */
 	submissionActionRef: MutableRefObject<Action | undefined>
 };
 

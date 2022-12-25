@@ -155,7 +155,7 @@ export default Dialog;
 export type DialogManager<
 	Values extends FormikValues = FormikValues,
 	Action extends string = string
-> = Promise<DialogResolution<Values, Action>> & Readonly<{
+> = Promise<DialogResult<Values, Action>> & Readonly<{
 	/** The dialog's `DialogContainer` element. */
 	element: JSX.Element,
 	/** The value of the `id` prop passed into the `Dialog` component. Undefined if the dialog hasn't been rendered yet. */
@@ -181,7 +181,7 @@ export type DialogCloseOptions<
 };
 
 /** The resolution value of a `DialogManager` promise. */
-export type DialogResolution<
+export type DialogResult<
 	Values extends FormikValues = FormikValues,
 	Action extends string = string
 > = (
@@ -215,8 +215,8 @@ Dialog.create = <
 		};
 	});
 
-	let resolvePromise: (value: DialogResolution<Values, Action> | PromiseLike<DialogResolution<Values, Action>>) => void;
-	const promise = new Promise<DialogResolution<Values, Action>>(resolve => {
+	let resolvePromise: (value: DialogResult<Values, Action> | PromiseLike<DialogResult<Values, Action>>) => void;
+	const promise = new Promise<DialogResult<Values, Action>>(resolve => {
 		resolvePromise = resolve;
 	});
 
