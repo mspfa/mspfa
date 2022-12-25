@@ -9,6 +9,41 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import type { ReactElement, ReactNode } from 'react';
 import React, { Fragment, useEffect, useRef } from 'react';
 
+/** Recursively looks for `Action` elements in the inputted React tree, returning an array of all of them. */
+const findActions = (
+	node: ReactNode,
+	actions: ReactNode[] = []
+): ReactNode[] => {
+	if (!(node instanceof Object)) {
+		return actions;
+	}
+
+	if (!React.isValidElement(node)) {
+		for (const child of node) {
+			findActions(child, actions);
+		}
+		return actions;
+	}
+
+	if (node.type !== Action) {
+		return findActions(node.props.children, actions);
+	}
+
+	node = React.cloneElement(
+		node as ReactElement<ActionProps, typeof Action>,
+		{ final: true }
+	);
+
+	actions.push(
+		node.key === null ? (
+			<Fragment key={actions.length}>
+				{node}
+			</Fragment>
+		) : node
+	);
+	return actions;
+};
+
 export type DialogProps<
 	Values extends FormikValues = FormikValues
 > = Partial<Omit<FormikConfig<Values>, 'initialValues'>> & {
@@ -17,10 +52,6 @@ export type DialogProps<
 	title: ReactNode,
 	initialValues?: Values
 };
-
-const isActionElement = (node: ReactNode): node is ReactElement<ActionProps, typeof Action> => (
-	React.isValidElement(node) && node.type === Action
-);
 
 /**
  * A component for a dialog box. Can contain `Action` components and Formik fields.
@@ -94,31 +125,7 @@ const Dialog = <
 					children = children(props);
 				}
 
-				const childrenArray = (
-					Array.isArray(children)
-						? children as ReactNode[]
-						: [children]
-				);
-
-				const actions = [];
-				const childrenWithoutActions = [];
-
-				for (let i = 0; i < childrenArray.length; i++) {
-					const node = childrenArray[i];
-
-					if (!isActionElement(node)) {
-						childrenWithoutActions.push(node);
-						continue;
-					}
-
-					actions.push(
-						node.key === null ? (
-							<Fragment key={actions.length}>
-								{node}
-							</Fragment>
-						) : node
-					);
-				}
+				const actions = findActions(children);
 
 				return (
 					<Form className="dialog-container">
@@ -127,7 +134,7 @@ const Dialog = <
 								{title}
 							</div>
 							<div className="dialog-content front">
-								{childrenWithoutActions}
+								{children}
 							</div>
 							{actions.length !== 0 && (
 								<div className="dialog-actions front">

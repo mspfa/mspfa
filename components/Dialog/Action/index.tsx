@@ -11,6 +11,8 @@ import React from 'react';
 export type ActionProps<
 	Action extends string = string
 > = Omit<ButtonProps, 'value'> & {
+	/** Whether this component is being rendered in its final location. */
+	final?: boolean,
 	/**
 	 * Whether this button should cancel the dialog instead of submitting it (and requiring any form fields to be valid).
 	 *
@@ -29,21 +31,47 @@ export type ActionProps<
 	disabled?: boolean
 };
 
-/** A dialog submission or cancellation button. */
+/**
+ * A dialog submission or cancellation button.
+ *
+ * Must be passed into the `Dialog`'s children, not returned from a component passed into the `Dialog`'s children.
+ */
 const Action = <
 	Values extends FormikValues = FormikValues,
 	Action extends string = string
 >({
+	final,
 	cancel = false,
 	keepOpen = false,
 	className,
 	value,
 	disabled,
-	onClick,
+	onClick: onClickProp,
 	...props
 }: ActionProps<Action>) => {
 	const { dialog, submissionActionRef } = useDialogContext<Values, Action>();
 	const { isSubmitting } = useFormikContext<Values>();
+
+	const onClick = useFunction((event: MouseEvent<HTMLButtonElement & HTMLAnchorElement>) => {
+		onClickProp?.(event);
+
+		if (keepOpen) {
+			return;
+		}
+
+		if (cancel) {
+			dialog.cancel({ action: value });
+			return;
+		}
+
+		// Let the dialog form handle this through the `submit` event if the form is valid.
+		// If the form is invalid, then no `submit` event will fire, and this value will be either unused or overwritten later.
+		submissionActionRef.current = value;
+	});
+
+	if (!final) {
+		return null;
+	}
 
 	return (
 		<Button
@@ -51,24 +79,7 @@ const Action = <
 			className={classNames('dialog-action', className)}
 			value={value}
 			disabled={disabled ?? isSubmitting}
-			onClick={
-				useFunction((event: MouseEvent<HTMLButtonElement & HTMLAnchorElement>) => {
-					onClick?.(event);
-
-					if (keepOpen) {
-						return;
-					}
-
-					if (cancel) {
-						dialog.cancel({ action: value });
-						return;
-					}
-
-					// Let the dialog form handle this through the `submit` event if the form is valid.
-					// If the form is invalid, then no `submit` event will fire, and this value will be either unused or overwritten later.
-					submissionActionRef.current = value;
-				})
-			}
+			onClick={onClick}
 			{...props}
 		/>
 	);
