@@ -49,7 +49,9 @@ type BBToolOptions = {
 	 *
 	 * If this is a function, the user's selected text is passed in when the dialog opens, and the return value is used instead.
 	 */
-	initialValues?: Partial<BBToolDialogValues> | ((selectedText: string) => Partial<BBToolDialogValues>),
+	initialValues?: Partial<BBToolDialogValues> | (
+		(options: { selectedText: string }) => Partial<BBToolDialogValues>
+	),
 	/**
 	 * The content of the BB tool dialog that opens when the `BBTool` is clicked. The dialog's form values used as the BB tag's props.
 	 *
@@ -168,7 +170,7 @@ const optionsByTagName: Record<string, BBToolOptions> = {
 	justify: { title: 'Align Justify' },
 	url: {
 		title: 'Link',
-		initialValues: selectedText => ({
+		initialValues: ({ selectedText }) => ({
 			attributes: '',
 			children: '',
 			[/^(?:\w+:)?\/\//.test(selectedText) ? 'attributes' : 'children']: selectedText
@@ -574,7 +576,7 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 					initialValues={{
 						...tagCodeOptions,
 						...options.initialValues instanceof Function
-							? options.initialValues(selectedText)
+							? options.initialValues({ selectedText })
 							: options.initialValues
 					}}
 				>
