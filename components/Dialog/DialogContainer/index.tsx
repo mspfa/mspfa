@@ -13,13 +13,14 @@ export type DialogContainerProps<
 	children: Parameters<typeof Dialog.create<Values, Action>>[0],
 	dialog: DialogManager<Values, Action>,
 	/** Sets the `id`, `initialValues`, and `values` properties on the `DialogManager` as soon as they're all known. */
-	setDialogProperties: (properties: Pick<DialogResult<Values, Action>, 'id' | 'initialValues' | 'values'>) => void
+	setDialogProperties: (properties: Pick<DialogResult<Values, Action>, 'id' | 'initialValues' | 'values'>) => void,
+	defaultActions: Parameters<typeof Dialog.create<Values, Action>>[1]
 };
 
 export type DialogContextValue<
 	Values extends FormikValues,
 	Action extends string
-> = Pick<DialogContainerProps<Values, Action>, 'dialog' | 'setDialogProperties'> & {
+> = Omit<DialogContainerProps<Values, Action>, 'children'> & {
 	/** A ref to the value of `action` that should be set on the `DialogResult` once the dialog's form is submitted. */
 	submissionActionRef: MutableRefObject<Action | undefined>
 };
@@ -45,13 +46,16 @@ const DialogContainerWithoutMemo = <
 >({
 	children,
 	dialog,
-	setDialogProperties
+	setDialogProperties,
+	defaultActions
 }: DialogContainerProps<Values, Action>) => {
-	if (typeof children === 'function') {
-		children = children();
-	}
+	const dialogElement = (
+		typeof children === 'function'
+			? children()
+			: children
+	);
 
-	if (!isDialogElement(children)) {
+	if (!isDialogElement(dialogElement)) {
 		throw new TypeError('You must pass only a `Dialog` component into `Dialog.create`.');
 	}
 
@@ -60,12 +64,13 @@ const DialogContainerWithoutMemo = <
 	const dialogContextValue = useMemo(() => ({
 		dialog,
 		setDialogProperties,
-		submissionActionRef
-	}), [dialog, setDialogProperties]);
+		submissionActionRef,
+		defaultActions
+	}), [dialog, setDialogProperties, defaultActions]);
 
 	return (
 		<DialogContext.Provider value={dialogContextValue}>
-			{children}
+			{dialogElement}
 		</DialogContext.Provider>
 	);
 };

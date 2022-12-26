@@ -77,7 +77,12 @@ const Dialog = <
 	children,
 	...props
 }: DialogProps<Values>) => {
-	const { dialog, setDialogProperties, submissionActionRef } = useDialogContext<Values, Action>();
+	const {
+		dialog,
+		setDialogProperties,
+		submissionActionRef,
+		defaultActions
+	} = useDialogContext<Values, Action>();
 
 	const initialIDRef = useRef(id);
 	if (initialIDRef.current !== id) {
@@ -136,8 +141,7 @@ const Dialog = <
 				let actions = getFinalActions(content);
 
 				if (actions.length === 0) {
-					// Use the default actions.
-					actions = getFinalActions(Action.OKAY_AUTO_FOCUS);
+					actions = getFinalActions(defaultActions);
 				}
 
 				return (
@@ -218,8 +222,14 @@ Dialog.create = <
 	Values extends FormikValues = FormikValues,
 	Action extends string = string
 >(
-	/** A `Dialog` JSX element, or a function (which can use hooks) that returns one. */
-	node: JSX.Element | (() => JSX.Element)
+	/** A `Dialog` element, or a function (which can use hooks) that returns one. */
+	node: JSX.Element | (() => JSX.Element),
+	/**
+	 * A node containing the `Action` components to use when there are none in the `Dialog` component's children.
+	 *
+	 * ⚠️ Always pass `Action`s into the `Dialog` component's children instead whenever possible.
+	 */
+	defaultActions: ReactNode = Action.OKAY
 ): DialogManager<Values, Action> => {
 	if (typeof window === 'undefined') {
 		throw new Error('`Dialog.create` must not be called server-side.');
@@ -284,6 +294,7 @@ Dialog.create = <
 			key={dialogCounter++}
 			dialog={dialog}
 			setDialogProperties={setDialogProperties!}
+			defaultActions={defaultActions}
 		>
 			{node}
 		</DialogContainer>
@@ -315,7 +326,12 @@ Dialog.getByID = <
 	dialogsByID[id] as DialogManager<Values, Action> | undefined
 );
 
-/** Equivalent to `Dialog.create`, but resolves to a boolean of whether the dialog was submitted and not canceled. */
-Dialog.confirm = async (...args: Parameters<typeof Dialog.create>) => (
-	!(await Dialog.create(...args)).canceled
-);
+/** Equivalent to `Dialog.create`, but resolves to a boolean of whether the dialog was submitted rather than canceled, and the default actions are `Action.YES_AUTO_COMPLETE` and `Action.NO`. */
+Dialog.confirm = async (...[
+	node,
+	defaultActions = [Action.YES_AUTO_FOCUS, Action.NO]
+]: Parameters<typeof Dialog.create>) => {
+	const dialog = await Dialog.create(node, defaultActions);
+
+	return !dialog.canceled;
+};
