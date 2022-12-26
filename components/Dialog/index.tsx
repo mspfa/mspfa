@@ -9,6 +9,13 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import type { ReactElement, ReactNode } from 'react';
 import React, { Fragment, useEffect, useRef } from 'react';
 
+type ActionElement = ReactElement<ActionProps, typeof Action>;
+
+/** Clones the inputted `Action` element, setting its `final` prop to `true`. */
+const finalizeAction = (element: ActionElement) => (
+	React.cloneElement(element, { final: true })
+);
+
 /** Recursively looks for `Action` elements in the inputted `ReactNode`, returning an array of all of them. */
 const findActions = (
 	node: ReactNode,
@@ -29,10 +36,7 @@ const findActions = (
 		return findActions(node.props.children, actions);
 	}
 
-	node = React.cloneElement(
-		node as ReactElement<ActionProps, typeof Action>,
-		{ final: true }
-	);
+	node = finalizeAction(node as ActionElement);
 
 	actions.push(
 		node.key === null ? (
@@ -127,10 +131,11 @@ const Dialog = <
 					children = children(props);
 				}
 
-				const actions = findActions(children);
+				let actions = findActions(children);
 
 				if (actions.length === 0) {
-					actions.push(Action.OKAY_AUTO_FOCUS);
+					// Use the default actions.
+					actions = findActions(Action.OKAY_AUTO_FOCUS);
 				}
 
 				return (
