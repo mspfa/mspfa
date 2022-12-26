@@ -17,7 +17,7 @@ const finalizeAction = (element: ActionElement) => (
 );
 
 /** Recursively looks for `Action` elements in the inputted `ReactNode`, returning an array of all of them. */
-const findActions = (
+const getFinalActions = (
 	node: ReactNode,
 	actions: ReactNode[] = []
 ): ReactNode[] => {
@@ -27,13 +27,13 @@ const findActions = (
 
 	if (!React.isValidElement(node)) {
 		for (const child of node) {
-			findActions(child, actions);
+			getFinalActions(child, actions);
 		}
 		return actions;
 	}
 
 	if (node.type !== Action) {
-		return findActions(node.props.children, actions);
+		return getFinalActions(node.props.children, actions);
 	}
 
 	node = finalizeAction(node as ActionElement);
@@ -127,15 +127,17 @@ const Dialog = <
 					values: props.values
 				});
 
-				if (typeof children === 'function') {
-					children = children(props);
-				}
+				const content = (
+					typeof children === 'function'
+						? children(props)
+						: children
+				);
 
-				let actions = findActions(children);
+				let actions = getFinalActions(content);
 
 				if (actions.length === 0) {
 					// Use the default actions.
-					actions = findActions(Action.OKAY_AUTO_FOCUS);
+					actions = getFinalActions(Action.OKAY_AUTO_FOCUS);
 				}
 
 				return (
@@ -151,7 +153,7 @@ const Dialog = <
 								{title}
 							</div>
 							<div className="dialog-content front">
-								{children}
+								{content}
 							</div>
 							<div className="dialog-actions front">
 								{actions}
