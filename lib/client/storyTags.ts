@@ -17,7 +17,7 @@ export const TAG_OR_EXCLUDED_TAG = /^-?[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?$/;
 /** A record of story tags which maps each `TagString` to a `string` explaining the tag. */
 const storyTags: Partial<Record<TagString, string>> = {
 	nonmspa: 'This adventure is unrelated to MSPA.',
-	test: 'This adventure was only made to test something.',
+	test: 'This adventure is only being used to test things.',
 	translation: 'This adventure only serves as a translation of something else.',
 	sburb: 'This adventure focuses on Sburb.',
 	puzzles: 'This adventure focuses on puzzles, problems, and/or sleuthing.',
