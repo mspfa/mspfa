@@ -56,9 +56,11 @@ export type DialogProps<
 /**
  * A component for a dialog box. Can contain `Action` components and Formik fields.
  *
- * If this component's child is a function, the dialog's Formik props are passed in.
+ * If no `Action` components are passed in, the dialog will default to only `Action.OKAY_AUTO_FOCUS`.
  *
- * ⚠️ Should only be passed into `Dialog.create`.
+ * If this component's child is a function, the dialog's Formik props are passed in, and the return value is used as the dialog's children.
+ *
+ * ⚠️ Must only be used in `Dialog.create`.
  */
 const Dialog = <
 	Values extends FormikValues = FormikValues,
@@ -127,20 +129,28 @@ const Dialog = <
 
 				const actions = findActions(children);
 
+				if (actions.length === 0) {
+					actions.push(Action.OKAY_AUTO_FOCUS);
+				}
+
 				return (
-					<Form className="dialog-container">
-						<dialog open>
+					<Form
+						id={id && `dialog-container-${id}`}
+						className="dialog-container"
+					>
+						<dialog
+							id={id && `dialog-${id}`}
+							open
+						>
 							<div className="dialog-title alt-front">
 								{title}
 							</div>
 							<div className="dialog-content front">
 								{children}
 							</div>
-							{actions.length !== 0 && (
-								<div className="dialog-actions front">
-									{actions}
-								</div>
-							)}
+							<div className="dialog-actions front">
+								{actions}
+							</div>
 						</dialog>
 					</Form>
 				);
