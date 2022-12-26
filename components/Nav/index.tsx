@@ -8,7 +8,7 @@ import useSticky from 'lib/client/reactHooks/useSticky';
 import { useContext, useRef } from 'react';
 import StoryIDContext from 'lib/client/reactContexts/StoryIDContext';
 import PreviewModeContext from 'lib/client/reactContexts/PreviewModeContext';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import promptSignIn from 'lib/client/promptSignIn';
@@ -40,11 +40,11 @@ const Nav = () => {
 	}
 
 	const promptSignOut = useFunction(async () => {
-		if (await Dialog.confirm({
-			id: 'sign-out',
-			title: 'Sign Out',
-			content: 'Are you sure you want to sign out?'
-		})) {
+		if (await Dialog.confirm(
+			<Dialog id="sign-out" title="Sign Out">
+				Are you sure you want to sign out?
+			</Dialog>
+		)) {
 			await (api as SessionAPI).delete('/session');
 			setUser(undefined);
 		}

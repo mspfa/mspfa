@@ -6,8 +6,7 @@ import { useUser } from 'lib/client/reactContexts/UserContext';
 import { useUserCache } from 'lib/client/reactContexts/UserCache';
 import React, { useRef, useState } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import type { DialogOptions } from 'lib/client/Dialog';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import api from 'lib/client/api';
 import Link from 'components/Link';
 import { useLeaveConfirmation } from 'lib/client/forms';
@@ -27,6 +26,7 @@ import { Formik, Form, Field } from 'formik';
 import type { PublicStory } from 'lib/client/stories';
 import promptSignIn from 'lib/client/promptSignIn';
 import classNames from 'classnames';
+import Action from 'components/Dialog/Action';
 
 export type CommentProps<ClientComment = ClientCommentOrReply> = {
 	/** The API path of this comment. */
@@ -89,12 +89,13 @@ const Comment = <
 		}
 
 		if (!user) {
-			if (await Dialog.confirm({
-				id: 'rate-comment',
-				title: 'Rate Comment',
-				content: 'Sign in to rate comments!',
-				actions: ['Sign In', 'Cancel']
-			})) {
+			if (await Dialog.confirm(
+				<Dialog id="rate-comment" title="Rate Comment">
+					Sign in to rate comments!
+					<Action autoFocus>Sign In</Action>
+					{Action.CANCEL}
+				</Dialog>
+			)) {
 				promptSignIn();
 			}
 
@@ -102,12 +103,11 @@ const Comment = <
 		}
 
 		if (user.id === comment.author) {
-			new Dialog({
-				id: 'rate-comment',
-				title: 'Rate Comment',
-				content: 'You can\'t rate your own comments!'
-			});
-
+			Dialog.create(
+				<Dialog id="rate-comment" title="Rate Comment">
+					You can't rate your own comments!
+				</Dialog>
+			);
 			return;
 		}
 
@@ -129,12 +129,13 @@ const Comment = <
 
 	const onSubmitReply = useFunction(async (values: { content: string }) => {
 		if (!user) {
-			if (await Dialog.confirm({
-				id: 'post-comment',
-				title: 'Comment',
-				content: 'Sign in to post a reply!',
-				actions: ['Sign In', 'Cancel']
-			})) {
+			if (await Dialog.confirm(
+				<Dialog id="post-comment" title="Comment">
+					Sign in to post a reply!
+					<Action autoFocus>Sign In</Action>
+					{Action.CANCEL}
+				</Dialog>
+			)) {
 				promptSignIn();
 			}
 
@@ -197,57 +198,48 @@ const Comment = <
 					<OptionsButton
 						onClick={
 							useFunction(async () => {
-								const actions: DialogOptions['actions'] = [
-									'Cancel'
-								];
+								type Action = 'report' | 'delete' | 'edit';
+								const optionsDialog = await Dialog.create<{}, Action>(
+									<Dialog id="comment-options" title="Comment Options">
+										What will you do with this comment?
 
-								if (!(user && user.id === comment.author)) {
-									actions.unshift(
-										{ value: 'report', label: 'Report' }
-									);
-								}
+										{user && (
+											user.id === comment.author
+											|| !!(user.perms & Perm.sudoWrite)
+										) && (
+											<Action value="edit">Edit</Action>
+										)}
+										{user && (
+											user.id === comment.author
+											|| story.owner === user.id
+											|| story.editors.includes(user.id)
+											|| !!(user.perms & Perm.sudoDelete)
+										) && (
+											<Action value="delete">Delete</Action>
+										)}
+										{user?.id !== comment.author && (
+											<Action value="report">Report</Action>
+										)}
+										{Action.CANCEL}
+									</Dialog>
+								);
 
-								if (user) {
-									if (
-										user.id === comment.author
-										|| story.owner === user.id
-										|| story.editors.includes(user.id)
-										|| user.perms & Perm.sudoDelete
-									) {
-										actions.unshift(
-											{ value: 'delete', label: 'Delete' }
-										);
-									}
-
-									if (
-										user.id === comment.author
-										|| user.perms & Perm.sudoWrite
-									) {
-										actions.unshift(
-											{ value: 'edit', label: 'Edit' }
-										);
-									}
-								}
-
-								const result = await new Dialog({
-									id: 'comment-options',
-									title: 'Comment Options',
-									content: 'What will you do with this comment?',
-									actions
-								});
-
-								if (!result) {
+								if (optionsDialog.canceled) {
 									return;
 								}
 
-								if (result.value === 'edit') {
-									const dialog = new Dialog({
-										id: 'edit-comment',
-										title: 'Edit Comment',
-										initialValues: {
-											content: comment.content
-										},
-										content: (
+								if (optionsDialog.action === 'edit') {
+									const initialValues = {
+										content: comment.content
+									};
+
+									type Values = typeof initialValues;
+									const dialog = await Dialog.create<Values>(
+										<Dialog
+											id="edit-comment"
+											title="Edit Comment"
+											initialValues={initialValues}
+										>
 											<IDPrefix.Provider value="comment">
 												<Label block htmlFor="comment-field-content">
 													Content
@@ -260,31 +252,31 @@ const Comment = <
 													rows={6}
 													escapeHTML
 												/>
+												<Action>Save</Action>
+												{Action.CANCEL}
 											</IDPrefix.Provider>
-										),
-										actions: [
-											{ label: 'Save', autoFocus: false },
-											'Cancel'
-										]
-									});
+										</Dialog>
+									);
 
-									if (!(await dialog)?.submit) {
+									if (dialog.canceled) {
 										return;
 									}
 
-									const { data: newComment } = await (api.patch as CommentAPI['patch'])(apiPath, dialog.form!.values);
+									const { data: newComment } = await (api.patch as CommentAPI['patch'])(apiPath, dialog.values);
 
 									setComment(newComment);
 
 									return;
 								}
 
-								if (result.value === 'delete') {
-									if (!await Dialog.confirm({
-										id: 'edit-comment',
-										title: 'Delete Comment',
-										content: 'Are you sure you want to delete this comment?\n\nThis cannot be undone.'
-									})) {
+								if (optionsDialog.action === 'delete') {
+									if (!await Dialog.confirm(
+										<Dialog id="edit-comment" title="Delete Comment">
+											Are you sure you want to delete this comment?<br />
+											<br />
+											This cannot be undone.
+										</Dialog>
+									)) {
 										return;
 									}
 
@@ -295,7 +287,7 @@ const Comment = <
 									return;
 								}
 
-								if (result.value === 'report') {
+								if (optionsDialog.action === 'report') {
 									// TODO: Report this comment.
 								}
 							})

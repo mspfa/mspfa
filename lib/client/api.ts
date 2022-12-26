@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { APIHandler } from 'lib/server/api';
 import type { AxiosRequestConfig, AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 import type { integer, Method, MethodWithData } from 'lib/types';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import { startLoading, stopLoading } from 'components/LoadingIndicator';
 
 // @client-only {

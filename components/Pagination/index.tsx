@@ -6,7 +6,7 @@ import Link from 'components/Link';
 import type { ReactNode } from 'react';
 import React from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import LabeledGrid from 'components/LabeledGrid';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 

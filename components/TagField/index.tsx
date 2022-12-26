@@ -10,7 +10,7 @@ import { isEqual } from 'lodash';
 import storyTags, { TAG_OR_EXCLUDED_TAG } from 'lib/client/storyTags';
 import type { TagOrExcludedTagString } from 'lib/client/storyTags';
 import Label from 'components/Label';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import Link from 'components/Link';
 import type { integer } from 'lib/types';
 import classNames from 'classnames';

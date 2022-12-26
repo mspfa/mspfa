@@ -7,7 +7,7 @@ import Row from 'components/Row';
 import { StoryViewerContext } from 'components/StoryViewer';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import frameThrottler from 'lib/client/frameThrottler';
 import IDPrefix from 'lib/client/reactContexts/IDPrefix';
 import type { ClientNewsPost } from 'lib/client/news';

@@ -8,7 +8,7 @@ import type { FormikHelpers } from 'formik';
 import { Formik, Form } from 'formik';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import IDPrefix from 'lib/client/reactContexts/IDPrefix';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import { useUser } from 'lib/client/reactContexts/UserContext';

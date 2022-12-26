@@ -9,7 +9,7 @@ import { Field } from 'formik';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import deleteFromClientStoryPageRecord from 'lib/client/deleteFromClientStoryPageRecord';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import invalidPublishedOrder from 'lib/client/invalidPublishedOrder';
 import type { ClientStoryPage } from 'lib/client/stories';
 import useFunction from 'lib/client/reactHooks/useFunction';

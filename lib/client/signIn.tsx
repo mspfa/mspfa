@@ -1,14 +1,16 @@
-import Dialog from 'lib/client/Dialog';
+import type { DialogManager } from 'components/Dialog';
+import Dialog from 'components/Dialog';
 import SignIn, { signInValues, resetSignInValues, setUser } from 'components/SignIn';
 import api from 'lib/client/api';
 import type { APIClient, APIError } from 'lib/client/api';
 import type { AuthMethodOptions } from 'lib/client/auth';
 import type { integer } from 'lib/types';
+import Action from 'components/Dialog/Action';
 
 type SessionAPI = APIClient<typeof import('pages/api/session').default>;
 type UsersAPI = APIClient<typeof import('pages/api/users').default>;
 
-let signInDialog: Dialog<{}> | undefined;
+let signInDialog: DialogManager<{}> | undefined;
 /** 0 if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
 let signInPage = 0;
 
@@ -16,9 +18,9 @@ let authMethodOptions: AuthMethodOptions | undefined;
 
 /** Resolve the sign-in dialog upon completion of an external auth method. */
 export const resolveExternalSignIn = (newAuthMethodOptions: AuthMethodOptions) => {
-	if (!signInDialog!.resolved) {
+	if (!signInDialog!.closed) {
 		authMethodOptions = newAuthMethodOptions;
-		signInDialog!.resolve({ submit: true, value: authMethodOptions.type });
+		signInDialog!.submit({ action: authMethodOptions.type });
 	}
 };
 
@@ -36,41 +38,48 @@ export const setSignInPage = (
 	newSignInPage: integer
 ) => {
 	if (signInLoading) {
-		new Dialog({
-			title: 'Error',
-			content: 'Your sign-in is already loading. Please wait.'
-		});
+		Dialog.create(
+			<Dialog title="Error">
+				Your sign-in is already loading. Please wait.
+			</Dialog>
+		);
 		return;
 	}
 
 	signInPage = newSignInPage;
 
-	if (signInDialog && !signInDialog.resolved) {
+	if (signInDialog && !signInDialog.closed) {
 		// Manually resolve the previous sign-in dialog with a value other than `undefined` so that `resetForm` is not called when switching between sign-up stages.
-		signInDialog.resolve({ value: 'overwrite' }, false);
+		signInDialog.cancel({ action: 'overwrite' });
 	}
 
-	signInDialog = new Dialog({
-		id: 'sign-in',
-		index: 0, // This is necessary to prevent the sign-in dialog from covering up sign-in error dialogs.
-		title: signInPage ? 'Sign Up' : 'Sign In',
-		content: <SignIn page={signInPage} />,
-		actions: signInPage === 0
-			? [
-				{ label: 'Sign In', value: 'password', autoFocus: false },
-				{ label: 'Cancel', value: 'exit' }
-			]
-			: [
-				signInPage === 1
-					? { label: 'Continue', value: 'password', autoFocus: false }
-					: { label: 'Sign Up', autoFocus: false },
-				{ label: 'Go Back', value: 'back' }
-			]
-	});
+	signInDialog = Dialog.create(
+		<Dialog
+			id="sign-in"
+			title={signInPage ? 'Sign Up' : 'Sign In'}
+		>
+			<SignIn page={signInPage} />
+			{signInPage === 0 ? (
+				<>
+					<Action value="password">Sign In</Action>
+					<Action cancel value="exit">Cancel</Action>
+				</>
+			) : (
+				<>
+					{signInPage === 1 ? (
+						<Action value="password">Continue</Action>
+					) : (
+						<Action>Sign Up</Action>
+					)}
+					<Action cancel value="back">Go Back</Action>
+				</>
+			)}
+		</Dialog>
+	);
 	signInDialog.then(result => {
-		if (result) {
-			if (result.submit) {
-				if (result.value === 'password') {
+		if (result.action) {
+			if (!result.canceled) {
+				if (result.action === 'password') {
 					authMethodOptions = {
 						type: 'password',
 						value: signInValues.password
@@ -84,10 +93,11 @@ export const setSignInPage = (
 					// If the user submits the form while on the sign-in screen or on the last stage of sign-up, attempt sign-in or sign-up.
 
 					if (signInPage === 2 && !signInValues.captchaToken) {
-						new Dialog({
-							title: 'Error',
-							content: 'Please complete the CAPTCHA challenge.'
-						});
+						Dialog.create(
+							<Dialog title="Error">
+								Please complete the CAPTCHA challenge.
+							</Dialog>
+						);
 						setSignInPage(signInPage);
 						return;
 					}
@@ -125,19 +135,19 @@ export const setSignInPage = (
 						if (error.defaultPrevented) {
 							resetSignInValues();
 
-							new Dialog({
-								id: 'verify-email',
-								title: 'Verify Email',
-								content: 'TODO'
-							});
+							Dialog.create(
+								<Dialog id="verify-email" title="Verify Email">
+									TODO
+								</Dialog>
+							);
 						} else {
 							setSignInPage(signInPage);
 						}
 					});
 				}
-			} else if (result.value === 'exit') {
+			} else if (result.action === 'exit') {
 				resetSignInValues();
-			} else if (result.value === 'back') {
+			} else if (result.action === 'back') {
 				setSignInPage(signInPage - 1);
 			}
 		} else {

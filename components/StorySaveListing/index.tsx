@@ -5,7 +5,7 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
 import RemoveButton from 'components/Button/RemoveButton';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import { useRouter } from 'next/router';
 import type { PublicStory } from 'lib/client/stories';
 import type { StoryID, StoryPageID } from 'lib/server/stories';

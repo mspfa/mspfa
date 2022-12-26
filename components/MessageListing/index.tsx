@@ -14,7 +14,7 @@ import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
 import Button from 'components/Button';
 import RemoveButton from 'components/Button/RemoveButton';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
 import useLatest from 'lib/client/reactHooks/useLatest';
 import ReplyButton from 'components/Button/ReplyButton';

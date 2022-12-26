@@ -1,8 +1,8 @@
 import Button from 'components/Button';
-import { useFormikContext } from 'formik';
+import { Field, useFormikContext } from 'formik';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import { preventReloads } from 'lib/client/errors';
 import { preventLeaveConfirmations } from 'lib/client/forms';
 import { useUser } from 'lib/client/reactContexts/UserContext';
@@ -10,6 +10,7 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import useLatest from 'lib/client/reactHooks/useLatest';
 import type { PrivateUser } from 'lib/client/users';
 import Router from 'next/router';
+import Action from 'components/Dialog/Action';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 type UserDoesOwnStoriesAPI = APIClient<typeof import('pages/api/users/[userID]/does-own-stories').default>;
@@ -39,44 +40,48 @@ const DeleteUserButton = ({ privateUser }: DeleteUserButtonProps) => {
 					setSubmitting(false);
 
 					if (doesOwnStories) {
-						new Dialog({
-							id: 'delete-user',
-							title: 'Delete Account',
-							content: 'If you want to delete your account, first delete or transfer ownership of each of the adventures you own.'
-						});
-
+						Dialog.create(
+							<Dialog id="delete-user" title="Delete Account">
+								If you want to delete your account, first delete or transfer ownership of each of the adventures you own.
+							</Dialog>
+						);
 						return;
 					}
 
-					if (!await Dialog.confirm({
-						id: 'delete-user',
-						title: 'Delete Account',
-						content: (
-							<>
-								Are you sure you want to delete your account?<br />
-								<br />
-								Your account will be restored if you sign into it within 30 days after deletion.<br />
-								<br />
-								If you do not sign into your account within 30 days, <span className="bolder red">the deletion will be irreversible.</span><br />
-								<br />
-								<label>
-									<input
-										type="checkbox"
-										className="spaced"
-										required
-										autoFocus
-									/>
-									<span className="spaced bolder">
-										I am sure I want to delete my account: <i>{privateUser.name}</i>
-									</span>
-								</label>
-							</>
-						),
-						actions: [
-							{ label: 'Yes', autoFocus: false },
-							'No'
-						]
-					})) {
+					if (!await Dialog.confirm(
+						<Dialog
+							id="delete-user"
+							title="Delete Account"
+							initialValues={{ confirmed: false }}
+						>
+							{({ values: { confirmed } }) => (
+								<>
+									Are you sure you want to delete your account?<br />
+									<br />
+									Your account will be restored if you sign into it within 30 days after deletion.<br />
+									<br />
+									After 30 days, <span className="bolder red">the deletion is irreversible.</span><br />
+									<br />
+									<label>
+										<Field
+											type="checkbox"
+											name="confirmed"
+											className="spaced"
+											required
+											autoFocus
+										/>
+										<span className="spaced bolder">
+											I am sure I want to delete my account: <i>{privateUser.name}</i>
+										</span>
+									</label>
+									<Action disabled={!confirmed}>
+										Yes
+									</Action>
+									{Action.NO}
+								</>
+							)}
+						</Dialog>
+					)) {
 						return;
 					}
 

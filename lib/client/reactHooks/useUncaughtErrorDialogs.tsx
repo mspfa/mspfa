@@ -1,4 +1,4 @@
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import { useEffect } from 'react';
 
 /**

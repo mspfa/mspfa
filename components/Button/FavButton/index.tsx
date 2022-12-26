@@ -6,7 +6,7 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import { useUser } from 'lib/client/reactContexts/UserContext';
 import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import type { StoryID } from 'lib/server/stories';
 import type { integer } from 'lib/types';
 import promptSignIn from 'lib/client/promptSignIn';
@@ -59,6 +59,7 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 						})) {
 							promptSignIn();
 						}
+
 						return;
 					}
 

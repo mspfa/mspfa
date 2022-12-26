@@ -18,7 +18,7 @@ import LabeledGrid from 'components/LabeledGrid';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import Button from 'components/Button';
 import type { StoryPageID } from 'lib/server/stories';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import Row from 'components/Row';
 import Link from 'components/Link';
 import type { APIClient } from 'lib/client/api';

@@ -8,7 +8,7 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import { useField, useFormikContext } from 'formik';
 import type { ColorFieldProps } from 'components/ColorField';
 import EditButton from 'components/Button/EditButton';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import ColorOptions from 'components/ColorTool/ColorOptions';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
@@ -17,6 +17,7 @@ import { getChangedValues } from 'lib/client/forms';
 import Grabber from 'components/Grabber';
 import addHashToColor from 'lib/client/addHashToColor';
 import classNames from 'classnames';
+import Action from 'components/Dialog/Action';
 
 type StoryColorAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors/[colorID]').default>;
 
@@ -60,47 +61,43 @@ const Color = ({
 			onClick={
 				useFunction(async () => {
 					if (editing) {
-						// Close any existing color options dialog.
-						await Dialog.getByID('color-options')?.resolve();
+						const initialValues = {
+							group: color.group || '',
+							name: color.name,
+							value: color.value
+						};
 
-						const dialog = new Dialog({
-							id: 'color-options',
-							title: 'Edit Color',
-							initialValues: {
-								group: color.group || '',
-								name: color.name,
-								value: color.value
-							},
-							content: <ColorOptions />,
-							actions: [
-								{ label: 'Delete', value: 'delete' },
-								{ label: 'Save', submit: true, autoFocus: false },
-								'Cancel'
-							]
-						});
+						type Values = typeof initialValues;
+						type Action = 'delete';
+						const dialog = await Dialog.create<Values, Action>(
+							<Dialog
+								id="color-options"
+								title="Edit Color"
+								initialValues={initialValues}
+							>
+								<ColorOptions />
+								<Action cancel value="delete">Delete</Action>
+								<Action>Save</Action>
+								{Action.CANCEL}
+							</Dialog>
+						);
 
-						const dialogResult = await dialog;
-
-						if (dialogResult?.value === 'delete') {
-							if (!await Dialog.confirm({
-								id: 'delete-color',
-								title: 'Delete Color',
-								content: (
-									<>
-										Are you sure you want to delete this saved color?<br />
-										<br />
-										<i>
-											{color.name === color.value ? (
-												color.name
-											) : (
-												`${color.name} (${color.value})`
-											)}
-										</i><br />
-										<br />
-										This cannot be undone.
-									</>
-								)
-							})) {
+						if (dialog.action === 'delete') {
+							if (!await Dialog.confirm(
+								<Dialog id="delete-color" title="Delete Color">
+									Are you sure you want to delete this saved color?<br />
+									<br />
+									<i>
+										{color.name === color.value ? (
+											color.name
+										) : (
+											`${color.name} (${color.value})`
+										)}
+									</i><br />
+									<br />
+									This cannot be undone.
+								</Dialog>
+							)) {
 								return;
 							}
 
@@ -111,17 +108,16 @@ const Color = ({
 
 								story.colors.splice(colorIndex, 1);
 							});
-
 							return;
 						}
 
-						if (!dialogResult?.submit) {
+						if (dialog.canceled) {
 							return;
 						}
 
 						const changedValues = getChangedValues<Parameters<StoryColorAPI['patch']>[1]>(
-							dialog.form!.initialValues,
-							dialog.form!.values
+							dialog.initialValues,
+							dialog.values
 						);
 
 						if (!changedValues) {

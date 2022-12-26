@@ -23,7 +23,7 @@ import BottomActions from 'components/BottomActions';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import Router from 'next/router';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
 import { Form, Formik } from 'formik';

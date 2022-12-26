@@ -3,7 +3,7 @@ import BirthdateField from 'components/DateField/BirthdateField';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import Timestamp from 'components/Timestamp';
 import { useField } from 'formik';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import type { ServerUser } from 'lib/server/users';
 import type { DateNumber } from 'lib/types';

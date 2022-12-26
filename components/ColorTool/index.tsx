@@ -4,7 +4,7 @@ import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import SaveButton from 'components/Button/SaveButton';
 import LabeledGrid from 'components/LabeledGrid';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import useAutoSelect from 'lib/client/reactHooks/useAutoSelect';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
@@ -14,6 +14,7 @@ import ColorField from 'components/ColorField';
 import Row from 'components/Row';
 import SavedColors from 'components/ColorTool/SavedColors';
 import ColorOptions from 'components/ColorTool/ColorOptions';
+import Action from 'components/Dialog/Action';
 
 type StoryColorsAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors').default>;
 
@@ -26,34 +27,35 @@ const ColorTool = ({ name }: ColorToolProps) => {
 	const [story, updateStory] = useContext(PrivateStoryContext) || [];
 
 	const saveColor = useFunction(async () => {
-		// Close any existing color options dialog.
-		await Dialog.getByID('color-options')?.resolve();
+		const initialValues = {
+			group: '',
+			name: value,
+			value
+		};
 
-		const dialog = new Dialog({
-			id: 'color-options',
-			title: 'Save Color',
-			initialValues: {
-				group: '',
-				name: value,
-				value
-			},
-			content: <ColorOptions />,
-			actions: [
-				{ label: 'Save!', autoFocus: false },
-				'Cancel'
-			]
-		});
+		type Values = typeof initialValues;
+		const dialog = await Dialog.create<Values>(
+			<Dialog
+				id="color-options"
+				title="Save Color"
+				initialValues={initialValues}
+			>
+				<ColorOptions />
+				<Action>Save!</Action>
+				{Action.CANCEL}
+			</Dialog>
+		);
 
-		if (!(await dialog)?.submit) {
+		if (dialog.canceled) {
 			return;
 		}
 
 		const { data: color } = await (api as StoryColorsAPI).post(`/stories/${story!.id}/colors`, {
-			...dialog.form!.values.group && {
-				group: dialog.form!.values.group
+			...dialog.values.group && {
+				group: dialog.values.group
 			},
-			name: dialog.form!.values.name,
-			value: dialog.form!.values.value
+			name: dialog.values.name,
+			value: dialog.values.value
 		});
 
 		updateStory!(story => {

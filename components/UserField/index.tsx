@@ -16,7 +16,7 @@ import { useUserCache } from 'lib/client/reactContexts/UserCache';
 import RemoveButton from 'components/Button/RemoveButton';
 import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
 import useLatest from 'lib/client/reactHooks/useLatest';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import useThrottled from 'lib/client/reactHooks/useThrottled';
 import useMountedRef from 'lib/client/reactHooks/useMountedRef';
 import UserLink from 'components/Link/UserLink';

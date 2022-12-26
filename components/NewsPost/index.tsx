@@ -10,7 +10,7 @@ import { useUser } from 'lib/client/reactContexts/UserContext';
 import type { PublicStory } from 'lib/client/stories';
 import { Perm } from 'lib/client/perms';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import IDPrefix from 'lib/client/reactContexts/IDPrefix';

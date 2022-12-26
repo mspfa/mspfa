@@ -11,7 +11,7 @@ import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayout
 import useLatest from 'lib/client/reactHooks/useLatest';
 import Stick from 'components/Stick';
 import Delimit from 'components/Delimit';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import { useUser } from 'lib/client/reactContexts/UserContext';
 import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
 import type { APIClient, APIConfig } from 'lib/client/api';
@@ -27,6 +27,7 @@ import defaultUserSettings from 'lib/client/defaultUserSettings';
 import parseBBCode from 'lib/client/parseBBCode';
 import type { ParsedReactNode } from 'lib/client/parseBBCode/BBStringParser';
 import BBTags from 'components/BBCode/BBTags';
+import Action from 'components/Dialog/Action';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 type UserStorySaveAPI = APIClient<typeof import('pages/api/users/[userID]/story-saves/[storyID]').default>;
@@ -52,11 +53,13 @@ export const goToPage = (pageID: StoryPageID) => {
 };
 
 const saveGameHelp = () => {
-	new Dialog({
-		id: 'help',
-		title: 'Help: Save Game',
-		content: 'If you\'re signed in, you can save your spot in the story. Click "Save Game", then when you return to the site, click "Load Game" to return to where you were.\n\nYour saves are stored on your MSPFA account, so you can even save and load between different devices!'
-	});
+	Dialog.create(
+		<Dialog id="help" title="Help: Save Game">
+			If you're signed in, you can save your spot in the story. Click "Save Game", then when you return to the site, click "Load Game" to return to where you were.<br />
+			<br />
+			Your saves are stored on your MSPFA account, so you can even save and load between different devices!
+		</Dialog>
+	);
 };
 
 /**
@@ -534,21 +537,22 @@ const StoryViewer = (props: StoryViewerProps) => {
 								onClick={
 									useFunction(async () => {
 										if (!page) {
-											new Dialog({
-												id: 'story-saves',
-												title: 'Save Game',
-												content: 'The page you\'re on does not exist and can\'t be saved.'
-											});
+											Dialog.create(
+												<Dialog id="story-saves" title="Save Game">
+													The page you're on does not exist and can't be saved.
+												</Dialog>
+											);
 											return;
 										}
 
 										if (!user) {
-											if (await Dialog.confirm({
-												id: 'story-saves',
-												title: 'Save Game',
-												content: 'Sign into the account you want to save to!',
-												actions: ['Sign In', 'Cancel']
-											})) {
+											if (await Dialog.confirm(
+												<Dialog id="story-saves" title="Save Game">
+													Sign into the account you want to save to!
+													<Action autoFocus>Sign In</Action>
+													{Action.CANCEL}
+												</Dialog>
+											)) {
 												promptSignIn();
 											}
 
@@ -571,12 +575,13 @@ const StoryViewer = (props: StoryViewerProps) => {
 								onClick={
 									useFunction(async () => {
 										if (!user) {
-											if (await Dialog.confirm({
-												id: 'story-saves',
-												title: 'Load Game',
-												content: 'Sign in to load your save!',
-												actions: ['Sign In', 'Cancel']
-											})) {
+											if (await Dialog.confirm(
+												<Dialog id="story-saves" title="Load Game">
+													Sign in to load your save!
+													<Action autoFocus>Sign In</Action>
+													{Action.CANCEL}
+												</Dialog>
+											)) {
 												promptSignIn();
 											}
 
@@ -585,15 +590,17 @@ const StoryViewer = (props: StoryViewerProps) => {
 
 										const { data: savedPageID } = await (api as UserStorySaveAPI).get(`/users/${user.id}/story-saves/${story.id}`, {
 											beforeInterceptError: error => {
-												if (error.response?.status === 404) {
-													error.preventDefault();
-
-													new Dialog({
-														id: 'story-saves',
-														title: 'Load Game',
-														content: 'You have no save for this adventure!'
-													});
+												if (error.response?.status !== 404) {
+													return;
 												}
+
+												error.preventDefault();
+
+												Dialog.create(
+													<Dialog id="story-saves" title="Load Game">
+														You have no save for this adventure!
+													</Dialog>
+												);
 											}
 										});
 
@@ -609,12 +616,13 @@ const StoryViewer = (props: StoryViewerProps) => {
 								onClick={
 									useFunction(async () => {
 										if (!user) {
-											if (await Dialog.confirm({
-												id: 'story-saves',
-												title: 'Delete Game Data',
-												content: 'Sign in to delete your save!',
-												actions: ['Sign In', 'Cancel']
-											})) {
+											if (await Dialog.confirm(
+												<Dialog id="story-saves" title="Delete Game Data">
+													Sign in to delete your save!
+													<Action autoFocus>Sign In</Action>
+													{Action.CANCEL}
+												</Dialog>
+											)) {
 												promptSignIn();
 											}
 
@@ -623,25 +631,27 @@ const StoryViewer = (props: StoryViewerProps) => {
 
 										const deleteUserStorySaveAPIConfig: APIConfig = {
 											beforeInterceptError: error => {
-												if (error.response?.status === 404) {
-													error.preventDefault();
-
-													new Dialog({
-														id: 'story-saves',
-														title: 'Delete Game Data',
-														content: 'You have no save for this adventure!'
-													});
+												if (error.response?.status !== 404) {
+													return;
 												}
+
+												error.preventDefault();
+
+												Dialog.create(
+													<Dialog id="story-saves" title="Delete Game Data">
+														You have no save for this adventure!
+													</Dialog>
+												);
 											}
 										};
 
 										await (api as UserStorySaveAPI).get(`/users/${user.id}/story-saves/${story.id}`, deleteUserStorySaveAPIConfig);
 
-										if (!await Dialog.confirm({
-											id: 'story-saves',
-											title: 'Delete Game Data',
-											content: 'Are you sure you want to delete your save for this adventure?'
-										})) {
+										if (!await Dialog.confirm(
+											<Dialog id="story-saves" title="Delete Game Data">
+												Are you sure you want to delete your save for this adventure?
+											</Dialog>
+										)) {
 											return;
 										}
 

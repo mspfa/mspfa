@@ -38,7 +38,7 @@ import api from 'lib/client/api';
 import DateField from 'components/DateField';
 import Timestamp from 'components/Timestamp';
 import EditButton from 'components/Button/EditButton';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import type { integer } from 'lib/types';
 import StoryIDContext from 'lib/client/reactContexts/StoryIDContext';
 import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';

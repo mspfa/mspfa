@@ -1,5 +1,5 @@
 import ColorGroupOptions from 'components/ColorTool/ColorGroupOptions';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import type { PrivateStory } from 'lib/client/stories';
@@ -17,9 +17,6 @@ const promptCreateColorGroup = (
 	story: PrivateStory,
 	updateStory: Updater<PrivateStory>
 ) => new Promise<ClientColorGroup>(async resolve => {
-	// Close any existing color options dialog.
-	await Dialog.getByID('color-group-options')?.resolve();
-
 	const dialog = new Dialog({
 		id: 'color-group-options',
 		title: 'Create Color Group',

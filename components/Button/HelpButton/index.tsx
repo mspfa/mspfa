@@ -3,7 +3,7 @@ import Button from 'components/Button';
 import type { ButtonProps } from 'components/Button';
 import type { ReactNode } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import classNames from 'classnames';
 
 export type HelpButtonProps = Omit<ButtonProps, 'children' | 'onClick' | 'title'> & {
@@ -18,11 +18,14 @@ const HelpButton = ({ className, subject, children, ...props }: HelpButtonProps)
 		title="Help"
 		onClick={
 			useFunction(() => {
-				new Dialog({
-					id: 'help',
-					title: <>Help: {subject}</>,
-					content: children
-				});
+				Dialog.create(
+					<Dialog
+						id="help"
+						title={<>Help: {subject}</>}
+					>
+						{children}
+					</Dialog>
+				);
 			})
 		}
 		{...props}

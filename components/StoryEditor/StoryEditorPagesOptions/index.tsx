@@ -3,7 +3,7 @@ import Section from 'components/Section';
 import Button from 'components/Button';
 import Label from 'components/Label';
 import Row from 'components/Row';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import replaceAll from 'lib/client/replaceAll';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import { escapeRegExp } from 'lodash';

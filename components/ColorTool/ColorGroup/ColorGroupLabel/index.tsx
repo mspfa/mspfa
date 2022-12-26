@@ -3,7 +3,7 @@ import EditButton from 'components/Button/EditButton';
 import Label from 'components/Label';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import type { APIClient } from 'lib/client/api';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import api from 'lib/client/api';
 import type { DragEvent } from 'react';
 import { useContext } from 'react';
@@ -11,6 +11,7 @@ import PrivateStoryContext from 'lib/client/reactContexts/PrivateStoryContext';
 import ColorGroupOptions from 'components/ColorTool/ColorGroupOptions';
 import { getChangedValues } from 'lib/client/forms';
 import Grabber from 'components/Grabber';
+import Action from 'components/Dialog/Action';
 
 type StoryColorGroupAPI = APIClient<typeof import('pages/api/stories/[storyID]/color-groups/[colorGroupID]').default>;
 
@@ -50,39 +51,31 @@ const ColorGroupLabel = ({ children: colorGroup }: ColorGroupLabelProps) => {
 					title="Edit Color Group"
 					onClick={
 						useFunction(async () => {
-							// Close any existing color group options dialog.
-							await Dialog.getByID('color-group-options')?.resolve();
+							const initialValues = {
+								name: colorGroup.name
+							};
 
-							const dialog = new Dialog({
-								id: 'color-group-options',
-								title: 'Edit Color Group',
-								initialValues: {
-									name: colorGroup.name
-								},
-								content: <ColorGroupOptions />,
-								actions: [
-									{ label: 'Delete', value: 'delete' },
-									{ label: 'Save', submit: true, autoFocus: false },
-									'Cancel'
-								]
-							});
+							type Values = typeof initialValues;
+							type Action = 'delete';
+							const dialog = await Dialog.create<Values, Action>(
+								<Dialog id="color-group-options" title="Edit Color Group">
+									<ColorGroupOptions />
+									<Action cancel value="delete">Delete</Action>
+									<Action>Save</Action>
+									{Action.CANCEL}
+								</Dialog>
+							);
 
-							const dialogResult = await dialog;
-
-							if (dialogResult?.value === 'delete') {
-								if (!await Dialog.confirm({
-									id: 'delete-color-group',
-									title: 'Delete Color Group',
-									content: (
-										<>
-											Are you sure you want to delete this color group?<br />
-											<br />
-											<i>{colorGroup.name}</i><br />
-											<br />
-											All colors in the group will remain without a group. This cannot be undone.
-										</>
-									)
-								})) {
+							if (dialog.action === 'delete') {
+								if (!await Dialog.confirm(
+									<Dialog id="delete-color-group" title="Delete Color Group">
+										Are you sure you want to delete this color group?<br />
+										<br />
+										<i>{colorGroup.name}</i><br />
+										<br />
+										All colors in the group will remain without a group. This cannot be undone.
+									</Dialog>
+								)) {
 									return;
 								}
 
@@ -103,17 +96,20 @@ const ColorGroupLabel = ({ children: colorGroup }: ColorGroupLabelProps) => {
 								return;
 							}
 
-							if (!dialogResult?.submit) {
+							if (dialog.canceled) {
 								return;
 							}
 
-							const changedValues = getChangedValues(dialog.form!.initialValues, dialog.form!.values);
+							const changedValues = getChangedValues(dialog.initialValues, dialog.values);
 
 							if (!changedValues) {
 								return;
 							}
 
-							const { data: newColorGroup } = await (api as StoryColorGroupAPI).patch(`/stories/${story.id}/color-groups/${colorGroup.id}`, changedValues);
+							const { data: newColorGroup } = await (api as StoryColorGroupAPI).patch(
+								`/stories/${story.id}/color-groups/${colorGroup.id}`,
+								changedValues
+							);
 
 							updateStory(story => {
 								const colorGroupIndex = story.colorGroups.findIndex(({ id }) => id === colorGroup.id);

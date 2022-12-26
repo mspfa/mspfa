@@ -569,7 +569,7 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 		if (options.dialogContent) {
 			setDialogCount(dialogCount => dialogCount + 1);
 
-			const dialogResult = await Dialog.create<BBToolDialogValues, never>(
+			const dialog = await Dialog.create<BBToolDialogValues, never>(
 				<Dialog<BBToolDialogValues, never>
 					id="bb-tool"
 					title={options.title}
@@ -594,7 +594,7 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 
 			setDialogCount(dialogCount => dialogCount - 1);
 
-			if (dialogResult.canceled) {
+			if (dialog.canceled) {
 				return;
 			}
 
@@ -611,10 +611,10 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 			selectedText = getSelectedText();
 
 			tagCodeOptions = {
-				...dialogResult.values,
+				...dialog.values,
 				// Overwrite the selected text from when the dialog opened.
 				children: selectedText,
-				...options.getTagCodeOptions?.(dialogResult)
+				...options.getTagCodeOptions?.(dialog)
 			};
 		}
 

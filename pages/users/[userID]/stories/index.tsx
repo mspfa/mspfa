@@ -9,7 +9,7 @@ import BottomActions from 'components/BottomActions';
 import Button from 'components/Button';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import LabeledGrid from 'components/LabeledGrid';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
 import randomStoryNames from 'lib/client/randomStoryNames.json';

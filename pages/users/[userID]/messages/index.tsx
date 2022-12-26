@@ -19,7 +19,7 @@ import MessageListing from 'components/MessageListing';
 import { useEffect, useRef } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import Button from 'components/Button';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import RandomArtwork from 'components/RandomArtwork';
 import type { integer } from 'lib/types';
 import useSticky from 'lib/client/reactHooks/useSticky';

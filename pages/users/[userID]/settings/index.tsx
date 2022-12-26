@@ -22,7 +22,7 @@ import Button from 'components/Button';
 import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
 import { isEqual, mergeWith } from 'lodash';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import Label from 'components/Label';
 import Row from 'components/Row';
 import AuthMethods from 'components/AuthMethod/AuthMethods';

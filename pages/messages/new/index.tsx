@@ -13,7 +13,7 @@ import api from 'lib/client/api';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
 import Section from 'components/Section';
-import Dialog from 'lib/client/Dialog';
+import Dialog from 'components/Dialog';
 import users, { getPublicUser } from 'lib/server/users';
 import UserArrayField from 'components/UserField/UserArrayField';
 import { useUserCache } from 'lib/client/reactContexts/UserCache';
