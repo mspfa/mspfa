@@ -1,5 +1,5 @@
 import Page from 'components/Page';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import { permToGetUserInPage } from 'lib/server/users/permToGetUser';
 import { withErrorPage } from 'lib/client/errors';
 import withStatusCode from 'lib/server/withStatusCode';
@@ -103,7 +103,7 @@ const Component = withErrorPage<ServerSideProps>(({ stories }) => (
 export default Component;
 
 export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, params }) => {
-	const { user, statusCode } = await permToGetUserInPage(req, params.userID, Perm.sudoRead);
+	const { user, statusCode } = await permToGetUserInPage(req, params.userID, Perm.READ);
 
 	if (statusCode) {
 		return { props: { statusCode } };

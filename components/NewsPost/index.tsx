@@ -8,7 +8,7 @@ import EditButton from 'components/Button/EditButton';
 import RemoveButton from 'components/Button/RemoveButton';
 import { useUser } from 'lib/client/reactContexts/UserContext';
 import type { PublicStory } from 'lib/client/stories';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import Dialog from 'components/Dialog';
 import type { APIClient } from 'lib/client/api';
@@ -106,19 +106,13 @@ const NewsPost = React.memo(({
 			)}
 		>
 			<div className="news-post-actions">
-				{(userIsEditor || (
-					user
-					&& !!(user.perms & Perm.sudoWrite)
-				)) && (
+				{(userIsEditor || hasPerms(user, Perm.WRITE)) && (
 					<EditButton
 						title="Edit News Post"
 						onClick={promptEdit}
 					/>
 				)}
-				{(userIsEditor || (
-					user
-					&& !!(user.perms & Perm.sudoDelete)
-				)) && (
+				{(userIsEditor || hasPerms(user, Perm.DELETE)) && (
 					<RemoveButton
 						title="Delete News Post"
 						onClick={promptDelete}

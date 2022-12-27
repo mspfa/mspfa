@@ -3,7 +3,7 @@ import Page from 'components/Page';
 import { withErrorPage } from 'lib/client/errors';
 import withStatusCode from 'lib/server/withStatusCode';
 import Section from 'components/Section';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import messages, { getClientMessage } from 'lib/server/messages';
 import updateUnreadMessages from 'lib/server/messages/updateUnreadMessages';
 import getMessageByUnsafeID from 'lib/server/messages/getMessageByUnsafeID';
@@ -219,7 +219,7 @@ const Component = withErrorPage<ServerSideProps>(({
 										</Button>
 										{(
 											message.from === user.id
-											|| !!(user.perms & Perm.sudoWrite)
+											|| hasPerms(user, Perm.WRITE)
 										) && (
 											<Button onClick={edit}>
 												Edit
@@ -247,7 +247,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 	if (!(
 		message && req.user && (
 			message.notDeletedBy.some(userID => userID.equals(req.user!._id))
-			|| req.user.perms & Perm.sudoRead
+			|| req.hasPerms(user, Perm.READ)
 		)
 	)) {
 		return { props: { statusCode: 403 } };
@@ -281,7 +281,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 			message: getClientMessage(message, req.user),
 			...replyTo && (
 				replyTo.notDeletedBy.some(userID => userID.equals(req.user!._id))
-				|| req.user.perms & Perm.sudoRead
+				|| req.hasPerms(user, Perm.READ)
 			) && {
 				replyTo: getClientMessage(replyTo, req.user)
 			},

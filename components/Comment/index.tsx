@@ -11,7 +11,7 @@ import api from 'lib/client/api';
 import Link from 'components/Link';
 import { useLeaveConfirmation } from 'lib/client/forms';
 import IDPrefix from 'lib/client/reactContexts/IDPrefix';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import BBCode from 'components/BBCode';
 import BBField from 'components/BBCode/BBField';
 import Button from 'components/Button';
@@ -205,7 +205,7 @@ const Comment = <
 
 										{user && (
 											user.id === comment.author
-											|| !!(user.perms & Perm.sudoWrite)
+											|| hasPerms(user, Perm.WRITE)
 										) && (
 											<Action value="edit">Edit</Action>
 										)}
@@ -213,7 +213,7 @@ const Comment = <
 											user.id === comment.author
 											|| story.owner === user.id
 											|| story.editors.includes(user.id)
-											|| !!(user.perms & Perm.sudoDelete)
+											|| hasPerms(user, Perm.DELETE)
 										) && (
 											<Action value="delete">Delete</Action>
 										)}

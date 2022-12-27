@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import Page from 'components/Page';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import { withErrorPage } from 'lib/client/errors';
 import withStatusCode from 'lib/server/withStatusCode';
 import { Field, Form, Formik } from 'formik';
@@ -94,7 +94,7 @@ const Component = withErrorPage<ServerSideProps>(({
 
 	const ownerPerms = (
 		user.id === story.owner
-		|| !!(user.perms & Perm.sudoWrite)
+		|| hasPerms(user, Perm.WRITE)
 	);
 
 	const [editingAnniversary, setEditingAnniversary] = useState(false);
@@ -529,7 +529,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 				// Only owners can access their deleted stories.
 				&& !story.willDelete
 			)
-			|| req.user.perms & Perm.sudoRead
+			|| req.hasPerms(user, Perm.READ)
 		)
 	)) {
 		return { props: { statusCode: 403 } };

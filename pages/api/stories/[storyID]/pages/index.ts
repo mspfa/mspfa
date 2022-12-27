@@ -10,7 +10,7 @@ import type { ClientStoryPage, ClientStoryPageRecord } from 'lib/client/stories'
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 import invalidPublishedOrder from 'lib/client/invalidPublishedOrder';
 import type { DateNumber, integer, Mutable, RecursivePartial } from 'lib/types';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import flatten from 'lib/server/db/flatten';
 import { mergeWith } from 'lodash';
 import overwriteArrays from 'lib/client/overwriteArrays';
@@ -97,7 +97,7 @@ const Handler: APIHandler<{
 				user && (
 					story.owner.equals(user._id)
 					|| story.editors.some(userID => userID.equals(user._id))
-					|| user.perms & Perm.sudoRead
+					|| hasPerms(user, Perm.READ)
 				)
 			)) {
 				res.status(403).send({
@@ -134,7 +134,7 @@ const Handler: APIHandler<{
 		user && (
 			story.owner.equals(user._id)
 			|| story.editors.some(userID => userID.equals(user._id))
-			|| user.perms & Perm.sudoWrite
+			|| hasPerms(user, Perm.WRITE)
 		)
 	)) {
 		res.status(403).send({

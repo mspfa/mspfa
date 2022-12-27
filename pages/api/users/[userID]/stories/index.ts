@@ -5,7 +5,7 @@ import getUserByUnsafeID from 'lib/server/users/getUserByUnsafeID';
 import stories, { getPublicStory } from 'lib/server/stories';
 import getPublicStoriesByEditor from 'lib/server/stories/getPublicStoriesByEditor';
 import authenticate from 'lib/server/auth/authenticate';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 
 const Handler: APIHandler<{
 	query: {
@@ -23,7 +23,7 @@ const Handler: APIHandler<{
 
 	if (user && (
 		user._id.equals(editor._id)
-		|| user.perms & Perm.sudoRead
+		|| hasPerms(user, Perm.READ)
 	)) {
 		res.send(
 			await stories.find!({

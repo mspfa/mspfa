@@ -1,7 +1,7 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
 import type { RecursivePartial } from 'lib/types';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import type { ServerUserID } from 'lib/server/users';
 import users from 'lib/server/users';
 import flatten from 'lib/server/db/flatten';
@@ -59,7 +59,7 @@ const Handler: APIHandler<{
 						// Only owners can access their deleted stories.
 						&& !story.willDelete
 					)
-					|| user.perms & Perm.sudoRead
+					|| hasPerms(user, Perm.READ)
 				)
 			)) {
 				res.status(403).send({
@@ -80,7 +80,7 @@ const Handler: APIHandler<{
 	const ownerPerms = !!(
 		user && (
 			story.owner.equals(user._id)
-			|| user.perms & Perm.sudoWrite
+			|| hasPerms(user, Perm.WRITE)
 		)
 	);
 
@@ -108,7 +108,7 @@ const Handler: APIHandler<{
 		) || (
 			'willDelete' in storyChanges && !(
 				story.owner.equals(user._id)
-				|| user.perms & Perm.sudoDelete
+				|| hasPerms(user, Perm.DELETE)
 			)
 		)) {
 			res.status(403).send({

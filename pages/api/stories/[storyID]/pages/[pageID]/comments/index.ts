@@ -7,7 +7,7 @@ import stories from 'lib/server/stories';
 import getStoryByUnsafeID from 'lib/server/stories/getStoryByUnsafeID';
 import authenticate from 'lib/server/auth/authenticate';
 import type { ClientComment } from 'lib/client/comments';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import { ObjectId } from 'mongodb';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 
@@ -38,7 +38,7 @@ const Handler: APIHandler<{
 	if (story.privacy === StoryPrivacy.Private && !(
 		story.owner.equals(user._id)
 		|| story.editors.some(userID => userID.equals(user._id))
-		|| user.perms & Perm.sudoWrite
+		|| hasPerms(user, Perm.WRITE)
 	)) {
 		res.status(403).send({
 			message: 'You do not have permission to access the specified adventure.'

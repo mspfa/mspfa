@@ -12,7 +12,7 @@ import Row from 'components/Row';
 import List from 'components/List';
 import type { ListedStory } from 'components/StoryListing';
 import StoryListing from 'components/StoryListing';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import type { integer } from 'lib/types';
 import Button from 'components/Button';
 import getRandomImageFilename from 'lib/server/getRandomImageFilename';
@@ -87,7 +87,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 	const canSudoReadUserFromParams = !!(
 		req.user && (
 			req.user._id.equals(userFromParams._id)
-			|| req.user.perms & Perm.sudoRead
+			|| req.hasPerms(user, Perm.READ)
 		)
 	);
 

@@ -10,7 +10,7 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import React, { Fragment, useContext, useState } from 'react';
 import { PageIDContext, StoryViewerContext } from 'components/StoryViewer';
 import { useUser } from 'lib/client/reactContexts/UserContext';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import UserLink from 'components/Link/UserLink';
 import { uniq } from 'lodash';
 import StoryNews from 'components/StoryViewer/Basement/BasementContent/StoryNews';
@@ -41,7 +41,7 @@ const BasementContent = React.memo(() => {
 		user && (
 			story.owner === user.id
 			|| story.editors.includes(user.id)
-			|| !!(user.perms & Perm.sudoWrite)
+			|| hasPerms(user, Perm.WRITE)
 		)
 	);
 

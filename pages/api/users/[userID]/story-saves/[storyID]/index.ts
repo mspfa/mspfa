@@ -1,6 +1,6 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import { permToGetUserInAPI } from 'lib/server/users/permToGetUser';
 import users from 'lib/server/users';
 import type { StoryPageID } from 'lib/server/stories';
@@ -31,10 +31,10 @@ const Handler: APIHandler<{
 		req,
 		res,
 		req.method === 'PUT'
-			? Perm.sudoWrite
+			? Perm.WRITE
 			: req.method === 'DELETE'
-				? Perm.sudoDelete
-				: Perm.sudoRead
+				? Perm.DELETE
+				: Perm.READ
 	);
 
 	const story = await getStoryByUnsafeID(req.query.storyID, res);

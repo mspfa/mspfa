@@ -6,7 +6,7 @@ import stories from 'lib/server/stories';
 import getStoryByUnsafeID from 'lib/server/stories/getStoryByUnsafeID';
 import authenticate from 'lib/server/auth/authenticate';
 import type { ClientNewsPost } from 'lib/client/news';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import { ObjectId } from 'mongodb';
 import type { integer } from 'lib/types';
 import type { PublicUser } from 'lib/client/users';
@@ -54,7 +54,7 @@ const Handler: APIHandler<{
 				user && (
 					story.owner.equals(user._id)
 					|| story.editors.some(userID => userID.equals(user._id))
-					|| user.perms & Perm.sudoRead
+					|| hasPerms(user, Perm.READ)
 				)
 			)) {
 				res.status(403).send({
@@ -114,7 +114,7 @@ const Handler: APIHandler<{
 		user && (
 			story.owner.equals(user._id)
 			|| story.editors.some(userID => userID.equals(user._id))
-			|| user.perms & Perm.sudoWrite
+			|| hasPerms(user, Perm.WRITE)
 		)
 	)) {
 		res.status(403).send({

@@ -23,7 +23,7 @@ import type { ClientMessage } from 'lib/client/messages';
 import { withErrorPage } from 'lib/client/errors';
 import { getClientMessage } from 'lib/server/messages';
 import getMessageByUnsafeID from 'lib/server/messages/getMessageByUnsafeID';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import withStatusCode from 'lib/server/withStatusCode';
 import Link from 'components/Link';
 import parseID from 'lib/server/db/parseID';
@@ -199,7 +199,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		if (!(
 			message && req.user && (
 				message.notDeletedBy.some(userID => userID.equals(req.user!._id))
-				|| req.user.perms & Perm.sudoRead
+				|| req.hasPerms(user, Perm.READ)
 			)
 		)) {
 			return { props: { statusCode: 403 } };

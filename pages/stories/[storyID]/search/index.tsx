@@ -1,6 +1,6 @@
 import './styles.module.scss';
 import { withErrorPage } from 'lib/client/errors';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import type { ClientStoryPage, PublicStory } from 'lib/client/stories';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 import withStatusCode from 'lib/server/withStatusCode';
@@ -213,7 +213,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		req.user && (
 			story.owner.equals(req.user._id)
 			|| story.editors.some(userID => userID.equals(req.user!._id))
-			|| req.user.perms & Perm.sudoRead
+			|| req.hasPerms(user, Perm.READ)
 		)
 	)) {
 		return { props: { statusCode: 403 } };

@@ -3,7 +3,7 @@ import type { APIHandler } from 'lib/server/api';
 import messages from 'lib/server/messages';
 import updateUnreadMessages from 'lib/server/messages/updateUnreadMessages';
 import getMessageByUnsafeID from 'lib/server/messages/getMessageByUnsafeID';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import { permToGetUserInAPI } from 'lib/server/users/permToGetUser';
 
 const Handler: APIHandler<{
@@ -17,7 +17,7 @@ const Handler: APIHandler<{
 }> = async (req, res) => {
 	await validate(req, res);
 
-	const user = await permToGetUserInAPI(req, res, Perm.sudoWrite);
+	const user = await permToGetUserInAPI(req, res, Perm.WRITE);
 
 	const message = await getMessageByUnsafeID(req.query.messageID, res);
 

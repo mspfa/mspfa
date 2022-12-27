@@ -7,7 +7,7 @@ import stories from 'lib/server/stories';
 import getStoryByUnsafeID from 'lib/server/stories/getStoryByUnsafeID';
 import authenticate from 'lib/server/auth/authenticate';
 import type { ClientCommentReply } from 'lib/client/comments';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import { ObjectId } from 'mongodb';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 import type { integer } from 'lib/types';
@@ -56,7 +56,7 @@ const Handler: APIHandler<{
 		user && (
 			story.owner.equals(user._id)
 			|| story.editors.some(userID => userID.equals(user._id))
-			|| user.perms & Perm.sudoRead
+			|| hasPerms(user, Perm.READ)
 		)
 	)) {
 		res.status(403).send({

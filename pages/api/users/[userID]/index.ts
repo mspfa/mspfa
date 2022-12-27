@@ -3,7 +3,7 @@ import type { APIHandler } from 'lib/server/api';
 import validateBirthdate from 'lib/server/validateBirthdate';
 import type { PrivateUser, PublicUser } from 'lib/client/users';
 import type { RecursivePartial } from 'lib/types';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import { permToGetUserInAPI } from 'lib/server/users/permToGetUser';
 import users, { getPrivateUser, getPublicUser } from 'lib/server/users';
 import getUserByUnsafeID from 'lib/server/users/getUserByUnsafeID';
@@ -48,7 +48,7 @@ const Handler: APIHandler<{
 	}
 
 	if (req.method === 'PATCH') {
-		const user = await permToGetUserInAPI(req, res, Perm.sudoWrite);
+		const user = await permToGetUserInAPI(req, res, Perm.WRITE);
 
 		if (Object.values(req.body).length) {
 			const userChanges: RecursivePartial<ServerUser> = req.body as Omit<typeof req.body, 'birthdate'>;
@@ -98,7 +98,7 @@ const Handler: APIHandler<{
 
 	// If this point is reached, `req.method === 'DELETE'`.
 
-	const user = await permToGetUserInAPI(req, res, Perm.sudoDelete);
+	const user = await permToGetUserInAPI(req, res, Perm.DELETE);
 
 	if (await stories.findOne({
 		owner: user._id,

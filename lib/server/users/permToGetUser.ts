@@ -11,11 +11,7 @@ type PermToGetUserRequiredParams = [
 	user: ServerUser | undefined,
 	/** The potentially unsafe user ID of the user to get. */
 	id: string | undefined,
-	/**
-	 * The perm or bitwise OR of perms to require.
-	 *
-	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
-	 */
+	/** The `Perm` or bitwise OR of `Perm`s to require. */
 	perms: integer
 ];
 
@@ -76,7 +72,7 @@ const permToGetUser = <Res extends APIResponse<any> | undefined>(
 		return;
 	}
 
-	if (!(user.perms & perms)) {
+	if (!hasPerms(user, perms)) {
 		// The user does not have one of the `perms`.
 
 		if (res) {
@@ -121,21 +117,17 @@ const permToGetUser = <Res extends APIResponse<any> | undefined>(
  *
  * Returns the other user if successful.
  *
- * Example:
+ * Examples:
  * ```
- * const user = await permToGetUserInAPI(req, res, Perm.sudoWrite);
- * const user = await permToGetUserInAPI(req, res, Perm.sudoWrite | Perm.sudoDelete);
- * const user = await permToGetUserInAPI(req, res, Perm.sudoWrite, req.body.user);
+ * const user = await permToGetUserInAPI(req, res, Perm.READ);
+ * const user = await permToGetUserInAPI(req, res, Perm.READ | Perm.WRITE);
+ * const user = await permToGetUserInAPI(req, res, Perm.DELETE, req.body.user);
  * ```
  */
 export const permToGetUserInAPI = async <UserID extends string | undefined = undefined>(
 	req: APIRequest<{ query: { userID: UserID } } | {}>,
 	res: APIResponse,
-	/**
-	 * The perm or bitwise OR of perms to require.
-	 *
-	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
-	 */
+	/** The `Perm` or bitwise OR of `Perm`s to require. */
 	perms: integer,
 	...[
 		userID = (req.query as any).userID
@@ -158,20 +150,16 @@ export const permToGetUserInAPI = async <UserID extends string | undefined = und
  *
  * Returns an object of the other user if successful, or an object of the HTTP error status code if not.
  *
- * Example:
+ * Examples:
  * ```
- * const { user, statusCode } = await permToGetUserInPage(req, params.userID, Perm.sudoRead);
- * const { user, statusCode } = await permToGetUserInPage(req, params.userID, Perm.sudoWrite | Perm.sudoDelete);
+ * const { user, statusCode } = await permToGetUserInPage(req, params.userID, Perm.READ);
+ * const { user, statusCode } = await permToGetUserInPage(req, params.userID, Perm.READ | Perm.WRITE);
  * ```
  */
 export const permToGetUserInPage = async (
 	req: PageRequest,
 	/** The potentially unsafe user ID of the user to get. */
 	id: string | undefined,
-	/**
-	 * The perm or bitwise OR of perms to require.
-	 *
-	 * Examples: `Perm.sudoRead`, `Perm.sudoWrite | Perm.sudoDelete`
-	 */
+	/** The `Perm` or bitwise OR of `Perm`s to require. */
 	perms: integer
 ) => permToGetUser(req.user, id, perms);

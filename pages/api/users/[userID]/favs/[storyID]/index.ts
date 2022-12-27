@@ -1,6 +1,6 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import { permToGetUserInAPI } from 'lib/server/users/permToGetUser';
 import users from 'lib/server/users';
 import updateFavCount from 'lib/server/stories/updateFavCount';
@@ -18,7 +18,7 @@ const Handler: APIHandler<{
 }> = async (req, res) => {
 	await validate(req, res);
 
-	const user = await permToGetUserInAPI(req, res, Perm.sudoWrite);
+	const user = await permToGetUserInAPI(req, res, Perm.WRITE);
 
 	const storyID = +req.query.storyID;
 	const story = await getStoryByUnsafeID(storyID);
@@ -37,7 +37,7 @@ const Handler: APIHandler<{
 			if (story.privacy === StoryPrivacy.Private && !(
 				story.owner.equals(user._id)
 				|| story.editors.some(userID => userID.equals(user._id))
-				|| user.perms & Perm.sudoRead
+				|| hasPerms(user, Perm.READ)
 			)) {
 				res.status(403).send({
 					message: 'The specified user does not have permission to favorite the specified story.'

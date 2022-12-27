@@ -1,7 +1,7 @@
 import EditButton from 'components/Button/EditButton';
 import FavButton from 'components/Button/FavButton';
 import PageCount from 'components/StoryStats/PageCount';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import type { PublicStory } from 'lib/client/stories';
 import { storyStatusNames } from 'lib/client/StoryStatus';
 import { useUser } from 'lib/client/reactContexts/UserContext';
@@ -34,7 +34,7 @@ const StoryStats = ({
 			{user && (
 				story.owner === user.id
 				|| story.editors.includes(user.id)
-				|| !!(user.perms & Perm.sudoWrite)
+				|| hasPerms(user, Perm.WRITE)
 			) && (
 				<EditButton
 					className="spaced"

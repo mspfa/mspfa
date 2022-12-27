@@ -4,7 +4,7 @@ import type { ServerStory, ServerStoryPage, StoryID, StoryPageID } from 'lib/ser
 import stories, { getClientStoryPage } from 'lib/server/stories';
 import getStoryByUnsafeID from 'lib/server/stories/getStoryByUnsafeID';
 import authenticate from 'lib/server/auth/authenticate';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import type { ClientStoryPageRecord } from 'lib/client/stories';
 import invalidPublishedOrder from 'lib/client/invalidPublishedOrder';
 import type { integer, Mutable } from 'lib/types';
@@ -57,7 +57,7 @@ const Handler: APIHandler<{
 	if (!(
 		story.owner.equals(user._id)
 		|| story.editors.some(userID => userID.equals(user._id))
-		|| user.perms & Perm.sudoWrite
+		|| hasPerms(user, Perm.WRITE)
 	)) {
 		res.status(403).send({
 			message: 'You do not have permission to edit the specified adventure.'

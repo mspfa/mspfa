@@ -2,7 +2,7 @@ import type { ServerUser } from 'lib/server/users';
 import type { Filter } from 'mongodb';
 import type { ServerStory } from 'lib/server/stories';
 import stories, { getPublicStory } from 'lib/server/stories';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 
 /** Queries the database for stories and filters them to include only the ones that the specified user should be able to find. */
@@ -12,7 +12,7 @@ const getStoriesAsUser = (
 	/**
 	 * Whether the user should be able to find unlisted stories that match the filter.
 	 *
-	 * Automatically overwritten as `true` if `user.perms & Perm.sudoRead`.
+	 * Automatically overwritten as `true` if `hasPerms(user, Perm.READ)`.
 	 */
 	includeUnlistedStories: boolean,
 	/**
@@ -27,9 +27,9 @@ const getStoriesAsUser = (
 		willDelete: { $exists: false }
 	};
 
-	const sudoReadPerm = user && user.perms & Perm.sudoRead;
+	const hasReadPerm = hasPerms(user, Perm.READ);
 
-	if (sudoReadPerm) {
+	if (hasReadPerm) {
 		includeUnlistedStories = true;
 	}
 
@@ -44,7 +44,7 @@ const getStoriesAsUser = (
 
 	return stories.find!(
 		user
-			? sudoReadPerm
+			? hasReadPerm
 				? filter
 				: {
 					$and: [filter, {

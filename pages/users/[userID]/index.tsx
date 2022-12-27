@@ -14,7 +14,7 @@ import Timestamp from 'components/Timestamp';
 import Link from 'components/Link';
 import BottomActions from 'components/BottomActions';
 import IconImage from 'components/IconImage';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import Row from 'components/Row';
 import BBCode from 'components/BBCode';
 import getPublicStoriesByEditor from 'lib/server/stories/getPublicStoriesByEditor';
@@ -175,7 +175,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, stories, favsPub
 			</div>
 			{user && (
 				user.id === publicUser.id
-				|| !!(user.perms & Perm.sudoRead)
+				|| hasPerms(user, Perm.READ)
 			) && (
 				<BottomActions>
 					<Button href={`/users/${publicUser.id}/edit`}>

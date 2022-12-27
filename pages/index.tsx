@@ -3,7 +3,7 @@ import { NEWS_POSTS_PER_REQUEST } from 'components/StoryViewer/Basement/Basement
 import type { StoryViewerProps } from 'components/StoryViewer';
 import { uniqBy } from 'lodash';
 import { withErrorPage } from 'lib/client/errors';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import type { StoryLogListings } from 'lib/client/stories';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 import { useUserCache } from 'lib/client/reactContexts/UserCache';
@@ -81,7 +81,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		req.user && (
 			story.owner.equals(req.user._id)
 			|| story.editors.some(userID => userID.equals(req.user!._id))
-			|| req.user.perms & Perm.sudoRead
+			|| req.hasPerms(user, Perm.READ)
 		)
 	)) {
 		return { props: { statusCode: 403 } };

@@ -5,7 +5,7 @@ import type { ServerMessage } from 'lib/server/messages';
 import messages, { getClientMessage } from 'lib/server/messages';
 import updateUnreadMessages from 'lib/server/messages/updateUnreadMessages';
 import getMessageByUnsafeID from 'lib/server/messages/getMessageByUnsafeID';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import type { ClientMessage } from 'lib/client/messages';
 
 const Handler: APIHandler<{
@@ -28,7 +28,7 @@ const Handler: APIHandler<{
 	const { user } = await authenticate(req, res);
 
 	if (req.method === 'DELETE') {
-		if (!(user && user.perms & Perm.sudoDelete)) {
+		if (!hasPerms(user, Perm.WRITE)) {
 			res.status(403).send({
 				message: 'You do not have permission to delete messages.'
 			});
@@ -54,7 +54,7 @@ const Handler: APIHandler<{
 	if (!(
 		user && (
 			message.from.equals(user._id)
-			|| user.perms & Perm.sudoWrite
+			|| hasPerms(user, Perm.WRITE)
 		)
 	)) {
 		res.status(403).send({

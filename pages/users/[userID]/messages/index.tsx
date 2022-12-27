@@ -3,7 +3,7 @@ import Page from 'components/Page';
 import { withErrorPage } from 'lib/client/errors';
 import withStatusCode from 'lib/server/withStatusCode';
 import Section from 'components/Section';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import { permToGetUserInPage } from 'lib/server/users/permToGetUser';
 import type { ServerMessage } from 'lib/server/messages';
 import messages, { getClientMessage } from 'lib/server/messages';
@@ -231,7 +231,7 @@ const Component = withErrorPage<ServerSideProps>(({
 export default Component;
 
 export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, params }) => {
-	const { user, statusCode } = await permToGetUserInPage(req, params.userID, Perm.sudoRead);
+	const { user, statusCode } = await permToGetUserInPage(req, params.userID, Perm.READ);
 
 	if (statusCode) {
 		return { props: { statusCode } };

@@ -11,7 +11,7 @@ import Dialog from 'components/Dialog';
 import frameThrottler from 'lib/client/frameThrottler';
 import IDPrefix from 'lib/client/reactContexts/IDPrefix';
 import type { ClientNewsPost } from 'lib/client/news';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import { useUserCache } from 'lib/client/reactContexts/UserCache';
 import { useUser } from 'lib/client/reactContexts/UserContext';
@@ -183,7 +183,7 @@ const StoryNews = React.memo(() => {
 			{user && (
 				story.owner === user.id
 				|| story.editors.includes(user.id)
-				|| !!(user.perms & Perm.sudoWrite)
+				|| hasPerms(user, Perm.WRITE)
 			) && (
 				<Row className="story-news-actions">
 					<Button

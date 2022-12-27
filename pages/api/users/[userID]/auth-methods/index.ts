@@ -1,6 +1,6 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import { permToGetUserInAPI } from 'lib/server/users/permToGetUser';
 import users from 'lib/server/users';
 import type { AuthMethod } from 'lib/server/users';
@@ -30,7 +30,7 @@ const Handler: APIHandler<{
 )> = async (req, res) => {
 	await validate(req, res);
 
-	const user = await permToGetUserInAPI(req, res, Perm.sudoRead);
+	const user = await permToGetUserInAPI(req, res, Perm.READ);
 
 	if (req.method === 'GET') {
 		let authMethods = user.authMethods.map(({ id, type, name }) => ({ id, type, name }));

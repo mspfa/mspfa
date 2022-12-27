@@ -1,7 +1,7 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
 import verifyPassword from 'lib/server/auth/verifyPassword';
-import { Perm } from 'lib/client/perms';
+import Perm, { hasPerms } from 'lib/client/Perm';
 import { permToGetUserInAPI } from 'lib/server/users/permToGetUser';
 import users from 'lib/server/users';
 import type { PasswordString } from 'lib/server/users';
@@ -19,7 +19,7 @@ const Handler: APIHandler<{
 }> = async (req, res) => {
 	await validate(req, res);
 
-	const user = await permToGetUserInAPI(req, res, Perm.sudoWrite);
+	const user = await permToGetUserInAPI(req, res, Perm.WRITE);
 
 	await verifyPassword(res, user, req.body.currentPassword);
 
