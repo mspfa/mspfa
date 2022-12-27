@@ -247,7 +247,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 	if (!(
 		message && req.user && (
 			message.notDeletedBy.some(userID => userID.equals(req.user!._id))
-			|| req.hasPerms(user, Perm.READ)
+			|| hasPerms(req.user, Perm.READ)
 		)
 	)) {
 		return { props: { statusCode: 403 } };
@@ -281,7 +281,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 			message: getClientMessage(message, req.user),
 			...replyTo && (
 				replyTo.notDeletedBy.some(userID => userID.equals(req.user!._id))
-				|| req.hasPerms(user, Perm.READ)
+				|| hasPerms(req.user, Perm.READ)
 			) && {
 				replyTo: getClientMessage(replyTo, req.user)
 			},

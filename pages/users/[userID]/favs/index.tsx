@@ -87,7 +87,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 	const canSudoReadUserFromParams = !!(
 		req.user && (
 			req.user._id.equals(userFromParams._id)
-			|| req.hasPerms(user, Perm.READ)
+			|| hasPerms(req.user, Perm.READ)
 		)
 	);
 

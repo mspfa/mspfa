@@ -23,7 +23,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		story && req.user && (
 			story.owner.equals(req.user._id)
 			|| story.editors.some(userID => userID.equals(req.user!._id))
-			|| req.hasPerms(user, Perm.READ)
+			|| hasPerms(req.user, Perm.READ)
 		)
 	)) {
 		return { props: { statusCode: 403 } };

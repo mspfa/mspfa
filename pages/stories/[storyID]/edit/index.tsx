@@ -529,7 +529,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 				// Only owners can access their deleted stories.
 				&& !story.willDelete
 			)
-			|| req.hasPerms(user, Perm.READ)
+			|| hasPerms(req.user, Perm.READ)
 		)
 	)) {
 		return { props: { statusCode: 403 } };
