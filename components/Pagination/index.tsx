@@ -9,6 +9,7 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import Dialog from 'components/Dialog';
 import LabeledGrid from 'components/LabeledGrid';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
+import Action from 'components/Dialog/Action';
 
 export type PaginationProps = {
 	maxPage: integer
@@ -32,7 +33,7 @@ const Pagination = React.memo(({ maxPage }: PaginationProps) => {
 	const url = new URL(router.asPath, 'https://mspfa.com');
 
 	/** Returns a `Link` to the specified page number. */
-	const pageLink = (pageNumber: integer, children?: ReactNode) => {
+	const getPageLink = (pageNumber: integer, children?: ReactNode) => {
 		url.searchParams.set('p', pageNumber.toString());
 
 		return (
@@ -50,11 +51,15 @@ const Pagination = React.memo(({ maxPage }: PaginationProps) => {
 			className="spaced"
 			onClick={
 				useFunction(async () => {
-					const dialog = new Dialog({
-						id: 'pagination',
-						title: 'Go to Page',
-						initialValues: { pageNumber: '' },
-						content: (
+					const initialValues = { pageNumber: '' };
+
+					type Values = typeof initialValues;
+					const dialog = await Dialog.create<Values>(
+						<Dialog
+							id="pagination"
+							title="Go to Page"
+							initialValues={initialValues}
+						>
 							<LabeledGrid>
 								<LabeledGridField
 									type="number"
@@ -66,18 +71,16 @@ const Pagination = React.memo(({ maxPage }: PaginationProps) => {
 									autoFocus
 								/>
 							</LabeledGrid>
-						),
-						actions: [
-							{ label: 'Okay', autoFocus: false },
-							'Cancel'
-						]
-					});
+							{Action.OKAY}
+							{Action.CANCEL}
+						</Dialog>
+					);
 
-					if (!(await dialog)?.submit) {
+					if (dialog.canceled) {
 						return;
 					}
 
-					url.searchParams.set('p', dialog.form!.values.pageNumber);
+					url.searchParams.set('p', dialog.values.pageNumber);
 					Router.push(url.pathname + url.search);
 				})
 			}
@@ -94,16 +97,16 @@ const Pagination = React.memo(({ maxPage }: PaginationProps) => {
 				</span>
 			) : (
 				<>
-					{pageLink(currentPage - 1, '< Back')}
-					{pageLink(1)}
+					{getPageLink(currentPage - 1, '< Back')}
+					{getPageLink(1)}
 					{currentPage - 3 > 1 && (
 						pageEllipsis
 					)}
 					{currentPage - 2 > 1 && (
-						pageLink(currentPage - 2)
+						getPageLink(currentPage - 2)
 					)}
 					{currentPage - 1 > 1 && (
-						pageLink(currentPage - 1)
+						getPageLink(currentPage - 1)
 					)}
 				</>
 			)}
@@ -113,16 +116,16 @@ const Pagination = React.memo(({ maxPage }: PaginationProps) => {
 			{currentPage < maxPage ? (
 				<>
 					{currentPage + 1 < maxPage && (
-						pageLink(currentPage + 1)
+						getPageLink(currentPage + 1)
 					)}
 					{currentPage + 2 < maxPage && (
-						pageLink(currentPage + 2)
+						getPageLink(currentPage + 2)
 					)}
 					{currentPage + 3 < maxPage && (
 						pageEllipsis
 					)}
-					{pageLink(maxPage)}
-					{pageLink(currentPage + 1, 'Next >')}
+					{getPageLink(maxPage)}
+					{getPageLink(currentPage + 1, 'Next >')}
 				</>
 			) : (
 				<span className="spaced translucent">

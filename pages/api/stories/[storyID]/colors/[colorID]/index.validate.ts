@@ -98,9 +98,9 @@ export default createAPIValidator({
 									],
 									description: 'The ID of the color group which the color should be set into, or `null` if the color should be removed from any group.'
 								},
-								position: {
+								index: {
 									$ref: '#/definitions/integer',
-									description: 'The position in the `colors` array to move the specified color to.'
+									description: 'The index in the `colors` array to move the specified color to.'
 								},
 								name: {
 									type: 'string',

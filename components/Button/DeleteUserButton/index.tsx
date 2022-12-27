@@ -74,6 +74,7 @@ const DeleteUserButton = ({ privateUser }: DeleteUserButtonProps) => {
 											I am sure I want to delete my account: <i>{privateUser.name}</i>
 										</span>
 									</label>
+
 									<Action disabled={!confirmed}>
 										Yes
 									</Action>

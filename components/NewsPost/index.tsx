@@ -17,6 +17,7 @@ import IDPrefix from 'lib/client/reactContexts/IDPrefix';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
 import classNames from 'classnames';
+import Action from 'components/Dialog/Action';
 
 type StoryNewsPostAPI = APIClient<typeof import('pages/api/stories/[storyID]/news/[newsPostID]').default>;
 
@@ -41,13 +42,17 @@ const NewsPost = React.memo(({
 	);
 
 	const promptEdit = useFunction(async () => {
-		const dialog = new Dialog({
-			id: 'edit-news',
-			title: 'Edit News Post',
-			initialValues: {
-				content: newsPost.content
-			},
-			content: (
+		const initialValues = {
+			content: newsPost.content
+		};
+
+		type Values = typeof initialValues;
+		const dialog = await Dialog.create<Values>(
+			<Dialog
+				id="edit-news"
+				title="Edit News Post"
+				initialValues={initialValues}
+			>
 				<IDPrefix.Provider value="news">
 					<Label block htmlFor="news-field-content">
 						Content
@@ -59,32 +64,32 @@ const NewsPost = React.memo(({
 						maxLength={20000}
 						rows={6}
 					/>
+					<Action>Save</Action>
+					{Action.CANCEL}
 				</IDPrefix.Provider>
-			),
-			actions: [
-				{ label: 'Save', autoFocus: false },
-				'Cancel'
-			]
-		});
+			</Dialog>
+		);
 
-		if (!(await dialog)?.submit) {
+		if (dialog.canceled) {
 			return;
 		}
 
 		const { data: newNewsPost } = await (api as StoryNewsPostAPI).patch(
 			`/stories/${story.id}/news/${newsPost.id}`,
-			dialog.form!.values
+			dialog.values
 		);
 
 		setNewsPost(newNewsPost);
 	});
 
 	const promptDelete = useFunction(async () => {
-		if (!await Dialog.confirm({
-			id: 'edit-news',
-			title: 'Delete News Post',
-			content: 'Are you sure you want to delete this news post?\n\nThis cannot be undone.'
-		})) {
+		if (!await Dialog.confirm(
+			<Dialog id="edit-news" title="Delete News Post">
+				Are you sure you want to delete this news post?<br />
+				<br />
+				This cannot be undone.
+			</Dialog>
+		)) {
 			return;
 		}
 

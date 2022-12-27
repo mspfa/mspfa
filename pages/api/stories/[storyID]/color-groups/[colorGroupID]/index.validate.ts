@@ -91,9 +91,9 @@ export default createAPIValidator({
 							type: 'object',
 							additionalProperties: false,
 							properties: {
-								position: {
+								index: {
 									$ref: '#/definitions/integer',
-									description: 'The position in the `colorGroups` array to move the specified color group to.'
+									description: 'The index in the `colorGroups` array to move the specified color group to.'
 								},
 								name: {
 									type: 'string',

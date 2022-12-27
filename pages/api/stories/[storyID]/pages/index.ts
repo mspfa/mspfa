@@ -264,12 +264,7 @@ const Handler: APIHandler<{
 		const pageValues = Object.values(story.pages);
 		// Iterate over all `pageValues` except the first one.
 		for (let i = 1; i < pageValues.length; i++) {
-			// Ensure that it is still impossible with the new changes for the `published` dates to result in gaps in published pages.
-			if (invalidPublishedOrder(
-				pageValues[i - 1].published,
-				pageValues[i].published,
-				now
-			)) {
+			if (invalidPublishedOrder(pageValues[i - 1], pageValues[i], now)) {
 				res.status(422).send({
 					message: `Page ${i + 1} should not have a \`published\` date set before page ${i}.`
 				});

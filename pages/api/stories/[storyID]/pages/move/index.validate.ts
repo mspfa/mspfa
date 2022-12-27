@@ -32,15 +32,15 @@ export default createAPIValidator({
 									description: 'The initial IDs of pages to move. After being moved, the pages will be in the same order as in this array.',
 									uniqueItems: true
 								},
-								position: {
+								index: {
 									$ref: '#/definitions/integer',
-									description: 'The position to insert the pages at.\n\nFor example, position 0 will insert the pages before page 1, position 1 will insert the pages after page 1, position 2 will insert the pages after page 2, and so on.',
+									description: 'The index to insert the pages at.\n\nFor example, index 0 will insert the pages before page 1, index 1 will insert the pages after page 1, index 2 will insert the pages after page 2, and so on.',
 									minimum: 0
 								}
 							},
 							required: [
 								'pageIDs',
-								'position'
+								'index'
 							],
 							additionalProperties: false
 						},

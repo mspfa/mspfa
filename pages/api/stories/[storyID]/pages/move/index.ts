@@ -1,4 +1,4 @@
-import validate from './index.validate';
+import validate from '../../pages/move/index.validate';
 import type { APIHandler } from 'lib/server/api';
 import type { ServerStory, ServerStoryPage, StoryID, StoryPageID } from 'lib/server/stories';
 import stories, { getClientStoryPage } from 'lib/server/stories';
@@ -80,7 +80,7 @@ const Handler: APIHandler<{
 	/** A record that maps each changed page's initial ID to its new ID after the move. */
 	const changedPageIDs: Record<StoryPageID, StoryPageID> = {};
 	/** An array of initial page IDs to be changed. */
-	const oldChangedPageIDs: StoryPageID[] = [];
+	const changedOldPageIDs: StoryPageID[] = [];
 	/** A record that maps each changed page's new ID from after the move to its initial ID (the reverse of `changedPageIDs`). */
 	const oldPageIDs: Record<StoryPageID, StoryPageID> = {};
 	const newClientPages: ClientStoryPageRecord = {};
@@ -99,11 +99,11 @@ const Handler: APIHandler<{
 	let newPageID: StoryPageID = 0;
 	/** The initial page ID of the previous page passed into `pushNewPage`. */
 	let previousOldPageID: StoryPageID | undefined;
-	/** The `published` value of the previous page passed into `pushNewPage`. */
-	let previousPublished: ServerStoryPage['published'] | undefined;
+	/** The previous page passed into `pushNewPage`. */
+	let previousPage: ServerStoryPage | undefined;
 
 	/**
-	 * Pushes a page to the story's updated set of pages. Adjusts the page's ID and sets it into the database update. If there is an error, never resolves.
+	 * Pushes a page to the story's updated set of pages. Adjusts the page's ID and sets it into the database update. If there is an error, sends an error response and never resolves.
 	 *
 	 * This should be called on every page of this story in the order of the new requested pages. This must not set properties into `story.pages`, since that is used to hold the original pages from before the move.
 	 */
@@ -111,12 +111,7 @@ const Handler: APIHandler<{
 		const oldPageID = page.id;
 		newPageID++;
 
-		// Ensure that it is impossible with the new order for the `published` dates to result in gaps in published pages.
-		if (
-			// Page 1 can't have an invalid `published` date, so exclude it.
-			newPageID !== 1
-			&& invalidPublishedOrder(previousPublished, page.published, now)
-		) {
+		if (previousPage && invalidPublishedOrder(previousPage, page, now)) {
 			res.status(422).send({
 				message: `Page ${oldPageID} should not have a \`published\` date set before page ${previousOldPageID}.`
 			});
@@ -125,7 +120,7 @@ const Handler: APIHandler<{
 
 		if (oldPageID !== newPageID) {
 			changedPageIDs[oldPageID] = newPageID;
-			oldChangedPageIDs.push(oldPageID);
+			changedOldPageIDs.push(oldPageID);
 			oldPageIDs[newPageID] = oldPageID;
 			branches.push({
 				// If a user's save for this story is on the `oldPageID`,
@@ -149,17 +144,17 @@ const Handler: APIHandler<{
 		resolve();
 
 		previousOldPageID = oldPageID;
-		previousPublished = page.published;
+		previousPage = page;
 	});
 
 	const pageValues = Object.values(story.pages);
 
 	for (let i = 0; i <= pageValues.length; i++) {
-		// Ensure this index is a valid page ID.
+		// Check if this index is a valid page ID.
 		if (i !== 0) {
 			const pageID = i;
 
-			// If this page exists and was not requested to be moved, push it to the new pages.
+			// If this page was not requested to be moved, push it to the new pages.
 			if (!req.body.pageIDs.includes(pageID)) {
 				await pushNewPage(story.pages[pageID]);
 			}
@@ -215,11 +210,11 @@ const Handler: APIHandler<{
 			_id: story._id
 		}, { $set });
 
-		if (oldChangedPageIDs.length) {
+		if (changedOldPageIDs.length) {
 			// Adjust page IDs in users' story saves.
 			await users.updateMany({
 				[`storySaves.${story._id}`]: {
-					$in: oldChangedPageIDs
+					$in: changedOldPageIDs
 				}
 			}, [{
 				$set: {
