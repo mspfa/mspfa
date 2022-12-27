@@ -25,6 +25,6 @@ const defaultUserSettings = {
 		},
 		stories: {} as Record<never, never>
 	}
-} as const;// satisfies PrivateUser['settings'];
+} as const satisfies PrivateUser['settings'];
 
 export default defaultUserSettings;

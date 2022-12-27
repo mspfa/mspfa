@@ -138,7 +138,7 @@ export const defaultStory = {
 	defaultPageTitle: 'Next.',
 	colorGroups: [] as never[],
 	colors: [] as never[]
-} as const;// satisfies Partial<ServerStory>;
+} as const satisfies Partial<ServerStory>;
 
 /** Converts a `ServerStory` to a `PrivateStory`. */
 export const getPrivateStory = (story: ServerStory): PrivateStory => ({
