@@ -34,6 +34,7 @@ import useLatest from 'lib/client/reactHooks/useLatest';
 import DeleteUserButton from 'components/Button/DeleteUserButton';
 import ChangePasswordButton from 'components/Button/ChangePasswordButton';
 import overwriteArrays from 'lib/client/overwriteArrays';
+import Action from 'components/Dialog/Action';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 type UserAuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/auth-methods').default>;
@@ -168,14 +169,13 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 											useFunction(async () => {
 												const { data: authMethods } = await (api as UserAuthMethodsAPI).get(`/users/${privateUser.id}/auth-methods`);
 
-												new Dialog({
-													id: 'auth-methods',
-													title: 'Edit Sign-In Methods',
-													content: <AuthMethods userID={privateUser.id} authMethods={authMethods} />,
-													actions: [
-														{ label: 'Done', autoFocus: false }
-													]
-												});
+												Dialog.create(
+													<Dialog id="auth-methods" title="Edit Sign-In Methods">
+														<AuthMethods userID={privateUser.id} authMethods={authMethods} />
+
+														<Action>Done</Action>
+													</Dialog>
+												);
 											})
 										}
 									>
@@ -294,15 +294,19 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 										disabled={isEqual(values.settings, defaultUserSettingsValues)}
 										onClick={
 											useFunction(async () => {
-												if (await Dialog.confirm({
-													id: 'reset-settings',
-													title: 'Reset Settings',
-													content: 'Are you sure you want to reset your settings to default?\n\nAll unsaved changes will be lost. This won\'t overwrite your previous settings until you save.'
-												})) {
-													setFieldValue('settings', defaultUserSettingsValues);
-
-													formChangedRef.current = true;
+												if (!await Dialog.confirm(
+													<Dialog id="reset-settings" title="Reset Settings">
+														Are you sure you want to reset your settings to default?<br />
+														<br />
+														All unsaved changes will be lost. This won't overwrite your previous settings until you save.
+													</Dialog>
+												)) {
+													return;
 												}
+
+												setFieldValue('settings', defaultUserSettingsValues);
+
+												formChangedRef.current = true;
 											})
 										}
 									>

@@ -24,9 +24,9 @@ import StoryPageLink from 'components/StoryPageLink';
 import Timestamp from 'components/Timestamp';
 import { Formik, Form, Field } from 'formik';
 import type { PublicStory } from 'lib/client/stories';
-import promptSignIn from 'lib/client/promptSignIn';
 import classNames from 'classnames';
 import Action from 'components/Dialog/Action';
+import promptSignIn from 'lib/client/promptSignIn';
 
 export type CommentProps<ClientComment = ClientCommentOrReply> = {
 	/** The API path of this comment. */
@@ -89,16 +89,10 @@ const Comment = <
 		}
 
 		if (!user) {
-			if (await Dialog.confirm(
-				<Dialog id="rate-comment" title="Rate Comment">
-					Sign in to rate comments!
-					<Action autoFocus>Sign In</Action>
-					{Action.CANCEL}
-				</Dialog>
-			)) {
-				promptSignIn();
-			}
-
+			promptSignIn({
+				title: 'Rate Comment',
+				content: 'Sign in to rate comments!'
+			});
 			return;
 		}
 
@@ -129,16 +123,10 @@ const Comment = <
 
 	const onSubmitReply = useFunction(async (values: { content: string }) => {
 		if (!user) {
-			if (await Dialog.confirm(
-				<Dialog id="post-comment" title="Comment">
-					Sign in to post a reply!
-					<Action autoFocus>Sign In</Action>
-					{Action.CANCEL}
-				</Dialog>
-			)) {
-				promptSignIn();
-			}
-
+			promptSignIn({
+				title: 'Comment',
+				content: 'Sign in to post your reply!'
+			});
 			return;
 		}
 
@@ -252,6 +240,7 @@ const Comment = <
 													rows={6}
 													escapeHTML
 												/>
+
 												<Action>Save</Action>
 												{Action.CANCEL}
 											</IDPrefix.Provider>

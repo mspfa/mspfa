@@ -29,6 +29,7 @@ import DateField from 'components/DateField';
 import useLatest from 'lib/client/reactHooks/useLatest';
 import IDPrefix from 'lib/client/reactContexts/IDPrefix';
 import classNames from 'classnames';
+import Action from 'components/Dialog/Action';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 
@@ -254,11 +255,11 @@ const StoryEditorPageListing = React.memo(({
 		// Ensure that none of the drafts to be published are unsaved.
 		for (let pageID = firstDraftID!; pageID <= page.id; pageID++) {
 			if (!isEqual(formikPropsRef.current.values.pages[pageID], formikPropsRef.current.initialValues.pages[pageID])) {
-				new Dialog({
-					id: 'publish-pages',
-					title: 'Publish Pages',
-					content: `Page ${pageID} has unsaved changes. Any pages being published must first be saved.`
-				});
+				Dialog.create(
+					<Dialog id="publish-pages" title="Publish Pages">
+						Page {pageID} has unsaved changes. Any pages being published must first be saved.
+					</Dialog>
+				);
 
 				formikPropsRef.current.setSubmitting(false);
 				return;
@@ -281,96 +282,100 @@ const StoryEditorPageListing = React.memo(({
 					: formikPropsRef.current.values.pages[firstDraftID! - 1].published!
 			);
 
-			const dialog = new Dialog({
-				id: 'publish-pages',
-				title: 'Publish Pages',
-				initialValues: {
-					action: 'publish' as 'publish' | 'schedule',
-					date: '' as DateNumber | '',
-					silent: false
-				},
-				content: ({ values }) => (
-					<IDPrefix.Provider value="story-page-publish">
-						<Row>
-							{`What would you like to do with ${
-								firstDraftID! === page.id
-									? `p${page.id}`
-									: `p${firstDraftID!}-${page.id}`
-							}?`}
-						</Row>
-						<Row id="story-page-publish-field-container-action">
-							<Field
-								type="radio"
-								id="story-page-publish-field-action-publish"
-								name="action"
-								value="publish"
-							/>
-							<label htmlFor="story-page-publish-field-action-publish">
-								Publish Now
-							</label>
-							<Field
-								type="radio"
-								id="story-page-publish-field-action-schedule"
-								name="action"
-								value="schedule"
-							/>
-							<label htmlFor="story-page-publish-field-action-schedule">
-								Schedule for Later
-							</label>
-							{values.action === 'schedule' && (
-								<>
-									<div id="story-page-publish-field-container-date">
-										<DateField
-											name="date"
-											withTime
-											required
-											min={minDate}
-											max={Date.now() + 1000 * 60 * 60 * 24 * 365}
-											defaultYear={new Date(minDate).getFullYear()}
-											defaultMonth={new Date(minDate).getMonth()}
-											defaultDay={new Date(minDate).getDate()}
-										/>
-									</div>
-									{typeof values.date === 'number' && (
-										<Timestamp relative withTime>
-											{values.date}
-										</Timestamp>
-									)}
-								</>
-							)}
-						</Row>
-						<LabeledGrid>
-							<LabeledGridField
-								type="checkbox"
-								name="silent"
-								label="Update Silently"
-								help={'Prevents this update from notifying your readers, and prevents the adventure from appearing at the front of the recently updated adventure list.\n\nNote that pages set as unlisted always update silently either way.\n\nAdditionally, if your adventure is unlisted or private, it will not publicly appear under any list no matter what.'}
-							/>
-						</LabeledGrid>
-						{/* To reduce clutter, only show the tip on the default `action` setting. */}
-						{values.action === 'publish' && (
-							<Row id="story-page-publish-tip">
-								Tip: Shift+click the publish button to bypass this dialog and publish immediately.
-							</Row>
-						)}
-					</IDPrefix.Provider>
-				),
-				actions: ['Submit!', 'Cancel']
-			});
+			const initialValues = {
+				action: 'publish' as 'publish' | 'schedule',
+				date: '' as DateNumber | '',
+				silent: false
+			};
 
-			if (!(await dialog)?.submit) {
+			type Values = typeof initialValues;
+			const dialog = await Dialog.create<Values>(
+				<Dialog id="publish-pages" title="Publish Pages">
+					{({ values }) => (
+						<IDPrefix.Provider value="story-page-publish">
+							<Row>
+								{`What would you like to do with ${
+									firstDraftID! === page.id
+										? `p${page.id}`
+										: `p${firstDraftID!}-${page.id}`
+								}?`}
+							</Row>
+							<Row id="story-page-publish-field-container-action">
+								<Field
+									type="radio"
+									id="story-page-publish-field-action-publish"
+									name="action"
+									value="publish"
+								/>
+								<label htmlFor="story-page-publish-field-action-publish">
+									Publish Now
+								</label>
+								<Field
+									type="radio"
+									id="story-page-publish-field-action-schedule"
+									name="action"
+									value="schedule"
+								/>
+								<label htmlFor="story-page-publish-field-action-schedule">
+									Schedule for Later
+								</label>
+								{values.action === 'schedule' && (
+									<>
+										<div id="story-page-publish-field-container-date">
+											<DateField
+												name="date"
+												withTime
+												required
+												min={minDate}
+												max={Date.now() + 1000 * 60 * 60 * 24 * 365}
+												defaultYear={new Date(minDate).getFullYear()}
+												defaultMonth={new Date(minDate).getMonth()}
+												defaultDay={new Date(minDate).getDate()}
+											/>
+										</div>
+										{typeof values.date === 'number' && (
+											<Timestamp relative withTime>
+												{values.date}
+											</Timestamp>
+										)}
+									</>
+								)}
+							</Row>
+							<LabeledGrid>
+								<LabeledGridField
+									type="checkbox"
+									name="silent"
+									label="Update Silently"
+									help={'Prevents this update from notifying your readers, and prevents the adventure from appearing at the front of the recently updated adventure list.\n\nNote that pages set as unlisted always update silently either way.\n\nAdditionally, if your adventure is unlisted or private, it will not publicly appear under any list no matter what.'}
+								/>
+							</LabeledGrid>
+							{/* To reduce clutter, only show the tip on the default `action` setting. */}
+							{values.action === 'publish' && (
+								<Row id="story-page-publish-tip">
+									Tip: Shift+click the publish button to bypass this dialog and publish immediately.
+								</Row>
+							)}
+
+							<Action autoFocus>Submit!</Action>
+							{Action.CANCEL}
+						</IDPrefix.Provider>
+					)}
+				</Dialog>
+			);
+
+			if (dialog.canceled) {
 				formikPropsRef.current.setSubmitting(false);
 				return;
 			}
 
 			published = (
-				dialog.form!.values.action === 'schedule'
-				&& typeof dialog.form!.values.date === 'number'
-					? dialog.form!.values.date
+				dialog.values.action === 'schedule'
+				&& typeof dialog.values.date === 'number'
+					? dialog.values.date
 					: Date.now()
 			);
 
-			({ silent } = dialog.form!.values);
+			({ silent } = dialog.values);
 		}
 
 		const pageChanges: Record<StoryPageID, RecursivePartial<ClientStoryPage>> = {};
@@ -411,15 +416,18 @@ const StoryEditorPageListing = React.memo(({
 	const unpublishPage = useFunction(async () => {
 		formikPropsRef.current.setSubmitting(true);
 
-		if (!await Dialog.confirm({
-			id: 'unpublish-pages',
-			title: `${pageStatus === 'scheduled' ? 'Unschedule' : 'Unpublish'} Pages`,
-			content: `Are you sure you want to unpublish ${
-				lastNonDraftID === page.id
-					? `p${page.id}`
-					: `p${page.id}-${lastNonDraftID}`
-			}?`
-		})) {
+		if (!await Dialog.confirm(
+			<Dialog
+				id="unpublish-pages"
+				title={`${pageStatus === 'scheduled' ? 'Unschedule' : 'Unpublish'} Pages`}
+			>
+				{`Are you sure you want to unpublish ${
+					lastNonDraftID === page.id
+						? `p${page.id}`
+						: `p${page.id}-${lastNonDraftID}`
+				}?`}
+			</Dialog>
+		)) {
 			formikPropsRef.current.setSubmitting(false);
 			return;
 		}
@@ -472,11 +480,13 @@ const StoryEditorPageListing = React.memo(({
 	const deletePage = useFunction(async () => {
 		formikPropsRef.current.setSubmitting(true);
 
-		if (!await Dialog.confirm({
-			id: 'delete-pages',
-			title: 'Delete Page',
-			content: `Are you sure you want to delete page ${page.id}?\n\nThis cannot be undone.`
-		})) {
+		if (!await Dialog.confirm(
+			<Dialog id="delete-pages" title="Delete Page">
+				Are you sure you want to delete page {page.id}?<br />
+				<br />
+				This cannot be undone.
+			</Dialog>
+		)) {
 			formikPropsRef.current.setSubmitting(false);
 			return;
 		}

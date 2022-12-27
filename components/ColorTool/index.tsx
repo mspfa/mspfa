@@ -41,6 +41,7 @@ const ColorTool = ({ name }: ColorToolProps) => {
 				initialValues={initialValues}
 			>
 				<ColorOptions />
+
 				<Action>Save!</Action>
 				{Action.CANCEL}
 			</Dialog>

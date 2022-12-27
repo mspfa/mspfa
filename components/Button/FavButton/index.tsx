@@ -6,11 +6,10 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import { useUser } from 'lib/client/reactContexts/UserContext';
 import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
-import Dialog from 'components/Dialog';
 import type { StoryID } from 'lib/server/stories';
 import type { integer } from 'lib/types';
-import promptSignIn from 'lib/client/promptSignIn';
 import classNames from 'classnames';
+import promptSignIn from 'lib/client/promptSignIn';
 
 type UserFavAPI = APIClient<typeof import('pages/api/users/[userID]/favs/[storyID]').default>;
 
@@ -51,15 +50,10 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 					}
 
 					if (!user) {
-						if (await Dialog.confirm({
-							id: 'fav',
+						promptSignIn({
 							title: 'Add to Favorites',
-							content: 'Sign in to save your favorites!',
-							actions: ['Sign In', 'Cancel']
-						})) {
-							promptSignIn();
-						}
-
+							content: 'Sign in to save your favorites!'
+						});
 						return;
 					}
 

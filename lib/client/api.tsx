@@ -89,10 +89,11 @@ const onReject = async (error: APIError) => {
 	await error.config?.beforeInterceptError?.(error);
 
 	if (!(error.defaultPrevented || error instanceof axios.Cancel)) {
-		new Dialog({
-			title: 'Error',
-			content: error.response?.data.message as string || error.message
-		});
+		Dialog.create(
+			<Dialog title="Error">
+				{error.response?.data.message as string || error.message}
+			</Dialog>
+		);
 	}
 
 	return Promise.reject(error);

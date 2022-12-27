@@ -27,7 +27,7 @@ export const resolveExternalSignIn = (newAuthMethodOptions: AuthMethodOptions) =
 /** Whether new sign-in dialogs should be prevented from opening due to a previous sign-in dialog already loading. */
 let signInLoading = false;
 
-export const openSignInDialog = () => {
+export const openSignInDialogInternally = () => {
 	resetSignInValues();
 	setSignInPage(0);
 };

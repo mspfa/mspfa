@@ -5,6 +5,7 @@ import api from 'lib/client/api';
 import type { PrivateStory } from 'lib/client/stories';
 import type { Updater } from 'use-immer';
 import type { ClientColorGroup } from 'lib/client/colors';
+import Action from 'components/Dialog/Action';
 
 type StoryColorGroupsAPI = APIClient<typeof import('pages/api/stories/[storyID]/color-groups').default>;
 
@@ -17,23 +18,27 @@ const promptCreateColorGroup = (
 	story: PrivateStory,
 	updateStory: Updater<PrivateStory>
 ) => new Promise<ClientColorGroup>(async resolve => {
-	const dialog = new Dialog({
-		id: 'color-group-options',
-		title: 'Create Color Group',
-		initialValues: { name: '' },
-		content: <ColorGroupOptions />,
-		actions: [
-			{ label: 'Okay', autoFocus: false },
-			'Cancel'
-		]
-	});
+	const initialValues = { name: '' };
 
-	if (!(await dialog)?.submit) {
+	type Values = typeof initialValues;
+	const dialog = await Dialog.create<Values>(
+		<Dialog
+			id="color-group-options"
+			title="Create Color Group"
+			initialValues={initialValues}
+		>
+			<ColorGroupOptions />
+
+			{Action.OKAY} {Action.CANCEL}
+		</Dialog>
+	);
+
+	if (dialog.canceled) {
 		return;
 	}
 
 	const { data: colorGroup } = await (api as StoryColorGroupsAPI).post(`/stories/${story.id}/color-groups`, {
-		name: dialog.form!.values.name
+		name: dialog.values.name
 	});
 
 	updateStory(story => {

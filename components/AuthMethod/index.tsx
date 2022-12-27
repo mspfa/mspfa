@@ -31,22 +31,21 @@ const AuthMethod = ({ userID, authMethod, authMethods, setAuthMethods }: AuthMet
 				disabled={authMethods.length === 1}
 				onClick={
 					useFunction(async () => {
-						if (!await Dialog.confirm({
-							id: `confirm-remove-auth-method-${authMethod.id}`,
-							title: 'Remove Sign-In Method',
-							content: (
-								<>
-									Are you sure you want to remove this {authMethodTypeName} sign-in method?
-									{authMethod.name && (
-										<>
-											<br />
-											<br />
-											<i>{authMethod.name}</i>
-										</>
-									)}
-								</>
-							)
-						})) {
+						if (!await Dialog.confirm(
+							<Dialog
+								id={`confirm-remove-auth-method-${authMethod.id}`}
+								title="Remove Sign-In Method"
+							>
+								Are you sure you want to remove this {authMethodTypeName} sign-in method?
+								{authMethod.name && (
+									<>
+										<br />
+										<br />
+										<i>{authMethod.name}</i>
+									</>
+								)}
+							</Dialog>
+						)) {
 							return;
 						}
 

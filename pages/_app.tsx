@@ -14,7 +14,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { setTheme } from 'lib/client/themes';
 import UserCache from 'lib/client/reactContexts/UserCache';
 import { useRouter } from 'next/router';
-import useUncaughtErrorDialogs from 'lib/client/reactHooks/useUncaughtErrorDialogs';
+import useGlobalUncaughtErrorDialogs from 'lib/client/reactHooks/useGlobalUncaughtErrorDialogs';
 
 export type MyAppInitialProps = {
 	user?: PrivateUser
@@ -41,7 +41,7 @@ const MyApp = ({
 		setTheme(theme);
 	}, [theme]);
 
-	useUncaughtErrorDialogs();
+	useGlobalUncaughtErrorDialogs();
 
 	const router = useRouter();
 	const asPathQueryIndex = router.asPath.indexOf('?');

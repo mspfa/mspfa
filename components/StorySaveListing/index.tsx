@@ -39,13 +39,11 @@ const StorySaveListing = ({
 	const [loading, setLoading] = useState(false);
 
 	const confirmDeleteStorySave = useFunction(async () => {
-		if (loading || !await Dialog.confirm({
-			id: 'story-saves',
-			title: 'Delete Game Data',
-			content: (
-				<>Are you sure you want to delete your save for the adventure <i>{storyTitle}</i>?</>
-			)
-		})) {
+		if (loading || !await Dialog.confirm(
+			<Dialog id="story-saves" title="Delete Game Data">
+				Are you sure you want to delete your save for the adventure <i>{storyTitle}</i>?
+			</Dialog>
+		)) {
 			return;
 		}
 

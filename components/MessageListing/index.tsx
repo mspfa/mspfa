@@ -192,19 +192,15 @@ const MessageListing = ({
 	});
 
 	const confirmDeleteMessage = useFunction(async () => {
-		if (loading || !await Dialog.confirm({
-			id: 'delete-message',
-			title: 'Delete Message',
-			content: (
-				<>
-					Are you sure you want to delete this message?<br />
-					<br />
-					<i>{message.subject}</i><br />
-					<br />
-					The message will only be deleted for you. This cannot be undone.
-				</>
-			)
-		})) {
+		if (loading || !await Dialog.confirm(
+			<Dialog id="delete-message" title="Delete Message">
+				Are you sure you want to delete this message?<br />
+				<br />
+				<i>{message.subject}</i><br />
+				<br />
+				The message will only be deleted for you. This cannot be undone.
+			</Dialog>
+		)) {
 			return;
 		}
 

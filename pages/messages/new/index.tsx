@@ -29,8 +29,10 @@ import Link from 'components/Link';
 import parseID from 'lib/server/db/parseID';
 import type { ObjectId } from 'mongodb';
 import type { integer } from 'lib/types';
-import promptSignIn from 'lib/client/promptSignIn';
+import openSignInDialog from 'lib/client/openSignInDialog';
 import Row from 'components/Row';
+import Action from 'components/Dialog/Action';
+import promptSignIn from 'lib/client/promptSignIn';
 
 type MessagesAPI = APIClient<typeof import('pages/api/messages').default>;
 
@@ -85,15 +87,10 @@ const Component = withErrorPage<ServerSideProps>(({ replyTo, toUsers }) => {
 						if (!user) {
 							setSubmitting(false);
 
-							if (await Dialog.confirm({
-								id: 'send-message',
+							promptSignIn({
 								title: 'Send Message',
-								content: 'Sign in to send your message!\n\n(Don\'t worry, your message won\'t be lost if you don\'t leave the page.)',
-								actions: ['Sign In', 'Cancel']
-							})) {
-								promptSignIn();
-							}
-
+								content: 'Sign in to send your message!'
+							});
 							return;
 						}
 

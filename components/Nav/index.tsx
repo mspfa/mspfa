@@ -11,7 +11,7 @@ import PreviewModeContext from 'lib/client/reactContexts/PreviewModeContext';
 import Dialog from 'components/Dialog';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
-import promptSignIn from 'lib/client/promptSignIn';
+import openSignInDialog from 'lib/client/openSignInDialog';
 import classNames from 'classnames';
 import useFunction from 'lib/client/reactHooks/useFunction';
 
@@ -92,7 +92,7 @@ const Nav = () => {
 						<NavItem id="sign-out" label="Sign Out" onClick={promptSignOut} />
 					</NavMenu>
 				) : (
-					<NavItem id="sign-in" label="Sign In" onClick={promptSignIn} />
+					<NavItem id="sign-in" label="Sign In" onClick={openSignInDialog} />
 				)}
 			</NavGroup>
 			<NavGroup id="secondary">

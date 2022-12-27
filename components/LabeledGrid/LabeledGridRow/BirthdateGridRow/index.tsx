@@ -18,11 +18,15 @@ const BirthdateGridRow = ({ birthdateChanged }: BirthdateGridRowProps) => {
 	const [editingBirthdate, setEditingBirthdate] = useState(false);
 
 	const editBirthdate = useFunction(async () => {
-		if (!await Dialog.confirm({
-			id: 'edit-birthdate',
-			title: 'Edit Birthdate',
-			content: 'You can only change your birthdate once.\n\nOnce changed, it cannot be undone.\n\nAre you sure you want to edit your birthdate?'
-		})) {
+		if (!await Dialog.confirm(
+			<Dialog id="edit-birthdate" title="Edit Birthdate">
+				You can only change your birthdate once.<br />
+				<br />
+				Once changed, it cannot be undone.<br />
+				<br />
+				Are you sure you want to edit your birthdate?
+			</Dialog>
+		)) {
 			return;
 		}
 

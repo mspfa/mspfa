@@ -19,6 +19,7 @@ import { addViewportListener, removeViewportListener } from 'lib/client/viewport
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import useMountedRef from 'lib/client/reactHooks/useMountedRef';
 import { useImmer } from 'use-immer';
+import Action from 'components/Dialog/Action';
 
 type StoryNewsAPI = APIClient<typeof import('pages/api/stories/[storyID]/news').default>;
 
@@ -47,13 +48,17 @@ const StoryNews = React.memo(() => {
 	});
 
 	const createNewsPost = useFunction(async () => {
-		const dialog = new Dialog({
-			id: 'edit-news',
-			title: 'Create News Post',
-			initialValues: {
-				content: ''
-			},
-			content: (
+		const initialValues = {
+			content: ''
+		};
+
+		type Values = typeof initialValues;
+		const dialog = await Dialog.create<Values>(
+			<Dialog
+				id="edit-news"
+				title="Create News Post"
+				initialValues={initialValues}
+			>
 				<IDPrefix.Provider value="news">
 					<Row>
 						<Label block htmlFor="news-field-content">
@@ -71,20 +76,19 @@ const StoryNews = React.memo(() => {
 						The recommended image width in a news post is 420 pixels.
 					</Row>
 				</IDPrefix.Provider>
-			),
-			actions: [
-				{ label: 'Submit!', autoFocus: false },
-				'Cancel'
-			]
-		});
 
-		if (!(await dialog)?.submit) {
+				<Action>Submit!</Action>
+				{Action.CANCEL}
+			</Dialog>
+		);
+
+		if (dialog.canceled) {
 			return;
 		}
 
 		const { data: newsPost } = await (api as StoryNewsAPI).post(
 			`/stories/${story.id}/news`,
-			dialog.form!.values
+			dialog.values
 		);
 
 		if (mountedRef.current) {

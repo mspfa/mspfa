@@ -384,15 +384,12 @@ const TagField = ({
 								target: HTMLElement & { parentNode: HTMLElement }
 							}
 						) => {
-							const tag = (
-								event.target.classList.contains('tag-field-tag-preset')
-									? event.target
-									: event.target.parentNode.classList.contains('tag-field-tag-preset')
-										? event.target.parentNode
-										: undefined
-							);
-
-							if (!tag) {
+							let tag;
+							if (event.target.classList.contains('tag-field-tag-preset')) {
+								tag = event.target;
+							} else if (event.target.parentNode.classList.contains('tag-field-tag-preset')) {
+								tag = event.target.parentNode;
+							} else {
 								return;
 							}
 
@@ -403,19 +400,26 @@ const TagField = ({
 							}
 
 							if (event.target.classList.contains('tag-field-tag-help')) {
-								new Dialog({
-									id: 'help',
-									title: `Help: #${tagValue}`,
-									content: `Use this tag if:\n\n${storyTags[tagValue]}`
-								});
-							} else if (!value.includes(tagValue)) {
-								setValue([
-									...value
-										// If the user clicked `test`, they probably don't want `-test` to stay.
-										.filter(previousTagValue => previousTagValue !== `-${tagValue}`),
-									tagValue
-								]);
+								Dialog.create(
+									<Dialog id="help" title={`Help: #${tagValue}`}>
+										Use this tag if:<br />
+										<br />
+										{storyTags[tagValue]}
+									</Dialog>
+								);
+								return;
 							}
+
+							if (value.includes(tagValue)) {
+								return;
+							}
+
+							setValue([
+								...value
+									// If the user clicked `test`, they probably don't want `-test` to stay.
+									.filter(previousTagValue => previousTagValue !== `-${tagValue}`),
+								tagValue
+							]);
 						})
 					}
 				>

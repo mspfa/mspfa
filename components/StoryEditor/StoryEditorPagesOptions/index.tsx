@@ -22,6 +22,7 @@ import type { integer } from 'lib/types';
 import { StoryEditorContext } from 'components/StoryEditor';
 import type { PrivateStory } from 'lib/client/stories';
 import type { Updater } from 'use-immer';
+import Action from 'components/Dialog/Action';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 
@@ -79,141 +80,146 @@ const StoryEditorPagesOptions = ({
 	});
 
 	const findAndReplace = useFunction(async () => {
-		const dialog = new Dialog({
-			id: 'find-and-replace',
-			title: 'Find and Replace',
-			initialValues: {
-				regex: false,
-				find: '',
-				flags: 'g',
-				replace: ''
-			},
-			content: function Content({ values, setFieldValue }) {
-				const findInputRef = useRef<HTMLInputElement>(null as never);
-				const flagsInputRef = useRef<HTMLInputElement>(null);
+		const initialValues = {
+			regex: false,
+			find: '',
+			flags: 'g',
+			replace: ''
+		};
 
-				useEffect(() => {
-					let regexPatternError = false;
+		type Values = typeof initialValues;
+		const dialog = await Dialog.create<Values>(
+			<Dialog
+				id="find-and-replace"
+				title="Find and Replace"
+				initialValues={initialValues}
+			>
+				{function Content({ values, setFieldValue }) {
+					const findInputRef = useRef<HTMLInputElement>(null as never);
+					const flagsInputRef = useRef<HTMLInputElement>(null);
 
-					if (values.regex && values.find) {
-						try {
-							new RegExp(values.find, '');
-						} catch {
-							regexPatternError = true;
+					useEffect(() => {
+						let regexPatternError = false;
+
+						if (values.regex && values.find) {
+							try {
+								new RegExp(values.find, '');
+							} catch {
+								regexPatternError = true;
+							}
+
+							let regexFlagsError = false;
+
+							try {
+								new RegExp('test', values.flags);
+							} catch {
+								regexFlagsError = true;
+							}
+
+							flagsInputRef.current!.setCustomValidity(regexFlagsError ? 'Please enter valid regex flags.' : '');
 						}
 
-						let regexFlagsError = false;
+						findInputRef.current.setCustomValidity(regexPatternError ? 'Please enter a valid regex pattern.' : '');
+					}, [values.regex, values.find, values.flags]);
 
-						try {
-							new RegExp('test', values.flags);
-						} catch {
-							regexFlagsError = true;
-						}
-
-						flagsInputRef.current!.setCustomValidity(regexFlagsError ? 'Please enter valid regex flags.' : '');
-					}
-
-					findInputRef.current.setCustomValidity(regexPatternError ? 'Please enter a valid regex pattern.' : '');
-				}, [values.regex, values.find, values.flags]);
-
-				return (
-					<LabeledGrid>
-						<Row>Finds and replaces text in every page's content.</Row>
-						{values.regex ? (
-							<LabeledGridRow
-								label="Find"
-								htmlFor="field-find"
-							>
-								/
-								<Field
-									id="field-find"
+					return (
+						<LabeledGrid>
+							<Row>Finds and replaces text in every page's content.</Row>
+							{values.regex ? (
+								<LabeledGridRow
+									label="Find"
+									htmlFor="field-find"
+								>
+									/
+									<Field
+										id="field-find"
+										name="find"
+										required
+										autoFocus
+										innerRef={findInputRef}
+									/>
+									/
+									<Field
+										id="field-find"
+										name="flags"
+										size="5"
+										title="Flags"
+										autoComplete="off"
+										innerRef={flagsInputRef}
+									/>
+								</LabeledGridRow>
+							) : (
+								<LabeledGridField
 									name="find"
+									label="Find"
 									required
 									autoFocus
-									innerRef={findInputRef}
+									innerRef={findInputRef as any}
 								/>
-								/
-								<Field
-									id="field-find"
-									name="flags"
-									size="5"
-									title="Flags"
-									autoComplete="off"
-									innerRef={flagsInputRef}
+							)}
+							<LabeledGridField
+								name="replace"
+								label="Replace With"
+							/>
+							<LabeledGridRow
+								label="Case-Sensitive"
+								htmlFor="field-case-sensitive"
+							>
+								<input
+									id="field-case-sensitive"
+									type="checkbox"
+									checked={!values.flags.includes('i')}
+									onChange={
+										useFunction((event: ChangeEvent<HTMLInputElement>) => {
+											setFieldValue(
+												'flags',
+												event.target.checked
+													? replaceAll(values.flags, 'i', '')
+													: `${values.flags}i`
+											);
+										})
+									}
 								/>
 							</LabeledGridRow>
-						) : (
 							<LabeledGridField
-								name="find"
-								label="Find"
-								required
-								autoFocus
-								innerRef={findInputRef as any}
-							/>
-						)}
-						<LabeledGridField
-							name="replace"
-							label="Replace With"
-						/>
-						<LabeledGridRow
-							label="Case-Sensitive"
-							htmlFor="field-case-sensitive"
-						>
-							<input
-								id="field-case-sensitive"
 								type="checkbox"
-								checked={!values.flags.includes('i')}
-								onChange={
-									useFunction((event: ChangeEvent<HTMLInputElement>) => {
-										setFieldValue(
-											'flags',
-											event.target.checked
-												? replaceAll(values.flags, 'i', '')
-												: `${values.flags}i`
-										);
-									})
-								}
+								name="regex"
+								label="Regex"
+								help={'If you don\'t know what this is, don\'t enable it.\n\nRegex allows for advanced search patterns and replacements.'}
 							/>
-						</LabeledGridRow>
-						<LabeledGridField
-							type="checkbox"
-							name="regex"
-							label="Regex"
-							help={'If you don\'t know what this is, don\'t enable it.\n\nRegex allows for advanced search patterns and replacements.'}
-						/>
-					</LabeledGrid>
-				);
-			},
-			actions: [
-				{ label: 'Replace All', autoFocus: false },
-				'Cancel'
-			]
-		});
 
-		if (!(await dialog)?.submit) {
+							<Action>Replace All</Action>
+							{Action.CANCEL}
+						</LabeledGrid>
+					);
+				}}
+			</Dialog>
+		);
+
+		if (dialog.canceled) {
 			return;
 		}
 
 		if (formikPropsRef.current.isSubmitting) {
-			new Dialog({
-				id: 'find-and-replace',
-				title: 'Find and Replace',
-				content: 'The specified action could not be completed, as the form is currently read-only.'
-			});
+			Dialog.create(
+				<Dialog id="find-and-replace" title="Find and Replace">
+					The specified action could not be completed, as the form is currently read-only.
+				</Dialog>
+			);
 			return;
 		}
 
 		const find = (
-			dialog.form!.values.regex
-				? new RegExp(dialog.form!.values.find, dialog.form!.values.flags)
+			dialog.values.regex
+				? new RegExp(dialog.values.find, dialog.values.flags)
 				: new RegExp(
-					escapeRegExp(dialog.form!.values.find),
-					`g${dialog.form!.values.flags.includes('i') ? 'i' : ''}`
+					escapeRegExp(dialog.values.find),
+					`g${dialog.values.flags.includes('i') ? 'i' : ''}`
 				)
 		);
 
 		for (const page of Object.values(formikPropsRef.current.values.pages)) {
-			const replacedContent = page.content.replace(find, dialog.form!.values.replace);
+			const replacedContent = page.content.replace(find, dialog.values.replace);
 
 			if (page.content !== replacedContent) {
 				formikPropsRef.current.setFieldValue(`pages.${page.id}.content`, replacedContent);
@@ -247,13 +253,17 @@ const StoryEditorPagesOptions = ({
 					disabled={!pageCount}
 					onClick={
 						useFunction(async () => {
-							const dialog = new Dialog({
-								id: 'jump-to-page',
-								title: 'Jump to Page',
-								initialValues: {
-									pageID: '' as number | ''
-								},
-								content: (
+							const initialValues = {
+								pageID: '' as number | ''
+							};
+
+							type Values = typeof initialValues;
+							const dialog = await Dialog.create<Values>(
+								<Dialog
+									id="jump-to-page"
+									title="Jump to Page"
+									initialValues={initialValues}
+								>
 									<LabeledGrid>
 										<LabeledGridField
 											type="number"
@@ -265,19 +275,17 @@ const StoryEditorPagesOptions = ({
 											max={Object.values(formikPropsRef.current.values.pages).length}
 										/>
 									</LabeledGrid>
-								),
-								actions: [
-									{ label: 'Jump!', autoFocus: false },
-									'Cancel'
-								]
-							});
+									<Action>Jump!</Action>
+									{Action.CANCEL}
+								</Dialog>
+							);
 
-							if (!(await dialog)?.submit) {
+							if (dialog.canceled) {
 								return;
 							}
 
 							location.hash = '';
-							location.hash = `p${dialog.form!.values.pageID}`;
+							location.hash = `p${dialog.values.pageID}`;
 						})
 					}
 				>
@@ -290,11 +298,11 @@ const StoryEditorPagesOptions = ({
 					onClick={
 						useFunction(() => {
 							if (formikPropsRef.current.dirty) {
-								new Dialog({
-									id: 'story-editor-view-mode',
-									title: 'View Mode',
-									content: 'You cannot change the view mode with unsaved changes.'
-								});
+								Dialog.create(
+									<Dialog id="story-editor-view-mode" title="View Mode">
+										You cannot change the view mode with unsaved changes.
+									</Dialog>
+								);
 								return;
 							}
 

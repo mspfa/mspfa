@@ -76,6 +76,7 @@ const Color = ({
 								initialValues={initialValues}
 							>
 								<ColorOptions />
+
 								<Action cancel value="delete">Delete</Action>
 								<Action>Save</Action>
 								{Action.CANCEL}

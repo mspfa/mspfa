@@ -22,12 +22,13 @@ import PreviewModeContext from 'lib/client/reactContexts/PreviewModeContext';
 import StoryPageLink from 'components/StoryPageLink';
 import StoryIDContext from 'lib/client/reactContexts/StoryIDContext';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import promptSignIn from 'lib/client/promptSignIn';
+import openSignInDialog from 'lib/client/openSignInDialog';
 import defaultUserSettings from 'lib/client/defaultUserSettings';
 import parseBBCode from 'lib/client/parseBBCode';
 import type { ParsedReactNode } from 'lib/client/parseBBCode/BBStringParser';
 import BBTags from 'components/BBCode/BBTags';
 import Action from 'components/Dialog/Action';
+import promptSignIn from 'lib/client/promptSignIn';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 type UserStorySaveAPI = APIClient<typeof import('pages/api/users/[userID]/story-saves/[storyID]').default>;
@@ -546,15 +547,10 @@ const StoryViewer = (props: StoryViewerProps) => {
 										}
 
 										if (!user) {
-											if (await Dialog.confirm(
-												<Dialog id="story-saves" title="Save Game">
-													Sign into the account you want to save to!
-													<Action autoFocus>Sign In</Action>
-													{Action.CANCEL}
-												</Dialog>
-											)) {
-												promptSignIn();
-											}
+											promptSignIn({
+												title: 'Save Game',
+												content: 'Sign into the account you want to save your place to!'
+											});
 
 											return;
 										}
@@ -575,16 +571,10 @@ const StoryViewer = (props: StoryViewerProps) => {
 								onClick={
 									useFunction(async () => {
 										if (!user) {
-											if (await Dialog.confirm(
-												<Dialog id="story-saves" title="Load Game">
-													Sign in to load your save!
-													<Action autoFocus>Sign In</Action>
-													{Action.CANCEL}
-												</Dialog>
-											)) {
-												promptSignIn();
-											}
-
+											promptSignIn({
+												title: 'Load Game',
+												content: 'Sign in to load your save!'
+											});
 											return;
 										}
 
@@ -616,16 +606,10 @@ const StoryViewer = (props: StoryViewerProps) => {
 								onClick={
 									useFunction(async () => {
 										if (!user) {
-											if (await Dialog.confirm(
-												<Dialog id="story-saves" title="Delete Game Data">
-													Sign in to delete your save!
-													<Action autoFocus>Sign In</Action>
-													{Action.CANCEL}
-												</Dialog>
-											)) {
-												promptSignIn();
-											}
-
+											promptSignIn({
+												title: 'Delete Game Data',
+												content: 'Sign in to delete your save!'
+											});
 											return;
 										}
 

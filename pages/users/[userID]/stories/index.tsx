@@ -19,6 +19,7 @@ import List from 'components/List';
 import StoryListing from 'components/StoryListing';
 import Router from 'next/router';
 import type { integer } from 'lib/types';
+import Action from 'components/Dialog/Action';
 
 type StoriesAPI = APIClient<typeof import('pages/api/stories').default>;
 
@@ -35,13 +36,17 @@ const getRandomStoryName = () => (
 const promptNewStory = async () => {
 	const randomStoryName = getRandomStoryName();
 
-	const dialog = new Dialog({
-		id: 'new-story',
-		title: 'New Adventure',
-		initialValues: {
-			title: ''
-		},
-		content: (
+	const initialValues = {
+		title: ''
+	};
+
+	type Values = typeof initialValues;
+	const dialog = await Dialog.create<Values>(
+		<Dialog
+			id="new-story"
+			title="New Adventure"
+			initialValues={initialValues}
+		>
 			<LabeledGrid>
 				<Row>What will the title of this new adventure be?</Row>
 				<LabeledGridField
@@ -55,19 +60,18 @@ const promptNewStory = async () => {
 					autoComplete="off"
 				/>
 			</LabeledGrid>
-		),
-		actions: [
-			{ label: 'Start!', autoFocus: false },
-			'Cancel'
-		]
-	});
 
-	if (!(await dialog)?.submit) {
+			<Action>Start!</Action>
+			{Action.CANCEL}
+		</Dialog>
+	);
+
+	if (dialog.canceled) {
 		return;
 	}
 
 	const { data: story } = await (api as StoriesAPI).post('/stories', {
-		title: dialog.form!.values.title
+		title: dialog.values.title
 	});
 
 	Router.push(`/stories/${story.id}/edit`);

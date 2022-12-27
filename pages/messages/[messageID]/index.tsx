@@ -75,11 +75,13 @@ const Component = withErrorPage<ServerSideProps>(({
 	initialUserCache.forEach(cacheUser);
 
 	const onClickDelete	= useFunction(async () => {
-		if (!await Dialog.confirm({
-			id: 'delete-message',
-			title: 'Delete Message',
-			content: 'Are you sure you want to delete this message?\n\nThe message will only be deleted for you.'
-		})) {
+		if (!await Dialog.confirm(
+			<Dialog id="delete-message" title="Delete Message">
+				Are you sure you want to delete this message?<br />
+				<br />
+				The message will only be deleted for you.
+			</Dialog>
+		)) {
 			return;
 		}
 

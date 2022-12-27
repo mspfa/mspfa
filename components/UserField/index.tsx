@@ -129,11 +129,11 @@ const UserField = ({
 	});
 
 	const startEditing = useFunction(async () => {
-		if (confirmEdit && !await Dialog.confirm({
-			id: 'user-field-edit',
-			title: editTitle,
-			content: confirmEdit
-		})) {
+		if (confirmEdit && !await Dialog.confirm(
+			<Dialog id="user-field-edit" title={editTitle}>
+				{confirmEdit}
+			</Dialog>
+		)) {
 			return;
 		}
 

@@ -118,11 +118,13 @@ const Component = withErrorPage<ServerSideProps>(({
 	});
 
 	const deleteMessages = useFunction(async () => {
-		if (!await Dialog.confirm({
-			id: 'delete-messages',
-			title: 'Delete Messages',
-			content: `Are you sure you want to delete all selected messages (${selectedCount})?\n\nThe messages will only be deleted for you. This cannot be undone.`
-		})) {
+		if (!await Dialog.confirm(
+			<Dialog id="delete-messages" title="Delete Messages">
+				Are you sure you want to delete all selected messages ({selectedCount})?<br />
+				<br />
+				The messages will only be deleted for you. This cannot be undone.
+			</Dialog>
+		)) {
 			return;
 		}
 

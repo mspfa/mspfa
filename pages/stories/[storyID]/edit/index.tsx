@@ -42,6 +42,7 @@ import Dialog from 'components/Dialog';
 import type { integer } from 'lib/types';
 import StoryIDContext from 'lib/client/reactContexts/StoryIDContext';
 import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';
+import Action from 'components/Dialog/Action';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 
@@ -100,11 +101,15 @@ const Component = withErrorPage<ServerSideProps>(({
 	const [editingAnniversary, setEditingAnniversary] = useState(false);
 
 	const editAnniversary = useFunction(async () => {
-		if (!await Dialog.confirm({
-			id: 'edit-anniversary',
-			title: 'Edit Creation Date',
-			content: 'You can only change this adventure\'s creation date once.\n\nOnce changed, it cannot be undone.\n\nAre you sure you want to edit the creation date?'
-		})) {
+		if (!await Dialog.confirm(
+			<Dialog id="edit-anniversary" title="Edit Creation Date">
+				You can only change this adventure's creation date once.<br />
+				<br />
+				Once changed, it cannot be undone.<br />
+				<br />
+				Are you sure you want to edit the creation date?
+			</Dialog>
+		)) {
 			return;
 		}
 
@@ -196,35 +201,41 @@ const Component = withErrorPage<ServerSideProps>(({
 						const deleteStory = useFunction(async () => {
 							if (!(
 								shouldLeave()
-								&& await Dialog.confirm({
-									id: 'delete-story',
-									title: 'Delete Adventure',
-									content: (
-										<>
-											Are you sure you want to delete this adventure?<br />
-											<br />
-											The adventure can be restored from the page you're currently on within 30 days after deletion.<br />
-											<br />
-											If you do not restore it within 30 days, <span className="bolder red">the deletion will be irreversible.</span><br />
-											<br />
-											<label>
-												<input
-													type="checkbox"
-													className="spaced"
-													required
-													autoFocus
-												/>
-												<span className="spaced bolder">
-													I am sure I want to delete this adventure: <i>{story.title}</i>
-												</span>
-											</label>
-										</>
-									),
-									actions: [
-										{ label: 'Yes', autoFocus: false },
-										'No'
-									]
-								})
+								&& await Dialog.confirm(
+									<Dialog
+										id="delete-story"
+										title="Delete Adventure"
+										initialValues={{ confirmed: false }}
+									>
+										{({ values: { confirmed } }) => (
+											<>
+												Are you sure you want to delete this adventure?<br />
+												<br />
+												The adventure can be restored from the page you're currently on within 30 days after deletion.<br />
+												<br />
+												If you do not restore it within 30 days, <span className="bolder red">the deletion will be irreversible.</span><br />
+												<br />
+												<label>
+													<Field
+														type="checkbox"
+														name="confirmed"
+														className="spaced"
+														required
+														autoFocus
+													/>
+													<span className="spaced bolder">
+														I am sure I want to delete this adventure: <i>{story.title}</i>
+													</span>
+												</label>
+
+												<Action disabled={!confirmed}>
+													Yes
+												</Action>
+												{Action.NO}
+											</>
+										)}
+									</Dialog>
+								)
 							)) {
 								return;
 							}
