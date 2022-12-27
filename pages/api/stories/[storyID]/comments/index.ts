@@ -155,24 +155,28 @@ const Handler: APIHandler<{
 			}
 		}
 
-		// Sort and limit.
-		comments = comments.sort((a, b) => (
-			sort === 'newest'
-				? +b.posted - +a.posted
-				: sort === 'oldest'
-					? +a.posted - +b.posted
-					sort satisfies 'rating';
-					: (
-						// Sort by net rating (like count minus dislike count).
-						(b.likes.length - b.dislikes.length) - (a.likes.length - a.dislikes.length)
-						// Sort by like count if they have the same net rating.
-						|| b.likes.length - a.likes.length
-						// Sort by page ID if they have the same net rating and like count.
-						|| commentPageIDs[stringifyID(b.id)] - commentPageIDs[stringifyID(a.id)]
-						// Sort by newest if they have the same net rating, like count, and page ID.
-						|| +b.posted - +a.posted
-					)
-		));
+		comments = comments.sort((a, b) => {
+			if (sort === 'newest') {
+				return +b.posted - +a.posted;
+			}
+
+			if (sort === 'oldest') {
+				return +a.posted - +b.posted;
+			}
+
+			sort satisfies 'rating';
+
+			return (
+				// Sort by net rating (like count minus dislike count).
+				(b.likes.length - b.dislikes.length) - (a.likes.length - a.dislikes.length)
+				// Sort by like count if they have the same net rating.
+				|| b.likes.length - a.likes.length
+				// Sort by page ID if they have the same net rating and like count.
+				|| commentPageIDs[stringifyID(b.id)] - commentPageIDs[stringifyID(a.id)]
+				// Sort by newest if they have the same net rating, like count, and page ID.
+				|| +b.posted - +a.posted
+			);
+		});
 
 		const startIndex = (
 			req.query.after
