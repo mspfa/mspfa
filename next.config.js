@@ -59,8 +59,5 @@ module.exports = {
 		source: '/discord',
 		destination: 'https://discord.gg/EC5acgG',
 		permanent: true
-	}],
-	experimental: {
-		allowMiddlewareResponseBody: true
-	}
+	}]
 };
