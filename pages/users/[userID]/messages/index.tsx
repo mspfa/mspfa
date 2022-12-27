@@ -3,7 +3,7 @@ import Page from 'components/Page';
 import { withErrorPage } from 'lib/client/errors';
 import withStatusCode from 'lib/server/withStatusCode';
 import Section from 'components/Section';
-import Perm, { hasPerms } from 'lib/client/Perm';
+import Perm from 'lib/client/Perm';
 import { permToGetUserInPage } from 'lib/server/users/permToGetUser';
 import type { ServerMessage } from 'lib/server/messages';
 import messages, { getClientMessage } from 'lib/server/messages';

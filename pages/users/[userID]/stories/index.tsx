@@ -1,5 +1,5 @@
 import Page from 'components/Page';
-import Perm, { hasPerms } from 'lib/client/Perm';
+import Perm from 'lib/client/Perm';
 import { permToGetUserInPage } from 'lib/server/users/permToGetUser';
 import { withErrorPage } from 'lib/client/errors';
 import withStatusCode from 'lib/server/withStatusCode';

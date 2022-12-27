@@ -3,7 +3,7 @@ import type { APIHandler } from 'lib/server/api';
 import messages from 'lib/server/messages';
 import updateUnreadMessages from 'lib/server/messages/updateUnreadMessages';
 import getMessageByUnsafeID from 'lib/server/messages/getMessageByUnsafeID';
-import Perm, { hasPerms } from 'lib/client/Perm';
+import Perm from 'lib/client/Perm';
 import { permToGetUserInAPI } from 'lib/server/users/permToGetUser';
 
 const Handler: APIHandler<{

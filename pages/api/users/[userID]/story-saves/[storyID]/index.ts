@@ -1,6 +1,6 @@
 import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
-import Perm, { hasPerms } from 'lib/client/Perm';
+import Perm from 'lib/client/Perm';
 import { permToGetUserInAPI } from 'lib/server/users/permToGetUser';
 import users from 'lib/server/users';
 import type { StoryPageID } from 'lib/server/stories';

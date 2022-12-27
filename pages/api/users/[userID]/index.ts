@@ -3,7 +3,7 @@ import type { APIHandler } from 'lib/server/api';
 import validateBirthdate from 'lib/server/validateBirthdate';
 import type { PrivateUser, PublicUser } from 'lib/client/users';
 import type { RecursivePartial } from 'lib/types';
-import Perm, { hasPerms } from 'lib/client/Perm';
+import Perm from 'lib/client/Perm';
 import { permToGetUserInAPI } from 'lib/server/users/permToGetUser';
 import users, { getPrivateUser, getPublicUser } from 'lib/server/users';
 import getUserByUnsafeID from 'lib/server/users/getUserByUnsafeID';
