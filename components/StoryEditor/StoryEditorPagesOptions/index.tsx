@@ -293,7 +293,6 @@ const StoryEditorPagesOptions = ({
 				</Button>
 				<Button
 					className="small"
-					title={`Set View Mode to ${viewMode === 'grid' ? 'List' : 'Grid'}`}
 					disabled={formikPropsRef.current.isSubmitting}
 					onClick={
 						useFunction(() => {
@@ -310,7 +309,7 @@ const StoryEditorPagesOptions = ({
 						})
 					}
 				>
-					{`View: ${viewMode === 'grid' ? 'Grid' : 'List'}`}
+					{viewMode === 'list' ? 'Bulk Edit Mode' : 'Back to Default View'}
 				</Button>
 			</Row>
 			{viewMode === 'list' && (
