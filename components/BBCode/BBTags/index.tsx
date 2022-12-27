@@ -49,7 +49,7 @@ const getWidthAndHeight = (attributes: BBTagProps['attributes']) => {
 		};
 	}
 
-	// If this point is reached, `attributes instanceof Object`.
+	attributes satisfies object;
 
 	return {
 		width: attributes.width ? +attributes.width : undefined,

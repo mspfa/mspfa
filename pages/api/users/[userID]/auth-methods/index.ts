@@ -43,7 +43,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	// If this point is reached, `req.method === 'POST'`.
+	req.method satisfies 'POST';
 
 	if (
 		req.body.type === 'password'

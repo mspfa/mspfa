@@ -135,7 +135,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	// If this point is reached, `req.method === 'POST'`.
+	req.method satisfies 'POST';
 
 	if (!user) {
 		res.status(403).send({

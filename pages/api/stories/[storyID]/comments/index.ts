@@ -161,7 +161,7 @@ const Handler: APIHandler<{
 				? +b.posted - +a.posted
 				: sort === 'oldest'
 					? +a.posted - +b.posted
-					// If this point is reached, `sort === 'rating'`.
+					sort satisfies 'rating';
 					: (
 						// Sort by net rating (like count minus dislike count).
 						(b.likes.length - b.dislikes.length) - (a.likes.length - a.dislikes.length)

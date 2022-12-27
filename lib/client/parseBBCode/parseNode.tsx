@@ -74,7 +74,7 @@ const parseNode = <
 			if (isTextNode(childNode)) {
 				parser.parsePartialBBString(childNode.nodeValue!);
 			} else {
-				// If this point is reached, `childNode instanceof Element`.
+				childNode satisfies Element;
 
 				parser.nodes.push(childNode);
 			}

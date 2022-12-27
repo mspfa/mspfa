@@ -93,7 +93,7 @@ const Handler: APIHandler<(
 		return;
 	}
 
-	// If this point is reached, `req.method === 'DELETE'`.
+	req.method satisfies 'DELETE';
 
 	const { user, token } = await authenticate(req, res, false);
 

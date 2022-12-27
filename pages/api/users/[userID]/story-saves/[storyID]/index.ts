@@ -66,7 +66,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	// If this point is reached, `req.method` is `'DELETE'` or `'GET'`.
+	req.method satisfies 'DELETE' | 'GET';
 
 	if (!(story._id in user.storySaves)) {
 		res.status(404).send({

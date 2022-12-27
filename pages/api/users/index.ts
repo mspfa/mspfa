@@ -111,7 +111,7 @@ const Handler: APIHandler<(
 		return;
 	}
 
-	// If this point is reached, `req.method === 'GET'`.
+	req.method satisfies 'GET';
 
 	let limit = req.query.limit ? +req.query.limit : NaN;
 

@@ -54,7 +54,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	// If this point is reached, `req.method === 'POST'`.
+	req.method satisfies 'POST';
 
 	const { user } = await authenticate(req, res);
 

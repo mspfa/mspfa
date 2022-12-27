@@ -109,7 +109,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 				}
 			}
 		} else {
-			// If this point is reached, `dragging === 'color'`.
+			dragging satisfies 'color';
 
 			// Keep the initial index.
 			newDropIndex = draggingIndex!;
@@ -276,7 +276,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 						return;
 					}
 
-					// If this point is reached, `dragging === 'color'`.
+					dragging satisfies 'color';
 
 					const color = story.colors[draggingIndex!];
 

@@ -73,7 +73,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	// If this point is reached, `req.method === 'PATCH'`.
+	req.method satisfies 'PATCH';
 
 	const { user } = await authenticate(req, res);
 

@@ -206,7 +206,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 				return;
 			}
 
-			// If this point is reached, `pageToCheck` is non-nullable.
+			pageToCheck satisfies ClientStoryPage;
 
 			// If this page is within the `IMAGE_PRELOAD_DEPTH`, preload its images.
 			if (depth <= IMAGE_PRELOAD_DEPTH) {
@@ -222,7 +222,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 						return;
 					}
 
-					// If this point is reached, `node` is a `JSX.Element`.
+					node satisfies JSX.Element;
 
 					if (
 						node.type === BBTags.img!

@@ -158,8 +158,6 @@ const UserField = ({
 			return;
 		}
 
-		// If this point is reached, the user just started or stopped editing.
-
 		if (isEditing) {
 			// The user started editing.
 

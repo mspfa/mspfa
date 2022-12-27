@@ -120,7 +120,7 @@ const promptAuthMethod = (
 		return;
 	}
 
-	// If this point is reached, `type === 'password'`.
+	(type satisfies 'password');
 
 	const dialog = await Dialog.create(
 		<Dialog

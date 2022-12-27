@@ -372,7 +372,7 @@ const StoryEditor = ({
 
 										document.documentElement.scrollTop = offsetTop - getScrollPaddingTop();
 									} else {
-										// If this point is reached, `viewMode === 'grid'`.
+										viewMode satisfies 'grid';
 
 										const {
 											pageContainer,
@@ -543,7 +543,7 @@ const StoryEditor = ({
 									throttledUpdateCulledPages();
 								}
 							} else {
-								// If this point is reached, `viewMode === 'grid'`.
+								viewMode satisfies 'grid';
 
 								const newGridCullingInfo = { ...defaultGridCullingInfo };
 
@@ -709,7 +709,7 @@ const StoryEditor = ({
 									cachedHeightSum = 0;
 								}
 							} else {
-								// If this point is reached, `viewMode === 'grid'`.
+								viewMode satisfies 'grid';
 
 								const pageStatus = (
 									initialPublished === undefined

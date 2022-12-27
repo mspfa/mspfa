@@ -47,7 +47,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	// If this point is reached, `req.method === 'PATCH'`.
+	req.method satisfies 'PATCH';
 
 	const message = await getMessageByUnsafeID(req.query.messageID, res);
 

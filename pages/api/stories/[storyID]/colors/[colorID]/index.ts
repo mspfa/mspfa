@@ -114,7 +114,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	// If this point is reached, `req.method === 'PATCH'`.
+	req.method satisfies 'PATCH';
 
 	if (!(
 		user && (

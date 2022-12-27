@@ -278,7 +278,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	// If this point is reached, `req.method === 'DELETE'`.
+	req.method satisfies 'DELETE';
 
 	for (const pageIDToDelete of req.body.pageIDs) {
 		if (!(pageIDToDelete in story.pages)) {
