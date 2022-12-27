@@ -84,24 +84,24 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		return { props: { statusCode: 404 } };
 	}
 
-	const canSudoReadUserFromParams = !!(
+	const canReadUserFromParams = !!(
 		req.user && (
-			req.user._id.equals(userFromParams._id)
+			userFromParams._id.equals(req.user._id)
 			|| hasPerms(req.user, Perm.READ)
 		)
 	);
 
-	if (!(userFromParams.settings.favsPublic || canSudoReadUserFromParams)) {
+	if (!(userFromParams.settings.favsPublic || canReadUserFromParams)) {
 		return { props: { statusCode: 403 } };
 	}
 
 	let stories: ListedStory[];
 
-	const storiesFoundAsUser = getStoriesAsUser(req.user, canSudoReadUserFromParams, {
+	const storiesFoundAsUser = getStoriesAsUser(req.user, canReadUserFromParams, {
 		_id: { $in: userFromParams.favs }
 	});
 
-	if (canSudoReadUserFromParams) {
+	if (canReadUserFromParams) {
 		// If the user is viewing their own favorites, include unavailable stories.
 
 		stories = [];

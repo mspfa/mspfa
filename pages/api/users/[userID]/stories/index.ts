@@ -22,7 +22,7 @@ const Handler: APIHandler<{
 	const { user } = await authenticate(req, res);
 
 	if (user && (
-		user._id.equals(editor._id)
+		editor._id.equals(user._id)
 		|| hasPerms(user, Perm.READ)
 	)) {
 		res.send(
