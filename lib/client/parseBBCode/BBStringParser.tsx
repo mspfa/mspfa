@@ -106,35 +106,44 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 
 			if (typeof node === 'string') {
 				pushString(node);
-			} else if (isOpeningBBTagData(node)) {
-				if (node.closed) {
-					// This is a valid opening BB tag.
+				continue;
+			}
 
-					// Only process this opening tag if the `removeBBTags` option is disabled.
-					if (!this.options.removeBBTags) {
-						if (depth > MAX_BB_PARSER_NODE_DEPTH) {
-							// Since we've reached the max depth, skip past this tag and everything inside it.
-							while (true) {
-								const skippedNode = this.nodes[++i];
-								if (
-									isClosingBBTagData(skippedNode)
-									&& skippedNode.openingBBTagData === node
-								) {
-									// Stop skipping when we find the respective closing tag.
-									break;
-								}
-							}
-							continue;
-						}
-
-						childrenStack.push([]);
-						depth++;
-					}
-				} else {
+			if (isOpeningBBTagData(node)) {
+				if (!node.closed) {
 					// This opening BB tag is invalid, so just treat it as plain text.
 					pushString(node.string);
+					continue;
 				}
-			} else if (isClosingBBTagData(node)) {
+
+				if (this.options.removeBBTags) {
+					// BB tags are supposed to be removed, so don't process this opening tag.
+					continue;
+				}
+
+				if (depth > MAX_BB_PARSER_NODE_DEPTH) {
+					// Since we've reached the max depth, skip past this tag and everything inside it.
+
+					while (true) {
+						const skippedNode = this.nodes[++i];
+
+						// Stop skipping when we find the respective closing tag.
+						if (
+							isClosingBBTagData(skippedNode)
+							&& skippedNode.openingBBTagData === node
+						) {
+							break;
+						}
+					}
+					continue;
+				}
+
+				childrenStack.push([]);
+				depth++;
+				continue;
+			}
+
+			if (isClosingBBTagData(node)) {
 				// This is a valid closing BB tag, and `this.options.removeBBTags` is necessarily disabled since `parsePartialBBString` doesn't push `ClosingBBTagData` when that option is enabled.
 
 				const children = childrenStack.pop()!;
@@ -155,17 +164,19 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 						)}
 					</BBTag>
 				);
-			} else {
-				// `node` is an `Element`.
 
-				if (depth > MAX_BB_PARSER_NODE_DEPTH) {
-					continue;
-				}
-
-				childrenStack[childrenStack.length - 1].push(
-					parseNode(node, this.options, depth, i)
-				);
+				continue;
 			}
+
+			node satisfies Element;
+
+			if (depth > MAX_BB_PARSER_NODE_DEPTH) {
+				continue;
+			}
+
+			childrenStack[childrenStack.length - 1].push(
+				parseNode(node, this.options, depth, i)
+			);
 		}
 
 		return (
@@ -328,7 +339,7 @@ export default class BBStringParser<RemoveBBTags extends boolean | undefined = u
 
 				tagEndIndex = matchEndIndex;
 
-				// Push this closing tag's data, but only if the `removeBBTags` option is disabled.
+				// Push this closing tag's data, but only if BB tags aren't supposed to be removed.
 				if (!this.options.removeBBTags) {
 					const closingBBTagData: ClosingBBTagData = {
 						bbTagDataType: 'closing',
