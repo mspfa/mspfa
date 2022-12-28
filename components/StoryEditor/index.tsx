@@ -42,12 +42,12 @@ export type Values = {
  *
  * This must be a symbol rather than a string so it is not detected when diffing pages for unsaved changes, but it is still kept when creating a shallow clone of the page.
  */
-export const keyProp = Symbol('key');
+export const KEY_PROP = Symbol('key');
 
 /** A `ClientStoryPage` with a React key. */
 export type KeyedClientStoryPage = ClientStoryPage & {
 	/** This page's React key. */
-	[keyProp]: integer
+	[KEY_PROP]: integer
 };
 
 export const StoryEditorContext = React.createContext<{
@@ -157,9 +157,9 @@ const StoryEditor = ({
 
 						// Preserve the React keys of updated pages.
 						for (const newInitialPage of Object.values(newInitialPages)) {
-							(newInitialPage as KeyedClientStoryPage)[keyProp] = (
+							(newInitialPage as KeyedClientStoryPage)[KEY_PROP] = (
 								formikPropsRef.current.values.pages[newInitialPage.id] as KeyedClientStoryPage
-							)[keyProp];
+							)[KEY_PROP];
 						}
 
 						setInitialPages({
@@ -353,7 +353,7 @@ const StoryEditor = ({
 										const iteratePage = (pageID: StoryPageID) => {
 											const pageHeight = cachedPageHeightsRef.current[
 												// This page's key.
-												(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[keyProp]
+												(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[KEY_PROP]
 											] ?? defaultCulledHeightRef.current;
 
 											// Add this page's height to the `offsetTop`.
@@ -469,7 +469,7 @@ const StoryEditor = ({
 										// Cache this page's height. This should be done here and not in the `StoryEditorPageListing` component so it can be ensured that it is up-to-date.
 										cachedPageHeightsRef.current[
 											// This page's key.
-											(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[keyProp]
+											(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[KEY_PROP]
 										] = pageHeight;
 
 										if (defaultCulledHeightUnsetRef.current) {
@@ -498,7 +498,7 @@ const StoryEditor = ({
 									const iteratePage = (pageID: StoryPageID) => {
 										const pageHeight = cachedPageHeightsRef.current[
 											// This page's key.
-											(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[keyProp]
+											(formikPropsRef.current.values.pages[pageID] as KeyedClientStoryPage)[KEY_PROP]
 										] ?? defaultCulledHeight;
 
 										// Only calculate whether this page should be culled if it hasn't already been determined previously.
@@ -651,8 +651,8 @@ const StoryEditor = ({
 							}
 
 							// If this page doesn't have a React key yet, set one.
-							if (!(keyProp in page)) {
-								(page as KeyedClientStoryPage)[keyProp] = nextKeyRef.current++;
+							if (!(KEY_PROP in page)) {
+								(page as KeyedClientStoryPage)[KEY_PROP] = nextKeyRef.current++;
 							}
 
 							const initialPublished = (
@@ -688,7 +688,7 @@ const StoryEditor = ({
 									);
 								}
 
-								const pageKey = page[keyProp];
+								const pageKey = page[KEY_PROP];
 
 								// Check if this page is culled.
 								if (culledPages[page.id]!) {
@@ -723,7 +723,7 @@ const StoryEditor = ({
 
 								pageComponents.push(
 									<Section
-										key={page[keyProp]}
+										key={page[KEY_PROP]}
 										id={`p${page.id}`}
 										className={classNames('story-editor-page', pageStatus, { selected })}
 										heading={page.id}

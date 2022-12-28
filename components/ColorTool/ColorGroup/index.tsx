@@ -8,7 +8,7 @@ import Color from 'components/ColorTool/Color';
 import ColorGroupLabel from 'components/ColorTool/ColorGroup/ColorGroupLabel';
 import type { ColorFieldProps } from 'components/ColorField';
 import type { integer } from 'lib/types';
-import { dropIndicator } from 'components/ColorTool/SavedColors';
+import { DROP_INDICATOR } from 'components/ColorTool/SavedColors';
 import DropIndicator from 'components/ColorTool/DropIndicator';
 
 export type ColorGroupProps = {
@@ -32,11 +32,11 @@ const ColorGroup = ({
 
 	const colorGroupID = colorGroup?.id;
 
-	const colors: Array<ClientColor | typeof dropIndicator> = (
+	const colors: Array<ClientColor | typeof DROP_INDICATOR> = (
 		story.colors.filter(color => color.group === colorGroupID)
 	);
 	if (dropIndicatorIndex !== undefined) {
-		colors.splice(dropIndicatorIndex, 0, dropIndicator);
+		colors.splice(dropIndicatorIndex, 0, DROP_INDICATOR);
 	}
 
 	const colorsComponent = (
@@ -45,7 +45,7 @@ const ColorGroup = ({
 		<div className="color-group-colors">
 			{colors.length !== 0 && (
 				colors.map(color => (
-					color === dropIndicator ? (
+					color === DROP_INDICATOR ? (
 						<DropIndicator key="drag-indicator" />
 					) : (
 						<Color
@@ -62,7 +62,7 @@ const ColorGroup = ({
 				// Check if there are no colors, possibly other than the drop indicator.
 				colors.length === 0 || (
 					colors.length === 1
-					&& colors[0] === dropIndicator
+					&& colors[0] === DROP_INDICATOR
 				)
 			) && (
 				<span className="translucent">

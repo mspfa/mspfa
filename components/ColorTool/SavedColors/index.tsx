@@ -23,7 +23,7 @@ type StoryColorGroupAPI = APIClient<typeof import('pages/api/stories/[storyID]/c
 type StoryColorAPI = APIClient<typeof import('pages/api/stories/[storyID]/colors/[colorID]').default>;
 
 /** A symbol that represents where a `DropIndicator` should be rendered. */
-export const dropIndicator = Symbol('dropIndicator');
+export const DROP_INDICATOR = Symbol('DROP_INDICATOR');
 
 export type SavedColorsProps = Pick<ColorProps, 'name'>;
 
@@ -188,13 +188,13 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 		}
 	});
 
-	const colorGroups: Array<ClientColorGroup | undefined | typeof dropIndicator> = [
+	const colorGroups: Array<ClientColorGroup | undefined | typeof DROP_INDICATOR> = [
 		...story.colorGroups,
 		// This is to render the colors without a `group`.
 		undefined
 	];
 	if (dragging === 'color-group') {
-		colorGroups.splice(dropIndicatorIndex!, 0, dropIndicator);
+		colorGroups.splice(dropIndicatorIndex!, 0, DROP_INDICATOR);
 	}
 
 	const SavedColorsComponent = editing ? 'div' : LabeledGrid;
@@ -327,7 +327,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 				</Label>
 			</Row>
 			{colorGroups.map(colorGroup => (
-				colorGroup === dropIndicator ? (
+				colorGroup === DROP_INDICATOR ? (
 					<DropIndicator key="drop-indicator" />
 				) : (
 					<ColorGroup

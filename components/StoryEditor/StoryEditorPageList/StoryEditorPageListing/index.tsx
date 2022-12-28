@@ -10,7 +10,7 @@ import React, { useRef, useState, useEffect, useContext } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import AddButton from 'components/Button/AddButton';
 import type { KeyedClientStoryPage } from 'components/StoryEditor';
-import { StoryEditorContext, keyProp } from 'components/StoryEditor';
+import { StoryEditorContext, KEY_PROP } from 'components/StoryEditor';
 import RemoveButton from 'components/Button/RemoveButton';
 import { isEqual } from 'lodash';
 import Timestamp from 'components/Timestamp';
@@ -175,7 +175,7 @@ const StoryEditorPageListing = React.memo(({
 			return;
 		}
 
-		toggleAdvancedShown(page[keyProp]);
+		toggleAdvancedShown(page[KEY_PROP]);
 	});
 
 	const savePage = useFunction(async () => {
@@ -229,9 +229,9 @@ const StoryEditorPageListing = React.memo(({
 
 		// Preserve the React keys of updated pages.
 		for (const newInitialPage of Object.values(newInitialPages)) {
-			(newInitialPage as KeyedClientStoryPage)[keyProp] = (
+			(newInitialPage as KeyedClientStoryPage)[KEY_PROP] = (
 				formikPropsRef.current.values.pages[newInitialPage.id] as KeyedClientStoryPage
-			)[keyProp];
+			)[KEY_PROP];
 		}
 
 		setInitialPages({
@@ -393,9 +393,9 @@ const StoryEditorPageListing = React.memo(({
 
 		// Preserve the React keys of updated pages.
 		for (const newInitialPage of Object.values(newInitialPages)) {
-			(newInitialPage as KeyedClientStoryPage)[keyProp] = (
+			(newInitialPage as KeyedClientStoryPage)[KEY_PROP] = (
 				formikPropsRef.current.values.pages[newInitialPage.id] as KeyedClientStoryPage
-			)[keyProp];
+			)[KEY_PROP];
 		}
 
 		setInitialPages({
@@ -454,9 +454,9 @@ const StoryEditorPageListing = React.memo(({
 
 		// Preserve the React keys of updated pages.
 		for (const newInitialPage of Object.values(newInitialPages)) {
-			(newInitialPage as KeyedClientStoryPage)[keyProp] = (
+			(newInitialPage as KeyedClientStoryPage)[KEY_PROP] = (
 				formikPropsRef.current.values.pages[newInitialPage.id] as KeyedClientStoryPage
-			)[keyProp];
+			)[KEY_PROP];
 		}
 
 		setInitialPages({
@@ -519,11 +519,11 @@ const StoryEditorPageListing = React.memo(({
 		}
 
 		// Delete this page's cached height.
-		delete cachedPageHeightsRef.current[page[keyProp]];
+		delete cachedPageHeightsRef.current[page[KEY_PROP]];
 
 		// If this page's key is in `advancedShownPageKeys`, delete it therefrom.
 		if (advancedShownRef.current) {
-			toggleAdvancedShown(page[keyProp]);
+			toggleAdvancedShown(page[KEY_PROP]);
 		}
 
 		formikPropsRef.current.setSubmitting(false);

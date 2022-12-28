@@ -4,7 +4,7 @@ import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
 import type { Dispatch, ReactNode, RefObject, SetStateAction } from 'react';
 import React, { useContext, useEffect } from 'react';
 import type { KeyedClientStoryPage } from 'components/StoryEditor';
-import { StoryEditorContext, keyProp } from 'components/StoryEditor';
+import { StoryEditorContext, KEY_PROP } from 'components/StoryEditor';
 import { Field } from 'formik';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
@@ -158,7 +158,7 @@ const StoryEditorPageGrid = ({
 			pageID = selectedPages.pop()
 		) {
 			const page = newPages[pageID] as KeyedClientStoryPage;
-			const pageKey = page[keyProp];
+			const pageKey = page[KEY_PROP];
 
 			// Delete the page from the `newPages`.
 			newPages = deleteFromClientStoryPageRecord(pageID, newPages);
@@ -239,7 +239,7 @@ const StoryEditorPageGrid = ({
 			const oldPage = formikPropsRef.current.values.pages[+oldPageID] as KeyedClientStoryPage;
 			const newPage = changedPages[newPageID] as KeyedClientStoryPage;
 
-			newPage[keyProp] = oldPage[keyProp];
+			newPage[KEY_PROP] = oldPage[KEY_PROP];
 		}
 
 		setInitialPages({
