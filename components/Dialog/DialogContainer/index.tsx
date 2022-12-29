@@ -36,10 +36,6 @@ export const useDialogContext = <
 	useContext(DialogContext)
 );
 
-const isDialogElement = (node: ReactNode) => (
-	React.isValidElement(node) && node.type === Dialog
-);
-
 const DialogContainerWithoutMemo = <
 	Values extends FormikValues = FormikValues,
 	Action extends string = string
@@ -54,10 +50,6 @@ const DialogContainerWithoutMemo = <
 			? children()
 			: children
 	);
-
-	if (!isDialogElement(dialogElement)) {
-		throw new TypeError('You must pass only a `Dialog` component into `Dialog.create`.');
-	}
 
 	const submissionActionRef = useRef<Action | undefined>();
 
