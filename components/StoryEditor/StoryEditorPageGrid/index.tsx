@@ -17,8 +17,8 @@ import useLatest from 'lib/client/reactHooks/useLatest';
 import classNames from 'classnames';
 import type { Updater } from 'use-immer';
 import Action from 'components/Dialog/Action';
-import type { MovePagesDialogValues } from 'components/StoryEditor/StoryEditorPageGrid/MovePagesDialogContent.tsx';
-import MovePagesDialogContent from 'components/StoryEditor/StoryEditorPageGrid/MovePagesDialogContent.tsx';
+import type { MovePagesDialogValues } from 'components/StoryEditor/StoryEditorPageGrid/MovePagesDialog.tsx';
+import MovePagesDialog from 'components/StoryEditor/StoryEditorPageGrid/MovePagesDialog.tsx';
 import getPagesString from 'lib/client/getPagesString';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -186,30 +186,12 @@ const StoryEditorPageGrid = ({
 	const moveSelectedPages = useFunction(async () => {
 		formikPropsRef.current.setSubmitting(true);
 
-		const initialValues: MovePagesDialogValues = {
-			relation: 'after' as 'before' | 'after',
-			targetPageID: '' as number | ''
-		};
-
 		const dialog = await Dialog.create<MovePagesDialogValues>(
-			<Dialog
-				id="move-pages"
-				title="Move Pages"
-				initialValues={initialValues}
-			>
-				{props => (
-					<>
-						<MovePagesDialogContent
-							formikProps={props}
-							pages={formikPropsRef.current.values.pages}
-							selectedPages={selectedPages}
-							pageCount={pageCount}
-						/>
-						<Action>Move!</Action>
-						{Action.CANCEL}
-					</>
-				)}
-			</Dialog>
+			<MovePagesDialog
+				pages={formikPropsRef.current.values.pages}
+				selectedPages={selectedPages}
+				pageCount={pageCount}
+			/>
 		);
 
 		if (dialog.canceled) {

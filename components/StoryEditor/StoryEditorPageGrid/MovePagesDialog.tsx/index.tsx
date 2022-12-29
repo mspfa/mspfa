@@ -1,4 +1,5 @@
-import type { FormikProps } from 'formik';
+import Dialog from 'components/Dialog';
+import Action from 'components/Dialog/Action';
 import { Field } from 'formik';
 import getPagesString from 'lib/client/getPagesString';
 import invalidPublishedOrder from 'lib/client/invalidPublishedOrder';
@@ -7,31 +8,27 @@ import type { StoryPageID } from 'lib/server/stories';
 import type { integer } from 'lib/types';
 import { useEffect, useRef } from 'react';
 
-/** The dialog's Formik values. */
 export type MovePagesDialogValues = {
 	relation: 'before' | 'after',
 	targetPageID: number | ''
 };
 
-export type MovePagesDialogContentProps = {
-	formikProps: FormikProps<MovePagesDialogValues>,
+export type MovePagesDialogProps = {
 	pages: ClientStoryPageRecord,
 	selectedPages: StoryPageID[],
 	pageCount: integer
 };
 
-/** The content of a `move-pages` dialog. */
-const MovePagesDialogContent = ({
-	formikProps: { values: { targetPageID, relation } },
+const MovePagesDialog = ({
 	pages,
 	selectedPages,
 	pageCount
-}: MovePagesDialogContentProps) => {
+}: MovePagesDialogProps) => {
 	const targetPageIDInputRef = useRef<HTMLInputElement>(null as never);
 
 	const selectedPagesString = getPagesString(selectedPages);
 
-	const getTargetPageIDCustomValidity = () => {
+	const getTargetPageIDCustomValidity = ({ relation, targetPageID }: MovePagesDialogValues) => {
 		const targetIsValid = typeof targetPageID === 'number' && targetPageID in pages;
 		if (!targetIsValid) {
 			// Let the browser handle the invalid page ID via the props on the `targetPageID` field.
@@ -88,34 +85,50 @@ const MovePagesDialogContent = ({
 		return '';
 	};
 
-	const targetPageIDCustomValidity = getTargetPageIDCustomValidity();
-
-	useEffect(() => {
-		targetPageIDInputRef.current.setCustomValidity(targetPageIDCustomValidity);
-	}, [targetPageIDCustomValidity]);
-
 	return (
-		<>
-			Where do you want to move {selectedPagesString}?<br />
-			<br />
-			This cannot be undone.<br />
-			<br />
-			<Field as="select" name="relation">
-				<option value="before">before</option>
-				<option value="after">after</option>
-			</Field>
-			{' page '}
-			<Field
-				type="number"
-				name="targetPageID"
-				required
-				min={1}
-				max={pageCount}
-				autoFocus
-				innerRef={targetPageIDInputRef}
-			/>
-		</>
+		<Dialog<MovePagesDialogValues>
+			id="move-pages"
+			title="Move Pages"
+			initialValues={{
+				relation: 'after',
+				targetPageID: ''
+			}}
+		>
+			{function Content({ values }) {
+				const targetPageIDCustomValidity = getTargetPageIDCustomValidity(values);
+
+				useEffect(() => {
+					targetPageIDInputRef.current.setCustomValidity(targetPageIDCustomValidity);
+				}, [targetPageIDCustomValidity]);
+
+				return (
+					<>
+						Where do you want to move {selectedPagesString}?<br />
+						<br />
+						This cannot be undone.<br />
+						<br />
+						<Field as="select" name="relation">
+							<option value="before">before</option>
+							<option value="after">after</option>
+						</Field>
+						{' page '}
+						<Field
+							type="number"
+							name="targetPageID"
+							required
+							min={1}
+							max={pageCount}
+							autoFocus
+							innerRef={targetPageIDInputRef}
+						/>
+
+						<Action>Move!</Action>
+						{Action.CANCEL}
+					</>
+				);
+			}}
+		</Dialog>
 	);
 };
 
-export default MovePagesDialogContent;
+export default MovePagesDialog;
