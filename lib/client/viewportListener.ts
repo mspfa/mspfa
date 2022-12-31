@@ -4,7 +4,7 @@ import frameThrottler, { cancelFrameThrottler } from 'lib/client/frameThrottler'
 const removeViewportListeners: Record<symbol, () => void> = {};
 
 /** Calls `listener` whenever the viewport changes, throttled by `frameThrottler`. Returns a symbol which can be passed into `removeViewportListener` or used as a `frameThrottler` key. */
-export const addViewportListener = (listener: () => unknown) => {
+export const addViewportListener = (listener: () => void) => {
 	const viewportListenerKey = Symbol('viewportListener');
 
 	const throttledListener = () => {

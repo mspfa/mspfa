@@ -5,7 +5,7 @@ import frameThrottler from 'lib/client/frameThrottler';
 
 const stickyElementRefs: Array<RefObject<HTMLElement>> = [];
 
-let _viewportListener: symbol;
+let viewportListenerKey: symbol;
 let updateViewport: () => void;
 
 const addStickyElementRef = (stickyElementRefToAdd: RefObject<HTMLElement>) => {
@@ -18,22 +18,22 @@ const addStickyElementRef = (stickyElementRefToAdd: RefObject<HTMLElement>) => {
 			let netStickyHeight = 0;
 
 			for (const stickyElementRef of stickyElementRefs) {
-				if (stickyElementRef.current) {
-					const style = getComputedStyle(stickyElementRef.current);
+				if (!stickyElementRef.current) {
+					continue;
+				}
 
-					if (style.position === 'sticky') {
-						const rect = stickyElementRef.current.getBoundingClientRect();
+				const style = getComputedStyle(stickyElementRef.current);
 
-						// Add the heights of sticky elements even if they aren't stuck because a scroll from a higher position where it's not stuck to a lower position where it's stuck would cause it to become stuck but not consider the new scroll padding which would be added due to the element becoming stuck after the scroll. The scroll padding needs to be set before the scroll occurs in order to be effective.
-						netStickyHeight += rect.height;
+				if (style.position === 'sticky') {
+					const rect = stickyElementRef.current.getBoundingClientRect();
 
-						const styleTop = +style.top.slice(0, -2);
-						stickyElementRef.current.classList[
-							styleTop === rect.top
-								? 'add'
-								: 'remove'
-						]('stuck');
-					}
+					// Add the heights of sticky elements even if they aren't stuck because a scroll from a higher position where it's not stuck to a lower position where it's stuck would cause it to become stuck but not consider the new scroll padding which would be added due to the element becoming stuck after the scroll. The scroll padding needs to be set before the scroll occurs in order to be effective.
+					netStickyHeight += rect.height;
+
+					const styleTop = +style.top.slice(0, -2);
+					stickyElementRef.current.classList[
+						styleTop === rect.top ? 'add' : 'remove'
+					]('stuck');
 				}
 			}
 
@@ -44,9 +44,9 @@ const addStickyElementRef = (stickyElementRefToAdd: RefObject<HTMLElement>) => {
 			);
 		};
 
-		_viewportListener = addViewportListener(updateViewport);
+		viewportListenerKey = addViewportListener(updateViewport);
 
-		frameThrottler(_viewportListener).then(() => {
+		frameThrottler(viewportListenerKey).then(() => {
 			updateViewport();
 		});
 	}
@@ -58,10 +58,10 @@ const removeStickyElementRef = (stickyElementRef: RefObject<HTMLElement>) => {
 
 	// Check if all have been removed.
 	if (stickyElementRefs.length === 0) {
-		removeViewportListener(_viewportListener);
+		removeViewportListener(viewportListenerKey);
 	}
 
-	frameThrottler(_viewportListener).then(() => {
+	frameThrottler(viewportListenerKey).then(() => {
 		updateViewport();
 	});
 };
