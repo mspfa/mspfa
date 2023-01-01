@@ -145,14 +145,14 @@ const SignInDialog = () => {
 							or
 						</Row>
 						<LabeledGridField
-							// Without this `key`, `autoFocus` will not work correctly.
-							key={page}
 							type="email"
 							name="email"
 							label="Email"
 							autoComplete="email"
 							required
 							maxLength={254}
+							// Without this `key`, `autoFocus` will not work correctly.
+							key={page}
 							autoFocus={!values.email}
 							innerRef={emailInputRef as any}
 						/>
