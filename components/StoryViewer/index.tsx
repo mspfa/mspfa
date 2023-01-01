@@ -22,12 +22,10 @@ import PreviewModeContext from 'lib/client/reactContexts/PreviewModeContext';
 import StoryPageLink from 'components/StoryPageLink';
 import StoryIDContext from 'lib/client/reactContexts/StoryIDContext';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import openSignInDialog from 'lib/client/openSignInDialog';
 import defaultUserSettings from 'lib/client/defaultUserSettings';
 import parseBBCode from 'lib/client/parseBBCode';
 import type { ParsedReactNode } from 'lib/client/parseBBCode/BBStringParser';
 import BBTags from 'components/BBCode/BBTags';
-import Action from 'components/Dialog/Action';
 import promptSignIn from 'lib/client/promptSignIn';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;

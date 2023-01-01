@@ -13,7 +13,6 @@ import api from 'lib/client/api';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
 import Section from 'components/Section';
-import Dialog from 'components/Dialog';
 import users, { getPublicUser } from 'lib/server/users';
 import UserArrayField from 'components/UserField/UserArrayField';
 import { useUserCache } from 'lib/client/reactContexts/UserCache';
@@ -29,9 +28,7 @@ import Link from 'components/Link';
 import parseID from 'lib/server/db/parseID';
 import type { ObjectId } from 'mongodb';
 import type { integer } from 'lib/types';
-import openSignInDialog from 'lib/client/openSignInDialog';
 import Row from 'components/Row';
-import Action from 'components/Dialog/Action';
 import promptSignIn from 'lib/client/promptSignIn';
 
 type MessagesAPI = APIClient<typeof import('pages/api/messages').default>;
