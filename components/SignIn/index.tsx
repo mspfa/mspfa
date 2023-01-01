@@ -79,7 +79,7 @@ const SignIn = ({ page }: SignInProps) => {
 					<Row className="translucent">
 						{page ? 'Sign up with' : 'Sign in with'}
 					</Row>
-					<Row id="sign-in-methods-external">
+					<Row>
 						<AuthButton type="google" onResolve={resolveExternalSignIn} />
 						<AuthButton type="discord" onResolve={resolveExternalSignIn} />
 					</Row>

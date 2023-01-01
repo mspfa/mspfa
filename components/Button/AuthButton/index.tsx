@@ -174,7 +174,7 @@ export type AuthButtonProps = Omit<ButtonProps, 'type' | 'className' | 'onClick'
 
 const AuthButton = ({ type, onResolve, ...props }: AuthButtonProps) => (
 	<Button
-		className={`auth-button-${toKebabCase(type)}`}
+		className={`auth-button auth-button-${toKebabCase(type)}`}
 		onClick={
 			useFunction(async () => {
 				const authMethodOptions = await promptAuthMethod(type);

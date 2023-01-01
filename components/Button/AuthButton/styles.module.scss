@@ -1,4 +1,8 @@
 .auth-button {
+	.theme-dark & {
+		opacity: 0.85;
+	}
+
 	&-google {
 		--button-color: #1a73e8;
 		--button-text-color: #ffffff;
