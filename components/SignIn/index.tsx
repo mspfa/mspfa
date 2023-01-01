@@ -3,8 +3,6 @@ import { setSignInPage, resolveExternalSignIn } from 'lib/client/signIn';
 import Link from 'components/Link';
 import createUpdater from 'react-component-updater';
 import type { ChangeEvent } from 'react';
-import { useState, useRef, useEffect } from 'react';
-import useFunction from 'lib/client/reactHooks/useFunction';
 import Captcha from 'components/Captcha';
 import LabeledGridRow from 'components/LabeledGrid/LabeledGridRow';
 import LabeledGrid from 'components/LabeledGrid';
@@ -12,19 +10,11 @@ import ForgotPassword from 'components/ForgotPassword';
 import AuthButton from 'components/Button/AuthButton';
 import BirthdateField from 'components/DateField/BirthdateField';
 import { escapeRegExp } from 'lodash';
-import type { CancelTokenSource } from 'axios';
-import axios from 'axios';
-import useMountedRef from 'lib/client/reactHooks/useMountedRef';
-import useThrottled from 'lib/client/reactHooks/useThrottled';
-import api from 'lib/client/api';
-import type { APIClient } from 'lib/client/api';
-import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
 import type { integer } from 'lib/types';
 import Row from 'components/Row';
 import type { UserContextType } from 'lib/client/reactContexts/UserContext';
 import { useUser } from 'lib/client/reactContexts/UserContext';
-
-type EmailTakenAPI = APIClient<typeof import('pages/api/email-taken').default>;
+import useEmailTaken from 'lib/client/reactHooks/useEmailTaken';
 
 const startSigningUp = () => {
 	setSignInPage(1);
@@ -65,9 +55,6 @@ const onChange = (
 	updateSignInValues();
 };
 
-// The following regular expression is copied directly from https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
-const EMAIL_ADDRESS = /^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-
 export type SignInProps = {
 	/** 0 if signing in and not signing up. 1 or more for the page of the sign-up form the user is on. */
 	page: integer
@@ -79,88 +66,11 @@ export let setUser: UserContextType[1];
 const SignIn = ({ page }: SignInProps) => {
 	useSignInValuesUpdater();
 
-	setUser = useUser()[1];
+	[, setUser] = useUser();
 
-	const mountedRef = useMountedRef();
-
-	// This state is whether the inputted email is valid and taken on `page === 1`, or undefined if whether it's taken is still loading.
-	const [emailTaken, setEmailTaken] = useState<boolean>();
-
-	const cancelTokenSourceRef = useRef<CancelTokenSource>();
-
-	/** Asynchronously checks if the `email` is taken and sets the `emailTaken` state accordingly. */
-	const checkEmail = useThrottled(500, async (email: string) => {
-		cancelTokenSourceRef.current = axios.CancelToken.source();
-
-		const { data: { taken } } = await (api as EmailTakenAPI).get('/email-taken', {
-			params: { email },
-			cancelToken: cancelTokenSourceRef.current.token
-		});
-
-		cancelTokenSourceRef.current = undefined;
-
-		if (mountedRef.current) {
-			setEmailTaken(taken);
-		}
-	});
-
-	/** If `page === 1`, queues an update to the `emailTaken` state, possibly via a `checkEmail` call. */
-	const updateEmailTaken = useFunction((email: string) => {
-		// Cancel the last `checkEmail` call, if there is one pending.
-		if (checkEmail.timeout) {
-			clearTimeout(checkEmail.timeout);
-		}
-		// Cancel the last `/email-taken` request, if there is one pending.
-		if (cancelTokenSourceRef.current) {
-			cancelTokenSourceRef.current.cancel();
-			cancelTokenSourceRef.current = undefined;
-		}
-
-		// If the user isn't on the first sign-up page, then stop since doing anything else would be useless.
-		if (page !== 1) {
-			return;
-		}
-
-		if (!EMAIL_ADDRESS.test(email)) {
-			// If the email is invalid, then it shouldn't report an error for being taken.
-			setEmailTaken(false);
-			return;
-		}
-
-		// Set whether the email is taken as unknown, since it's about to be checked afterward by the `checkEmail` call.
-		setEmailTaken(undefined);
-
-		checkEmail(email);
-	});
-
-	const onChangeEmail = useFunction((
-		event: ChangeEvent<HTMLInputElement & HTMLSelectElement & { name: 'email' }>
-	) => {
-		updateEmailTaken(event.target.value);
-
-		onChange(event);
-	});
-
-	const emailInputRef = useRef<HTMLInputElement>(null);
-
-	useEffect(() => {
-		// Check if the email is taken in case they already have an email entered but just switched to the sign-up page.
-		updateEmailTaken(signInValues.email);
-
-		// `page` should be a dependency here so `updateEmailTaken` runs again each time the `page` changes.
-	}, [page, updateEmailTaken]);
-
-	useIsomorphicLayoutEffect(() => {
-		emailInputRef.current?.setCustomValidity(
-			page === 1
-				? emailTaken
-					? 'This email is taken.'
-					: emailTaken === undefined
-						? 'Checking whether this email is taken...'
-						: ''
-				: ''
-		);
-	}, [emailTaken, page]);
+	const { emailInputRef, emailTakenGridRow } = useEmailTaken(
+		page === 1 && signInValues.email
+	);
 
 	return (
 		<div id="sign-in-content">
@@ -215,15 +125,11 @@ const SignIn = ({ page }: SignInProps) => {
 								maxLength={254}
 								autoFocus={!signInValues.email}
 								value={signInValues.email}
-								onChange={onChangeEmail}
+								onChange={onChange}
 								ref={emailInputRef}
 							/>
 						</LabeledGridRow>
-						{page === 1 && emailTaken && (
-							<div id="sign-up-email-taken" className="red">
-								This email is taken.
-							</div>
-						)}
+						{emailTakenGridRow}
 						<LabeledGridRow htmlFor="sign-in-password" label="Password">
 							<input
 								type="password"

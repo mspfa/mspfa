@@ -35,6 +35,7 @@ import DeleteUserButton from 'components/Button/DeleteUserButton';
 import ChangePasswordButton from 'components/Button/ChangePasswordButton';
 import overwriteArrays from 'lib/client/overwriteArrays';
 import Action from 'components/Dialog/Action';
+import useEmailTaken from 'lib/client/reactHooks/useEmailTaken';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 type UserAuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/auth-methods').default>;
@@ -55,7 +56,7 @@ const getSettingsValues = (settings: PrivateUser['settings']) => ({
 });
 
 const getValuesFromUser = (privateUser: PrivateUser) => ({
-	email: privateUser.email,
+	email: (privateUser.email || privateUser.unverifiedEmail)!,
 	birthdate: privateUser.birthdate,
 	settings: getSettingsValues(privateUser.settings)
 });
@@ -116,7 +117,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 				}
 				enableReinitialize
 			>
-				{({ isSubmitting, dirty, values, setFieldValue, submitForm }) => {
+				{({ isSubmitting, dirty, values, setFieldValue, submitForm, initialValues }) => {
 					useLeaveConfirmation(dirty);
 
 					const formChangedRef = useRef(false);
@@ -137,6 +138,11 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 						}
 					});
 
+					const changedEmail = initialValues.email !== values.email;
+					const { emailInputRef, emailTakenGridRow } = useEmailTaken(
+						changedEmail && values.email
+					);
+
 					return (
 						<Form
 							onChange={
@@ -154,7 +160,9 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 									autoComplete="email"
 									required
 									maxLength={254}
+									innerRef={emailInputRef as any}
 								/>
+								{emailTakenGridRow}
 								<BirthdateGridRow
 									birthdateChanged={privateUser.birthdateChanged}
 								/>
