@@ -19,6 +19,7 @@ import StoryPageComment from 'components/Comment/StoryPageComment';
 import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
 import frameThrottler from 'lib/client/frameThrottler';
 import promptSignIn from 'lib/client/promptSignIn';
+import useOnChange from 'lib/client/reactHooks/useOnChange';
 
 type StoryCommentsAPI = APIClient<typeof import('pages/api/stories/[storyID]/comments').default>;
 type StoryPageCommentsAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/[pageID]/comments').default>;
@@ -55,20 +56,10 @@ const StoryComments = React.memo(() => {
 		setNotAllCommentsLoaded(true);
 	};
 
-	const previousPageIDRef = useRef(pageID);
-	const userID = user?.id;
-	const previousUserIDRef = useRef(userID);
-	if (
-		// Reset comments whenever the page changes.
-		previousPageIDRef.current !== pageID
-		// Reset comments whenever the user changes, because otherwise comment ratings could be inaccurate.
-		|| previousUserIDRef.current !== userID
-	) {
-		resetComments();
-
-		previousPageIDRef.current = pageID;
-		previousUserIDRef.current = userID;
-	}
+	// Reset comments whenever the page changes.
+	useOnChange(pageID, resetComments);
+	// Reset comments whenever the user changes, because otherwise comment ratings could be inaccurate.
+	useOnChange(user?.id, resetComments);
 
 	/** A ref to the element containing the comments. */
 	const commentsElementRef = useRef<HTMLDivElement>(null as never);

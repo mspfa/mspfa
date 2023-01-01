@@ -89,7 +89,7 @@ const SignIn = ({ page }: SignInProps) => {
 	const cancelTokenSourceRef = useRef<CancelTokenSource>();
 
 	/** Asynchronously checks if the `email` is taken and sets the `emailTaken` state accordingly. */
-	const checkEmail = useThrottled(async (email: string) => {
+	const checkEmail = useThrottled(500, async (email: string) => {
 		cancelTokenSourceRef.current = axios.CancelToken.source();
 
 		const { data: { taken } } = await (api as EmailTakenAPI).get('/email-taken', {
@@ -107,8 +107,8 @@ const SignIn = ({ page }: SignInProps) => {
 	/** If `page === 1`, queues an update to the `emailTaken` state, possibly via a `checkEmail` call. */
 	const updateEmailTaken = useFunction((email: string) => {
 		// Cancel the last `checkEmail` call, if there is one pending.
-		if (checkEmail.timeoutRef.current) {
-			clearTimeout(checkEmail.timeoutRef.current);
+		if (checkEmail.timeout) {
+			clearTimeout(checkEmail.timeout);
 		}
 		// Cancel the last `/email-taken` request, if there is one pending.
 		if (cancelTokenSourceRef.current) {

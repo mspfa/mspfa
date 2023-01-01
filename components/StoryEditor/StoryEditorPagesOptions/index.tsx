@@ -52,7 +52,7 @@ const StoryEditorPagesOptions = ({
 
 	const cancelTokenSourceRef = useRef<CancelTokenSource>();
 
-	const changeDefaultPageTitle = useThrottled(async (event: ChangeEvent<HTMLInputElement>) => {
+	const changeDefaultPageTitle = useThrottled(500, async (event: ChangeEvent<HTMLInputElement>) => {
 		updateStory(story => {
 			story.defaultPageTitle = event.target.value;
 		});

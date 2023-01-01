@@ -28,7 +28,7 @@ const MovePagesDialog = ({
 
 	const selectedPagesString = getPagesString(selectedPages);
 
-	const getTargetPageIDCustomValidity = ({ relation, targetPageID }: MovePagesDialogValues) => {
+	const getTargetPageIDCustomValidity = ({ relation, targetPageID }: MovePagesDialogValues): string => {
 		const targetIsValid = typeof targetPageID === 'number' && targetPageID in pages;
 		if (!targetIsValid) {
 			// Let the browser handle the invalid page ID via the props on the `targetPageID` field.

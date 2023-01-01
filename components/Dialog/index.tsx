@@ -6,8 +6,9 @@ import { dialogsState } from 'components/Dialog/Dialogs';
 import type { FormikConfig, FormikValues } from 'formik';
 import { Form, Formik } from 'formik';
 import useFunction from 'lib/client/reactHooks/useFunction';
+import useOnChange from 'lib/client/reactHooks/useOnChange';
 import type { ReactElement, ReactNode } from 'react';
-import React, { Fragment, useEffect, useRef } from 'react';
+import React, { Fragment, useEffect } from 'react';
 
 type ActionElement = ReactElement<ActionProps, typeof Action>;
 
@@ -84,10 +85,9 @@ const Dialog = <
 		defaultActions
 	} = useDialogContext<Values, Action>();
 
-	const initialIDRef = useRef(id);
-	if (initialIDRef.current !== id) {
+	useOnChange(id, () => {
 		throw Error('A `Dialog`\'s `id` prop must never change.');
-	}
+	});
 
 	// Close any other dialog with the same `id` as this one.
 	useEffect(() => {
