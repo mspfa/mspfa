@@ -1,11 +1,11 @@
 @use 'sass:math';
 
+// The width and height of the flashy title image.
+$width: 950;
+$height: 68;
+
 #flashy-title {
 	&-container {
-		// The width and height of the flashy title image.
-		$width: 950;
-		$height: 68;
-
 		position: relative;
 		padding-bottom: math.div($height, $width) * 100%
 	}
