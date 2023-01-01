@@ -49,11 +49,13 @@ const Action = <
 	onClick: onClickProp,
 	...props
 }: ActionProps<Action>) => {
-	const { dialog, submissionActionRef } = useDialogContext<Values, Action>();
+	const { dialog, formRef, submissionActionRef } = useDialogContext<Values, Action>();
 	const { isSubmitting } = useFormikContext<Values>();
 
 	const onClick = useFunction((event: MouseEvent<HTMLButtonElement & HTMLAnchorElement>) => {
-		onClickProp?.(event);
+		if (cancel || formRef.current.reportValidity()) {
+			onClickProp?.(event);
+		}
 
 		if (keepOpen) {
 			return;

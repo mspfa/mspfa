@@ -1,9 +1,9 @@
 import './styles.module.scss';
-import type { MutableRefObject, ReactNode } from 'react';
+import type { MutableRefObject } from 'react';
 import React, { useContext, useMemo, useRef } from 'react';
 import type { FormikValues } from 'formik';
 import type { DialogManager, DialogResult } from 'components/Dialog';
-import Dialog from 'components/Dialog';
+import type Dialog from 'components/Dialog';
 
 export type DialogContainerProps<
 	Values extends FormikValues = FormikValues,
@@ -21,6 +21,8 @@ export type DialogContextValue<
 	Values extends FormikValues,
 	Action extends string
 > = Omit<DialogContainerProps<Values, Action>, 'children'> & {
+	/** A ref to the dialog's form element. */
+	formRef: MutableRefObject<HTMLFormElement>,
 	/** A ref to the value of `action` that should be set on the `DialogResult` once the dialog's form is submitted. */
 	submissionActionRef: MutableRefObject<Action | undefined>
 };
@@ -51,11 +53,13 @@ const DialogContainerWithoutMemo = <
 			: children
 	);
 
+	const formRef = useRef<HTMLFormElement>(null as never);
 	const submissionActionRef = useRef<Action | undefined>();
 
 	const dialogContextValue = useMemo(() => ({
 		dialog,
 		setDialogProperties,
+		formRef,
 		submissionActionRef,
 		defaultActions
 	}), [dialog, setDialogProperties, defaultActions]);

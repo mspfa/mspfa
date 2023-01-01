@@ -81,6 +81,7 @@ const Dialog = <
 	const {
 		dialog,
 		setDialogProperties,
+		formRef,
 		submissionActionRef,
 		defaultActions
 	} = useDialogContext<Values, Action>();
@@ -148,6 +149,7 @@ const Dialog = <
 					<Form
 						id={id && `dialog-container-${id}`}
 						className="dialog-container"
+						ref={formRef}
 					>
 						<dialog
 							id={id && `dialog-${id}`}

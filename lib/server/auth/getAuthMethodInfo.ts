@@ -44,14 +44,12 @@ const getAuthMethodInfo = async <AuthMethodType extends AuthMethod['type'] = Aut
 		value = await argon2.hash(authMethodOptions.value);
 	} else {
 		const onReject = (error: any) => new Promise<never>(() => {
-			res.status(error.status || 422).send({
+			res.status(error.response?.status || 500).send({
 				message: error.message
 			});
 		});
 
 		if (authMethodOptions.type === 'google') {
-			// Authenticate with Google.
-
 			const ticket = await googleClient.verifyIdToken({
 				idToken: authMethodOptions.value,
 				audience: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
@@ -64,7 +62,7 @@ const getAuthMethodInfo = async <AuthMethodType extends AuthMethod['type'] = Aut
 			verified = payload.email_verified!;
 			name = payload.email;
 		} else {
-			// Authenticate with Discord.
+			authMethodOptions.type satisfies 'discord';
 
 			const referrerOrigin = req.headers.referer?.slice(
 				0,
@@ -72,6 +70,7 @@ const getAuthMethodInfo = async <AuthMethodType extends AuthMethod['type'] = Aut
 				`${req.headers.referer}/`.indexOf('/', req.headers.referer.indexOf('//') + 2)
 			);
 
+			// TODO: Figure out why `discordToken` is a gibberish string instead of JSON data.
 			const { data: discordToken } = await axios.post('https://discord.com/api/oauth2/token', new URLSearchParams({
 				client_id: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID!,
 				client_secret: process.env.DISCORD_CLIENT_SECRET!,
