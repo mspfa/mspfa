@@ -24,7 +24,7 @@
 		"@hcaptcha/react-hcaptcha": "^1.4.4",
 		"ajv": "^8.11.2",
 		"argon2": "^0.30.2",
-		"axios": "^1.2.0",
+		"axios": "^1.2.2",
 		"classnames": "^2.3.2",
 		"cookies": "^0.8.0",
 		"formik": "^2.2.9",

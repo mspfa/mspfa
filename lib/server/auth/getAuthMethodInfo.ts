@@ -70,7 +70,6 @@ const getAuthMethodInfo = async <AuthMethodType extends AuthMethod['type'] = Aut
 				`${req.headers.referer}/`.indexOf('/', req.headers.referer.indexOf('//') + 2)
 			);
 
-			// TODO: Figure out why `discordToken` is a gibberish string instead of JSON data.
 			const { data: discordToken } = await axios.post('https://discord.com/api/oauth2/token', new URLSearchParams({
 				client_id: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID!,
 				client_secret: process.env.DISCORD_CLIENT_SECRET!,

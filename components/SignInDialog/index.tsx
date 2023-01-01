@@ -129,7 +129,12 @@ const SignInDialog = () => {
 
 				const onResolveAuth = useFunction((authMethodOptions: AuthMethodOptions) => {
 					authMethodOptionsRef.current = authMethodOptions;
-					submitForm();
+
+					if (signingIn) {
+						submitForm();
+					} else {
+						goToNextPage();
+					}
 				});
 
 				return onEitherFirstPage ? (
