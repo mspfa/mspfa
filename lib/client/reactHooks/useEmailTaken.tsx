@@ -28,7 +28,7 @@ const useEmailTaken = (
 	// This state should be completely ignored when `!validEmail`.
 	const [emailTaken, setEmailTaken] = useState<boolean>();
 
-	const emailInputRef = useRef<HTMLInputElement>(null as never);
+	const emailInputRef = useRef<HTMLInputElement>(null);
 
 	const getEmailCustomValidity = (): string => {
 		if (!validEmail) {
@@ -51,7 +51,7 @@ const useEmailTaken = (
 
 	// This must be a layout effect to prevent any moment for which the email input is valid but shouldn't be.
 	useIsomorphicLayoutEffect(() => {
-		emailInputRef.current.setCustomValidity(emailCustomValidity);
+		emailInputRef.current?.setCustomValidity(emailCustomValidity);
 	}, [emailCustomValidity]);
 
 	const cancelTokenSourceRef = useRef<CancelTokenSource>();
