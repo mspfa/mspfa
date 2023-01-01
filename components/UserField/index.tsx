@@ -15,10 +15,8 @@ import axios from 'axios';
 import { useUserCache } from 'lib/client/reactContexts/UserCache';
 import RemoveButton from 'components/Button/RemoveButton';
 import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
-import useLatest from 'lib/client/reactHooks/useLatest';
 import Dialog from 'components/Dialog';
 import useThrottled from 'lib/client/reactHooks/useThrottled';
-import useMountedRef from 'lib/client/reactHooks/useMountedRef';
 import UserLink from 'components/Link/UserLink';
 import type { integer } from 'lib/types';
 
@@ -80,41 +78,49 @@ const UserField = ({
 	const userFieldRef = useRef<HTMLDivElement>(null);
 	const [autoCompleteUsers, setAutoCompleteUsers] = useState<PublicUser[]>([]);
 
-	const mountedRef = useMountedRef();
-
 	const cancelTokenSourceRef = useRef<CancelTokenSource>();
 
 	const updateAutoComplete = useThrottled(500, async (nameOrID: string) => {
-		if (nameOrID) {
-			cancelTokenSourceRef.current?.cancel();
-			cancelTokenSourceRef.current = axios.CancelToken.source();
-
-			const { data: newAutoCompleteUsers } = await (api as UsersAPI).get('/users', {
-				params: {
-					limit: 8,
-					nameOrID
-				},
-				cancelToken: cancelTokenSourceRef.current.token
-			});
-
-			cancelTokenSourceRef.current = undefined;
-
-			newAutoCompleteUsers.forEach(cacheUser);
-
-			if (mountedRef.current) {
-				setAutoCompleteUsers(newAutoCompleteUsers);
-			}
-		} else {
+		if (!nameOrID) {
 			setAutoCompleteUsers([]);
+			return;
+		}
+
+		cancelTokenSourceRef.current?.cancel();
+		cancelTokenSourceRef.current = axios.CancelToken.source();
+
+		const { data: newAutoCompleteUsers } = await (api as UsersAPI).get('/users', {
+			params: {
+				limit: 8,
+				nameOrID
+			},
+			cancelToken: cancelTokenSourceRef.current.token
+		});
+
+		cancelTokenSourceRef.current = undefined;
+
+		newAutoCompleteUsers.forEach(cacheUser);
+		setAutoCompleteUsers(newAutoCompleteUsers);
+	});
+
+	const cancelAutoCompleteUpdate = useFunction(() => {
+		if (updateAutoComplete.timeout) {
+			clearTimeout(updateAutoComplete.timeout);
+			updateAutoComplete.timeout = undefined;
+		}
+
+		if (cancelTokenSourceRef.current) {
+			cancelTokenSourceRef.current.cancel();
+			cancelTokenSourceRef.current = undefined;
 		}
 	});
 
-	const updateAutoCompleteRef = useLatest(updateAutoComplete);
+	useEffect(() => cancelAutoCompleteUpdate, [cancelAutoCompleteUpdate]);
 
 	const onChange = useFunction((event: ChangeEvent<HTMLInputElement>) => {
 		setInputValue(event.target.value);
 
-		updateAutoCompleteRef.current(event.target.value);
+		updateAutoComplete(event.target.value);
 	});
 
 	const changeValue = useFunction(async (newValue: string | undefined) => {
@@ -145,7 +151,7 @@ const UserField = ({
 			setInputValue(newInputValue);
 		}
 
-		updateAutoCompleteRef.current(newInputValue);
+		updateAutoComplete(newInputValue);
 
 		changeValue(undefined);
 	});
@@ -173,38 +179,32 @@ const UserField = ({
 		} else {
 			// The user stopped editing.
 
-			if (updateAutoComplete.timeout) {
-				clearTimeout(updateAutoComplete.timeout);
-				updateAutoComplete.timeout = undefined;
-			}
-
-			if (cancelTokenSourceRef.current) {
-				cancelTokenSourceRef.current.cancel();
-				cancelTokenSourceRef.current = undefined;
-			}
+			cancelAutoCompleteUpdate();
 
 			// Reset the auto-complete users so starting editing does not display an outdated auto-complete list for an instant.
 			setAutoCompleteUsers([]);
 		}
 
 		setWasEditing(isEditing);
-	}, [isEditing, wasEditing, inputValue, autoFocus, updateAutoComplete]);
+	}, [isEditing, wasEditing, inputValue, autoFocus, cancelAutoCompleteUpdate]);
 
 	useIsomorphicLayoutEffect(() => {
-		if (isEditing) {
-			// The component rendered while the user is editing.
-
-			const userFieldInput = userFieldRef.current!.getElementsByClassName('user-field-input')[0] as HTMLInputElement;
-
-			userFieldInput.setCustomValidity(
-				// If the field is required, a field still being edited should be invalid to avoid `undefined` being submitted as its value.
-				required
-				// If the field is part of a `UserArrayField`, a field still being edited should be invalid to avoid `undefined`s in the submitted user array.
-				|| inUserArrayField
-					? 'Please enter a valid username or ID, and select a user.'
-					: ''
-			);
+		if (!isEditing) {
+			return;
 		}
+
+		// The component rendered while the user is editing.
+
+		const userFieldInput = userFieldRef.current!.getElementsByClassName('user-field-input')[0] as HTMLInputElement;
+
+		userFieldInput.setCustomValidity(
+			// If the field is required, a field still being edited should be invalid to avoid `undefined` being submitted as its value.
+			required
+			// If the field is part of a `UserArrayField`, a field still being edited should be invalid to avoid `undefined`s in the submitted user array.
+			|| inUserArrayField
+				? 'Please enter a valid username or ID, and select a user.'
+				: ''
+		);
 	}, [isEditing, required, inUserArrayField]);
 
 	const deleteFromArray = useFunction(() => {

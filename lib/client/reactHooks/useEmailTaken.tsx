@@ -70,7 +70,10 @@ const useEmailTaken = (
 	});
 
 	const cancelEmailTakenCheck = useFunction(() => {
-		clearTimeout(checkEmailTaken.timeout);
+		if (checkEmailTaken.timeout) {
+			clearTimeout(checkEmailTaken.timeout);
+			checkEmailTaken.timeout = undefined;
+		}
 
 		if (cancelTokenSourceRef.current) {
 			cancelTokenSourceRef.current.cancel();

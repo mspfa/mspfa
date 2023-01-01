@@ -91,11 +91,13 @@ const StoryNews = React.memo(() => {
 			dialog.values
 		);
 
-		if (mountedRef.current) {
-			updateNewsPosts(newsPosts => {
-				newsPosts.unshift(newsPost);
-			});
+		if (!mountedRef.current) {
+			return;
 		}
+
+		updateNewsPosts(newsPosts => {
+			newsPosts.unshift(newsPost);
+		});
 	});
 
 	const [notAllNewsLoaded, setNotAllNewsLoaded] = useState(
