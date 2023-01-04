@@ -1,0 +1,67 @@
+@use 'lib/styles/themes' as *;
+
+dialog {
+	// This is a flexbox in order to prevent the children from overflowing.
+	display: flex;
+    flex-direction: column;
+	pointer-events: auto;
+	position: relative;
+	padding: 0;
+	max-height: 100%;
+	min-width: 320px;
+	max-width: 880px;
+	color: inherit;
+	background: none;
+	border: none;
+	animation: 0.05s step-end dialog-pop;
+
+	// The border and the shadow respectively. These are pseudo-elements rather than using `border` and `box-shadow` so that their colors can be adjusted in runtime (e.g. via `opacity`), making it easier for custom styles to change the colors.
+	&::before, &::after {
+		content: '';
+		pointer-events: none;
+		position: absolute;
+		z-index: -1;
+		width: 100%;
+		height: 100%;
+		padding: 1px;
+		margin: -1px;
+		opacity: 0.5;
+		// Color the border and the shadow so they blend with the background.
+		@include theme(background-color, back-color);
+	}
+
+	&::after {
+		top: 16px;
+		left: 16px;
+	}
+}
+
+.dialog {
+	&-title {
+		padding: 0.25em 0.5em;
+		@include theme(font, heading-font);
+		font-size: 1.75em;
+	}
+
+	&-content {
+		padding: 1em 0.875em;
+		overflow-y: auto;
+		overflow-x: hidden;
+		white-space: pre-wrap;
+	}
+
+	&-actions {
+		padding: 1em;
+		text-align: right;
+	}
+}
+
+@keyframes dialog-pop {
+	from {
+		transform: translate(-2px, -2px);
+	}
+
+	to {
+		transform: none;
+	}
+}

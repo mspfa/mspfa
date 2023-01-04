@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import type { DialogManager } from 'components/Dialog';
 import Router from 'next/router';
 import { useEffect } from 'react';
