@@ -355,8 +355,10 @@ const StoryEditorPageListing = React.memo(({
 							</LabeledGrid>
 							{/* To reduce clutter, only show the tip on the default `action` setting. */}
 							{values.action === 'publish' && (
-								<Row id="story-page-publish-tip">
-									Tip: Shift+click the publish button to bypass this dialog and publish immediately.
+								<Row id="story-page-publish-tip-container">
+									<div id="story-page-publish-tip">
+										Tip: Shift+click the publish button to bypass this dialog and publish immediately.
+									</div>
 								</Row>
 							)}
 

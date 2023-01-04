@@ -93,8 +93,13 @@
 	}
 
 	&-tip {
+		&-container {
+			display: flex;
+		}
+
+		width: 0;
+		flex-grow: 1;
 		font-size: 0.875rem;
 		opacity: 0.5;
-		max-width: fit-content;
 	}
 }
