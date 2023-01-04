@@ -1,6 +1,5 @@
 import type { PrivateUser } from 'lib/client/users';
 import type { ServerUser } from 'lib/server/users';
-import type { integer } from 'lib/types';
 
 enum Perm {
 	/** Permission to grant or revoke `Perm`s for users (including yourself). */
