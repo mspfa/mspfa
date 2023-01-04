@@ -151,7 +151,9 @@ const promptAuthMethod = (
 						placeholder="Re-Type Password"
 						pattern={escapeRegExp(values.password)}
 					/>
-					{Action.OKAY} {Action.CANCEL}
+
+					{Action.OKAY}
+					{Action.CANCEL}
 				</LabeledGrid>
 			)}
 		</Dialog>

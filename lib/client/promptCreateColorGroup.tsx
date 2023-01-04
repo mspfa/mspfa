@@ -29,7 +29,8 @@ const promptCreateColorGroup = (
 		>
 			<ColorGroupOptions />
 
-			{Action.OKAY} {Action.CANCEL}
+			{Action.OKAY}
+			{Action.CANCEL}
 		</Dialog>
 	);
 

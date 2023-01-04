@@ -288,7 +288,7 @@ const optionsByTagName: Record<string, BBToolOptions> = {
 					required
 					autoFocus
 					autoComplete="off"
-					help="TODO: Add info on getting image URLs."
+					help="TODO: Add info on image hosting and getting image URLs."
 				/>
 				<LabeledGridField
 					type="number"
@@ -419,9 +419,9 @@ const optionsByTagName: Record<string, BBToolOptions> = {
 					autoComplete="off"
 					help={(
 						<>
-							A direct link to an HTML file (usually called "index.html"). You can upload HTML files to a file host that supports HTML5, such as <Link href="https://pipe.miroware.io" target="_blank">Miroware Pipe</Link>.<br />
+							A direct link to an HTML file. You can upload HTML files to a file host that supports HTML5, such as <Link href="https://filegarden.com" target="_blank">File Garden</Link>.<br />
 							<br />
-							If you need help extracting, uploading, and/or embedding HTML, feel free to ask in the #technical-help channel of <Link href="/discord" target="_blank">our Discord server</Link>.
+							If you need help with HTML5, feel free to ask in the #technical-help channel of <Link href="/discord" target="_blank">our Discord server</Link>.
 						</>
 					)}
 				/>
@@ -586,7 +586,9 @@ const BBTool = ({ tag: tagName }: BBToolProps) => {
 								? options.dialogContent(props)
 								: options.dialogContent
 							)}
-							{Action.OKAY} {Action.CANCEL}
+
+							{Action.OKAY}
+							{Action.CANCEL}
 						</IDPrefix.Provider>
 					)}
 				</Dialog>

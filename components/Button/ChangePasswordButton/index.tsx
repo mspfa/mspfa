@@ -78,7 +78,9 @@ const ChangePasswordButton = ({ privateUser }: ChangePasswordButtonProps) => (
 									placeholder="Re-Type Password"
 									pattern={escapeRegExp(values.newPassword)}
 								/>
-								{Action.OKAY} {Action.CANCEL}
+
+								{Action.OKAY}
+								{Action.CANCEL}
 							</LabeledGrid>
 						)}
 					</Dialog>
