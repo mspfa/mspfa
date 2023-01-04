@@ -38,7 +38,8 @@
 		"react": "^18.2.0",
 		"react-component-updater": "^1.0.7",
 		"react-dom": "^18.2.0",
-		"use-immer": "^0.8.1"
+		"use-immer": "^0.8.1",
+		"use-isomorphic-layout-effect": "^1.1.2"
 	},
 	"devDependencies": {
 		"@grantgryczan/eslint-config": "^1.1.0",

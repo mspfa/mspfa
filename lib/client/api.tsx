@@ -1,6 +1,6 @@
 import axios from 'axios';
 import type { APIHandler } from 'lib/server/api';
-import type { AxiosRequestConfig, AxiosInstance, AxiosResponse, AxiosError } from 'axios';
+import type { AxiosRequestConfig, AxiosInstance, AxiosResponse, AxiosError, RawAxiosRequestHeaders } from 'axios';
 import type { integer, Method, MethodWithData } from 'lib/types';
 import Dialog from 'components/Dialog';
 import { startLoading, stopLoading } from 'components/LoadingIndicator';
@@ -102,14 +102,15 @@ api.interceptors.request.use(
 	value => {
 		startLoading();
 
-		if (value.data !== undefined) {
-			if (!value.headers) {
-				value.headers = {};
-			}
-
-			value.headers['Content-Type'] = 'application/json';
+		if (value.data === undefined) {
+			return value;
 		}
 
+		if (!value.headers) {
+			value.headers = {};
+		}
+
+		(value.headers as RawAxiosRequestHeaders)['Content-Type'] = 'application/json';
 		return value;
 	},
 	onReject

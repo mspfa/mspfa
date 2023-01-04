@@ -14,7 +14,7 @@ import type { CancelTokenSource } from 'axios';
 import axios from 'axios';
 import { useUserCache } from 'lib/client/reactContexts/UserCache';
 import RemoveButton from 'components/Button/RemoveButton';
-import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
+import useIsomorphicLayoutEffect from 'use-isomorphic-layout-effect';
 import Dialog from 'components/Dialog';
 import useThrottled from 'lib/client/reactHooks/useThrottled';
 import UserLink from 'components/Link/UserLink';

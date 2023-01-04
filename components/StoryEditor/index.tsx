@@ -12,7 +12,7 @@ import Section from 'components/Section';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import StoryEditorPageListing from 'components/StoryEditor/StoryEditorPageList/StoryEditorPageListing';
-import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
+import useIsomorphicLayoutEffect from 'use-isomorphic-layout-effect';
 import useLatest from 'lib/client/reactHooks/useLatest';
 import Router, { useRouter } from 'next/router';
 import frameThrottler from 'lib/client/frameThrottler';

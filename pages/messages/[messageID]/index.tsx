@@ -29,7 +29,7 @@ import BBField from 'components/BBCode/BBField';
 import { Form, Formik } from 'formik';
 import { useLeaveConfirmation } from 'lib/client/forms';
 import UserLink from 'components/Link/UserLink';
-import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
+import useIsomorphicLayoutEffect from 'use-isomorphic-layout-effect';
 import type { integer } from 'lib/types';
 import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';
 import classNames from 'classnames';

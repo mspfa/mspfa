@@ -196,7 +196,9 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ param
 		return {
 			props: {
 				publicUser: getPublicUser(userFromParams),
-				stories: await getPublicStoriesByEditor(userFromParams),
+				stories: (
+					await getPublicStoriesByEditor(userFromParams)
+				).sort((a, b) => b.updated - a.updated),
 				favsPublic: userFromParams.settings.favsPublic,
 				...userFromParams.settings.favsPublic && {
 					favCount: (

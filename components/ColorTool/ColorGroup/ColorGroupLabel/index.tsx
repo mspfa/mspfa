@@ -58,7 +58,11 @@ const ColorGroupLabel = ({ children: colorGroup }: ColorGroupLabelProps) => {
 							type Values = typeof initialValues;
 							type Action = 'delete';
 							const dialog = await Dialog.create<Values, Action>(
-								<Dialog id="color-group-options" title="Edit Color Group">
+								<Dialog
+									id="color-group-options"
+									title="Edit Color Group"
+									initialValues={initialValues}
+								>
 									<ColorGroupOptions />
 
 									<Action cancel value="delete">Delete</Action>

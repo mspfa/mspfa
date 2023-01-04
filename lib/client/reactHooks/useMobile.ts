@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
+import useIsomorphicLayoutEffect from 'use-isomorphic-layout-effect';
 
 const PAGE_WIDTH = 950;
 

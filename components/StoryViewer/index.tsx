@@ -7,7 +7,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import React, { useState, useEffect, useRef, Fragment, useMemo } from 'react';
 import type { StoryPageID } from 'lib/server/stories';
 import BBCode from 'components/BBCode';
-import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
+import useIsomorphicLayoutEffect from 'use-isomorphic-layout-effect';
 import useLatest from 'lib/client/reactHooks/useLatest';
 import Stick from 'components/Stick';
 import Delimit from 'components/Delimit';

@@ -290,7 +290,11 @@ const StoryEditorPageListing = React.memo(({
 
 			type Values = typeof initialValues;
 			const dialog = await Dialog.create<Values>(
-				<Dialog id="publish-pages" title="Publish Pages">
+				<Dialog
+					id="publish-pages"
+					title="Publish Pages"
+					initialValues={initialValues}
+				>
 					{({ values }) => (
 						<IDPrefix.Provider value="story-page-publish">
 							<Row>

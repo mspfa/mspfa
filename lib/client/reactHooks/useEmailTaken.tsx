@@ -4,7 +4,7 @@ import EmailTakenGridRow from 'components/EmailTakenGridRow';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import useFunction from 'lib/client/reactHooks/useFunction';
-import useIsomorphicLayoutEffect from 'lib/client/reactHooks/useIsomorphicLayoutEffect';
+import useIsomorphicLayoutEffect from 'use-isomorphic-layout-effect';
 import useOnChange from 'lib/client/reactHooks/useOnChange';
 import useThrottled from 'lib/client/reactHooks/useThrottled';
 import type { EmailString } from 'lib/types';

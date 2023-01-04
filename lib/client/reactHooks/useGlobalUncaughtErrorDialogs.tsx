@@ -5,21 +5,23 @@ import { useEffect } from 'react';
 const useGlobalUncaughtErrorDialogs = () => {
 	useEffect(() => {
 		const onError = (event: ErrorEvent) => {
-			if (event.filename.startsWith(`${location.origin}/`)) {
-				Dialog.create(
-					<Dialog title="Bug Found!">
-						<div className="red">
-							{event.message}
-						</div>
-						<br />
-						<div className="translucent">
-							{event.error.stack || (
-								`${event.error.message}\n    at ${event.filename}:${event.lineno}${event.colno ? `:${event.colno}` : ''}`
-							)}
-						</div>
-					</Dialog>
-				);
+			if (!event.filename.startsWith(`${location.origin}/`)) {
+				return;
 			}
+
+			Dialog.create(
+				<Dialog title="Bug Found!">
+					<div className="red">
+						{event.message}
+					</div>
+					<br />
+					<div className="translucent">
+						{event.error.stack || (
+							`${event.error.message}\n    at ${event.filename}:${event.lineno}${event.colno ? `:${event.colno}` : ''}`
+						)}
+					</div>
+				</Dialog>
+			);
 		};
 
 		window.addEventListener('error', onError);
