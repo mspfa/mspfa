@@ -22,15 +22,23 @@ enum Perm {
 export default Perm;
 
 /**
- * Checks if a user has a `Perm` or has all of the `Perm`s in a bitwise OR of `Perm`s.
+ * Checks if a user has all the specified `Perm`s.
  *
- * If the inputted user is `undefined`, returns `false`.
+ * If the user is `undefined`, returns `false`.
  */
 export const hasPerms = (
 	/** The user to check the perms of. */
-	user: PrivateUser | ServerUser | undefined,
-	/** The `Perm` or bitwise OR of `Perm`s to require. */
-	perms: integer
-) => Boolean(
-	user && (user.perms & perms)
-);
+	user: ServerUser | PrivateUser | undefined,
+	/** The `Perm` or array of `Perm`s to require. */
+	perms: Perm | Perm[]
+): boolean => {
+	if (!user) {
+		return false;
+	}
+
+	if (Array.isArray(perms)) {
+		return perms.every(perm => user.perms & perm);
+	}
+
+	return Boolean(user.perms & perms);
+};

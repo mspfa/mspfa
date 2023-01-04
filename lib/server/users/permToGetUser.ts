@@ -5,14 +5,16 @@ import type { PageRequest } from 'lib/server/pages';
 import authenticate from 'lib/server/auth/authenticate';
 import type { integer } from 'lib/types';
 import stringifyID from 'lib/server/db/stringifyID';
+import type Perm from 'lib/client/Perm';
+import { hasPerms } from 'lib/client/Perm';
 
 type PermToGetUserRequiredParams = [
 	/** The user to check the perms of. */
 	user: ServerUser | undefined,
 	/** The potentially unsafe user ID of the user to get. */
 	id: string | undefined,
-	/** The `Perm` or bitwise OR of `Perm`s to require. */
-	perms: integer
+	/** The `Perm` or array of `Perm`s to require. */
+	perms: Perm | Perm[]
 ];
 
 type PermToGetUserReturn<Res> = {
@@ -120,15 +122,15 @@ const permToGetUser = <Res extends APIResponse<any> | undefined>(
  * Examples:
  * ```
  * const user = await permToGetUserInAPI(req, res, Perm.READ);
- * const user = await permToGetUserInAPI(req, res, Perm.READ | Perm.WRITE);
+ * const user = await permToGetUserInAPI(req, res, [Perm.READ, Perm.WRITE]);
  * const user = await permToGetUserInAPI(req, res, Perm.DELETE, req.body.user);
  * ```
  */
 export const permToGetUserInAPI = async <UserID extends string | undefined = undefined>(
 	req: APIRequest<{ query: { userID: UserID } } | {}>,
 	res: APIResponse,
-	/** The `Perm` or bitwise OR of `Perm`s to require. */
-	perms: integer,
+	/** The `Perm` or array of `Perm`s to require. */
+	perms: Perm | Perm[],
 	...[
 		userID = (req.query as any).userID
 	]: (UserID extends undefined ? [
@@ -153,13 +155,13 @@ export const permToGetUserInAPI = async <UserID extends string | undefined = und
  * Examples:
  * ```
  * const { user, statusCode } = await permToGetUserInPage(req, params.userID, Perm.READ);
- * const { user, statusCode } = await permToGetUserInPage(req, params.userID, Perm.READ | Perm.WRITE);
+ * const { user, statusCode } = await permToGetUserInPage(req, params.userID, [Perm.READ, Perm.WRITE]);
  * ```
  */
 export const permToGetUserInPage = async (
 	req: PageRequest,
 	/** The potentially unsafe user ID of the user to get. */
 	id: string | undefined,
-	/** The `Perm` or bitwise OR of `Perm`s to require. */
-	perms: integer
+	/** The `Perm` or array of `Perm`s to require. */
+	perms: Perm | Perm[]
 ) => permToGetUser(req.user, id, perms);
