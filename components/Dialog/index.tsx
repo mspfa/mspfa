@@ -1,3 +1,4 @@
+import './styles.module.scss';
 import type { ActionProps } from 'components/Dialog/Action';
 import Action from 'components/Dialog/Action';
 import type { DialogContextValue } from 'components/Dialog/DialogContainer';
