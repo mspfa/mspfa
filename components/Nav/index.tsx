@@ -81,14 +81,14 @@ const Nav = () => {
 							href={`/users/${user.id}/messages`}
 							bubble={messagesBubble}
 						/>
-						<div className="divider" />
+						<hr />
 						<NavItem id="stories" label="Adventures" href={`/users/${user.id}/stories`} />
 						<NavItem id="favs" label="Favorites" href={`/users/${user.id}/favs`} />
 						<NavItem id="saves" label="Game Saves" href={`/users/${user.id}/saves`} />
-						<div className="divider" />
+						<hr />
 						<NavItem id="profile" label="Profile" href={`/users/${user.id}`} />
 						<NavItem id="settings" label="Settings" href={`/users/${user.id}/settings`} />
-						<div className="divider" />
+						<hr />
 						<NavItem id="sign-out" label="Sign Out" onClick={promptSignOut} />
 					</NavMenu>
 				) : (
@@ -99,7 +99,7 @@ const Nav = () => {
 				<NavMenu id="browse" label="Browse">
 					<NavItem id="browse-stories" label="Adventures" href="/browse/stories" />
 					<NavItem id="browse-users" label="Users" href="/browse/users" />
-					<div className="divider" />
+					<hr />
 					<NavItem id="browse-modules" label="Modules" href="/browse/modules" />
 				</NavMenu>
 				<NavItem id="random-story" label="Mystery" title="Take me to a random adventure!" onClick={visitRandomStory} />
@@ -119,23 +119,23 @@ const Nav = () => {
 				</NavGroup>
 			)}
 			<NavGroup id="external">
-				{/* Since these are all external links, they should all have `target="_blank"`, since the user's intention with them is generally not going to be to leave the site. */}
-				<NavMenu id="support" label="Support">
-					<NavItem id="support-discord" label="Ask on Discord" href="/discord" target="_blank" />
-					<NavItem id="support-email" label="Email Us" href="mailto:support@mspfa.com" target="_blank" />
-				</NavMenu>
+				<NavItem id="donate" label="Donate <3" href="https://www.patreon.com/mspfa" target="_blank" />
 				<NavMenu id="more" label="More">
 					<NavItem id="discord" label="Discord" href="/discord" target="_blank" />
-					<NavItem id="patreon" label="Patreon" href="https://www.patreon.com/mspfa" target="_blank" />
 					<NavItem id="twitter" label="Twitter" href="https://twitter.com/mspfa" target="_blank" />
 					<NavItem id="github" label="GitHub" href="https://github.com/MSPFA/MSPFA" target="_blank" />
 				</NavMenu>
 			</NavGroup>
-			<NavGroup id="boring">
-				<NavItem id="rules" label="Rules" href="/rules" />
-				<NavMenu id="legal" label="Legal">
-					<NavItem id="privacy" label="Privacy Policy" href="/privacy" />
+			<NavGroup id="misc">
+				<NavMenu id="help" label="Help">
+					<NavItem id="help-discord" label="Ask on Discord" href="/discord" target="_blank" />
+					<NavItem id="support-email" label="Email Us" href="mailto:support@mspfa.com" target="_blank" />
+				</NavMenu>
+				<NavMenu id="policies" label="Boring">
+					<NavItem id="rules" label="Rules" href="/rules" />
+					<hr />
 					<NavItem id="terms" label="Terms of Service" href="/terms" />
+					<NavItem id="privacy" label="Privacy Policy" href="/privacy" />
 				</NavMenu>
 			</NavGroup>
 		</nav>

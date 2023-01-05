@@ -11,7 +11,7 @@ dialog {
 	max-width: 880px;
 	animation: 0.05s step-end dialog-pop;
 
-	// Overwrite default `dialog` element styles.
+	// Undo default `dialog` element styles.
 	margin: 0;
 	padding: 0;
 	color: inherit;
