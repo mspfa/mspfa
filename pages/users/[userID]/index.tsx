@@ -168,7 +168,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, stories, favsPub
 						open
 					>
 						<List listing={StoryListing}>
-							{stories}
+							{stories.sort((a, b) => b.updated - a.updated)}
 						</List>
 					</Section>
 				)}
@@ -196,9 +196,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ param
 		return {
 			props: {
 				publicUser: getPublicUser(userFromParams),
-				stories: (
-					await getPublicStoriesByEditor(userFromParams)
-				).sort((a, b) => b.updated - a.updated),
+				stories: await getPublicStoriesByEditor(userFromParams),
 				favsPublic: userFromParams.settings.favsPublic,
 				...userFromParams.settings.favsPublic && {
 					favCount: (
