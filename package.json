@@ -6,7 +6,7 @@
 		"type": "git",
 		"url": "git+https://github.com/MSPFA/MSPFA.git"
 	},
-	"license": "MIT",
+	"license": "ISC",
 	"bugs": {
 		"url": "https://github.com/MSPFA/MSPFA/issues"
 	},
