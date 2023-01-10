@@ -6,4 +6,10 @@
 	&:not(:first-child) {
 		margin-top: 1em;
 	}
+
+	.labeled-grid > & {
+		margin: 0;
+		grid-column: 1 / -1;
+		text-align: center;
+	}
 }
