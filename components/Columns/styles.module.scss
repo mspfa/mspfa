@@ -28,8 +28,8 @@
 			flex-grow: 1;
 			width: 50%;
 			// Undo any vertical margins on the column elements.
-			margin-top: 0 !important;
-			margin-bottom: 0 !important;
+			margin-top: 0;
+			margin-bottom: 0;
 		}
 
 		& > :not(:first-child) {
