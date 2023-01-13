@@ -109,7 +109,7 @@
 	}
 
 	// The unmoving bounding box of the button, the 3D depth effect behind it, and optionally the button's border.
-	// This is a pseudo-element rather than using `box-shadow` and `border` so its color can be adjusted at runtime (e.g. via `linear-gradient`), making it easier for custom styles to change the colors. Additionally, making it a pseudo-element allows it to be clickable as part of the button.
+	// This is a pseudo-element rather than using `box-shadow` and `border` so its color can be adjusted at runtime via CSS variables. Additionally, making it a pseudo-element allows it to be clickable as part of the button.
 	&::before {
 		// The brightness multiplier on the button's color to get the 3D depth effect's color.
 		$brightness: math.div(2, 3);
