@@ -17,8 +17,9 @@ dialog {
 	color: inherit;
 	background: none;
 	border: none;
+	border-top-width: 0;
+	@include theme(border-color, alt-front-color);
 
-	// The border and the shadow respectively. These are pseudo-elements rather than using `border` and `box-shadow` so that their colors can be adjusted in runtime (e.g. via `opacity`), making it easier for custom styles to change the colors.
 	&::before, &::after {
 		content: '';
 		pointer-events: none;
@@ -28,14 +29,20 @@ dialog {
 		height: 100%;
 		padding: 1px;
 		margin: -1px;
+	}
+
+	// The shadow. This is a pseudo-element rather than using `box-shadow` so its color can be adjusted at runtime via CSS variables.
+	&::before {
+		top: 16px;
+		left: 16px;
 		opacity: 0.5;
-		// Color the border and the shadow so they blend with the background.
 		@include theme(background-color, back-color);
 	}
 
+	// The border. This is a pseudo-element rather than using `border` so there aren't gaps between the border and the content on certain zoom levels in Chrome.
 	&::after {
-		top: 16px;
-		left: 16px;
+		// Color the border so it blends with the dialog's title bar.
+		@include theme(background-color, alt-front-color);
 	}
 }
 
