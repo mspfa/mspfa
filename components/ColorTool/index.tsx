@@ -52,9 +52,7 @@ const ColorTool = ({ name }: ColorToolProps) => {
 		}
 
 		const { data: color } = await (api as StoryColorsAPI).post(`/stories/${story!.id}/colors`, {
-			...dialog.values.group && {
-				group: dialog.values.group
-			},
+			group: dialog.values.group || null,
 			name: dialog.values.name,
 			value: dialog.values.value
 		});

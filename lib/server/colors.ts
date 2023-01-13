@@ -22,8 +22,8 @@ export const getClientColorGroup = (colorGroup: ServerColorGroup): ClientColorGr
 
 export type ServerColor = {
 	id: ColorID,
-	/** The ID of the color group which the color belongs to, or undefined if the color is not in a group. */
-	group?: ColorGroupID,
+	/** The ID of the color group which the color belongs to, or `null` if the color is not in a group. */
+	group: ColorGroupID | null,
 	/**
 	 * @minLength 1
 	 * @maxLength 50
@@ -39,9 +39,7 @@ export type ServerColor = {
 /** Converts a `ServerColor` to a `ClientColor`. */
 export const getClientColor = (color: ServerColor): ClientColor => ({
 	id: stringifyID(color.id),
-	...color.group && {
-		group: stringifyID(color.group)
-	},
+	group: color.group && stringifyID(color.group),
 	name: color.name,
 	value: color.value
 });

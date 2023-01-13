@@ -14,5 +14,6 @@ type ClientColorKey = 'name' | 'value';
 /** A serializable version of `ServerColor` with only the properties that can safely be exposed to any client. */
 export type ClientColor = Pick<ServerColor, ClientColorKey> & {
 	id: string,
-	group?: string
+	/** The ID of the color group which the color belongs to, or `null` if the color is not in a group. */
+	group: string | null
 };

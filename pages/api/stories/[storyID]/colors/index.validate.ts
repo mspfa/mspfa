@@ -38,12 +38,17 @@ export default createAPIValidator({
 									maxLength: 50
 								},
 								group: {
-									type: 'string'
+									type: [
+										'string',
+										'null'
+									],
+									description: 'The ID of the color group which the color belongs to, or `null` if the color is not in a group.'
 								}
 							},
 							required: [
 								'name',
-								'value'
+								'value',
+								'group'
 							],
 							additionalProperties: false
 						},

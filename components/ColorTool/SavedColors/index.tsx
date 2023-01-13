@@ -1,4 +1,3 @@
-import './styles.module.scss';
 import type { DragEvent } from 'react';
 import React, { useContext, useState, useRef } from 'react';
 import LabeledGrid from 'components/LabeledGrid';
@@ -15,7 +14,7 @@ import promptCreateColorGroup from 'lib/client/promptCreateColorGroup';
 import type { integer } from 'lib/types';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
-import type { ClientColorGroup } from 'lib/client/colors';
+import type { ClientColor, ClientColorGroup } from 'lib/client/colors';
 import DropIndicator from 'components/ColorTool/DropIndicator';
 import classNames from 'classnames';
 
@@ -47,8 +46,8 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 	const [draggingIndex, setDraggingIndex] = useState<integer>();
 	// This state is the nearest index to drop the dragged color or color group at.
 	const [dropIndex, setDropIndex] = useState<integer>();
-	// This state is the ID of the nearest group to drop the dragged color into, or `undefined` if its group should be removed on drop.
-	const [dropGroup, setDropGroup] = useState<ClientColorGroup['id']>();
+	// This state is the ID of the nearest group to drop the dragged color into, or `null` if its group should be removed on drop.
+	const [dropGroup, setDropGroup] = useState<ClientColor['group']>();
 	/** The index in the `colors` or `colorGroups` array at which a drop indicator should be inserted. */
 	const dropIndicatorIndex = (
 		dropIndex === undefined
@@ -83,7 +82,7 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 
 			for (const colorGroupElement of savedColorsElementRef.current!.getElementsByClassName('color-group')) {
 				// Ignore the group of colors with no group, since it doesn't actually have any index in the color group array.
-				if (colorGroupElement.id === 'color-group-undefined') {
+				if (colorGroupElement.id === 'color-group-null') {
 					continue;
 				}
 
@@ -142,9 +141,8 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 			let newDropGroup: typeof dropGroup = (
 				nearestColorGroupColorsElement!.parentNode as HTMLDivElement
 			).id.slice('color-group-'.length);
-			if (newDropGroup === 'undefined') {
-				// If dropping into the group of colors with no group, remove the color's group on drop.
-				newDropGroup = undefined;
+			if (newDropGroup === 'null') {
+				newDropGroup = null;
 			}
 
 			if (newDropGroup !== dropGroup) {
@@ -188,10 +186,10 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 		}
 	});
 
-	const colorGroups: Array<ClientColorGroup | undefined | typeof DROP_INDICATOR> = [
+	const colorGroups: Array<ClientColorGroup | null | typeof DROP_INDICATOR> = [
 		...story.colorGroups,
 		// This is to render the colors without a `group`.
-		undefined
+		null
 	];
 	if (dragging === 'color-group') {
 		colorGroups.splice(dropIndicatorIndex!, 0, DROP_INDICATOR);
@@ -293,57 +291,57 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 							index: dropIndex!
 						},
 						...changedGroup && {
-							group: dropGroup || null
+							group: dropGroup
 						}
 					});
 
 					updateStory(story => {
-						story.colorGroups.splice(draggingIndex!, 1);
-						story.colorGroups.splice(dropIndex!, 0, newColor);
+						story.colors.splice(draggingIndex!, 1);
+						story.colors.splice(dropIndex!, 0, newColor);
 					});
 				})
 			}
 			ref={savedColorsElementRef}
 		>
-			<Row>
-				<Label
-					afterLabel={
-						editing ? (
-							<CheckButton
-								className="spaced"
-								title="Finish Editing"
-								onClick={toggleEditing}
-							/>
-						) : (
-							<EditButton
-								className="spaced"
-								title="Edit Saved Colors"
-								onClick={toggleEditing}
-							/>
-						)
-					}
-				>
-					This Adventure's Saved Colors
-				</Label>
+			<Label
+				afterLabel={
+					editing ? (
+						<CheckButton
+							className="spaced"
+							title="Finish Editing"
+							onClick={toggleEditing}
+						/>
+					) : (
+						<EditButton
+							className="spaced"
+							title="Edit Saved Colors"
+							onClick={toggleEditing}
+						/>
+					)
+				}
+			>
+				This Adventure's Saved Colors
+			</Label>
+			<Row id="color-groups">
+				{colorGroups.map(colorGroup => (
+					colorGroup === DROP_INDICATOR ? (
+						<DropIndicator key="drop-indicator" />
+					) : (
+						<ColorGroup
+							key={String(colorGroup && colorGroup.id)}
+							name={name}
+							editing={editing}
+							dropIndicatorIndex={
+								dropGroup === (colorGroup && colorGroup.id)
+									? dropIndicatorIndex!
+									: undefined
+							}
+						>
+							{colorGroup}
+						</ColorGroup>
+					)
+				))}
 			</Row>
-			{colorGroups.map(colorGroup => (
-				colorGroup === DROP_INDICATOR ? (
-					<DropIndicator key="drop-indicator" />
-				) : (
-					<ColorGroup
-						key={String(colorGroup?.id)}
-						name={name}
-						editing={editing}
-						dropIndicatorIndex={
-							dragging === 'color' && colorGroup?.id === dropGroup
-								? dropIndicatorIndex!
-								: undefined
-						}
-					>
-						{colorGroup}
-					</ColorGroup>
-				)
-			))}
 			{editing && (
 				<Row>
 					<Button

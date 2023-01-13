@@ -91,13 +91,6 @@ export default createAPIValidator({
 							type: 'object',
 							additionalProperties: false,
 							properties: {
-								group: {
-									type: [
-										'string',
-										'null'
-									],
-									description: 'The ID of the color group which the color should be set into, or `null` if the color should be removed from any group.'
-								},
 								index: {
 									$ref: '#/definitions/integer',
 									description: 'The index in the `colors` array to move the specified color to.'
@@ -111,6 +104,13 @@ export default createAPIValidator({
 									type: 'string',
 									minLength: 1,
 									maxLength: 50
+								},
+								group: {
+									type: [
+										'string',
+										'null'
+									],
+									description: 'The ID of the color group which the color belongs to, or `null` if the color is not in a group.'
 								}
 							}
 						},

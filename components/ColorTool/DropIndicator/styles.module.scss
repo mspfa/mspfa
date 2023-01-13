@@ -1,12 +1,19 @@
-@use 'sass:math';
-
-$drop-indicator-height: 1rem * math.div(2px, 16px);
-
 .drop-indicator {
-	height: $drop-indicator-height;
-	margin: math.div(-$drop-indicator-height, 2) 0;
-	background-color: currentColor;
 	position: relative;
-	z-index: 10;
 	pointer-events: none;
+	// Don't let the drop indicator get covered up by the elements it's between.
+	z-index: 10;
+
+	#color-groups > & {
+		top: -0.5em;
+	}
+
+	&::before {
+		content: '';
+		position: absolute;
+		width: 100%;
+		height: 2px;
+		transform: translateY(-50%);
+		background-color: currentColor;
+	}
 }

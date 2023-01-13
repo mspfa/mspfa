@@ -62,13 +62,14 @@ const initializeValidator = async (
 	// This is necessary so validator imports don't throw errors and prevent TS compilation.
 	await fs.writeFile(
 		outputPath,
-		'export default {} as any;'
+		'export default {} as any;\n'
 	);
 
 	inputLines.push(
 		`import type Handler${index} from '${sourcePathModule}';`,
 		`export type Request${index} = NonNullable<typeof Handler${index}['Request']>;`,
-		`export type RequestMethod${index} = Request${index}['method'];`
+		`export type RequestMethod${index} = Request${index}['method'];`,
+		''
 	);
 };
 
@@ -105,7 +106,7 @@ const generateValidator = async (
 		+ '\n'
 		+ 'import createAPIValidator from \'lib/server/api/createAPIValidator\';\n'
 		+ '\n'
-		+ `export default createAPIValidator(${methodSchemaString}, ${schemaString});`
+		+ `export default createAPIValidator(${methodSchemaString}, ${schemaString});\n`
 	);
 
 	console.info(`${c.gray(sourcePathModule)} ${c.green('Success!')}`);

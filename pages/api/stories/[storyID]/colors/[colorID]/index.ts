@@ -9,12 +9,12 @@ import type { ClientColor } from 'lib/client/colors';
 import Perm, { hasPerms } from 'lib/client/Perm';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
 import flatten from 'lib/server/db/flatten';
-import { ObjectId } from 'mongodb';
+import parseID from 'lib/server/db/parseID';
 import type { integer } from 'lib/types';
 import stringifyID from 'lib/server/db/stringifyID';
 
 /** The keys of all `ClientColor` properties which a client should be able to `PATCH` into a `ServerColor`. */
-type WritableColorKey = 'name' | 'value';
+type WritableColorKey = 'name' | 'value' | 'group';
 
 const Handler: APIHandler<{
 	query: {
@@ -29,8 +29,6 @@ const Handler: APIHandler<{
 	} | {
 		method: 'PATCH',
 		body: Partial<Pick<ClientColor, WritableColorKey>> & {
-			/** The ID of the color group which the color should be set into, or `null` if the color should be removed from any group. */
-			group?: string | null,
 			/** The index in the `colors` array to move the specified color to. */
 			index?: integer
 		}
@@ -131,58 +129,45 @@ const Handler: APIHandler<{
 
 	const color = await getColor();
 
-	/** An `ObjectId` of `req.body.group`. */
-	let colorGroupID: ObjectId | undefined;
+	const { index, group, ...colorChangesWithoutGroup } = req.body;
+
+	const colorChanges: Partial<Pick<ServerColor, WritableColorKey>> = {
+		...colorChangesWithoutGroup,
+		...group === null && {
+			group: null
+		}
+	};
 
 	if (typeof req.body.group === 'string') {
-		try {
-			colorGroupID = new ObjectId(req.body.group);
-		} catch {
+		const colorGroupID = parseID(req.body.group);
+
+		if (colorGroupID === undefined) {
 			res.status(400).send({
 				message: 'The specified color group ID is invalid.'
 			});
 			return;
 		}
 
-		if (!story.colorGroups.some(({ id }) => id.equals(colorGroupID!))) {
+		if (!story.colorGroups.some(({ id }) => id.equals(colorGroupID))) {
 			res.status(422).send({
 				message: 'No color group was found with the specified ID.'
 			});
 			return;
 		}
-	}
 
-	const colorChanges: Partial<ServerColor> & Pick<typeof req.body, 'index'> = {
-		...req.body as Omit<typeof req.body, 'group'>,
-		...'group' in req.body && {
-			group: colorGroupID
-		}
-	};
-	// Delete the `index` property from `colorChanges` since it isn't a real property of `ServerColor`s.
-	delete colorChanges.index;
+		colorChanges.group = colorGroupID;
+	}
 
 	Object.assign(color, colorChanges);
 
-	const shouldUnsetGroup = req.body.group === null;
-
-	if (shouldUnsetGroup) {
-		delete colorChanges.group;
-		delete color.group;
-	}
-
-	if (req.body.index === undefined) {
+	if (index === undefined) {
 		const colorChangesLength = Object.values(colorChanges).length;
-		if (colorChangesLength || shouldUnsetGroup) {
+		if (colorChangesLength) {
 			await stories.updateOne({
 				'_id': story._id,
 				'colors.id': color.id
 			}, {
-				...colorChangesLength && {
-					$set: flatten(colorChanges, 'colors.$.')
-				},
-				...shouldUnsetGroup && {
-					$unset: { 'colors.$.group': true }
-				}
+				$set: flatten(colorChanges, 'colors.$.')
 			});
 		}
 	} else {
@@ -202,8 +187,8 @@ const Handler: APIHandler<{
 			$push: {
 				colors: {
 					$each: [color],
-					// Clamp `req.body.index` to only valid indexes in the array.
-					$position: Math.max(0, Math.min(story.colors.length - 1, req.body.index))
+					// Clamp `index` to only valid indexes in the array.
+					$position: Math.max(0, Math.min(story.colors.length - 1, index))
 				}
 			}
 		});

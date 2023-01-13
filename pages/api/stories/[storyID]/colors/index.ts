@@ -9,6 +9,7 @@ import StoryPrivacy from 'lib/client/StoryPrivacy';
 import type { ClientColor } from 'lib/client/colors';
 import type { ServerColor } from 'lib/server/colors';
 import { getClientColor } from 'lib/server/colors';
+import parseID from 'lib/server/db/parseID';
 
 const Handler: APIHandler<{
 	query: {
@@ -71,45 +72,41 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	/** An `ObjectId` of `req.body.group`. */
-	let colorGroupID: ObjectId | undefined;
+	const color: ServerColor = {
+		id: new ObjectId(),
+		...req.body,
+		group: null
+	};
 
-	if ('group' in req.body) {
-		try {
-			colorGroupID = new ObjectId(req.body.group);
-		} catch {
+	if (req.body.group !== null) {
+		const colorGroupID = parseID(req.body.group);
+
+		if (colorGroupID === undefined) {
 			res.status(400).send({
 				message: 'The specified color group ID is invalid.'
 			});
 			return;
 		}
 
-		if (!story.colorGroups.some(({ id }) => id.equals(colorGroupID!))) {
+		if (!story.colorGroups.some(({ id }) => id.equals(colorGroupID))) {
 			res.status(422).send({
 				message: 'No color group was found with the specified ID.'
 			});
 			return;
 		}
-	}
 
-	const serverColor: ServerColor = {
-		id: new ObjectId(),
-		...req.body,
-		group: colorGroupID
-	};
-	if (serverColor.group === undefined) {
-		delete serverColor.group;
+		color.group = colorGroupID;
 	}
 
 	await stories.updateOne({
 		_id: story._id
 	}, {
 		$push: {
-			colors: serverColor
+			colors: color
 		}
 	});
 
-	res.status(201).send(getClientColor(serverColor));
+	res.status(201).send(getClientColor(color));
 };
 
 export default Handler;

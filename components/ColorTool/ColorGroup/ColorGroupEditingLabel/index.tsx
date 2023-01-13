@@ -20,7 +20,7 @@ export type ColorGroupLabelProps = {
 };
 
 /** A `Label` representing a `ClientColorGroup` when saved colors are being edited. */
-const ColorGroupLabel = ({ children: colorGroup }: ColorGroupLabelProps) => {
+const ColorGroupEditingLabel = ({ children: colorGroup }: ColorGroupLabelProps) => {
 	const [story, updateStory] = useContext(PrivateStoryContext)!;
 
 	return (
@@ -93,7 +93,7 @@ const ColorGroupLabel = ({ children: colorGroup }: ColorGroupLabelProps) => {
 
 									for (const color of story.colors) {
 										if (color.group === colorGroup.id) {
-											delete color.group;
+											color.group = null;
 										}
 									}
 								});
@@ -131,4 +131,4 @@ const ColorGroupLabel = ({ children: colorGroup }: ColorGroupLabelProps) => {
 	);
 };
 
-export default ColorGroupLabel;
+export default ColorGroupEditingLabel;
