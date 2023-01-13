@@ -13,6 +13,7 @@ import type { ColorFieldProps } from 'components/ColorField';
 import ColorField from 'components/ColorField';
 import Row from 'components/Row';
 import SavedColors from 'components/ColorTool/SavedColors';
+import type { ColorOptionsValues } from 'components/ColorTool/ColorOptions';
 import ColorOptions from 'components/ColorTool/ColorOptions';
 import Action from 'components/Dialog/Action';
 
@@ -27,14 +28,13 @@ const ColorTool = ({ name }: ColorToolProps) => {
 	const [story, updateStory] = useContext(PrivateStoryContext) || [];
 
 	const saveColor = useFunction(async () => {
-		const initialValues = {
+		const initialValues: ColorOptionsValues = {
 			group: '',
-			name: value,
+			name: '',
 			value
 		};
 
-		type Values = typeof initialValues;
-		const dialog = await Dialog.create<Values>(
+		const dialog = await Dialog.create<ColorOptionsValues>(
 			<Dialog
 				id="color-options"
 				title="Save Color"

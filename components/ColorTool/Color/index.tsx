@@ -9,6 +9,7 @@ import { useField, useFormikContext } from 'formik';
 import type { ColorFieldProps } from 'components/ColorField';
 import EditButton from 'components/Button/EditButton';
 import Dialog from 'components/Dialog';
+import type { ColorOptionsValues } from 'components/ColorTool/ColorOptions';
 import ColorOptions from 'components/ColorTool/ColorOptions';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
@@ -49,9 +50,9 @@ const Color = ({
 			title={
 				editing
 					? 'Edit Color'
-					: color.name === color.value
-						? color.name
-						: `${color.name} (${color.value})`
+					: color.name
+						? `${color.name} (${color.value})`
+						: color.value
 			}
 			style={
 				{
@@ -60,86 +61,87 @@ const Color = ({
 			}
 			onClick={
 				useFunction(async () => {
-					if (editing) {
-						const initialValues = {
-							group: color.group || '',
-							name: color.name,
-							value: color.value
-						};
+					if (!editing) {
+						setValue(color.value);
+						submitForm();
 
-						type Values = typeof initialValues;
-						type Action = 'delete';
-						const dialog = await Dialog.create<Values, Action>(
-							<Dialog
-								id="color-options"
-								title="Edit Color"
-								initialValues={initialValues}
-							>
-								<ColorOptions />
+						return;
+					}
 
-								<Action cancel value="delete">Delete</Action>
-								<Action>Save</Action>
-								{Action.CANCEL}
+					const initialValues: ColorOptionsValues = {
+						group: color.group || '',
+						name: color.name,
+						value: color.value
+					};
+
+					type Action = 'delete';
+					const dialog = await Dialog.create<ColorOptionsValues, Action>(
+						<Dialog
+							id="color-options"
+							title="Edit Color"
+							initialValues={initialValues}
+						>
+							<ColorOptions />
+
+							<Action cancel value="delete">Delete</Action>
+							<Action>Save</Action>
+							{Action.CANCEL}
+						</Dialog>
+					);
+
+					if (dialog.action === 'delete') {
+						if (!await Dialog.confirm(
+							<Dialog id="delete-color" title="Delete Color">
+								Are you sure you want to delete this saved color?<br />
+								<br />
+								<i>
+									{color.name ? (
+										`${color.name} (${color.value})`
+									) : (
+										color.value
+									)}
+								</i><br />
+								<br />
+								This cannot be undone.
 							</Dialog>
-						);
-
-						if (dialog.action === 'delete') {
-							if (!await Dialog.confirm(
-								<Dialog id="delete-color" title="Delete Color">
-									Are you sure you want to delete this saved color?<br />
-									<br />
-									<i>
-										{color.name === color.value ? (
-											color.name
-										) : (
-											`${color.name} (${color.value})`
-										)}
-									</i><br />
-									<br />
-									This cannot be undone.
-								</Dialog>
-							)) {
-								return;
-							}
-
-							await (api as StoryColorAPI).delete(`/stories/${story.id}/colors/${color.id}`);
-
-							updateStory(story => {
-								const colorIndex = story.colors.findIndex(({ id }) => id === color.id);
-
-								story.colors.splice(colorIndex, 1);
-							});
+						)) {
 							return;
 						}
 
-						if (dialog.canceled) {
-							return;
-						}
-
-						const changedValues = getChangedValues<Parameters<StoryColorAPI['patch']>[1]>(
-							dialog.initialValues,
-							dialog.values
-						);
-
-						if (!changedValues) {
-							return;
-						}
-
-						if (changedValues.group === '') {
-							changedValues.group = null;
-						}
-
-						const { data: newColor } = await (api as StoryColorAPI).patch(`/stories/${story.id}/colors/${color.id}`, changedValues);
+						await (api as StoryColorAPI).delete(`/stories/${story.id}/colors/${color.id}`);
 
 						updateStory(story => {
 							const colorIndex = story.colors.findIndex(({ id }) => id === color.id);
 
-							story.colors[colorIndex] = newColor;
+							story.colors.splice(colorIndex, 1);
 						});
-					} else {
-						setValue(color.value);
-						submitForm();
+						return;
 					}
+
+					if (dialog.canceled) {
+						return;
+					}
+
+					const changedValues = getChangedValues<Parameters<StoryColorAPI['patch']>[1]>(
+						dialog.initialValues,
+						dialog.values
+					);
+
+					if (!changedValues) {
+						return;
+					}
+
+					if (changedValues.group === '') {
+						changedValues.group = null;
+					}
+
+					const { data: newColor } = await (api as StoryColorAPI).patch(`/stories/${story.id}/colors/${color.id}`, changedValues);
+
+					updateStory(story => {
+						const colorIndex = story.colors.findIndex(({ id }) => id === color.id);
+
+						story.colors[colorIndex] = newColor;
+					});
 				})
 			}
 			{...props}
@@ -173,7 +175,7 @@ const Color = ({
 				className="color-label spaced"
 				title={color.value}
 			>
-				{color.name}
+				{color.name || color.value}
 			</span>
 		</div>
 	) : (

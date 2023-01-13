@@ -25,7 +25,6 @@ export type ServerColor = {
 	/** The ID of the color group which the color belongs to, or `null` if the color is not in a group. */
 	group: ColorGroupID | null,
 	/**
-	 * @minLength 1
 	 * @maxLength 50
 	 */
 	name: string,

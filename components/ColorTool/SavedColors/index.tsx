@@ -303,45 +303,45 @@ const SavedColors = React.memo(({ name }: SavedColorsProps) => {
 			}
 			ref={savedColorsElementRef}
 		>
-			<Label
-				afterLabel={
-					editing ? (
-						<CheckButton
-							className="spaced"
-							title="Finish Editing"
-							onClick={toggleEditing}
-						/>
-					) : (
-						<EditButton
-							className="spaced"
-							title="Edit Saved Colors"
-							onClick={toggleEditing}
-						/>
-					)
-				}
-			>
-				This Adventure's Saved Colors
-			</Label>
-			<Row id="color-groups">
-				{colorGroups.map(colorGroup => (
-					colorGroup === DROP_INDICATOR ? (
-						<DropIndicator key="drop-indicator" />
-					) : (
-						<ColorGroup
-							key={String(colorGroup && colorGroup.id)}
-							name={name}
-							editing={editing}
-							dropIndicatorIndex={
-								dropGroup === (colorGroup && colorGroup.id)
-									? dropIndicatorIndex!
-									: undefined
-							}
-						>
-							{colorGroup}
-						</ColorGroup>
-					)
-				))}
+			<Row>
+				<Label
+					afterLabel={
+						editing ? (
+							<CheckButton
+								className="spaced"
+								title="Finish Editing"
+								onClick={toggleEditing}
+							/>
+						) : (
+							<EditButton
+								className="spaced"
+								title="Edit Saved Colors"
+								onClick={toggleEditing}
+							/>
+						)
+					}
+				>
+					This Adventure's Saved Colors
+				</Label>
 			</Row>
+			{colorGroups.map(colorGroup => (
+				colorGroup === DROP_INDICATOR ? (
+					<DropIndicator key="drop-indicator" />
+				) : (
+					<ColorGroup
+						key={String(colorGroup && colorGroup.id)}
+						name={name}
+						editing={editing}
+						dropIndicatorIndex={
+							dropGroup === (colorGroup && colorGroup.id)
+								? dropIndicatorIndex!
+								: undefined
+						}
+					>
+						{colorGroup}
+					</ColorGroup>
+				)
+			))}
 			{editing && (
 				<Row>
 					<Button
