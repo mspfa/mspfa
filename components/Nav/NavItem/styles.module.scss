@@ -26,8 +26,9 @@
 
 		// Bubbles on nav menu labels.
 		.nav-menu-container > .nav-item > & {
-			left: calc(100% - 3px);
-			bottom: calc(100% - 3px);
+			left: 100%;
+			bottom: 100%;
+			margin: -3px;
 		}
 
 		// Hide bubbles on labels of open nav menus.
@@ -39,7 +40,8 @@
 		// Bubbles on labels in nav menus.
 		.nav-menu & {
 			align-self: center;
-			left: calc(100% - 5px);
+			left: 100%;
+			margin-left: -5px;
 		}
 	}
 }
