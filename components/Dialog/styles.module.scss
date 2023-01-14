@@ -66,7 +66,8 @@ dialog {
 	&-body {
 		display: flex;
 	    flex-direction: column;
-		// TODO: Fix that this element's children can overflow this element.
+		// Overwrite the default `min-height: auto` that flex items have so this item can't overflow its parent.
+		min-height: 0;
 
 		&::before {
 			top: 0;
