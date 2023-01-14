@@ -234,7 +234,7 @@ Dialog.create = <
 	 *
 	 * ⚠️ Always pass `Action`s into the `Dialog` component's children instead whenever possible.
 	 */
-	defaultActions: ReactNode = Action.OKAY
+	defaultActions: ReactNode = Action.OKAY_AUTO_FOCUS
 ): DialogManager<Values, Action> => {
 	if (typeof window === 'undefined') {
 		throw new Error('`Dialog.create` must not be called server-side.');
