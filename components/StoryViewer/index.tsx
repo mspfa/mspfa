@@ -27,6 +27,7 @@ import parseBBCode from 'lib/client/parseBBCode';
 import type { ParsedReactNode } from 'lib/client/parseBBCode/BBStringParser';
 import BBTags from 'components/BBCode/BBTags';
 import promptSignIn from 'lib/client/promptSignIn';
+import classNames from 'classnames';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 type UserStorySaveAPI = APIClient<typeof import('pages/api/users/[userID]/story-saves/[storyID]').default>;
@@ -79,6 +80,8 @@ export type StoryViewerProps = {
 	 */
 	pages: Partial<Record<StoryPageID, ClientStoryPage | null>>,
 	previousPageIDs: ClientPreviousPageIDs,
+	/** Whether the user has a page saved for this story. */
+	userHasSave: boolean,
 	// These ESLint comments are necessary because it doesn't recognize the props are used outside this file.
 	// eslint-disable-next-line react/no-unused-prop-types
 	latestPages: StoryLogListings,
@@ -105,7 +108,8 @@ const StoryViewer = (props: StoryViewerProps) => {
 	const {
 		story,
 		pages: initialPages,
-		previousPageIDs: initialPreviousPageIDs
+		previousPageIDs: initialPreviousPageIDs,
+		userHasSave: initialUserHasSave
 	} = props;
 
 	const router = useRouter();
@@ -147,6 +151,8 @@ const StoryViewer = (props: StoryViewerProps) => {
 	const previousPageID = previousPageIDsRef.current[pageID];
 
 	pageIDRef.current = pageID;
+
+	const [userHasSave, setUserHasSave] = useState(initialUserHasSave);
 
 	/** A ref to an array of page IDs which are currently being fetched around. */
 	const fetchingPageIDsRef = useRef<StoryPageID[]>([]);
@@ -532,7 +538,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 						)}
 						<span className="story-section-footer-group">
 							<Link
-								className="story-link-save-game"
+								className={classNames('story-link-save-game', { visited: userHasSave })}
 								onClick={
 									useFunction(async () => {
 										if (!page) {
@@ -552,7 +558,9 @@ const StoryViewer = (props: StoryViewerProps) => {
 											return;
 										}
 
-										(api as UserStorySaveAPI).put(`/users/${user.id}/story-saves/${story.id}`, pageID);
+										await (api as UserStorySaveAPI).put(`/users/${user.id}/story-saves/${story.id}`, pageID);
+
+										setUserHasSave(true);
 									})
 								}
 							>
@@ -588,8 +596,12 @@ const StoryViewer = (props: StoryViewerProps) => {
 														You have no save for this adventure!
 													</Dialog>
 												);
+
+												setUserHasSave(false);
 											}
 										});
+
+										setUserHasSave(true);
 
 										goToPage(savedPageID);
 									})
@@ -623,10 +635,14 @@ const StoryViewer = (props: StoryViewerProps) => {
 														You have no save for this adventure!
 													</Dialog>
 												);
+
+												setUserHasSave(false);
 											}
 										};
 
 										await (api as UserStorySaveAPI).get(`/users/${user.id}/story-saves/${story.id}`, deleteUserStorySaveAPIConfig);
+
+										setUserHasSave(true);
 
 										if (!await Dialog.confirm(
 											<Dialog id="story-saves" title="Delete Game Data">
@@ -636,7 +652,9 @@ const StoryViewer = (props: StoryViewerProps) => {
 											return;
 										}
 
-										(api as UserStorySaveAPI).delete(`/users/${user.id}/story-saves/${story.id}`, deleteUserStorySaveAPIConfig);
+										await (api as UserStorySaveAPI).delete(`/users/${user.id}/story-saves/${story.id}`, deleteUserStorySaveAPIConfig);
+
+										setUserHasSave(false);
 									})
 								}
 							>

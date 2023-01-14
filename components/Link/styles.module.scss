@@ -4,7 +4,7 @@
 	text-decoration: underline;
 	@include theme(color, link-color);
 
-	&:visited {
+	&:visited, &.visited {
 		@include theme(color, link-visited-color);
 	}
 

@@ -88,6 +88,8 @@ const Handler: APIHandler<{
 		return;
 	}
 
+	req.method satisfies 'GET';
+
 	res.send(user.storySaves[story._id]);
 };
 

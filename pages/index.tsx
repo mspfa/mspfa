@@ -148,6 +148,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 			pages: clientPages,
 			// The reason this is sent to the client rather than having SSR and the client compute it a second time is as an optimization (and also it's simpler code).
 			previousPageIDs: clientPreviousPageIDs,
+			userHasSave: req.user ? story._id in req.user.storySaves : false,
 			latestPages,
 			newsPosts: newsPosts.map(getClientNewsPost),
 			hasCommentary
