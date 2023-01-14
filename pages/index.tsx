@@ -42,16 +42,16 @@ const Component = withErrorPage<ServerSideProps>(({
 	const { cacheUser } = useUserCache();
 	initialUserCache?.forEach(cacheUser);
 
+	if (!props.story) {
+		return <Homepage />;
+	}
+
 	return (
-		props.story
-			? (
-				<StoryViewer
-					// This key is to make the `StoryViewer`'s states not preserve between different stories.
-					key={props.story.id}
-					{...props}
-				/>
-			)
-			: <Homepage />
+		<StoryViewer
+			// This key is to make the `StoryViewer`'s states not preserve between different stories.
+			key={props.story.id}
+			{...props}
+		/>
 	);
 });
 

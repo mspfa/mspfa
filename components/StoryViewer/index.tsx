@@ -34,7 +34,7 @@ type UserStorySaveAPI = APIClient<typeof import('pages/api/users/[userID]/story-
 /**
  * The maximum distance of pages to preload around the user's current page.
  *
- * For example, if this is 2 and the user is on page 10, then pages 8 to 12 will be preloaded (assuming page 10 only links to page 11 and page 11 only links to page 12).
+ * For example, if this is 2 and the user is on page 10, then pages 8 to 12 will be preloaded (assuming the story is linear).
  */
 export const PAGE_PRELOAD_DEPTH = 10;
 
@@ -549,7 +549,6 @@ const StoryViewer = (props: StoryViewerProps) => {
 												title: 'Save Game',
 												content: 'Sign into the account you want to save your place to!'
 											});
-
 											return;
 										}
 
