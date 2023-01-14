@@ -1,4 +1,5 @@
 @use 'lib/styles/themes' as *;
+@use 'lib/styles/depth-effect' as *;
 
 dialog {
 	// This is a flexbox in order to prevent the children from overflowing.
@@ -20,29 +21,31 @@ dialog {
 	border-top-width: 0;
 	@include theme(border-color, alt-front-color);
 
+	@include depth-effect($scale: 2px, $border: true);
+
 	&::before, &::after {
 		content: '';
-		pointer-events: none;
 		position: absolute;
-		z-index: -1;
 		width: 100%;
 		height: 100%;
-		padding: 1px;
-		margin: -1px;
-	}
-
-	// The shadow. This is a pseudo-element rather than using `box-shadow` so its color can be adjusted at runtime via CSS variables.
-	&::before {
-		top: 16px;
-		left: 16px;
-		opacity: 0.5;
-		@include theme(background-color, back-color);
 	}
 
 	// The border. This is a pseudo-element rather than using `border` so there aren't gaps between the border and the content on certain zoom levels in Chrome.
+	&::before {
+		z-index: -1;
+
+		@include depth-effect-color(alt-front-color);
+	}
+
+	// The shadow. This is a pseudo-element rather than using `box-shadow` so its color can be adjusted at runtime via CSS variables.
 	&::after {
-		// Color the border so it blends with the dialog's title bar.
-		@include theme(background-color, alt-front-color);
+		z-index: -2;
+		top: 16px;
+		left: 16px;
+		padding: 2px;
+		opacity: 0.5;
+		pointer-events: none;
+		@include theme(background-color, back-color);
 	}
 }
 

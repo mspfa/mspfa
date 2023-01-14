@@ -1,0 +1,86 @@
+@use 'sass:math';
+@use 'lib/styles/themes' as *;
+
+// Applies a pixelated 3D depth effect behind the element using its `::before`'s background. Lowers the depth on `:active` if `$can-be-active`.
+@mixin depth-effect(
+	$scale: 2px,
+	$border: false,
+	$can-be-active: false
+) {
+	// Include the depth effect in the area of the element that affects the layout.
+	margin-right: 2 * $scale;
+	margin-bottom: 2 * $scale;
+
+	@if $border {
+		// Add room for a border, but don't actually give it a color since that'll already be handled by `::before`.
+		border: $scale solid transparent;
+	}
+
+	@if $can-be-active {
+		&:active:not(:disabled) {
+			// Offset the element on `:active`.
+			left: $scale;
+			top: $scale;
+
+			&::before {
+				// Prevent the element's depth effect or bounding box from moving when `:active`.
+				left: -$scale;
+				top: -$scale;
+			}
+		}
+	}
+
+	// The background position of the depth effect's two rectangles, or of one rectangle and a border (if `:active`).
+	$two-background-positions:
+		$scale $scale,
+		(2 * $scale) (2 * $scale);
+
+	// The background position of the depth effect in addition to the border.
+	$three-background-positions: 0 0, $two-background-positions;
+
+	&::before {
+		// Set each rectangle's size to the size of the pseudo-element, subtracting its non-border padding which is set later.
+		background-size: calc(100% - #{2 * $scale}) calc(100% - #{2 * $scale});
+
+		@if not $border or $can-be-active {
+			background-position: $two-background-positions;
+		} @else {
+			background-position: $three-background-positions;
+		}
+
+		@if $border {
+			// Offset the pseudo-element to start in the position of the border.
+			margin: -$scale;
+
+			// Ensure the element's border and depth effect are part of the element's bounding box.
+			padding: 2 * $scale;
+		} @else {
+			// Ensure the element's depth effect is part of the element's bounding box.
+			padding: $scale;
+		}
+	}
+
+	@if $border and $can-be-active {
+		&:not(:active)::before {
+			background-position: $three-background-positions;
+		}
+	}
+}
+
+// The automatically darkened background properties to apply to the `::before` of an element with a `depth-effect`.
+@mixin depth-effect-color($theme-variable) {
+	// The brightness multiplier on the inputted color to get the depth effect's color.
+	$brightness: math.div(2, 3);
+	$large-gradient-size: 1000000%;
+
+	// In order to darken the inputted color to get the depth effect's color, we take a gradient from black to the inputted color and stretch it out so much that you only see one apparent color along the gradient.
+	$background-image: linear-gradient(
+		#000000 ($large-gradient-size * -$brightness),
+		currentColor ($large-gradient-size * (1 - $brightness))
+	);
+	// The two rectangles for the depth effect behind the element, and one extra for if there's a border.
+	background-image: $background-image, $background-image, $background-image;
+	background-repeat: no-repeat;
+
+	@include theme(color, $theme-variable);
+}
