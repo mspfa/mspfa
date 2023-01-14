@@ -15,6 +15,7 @@ import { setTheme } from 'lib/client/themes';
 import UserCache from 'lib/client/reactContexts/UserCache';
 import { useRouter } from 'next/router';
 import useGlobalUncaughtErrorDialogs from 'lib/client/reactHooks/useGlobalUncaughtErrorDialogs';
+import LoadingIndicator from 'components/LoadingIndicator';
 
 export type MyAppInitialProps = {
 	user?: PrivateUser
@@ -70,6 +71,7 @@ const MyApp = ({
 					<meta property="og:image" content="/images/icon.png" />
 					<link rel="icon" href="/images/icon.png" /* Image credit: heyitskane */ />
 				</Head>
+
 				<Component
 					// This `key` is necessary so a page's states are reset when the route or any of its parameters changes.
 					key={
@@ -81,6 +83,8 @@ const MyApp = ({
 					// It is necessary that the props object passed here is the original `pageProps` object and not a clone, because after this point is reached, props from a page's `getServerSideProps` are assigned to the original `pageProps` object and would otherwise not be passed into the page component.
 					{...pageProps}
 				/>
+
+				<LoadingIndicator />
 			</UserContext.Provider>
 		</UserCache.Provider>
 	);

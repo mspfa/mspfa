@@ -4,7 +4,6 @@ import Header from 'components/Header';
 import type { HeaderProps } from 'components/Header';
 import Footer from 'components/Footer';
 import Dialogs from 'components/Dialog/Dialogs';
-import LoadingIndicator from 'components/LoadingIndicator';
 import PageHeading from 'components/Page/PageHeading';
 import classNames from 'classnames';
 
@@ -44,7 +43,6 @@ const Page = ({ heading, children, withFlashyTitle, basement }: PageProps) => (
 			</div>
 		</div>
 
-		<LoadingIndicator />
 		{/* This dummy element exists to preload certain resources via styles set on it, as well as to perform computations on it in some cases. */}
 		<div id="dummy" />
 	</>

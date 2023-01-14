@@ -1,96 +1,104 @@
 import './styles.module.scss';
-import createGlobalState from 'global-react-state';
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Router from 'next/router';
 import classNames from 'classnames';
+import useFunction from 'lib/client/reactHooks/useFunction';
 
-const [useLoadingCount, setLoadingCount, getLoadingCount] = createGlobalState(0);
+/** The number of milliseconds to wait to show the loading indicator after the `loadingCount` is non-zero. */
+const LOADING_INDICATOR_DELAY = 250;
 
-/** An amount to be set as loading count at the end of the `startLoadingTimeout`. */
-let queuedLoadingCount = 0;
-let startLoadingTimeout: NodeJS.Timeout | undefined;
+/** Increment the count which displays the loading indicator when non-zero. */
+export let startLoading: (
+	/** The number of things which started loading. Defaults to 1. */
+	count?: number
+) => void;
 
-/**
- * Increment the count which displays the loading indicator when non-zero.
- *
- * Returns the new value of the count.
- */
-export const startLoading = (
-	/** The number of things which started loading. */
-	count = 1
-) => {
-	if (startLoadingTimeout) {
-		return queuedLoadingCount += count;
-	}
-
-	const previousLoadingCount = getLoadingCount();
-
-	if (previousLoadingCount) {
-		const loadingCount = previousLoadingCount + count;
-		setLoadingCount(loadingCount);
-		return loadingCount;
-	}
-
-	startLoadingTimeout = setTimeout(() => {
-		startLoadingTimeout = undefined;
-
-		setLoadingCount(queuedLoadingCount);
-		queuedLoadingCount = 0;
-	}, 250);
-
-	return queuedLoadingCount += count;
-};
-
-/**
- * Decrement the count which displays the loading indicator when non-zero.
- *
- * Returns the new value of the count.
- */
-export const stopLoading = (
-	/** The number of things which stopped loading. */
-	count = 1
-) => {
-	if (startLoadingTimeout) {
-		queuedLoadingCount -= count;
-
-		if (!queuedLoadingCount) {
-			clearTimeout(startLoadingTimeout);
-			startLoadingTimeout = undefined;
-		}
-
-		return;
-	}
-
-	const loadingCount = getLoadingCount() - count;
-	setLoadingCount(loadingCount);
-	return loadingCount;
-};
-
-Router.events.on('routeChangeStart', () => {
-	startLoading();
-});
-
-const stopLoadingPage = () => {
-	// This timeout is necessary so the loading state of the `LoadingIndicator` component is not set during a route change, causing it to update incorrectly.
-	setTimeout(() => {
-		stopLoading();
-	});
-};
-Router.events.on('routeChangeComplete', stopLoadingPage);
-Router.events.on('routeChangeError', stopLoadingPage);
+/** Decrement the count which displays the loading indicator when non-zero. */
+export let stopLoading: (
+	/** The number of things which stopped loading. Defaults to 1. */
+	count?: number
+) => void;
 
 /**
  * The component which renders the loading indicator.
  *
- * ⚠️ This should never be rendered anywhere but in the `Page` component's direct children.
+ * ⚠️ This should never be rendered anywhere but in `_app`.
  */
 const LoadingIndicator = () => {
-	const [loadingCount] = useLoadingCount();
+	const [loading, setLoading] = useState(false);
+
+	/** A ref to the count which displays the loading indicator when non-zero. */
+	const loadingCountRef = useRef(0);
+	/** A ref to the `LOADING_INDICATOR_DELAY` timeout. */
+	const timeoutRef = useRef<NodeJS.Timeout>();
+
+	startLoading = useFunction((count = 1) => {
+		loadingCountRef.current += count;
+
+		if (timeoutRef.current) {
+			return;
+		}
+
+		timeoutRef.current = setTimeout(() => {
+			timeoutRef.current = undefined;
+
+			setLoading(true);
+		}, LOADING_INDICATOR_DELAY);
+	});
+
+	stopLoading = useFunction((count = 1) => {
+		loadingCountRef.current -= count;
+
+		if (loadingCountRef.current !== 0) {
+			return;
+		}
+
+		clearTimeout(timeoutRef.current);
+		timeoutRef.current = undefined;
+
+		setLoading(false);
+	});
+
+	useEffect(() => () => {
+		clearTimeout(timeoutRef.current);
+	}, []);
+
+	useEffect(() => {
+		let changingRoute = false;
+
+		const startRouteChange = () => {
+			if (changingRoute) {
+				return;
+			}
+
+			changingRoute = true;
+			startLoading();
+		};
+
+		const stopRouteChange = () => {
+			if (!changingRoute) {
+				return;
+			}
+
+			changingRoute = false;
+			stopLoading();
+		};
+
+		Router.events.on('routeChangeStart', startRouteChange);
+		Router.events.on('routeChangeComplete', stopRouteChange);
+		Router.events.on('routeChangeError', stopRouteChange);
+
+		return () => {
+			Router.events.off('routeChangeStart', startRouteChange);
+			Router.events.off('routeChangeComplete', stopRouteChange);
+			Router.events.off('routeChangeError', stopRouteChange);
+		};
+	}, []);
 
 	return (
 		<div
 			id="loading-indicator"
-			className={classNames({ loading: loadingCount !== 0 })}
+			className={classNames({ loading })}
 		/>
 	);
 };
