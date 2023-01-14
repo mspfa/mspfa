@@ -5,7 +5,8 @@
 	$scale,
 	$border: false,
 	$margin: false,
-	$can-be-active: false
+	$can-be-active: false,
+	$no-transparent-border: false
 ) {
 	@if $margin {
 		// Include the depth effect in the area of the element that affects the layout.
@@ -13,8 +14,8 @@
 		margin-bottom: 2 * $scale;
 	}
 
-	@if $border {
-		// Add room for a border, but don't actually give it a color since that'll already be handled by `::before`.
+	@if $border and not $no-transparent-border {
+		// Add room for the border.
 		border: $scale solid transparent;
 	}
 
