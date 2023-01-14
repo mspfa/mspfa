@@ -159,11 +159,13 @@ const Dialog = <
 							<div className="dialog-title alt-front">
 								{title}
 							</div>
-							<div className="dialog-content front">
-								{content}
-							</div>
-							<div className="dialog-actions front">
-								{actions}
+							<div className="dialog-body front">
+								<div className="dialog-content">
+									{content}
+								</div>
+								<div className="dialog-actions">
+									{actions}
+								</div>
 							</div>
 						</dialog>
 					</Form>

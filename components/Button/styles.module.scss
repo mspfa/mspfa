@@ -14,7 +14,12 @@
 	text-decoration: none;
 	flex-shrink: 0;
 	@include theme(background-color, button-color);
-	@include depth-effect($scale: 2px, $border: false, $can-be-active: true);
+	@include depth-effect(
+		$scale: 2px,
+		$border: false,
+		$margin: true,
+		$can-be-active: true
+	);
 
 	&:not(.icon-button) {
 		@include theme(color, button-text-color);
@@ -84,7 +89,12 @@
 	font-size: 1rem;
 	padding: 1px;
 	line-height: 0;
-	@include depth-effect($scale: 1px, $border: true, $can-be-active: true);
+	@include depth-effect(
+		$scale: 1px,
+		$border: true,
+		$margin: true,
+		$can-be-active: true
+	);
 
 	&.labeled {
 		padding-right: 3px;
