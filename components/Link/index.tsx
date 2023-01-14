@@ -73,29 +73,34 @@ const Link = React.forwardRef<HTMLAnchorElement & HTMLButtonElement, LinkProps>(
 		href: hrefString
 	};
 
-	const external = anchorProps.target === '_blank' || (
-		/:|\/\//.test(hrefString)
-		&& !/^https:\/\/mspfa\.com(?:[/?#]|$)/.test(hrefString)
+	const isNative = (
+		// Links that open in a new tab don't benefit from `NextLink`.
+		anchorProps.target === '_blank'
+		// Hash links don't benefit from `NextLink`.
+		|| hrefString.startsWith('#')
+		|| (
+			// External links don't benefit from `NextLink`.
+			/^[^/]*(?::|\/\/)/.test(hrefString)
+			&& !/^(?:https?:)?\/\/mspfa\.com(?:[/?#]|$)/.test(hrefString)
+		)
 	);
 
-	// `NextLink`s aren't useful for external links, so if the link is external, just return the anchor.
-	if (external) {
+	if (isNative) {
 		// If the link should open in a new tab, add `noreferrer noopener` to its `rel` since you can't trust external targets with [`window.opener`](https://developer.mozilla.org/en-US/docs/Web/API/Window/opener) on older browsers.
 		if (anchorProps.target === '_blank') {
-			if (anchorProps.rel) {
-				if (/(?:^| )(?:noreferrer|noopener)(?:$| )/i.test(anchorProps.rel)) {
-					throw new TypeError('If a `Link` has `target="_blank"`, it is unnecessary for its `rel` prop to include `noreferrer` or `noopener` because they are included automatically.');
-				}
-				anchorProps.rel += ' noreferrer noopener';
-			} else {
-				anchorProps.rel = 'noreferrer noopener';
+			const rel = anchorProps.rel?.split(' ') || [];
+
+			if (rel.includes('noreferrer') || rel.includes('noopener')) {
+				throw new TypeError('If a `Link` has `target="_blank"`, it is unnecessary for its `rel` prop to include `noreferrer` or `noopener` because they are included automatically.');
 			}
+
+			rel.push('noreferrer', 'noopener');
+			anchorProps.rel = rel.join(' ');
 		}
 
 		return <a {...anchorProps} ref={ref} />;
 	}
 
-	// Otherwise, if the link is not external, wrap the anchor in a `NextLink` to get those [nice features](https://nextjs.org/docs/api-reference/next/link).
 	return (
 		<NextLink
 			href={href}
