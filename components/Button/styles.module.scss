@@ -13,6 +13,7 @@
 	vertical-align: middle;
 	text-decoration: none;
 	flex-shrink: 0;
+	@include theme(color, button-text-color);
 	@include theme(background-color, button-color);
 	@include depth-effect(
 		$scale: 2px,
@@ -22,7 +23,6 @@
 	);
 
 	&:not(.icon-button) {
-		@include theme(color, button-text-color);
 		@include theme(font, heading-font);
 		font-size: 1.5em;
 	}
