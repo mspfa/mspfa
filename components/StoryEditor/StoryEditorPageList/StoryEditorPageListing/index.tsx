@@ -738,15 +738,11 @@ const StoryEditorPageListing = React.memo(({
 						}
 						onClick={unpublishPage}
 					>
-						{
-							(pageStatus === 'scheduled' ? 'Unschedule' : 'Unpublish')
-							+ ' '
-							+ (
-								lastNonDraftID === page.id
-									? ''
-									: ` p${page.id}-${lastNonDraftID}`
-							)
-						}
+						{(pageStatus === 'scheduled' ? 'Unschedule' : 'Unpublish') + (
+							lastNonDraftID === page.id
+								? ''
+								: ` p${page.id}-${lastNonDraftID}`
+						)}
 					</Button>
 				)}
 				<Button
