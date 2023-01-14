@@ -1,9 +1,8 @@
-@use 'sass:math';
 @use 'lib/styles/themes' as *;
 
 .story-log {
 	@include theme(font, alt-font);
-	font-size: math.div(10, 16) * 1rem;
+	font-size: (10rem / 16);
 
 	&-timestamp-container::after {
 		content: ' - ';

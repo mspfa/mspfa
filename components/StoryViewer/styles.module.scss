@@ -1,17 +1,16 @@
-@use 'sass:math';
 @use 'lib/styles/themes' as *;
 
 // This is to mimic the apparent horizontal padding of the page container on http://web.archive.org/web/20141103155157/http://www.mspaintadventures.com/index_hscroll.php?s=6&p=008848.
-$story-page-container-horizontal-padding: math.div(1200px - 1107px, 2);
-$story-page-min-width: 650px;
-$story-page-padding: 25px;
+$story-section-container-horizontal-padding: (1200px - 1107px) / 2;
+$story-section-min-width: 650px;
+$story-section-padding: 25px;
 
 .story {
 	&-section {
 		&-container {
 			display: flex;
 			justify-content: center;
-			padding: 7px $story-page-container-horizontal-padding 23px;
+			padding: 7px $story-section-container-horizontal-padding 23px;
 
 			@include mobile {
 				padding-left: 0;
@@ -23,10 +22,10 @@ $story-page-padding: 25px;
 		// `display: table` conveniently allows the element's width to dynamically adjust on older browsers in the same way `width: min-content` works on newer browsers.
 		display: table;
 		box-sizing: border-box;
-		padding: 0 $story-page-padding;
-		min-width: $story-page-min-width;
+		padding: 0 $story-section-padding;
+		min-width: $story-section-min-width;
 		// For browsers that don't support `min-content`.
-		width: $story-page-min-width;
+		width: $story-section-min-width;
 		width: min-content;
 
 		@supports (width: min-content) {
@@ -133,9 +132,9 @@ $story-page-padding: 25px;
 }
 
 .panel {
-	margin: 0 (-$story-page-padding);
+	margin: 0 (-$story-section-padding);
 	// For browsers that don't support `stretch`.
-	max-width: $page-width - 2 * $story-page-container-horizontal-padding;
+	max-width: $page-width - 2 * $story-section-container-horizontal-padding;
 	max-width: stretch;
 
 	@include mobile {

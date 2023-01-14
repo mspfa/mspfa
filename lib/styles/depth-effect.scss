@@ -1,4 +1,3 @@
-@use 'sass:math';
 @use 'lib/styles/themes' as *;
 
 // Applies a pixelated 3D depth effect behind the element using its `::before`'s background. Lowers the depth on `:active` if `$can-be-active`.
@@ -70,7 +69,7 @@
 // The automatically darkened background properties to apply to the `::before` of an element with a `depth-effect`.
 @mixin depth-effect-color($theme-variable) {
 	// The brightness multiplier on the inputted color to get the depth effect's color.
-	$brightness: math.div(2, 3);
+	$brightness: 2 / 3;
 	$large-gradient-size: 1000000%;
 
 	// In order to darken the inputted color to get the depth effect's color, we take a gradient from black to the inputted color and stretch it out so much that you only see one apparent color along the gradient.
