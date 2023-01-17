@@ -117,7 +117,7 @@ export type ServerStory = {
 
 /** A `Partial<ServerStory>` used to spread some general properties on newly inserted `ServerStory`s. */
 export const defaultStory = {
-	status: StoryStatus.Ongoing,
+	status: StoryStatus.Active,
 	privacy: StoryPrivacy.Public,
 	editors: [],
 	pages: {} as Record<never, never>,
