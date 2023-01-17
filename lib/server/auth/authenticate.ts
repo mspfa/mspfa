@@ -18,7 +18,7 @@ export type Credentials = {
 /**
  * Gets the user's (unverified) ID and token from the request's `Authorization` header or `auth` cookie.
  *
- * If the credentials are in an invalid format, and deletes the `auth` cookie (if that's where the credentials came from).
+ * If the credentials are in an invalid format, returns `undefined` and deletes the `auth` cookie (if that's where the credentials came from).
  */
 export const getCredentials = (
 	req: IncomingMessage,
