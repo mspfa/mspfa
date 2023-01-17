@@ -10,6 +10,16 @@ export type RecursivePartial<Type> = Partial<{
 	)
 }>;
 
+export type RecursiveReadonly<Type> = {
+	readonly [Key in keyof Type]: (
+		Type[Key] extends string | number | boolean | symbol | undefined | null | Date | ObjectId
+			? Type[Key]
+			: Type[Key] extends Array<infer Item>
+				? ReadonlyArray<RecursiveReadonly<Item>>
+				: RecursiveReadonly<Type[Key]>
+	)
+};
+
 /** Makes a read-only type not read-only. */
 export type Mutable<Type> = {
 	-readonly [Key in keyof Type]: Type[Key]

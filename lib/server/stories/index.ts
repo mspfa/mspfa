@@ -1,5 +1,5 @@
 import db from 'lib/server/db';
-import type { integer, URLString } from 'lib/types';
+import type { integer, RecursiveReadonly, URLString } from 'lib/types';
 import type { ClientStoryPage, PrivateStory, PublicStory } from 'lib/client/stories';
 import StoryStatus from 'lib/client/StoryStatus';
 import StoryPrivacy from 'lib/client/StoryPrivacy';
@@ -119,7 +119,7 @@ export type ServerStory = {
 export const defaultStory = {
 	status: StoryStatus.Ongoing,
 	privacy: StoryPrivacy.Public,
-	editors: [] as never[],
+	editors: [],
 	pages: {} as Record<never, never>,
 	description: '',
 	icon: '',
@@ -131,14 +131,14 @@ export const defaultStory = {
 		unverified: '',
 		verified: ''
 	},
-	tags: [] as never[],
+	tags: [],
 	allowComments: true,
 	sidebarContent: '',
-	news: [] as never[],
+	news: [],
 	defaultPageTitle: 'Next.',
-	colorGroups: [] as never[],
-	colors: [] as never[]
-} as const satisfies Partial<ServerStory>;
+	colorGroups: [],
+	colors: []
+} as const satisfies Partial<RecursiveReadonly<ServerStory>>;
 
 /** Converts a `ServerStory` to a `PrivateStory`. */
 export const getPrivateStory = (story: ServerStory): PrivateStory => ({

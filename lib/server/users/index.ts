@@ -1,7 +1,7 @@
 import db from 'lib/server/db';
 import type { ObjectId } from 'mongodb';
 import type { AchievementID } from 'lib/client/achievements';
-import type { URLString, EmailString, integer } from 'lib/types';
+import type { URLString, EmailString, integer, RecursiveReadonly } from 'lib/types';
 import type { PrivateUser, PublicUser } from 'lib/client/users';
 import defaultUserSettings from 'lib/client/defaultUserSettings';
 import type { Theme } from 'lib/client/themes';
@@ -141,19 +141,19 @@ export type ServerUser = {
 
 /** A `Partial<ServerUser>` used to spread some general properties on newly inserted `ServerUser`s. */
 export const defaultUser = {
-	sessions: [] as never[],
+	sessions: [],
 	birthdateChanged: false,
 	description: '',
 	icon: '',
 	site: '',
-	favs: [] as never[],
+	favs: [],
 	achievements: {} as Record<never, never>,
 	storySaves: {} as Record<never, never>,
 	profileStyle: '',
 	settings: defaultUserSettings,
 	perms: 0,
 	unreadMessageCount: 0
-} as const satisfies Partial<ServerUser>;
+} as const satisfies Partial<RecursiveReadonly<ServerUser>>;
 
 /** Converts a `ServerUser` to a `PrivateUser`. */
 export const getPrivateUser = (user: ServerUser): PrivateUser => ({
