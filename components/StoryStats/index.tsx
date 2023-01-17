@@ -29,7 +29,7 @@ const StoryStats = ({
 			className={classes('story-stats', className)}
 		>
 			<span className="story-status spaced">
-				{storyStatusNames[story.status]}
+				{storyStatusNames.get(story.status)}
 			</span>
 			{user && (
 				story.owner === user.id

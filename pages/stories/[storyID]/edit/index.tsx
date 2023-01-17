@@ -290,7 +290,7 @@ const Component = withErrorPage<ServerSideProps>(({
 											label="Status"
 											required
 										>
-											{storyStatusNames.map(([status, statusName]) => (
+											{[...storyStatusNames.entries()].map(([status, statusName]) => (
 												<option key={status} value={status}>
 													{statusName}
 												</option>

@@ -1,5 +1,3 @@
-import type { RecursiveReadonly } from 'lib/types';
-
 enum StoryStatus {
 	Active = 0,
 	Complete,
@@ -10,10 +8,11 @@ enum StoryStatus {
 
 export default StoryStatus;
 
-export const storyStatusNames = [
+// This must use a `Map` instead of a `Record` so the elements can be ordered independently of the `StoryStatus` enum.
+export const storyStatusNames = new Map<StoryStatus, string>([
 	[StoryStatus.Complete, 'Complete'],
 	[StoryStatus.Active, 'Active'],
 	[StoryStatus.Inactive, 'Inactive'],
 	[StoryStatus.Discontinued, 'Discontinued'],
 	[StoryStatus.OffSite, 'Moved Off-Site']
-] as const satisfies RecursiveReadonly<Array<[StoryStatus, string]>>;
+] satisfies Array<[StoryStatus, string]>);
