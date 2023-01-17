@@ -5,7 +5,7 @@ import type { LinkProps } from 'components/Link';
 import Link from 'components/Link';
 import type { IconProps } from 'components/Icon';
 import Icon from 'components/Icon';
-import classNames from 'classnames';
+import classes from 'lib/client/classes';
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & Omit<LinkProps, 'buttonClass'> & {
 	/**
@@ -33,7 +33,7 @@ const Button = React.forwardRef<HTMLButtonElement & HTMLAnchorElement, ButtonPro
 	);
 
 	if (icon) {
-		className = classNames('icon-button', { labeled: hasChildren }, className);
+		className = classes('icon-button', { labeled: hasChildren }, className);
 
 		const iconProps = icon === true ? {} : icon;
 
@@ -63,7 +63,7 @@ const Button = React.forwardRef<HTMLButtonElement & HTMLAnchorElement, ButtonPro
 	) : (
 		<button
 			type={type}
-			className={classNames('button', className)}
+			className={classes('button', className)}
 			ref={ref}
 			{...props}
 		>

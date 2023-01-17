@@ -2,7 +2,7 @@ import { getRelativeTimestamp, getAbsoluteTimestamp, getShortTimestamp } from 'l
 import type { DateNumber } from 'lib/types';
 import type { HTMLAttributes } from 'react';
 import { useEffect, useState } from 'react';
-import classNames from 'classnames';
+import classes from 'lib/client/classes';
 
 export type TimestampProps = Omit<HTMLAttributes<HTMLSpanElement>, 'children'> & {
 	children: Date | DateNumber,
@@ -40,7 +40,7 @@ const Timestamp = ({ short, relative, withTime, edited, className, children, ...
 	return (
 		<>
 			<span
-				className={classNames('timestamp', className)}
+				className={classes('timestamp', className)}
 				{...props}
 			>
 				<time

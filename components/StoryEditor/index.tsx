@@ -25,7 +25,7 @@ import StoryEditorPageList from 'components/StoryEditor/StoryEditorPageList';
 import StoryEditorPagesOptions from 'components/StoryEditor/StoryEditorPagesOptions';
 import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';
 import PrivateStoryContext from 'lib/client/reactContexts/PrivateStoryContext';
-import classNames from 'classnames';
+import classes from 'lib/client/classes';
 import { useImmer } from 'use-immer';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
@@ -725,7 +725,7 @@ const StoryEditor = ({
 									<Section
 										key={page[KEY_PROP]}
 										id={`p${page.id}`}
-										className={classNames('story-editor-page', pageStatus, { selected })}
+										className={classes('story-editor-page', pageStatus, { selected })}
 										heading={page.id}
 										title={page.title}
 										onClick={onClickPageTile}

@@ -5,7 +5,7 @@ import type { HeaderProps } from 'components/Header';
 import Footer from 'components/Footer';
 import Dialogs from 'components/Dialog/Dialogs';
 import PageHeading from 'components/Page/PageHeading';
-import classNames from 'classnames';
+import classes from 'lib/client/classes';
 
 export type PageProps = {
 	/**
@@ -27,7 +27,7 @@ const Page = ({ heading, children, withFlashyTitle, basement }: PageProps) => (
 		<div id="page">
 			<Header withFlashyTitle={withFlashyTitle} />
 
-			<main className={classNames('mid', { padded: heading !== undefined })}>
+			<main className={classes('mid', { padded: heading !== undefined })}>
 				{heading !== undefined && (
 					<PageHeading>{heading}</PageHeading>
 				)}

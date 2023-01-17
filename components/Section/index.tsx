@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import type { DetailsHTMLAttributes, HTMLAttributes, ReactNode } from 'react';
 import React from 'react';
-import classNames from 'classnames';
+import classes from 'lib/client/classes';
 
 export type SectionProps = HTMLAttributes<HTMLDivElement> & DetailsHTMLAttributes<HTMLDetailsElement> & {
 	heading?: ReactNode,
@@ -24,7 +24,7 @@ const Section = React.forwardRef<HTMLDivElement & HTMLDetailsElement, SectionPro
 
 	return (
 		<SectionTag
-			className={classNames('section', className)}
+			className={classes('section', className)}
 			{...props}
 			ref={ref}
 		>

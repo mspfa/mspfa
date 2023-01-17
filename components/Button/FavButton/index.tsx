@@ -8,7 +8,7 @@ import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
 import type { StoryID } from 'lib/server/stories';
 import type { integer } from 'lib/types';
-import classNames from 'classnames';
+import classes from 'lib/client/classes';
 import promptSignIn from 'lib/client/promptSignIn';
 
 type UserFavAPI = APIClient<typeof import('pages/api/users/[userID]/favs/[storyID]').default>;
@@ -35,7 +35,7 @@ const FavButton = ({ storyID, className, children, ...props }: FavButtonProps) =
 	return (
 		<Button
 			icon
-			className={classNames('fav-button', { active }, className)}
+			className={classes('fav-button', { active }, className)}
 			title={
 				favCount === undefined
 					? active

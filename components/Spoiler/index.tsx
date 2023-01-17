@@ -5,7 +5,7 @@ import type { HTMLAttributes, ReactNode } from 'react';
 import { useState, useEffect } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import defaultUserSettings from 'lib/client/defaultUserSettings';
-import classNames from 'classnames';
+import classes from 'lib/client/classes';
 import useLatest from 'lib/client/reactHooks/useLatest';
 
 export type SpoilerProps = HTMLAttributes<HTMLDivElement> & {
@@ -85,7 +85,7 @@ const Spoiler = ({
 
 	return (
 		<div
-			className={classNames('spoiler', { open }, className)}
+			className={classes('spoiler', { open }, className)}
 			{...props}
 		>
 			<div className="spoiler-heading">

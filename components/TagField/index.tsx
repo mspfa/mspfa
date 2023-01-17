@@ -13,7 +13,7 @@ import Label from 'components/Label';
 import Dialog from 'components/Dialog';
 import Link from 'components/Link';
 import type { integer } from 'lib/types';
-import classNames from 'classnames';
+import classes from 'lib/client/classes';
 
 /** A `textarea` used solely to calculate the `style.height` of a `TagField` based on its `rows` prop. */
 const heightTextArea = document.createElement('textarea'); // @client-only
@@ -426,7 +426,7 @@ const TagField = ({
 					{Object.keys(storyTags).map(tagValue => (
 						<div
 							key={tagValue}
-							className={classNames('tag-field-tag-preset', { used: value.includes(tagValue) })}
+							className={classes('tag-field-tag-preset', { used: value.includes(tagValue) })}
 							data-value={tagValue}
 						>
 							<div className="tag-field-tag-content">

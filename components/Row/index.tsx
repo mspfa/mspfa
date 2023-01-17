@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import type { HTMLAttributes } from 'react';
 import React from 'react';
-import classNames from 'classnames';
+import classes from 'lib/client/classes';
 
 export type RowProps = HTMLAttributes<HTMLDivElement>;
 
@@ -11,7 +11,7 @@ const Row = React.forwardRef<HTMLDivElement, RowProps>(({
 	...props
 }, ref) => (
 	<div
-		className={classNames('row', className)}
+		className={classes('row', className)}
 		{...props}
 		ref={ref}
 	/>

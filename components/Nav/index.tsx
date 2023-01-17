@@ -12,7 +12,7 @@ import Dialog from 'components/Dialog';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import openSignInDialog from 'lib/client/openSignInDialog';
-import classNames from 'classnames';
+import classes from 'lib/client/classes';
 import useFunction from 'lib/client/reactHooks/useFunction';
 
 type SessionAPI = APIClient<typeof import('pages/api/session').default>;
@@ -58,7 +58,7 @@ const Nav = () => {
 
 	return (
 		<nav
-			className={classNames({ sticky: user?.settings.stickyNav })}
+			className={classes({ sticky: user?.settings.stickyNav })}
 			ref={ref}
 		>
 			<NavGroup id="primary">

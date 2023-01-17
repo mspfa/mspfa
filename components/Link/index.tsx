@@ -6,7 +6,7 @@ import type { LinkProps as OriginalNextLinkProps } from 'next/link';
 import React from 'react';
 import type { AnchorHTMLAttributes } from 'react';
 import sanitizeURL from 'lib/client/sanitizeURL';
-import classNames from 'classnames';
+import classes from 'lib/client/classes';
 
 // `href` is omitted here because `NextLinkProps` has a more inclusive `href`, accepting URL objects in addition to strings.
 type HTMLAnchorProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>;
@@ -48,7 +48,7 @@ const Link = React.forwardRef<HTMLAnchorElement & HTMLButtonElement, LinkProps>(
 	},
 	ref
 ) => {
-	const className = classNames(
+	const className = classes(
 		buttonClass ? 'button' : 'link',
 		classNameProp
 	);

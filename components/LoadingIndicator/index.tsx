@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import React, { useState, useEffect, useRef } from 'react';
 import Router from 'next/router';
-import classNames from 'classnames';
+import classes from 'lib/client/classes';
 import useFunction from 'lib/client/reactHooks/useFunction';
 
 /** The number of milliseconds to wait to show the loading indicator after the `loadingCount` is non-zero. */
@@ -98,7 +98,7 @@ const LoadingIndicator = () => {
 	return (
 		<div
 			id="loading-indicator"
-			className={classNames({ loading })}
+			className={classes({ loading })}
 		/>
 	);
 };

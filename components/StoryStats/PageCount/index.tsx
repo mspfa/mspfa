@@ -2,7 +2,7 @@ import './styles.module.scss';
 import Icon from 'components/Icon';
 import type { HTMLAttributes } from 'react';
 import type { integer } from 'lib/types';
-import classNames from 'classnames';
+import classes from 'lib/client/classes';
 
 export type PageCountProps = Omit<HTMLAttributes<HTMLSpanElement>, 'title' | 'children'> & {
 	children: integer
@@ -10,7 +10,7 @@ export type PageCountProps = Omit<HTMLAttributes<HTMLSpanElement>, 'title' | 'ch
 
 const PageCount = ({ className, children, ...props }: PageCountProps) => (
 	<span
-		className={classNames('page-count', className)}
+		className={classes('page-count', className)}
 		title={`${children} Page${children === 1 ? '' : 's'}`}
 		{...props}
 	>

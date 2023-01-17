@@ -14,7 +14,7 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import type { StoryPageID } from 'lib/server/stories';
 import type { integer } from 'lib/types';
 import useLatest from 'lib/client/reactHooks/useLatest';
-import classNames from 'classnames';
+import classes from 'lib/client/classes';
 import type { Updater } from 'use-immer';
 import Action from 'components/Dialog/Action';
 import type { MovePagesDialogValues } from 'components/StoryEditor/StoryEditorPageGrid/MovePagesDialog.tsx';
@@ -326,7 +326,7 @@ const StoryEditorPageGrid = ({
 			</div>
 			<div
 				id="story-editor-pages"
-				className={classNames('view-mode-grid', { disabled: formikPropsRef.current.isSubmitting })}
+				className={classes('view-mode-grid', { disabled: formikPropsRef.current.isSubmitting })}
 				style={{
 					paddingTop: `${gridCullingInfo.paddingTop}px`,
 					paddingBottom: `${gridCullingInfo.paddingBottom}px`

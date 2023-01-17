@@ -24,7 +24,7 @@ import StoryPageLink from 'components/StoryPageLink';
 import Timestamp from 'components/Timestamp';
 import { Formik, Form, Field } from 'formik';
 import type { PublicStory } from 'lib/client/stories';
-import classNames from 'classnames';
+import classes from 'lib/client/classes';
 import Action from 'components/Dialog/Action';
 import promptSignIn from 'lib/client/promptSignIn';
 
@@ -139,7 +139,7 @@ const Comment = <
 
 	return (
 		<div
-			className={classNames(
+			className={classes(
 				`comment comment-${comment.id} by-${comment.author}`,
 				{
 					'by-self': user?.id === comment.author,
@@ -291,7 +291,7 @@ const Comment = <
 				<div className="comment-actions">
 					<span className="comment-ratings">
 						<button
-							className={classNames(
+							className={classes(
 								'comment-action comment-rating-button like-button',
 								{ active: comment.userRating === 1 }
 							)}
@@ -307,7 +307,7 @@ const Comment = <
 							</Icon>
 						</button>
 						<button
-							className={classNames(
+							className={classes(
 								'comment-action comment-rating-button dislike-button',
 								{ active: comment.userRating === -1 }
 							)}

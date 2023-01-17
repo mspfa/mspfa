@@ -16,7 +16,7 @@ import api from 'lib/client/api';
 import IDPrefix from 'lib/client/reactContexts/IDPrefix';
 import Label from 'components/Label';
 import BBField from 'components/BBCode/BBField';
-import classNames from 'classnames';
+import classes from 'lib/client/classes';
 import Action from 'components/Dialog/Action';
 
 type StoryNewsPostAPI = APIClient<typeof import('pages/api/stories/[storyID]/news/[newsPostID]').default>;
@@ -100,7 +100,7 @@ const NewsPost = React.memo(({
 
 	return (
 		<div
-			className={classNames(
+			className={classes(
 				`news-post by-${newsPost.author}`,
 				{ 'by-self': user?.id === newsPost.author }
 			)}

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import classes from 'lib/client/classes';
 import type { ButtonProps } from 'components/Button';
 import Button from 'components/Button';
 import { useDialogContext } from 'components/Dialog/DialogContainer';
@@ -78,7 +78,7 @@ const Action = <
 	return (
 		<Button
 			type={cancel ? 'button' : 'submit'}
-			className={classNames('dialog-action', className)}
+			className={classes('dialog-action', className)}
 			value={value}
 			disabled={disabled ?? isSubmitting}
 			onClick={onClick}

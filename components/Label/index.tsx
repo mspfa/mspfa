@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import type { HTMLAttributes, LabelHTMLAttributes, ReactNode } from 'react';
 import HelpButton from 'components/Button/HelpButton';
-import classNames from 'classnames';
+import classes from 'lib/client/classes';
 
 export type ExclusiveLabelProps = {
 	/** Whether this label should be a block element on its own line. */
@@ -24,7 +24,7 @@ const Label = ({ block, htmlFor, help, beforeLabel, afterLabel, className, child
 
 	return (
 		<LabelContainerTag
-			className={classNames('label-container', className)}
+			className={classes('label-container', className)}
 			{...props}
 		>
 			{beforeLabel}

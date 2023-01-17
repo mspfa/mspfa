@@ -27,7 +27,7 @@ import parseBBCode from 'lib/client/parseBBCode';
 import type { ParsedReactNode } from 'lib/client/parseBBCode/BBStringParser';
 import BBTags from 'components/BBCode/BBTags';
 import promptSignIn from 'lib/client/promptSignIn';
-import classNames from 'classnames';
+import classes from 'lib/client/classes';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 type UserStorySaveAPI = APIClient<typeof import('pages/api/users/[userID]/story-saves/[storyID]').default>;
@@ -538,7 +538,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 						)}
 						<span className="story-section-footer-group">
 							<Link
-								className={classNames('story-link-save-game', { visited: userHasSave })}
+								className={classes('story-link-save-game', { visited: userHasSave })}
 								onClick={
 									useFunction(async () => {
 										if (!page) {

@@ -1,14 +1,14 @@
 import './styles.module.scss';
 import type { ButtonProps } from 'components/Button';
 import Button from 'components/Button';
-import classNames from 'classnames';
+import classes from 'lib/client/classes';
 
 export type ReplyButtonProps = Omit<ButtonProps, 'children'>;
 
 const ReplyButton = ({ className, ...props }: ReplyButtonProps) => (
 	<Button
 		icon
-		className={classNames('reply-button', className)}
+		className={classes('reply-button', className)}
 		title="Reply"
 		{...props}
 	/>
