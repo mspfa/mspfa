@@ -18,7 +18,7 @@ export type Credentials = {
 /**
  * Gets the user's (unverified) ID and token from the request's `Authorization` header or `auth` cookie.
  *
- * Returns `undefined` if the credentials are in an invalid format.
+ * If the credentials are in an invalid format, and deletes the `auth` cookie (if that's where the credentials came from).
  */
 export const getCredentials = (
 	req: IncomingMessage,
@@ -45,12 +45,14 @@ export const getCredentials = (
 	const [userIDString, token, ...invalidParts] = decodedString.split(':');
 
 	if (invalidParts.length !== 0) {
+		cookies?.set('auth', undefined);
 		return;
 	}
 
 	const userID = parseID(userIDString);
 
 	if (!userID) {
+		cookies?.set('auth', undefined);
 		return;
 	}
 
@@ -60,7 +62,7 @@ export const getCredentials = (
 /**
  * Returns the user authenticated by the specified credentials if the credentials are correct.
  *
- * Otherwise, returns `undefined` and deletes the client's `auth` cookie (if the `auth` cookie is where the credentials came from).
+ * Otherwise, returns `undefined` and deletes the `auth` cookie (if that's where the credentials came from).
  */
 export const verifyCredentials = async ({
 	cookies,
@@ -72,9 +74,7 @@ export const verifyCredentials = async ({
 	});
 
 	if (!user) {
-		// Authentication failed, so delete the `auth` cookie.
 		cookies?.set('auth', undefined);
-
 		return;
 	}
 
