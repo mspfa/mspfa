@@ -32,7 +32,7 @@ const createSession = async (
 
 	new Cookies(req, res).set(
 		'auth',
-		`${stringifyID(user._id)}:${token}`,
+		Buffer.from(`${stringifyID(user._id)}:${token}`).toString('base64'),
 		authCookieOptions
 	);
 
