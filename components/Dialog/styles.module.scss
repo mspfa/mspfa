@@ -37,6 +37,8 @@ dialog {
 }
 
 .dialog {
+	$horizontal-text-padding: 0.875rem;
+
 	&-title, &-body {
 		position: relative;
 		@include depth-effect(
@@ -57,7 +59,7 @@ dialog {
 	}
 
 	&-title {
-		padding: 0.25em 0.5em;
+		padding: ($horizontal-text-padding / 2) $horizontal-text-padding;
 		@include theme(font, heading-font);
 		font-size: 1.75em;
 
@@ -80,7 +82,7 @@ dialog {
 	}
 
 	&-content {
-		padding: 1em 0.875em;
+		padding: 1rem $horizontal-text-padding;
 		overflow-y: auto;
 		overflow-x: hidden;
 		white-space: pre-wrap;
