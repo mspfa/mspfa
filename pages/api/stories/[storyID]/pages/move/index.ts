@@ -43,7 +43,7 @@ const Handler: APIHandler<{
 }> = async (req, res) => {
 	await validate(req, res);
 
-	const { user } = await authenticate(req, res);
+	const user = await authenticate(req, res);
 
 	if (!user) {
 		res.status(403).send({

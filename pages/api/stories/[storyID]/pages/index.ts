@@ -91,7 +91,7 @@ const Handler: APIHandler<{
 			story.privacy === StoryPrivacy.Private
 			|| previewMode
 		) {
-			const { user } = await authenticate(req, res);
+			const user = await authenticate(req, res);
 
 			if (!(
 				user && (
@@ -128,7 +128,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	const { user } = await authenticate(req, res);
+	const user = await authenticate(req, res);
 
 	if (!(
 		user && (

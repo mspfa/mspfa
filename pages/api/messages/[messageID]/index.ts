@@ -25,7 +25,7 @@ const Handler: APIHandler<{
 }> = async (req, res) => {
 	await validate(req, res);
 
-	const { user } = await authenticate(req, res);
+	const user = await authenticate(req, res);
 
 	if (req.method === 'DELETE') {
 		if (!hasPerms(user, Perm.WRITE)) {

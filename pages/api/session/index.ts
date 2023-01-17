@@ -5,9 +5,8 @@ import type { ServerUser } from 'lib/server/users';
 import type { ExternalAuthMethodOptions, InternalAuthMethodOptions } from 'lib/client/auth';
 import getAuthMethodInfo from 'lib/server/auth/getAuthMethodInfo';
 import createSession from 'lib/server/auth/createSession';
-import authenticate from 'lib/server/auth/authenticate';
+import { getCredentials, verifyCredentials } from 'lib/server/auth/authenticate';
 import verifyPassword, { VerifyPasswordResult } from 'lib/server/auth/verifyPassword';
-import Cookies from 'cookies';
 import type { PrivateUser } from 'lib/client/users';
 import type { EmailString } from 'lib/types';
 
@@ -95,27 +94,37 @@ const Handler: APIHandler<(
 
 	req.method satisfies 'DELETE';
 
-	const { user, token } = await authenticate(req, res, false);
+	const credentials = getCredentials(req, res);
 
-	if (user) {
-		await users.updateOne({
-			_id: user._id
-		}, {
-			$pull: {
-				sessions: {
-					token
-				}
-			}
+	if (!credentials) {
+		res.status(422).send({
+			message: 'The specified session\'s credentials are invalid.'
 		});
-
-		new Cookies(req, res).set('auth', undefined);
-
-		res.status(204).end();
-	} else {
-		res.status(404).send({
-			message: 'No valid user session was found to sign out of.'
-		});
+		return;
 	}
+
+	const user = await verifyCredentials(credentials);
+
+	if (!user) {
+		res.status(404).send({
+			message: 'No valid session was found to sign out of.'
+		});
+		return;
+	}
+
+	await users.updateOne({
+		_id: user._id
+	}, {
+		$pull: {
+			sessions: {
+				token: credentials.token
+			}
+		}
+	});
+
+	credentials.cookies?.set('auth', undefined);
+
+	res.status(204).end();
 };
 
 export default Handler;

@@ -62,7 +62,7 @@ const Handler: APIHandler<{
 
 	if (req.method === 'GET') {
 		if (story.privacy === StoryPrivacy.Private) {
-			const { user } = await authenticate(req, res);
+			const user = await authenticate(req, res);
 
 			if (!(
 				user && (
@@ -82,7 +82,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	const { user } = await authenticate(req, res);
+	const user = await authenticate(req, res);
 
 	if (req.method === 'DELETE') {
 		if (!(

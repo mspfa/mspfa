@@ -19,7 +19,7 @@ const Handler: APIHandler<{
 
 	const editor = await getUserByUnsafeID(req.query.userID, res);
 
-	const { user } = await authenticate(req, res);
+	const user = await authenticate(req, res);
 
 	if (user && (
 		editor._id.equals(user._id)

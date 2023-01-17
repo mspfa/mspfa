@@ -30,7 +30,7 @@ const Handler: APIHandler<{
 
 	const story = await getStoryByUnsafeID(req.query.storyID, res);
 
-	const { user } = await authenticate(req, res);
+	const user = await authenticate(req, res);
 
 	if (story.privacy === StoryPrivacy.Private && !(
 		user && (

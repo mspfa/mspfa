@@ -48,7 +48,7 @@ const Handler: APIHandler<{
 
 	if (req.method === 'GET') {
 		if (story.privacy === StoryPrivacy.Private) {
-			const { user } = await authenticate(req, res);
+			const user = await authenticate(req, res);
 
 			if (!(
 				user && (
@@ -108,7 +108,7 @@ const Handler: APIHandler<{
 
 	req.method satisfies 'POST';
 
-	const { user } = await authenticate(req, res);
+	const user = await authenticate(req, res);
 
 	if (!(
 		user && (

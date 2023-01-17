@@ -140,7 +140,7 @@ export const permToGetUserInAPI = async <UserID extends string | undefined = und
 	])
 ) => (
 	(await permToGetUser(
-		(await authenticate(req, res)).user,
+		await authenticate(req, res),
 		userID,
 		perms,
 		res
