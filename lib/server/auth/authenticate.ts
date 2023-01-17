@@ -27,8 +27,10 @@ const authenticate = async (
 	/** The auth credentials in the format `${userID}:${token}`, decoded from either the `Authorization` header or the `auth` cookie. */
 	let credentials: string | undefined;
 
-	if (req.headers.authorization && req.headers.authorization.startsWith('Basic ')) {
-		credentials = Buffer.from(req.headers.authorization.slice(6), 'base64').toString();
+	if (req.headers.authorization) {
+		if (req.headers.authorization.startsWith('Basic ')) {
+			credentials = Buffer.from(req.headers.authorization.slice(6), 'base64').toString();
+		}
 	} else {
 		cookies = new Cookies(req, res);
 		credentials = cookies.get('auth');
