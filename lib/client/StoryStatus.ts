@@ -3,7 +3,7 @@ enum StoryStatus {
 	Complete,
 	Discontinued,
 	Inactive,
-	MovedElsewhere
+	Relocated
 }
 
 export default StoryStatus;
@@ -13,5 +13,5 @@ export const storyStatusNames: Record<StoryStatus, string> = {
 	[StoryStatus.Complete]: 'Complete',
 	[StoryStatus.Discontinued]: 'Discontinued',
 	[StoryStatus.Inactive]: 'Inactive',
-	[StoryStatus.MovedElsewhere]: 'Moved Elsewhere'
+	[StoryStatus.Relocated]: 'Relocated'
 };
