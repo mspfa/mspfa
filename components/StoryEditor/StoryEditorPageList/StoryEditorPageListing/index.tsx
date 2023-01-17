@@ -273,12 +273,11 @@ const StoryEditorPageListing = React.memo(({
 
 		if (!event.shiftKey) {
 			const minDate = Math.max(
-				// One minute from now.
 				Date.now() + 1000 * 60,
 				firstDraftID! === 1
 					// If the first page being published is page 1, then there should be no other minimum `published` date.
 					? -Infinity
-					// The `published` date of the previous page.
+					// The `published` date of the last published page.
 					: formikPropsRef.current.values.pages[firstDraftID! - 1].published!
 			);
 
@@ -687,44 +686,40 @@ const StoryEditorPageListing = React.memo(({
 			)}
 			<Row className="story-editor-page-actions">
 				{saved ? (
-					<>
-						<Button
-							href={`/?s=${storyID}&p=${page.id}${pageStatus === 'published' ? '' : '&preview=1'}`}
-							target={pageStatus === 'published' ? undefined : '_blank'}
-							disabled={isSubmitting}
-						>
-							{pageStatus === 'published' ? 'View' : 'Preview'}
-						</Button>
-						{pageStatus === 'draft' && (
-							<Button
-								disabled={isSubmitting}
-								title={
-									firstDraftID === page.id
-										? `Publish Page ${page.id}`
-										: `Publish Pages ${firstDraftID} to ${page.id}`
-								}
-								onClick={publishPage}
-							>
-								{(firstDraftID === page.id
-									? 'Publish'
-									: `Publish p${firstDraftID}-${page.id}`
-								)}
-							</Button>
-						)}
-					</>
+					<Button
+						href={`/?s=${storyID}&p=${page.id}${pageStatus === 'published' ? '' : '&preview=1'}`}
+						target={pageStatus === 'published' ? undefined : '_blank'}
+						disabled={isSubmitting}
+					>
+						{pageStatus === 'published' ? 'View' : 'Preview'}
+					</Button>
 				) : (
 					<Button
 						disabled={isSubmitting}
 						onClick={savePage}
 					>
-						{(pageStatus === 'draft'
-						// The reason this should say "Save Draft" instead of "Save" for drafts is because "Save" would be ambiguous with "Publish", making users more hesitant to click it if they aren't ready to publish yet.
-							? 'Save Draft'
-							: 'Save'
-						)}
+						Save
 					</Button>
 				)}
-				{pageStatus !== 'draft' && (
+				{pageStatus === 'draft' ? (
+					<Button
+						disabled={isSubmitting}
+						title={
+							(saved ? '' : 'Save and ') + (
+								firstDraftID === page.id
+									? `Publish Page ${page.id}`
+									: `Publish Pages ${firstDraftID} to ${page.id}`
+							)
+						}
+						onClick={publishPage}
+					>
+						{(saved ? '' : 'Save & ') + (
+							firstDraftID === page.id
+								? 'Publish'
+								: `Publish p${firstDraftID}-${page.id}`
+						)}
+					</Button>
+				) : (
 					<Button
 						disabled={isSubmitting}
 						title={
