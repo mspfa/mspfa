@@ -9,7 +9,6 @@ import type { integer } from 'lib/types';
 import BrowsePage, { getBooleanFromQueryValue, getBooleanRecordFromQueryValue, getNumberFromQueryValue, getStringFromQueryValue, getTagsFromQueryValue, MAX_RESULTS_PER_PAGE } from 'components/BrowsePage';
 import StoryListing from 'components/StoryListing';
 import TagField from 'components/TagField';
-import type StoryStatus from 'lib/client/StoryStatus';
 import { storyStatusNames } from 'lib/client/StoryStatus';
 import type { ChangeEvent, ReactNode } from 'react';
 import { useState } from 'react';
@@ -25,7 +24,7 @@ const allStatusesTrue: Record<string, true> = {};
 
 const statusFieldContainers: ReactNode[] = [];
 
-for (const status of Object.keys(storyStatusNames)) {
+for (const [status, statusName] of storyStatusNames) {
 	allStatusesTrue[status] = true;
 
 	statusFieldContainers.push(
@@ -43,7 +42,7 @@ for (const status of Object.keys(storyStatusNames)) {
 				className="spaced"
 				htmlFor={`field-status-${status}`}
 			>
-				{storyStatusNames[status as unknown as StoryStatus]}
+				{statusName}
 			</label>
 		</span>
 	);

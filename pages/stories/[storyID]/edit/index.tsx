@@ -14,7 +14,6 @@ import { getPrivateStory } from 'lib/server/stories';
 import getStoryByUnsafeID from 'lib/server/stories/getStoryByUnsafeID';
 import type { PrivateStory } from 'lib/client/stories';
 import { storyStatusNames } from 'lib/client/StoryStatus';
-import type StoryStatus from 'lib/client/StoryStatus';
 import StoryPrivacy, { storyPrivacyNames } from 'lib/client/StoryPrivacy';
 import LabeledGridSection from 'components/Section/LabeledGridSection';
 import LabeledGridField from 'components/LabeledGrid/LabeledGridField';
@@ -291,12 +290,9 @@ const Component = withErrorPage<ServerSideProps>(({
 											label="Status"
 											required
 										>
-											{Object.keys(storyStatusNames).map(status => (
-												<option
-													key={status}
-													value={status}
-												>
-													{storyStatusNames[status as unknown as StoryStatus]}
+											{storyStatusNames.map(([status, statusName]) => (
+												<option key={status} value={status}>
+													{statusName}
 												</option>
 											))}
 										</LabeledGridField>
