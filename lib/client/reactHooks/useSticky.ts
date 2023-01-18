@@ -23,7 +23,12 @@ const updateViewport = () => {
 
 		// Stick the top of this element to the bottom of the previous element.
 		const styleTop = netStuckHeight;
-		stickyElement.style.top = `${styleTop}px`;
+		stickyElement.style.top = (
+			styleTop === 0
+				// Avoid setting `top` to `0` in order to future-proof, so that styles can't rely on `top` already being set.
+				? ''
+				: `${styleTop}px`
+		);
 
 		const rect = stickyElement.getBoundingClientRect();
 		netStickyHeight += rect.height;
