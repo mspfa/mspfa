@@ -6,8 +6,4 @@
 	margin-top: -12px;
 	padding: 12px 0;
 	border-bottom: 1px solid rgba(128, 128, 128, 0.5);
-
-	nav.sticky ~ * & {
-		top: 20px;
-	}
 }

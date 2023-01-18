@@ -3,61 +3,78 @@ import { useEffect } from 'react';
 import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
 import frameThrottler from 'lib/client/frameThrottler';
 
-const stickyElementRefs: Array<RefObject<HTMLElement>> = [];
+const stickyElements: HTMLElement[] = [];
 
 let viewportListenerKey: symbol;
-let updateViewport: () => void;
 
-const addStickyElementRef = (stickyElementRefToAdd: RefObject<HTMLElement>) => {
-	stickyElementRefs.push(stickyElementRefToAdd);
+const updateViewport = () => {
+	/** The height of all prior sticky elements. */
+	let netStickyHeight = 0;
+	/** The height of all prior stuck sticky elements. */
+	let netStuckHeight = 0;
 
-	// Check if this is the first to be added.
-	if (stickyElementRefs.length === 1) {
-		updateViewport = () => {
-			/** The total height of all sticky elements. */
-			let netStickyHeight = 0;
+	for (const stickyElement of stickyElements) {
+		const style = getComputedStyle(stickyElement);
 
-			for (const stickyElementRef of stickyElementRefs) {
-				if (!stickyElementRef.current) {
-					continue;
-				}
+		if (style.position !== 'sticky') {
+			stickyElement.style.top = '';
+			continue;
+		}
 
-				const style = getComputedStyle(stickyElementRef.current);
+		// Stick the top of this element to the bottom of the previous element.
+		const styleTop = netStuckHeight;
+		stickyElement.style.top = `${styleTop}px`;
 
-				if (style.position === 'sticky') {
-					const rect = stickyElementRef.current.getBoundingClientRect();
+		const rect = stickyElement.getBoundingClientRect();
+		netStickyHeight += rect.height;
 
-					// Add the heights of sticky elements even if they aren't stuck because a scroll from a higher position where it's not stuck to a lower position where it's stuck would cause it to become stuck but not consider the new scroll padding which would be added due to the element becoming stuck after the scroll. The scroll padding needs to be set before the scroll occurs in order to be effective.
-					netStickyHeight += rect.height;
+		const stuck = styleTop === rect.top;
 
-					const styleTop = +style.top.slice(0, -2);
-					stickyElementRef.current.classList[
-						styleTop === rect.top ? 'add' : 'remove'
-					]('stuck');
-				}
-			}
+		if (!stuck) {
+			stickyElement.classList.remove('stuck');
+			continue;
+		}
 
-			document.documentElement.style.scrollPaddingTop = (
-				netStickyHeight
-					? `${netStickyHeight}px`
-					: ''
-			);
-		};
-
-		viewportListenerKey = addViewportListener(updateViewport);
-
-		frameThrottler(viewportListenerKey).then(() => {
-			updateViewport();
-		});
+		stickyElement.classList.add('stuck');
+		netStuckHeight += rect.height;
 	}
+
+	// Use `netStickyHeight` instead of `netStuckHeight` because a scroll from a higher position where a sticky element is not stuck to a lower position where it's stuck would cause it to become stuck but not consider the new scroll padding which would be added due to the element becoming stuck after the scroll. The scroll padding needs to be set before the scroll occurs in order to be useful.
+	document.documentElement.style.scrollPaddingTop = (
+		netStickyHeight
+			? `${netStickyHeight}px`
+			: ''
+	);
 };
 
-const removeStickyElementRef = (stickyElementRef: RefObject<HTMLElement>) => {
-	const elementIndex = stickyElementRefs.indexOf(stickyElementRef);
-	stickyElementRefs.splice(elementIndex, 1);
+const byDocumentPosition = (a: Node, b: Node) => (
+	a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_PRECEDING
+		? 1
+		: -1
+);
 
-	// Check if all have been removed.
-	if (stickyElementRefs.length === 0) {
+const addStickyElement = (newStickyElement: HTMLElement) => {
+	stickyElements.push(newStickyElement);
+	stickyElements.sort(byDocumentPosition);
+
+	// Only run the rest if this is the first sticky element to be added.
+	if (stickyElements.length !== 1) {
+		return;
+	}
+
+	viewportListenerKey = addViewportListener(updateViewport);
+
+	frameThrottler(viewportListenerKey).then(() => {
+		updateViewport();
+	});
+};
+
+const removeStickyElement = (stickyElement: HTMLElement) => {
+	const elementIndex = stickyElements.indexOf(stickyElement);
+	stickyElements.splice(elementIndex, 1);
+
+	// Stop listening to the viewport if all sticky elements have been removed.
+	if (stickyElements.length === 0) {
 		removeViewportListener(viewportListenerKey);
 	}
 
@@ -66,16 +83,25 @@ const removeStickyElementRef = (stickyElementRef: RefObject<HTMLElement>) => {
 	});
 };
 
-/** A hook to automatically update `document.documentElement.style.scrollPaddingTop` to accommodate sticky elements. Please call this hook on any sticky element which sticks to the top of the viewport if it is above any part of the page's main content. */
+/**
+ * A hook to handle any element that's sticky to the top of the viewport.
+ *
+ * Automatically updates `document.documentElement.style.scrollPaddingTop` and `stickyElementRef.current.style.top`.
+ */
 const useSticky = (
 	/** A ref to the sticky element. */
 	stickyElementRef: RefObject<HTMLElement>
 ) => {
 	useEffect(() => {
-		addStickyElementRef(stickyElementRef);
+		const stickyElement = stickyElementRef.current;
+		if (!stickyElement) {
+			return;
+		}
+
+		addStickyElement(stickyElement);
 
 		return () => {
-			removeStickyElementRef(stickyElementRef);
+			removeStickyElement(stickyElement);
 		};
 	});
 	// The above effect hook should have no dependencies because it should call `updateViewport` every re-render in case re-rendering the component changed the element or its related styles.
