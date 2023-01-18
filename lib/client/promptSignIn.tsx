@@ -15,6 +15,7 @@ const promptSignIn = async ({ title, content }: PromptSignInOptions) => {
 	const confirmedSignIn = await Dialog.confirm(
 		<Dialog id="prompt-sign-in" title={title}>
 			{content}<br />
+			<br />
 			(Don't worry; this page will stay open.)
 
 			<Action autoFocus>Sign In</Action>
