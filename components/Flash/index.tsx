@@ -54,13 +54,16 @@ const Flash = ({
 				config: {
 					polyfills: false,
 					showSwfDownload: true,
-					warnOnUnsupportedContent: false
+					warnOnUnsupportedContent: false,
+					preloader: false
 				}
 			};
 		}).then(() => {
 			if (!mounted) {
 				return;
 			}
+
+			startLoading();
 
 			axios.head(src!).then(response => {
 				if (!mounted) {
@@ -76,8 +79,10 @@ const Flash = ({
 				player = ruffle.createPlayer();
 				content.appendChild(player);
 
-				player.load(src).catch(setError);
-			}).catch(setError);
+				return player.load(src);
+			}).catch(setError).finally(() => {
+				stopLoading();
+			});
 		}).catch(() => {
 			setError('The emulator script failed to load.');
 		});
