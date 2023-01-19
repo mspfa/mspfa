@@ -59,7 +59,7 @@ const Flash = ({
 			let mounted = true;
 			let player: any;
 
-			loadScript('/ruffle/ruffle.js', () => {
+			loadScript('https://unpkg.com/@ruffle-rs/ruffle', () => {
 				(window as any).RufflePlayer = {
 					config: {
 						polyfills: false
