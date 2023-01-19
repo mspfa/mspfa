@@ -1,4 +1,4 @@
-@use "sass:map";
+@use 'sass:map';
 
 // Because custom styles are a thing, in order to avoid the site's built-in styles making false assumptions about the font weight, all fonts set here should leave the font weight unset (to default to `normal`) unless it is intended for the font to be universally if not almost universally different.
 // Additionally, all fonts set here should unconditionally use `1em` as the font size, so that `1em` can be safely assumed as the default font size when the font size is left unset.
