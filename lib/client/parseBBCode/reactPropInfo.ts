@@ -1,5 +1,5 @@
 /**
- * An object that maps HTML/SVG attribute names to their corresponding React prop names, excluding event listeners and names that map to themselves.
+ * A mapping from HTML/SVG attribute names to their corresponding React prop names, excluding names that map to themselves and event listeners.
  *
  * Source: https://github.com/facebook/react/blob/feb134c30d20ef332771d71d8d1cb66d34311637/packages/react-dom/src/shared/possibleStandardNames.js
  *
@@ -161,7 +161,7 @@ export const reactPropNames: Partial<Record<string, string>> = {
 };
 
 /**
- * An object which maps the name of each prop that represents a boolean attribute to `true`. If a prop does not represent a boolean attribute, its name is not in this object's keys.
+ * A mapping from the name of each prop that represents a boolean attribute to `true`. If a prop does not represent a boolean attribute, its name is not in this object's keys.
  *
  * See https://www.w3.org/TR/html52/infrastructure.html#sec-boolean-attributes for the definition of a boolean attribute. Does not include boolean-ish string attributes such as `contentEditable`, which accepts a string such as `'false'`.
  *
