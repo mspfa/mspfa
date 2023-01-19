@@ -1,3 +1,5 @@
+@use 'styles/themes' as *;
+
 .flash {
 	&-container {
 		display: inline-block;
@@ -16,7 +18,8 @@
 
 	&-placeholder {
 		box-sizing: border-box;
-		border: 1px solid #808080;
+		border: 2px solid;
+		@include theme(border-color, alt-front-color);
 		padding: 2em 1.5em;
 		display: flex;
 		flex-direction: column;
