@@ -62,7 +62,10 @@ const Flash = ({
 			loadScript('https://unpkg.com/@ruffle-rs/ruffle', () => {
 				(window as any).RufflePlayer = {
 					config: {
-						polyfills: false
+						polyfills: false,
+						showSwfDownload: true,
+						warnOnUnsupportedContent: false,
+						preloader: false
 					}
 				};
 			}).then(() => {
