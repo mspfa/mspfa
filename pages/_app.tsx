@@ -1,4 +1,4 @@
-import './styles.scss';
+import 'styles/global.scss';
 import 'lib/server/effects'; // @server-only
 import App from 'next/app'; // @server-only
 import authenticate from 'lib/server/auth/authenticate'; // @server-only

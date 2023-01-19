@@ -1,5 +1,5 @@
-@use 'lib/styles/themes' as *;
-@use 'lib/styles/depth-effect' as *;
+@use 'styles/themes' as *;
+@use 'styles/depth-effect' as *;
 
 dialog {
 	// This is a flexbox in order to prevent the children from overflowing.

@@ -1,4 +1,4 @@
-@use 'lib/styles/themes' as *;
+@use 'styles/themes' as *;
 
 // Applies a pixelated 3D depth effect behind the element using its `::before`'s background. Lowers the depth on `:active` if `$can-be-active`.
 @mixin depth-effect(

@@ -1,4 +1,4 @@
-@use 'lib/styles/themes' as *;
+@use 'styles/themes' as *;
 @use 'components/Section/styles.module' as * with ( $variables-only: true );
 
 .columns {

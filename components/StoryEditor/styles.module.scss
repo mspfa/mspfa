@@ -1,6 +1,6 @@
 @use 'sass:map';
 @use 'sass:color';
-@use 'lib/styles/themes' as *;
+@use 'styles/themes' as *;
 
 #story-editor-pages {
 	@include desktop {

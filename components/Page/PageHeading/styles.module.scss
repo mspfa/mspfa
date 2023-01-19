@@ -1,4 +1,4 @@
-@use 'lib/styles/themes' as *;
+@use 'styles/themes' as *;
 
 .page-heading {
 	@include theme(font, heading-font);
