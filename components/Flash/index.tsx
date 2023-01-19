@@ -121,7 +121,7 @@ const Flash = ({
 							Would you like to automatically use <Link href="https://ruffle.rs/" target="_blank">Ruffle</Link> to emulate all Flash content during this session?
 						</p>
 						<p>
-							<Button onClick={setFlashModeToEmulate}>
+							<Button autoFocus onClick={setFlashModeToEmulate}>
 								Yes
 							</Button>
 							<Button onClick={setFlashModeToNative}>
