@@ -8,7 +8,7 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import axios from 'axios';
 import loadScript from 'lib/client/loadScript';
 
-const [useFlashMode, setFlashMode] = createGlobalState<'ask' | 'native' | 'emulate'>('ask');
+const [useFlashMode, setFlashMode] = createGlobalState<undefined | 'native' | 'emulate'>(undefined);
 
 const setFlashModeToNative = () => {
 	setFlashMode('native');
@@ -56,7 +56,7 @@ const Flash = ({
 		if (emulation) {
 			// If `emulation` is defined, then `flashMode === 'emulate'`.
 
-			let unmounted = false;
+			let mounted = true;
 			let player: any;
 
 			loadScript('/ruffle/ruffle.js', () => {
@@ -66,12 +66,12 @@ const Flash = ({
 					}
 				};
 			}).then(() => {
-				if (unmounted) {
+				if (!mounted) {
 					return;
 				}
 
 				axios.head(src!).then(response => {
-					if (unmounted) {
+					if (!mounted) {
 						return;
 					}
 
@@ -93,7 +93,7 @@ const Flash = ({
 			});
 
 			return () => {
-				unmounted = true;
+				mounted = false;
 
 				if (player) {
 					emulation.removeChild(player);
@@ -111,60 +111,55 @@ const Flash = ({
 	);
 
 	return (
-		<div className="flash-container" style={{ width, height }}>
-			{(flashMode === 'ask'
-				? (
-					<div className="flash-warning">
-						<div className="flash-warning-content">
-							<p>
-								There's supposed to be a Flash embed here, but Flash is not supported.<br />
-								<br />
-								Would you like to automatically use <Link href="https://ruffle.rs/" target="_blank">Ruffle</Link> to emulate all Flash content during this session?
-							</p>
-							<p>
-								<Button onClick={setFlashModeToEmulate}>
-									Yes
-								</Button>
-								<Button onClick={setFlashModeToNative}>
-									No
-								</Button>
-							</p>
-							<p>
-								Warning: The emulator is still in development and will not always work, especially with ActionScript 3. You can always refresh the page to disable it again.
-							</p>
-						</div>
-						{flashWarningFooter}
+		<div className="flash-container panel" style={{ width, height }}>
+			{flashMode === undefined ? (
+				<div className="flash-warning">
+					<div className="flash-warning-content">
+						<p>
+							There's supposed to be a Flash embed here, but Flash is not supported.<br />
+							<br />
+							Would you like to automatically use <Link href="https://ruffle.rs/" target="_blank">Ruffle</Link> to emulate all Flash content during this session?
+						</p>
+						<p>
+							<Button onClick={setFlashModeToEmulate}>
+								Yes
+							</Button>
+							<Button onClick={setFlashModeToNative}>
+								No
+							</Button>
+						</p>
+						<p>
+							Warning: The emulator is still in development and will not always work, especially with ActionScript 3. You can always refresh the page to disable it again.
+						</p>
 					</div>
-				)
-				: flashMode === 'native'
-					? (
-						<object
-							type="application/x-shockwave-flash"
-							data={src}
-							width={width}
-							height={height}
-						/>
-					)
-					: error
-						? (
-							<div className="flash-warning" style={{ width, height }}>
-								<div className="flash-warning-content">
-									<p>
-										An error occurred while trying to load the player:
-									</p>
-									<p className="red">
-										{error.toString()}
-									</p>
-									<p>
-										<Button onClick={retry}>
-											Retry
-										</Button>
-									</p>
-								</div>
-								{flashWarningFooter}
-							</div>
-						)
-						: <div className="flash-emulation" ref={emulationRef} />
+					{flashWarningFooter}
+				</div>
+			) : flashMode === 'native' ? (
+				<object
+					type="application/x-shockwave-flash"
+					data={src}
+					width={width}
+					height={height}
+				/>
+			) : error ? (
+				<div className="flash-warning" style={{ width, height }}>
+					<div className="flash-warning-content">
+						<p>
+							An error occurred while trying to load the player:
+						</p>
+						<p className="red">
+							{error.toString()}
+						</p>
+						<p>
+							<Button onClick={retry}>
+								Retry
+							</Button>
+						</p>
+					</div>
+					{flashWarningFooter}
+				</div>
+			) : (
+				<div className="flash-emulation" ref={emulationRef} />
 			)}
 		</div>
 	);
