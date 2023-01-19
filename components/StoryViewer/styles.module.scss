@@ -54,7 +54,7 @@ $story-section-padding: 25px;
 				text-align: center;
 				padding: 0 0 14px;
 
-				:not(.panel) {
+				:not(.panel):not(.panel *) {
 					// This is necessary so an effect hook can detect the original width of elements to be classed with the `panel` class.
 					max-width: none;
 				}

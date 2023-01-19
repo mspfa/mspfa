@@ -1,23 +1,35 @@
 .flash {
 	&-container {
 		display: inline-block;
-		font-size: 1rem;
+		// Prevent whitespace (e.g. inside the Flash player) from being unintentionally preserved.
+		white-space: normal;
 	}
 
-	&-warning {
+	position: relative;
+
+	& > * {
+		position: absolute;
 		width: 100%;
 		height: 100%;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		box-sizing: border-box;
-		overflow: hidden auto;
-		padding: 1.5em;
-		text-align: center;
-		border: 1px solid #808080;
 	}
 
-	&-emulation {
-		white-space: normal;
+	&-content > * {
+		width: 100%;
+		height: 100%;
+	}
+
+	&-placeholder {
+		box-sizing: border-box;
+		border: 1px solid #808080;
+		padding: 2em 1.5em;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden auto;
+		text-align: center;
+		font-size: 1rem;
+
+		&-content {
+			flex-grow: 1;
+		}
 	}
 }
