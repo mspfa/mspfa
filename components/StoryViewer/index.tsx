@@ -344,7 +344,8 @@ const StoryViewer = (props: StoryViewerProps) => {
 	// Add the `panel` class to any media elements large enough to be considered a panel.
 	// This is a layout effect rather than a normal effect so that media is not briefly visible at the wrong size.
 	useIsomorphicLayoutEffect(() => {
-		const storySectionElementStyle = window.getComputedStyle(storySectionElementRef.current);
+		const storySectionElement = storySectionElementRef.current;
+		const storySectionElementStyle = window.getComputedStyle(storySectionElement);
 
 		/** The content width of the story section. */
 		const storySectionContentWidth = (
@@ -354,7 +355,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 		);
 
 		/** Adds or removes the `panel` class to an inputted element based on its size relative to the story section. */
-		const classifyPotentialPanel = (element: HTMLElement) => {
+		const classifyPotentialPanel = (element: Element) => {
 			element.classList[
 				element.getBoundingClientRect().width > storySectionContentWidth
 					// If and only if the element is wider than the content width of the story section, this element should have the `panel` class.
@@ -368,30 +369,31 @@ const StoryViewer = (props: StoryViewerProps) => {
 
 		/** Calls `classifyPotentialPanel` on the `event.target`. */
 		const potentialPanelListener = (event: Event) => {
-			classifyPotentialPanel(event.target as HTMLElement);
+			classifyPotentialPanel(event.target as Element);
 		};
 
-		for (const tagName of ['img', 'video', 'iframe', 'canvas', 'object'] as const) {
-			for (const element of storySectionElementRef.current.getElementsByTagName(tagName)) {
-				// Clasify this element in case it's already loaded or it already has a set size.
-				classifyPotentialPanel(element);
+		const potentialPanelElements = storySectionElement.querySelectorAll(
+			'img, video, iframe, canvas, object, .flash-container'
+		);
+		for (const element of potentialPanelElements) {
+			// Clasify this element in case it's already loaded or it already has a set size.
+			classifyPotentialPanel(element);
 
-				if (
-					element instanceof HTMLImageElement
-					|| element instanceof HTMLVideoElement
-				) {
-					// If this element is one of the tags that can change size on load or error, then add listeners to classify potential panels on load or error.
+			if (
+				element instanceof HTMLImageElement
+				|| element instanceof HTMLVideoElement
+			) {
+				// If this element is one of the tags that can change size on load or error, then add listeners to classify potential panels on load or error.
 
-					element.addEventListener(
-						element instanceof HTMLVideoElement
-							? 'loadeddata'
-							: 'load',
-						potentialPanelListener
-					);
-					element.addEventListener('error', potentialPanelListener);
+				element.addEventListener(
+					element instanceof HTMLVideoElement
+						? 'loadeddata'
+						: 'load',
+					potentialPanelListener
+				);
+				element.addEventListener('error', potentialPanelListener);
 
-					listeningPotentialPanels.push(element);
-				}
+				listeningPotentialPanels.push(element);
 			}
 		}
 

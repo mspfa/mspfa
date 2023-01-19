@@ -7,6 +7,7 @@ import useFunction from 'lib/client/reactHooks/useFunction';
 import axios from 'axios';
 import loadScript from 'lib/client/loadScript';
 import Row from 'components/Row';
+import classes from 'lib/client/classes';
 
 export type FlashProps = {
 	src?: string,
@@ -90,10 +91,20 @@ const Flash = ({
 		};
 	}, [error, src]);
 
+	const flashContainerRef = useRef<HTMLDivElement>(null);
+	const flashContainer = flashContainerRef.current;
+
 	return (
 		<div
-			className="flash-container panel"
+			className={
+				classes(
+					'flash-container',
+					// Preserve the `panel` class if it was added from outside.
+					{ panel: flashContainer?.classList.contains('panel') }
+				)
+			}
 			style={{ width }}
+			ref={flashContainerRef}
 		>
 			<div
 				className="flash"
