@@ -52,57 +52,57 @@ const Flash = ({
 		}
 
 		const emulation = emulationRef.current;
+		if (!emulation) {
+			return;
+		}
 
-		if (emulation) {
-			// If `emulation` is defined, then `flashMode === 'emulate'`.
+		// If `emulation` is defined, then `flashMode === 'emulate'`.
 
-			let mounted = true;
-			let player: any;
+		let mounted = true;
+		let player: any;
 
-			loadScript('https://unpkg.com/@ruffle-rs/ruffle', () => {
-				(window as any).RufflePlayer = {
-					config: {
-						polyfills: false,
-						showSwfDownload: true,
-						warnOnUnsupportedContent: false,
-						preloader: false
-					}
-				};
-			}).then(() => {
+		loadScript('https://unpkg.com/@ruffle-rs/ruffle', () => {
+			(window as any).RufflePlayer = {
+				config: {
+					polyfills: false,
+					showSwfDownload: true,
+					warnOnUnsupportedContent: false
+				}
+			};
+		}).then(() => {
+			if (!mounted) {
+				return;
+			}
+
+			axios.head(src!).then(response => {
 				if (!mounted) {
 					return;
 				}
 
-				axios.head(src!).then(response => {
-					if (!mounted) {
-						return;
-					}
-
-					if (response.headers['content-type'] !== 'application/x-shockwave-flash') {
-						setError(new Error('The requested file is not a Flash file.'));
-						return;
-					}
-
-					const ruffle = (window as any).RufflePlayer.newest();
-					player = ruffle.createPlayer();
-					player.style.width = `${width}px`;
-					player.style.height = `${height}px`;
-					emulation.appendChild(player);
-
-					player.load(src).catch(setError);
-				}).catch(setError);
-			}).catch(() => {
-				setError(new Error('The emulator script failed to load.'));
-			});
-
-			return () => {
-				mounted = false;
-
-				if (player) {
-					emulation.removeChild(player);
+				if (response.headers['content-type'] !== 'application/x-shockwave-flash') {
+					setError(new Error('The requested file is not a Flash file.'));
+					return;
 				}
-			};
-		}
+
+				const ruffle = (window as any).RufflePlayer.newest();
+				player = ruffle.createPlayer();
+				player.style.width = `${width}px`;
+				player.style.height = `${height}px`;
+				emulation.appendChild(player);
+
+				player.load(src).catch(setError);
+			}).catch(setError);
+		}).catch(() => {
+			setError(new Error('The emulator script failed to load.'));
+		});
+
+		return () => {
+			mounted = false;
+
+			if (player) {
+				emulation.removeChild(player);
+			}
+		};
 	}, [flashMode, error, src, width, height]);
 
 	const flashWarningFooter = src && (
