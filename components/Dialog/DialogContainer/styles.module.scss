@@ -4,7 +4,8 @@
 	align-items: center;
 	justify-content: center;
 	position: fixed;
-	z-index: 300;
+	// It would be ideal for the dialog to be in front of the nav (so the nav doesn't float in front of dialogs when not `.stuck`) but behind nav menus (so dialogs can't block you from clicking nav menu items). But that's impossible when the nav is sticky (even when not `.stuck`), since the nav's `position` property creates a stacking context that confines nav menus to the same layer as the nav (behind the dialog). Unless nav menus are changed to not be children of the nav, the next best thing is to always put dialogs in front of both the nav and nav menus when the nav is sticky.
+	z-index: 400;
 	left: 0;
 	top: 0;
 	width: 100%;
