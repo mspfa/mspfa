@@ -372,6 +372,7 @@ const StoryViewer = (props: StoryViewerProps) => {
 			classifyPotentialPanel(event.target as Element);
 		};
 
+		// TODO: Fix the `panel` class not being added to `.flash-container`s due to the `Flash` component being lazy-loaded after this already finishes adding `panel` classes, perhaps by running `classifyPotentialPanel` from an effect hook in `Flash` instead.
 		const potentialPanelElements = storySectionElement.querySelectorAll(
 			'img, video, iframe, canvas, object, .flash-container'
 		);
