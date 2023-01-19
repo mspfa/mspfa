@@ -126,6 +126,7 @@ const Flash = ({
 								<Link
 									href={src}
 									download
+									// Open in new tab in case the link goes to a page and not a download.
 									target="_blank"
 								>
 									Download Original Flash File
