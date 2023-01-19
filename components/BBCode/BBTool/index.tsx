@@ -457,33 +457,37 @@ const optionsByTagName: Record<string, BBToolOptions> = {
 			height: 450
 		},
 		dialogContent: (
-			<LabeledGrid>
-				<Row className="red">
-					It is highly recommended not to use Flash due to its loss of support. Consider using video or HTML5 instead.
+			<>
+				<LabeledGrid>
+					<LabeledGridField
+						type="url"
+						name="children"
+						label="SWF File URL"
+						required
+						autoFocus
+						autoComplete="off"
+					/>
+					<LabeledGridField
+						type="number"
+						name="width"
+						label="Width"
+						required
+						min={0}
+					/>
+					<LabeledGridField
+						type="number"
+						name="height"
+						label="Height"
+						required
+						min={0}
+					/>
+				</LabeledGrid>
+				<Row id="flash-warning-container">
+					<div id="flash-warning" className="red">
+						Browsers no longer support Flash, so we automatically use <Link href="https://ruffle.rs/" target="_blank">Ruffle</Link> to emulate it. Not all Flash features are supported yet, so consider using HTML5 or video instead.
+					</div>
 				</Row>
-				<LabeledGridField
-					type="url"
-					name="children"
-					label="SWF File URL"
-					required
-					autoFocus
-					autoComplete="off"
-				/>
-				<LabeledGridField
-					type="number"
-					name="width"
-					label="Width"
-					required
-					min={0}
-				/>
-				<LabeledGridField
-					type="number"
-					name="height"
-					label="Height"
-					required
-					min={0}
-				/>
-			</LabeledGrid>
+			</>
 		),
 		getTagCodeOptions: ({ values: { width, height, children } }) => ({
 			children,
