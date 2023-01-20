@@ -20,6 +20,7 @@ const Handler: APIHandler<{
 		userID: string
 	},
 	method: 'PUT',
+	// TODO: Address the fact that `ts-json-schema-generator` doesn't like `NonNullable` on a non-object.
 	body: NonNullable<ClientComment['userRating']>
 }, {
 	method: 'PUT',
