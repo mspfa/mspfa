@@ -482,8 +482,8 @@ const optionsByTagName: Record<string, BBToolOptions> = {
 						min={0}
 					/>
 				</LabeledGrid>
-				<Row id="flash-warning-container">
-					<div id="flash-warning" className="red">
+				<Row id="bb-flash-warning-container">
+					<div id="bb-flash-warning" className="red">
 						Browsers no longer support Flash, so we automatically use <Link href="https://ruffle.rs/" target="_blank">Ruffle</Link> to emulate it. Not all Flash features are supported yet, so consider using HTML5 or video instead.
 					</div>
 				</Row>
