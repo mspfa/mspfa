@@ -44,7 +44,7 @@ const createAPIValidator = (methodSchema: Record<string, unknown>, schema: Recor
 
 				let message = errorMessages.join('\n');
 				if (errorMessages.length > 1) {
-					message = `One or more of the following errors apply:\n${message}`;
+					message = `One or more of the following errors apply:\n${message}\n\nIf you're seeing this error on the website, it's probably a bug and should be reported.`;
 				}
 				res.status(400).send({
 					message
