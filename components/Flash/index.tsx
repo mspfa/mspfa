@@ -127,7 +127,7 @@ const Flash = ({
 								{error.toString()}
 							</Row>
 							<Row>
-								<Button onClick={retry}>
+								<Button autoFocus onClick={retry}>
 									Retry
 								</Button>
 							</Row>
