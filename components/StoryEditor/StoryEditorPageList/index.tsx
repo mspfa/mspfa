@@ -1,30 +1,23 @@
 import './styles.module.scss';
 import Button from 'components/Button';
-import type { ReactNode, RefObject } from 'react';
+import type { ReactNode } from 'react';
 import { useContext } from 'react';
 import { StoryEditorContext } from 'components/StoryEditor';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import type { ClientStoryPage, PrivateStory } from 'lib/client/stories';
+import TopActions from 'components/TopActions';
 
 export type StoryEditorPageListProps = {
-	pagesActionsElementRef: RefObject<HTMLDivElement>,
 	story: PrivateStory,
 	pageComponents: ReactNode[]
 };
 
-const StoryEditorPageList = ({ pagesActionsElementRef, story, pageComponents }: StoryEditorPageListProps) => {
+const StoryEditorPageList = ({ story, pageComponents }: StoryEditorPageListProps) => {
 	const { formikPropsRef } = useContext(StoryEditorContext)!;
 
 	return (
 		<>
-			<div
-				id="story-editor-pages-actions"
-				className="mid"
-				ref={pagesActionsElementRef}
-			>
-				<Button id="story-editor-back-to-top" href="#">
-					Back to Top
-				</Button>
+			<TopActions>
 				<Button
 					disabled={formikPropsRef.current.isSubmitting}
 					onClick={
@@ -76,7 +69,7 @@ const StoryEditorPageList = ({ pagesActionsElementRef, story, pageComponents }: 
 				>
 					Save All
 				</Button>
-			</div>
+			</TopActions>
 			<div id="story-editor-pages" className="view-mode-list">
 				{pageComponents}
 			</div>

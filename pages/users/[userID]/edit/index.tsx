@@ -12,7 +12,7 @@ import { getChangedValues, useLeaveConfirmation } from 'lib/client/forms';
 import Columns from 'components/Columns';
 import Section from 'components/Section';
 import LabeledGridSection from 'components/Section/LabeledGridSection';
-import BottomActions from 'components/BottomActions';
+import TopActions from 'components/TopActions';
 import Button from 'components/Button';
 import api from 'lib/client/api';
 import type { APIClient } from 'lib/client/api';
@@ -92,6 +92,18 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 						<Form
 							ref={useSubmitOnSave({ submitForm, dirty, isSubmitting })}
 						>
+							<TopActions>
+								<Button href={`/users/${privateUser.id}`}>
+									Back to Profile
+								</Button>
+								<Button
+									type="submit"
+									className="alt"
+									disabled={!dirty || isSubmitting}
+								>
+									Save
+								</Button>
+							</TopActions>
 							<Columns ofSections>
 								<LabeledGridSection heading="Info">
 									<LabeledGridField
@@ -177,18 +189,6 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 									placeholder={'Paste SCSS here.\nIf you don\'t know what this is, don\'t worry about it.'}
 								/>
 							</Section>
-							<BottomActions>
-								<Button
-									type="submit"
-									className="alt"
-									disabled={!dirty || isSubmitting}
-								>
-									Save
-								</Button>
-								<Button href={`/users/${privateUser.id}`}>
-									Back to Profile
-								</Button>
-							</BottomActions>
 						</Form>
 					);
 				}}

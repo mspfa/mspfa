@@ -1,0 +1,16 @@
+.top-actions {
+	text-align: center;
+	position: sticky;
+	top: 0;
+	margin: 16px 0;
+	padding: 8px 0;
+
+	&.stuck {
+		z-index: 200;
+		border-bottom: 1px solid rgba(128, 128, 128, 0.5);
+	}
+
+	&:not(.stuck) .link-to-top {
+		display: none;
+	}
+}

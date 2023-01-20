@@ -2,21 +2,12 @@
 	&-form {
 		.bb {
 			&-tool {
-				&-separator,
-				&-color,
-				&-background,
-				&-size,
-				&-font,
-				&-left,
-				&-center,
-				&-right,
-				&-justify,
-				&-chat,
-				&-alt,
-				&-video,
-				&-iframe,
-				&-flash {
+				&, &-separator {
 					display: none;
+				}
+
+				&-b, &-i, &-u, &-s, &-url, &-spoiler, &-img {
+					display: inline-block;
 				}
 			}
 

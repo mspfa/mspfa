@@ -19,7 +19,7 @@ import { Fragment, useState } from 'react';
 import useFunction from 'lib/client/reactHooks/useFunction';
 import Timestamp from 'components/Timestamp';
 import Button from 'components/Button';
-import BottomActions from 'components/BottomActions';
+import TopActions from 'components/TopActions';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
 import Router from 'next/router';
@@ -134,6 +134,43 @@ const Component = withErrorPage<ServerSideProps>(({
 							className={classes({ editing })}
 							ref={useSubmitOnSave({ submitForm, dirty, isSubmitting }, editing)}
 						>
+							{editing ? (
+								<TopActions>
+									<Button
+										disabled={isSubmitting}
+										onClick={cancel}
+									>
+										Cancel
+									</Button>
+									<Button
+										type="submit"
+										className="alt"
+										disabled={!dirty || isSubmitting}
+									>
+										Save
+									</Button>
+								</TopActions>
+							) : (
+								<TopActions>
+									<Button href={`/users/${user.id}/messages`}>
+										All Messages
+									</Button>
+									{(
+										message.from === user.id
+										|| hasPerms(user, Perm.WRITE)
+									) && (
+										<Button onClick={edit}>
+											Edit
+										</Button>
+									)}
+									<Button onClick={onClickDelete}>
+										Delete
+									</Button>
+									<Button href={`/messages/new?replyTo=${message.id}`}>
+										Reply
+									</Button>
+								</TopActions>
+							)}
 							<Section
 								id="message-info"
 								heading={message.subject}
@@ -194,45 +231,6 @@ const Component = withErrorPage<ServerSideProps>(({
 									<BBCode>{message.content}</BBCode>
 								)}
 							</Section>
-							<BottomActions>
-								{editing ? (
-									<>
-										<Button
-											type="submit"
-											className="alt"
-											disabled={!dirty || isSubmitting}
-										>
-											Save
-										</Button>
-										<Button
-											disabled={isSubmitting}
-											onClick={cancel}
-										>
-											Cancel
-										</Button>
-									</>
-								) : (
-									<>
-										<Button href={`/users/${user.id}/messages`}>
-											All Messages
-										</Button>
-										<Button href={`/messages/new?replyTo=${message.id}`}>
-											Reply
-										</Button>
-										{(
-											message.from === user.id
-											|| hasPerms(user, Perm.WRITE)
-										) && (
-											<Button onClick={edit}>
-												Edit
-											</Button>
-										)}
-										<Button onClick={onClickDelete}>
-											Delete
-										</Button>
-									</>
-								)}
-							</BottomActions>
 						</Form>
 					);
 				}}

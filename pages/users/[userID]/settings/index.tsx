@@ -36,6 +36,7 @@ import ChangePasswordButton from 'components/Button/ChangePasswordButton';
 import overwriteArrays from 'lib/client/overwriteArrays';
 import Action from 'components/Dialog/Action';
 import useEmailTaken from 'lib/client/reactHooks/useEmailTaken';
+import TopActions from 'components/TopActions';
 
 type UserAPI = APIClient<typeof import('pages/api/users/[userID]').default>;
 type UserAuthMethodsAPI = APIClient<typeof import('pages/api/users/[userID]/auth-methods').default>;
@@ -152,6 +153,15 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 							}
 							ref={useSubmitOnSave({ submitForm, dirty, isSubmitting })}
 						>
+							<TopActions>
+								<Button
+									type="submit"
+									className="alt"
+									disabled={!dirty || isSubmitting}
+								>
+									Save
+								</Button>
+							</TopActions>
 							<LabeledGridSection heading="Account">
 								<LabeledGridField
 									type="email"
@@ -206,7 +216,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 									type="checkbox"
 									name="settings.stickyNav"
 									label="Sticky Nav Bar"
-									help="Makes the nav bar stick to the top of your screen when you scroll down instead of scrolling out of the page."
+									help="Makes the nav bar stick to the top of your screen when you scroll down so you can always access it easily."
 								/>
 								<LabeledGridField
 									type="checkbox"
@@ -289,41 +299,30 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 								/>
 							</Section>
 							<BottomActions>
-								<Row>
-									<Button
-										type="submit"
-										className="alt"
-										disabled={!dirty || isSubmitting}
-									>
-										Save
-									</Button>
-									<Button
-										title="Reset Settings to Default"
-										disabled={isEqual(values.settings, defaultUserSettingsValues)}
-										onClick={
-											useFunction(async () => {
-												if (!await Dialog.confirm(
-													<Dialog id="reset-settings" title="Reset Settings">
-														Are you sure you want to reset your settings to default?<br />
-														<br />
-														All unsaved changes will be lost. This won't overwrite your previous settings until you save.
-													</Dialog>
-												)) {
-													return;
-												}
+								<Button
+									title="Reset Settings to Default"
+									disabled={isEqual(values.settings, defaultUserSettingsValues)}
+									onClick={
+										useFunction(async () => {
+											if (!await Dialog.confirm(
+												<Dialog id="reset-settings" title="Reset Settings">
+													Are you sure you want to reset your settings to default?<br />
+													<br />
+													All unsaved changes will be lost, but this won't overwrite your previous settings until you save.
+												</Dialog>
+											)) {
+												return;
+											}
 
-												setFieldValue('settings', defaultUserSettingsValues);
+											setFieldValue('settings', defaultUserSettingsValues);
 
-												formChangedRef.current = true;
-											})
-										}
-									>
-										Reset to Default
-									</Button>
-								</Row>
-								<Row>
-									<DeleteUserButton privateUser={privateUser} />
-								</Row>
+											formChangedRef.current = true;
+										})
+									}
+								>
+									Reset to Default
+								</Button>
+								<DeleteUserButton privateUser={privateUser} />
 							</BottomActions>
 						</Form>
 					);

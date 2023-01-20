@@ -22,7 +22,7 @@ import StoryPageLink from 'components/StoryPageLink';
 import PreviewModeContext from 'lib/client/reactContexts/PreviewModeContext';
 import StoryIDContext from 'lib/client/reactContexts/StoryIDContext';
 import { escapeRegExp } from 'lodash';
-import Row from 'components/Row';
+import TopActions from 'components/TopActions';
 
 type StorySearchResult = Pick<ClientStoryPage, 'id' | 'published' | 'title' | 'content'>;
 
@@ -135,18 +135,15 @@ const Component = withErrorPage<ServerSideProps>(({ story, results }) => {
 
 	const pageComponent = (
 		<Page withFlashyTitle heading="Adventure Search">
+			<TopActions>
+				<Button href={`/?s=${story.id}`}>
+					Back to Adventure
+				</Button>
+			</TopActions>
 			<Section
 				id="story-search-section"
 				heading={story.title}
 			>
-				<Row id="story-search-actions">
-					<Button
-						className="small"
-						href={`/?s=${story.id}`}
-					>
-						Back to Adventure
-					</Button>
-				</Row>
 				<Formik
 					initialValues={{ searchQuery }}
 					onSubmit={

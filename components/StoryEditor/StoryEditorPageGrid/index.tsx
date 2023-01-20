@@ -1,7 +1,7 @@
 import './styles.module.scss';
 import Button from 'components/Button';
 import shouldIgnoreControl from 'lib/client/shouldIgnoreControl';
-import type { Dispatch, ReactNode, RefObject, SetStateAction } from 'react';
+import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import React, { useContext, useEffect } from 'react';
 import type { KeyedClientStoryPage } from 'components/StoryEditor';
 import { StoryEditorContext, KEY_PROP } from 'components/StoryEditor';
@@ -20,6 +20,7 @@ import Action from 'components/Dialog/Action';
 import type { MovePagesDialogValues } from 'components/StoryEditor/StoryEditorPageGrid/MovePagesDialog.tsx';
 import MovePagesDialog from 'components/StoryEditor/StoryEditorPageGrid/MovePagesDialog.tsx';
 import getPagesString from 'lib/client/getPagesString';
+import TopActions from 'components/TopActions';
 
 type StoryPagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages').default>;
 type StoryMovePagesAPI = APIClient<typeof import('pages/api/stories/[storyID]/pages/move').default>;
@@ -47,7 +48,6 @@ export const defaultGridCullingInfo = {
 export type GridCullingInfo = typeof defaultGridCullingInfo;
 
 export type StoryEditorPageGridProps = {
-	pagesActionsElementRef: RefObject<HTMLDivElement>,
 	selectedPages: StoryPageID[],
 	setSelectedPages: Dispatch<SetStateAction<StoryPageID[]>>,
 	advancedShownPageKeys: integer[],
@@ -58,7 +58,6 @@ export type StoryEditorPageGridProps = {
 };
 
 const StoryEditorPageGrid = ({
-	pagesActionsElementRef,
 	selectedPages,
 	setSelectedPages,
 	advancedShownPageKeys,
@@ -285,11 +284,7 @@ const StoryEditorPageGrid = ({
 
 	return (
 		<>
-			<div
-				id="story-editor-pages-actions"
-				className="mid"
-				ref={pagesActionsElementRef}
-			>
+			<TopActions>
 				<Button
 					title={
 						selectedPages.length
@@ -323,7 +318,7 @@ const StoryEditorPageGrid = ({
 				>
 					Delete
 				</Button>
-			</div>
+			</TopActions>
 			<div
 				id="story-editor-pages"
 				className={classes('view-mode-grid', { disabled: formikPropsRef.current.isSubmitting })}

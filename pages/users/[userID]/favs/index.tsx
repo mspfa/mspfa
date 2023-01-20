@@ -19,6 +19,7 @@ import getRandomImageFilename from 'lib/server/getRandomImageFilename';
 import getStoriesAsUser from 'lib/server/stories/getStoriesAsUser';
 import type { StoryID } from 'lib/server/stories';
 import RandomArtwork from 'components/RandomArtwork';
+import TopActions from 'components/TopActions';
 
 type ServerSideProps = {
 	publicUser: PublicUser,
@@ -34,17 +35,14 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, favsPublic, stor
 
 	return (
 		<Page withFlashyTitle heading="Favorite Adventures">
+			<TopActions>
+				<Button href={`/users/${publicUser.id}`}>
+					Back to Profile
+				</Button>
+			</TopActions>
 			<Section
 				heading={`${publicUser.name}'s Favorites (${stories.length})`}
 			>
-				<Row id="favs-actions">
-					<Button
-						className="small"
-						href={`/users/${publicUser.id}`}
-					>
-						Back to Profile
-					</Button>
-				</Row>
 				{!favsPublic && (
 					<Row>
 						<span id="favs-public-tip">

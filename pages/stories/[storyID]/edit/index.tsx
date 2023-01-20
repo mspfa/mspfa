@@ -42,6 +42,7 @@ import type { integer } from 'lib/types';
 import StoryIDContext from 'lib/client/reactContexts/StoryIDContext';
 import useSubmitOnSave from 'lib/client/reactHooks/useSubmitOnSave';
 import Action from 'components/Dialog/Action';
+import TopActions from 'components/TopActions';
 
 type StoryAPI = APIClient<typeof import('pages/api/stories/[storyID]').default>;
 
@@ -175,16 +176,16 @@ const Component = withErrorPage<ServerSideProps>(({
 							{` will be permanently deleted in ~${daysUntilDeletion} day${daysUntilDeletion === 1 ? '' : 's'}.`}
 						</Row>
 					</Section>
-					<BottomActions>
-						{ownerPerms && (
+					{ownerPerms && (
+						<BottomActions>
 							<Button
 								disabled={loadingRestore}
 								onClick={restoreStory}
 							>
 								Restore
 							</Button>
-						)}
-					</BottomActions>
+						</BottomActions>
+					)}
 				</>
 			) : (
 				<Formik
@@ -212,7 +213,7 @@ const Component = withErrorPage<ServerSideProps>(({
 												<br />
 												The adventure can be restored from the page you're currently on within 30 days after deletion.<br />
 												<br />
-												If you do not restore it within 30 days, <span className="bolder red">the deletion will be irreversible.</span><br />
+												If you do not restore it within 30 days, <span className="bolder red">the deletion will be irreversible.</span> Consider setting the adventure to private instead.<br />
 												<br />
 												<label>
 													<Field
@@ -256,6 +257,15 @@ const Component = withErrorPage<ServerSideProps>(({
 							<Form
 								ref={useSubmitOnSave({ submitForm, dirty, isSubmitting })}
 							>
+								<TopActions>
+									<Button
+										type="submit"
+										className="alt"
+										disabled={!dirty || isSubmitting}
+									>
+										Save
+									</Button>
+								</TopActions>
 								<Section
 									id="story-editor-options"
 									heading={story.title}
@@ -491,23 +501,16 @@ const Component = withErrorPage<ServerSideProps>(({
 										</div>
 									</Columns>
 								</Section>
-								<BottomActions>
-									<Button
-										type="submit"
-										className="alt"
-										disabled={!dirty || isSubmitting}
-									>
-										Save
-									</Button>
-									{ownerPerms && (
+								{ownerPerms && (
+									<BottomActions>
 										<Button
 											disabled={isSubmitting}
 											onClick={deleteStory}
 										>
 											Delete
 										</Button>
-									)}
-								</BottomActions>
+									</BottomActions>
+								)}
 							</Form>
 						);
 					}}

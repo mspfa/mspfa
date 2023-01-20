@@ -18,7 +18,6 @@ import Router, { useRouter } from 'next/router';
 import frameThrottler from 'lib/client/frameThrottler';
 import { addViewportListener, removeViewportListener } from 'lib/client/viewportListener';
 import type { integer } from 'lib/types';
-import useSticky from 'lib/client/reactHooks/useSticky';
 import StoryIDContext from 'lib/client/reactContexts/StoryIDContext';
 import StoryEditorPageGrid, { defaultGridCullingInfo } from 'components/StoryEditor/StoryEditorPageGrid';
 import StoryEditorPageList from 'components/StoryEditor/StoryEditorPageList';
@@ -762,10 +761,6 @@ const StoryEditor = ({
 						});
 					});
 
-					/** A ref to the `#story-editor-pages-actions` element. */
-					const pagesActionsElementRef = useRef<HTMLDivElement>(null as never);
-					useSticky(pagesActionsElementRef);
-
 					// This is because ESLint doesn't recognize `story.id` as a necessary hook dependency.
 					const storyID = story.id;
 
@@ -800,13 +795,11 @@ const StoryEditor = ({
 								/>
 								{viewMode === 'list' ? (
 									<StoryEditorPageList
-										pagesActionsElementRef={pagesActionsElementRef}
 										story={story}
 										pageComponents={pageComponents}
 									/>
 								) : (
 									<StoryEditorPageGrid
-										pagesActionsElementRef={pagesActionsElementRef}
 										selectedPages={selectedPages}
 										setSelectedPages={setSelectedPages}
 										advancedShownPageKeys={advancedShownPageKeys}
