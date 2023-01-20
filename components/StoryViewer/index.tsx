@@ -342,13 +342,14 @@ const StoryViewer = (props: StoryViewerProps) => {
 	const storySectionElementRef = useRef<HTMLDivElement>(null as never);
 
 	// Add the `panel` class to any media elements large enough to be considered a panel.
-	// This is a layout effect rather than a normal effect so that media is not briefly visible at the wrong size.
+	// This is a layout effect to avoid panels being briefly visible without the `panel` class.
 	useIsomorphicLayoutEffect(() => {
 		const storySectionElement = storySectionElementRef.current;
 		const storySectionElementStyle = window.getComputedStyle(storySectionElement);
 
 		/** The content width of the story section. */
 		const storySectionContentWidth = (
+			// This must be calculated based on `minWidth` instead of the element's bounding width since the bounding width increases to fit panels inside it.
 			+storySectionElementStyle.minWidth.slice(0, -2)
 			- +storySectionElementStyle.paddingLeft.slice(0, -2)
 			- +storySectionElementStyle.paddingRight.slice(0, -2)
@@ -364,49 +365,51 @@ const StoryViewer = (props: StoryViewerProps) => {
 			]('panel');
 		};
 
-		/** An array of potential panel elements being listened to. */
-		const listeningPotentialPanels: Array<HTMLImageElement | HTMLVideoElement> = [];
+		const cleanupFunctions: Array<() => void> = [];
 
-		/** Calls `classifyPotentialPanel` on the `event.target`. */
 		const potentialPanelListener = (event: Event) => {
 			classifyPotentialPanel(event.target as Element);
 		};
 
-		// TODO: Fix the `panel` class not being added to `.flash-container`s due to the `Flash` component being lazy-loaded after this already finishes adding `panel` classes, perhaps by running `classifyPotentialPanel` from an effect hook in `Flash` instead.
-		const potentialPanelElements = storySectionElement.querySelectorAll(
-			'img, video, iframe, canvas, object, .flash-container'
-		);
-		for (const element of potentialPanelElements) {
+		const addPotentialPanelListeners = (element: Element) => {
 			// Clasify this element in case it's already loaded or it already has a set size.
 			classifyPotentialPanel(element);
 
-			if (
+			if (!(
 				element instanceof HTMLImageElement
 				|| element instanceof HTMLVideoElement
-			) {
-				// If this element is one of the tags that can change size on load or error, then add listeners to classify potential panels on load or error.
+			)) {
+				return;
+			}
 
-				element.addEventListener(
-					element instanceof HTMLVideoElement
-						? 'loadeddata'
-						: 'load',
-					potentialPanelListener
-				);
-				element.addEventListener('error', potentialPanelListener);
+			// This element can change size on load or error, so add listeners to classify potential panels on load or error.
 
-				listeningPotentialPanels.push(element);
+			const loadEventName = element instanceof HTMLVideoElement ? 'loadeddata' : 'load';
+			element.addEventListener(loadEventName, potentialPanelListener);
+			element.addEventListener('error', potentialPanelListener);
+
+			cleanupFunctions.push(() => {
+				element.removeEventListener(loadEventName, potentialPanelListener);
+				element.removeEventListener('error', potentialPanelListener);
+			});
+		};
+
+		const potentialPanelTagNames = ['img', 'video', 'iframe', 'canvas', 'object'] as const;
+		for (const tagName of potentialPanelTagNames) {
+			const elements = storySectionElement.getElementsByTagName(tagName);
+			for (const element of elements) {
+				addPotentialPanelListeners(element);
 			}
 		}
 
+		// TODO: Fix the `panel` class not being added to `.flash-container`s due to the `Flash` component being lazy-loaded after this already finishes adding `panel` classes, perhaps by using a temporary `requestAnimationFrame` loop or by running this from an effect hook in `Flash` instead.
+		for (const element of storySectionElement.getElementsByClassName('flash-container')) {
+			addPotentialPanelListeners(element);
+		}
+
 		return () => {
-			for (const element of listeningPotentialPanels) {
-				element.removeEventListener(
-					element instanceof HTMLVideoElement
-						? 'loadeddata'
-						: 'load',
-					potentialPanelListener
-				);
-				element.removeEventListener('error', potentialPanelListener);
+			for (const cleanupFunction of cleanupFunctions) {
+				cleanupFunction();
 			}
 		};
 	}, [pageID]);
