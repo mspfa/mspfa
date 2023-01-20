@@ -79,7 +79,12 @@ const Flash = ({
 				player = ruffle.createPlayer();
 				content.appendChild(player);
 
-				return player.load(src);
+				return player.load(src).then(() => {
+					// This is a workaround for https://github.com/ruffle-rs/ruffle/issues/9233.
+					if (!mounted) {
+						player.destroy();
+					}
+				});
 			}).catch(setError).finally(() => {
 				stopLoading();
 			});
