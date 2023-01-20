@@ -15,6 +15,7 @@
 	flex-shrink: 0;
 	@include theme(color, button-text-color);
 	@include theme(background-color, button-color);
+
 	@include depth-effect(
 		$scale: 2px,
 		$border: false,
