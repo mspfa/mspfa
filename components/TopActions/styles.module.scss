@@ -12,5 +12,9 @@
 
 	&:not(.stuck) .link-to-top {
 		display: none;
+
+		& + .button:not(.icon-button) {
+			margin-left: 0;
+		}
 	}
 }
