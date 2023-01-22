@@ -3,11 +3,10 @@
 
 #basement {
 	display: flex;
-	align-items: flex-start;
+	align-items: stretch;
 
 	@include mobile {
 		flex-direction: column-reverse;
-		align-items: center;
 	}
 }
 
@@ -21,6 +20,10 @@
 
 		&.mid {
 			flex-shrink: 0;
+		
+			@include mobile {
+				width: 100%;
+			}
 
 			&:first-child {
 				@include desktop {
@@ -41,6 +44,10 @@
 					border-top: none;
 				}
 			}
+		}
+		
+		@include mobile {
+			min-height: 0;
 		}
 
 		&.front {
