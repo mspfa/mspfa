@@ -1,6 +1,7 @@
 const path = require('path');
 
-module.exports = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
 	webpack: (config, { isServer }) => {
 		for (const { oneOf } of config.module.rules) {
 			if (Array.isArray(oneOf)) {
@@ -55,9 +56,11 @@ module.exports = {
 		return config;
 	},
 	poweredByHeader: false,
-	redirects: () => [{
+	redirects: async () => [{
 		source: '/discord',
 		destination: 'https://discord.gg/EC5acgG',
 		permanent: true
 	}]
 };
+
+module.exports = nextConfig;
