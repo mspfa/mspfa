@@ -3,7 +3,7 @@
 
 import { createGenerator } from 'ts-json-schema-generator';
 import type { SchemaGenerator } from 'ts-json-schema-generator';
-import { promises as fs } from 'node:fs';
+import fs from 'node:fs/promises';
 import path from 'node:path';
 import { exec } from 'node:child_process';
 import c from 'ansi-colors';

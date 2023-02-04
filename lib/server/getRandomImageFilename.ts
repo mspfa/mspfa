@@ -1,4 +1,4 @@
-import { promises as fs } from 'node:fs';
+import fs from 'node:fs/promises';
 import path from 'node:path';
 
 /** A record mapping the path string of each directory to an array of filename strings of the images in the directory. */
