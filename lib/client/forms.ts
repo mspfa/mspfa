@@ -84,25 +84,25 @@ export const useLeaveConfirmation = (
 
 	useEffect(() => {
 		const onBeforeUnload = (event: BeforeUnloadEvent) => {
-			if (shouldConfirmLeave()) {
-				event.preventDefault();
-				event.returnValue = message;
-				return message;
+			if (!shouldConfirmLeave()) {
+				return;
 			}
+
+			event.preventDefault();
+			return event.returnValue = message;
 		};
 
-		const onRouteChangeStart = (path: string) => {
-			if (
-				Router.asPath !== path
-				&& !shouldLeave()
-			) {
-				Router.events.emit('routeChangeError');
-				Router.replace(Router.asPath, Router.asPath, { shallow: true });
-
-				// Next being opinionated can be bullshit. To see why throwing a string is necessary, see the issue linked in said string.
-				// eslint-disable-next-line @typescript-eslint/no-throw-literal
-				throw 'Route change prevented. Please ignore this error.\nhttps://github.com/vercel/next.js/issues/2476#issuecomment-573460710';
+		const onRouteChangeStart = (newPath: string) => {
+			if (Router.asPath === newPath || shouldLeave()) {
+				return;
 			}
+
+			Router.events.emit('routeChangeError');
+			Router.replace(Router.asPath, Router.asPath, { shallow: true });
+
+			// Next being opinionated can be bullshit. To see why throwing a string is necessary, see the issue linked in said string.
+			// eslint-disable-next-line @typescript-eslint/no-throw-literal
+			throw 'Route change prevented. Please ignore this error.\nhttps://github.com/vercel/next.js/issues/2476#issuecomment-573460710';
 		};
 
 		window.addEventListener('beforeunload', onBeforeUnload);
