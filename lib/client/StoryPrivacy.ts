@@ -1,5 +1,5 @@
 enum StoryPrivacy {
-	Public = 0,
+	Public,
 	Unlisted,
 	Private
 }

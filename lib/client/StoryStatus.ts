@@ -1,5 +1,5 @@
 enum StoryStatus {
-	Active = 0,
+	Active,
 	Complete,
 	Discontinued,
 	Inactive,
@@ -15,4 +15,4 @@ export const storyStatusNames = new Map<StoryStatus, string>([
 	[StoryStatus.Inactive, 'Inactive'],
 	[StoryStatus.Discontinued, 'Discontinued'],
 	[StoryStatus.OffSite, 'Moved Off-Site']
-] satisfies Array<[StoryStatus, string]>);
+]);
