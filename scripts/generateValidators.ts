@@ -167,7 +167,9 @@ const generateValidator = async (
 
 	// Generate validators in series.
 	for (let i = 0; i < sourcePaths.length; i++) {
-		await generateValidator(sourcePaths[i], i);
+		const sourcePath = sourcePaths[i]!;
+
+		await generateValidator(sourcePath, i);
 	}
 
 	// Finish validators.

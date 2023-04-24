@@ -13,16 +13,16 @@ const getRandomImageFilename = async (
 	 */
 	directoryPath: string
 ) => {
-	if (!(directoryPath in directories)) {
-		directories[directoryPath] = (
-			await fs.readdir(
-				path.join(process.cwd(), directoryPath)
-			)
-		).filter(filename => /\.(?:png|gif)$/i.test(filename));
-	}
+	directories[directoryPath] ??= (
+		await fs.readdir(
+			path.join(process.cwd(), directoryPath)
+		)
+	).filter(filename => /\.(?:png|gif)$/i.test(filename));
 
-	const imageFilenames = directories[directoryPath];
-	return imageFilenames[Math.floor(Math.random() * imageFilenames.length)];
+	const imageFilenames = directories[directoryPath]!;
+	const imageFilename = imageFilenames[Math.floor(Math.random() * imageFilenames.length)]!;
+
+	return imageFilename;
 };
 
 export default getRandomImageFilename;

@@ -2,7 +2,7 @@ import type { ClientPreviousPageIDs } from 'components/StoryViewer';
 import { PAGE_PRELOAD_DEPTH } from 'components/StoryViewer';
 import type { ClientStoryPage } from 'lib/client/stories';
 import type { DateNumber } from 'lib/types';
-import type { ServerStory, StoryPageID, ServerStoryPage } from 'lib/server/stories';
+import type { ServerStory, StoryPageID } from 'lib/server/stories';
 import { getClientStoryPage } from 'lib/server/stories';
 
 /** Gets information about a specified story's pages within the `PAGE_PRELOAD_DEPTH` around the specified page ID. */
@@ -58,8 +58,7 @@ const getClientPagesAround = (
 			return;
 		}
 
-		// This is asserted as nullable because `pageID` may not index a real page.
-		const serverPage = story.pages[pageID] as ServerStoryPage | undefined;
+		const serverPage = story.pages[pageID];
 
 		// If this page doesn't exist or the user doesn't have access to it, then set it to `null` and don't continue.
 		if (!serverPage || (
@@ -72,7 +71,7 @@ const getClientPagesAround = (
 			return;
 		}
 
-		const clientPage = getClientStoryPage(story.pages[pageID]);
+		const clientPage = getClientStoryPage(serverPage);
 
 		// Add the `clientPage` to `clientPages`.
 		clientPages[pageID] = clientPage;

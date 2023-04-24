@@ -24,7 +24,8 @@
 			{
 				"name": "next"
 			}
-		]
+		],
+		"noUncheckedIndexedAccess": true
 	},
 	"ts-node": {
 		"compilerOptions": {

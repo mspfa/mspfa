@@ -637,15 +637,12 @@ const StoryEditor = ({
 						/** The sum of cached heights of consecutive culled pages when `viewMode === 'list'`. */
 						let cachedHeightSum = 0;
 
-						const iteratePage = (
-							/** The index of this page in `pageValues`. */
-							i: integer
-						) => {
-							// This is typed as nullable because `i` may not index a real page if there are no pages in view.
-							const page = pageValues[i] as KeyedClientStoryPage | undefined;
+						const iteratePage = (pageValueIndex: integer) => {
+							// This is typed as nullable because `pageValueIndex` may not index a real page if there are no pages in view.
+							const page = pageValues[pageValueIndex];
 
 							if (!page) {
-								// If `i` doesn't index a real page, don't iterate over it.
+								// If `pageValueIndex` doesn't index a real page, don't iterate over it.
 								return;
 							}
 
@@ -655,7 +652,7 @@ const StoryEditor = ({
 							}
 
 							const initialPublished = (
-								formikPropsRef.current.initialValues.pages[page.id] as ClientStoryPage | undefined
+								formikPropsRef.current.initialValues.pages[page.id]
 							)?.published;
 
 							// Set `firstDraftID` and `lastNonDraftID`.

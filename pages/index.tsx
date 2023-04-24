@@ -109,7 +109,7 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 		latestPageID > 0 && latestPages.length < MAX_LATEST_PAGES;
 		latestPageID--
 	) {
-		const latestPage = story.pages[latestPageID];
+		const latestPage = story.pages[latestPageID]!;
 
 		if (!latestPage.unlisted) {
 			latestPages.push({
@@ -124,7 +124,9 @@ export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, 
 
 	let hasCommentary = false;
 	for (let i = 1; i < lastPageID; i++) {
-		if (story.pages[i].commentary) {
+		const page = story.pages[i]!;
+
+		if (page.commentary) {
 			hasCommentary = true;
 			break;
 		}

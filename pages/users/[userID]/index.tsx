@@ -190,23 +190,23 @@ export default Component;
 export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ params }) => {
 	const userFromParams = await getUserByUnsafeID(params.userID);
 
-	if (userFromParams) {
-		return {
-			props: {
-				publicUser: getPublicUser(userFromParams),
-				stories: await getPublicStoriesByEditor(userFromParams),
-				favsPublic: userFromParams.settings.favsPublic,
-				...userFromParams.settings.favsPublic && {
-					favCount: (
-						// Show only the public fav count on the user's profile no matter who you are, so that everyone sees the same number.
-						await getStoriesAsUser(undefined, false, {
-							_id: { $in: userFromParams.favs }
-						}).toArray()
-					).length
-				}
-			}
-		};
+	if (!userFromParams) {
+		return { props: { statusCode: 404 } };
 	}
 
-	return { props: { statusCode: 404 } };
+	return {
+		props: {
+			publicUser: getPublicUser(userFromParams),
+			stories: await getPublicStoriesByEditor(userFromParams),
+			favsPublic: userFromParams.settings.favsPublic,
+			...userFromParams.settings.favsPublic && {
+				favCount: (
+					// Show only the public fav count on the user's profile no matter who you are, so that everyone sees the same number.
+					await getStoriesAsUser(undefined, false, {
+						_id: { $in: userFromParams.favs }
+					}).toArray()
+				).length
+			}
+		}
+	};
 });

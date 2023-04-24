@@ -37,19 +37,18 @@ const getStoryByUnsafeID = <Res extends APIResponse<any> | undefined>(
 		});
 	}
 
-	if (!story) {
-		if (res) {
-			res.status(404).send({
-				message: 'No story was found with the specified ID.'
-			});
-		} else {
-			resolve(undefined as any);
-		}
-
+	if (story) {
+		resolve(story);
 		return;
 	}
 
-	resolve(story);
+	if (res) {
+		res.status(404).send({
+			message: 'No story was found with the specified ID.'
+		});
+	} else {
+		resolve(undefined as any);
+	}
 });
 
 export default getStoryByUnsafeID;

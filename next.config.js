@@ -4,23 +4,29 @@ const path = require('path');
 const nextConfig = {
 	webpack: (config, { isServer }) => {
 		for (const { oneOf } of config.module.rules) {
-			if (Array.isArray(oneOf)) {
-				for (const rule of oneOf) {
-					if (Array.isArray(rule.use)) {
-						for (const entry of rule.use) {
-							if (
-								entry.options instanceof Object
-								&& entry.options.modules instanceof Object
-								&& entry.loader.includes(`${path.sep}css-loader${path.sep}`)
-							) {
-								// Let global styles be used in style modules.
-								entry.options.modules.mode = 'global';
+			if (!Array.isArray(oneOf)) {
+				continue;
+			}
 
-								// Undo the default hashing of style module class names.
-								entry.options.modules.getLocalIdent = (_, __, localName) => localName;
-							}
-						}
+			for (const rule of oneOf) {
+				if (!Array.isArray(rule.use)) {
+					continue;
+				}
+
+				for (const entry of rule.use) {
+					if (!(
+						entry.options instanceof Object
+						&& entry.options.modules instanceof Object
+						&& entry.loader.includes(`${path.sep}css-loader${path.sep}`)
+					)) {
+						continue;
 					}
+
+					// Let global styles be used in style modules.
+					entry.options.modules.mode = 'global';
+
+					// Undo the default hashing of style module class names.
+					entry.options.modules.getLocalIdent = (_, __, localName) => localName;
 				}
 			}
 		}

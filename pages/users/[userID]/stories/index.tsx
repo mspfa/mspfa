@@ -23,15 +23,18 @@ import Action from 'components/Dialog/Action';
 
 type StoriesAPI = APIClient<typeof import('pages/api/stories').default>;
 
-const getRandomStoryName = () => (
-	Math.random() < 1 / 1000
-		? 'Help I\'m trapped in an adventure creation screen'
-		: (
-			randomStoryNames[Math.floor(Math.random() * randomStoryNames.length)].map(
-				possibilities => possibilities[Math.floor(Math.random() * possibilities.length)]
-			).join('')
-		)
-);
+const getRandomStoryName = () => {
+	if (Math.random() < 1 / 1000) {
+		return 'Help I\'m trapped in an adventure creation screen';
+	}
+
+	const phraseListsIndex = Math.floor(Math.random() * randomStoryNames.length);
+	const phraseLists = randomStoryNames[phraseListsIndex]!;
+
+	return phraseLists.map(
+		phrases => phrases[Math.floor(Math.random() * phrases.length)]!
+	).join('');
+};
 
 const promptNewStory = async () => {
 	const randomStoryName = getRandomStoryName();

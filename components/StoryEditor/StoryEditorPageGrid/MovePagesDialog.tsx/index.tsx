@@ -3,7 +3,7 @@ import Action from 'components/Dialog/Action';
 import { Field } from 'formik';
 import getPagesString from 'lib/client/getPagesString';
 import invalidPublishedOrder from 'lib/client/invalidPublishedOrder';
-import type { ClientStoryPage, ClientStoryPageRecord } from 'lib/client/stories';
+import type { ClientStoryPageRecord } from 'lib/client/stories';
 import type { StoryPageID } from 'lib/server/stories';
 import type { integer } from 'lib/types';
 import { useEffect, useRef } from 'react';
@@ -49,11 +49,11 @@ const MovePagesDialog = ({
 		}
 
 		/** The deselected page which the selected pages are being moved after. */
-		const moveAfterPage = pages[moveAfterPageID] as ClientStoryPage | undefined;
+		const moveAfterPage = pages[moveAfterPageID];
 
 		// The `lowestSelectedPage` is being moved after the `moveAfterPage`, so check if that arrangement is valid.
 		if (moveAfterPage) {
-			const lowestSelectedPage = pages[Math.min(...selectedPages)];
+			const lowestSelectedPage = pages[Math.min(...selectedPages)]!;
 
 			if (invalidPublishedOrder(moveAfterPage, lowestSelectedPage)) {
 				return `Page ${lowestSelectedPage.id} can't be moved after page ${moveAfterPage.id} because then page ${lowestSelectedPage.id} would be published first.`;
@@ -70,11 +70,11 @@ const MovePagesDialog = ({
 		}
 
 		/** The deselected page which the selected pages are being moved before. */
-		const moveBeforePage = pages[moveBeforePageID] as ClientStoryPage | undefined;
+		const moveBeforePage = pages[moveBeforePageID];
 
 		// The `highestSelectedPage` is being moved before the `moveBeforePage`, so check if that arrangement is valid.
 		if (moveBeforePage) {
-			const highestSelectedPage = pages[Math.max(...selectedPages)];
+			const highestSelectedPage = pages[Math.max(...selectedPages)]!;
 
 			if (invalidPublishedOrder(highestSelectedPage, moveBeforePage)) {
 				return `Page ${highestSelectedPage.id} can't be moved before page ${moveBeforePage.id} because then page ${moveBeforePage.id} would be published first.`;

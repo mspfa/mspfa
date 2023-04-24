@@ -2,7 +2,6 @@ import validate from './index.validate';
 import type { APIHandler } from 'lib/server/api';
 import type { ServerComment } from 'lib/server/comments';
 import { getClientComment } from 'lib/server/comments';
-import type { ServerStoryPage } from 'lib/server/stories';
 import stories from 'lib/server/stories';
 import getStoryByUnsafeID from 'lib/server/stories/getStoryByUnsafeID';
 import authenticate from 'lib/server/auth/authenticate';
@@ -53,7 +52,7 @@ const Handler: APIHandler<{
 		return;
 	}
 
-	const page = story.pages[+req.query.pageID] as ServerStoryPage | undefined;
+	const page = story.pages[+req.query.pageID];
 
 	if (!page) {
 		res.status(404).send({

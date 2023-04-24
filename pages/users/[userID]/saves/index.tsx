@@ -74,29 +74,31 @@ export default Component;
 export const getServerSideProps = withStatusCode<ServerSideProps>(async ({ req, params }) => {
 	const { user, statusCode } = await permToGetUserInPage(req, params.userID, Perm.READ);
 
-	if (statusCode) {
+	if (!user) {
 		return { props: { statusCode } };
 	}
 
-	const storyIDs = Object.keys(user!.storySaves).map(Number);
+	const storyIDs = Object.keys(user.storySaves).map(Number);
 
 	const storySaves: StorySave[] = [];
-	const storySaveRecord: Record<StoryID, StorySave> = {};
+	const storySavesByStoryID: Record<StoryID, StorySave> = {};
 
 	for (const storyID of storyIDs) {
+		const pageID = user.storySaves[storyID]!;
+
 		const storySave: StorySave = {
 			id: storyID,
-			pageID: user!.storySaves[storyID]
+			pageID
 		};
 
 		storySaves.push(storySave);
-		storySaveRecord[storyID] = storySave;
+		storySavesByStoryID[storyID] = storySave;
 	}
 
 	await getStoriesAsUser(user, true, {
 		_id: { $in: storyIDs }
 	}).forEach(story => {
-		storySaveRecord[story.id].story = story;
+		storySavesByStoryID[story.id]!.story = story;
 	});
 
 	return {
