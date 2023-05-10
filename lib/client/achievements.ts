@@ -42,7 +42,7 @@ export const achievements = {
 	},
 	hack: {
 		name: 'The Yellow Yard',
-		description: 'Hack your way into acquiring this achievement.'
+		description: 'Hack your way into acquiring this achievement, and tell no one how you did it.'
 	}
 } as const satisfies Record<string, Achievement>;
 
