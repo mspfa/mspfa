@@ -13,7 +13,7 @@ export const achievements = {
 		description: 'Reach 10 favorites on one of your adventures.'
 	},
 	get100Favs: {
-		name: 'A Burgeoning Benjamin',
+		name: 'A Catalytic Reaction',
 		description: 'Reach 100 favorites on one of your adventures.'
 	},
 	get413Favs: {
@@ -26,11 +26,7 @@ export const achievements = {
 	},
 	veteran: {
 		name: 'Veteran Adventurer',
-		description: 'Go online at least 3 years after you first signed up for MSPFA.'
-	},
-	contribute: {
-		name: 'Distinguished Enhancer',
-		description: 'Contribute something unique and helpful to the website itself.'
+		description: 'Go online at least 5 years after you first signed up for MSPFA.'
 	},
 	donate: {
 		name: 'Loyal Benefactor',
@@ -38,7 +34,11 @@ export const achievements = {
 	},
 	reportBug: {
 		name: 'Blunder Scout',
-		description: 'Report a new, confirmable bug, no matter how small. If you found a bug but already have this achievement, feel free to let a friend report the bug instead so they can have it too.'
+		description: 'Report a new, confirmable bug, no matter how small.'
+	},
+	contribute: {
+		name: 'Distinguished Enhancer',
+		description: 'Contribute something unique and helpful to the website itself.'
 	},
 	hack: {
 		name: 'The Yellow Yard',
