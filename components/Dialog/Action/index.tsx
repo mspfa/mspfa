@@ -34,7 +34,7 @@ export type ActionProps<
 /**
  * A dialog submission or cancellation button.
  *
- * Must be passed into the `Dialog`'s children, not returned from a component passed into the `Dialog`'s children.
+ * Must be included in the `Dialog`'s children, not returned from a component included in the `Dialog`'s children.
  */
 const Action = <
 	Values extends FormikValues = FormikValues,

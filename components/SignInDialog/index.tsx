@@ -77,12 +77,12 @@ const SignInDialog = () => {
 			initialValues={initialValues}
 			onSubmit={
 				useFunction(async (values: Values) => {
-					const authMethodOptions = authMethodOptionsRef.current;
+					const authMethodOptions = authMethodOptionsRef.current!;
 
 					const { data } = await (api as SessionAPI | UsersAPI).post(
 						signingIn ? '/session' : '/users',
 						{
-							email: authMethodOptions!.type === 'password' ? values.email : undefined,
+							email: authMethodOptions.type === 'password' ? values.email : undefined,
 							authMethod: authMethodOptions,
 							...!signingIn && {
 								captchaToken: values.captchaToken,
@@ -107,11 +107,10 @@ const SignInDialog = () => {
 								);
 							}
 						}
-					).finally(() => {
-						authMethodOptionsRef.current = undefined;
-					});
+					);
 
 					setUser(data);
+					authMethodOptionsRef.current = undefined;
 				})
 			}
 		>
@@ -125,6 +124,11 @@ const SignInDialog = () => {
 						type: 'password',
 						value: values.password
 					};
+				});
+
+				const continueWithPassword = useFunction(() => {
+					setAuthMethodToPassword();
+					goToNextPage();
 				});
 
 				const onResolveAuth = useFunction((authMethodOptions: AuthMethodOptions) => {
@@ -197,7 +201,7 @@ const SignInDialog = () => {
 								<Action keepOpen cancel onClick={goToSignIn}>
 									Go Back
 								</Action>
-								<Action keepOpen onClick={goToNextPage}>
+								<Action keepOpen onClick={continueWithPassword}>
 									Continue
 								</Action>
 							</>
