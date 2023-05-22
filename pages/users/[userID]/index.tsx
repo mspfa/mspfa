@@ -114,9 +114,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, stories, favsPub
 				<div id="profile-misc">
 					<LabeledGridSection id="profile-stats" heading="Stats">
 						<LabeledGridRow label="Last Connection">
-							{online ? (
-								'Online!'
-							) : (
+							{online ? 'Online!' : (
 								<Timestamp relative withTime>
 									{publicUser.lastSeen}
 								</Timestamp>
@@ -155,20 +153,20 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, stories, favsPub
 							)}
 						</LabeledGridSection>
 					)}
+					{publicUser.description && (
+						<Section
+							id="profile-description"
+							heading="Description"
+							collapsible
+							open
+						>
+							<BBCode keepHTMLTags>
+								{publicUser.description}
+							</BBCode>
+						</Section>
+					)}
 				</div>
 			</Columns>
-			{publicUser.description && (
-				<Section
-					id="profile-description"
-					heading="Description"
-					collapsible
-					open
-				>
-					<BBCode keepHTMLTags>
-						{publicUser.description}
-					</BBCode>
-				</Section>
-			)}
 			{stories.length !== 0 && (
 				<Section
 					id="profile-stories"
