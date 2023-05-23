@@ -4,25 +4,29 @@ export type Achievement = {
 };
 
 export const achievements = {
+	fav: {
+		name: '???',
+		description: 'Favorite an adventure.'
+	},
 	author: {
 		name: 'Humble Beginnings',
 		description: 'Embark on your first adventure.'
 	},
 	get10Favs: {
 		name: 'A Tentative Following',
-		description: 'Reach 10 favorites on one of your adventures.'
+		description: 'Reach 10 favorites on an adventure.'
 	},
 	get100Favs: {
 		name: 'A Catalytic Reaction',
-		description: 'Reach 100 favorites on one of your adventures.'
+		description: 'Reach 100 favorites on an adventure.'
 	},
 	get413Favs: {
 		name: 'A Momentous Constant',
-		description: 'Reach 413 favorites on one of your adventures.'
+		description: 'Reach 413 favorites on an adventure.'
 	},
 	get1KFavs: {
 		name: 'A Grand Attainment',
-		description: 'Reach 1,000 favorites on one of your adventures.'
+		description: 'Reach 1,000 favorites on an adventure.'
 	},
 	veteran: {
 		name: 'Veteran Adventurer',
