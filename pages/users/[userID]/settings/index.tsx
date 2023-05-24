@@ -288,7 +288,7 @@ const Component = withErrorPage<ServerSideProps>(({ initialPrivateUser }) => {
 							</LabeledGridSection>
 							<Section heading="Advanced" collapsible>
 								<Label block htmlFor="field-style">
-									Custom Site Style
+									Custom Global Stylesheet
 								</Label>
 								<Field
 									as="textarea"

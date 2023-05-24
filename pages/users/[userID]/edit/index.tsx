@@ -179,7 +179,7 @@ const Component = withErrorPage<ServerSideProps>(({ privateUser: initialPrivateU
 							</Section>
 							<Section heading="Advanced" collapsible>
 								<Label block htmlFor="field-style">
-									Custom Profile Style
+									Custom Profile Stylesheet
 								</Label>
 								<Field
 									as="textarea"

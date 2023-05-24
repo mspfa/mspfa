@@ -5,7 +5,7 @@ import { withErrorPage } from 'lib/client/errors';
 import withStatusCode from 'lib/server/withStatusCode';
 import Section from 'components/Section';
 import Row from 'components/Row';
-import BottomActions from 'components/BottomActions';
+import TopActions from 'components/TopActions';
 import Button from 'components/Button';
 import type { APIClient } from 'lib/client/api';
 import api from 'lib/client/api';
@@ -89,6 +89,11 @@ type ServerSideProps = {
 
 const Component = withErrorPage<ServerSideProps>(({ stories }) => (
 	<Page withFlashyTitle heading="Your Adventures">
+		<TopActions>
+			<Button onClick={promptNewStory}>
+				New Adventure!
+			</Button>
+		</TopActions>
 		<Section heading="Adventures">
 			{(stories.length
 				? (
@@ -99,11 +104,6 @@ const Component = withErrorPage<ServerSideProps>(({ stories }) => (
 				: 'You haven\'t started any adventures yet! Click the button below to begin.'
 			)}
 		</Section>
-		<BottomActions>
-			<Button onClick={promptNewStory}>
-				New Adventure!
-			</Button>
-		</BottomActions>
 	</Page>
 ));
 

@@ -477,7 +477,7 @@ const Component = withErrorPage<ServerSideProps>(({
 									<Columns id="story-editor-code-fields">
 										<div>
 											<Label block htmlFor="field-style">
-												Custom Style
+												Custom Stylesheet
 											</Label>
 											<Field
 												as="textarea"
