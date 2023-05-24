@@ -44,7 +44,7 @@ export const getCredentials = (
 
 	const [userIDString, token, ...invalidParts] = decodedString.split(':');
 
-	if (invalidParts.length) {
+	if (token === undefined || invalidParts.length) {
 		cookies?.set('auth', undefined);
 		return;
 	}
