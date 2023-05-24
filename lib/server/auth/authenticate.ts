@@ -2,7 +2,7 @@ import argon2 from 'argon2';
 import Cookies from 'cookies';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import users from 'lib/server/users';
-import type { ServerUser, ServerUserID } from 'lib/server/users';
+import type { ServerUser, ServerUserID, UserSession } from 'lib/server/users';
 import authCookieOptions from 'lib/server/auth/authCookieOptions';
 import parseID from 'lib/server/db/parseID';
 
@@ -44,7 +44,7 @@ export const getCredentials = (
 
 	const [userIDString, token, ...invalidParts] = decodedString.split(':');
 
-	if (invalidParts.length !== 0) {
+	if (invalidParts.length) {
 		cookies?.set('auth', undefined);
 		return;
 	}
@@ -68,14 +68,20 @@ export const verifyCredentials = async ({
 	cookies,
 	userID,
 	token
-}: Credentials): Promise<ServerUser | undefined> => {
+}: Credentials): Promise<{
+	user: ServerUser,
+	session: UserSession
+} | {
+	user?: undefined,
+	session?: undefined
+}> => {
 	const user = await users.findOne({
 		_id: userID
 	});
 
 	if (!user) {
 		cookies?.set('auth', undefined);
-		return;
+		return {};
 	}
 
 	for (const session of user.sessions) {
@@ -83,8 +89,10 @@ export const verifyCredentials = async ({
 			continue;
 		}
 
-		return user;
+		return { user, session };
 	}
+
+	return {};
 };
 
 /**
@@ -104,7 +112,7 @@ const authenticate = async (
 		return;
 	}
 
-	const user = await verifyCredentials(credentials);
+	const { user, session } = await verifyCredentials(credentials);
 
 	if (!user) {
 		return;
@@ -113,14 +121,16 @@ const authenticate = async (
 	// Update the `auth` cookie's expiration date.
 	credentials.cookies?.set('auth', credentials.encodedString, authCookieOptions);
 
+	const now = new Date();
+
 	// Update the existing session in the DB.
 	users.updateOne({
 		'_id': user._id,
-		'sessions.token': credentials.token
+		'sessions.token': session.token
 	}, {
 		$set: {
-			'lastSeen': new Date(),
-			'sessions.$.lastUsed': new Date(),
+			'lastSeen': now,
+			'sessions.$.lastUsed': now,
 			'sessions.$.ip': req.headers['x-real-ip']
 		}
 	});

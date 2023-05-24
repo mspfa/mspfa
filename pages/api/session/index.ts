@@ -103,7 +103,7 @@ const Handler: APIHandler<(
 		return;
 	}
 
-	const user = await verifyCredentials(credentials);
+	const { user, session } = await verifyCredentials(credentials);
 
 	if (!user) {
 		res.status(404).send({
@@ -117,7 +117,7 @@ const Handler: APIHandler<(
 	}, {
 		$pull: {
 			sessions: {
-				token: credentials.token
+				token: session.token
 			}
 		}
 	});
