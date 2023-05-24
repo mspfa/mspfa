@@ -33,6 +33,7 @@ const updateViewport = () => {
 		const rect = stickyElement.getBoundingClientRect();
 		netStickyHeight += rect.height;
 
+		// TODO: Fix that this is incorrectly `false` when the sticky element reaches the bottom of the parent, probably by refactoring this to use `IntersectionObserver` instead of viewport listener checks.
 		const stuck = styleTop === rect.top;
 
 		if (!stuck) {
