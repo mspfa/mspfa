@@ -1,31 +1,52 @@
-$variables-only: false !default;
+@use 'components/Section/variables' as *;
 
-$space-between-sections: 4px;
+.section {
+	display: flex;
+	flex-direction: column;
+	// This can be useful when the section's parent has fixed height.
+	flex-grow: 1;
 
-@if not $variables-only {
-	.section {
-		display: flex;
-		flex-direction: column;
-		// This can be useful when the section's parent has fixed height.
-		flex-grow: 1;
+	&.collapsible:not(.open) {
+		flex-grow: 0;
+	}
 
-		&:not(:last-child) {
-			margin-bottom: $space-between-sections;
+	&:not(:last-child) {
+		margin-bottom: $space-between-sections;
+	}
+
+	&-heading {
+		text-align: center;
+		padding: 0.25em 0.5em;
+		margin-bottom: $space-between-sections;
+
+		.section.collapsible:not(.open) > & {
+			margin-bottom: 0;
 		}
 
-		&-heading {
-			text-align: center;
-			padding: 0.25em 0.5em;
-			margin-bottom: $space-between-sections;
+		.section.collapsible > & {
+			cursor: pointer;
 
-			details.section:not([open]) > & {
-				margin-bottom: 0;
+			// Undo the `button` styles.
+			border: none;
+			font: inherit;
+		}
+
+		&::before {
+			.section.collapsible > & {
+				content: '▼';
+				margin-right: 1ch;
+			}
+
+			.section.collapsible:not(.open) > & {
+				// We rotate `▼` instead of using `▶` to ensure there are no variations in size.
+				display: inline-block;
+				transform: rotate(-90deg);
 			}
 		}
+	}
 
-		&-content {
-			flex-grow: 1;
-			padding: 24px;
-		}
+	&-content {
+		flex-grow: 1;
+		padding: 24px;
 	}
 }

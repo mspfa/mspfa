@@ -158,7 +158,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, stories, favsPub
 							id="profile-description"
 							heading="Description"
 							collapsible
-							open
+							defaultOpen
 						>
 							<BBCode keepHTMLTags>
 								{publicUser.description}
@@ -172,7 +172,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, stories, favsPub
 					id="profile-stories"
 					heading={`${publicUser.name}'s Adventures (${stories.length})`}
 					collapsible
-					open
+					defaultOpen
 				>
 					<List listing={StoryListing}>
 						{stories.sort((a, b) => b.updated - a.updated)}

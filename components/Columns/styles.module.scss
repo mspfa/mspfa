@@ -1,5 +1,5 @@
 @use 'styles/themes' as *;
-@use 'components/Section/styles.module' as * with ( $variables-only: true );
+@use 'components/Section/variables' as *;
 
 .columns {
 	display: flex;

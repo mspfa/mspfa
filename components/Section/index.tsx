@@ -1,46 +1,71 @@
 import './styles.module.scss';
 import type { DetailsHTMLAttributes, HTMLAttributes, ReactNode } from 'react';
-import React from 'react';
+import React, { useState } from 'react';
 import classes from 'lib/client/classes';
+import useFunction from 'lib/client/reactHooks/useFunction';
 
 export type SectionProps = HTMLAttributes<HTMLDivElement> & DetailsHTMLAttributes<HTMLDetailsElement> & {
 	heading?: ReactNode,
-	collapsible?: boolean,
 	/** Whether this component's children should be inserted directly instead of inside a content element. */
 	customContent?: boolean
-};
+} & (
+	{
+		collapsible: true,
+		defaultOpen?: boolean
+	} | {
+		collapsible?: false,
+		defaultOpen?: never
+	}
+);
 
 /** A section with a heading box and a content box. */
 const Section = React.forwardRef<HTMLDivElement & HTMLDetailsElement, SectionProps>(({
 	heading,
 	className,
 	collapsible,
+	defaultOpen,
 	customContent,
 	children,
 	...props
 }, ref) => {
-	const SectionTag = collapsible ? 'details' : 'div';
-	const HeadingTag = collapsible ? 'summary' : 'div';
+	// We can't use `details` and `summary` for collapsible sections because the `details` element uses slots for its children, which makes `flex-grow` not work properly.
+	const HeadingTag = collapsible ? 'button' : 'div';
+
+	const [open, setOpen] = useState(defaultOpen);
+	const contentVisible = !collapsible || open;
+
+	const handleHeadingClick = useFunction(() => {
+		if (!collapsible) {
+			return;
+		}
+
+		setOpen(open => !open);
+	});
 
 	return (
-		<SectionTag
-			className={classes('section', className)}
+		<div
+			className={classes('section', { collapsible, open }, className)}
 			{...props}
 			ref={ref}
 		>
 			{heading && (
-				<HeadingTag className="section-heading alt-front">
+				<HeadingTag
+					className="section-heading alt-front"
+					onClick={handleHeadingClick}
+				>
 					{heading}
 				</HeadingTag>
 			)}
-			{customContent ? (
-				children
-			) : (
-				<div className="section-content front">
-					{children}
-				</div>
+			{contentVisible && (
+				customContent ? (
+					children
+				) : (
+					<div className="section-content front">
+						{children}
+					</div>
+				)
 			)}
-		</SectionTag>
+		</div>
 	);
 });
 
