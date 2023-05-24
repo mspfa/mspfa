@@ -258,6 +258,18 @@ const Component = withErrorPage<ServerSideProps>(({
 								ref={useSubmitOnSave({ submitForm, dirty, isSubmitting })}
 							>
 								<TopActions>
+									{story.pageCount !== 0 && (
+										<Button
+											href={`/?s=${story.id}&p=1`}
+										>
+											View
+										</Button>
+									)}
+									<Button
+										href={`/stories/${story.id}/edit/pages`}
+									>
+										Edit Pages
+									</Button>
 									<Button
 										type="submit"
 										className="alt"
@@ -266,25 +278,6 @@ const Component = withErrorPage<ServerSideProps>(({
 										Save
 									</Button>
 								</TopActions>
-								<Section
-									id="story-editor-options"
-									heading={story.title}
-								>
-									{story.pageCount !== 0 && (
-										<Button
-											className="small"
-											href={`/?s=${story.id}&p=1`}
-										>
-											View
-										</Button>
-									)}
-									<Button
-										className="small"
-										href={`/stories/${story.id}/edit/pages`}
-									>
-										Edit Pages
-									</Button>
-								</Section>
 								<Columns ofSections>
 									<LabeledGridSection id="story-editor-info" heading="Info">
 										<LabeledGridField

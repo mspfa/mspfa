@@ -1,10 +1,6 @@
 @use 'styles/themes' as *;
 
 #story-editor {
-	&-options {
-		text-align: center;
-	}
-
 	&-misc > .section-content {
 		row-gap: 1em;
 	}
