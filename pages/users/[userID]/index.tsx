@@ -154,12 +154,7 @@ const Component = withErrorPage<ServerSideProps>(({ publicUser, stories, favsPub
 						</LabeledGridSection>
 					)}
 					{publicUser.description && (
-						<Section
-							id="profile-description"
-							heading="Description"
-							collapsible
-							defaultOpen
-						>
+						<Section id="profile-description" heading="Description">
 							<BBCode keepHTMLTags>
 								{publicUser.description}
 							</BBCode>
