@@ -45,7 +45,7 @@
 		// Set each rectangle's size to the size of the pseudo-element, subtracting its non-border padding which is set later.
 		background-size: calc(100% - #{2 * $scale}) calc(100% - #{2 * $scale});
 
-		@if not $border or $can-be-active {
+		@if not $border {
 			background-position: $two-background-positions;
 		} @else {
 			background-position: $three-background-positions;
@@ -64,8 +64,8 @@
 	}
 
 	@if $border and $can-be-active {
-		&:not(:active)::before {
-			background-position: $three-background-positions;
+		&:active:not(:disabled)::before {
+			background-position: $two-background-positions;
 		}
 	}
 }
