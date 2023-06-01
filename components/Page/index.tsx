@@ -43,8 +43,9 @@ const Page = ({ heading, children, withFlashyTitle, basement }: PageProps) => (
 			</div>
 		</div>
 
-		{/* This dummy element exists to preload certain resources via styles set on it, as well as to perform computations on it in some cases. */}
-		<div id="dummy" />
+		{/* This dummy element exists to preload certain resources via styles set on it (to prevent FOUC), as well as to perform computations on it in some cases. */}
+		{/* The zero-width space inside is necessary for this element's font to attempt to load. */}
+		<div id="dummy">&zwsp;</div>
 	</>
 );
 
