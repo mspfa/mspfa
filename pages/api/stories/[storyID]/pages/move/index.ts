@@ -81,7 +81,7 @@ const Handler: APIHandler<{
 	const changedPageIDs: Record<StoryPageID, StoryPageID> = {};
 	/** An array of initial page IDs to be changed. */
 	const changedOldPageIDs: StoryPageID[] = [];
-	/** A record that maps each changed page's new ID from after the move to its initial ID (the reverse of `changedPageIDs`). */
+	/** A record that maps each changed page's new ID from after the move to its initial ID (the inverse of `changedPageIDs`). */
 	const oldPageIDs: Record<StoryPageID, StoryPageID> = {};
 	const newClientPages: ClientStoryPageRecord = {};
 	/** The MongoDB `$switch` operation's `branches` used to modify each user's `storySaves` entry for this story. */
