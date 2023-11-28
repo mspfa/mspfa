@@ -150,7 +150,7 @@ const BBTags: Partial<Record<string, BBTag>> = {
 	chat: withBlock(({ children }) => (
 		<div className="chat">{children}</div>
 	)),
-	alt: ({ attributes, children }) => (
+	tooltip: ({ attributes, children }) => (
 		<span
 			title={
 				typeof attributes === 'string'

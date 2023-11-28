@@ -4,7 +4,7 @@
 	vertical-align: bottom;
 	width: 150px;
 	height: 150px;
-	// If this isn't here, a broken image's alt text can overflow the size of the image.
+	// Without this, a broken image's tooltip can overflow the size of the image.
 	display: inline-block;
 	overflow: hidden;
 }

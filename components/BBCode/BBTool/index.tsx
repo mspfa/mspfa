@@ -231,14 +231,14 @@ const optionsByTagName: Record<string, BBToolOptions> = {
 						<LabeledGridField
 							name="show"
 							label={'"Show" Button Text'}
-							help={'The spoiler\'s button text when the spoiler is closed.'}
+							help="The spoiler's button text when the spoiler is closed."
 							autoFocus
 							placeholder="Optional"
 						/>
 						<LabeledGridField
 							name="hide"
 							label={'"Hide" Button Text'}
-							help={'The spoiler\'s button text when the spoiler is open.'}
+							help="The spoiler's button text when the spoiler is open."
 							placeholder="Optional"
 						/>
 					</>
@@ -259,13 +259,14 @@ const optionsByTagName: Record<string, BBToolOptions> = {
 		})
 	},
 	chat: { title: 'Chat' },
-	alt: {
-		title: 'Hover Text',
+	tooltip: {
+		title: 'Tooltip',
 		dialogContent: (
 			<LabeledGrid>
 				<LabeledGridField
 					name="attributes"
-					label="Hover Text"
+					label="Tooltip"
+					help="Text that appears while hovering over content."
 					required
 					autoFocus
 					autoComplete="off"
