@@ -10,7 +10,7 @@ export const achievements = {
 	},
 	author: {
 		name: 'Humble Beginnings',
-		description: 'Embark on your very own first adventure.'
+		description: 'Embark on your first very own adventure.'
 	},
 	get10Favs: {
 		name: 'A Tentative Following',
