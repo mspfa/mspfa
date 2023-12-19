@@ -14,19 +14,19 @@ export const achievements = {
 	},
 	get10Favs: {
 		name: 'A Tentative Following',
-		description: 'Reach 10 favorites on an adventure.'
+		description: 'Author an adventure with 10 favorites.'
 	},
 	get100Favs: {
 		name: 'A Catalytic Reaction',
-		description: 'Reach 100 favorites on an adventure.'
+		description: 'Author an adventure with 100 favorites.'
 	},
 	get413Favs: {
 		name: 'A Momentous Constant',
-		description: 'Reach 413 favorites on an adventure.'
+		description: 'Author an adventure with 413 favorites.'
 	},
 	get1KFavs: {
 		name: 'A Grand Attainment',
-		description: 'Reach 1,000 favorites on an adventure.'
+		description: 'Author an adventure with 1,000 favorites.'
 	},
 	veteran: {
 		name: 'Veteran Adventurer',
