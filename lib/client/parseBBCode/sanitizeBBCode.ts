@@ -1,7 +1,7 @@
 import DOMPurify from 'isomorphic-dompurify';
 
 /** The enforced `sandbox` attribute of any BBCode/HTML `iframe`. */
-// `allow-downloads` is NOT here because the user may think the download comes from us and is trustworthy, and there is little reason for an embed to need to download anything. If necessary, download could occur from a separate window instead.
+// `allow-downloads` is NOT here because the user may think the download comes from us and is trustworthy, and there is little reason for an embed to need to download anything. If necessary, a download can occur from a separate window instead.
 // `allow-forms` is here because forms can be useful to be able to embed (such as for external suggestion boxes), and although they can be used for phishing, there is no reason to restrict them since `allow-same-origin` and `allow-scripts` are enabled, enabling scripts to send HTTP requests anyway.
 // `allow-modals` is here because they are convenient to code and are mostly harmless.
 // `allow-pointer-lock` is here because it is mostly harmless and allows for games that require cursor restriction (such as first-person games).
