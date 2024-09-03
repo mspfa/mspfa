@@ -29,7 +29,7 @@ export type SanitizeBBCodeOptions = {
 	/**
 	 * Whether to escape HTML into plain text by replacing all inputted `&` with `&amp;`, `<` with `&lt;`, and `>` with `&gt;`.
 	 *
-	 * Does not escape HTML entities, since that would make certain attribute values impossible. For example, `[spoiler show="&quot;'&quot;"][/spoiler]` would be replaced with `[spoiler show="&amp;quot;'&amp;quot;"][/spoiler]`, which isn't what the user intended.
+	 * Doesn't escape `&` when it's part of an HTML entity, since that would make certain attribute values impossible. For example, `[spoiler show="&quot;'&quot;"][/spoiler]` would be replaced with `[spoiler show="&amp;quot;'&amp;quot;"][/spoiler]`, which isn't what the user intended.
 	 */
 	escapeHTML?: boolean
 };
